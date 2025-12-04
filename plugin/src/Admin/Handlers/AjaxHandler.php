@@ -293,8 +293,8 @@ class AjaxHandler
 
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
-                wp_send_json_error('Erreur interne: template_processor non disponible');
-                return;
+                // Fallback: charger le template directement
+                return $this->fallbackLoadTemplate($template_id);
             }
 
             // Charger le template en utilisant le template processor
@@ -1375,5 +1375,178 @@ class AjaxHandler
         } catch (Exception $e) {
             wp_send_json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Fallback method to load template when template_processor is not available
+     */
+    private function fallbackLoadTemplate($template_id)
+    {
+        try {
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Vérifier que la table existe
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+                wp_send_json_error('Table des templates introuvable');
+                return;
+            }
+
+            $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+            if (!$template) {
+                wp_send_json_error('Template introuvable');
+                return;
+            }
+
+            // Essayer de décoder le JSON
+            $template_data = json_decode($template['template_data'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                // S'assurer qu'il y a toujours un nom de template
+                if (!isset($template_data['name']) || empty($template_data['name'])) {
+                    $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
+                }
+                $this->sendTemplateSuccessResponse($template_data, $template);
+                return;
+            }
+
+            // Essayer le nettoyage normal si DataUtils est disponible
+            if (isset($this->admin->data_utils) && method_exists($this->admin->data_utils, 'cleanJsonData')) {
+                $clean_json = $this->admin->data_utils->cleanJsonData($template['template_data']);
+                if ($clean_json !== $template['template_data']) {
+                    $template_data = json_decode($clean_json, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        // Ajouter le nom du template depuis la base de données
+                        if (isset($template['name']) && !isset($template_data['name'])) {
+                            $template_data['name'] = $template['name'];
+                        }
+                        $this->sendTemplateSuccessResponse($template_data, $template);
+                        return;
+                    }
+                }
+            }
+
+            // Essayer le nettoyage agressif si DataUtils est disponible
+            if (isset($this->admin->data_utils) && method_exists($this->admin->data_utils, 'aggressiveJsonClean')) {
+                $aggressive_clean = $this->admin->data_utils->aggressiveJsonClean($template['template_data']);
+                if ($aggressive_clean !== $template['template_data']) {
+                    $template_data = json_decode($aggressive_clean, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        // Ajouter le nom du template depuis la base de données
+                        if (isset($template['name']) && !isset($template_data['name'])) {
+                            $template_data['name'] = $template['name'];
+                        }
+                        $this->sendTemplateSuccessResponse($template_data, $template);
+                        return;
+                    }
+                }
+            }
+
+            // Dernier recours - utiliser un template par défaut
+            $default_template = $this->getDefaultInvoiceTemplate();
+            $this->sendTemplateSuccessResponse($default_template, ['name' => 'Template par défaut']);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send successful template response
+     */
+    private function sendTemplateSuccessResponse($template_data, $template_info)
+    {
+        // Récupérer le nom du template depuis les données JSON en priorité, sinon depuis la DB
+        $template_name = '';
+        if (isset($template_data['name']) && !empty($template_data['name'])) {
+            $template_name = $template_data['name'];
+        } elseif (isset($template_info['name']) && !empty($template_info['name'])) {
+            $template_name = $template_info['name'];
+        } else {
+            $template_name = 'Template ' . (isset($template_info['id']) ? $template_info['id'] : 'inconnu');
+        }
+
+        wp_send_json_success([
+            'template' => $template_data,
+            'template_name' => $template_name,
+            'message' => 'Template chargé avec succès'
+        ]);
+    }
+
+    /**
+     * Get default invoice template
+     */
+    private function getDefaultInvoiceTemplate()
+    {
+        return array(
+            'canvas' => array(
+                'width' => 595,
+                'height' => 842,
+                'zoom' => 1,
+                'pan' => array('x' => 0, 'y' => 0)
+            ),
+            'pages' => array(
+                array(
+                    'margins' => array('top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20),
+                    'elements' => array(
+                        array(
+                            'id' => 'company_name',
+                            'type' => 'text',
+                            'position' => array('x' => 50, 'y' => 50),
+                            'size' => array('width' => 200, 'height' => 30),
+                            'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
+                            'content' => 'Ma Société'
+                        ),
+                        array(
+                            'id' => 'invoice_title',
+                            'type' => 'text',
+                            'position' => array('x' => 400, 'y' => 50),
+                            'size' => array('width' => 150, 'height' => 30),
+                            'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
+                            'content' => 'FACTURE'
+                        ),
+                        array(
+                            'id' => 'invoice_number',
+                            'type' => 'invoice_number',
+                            'position' => array('x' => 400, 'y' => 90),
+                            'size' => array('width' => 150, 'height' => 25),
+                            'style' => array('fontSize' => 14, 'color' => '#000000'),
+                            'content' => 'N° de facture'
+                        ),
+                        array(
+                            'id' => 'invoice_date',
+                            'type' => 'invoice_date',
+                            'position' => array('x' => 400, 'y' => 120),
+                            'size' => array('width' => 150, 'height' => 25),
+                            'style' => array('fontSize' => 14, 'color' => '#000000'),
+                            'content' => 'Date'
+                        ),
+                        array(
+                            'id' => 'customer_info',
+                            'type' => 'customer_info',
+                            'position' => array('x' => 50, 'y' => 150),
+                            'size' => array('width' => 250, 'height' => 80),
+                            'style' => array('fontSize' => 12, 'color' => '#000000'),
+                            'content' => 'Informations client'
+                        ),
+                        array(
+                            'id' => 'products_table',
+                            'type' => 'product_table',
+                            'position' => array('x' => 50, 'y' => 250),
+                            'size' => array('width' => 500, 'height' => 200),
+                            'style' => array('fontSize' => 12, 'color' => '#000000'),
+                            'content' => 'Tableau produits'
+                        ),
+                        array(
+                            'id' => 'total',
+                            'type' => 'total',
+                            'position' => array('x' => 400, 'y' => 500),
+                            'size' => array('width' => 150, 'height' => 30),
+                            'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
+                            'content' => 'Total'
+                        )
+                    )
+                )
+            )
+        );
     }
 }
