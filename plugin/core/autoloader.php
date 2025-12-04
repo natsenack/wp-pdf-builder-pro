@@ -46,7 +46,7 @@ class PdfBuilderAutoloader
     public static function autoload($class)
     {
         // Skip Dompdf classes to avoid conflicts
-        if (strpos($class, 'Dompdf\\') === 0) {
+        if (strpos($class, 'Dompdf') !== false) {
             return false;
         }
 
