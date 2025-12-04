@@ -521,6 +521,18 @@ class PdfBuilderAdmin
         // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-settings', [$this, 'settings_page']);
 
+        // Galerie de modèles (mode développeur uniquement)
+        if (!empty(get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
+            add_submenu_page(
+                'pdf-builder-pro',
+                __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
+                __('🖼️ Galerie', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-predefined-templates',
+                [$this->predefined_templates_manager ?? null, 'renderAdminPage']
+            );
+        }
+
     }
 
 

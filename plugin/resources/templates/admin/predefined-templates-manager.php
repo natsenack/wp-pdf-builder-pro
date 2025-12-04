@@ -35,11 +35,14 @@ class PDF_Builder_Predefined_Templates_Manager
      */
     public function addAdminMenu()
     {
+        // Menu déplacé dans PDF_Builder_Admin.php pour contrôler l'ordre
         // Vérifier si le Mode Développeur est activé
         $settings = get_option('pdf_builder_settings', []);
         
         // N'ajouter le menu que si le Mode Développeur est activé
         if (!empty($settings['pdf_builder_developer_enabled'])) {
+            // Menu maintenant géré par PDF_Builder_Admin.php
+            /*
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
@@ -48,6 +51,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 'pdf-builder-predefined-templates',
                 [$this, 'renderAdminPage']
             );
+            */
         }
     }
     /**
