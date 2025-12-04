@@ -862,9 +862,16 @@ if ($FileFilter -ne "all") {
             "custom" {
                 $include = $false
                 foreach ($pattern in $CustomFilter) {
-                    # Convertir le pattern pour Windows (remplacer / par \ et gérer les wildcards)
+                    # Convertir le pattern pour Windows et utiliser une logique plus simple
                     $windowsPattern = $pattern.Replace("/", "\").ToLower()
-                    if ($fullName -like $windowsPattern) {
+                    # Pour les patterns récursifs, vérifier si le chemin commence par le pattern (sans wildcard)
+                    $basePattern = $windowsPattern.Replace("\*\*", "").Replace("\*", "")
+                    if ($fullName.StartsWith($basePattern)) {
+                        $include = $true
+                        break
+                    }
+                    # Essayer aussi le pattern direct
+                    elseif ($fullName -like $windowsPattern) {
                         $include = $true
                         break
                     }
