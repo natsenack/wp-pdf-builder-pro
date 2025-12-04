@@ -492,19 +492,27 @@
     // Alias pour la compatibilité - définis immédiatement
     window.showSuccessNotification = function(message, options) {
         console.trace('showSuccessNotification called with:', message);
-        return window.pdfBuilderNotify.success(message, options);
+        if (window.pdfBuilderNotificationsInstance) {
+            return window.pdfBuilderNotificationsInstance.success(message, options);
+        }
     };
     window.showErrorNotification = function(message, options) {
         console.trace('showErrorNotification called with:', message);
-        return window.pdfBuilderNotify.error(message, options);
+        if (window.pdfBuilderNotificationsInstance) {
+            return window.pdfBuilderNotificationsInstance.error(message, options);
+        }
     };
     window.showWarningNotification = function(message, options) {
         console.trace('showWarningNotification called with:', message);
-        return window.pdfBuilderNotify.warning(message, options);
+        if (window.pdfBuilderNotificationsInstance) {
+            return window.pdfBuilderNotificationsInstance.warning(message, options);
+        }
     };
     window.showInfoNotification = function(message, options) {
         console.trace('showInfoNotification called with:', message);
-        return window.pdfBuilderNotify.info(message, options);
+        if (window.pdfBuilderNotificationsInstance) {
+            return window.pdfBuilderNotificationsInstance.info(message, options);
+        }
     };
 
     // Initialisation automatique
