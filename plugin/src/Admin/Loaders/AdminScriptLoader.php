@@ -146,6 +146,8 @@ class AdminScriptLoader
         // Outils développeur asynchrones
         wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js');
+        error_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
+        error_log('[WP AdminScriptLoader] Current hook: ' . $hook);
 
         // Définir les paramètres de debug JavaScript pour developer-tools.js
         $settings = get_option('pdf_builder_settings', array());

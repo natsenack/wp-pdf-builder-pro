@@ -4,6 +4,12 @@
  * Version complète recréée - 2025-11-30
  */
 
+// LOG ABSOLU - toujours affiché, même si le script ne s'initialise pas
+console.log('🔧 DEVELOPER-TOOLS.JS FILE LOADED - ABSOLUTE LOG');
+console.log('🔧 Current location:', window.location.href);
+console.log('🔧 pdfBuilderAjax defined:', typeof pdfBuilderAjax);
+console.log('🔧 pdf_builder_ajax defined:', typeof pdf_builder_ajax);
+
 (function($) {
     'use strict';
 
