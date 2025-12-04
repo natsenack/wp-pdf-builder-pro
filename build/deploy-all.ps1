@@ -751,9 +751,9 @@ if (-not $FullSync -and -not $IsTestMode -and $Mode -eq "plugin") {
             Write-Host "   • Dernier déploiement : $($lastDeployTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
             
             # Filtrer les fichiers modifiés depuis le dernier déploiement
-            $beforeCount = $filteredFiles.Count
-            $filteredFiles = $filteredFiles | Where-Object { $_.LastWriteTime -gt $lastDeployTime }
-            $afterCount = $filteredFiles.Count
+            $beforeCount = $filesToDeploy.Count
+            $filesToDeploy = $filesToDeploy | Where-Object { $_.LastWriteTime -gt $lastDeployTime }
+            $afterCount = $filesToDeploy.Count
             
             Write-Host "   • Fichiers modifiés depuis : $afterCount / $beforeCount" -ForegroundColor Cyan
             
