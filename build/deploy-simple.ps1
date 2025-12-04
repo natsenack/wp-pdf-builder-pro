@@ -14,6 +14,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# Forcer l'encodage UTF-8 pour éviter les problèmes avec les caractères accentués
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001 | Out-Null  # Page de code UTF-8
+
 # Configuration FTP
 $FtpHost = "65.108.242.181"
 $FtpUser = "nats"
@@ -26,7 +31,7 @@ $WorkingDir = "I:\wp-pdf-builder-pro"
 function Get-SmartCommitMessage {
     param([string[]]$ModifiedFiles)
 
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $timestamp = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
 
     # Analyser les types de fichiers modifiés
     $hasJs = $ModifiedFiles | Where-Object { $_ -like "*.js" -or $_ -like "*.jsx" -or $_ -like "*.ts" -or $_ -like "*.tsx" }
@@ -62,7 +67,7 @@ function Get-SmartCommitMessage {
 # Configuration FastMode
 if ($FastMode) {
     $SkipConnectionTest = $true
-    Write-Host "MODE RAPIDE: Test de connexion désactivé, parallélisation maximale" -ForegroundColor Cyan
+    Write-Host "MODE RAPIDE: Test de connexion desactiver, parallelisation maximale" -ForegroundColor Cyan
 }
 
 Write-Host "`nDEPLOIEMENT PLUGIN - Mode: $Mode $(if ($FastMode) { '(RAPIDE)' } else { '' })" -ForegroundColor Cyan
@@ -92,36 +97,96 @@ Write-Host "`n2 Detection des fichiers modifies..." -ForegroundColor Magenta
 
 try {
     Push-Location $WorkingDir
-    
-    # Recuperer les fichiers modifies depuis git (les warnings git ne doivent pas causer d'erreur)
-    $ErrorActionPreference = "Continue"
-    $statusOutput = & git status --porcelain 2>&1
-    $ErrorActionPreference = "Stop"
-    
-    # Parser la sortie de git status pour extraire les fichiers modifiés
-    $allModified = $statusOutput | Where-Object { $_ -and $_ -notlike "*warning*" } | ForEach-Object {
-        # Format de git status --porcelain: "XY fichier" où X=status index, Y=status working tree
-        if ($_ -match '^\s*([MADRCU\?\!]{1,2})\s+(.+)$') {
-            $file = $matches[2]
-            $file
+
+    # Essayer de récupérer les fichiers modifiés via git
+    try {
+        $ErrorActionPreference = "Continue"
+        # Utiliser cmd /c pour éviter les problèmes d'encodage PowerShell
+        $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+        $gitExitCode = $LASTEXITCODE
+        $ErrorActionPreference = "Stop"
+
+        if ($gitExitCode -eq 0) {
+            $allModified = $statusOutput | Where-Object { $_ -and $_ -notlike "*warning*" -and $_ -notlike "*fatal*" } | ForEach-Object {
+                $line = $_.ToString().Trim()
+                if ($line -match '^\s*([MADRCU\?\!]{1,2})\s+(.+)$') {
+                    $status = $matches[1]
+                    $filePart = $matches[2]
+                    
+                    # Pour les renommages (R), extraire le nouveau nom de fichier après "->"
+                    if ($status -like "*R*") {
+                        if ($filePart -match '(.+)\s*->\s*(.+)') {
+                            $file = $matches[2].Trim()
+                        } else {
+                            $file = $filePart
+                        }
+                    } else {
+                        $file = $filePart
+                    }
+                    
+                    $file
+                }
+            } | Sort-Object -Unique
+
+            Write-Host "Utilisation des fichiers modifies detectes par git ($($allModified.Count) fichiers)" -ForegroundColor Green
+        } else {
+            Write-Host "Git status a retourne le code $gitExitCode, utilisation liste par defaut" -ForegroundColor Yellow
+            $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
         }
-    } | Sort-Object -Unique
-    
-    # Filtrer pour les fichiers à déployer
+    } catch {
+        Write-Host "Erreur git: $($_.Exception.Message), utilisation liste par defaut" -ForegroundColor Yellow
+        $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
+    }
     # Inclure: plugin/*, build/*, mais EXCLURE les fichiers sources TypeScript (assets/js/src)
     # Les fichiers sources TypeScript ne doivent pas être en production, seulement les fichiers compilés
-    $pluginModified = $allModified | Where-Object { 
-        ($_ -like "plugin/*" -or $_ -like "build/*") -and
-        $_ -notlike "assets/js/src/*" -and
-        $_ -notlike "plugin/config/*" -and  # Exclure le dossier config qui n'existe pas dans plugin/
-        $_ -notlike "plugin/docs/*" -and    # Exclure le dossier docs qui n'existe pas dans plugin/
-        (Test-Path "$WorkingDir\$_")  # Vérifier que le fichier existe réellement
+    try {
+        $pluginModified = $allModified | Where-Object {
+            try {
+                $filePath = $_
+                $isPlugin = ($filePath -like "plugin/*")
+                $isNotExcluded = ($filePath -notlike "assets/js/src/*" -and
+                                $filePath -notlike "plugin/config/*" -and
+                                $filePath -notlike "plugin/docs/*")
+                $exists = $false
+                if ($isPlugin -and $isNotExcluded) {
+                    try {
+                        $exists = Test-Path "$WorkingDir\$filePath" -ErrorAction Stop
+                    } catch {
+                        # Si Test-Path échoue, considérer que le fichier n'existe pas
+                        $exists = $false
+                    }
+                }
+                return $isPlugin -and $isNotExcluded -and $exists
+            } catch {
+                return $false
+            }
+        }
+    } catch {
+        Write-Host "Erreur lors du filtrage des fichiers: $($_.Exception.Message)" -ForegroundColor Yellow
+        $pluginModified = @()
+    }    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
+    try {
+        $distFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\dist\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
+        $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+        $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
+    } catch {
+        Write-Host "Erreur lors de la detection des fichiers dist: $($_.Exception.Message)" -ForegroundColor Yellow
     }
-    
-    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
-    $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
-    $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-    $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
+
+    # Toujours inclure les fichiers vendor (dépendances PHP) - seulement s'ils sont récents
+    try {
+        # N'inclure que les vendor files modifiés récemment (dernières 24h) pour éviter l'upload massif
+        $recentVendorFiles = Get-ChildItem "$WorkingDir\plugin\vendor\*" -Recurse -File -ErrorAction SilentlyContinue | Where-Object {
+            $_.LastWriteTime -gt (Get-Date).AddHours(-24)
+        } | Select-Object -ExpandProperty FullName
+        $vendorFilesRelative = $recentVendorFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+        if ($vendorFilesRelative.Count -gt 0) {
+            Write-Host "Vendor files recents detectes: $($vendorFilesRelative.Count)" -ForegroundColor Yellow
+            $pluginModified = @($pluginModified) + @($vendorFilesRelative) | Sort-Object -Unique
+        }
+    } catch {
+        Write-Host "Erreur lors de la detection des fichiers vendor: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
     
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
@@ -426,12 +491,12 @@ try {
     # ✅ CORRECTION: Ajouter TOUS les fichiers modifiés (même s'ils ne sont pas dans $pluginModified)
     Write-Host "   Staging de TOUS les fichiers modifies..." -ForegroundColor Yellow
     $ErrorActionPreference = "Continue"
-    $addResult = & git add -A 2>&1
+    $addResult = cmd /c "cd /d $WorkingDir && git add -A" 2>&1
     $ErrorActionPreference = "Stop"
 
     # Vérifier s'il y a des changements à committer
-    $statusOutput = & git status --porcelain 2>&1
-    $stagedFiles = $statusOutput | Where-Object { $_ -match "^[AM]" }
+    $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+    $stagedFiles = $statusOutput | Where-Object { $_ -and $_ -match "^[AM]" }
     
     if ($stagedFiles -and $stagedFiles.Count -gt 0) {
         # Afficher les fichiers qui seront committés
@@ -444,7 +509,7 @@ try {
         $commitMsg = Get-SmartCommitMessage -ModifiedFiles $pluginModified
         Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
-        $commitResult = & git commit -m $commitMsg 2>&1
+        $commitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMsg`"" 2>&1
         $ErrorActionPreference = "Stop"
 
         if ($LASTEXITCODE -eq 0) {
@@ -463,7 +528,7 @@ try {
     if ($commitCreated) {
         Write-Host "   Push vers remote..." -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
-        $pushResult = & git push origin dev 2>&1
+        $pushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
         $ErrorActionPreference = "Stop"
 
         if ($LASTEXITCODE -eq 0) {
@@ -481,15 +546,15 @@ try {
     # Tag seulement si push réussi - OPTIONNEL, peut être désactivé pour accélérer
     if ($pushSuccess -and $commitCreated) {
         # ✅ CORRECTION: Utiliser le format de version déployé (comme dans les logs)
-        $version = Get-Date -Format "v1.0.0-11eplo25-yyyyMMdd-HHmmss"
+        $version = Get-Date -Format "v1.0.0-11eplo25-ddMMyyyy-HHmmss"
         Write-Host "   Tag: $version" -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
-        $tagResult = & git tag -a $version -m "Deploiement $version" 2>&1
+        $tagResult = cmd /c "cd /d $WorkingDir && git tag -a $version -m `"Deploiement $version`"" 2>&1
         $ErrorActionPreference = "Stop"
 
         if ($LASTEXITCODE -eq 0) {
             $ErrorActionPreference = "Continue"
-            $tagPushResult = & git push origin $version 2>&1
+            $tagPushResult = cmd /c "cd /d $WorkingDir && git push origin $version" 2>&1
             $ErrorActionPreference = "Stop"
 
             if ($LASTEXITCODE -eq 0) {
@@ -535,7 +600,7 @@ try {
     
     # ✅ CORRECTION: Vérifier qu'il n'y a plus de fichiers non committés
     $ErrorActionPreference = "Continue"
-    $finalStatus = & git status --porcelain 2>&1
+    $finalStatus = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
     $ErrorActionPreference = "Stop"
     
     # Filtrer pour ne montrer que les fichiers modifiés (pas les fichiers non suivis)
@@ -550,9 +615,9 @@ try {
         # Ajouter et commiter les fichiers restants
         Write-Host "   Commitment des fichiers restants..." -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
-        & git add -A 2>&1 | Out-Null
-        $commitMsg = "chore: Commit final des fichiers restants - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-        $finalCommitResult = & git commit -m $commitMsg 2>&1
+        cmd /c "cd /d $WorkingDir && git add -A" 2>&1 | Out-Null
+        $commitMsg = "chore: Commit final des fichiers restants - $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')"
+        $finalCommitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMsg`"" 2>&1
         $ErrorActionPreference = "Stop"
         
         if ($LASTEXITCODE -eq 0) {
@@ -562,7 +627,7 @@ try {
     
     # Pousser tout vers le remote
     $ErrorActionPreference = "Continue"
-    $finalPushResult = & git push origin dev 2>&1
+    $finalPushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
     $ErrorActionPreference = "Stop"
     
     if ($LASTEXITCODE -eq 0) {

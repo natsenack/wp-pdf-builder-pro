@@ -3,7 +3,7 @@
 /**
  * PDF Builder Pro - Générateur d'Aperçu
  * Phase 1: Génération d'aperçu côté serveur avec Dompdf
- */
+ */ 
 
 namespace PDF_Builder\Managers;
 
