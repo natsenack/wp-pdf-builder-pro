@@ -38,14 +38,36 @@ class PDF_Builder_Logger {
     }
 
     private function init_settings() {
-        // Utiliser des valeurs par défaut fixes (paramètres de debug supprimés)
-        $this->log_level = self::LEVEL_INFO; // Niveau INFO par défaut
-        $this->max_file_size = 10 * 1024 * 1024; // 10 MB par défaut
-        $this->retention_days = 30; // 30 jours par défaut
+        // Récupérer les paramètres de debug depuis les options WordPress
+        $settings = get_option('pdf_builder_settings', []);
+
+        // Niveau de log basé sur pdf_builder_log_level (0-4)
+        $log_level_setting = isset($settings['pdf_builder_log_level']) ? intval($settings['pdf_builder_log_level']) : 3; // 3 = Info par défaut
+        $this->log_level = $this->map_log_level($log_level_setting);
+
+        // Taille max du fichier de log
+        $this->max_file_size = isset($settings['pdf_builder_log_file_size']) ? intval($settings['pdf_builder_log_file_size']) * 1024 * 1024 : 10 * 1024 * 1024; // 10 MB par défaut
+
+        // Rétention des logs en jours
+        $this->retention_days = isset($settings['pdf_builder_log_retention']) ? intval($settings['pdf_builder_log_retention']) : 30; // 30 jours par défaut
 
         // Définir le chemin du fichier de log
         $upload_dir = wp_upload_dir();
         $this->log_file = $upload_dir['basedir'] . '/pdf-builder-logs/pdf-builder.log';
+    }
+
+    /**
+     * Map les niveaux de log du plugin vers les constantes internes
+     */
+    private function map_log_level($plugin_level) {
+        switch ($plugin_level) {
+            case 0: return self::LEVEL_CRITICAL; // Aucun log = seulement erreurs critiques
+            case 1: return self::LEVEL_ERROR;     // Erreurs uniquement
+            case 2: return self::LEVEL_WARNING;   // Erreurs + Avertissements
+            case 3: return self::LEVEL_INFO;      // Info complète
+            case 4: return self::LEVEL_DEBUG;     // Détails (Développement)
+            default: return self::LEVEL_INFO;     // Par défaut
+        }
     }
 
     private function init_hooks() {
@@ -100,6 +122,14 @@ class PDF_Builder_Logger {
      * Log les erreurs PHP
      */
     public function log_php_errors() {
+        // Vérifier si le debug PHP errors est activé
+        $settings = get_option('pdf_builder_settings', []);
+        $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
+
+        if (!$debug_php_errors) {
+            return; // Ne pas logger les erreurs PHP si le toggle est désactivé
+        }
+
         $error = error_get_last();
         if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
             $this->critical('PHP Fatal Error', [
