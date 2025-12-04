@@ -142,7 +142,8 @@ class AdminScriptLoader
             $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
                 $localize_data['initialElements'] = $existing_template_data['elements'];
-                $localize_data['initialTemplate'] = $existing_template_data;
+                $localize_data['existingTemplate'] = $existing_template_data;
+                $localize_data['hasExistingData'] = true;
                 error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
             } else {
                 error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
