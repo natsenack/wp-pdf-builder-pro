@@ -594,6 +594,7 @@ class PdfBuilderAdmin
         </div>
 
         <style>
+        /* Cache bust: <?php echo time(); ?> */
         .pdf-builder-react-editor {
             background: #fff;
             border: 1px solid #ccd0d4;
