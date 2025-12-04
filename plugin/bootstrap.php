@@ -768,8 +768,6 @@ function pdf_builder_load_bootstrap()
 
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS
     add_action('admin_enqueue_scripts', function() {
-        error_log('PDF Builder: admin_enqueue_scripts hook fired for developer tools');
-
         // Charger le CSS des notifications
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/css/notifications.css')) {
             wp_enqueue_style(
@@ -841,12 +839,7 @@ function pdf_builder_load_bootstrap()
         }
 
         // Charger les outils développeur
-        $dev_tools_path = PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/developer-tools.js';
-        error_log('PDF Builder: Checking developer-tools.js path: ' . $dev_tools_path);
-        error_log('PDF Builder: developer-tools.js exists: ' . (file_exists($dev_tools_path) ? 'YES' : 'NO'));
-
-        if (file_exists($dev_tools_path)) {
-            error_log('PDF Builder: Enqueuing developer-tools.js');
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/developer-tools.js')) {
             wp_enqueue_script(
                 'pdf-builder-developer-tools',
                 PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/developer-tools.js',
