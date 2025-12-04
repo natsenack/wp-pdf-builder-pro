@@ -864,21 +864,24 @@ function pdf_builder_load_bootstrap()
         }
 
         // Initialiser l'interface d'administration dans l'admin OU lors d'AJAX pour nos actions
-        $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
+        // DÉPLACÉ DANS LE HOOK 'init' pour que $_REQUEST soit disponible
+        add_action('init', function() use ($core) {
+            $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
 
-        if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
-            try {
-                $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
-            } catch (Exception $e) {
-                // Fallback en cas d'erreur
+            if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
+                try {
+                    $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
+                } catch (Exception $e) {
+                    // Fallback en cas d'erreur
+                    add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+                }
+            } elseif (wp_doing_ajax()) {
+                // Ne rien faire pour les appels AJAX non-PDF
+            } else {
+                // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
                 add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
             }
-        } elseif (wp_doing_ajax()) {
-            // Ne rien faire pour les appels AJAX non-PDF
-        } else {
-            // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
-            add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
-        }
+        }, 1);
     } else {
         // Fallback: enregistrer un menu simple si le core n'est pas disponible
         add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
