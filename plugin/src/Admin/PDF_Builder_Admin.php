@@ -149,7 +149,6 @@ class PdfBuilderAdmin
 
         // Initialiser les nouveaux modules spécialisés
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
-        $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
 
         // Charger manuellement la classe DataUtils si nécessaire
         if (!class_exists('PDF_Builder\Admin\Data\DataUtils')) {
@@ -160,6 +159,7 @@ class PdfBuilderAdmin
         }
 
         $this->data_utils = new DataUtils($this);
+        $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new Utils($this);
 
