@@ -78,7 +78,20 @@ class PdfBuilderPreviewGenerator
      */
     private function initDompdf()
     {
-        require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+        // Charger l'autoload seulement si Dompdf n'est pas déjà disponible
+        if (!class_exists('Dompdf\Dompdf')) {
+            $autoload_path = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+            if (file_exists($autoload_path)) {
+                require_once $autoload_path;
+            } else {
+                throw new Exception('Dompdf autoload not found. Please ensure vendor dependencies are installed.');
+            }
+        }
+
+        // Vérifier que Dompdf est maintenant disponible
+        if (!class_exists('Dompdf\Dompdf')) {
+            throw new Exception('Dompdf class not found after loading autoload.');
+        }
 
         // Récupérer les paramètres PDF depuis les options pour la prévisualisation
         $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
