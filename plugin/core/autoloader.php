@@ -45,43 +45,18 @@ class PdfBuilderAutoloader
      */
     public static function autoload($class)
     {
-        // Special focus: only log Dompdf-related classes and the problematic one
-        $should_log = ($class === 'PDF_Builder\\Managers\\Dompdf\\Dompdf') ||
-                     (strpos($class, 'Dompdf') !== false) ||
-                     (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false);
-
-        if ($should_log) {
-            // Add stack trace to see where this is being called from
-            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
-            $caller_info = '';
-            if (isset($trace[1])) {
-                $caller = $trace[1];
-                $caller_info = (isset($caller['file']) ? basename($caller['file']) : 'unknown') . ':' .
-                              (isset($caller['line']) ? $caller['line'] : 'unknown') . ' ' .
-                              (isset($caller['function']) ? $caller['function'] : 'unknown');
-            }
-            error_log("FOCUSED AUTOLOADER: Called for class: $class from $caller_info");
-        }
-
         // Skip Dompdf classes to avoid conflicts
         if (strpos($class, 'Dompdf') !== false) {
-            if ($should_log) {
-                error_log("FOCUSED AUTOLOADER: SKIPPING Dompdf-related class: $class");
-            }
             return false;
         }
 
         // Special check for the problematic class
         if ($class === 'PDF_Builder\\Managers\\Dompdf\\Dompdf') {
-            error_log("FOCUSED AUTOLOADER: SKIPPING specific problematic class: $class");
             return false;
         }
 
         // Fallback: if any class contains 'Dompdf' and is in PDF_Builder namespace, skip it
         if (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false) {
-            if ($should_log) {
-                error_log("FOCUSED AUTOLOADER: SKIPPING PDF_Builder class with Dompdf: $class");
-            }
             return false;
         }
 
