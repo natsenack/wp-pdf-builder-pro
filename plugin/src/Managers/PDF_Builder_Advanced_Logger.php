@@ -119,9 +119,16 @@ class PDF_Builder_Logger {
     }
 
     /**
-     * Log les erreurs PHP
+     * Log un message dans error_log() seulement si le debug PHP est activé
      */
-    public function log_php_errors() {
+    public function debug_log($message) {
+        $settings = get_option('pdf_builder_settings', []);
+        $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
+
+        if ($debug_php_errors) {
+            error_log('[PDF Builder Debug] ' . $message);
+        }
+    }
         // Vérifier si le debug PHP errors est activé
         $settings = get_option('pdf_builder_settings', []);
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];

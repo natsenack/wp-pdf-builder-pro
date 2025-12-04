@@ -3,6 +3,7 @@
 namespace PDF_Builder\Generators;
 
 use PDF_Builder\Interfaces\DataProviderInterface;
+use PDF_Builder\Managers\PDF_Builder_Logger;
 
 /**
  * Classe abstraite BaseGenerator
@@ -159,17 +160,19 @@ abstract class BaseGenerator
         
         // Logging détaillé de la structure du template
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder] generateContent - template_data structure: ' . print_r($this->template_data, true));
-            error_log('[PDF Builder] generateContent - isset template: ' . isset($this->template_data['template']));
-            error_log('[PDF Builder] generateContent - isset elements: ' . isset($this->template_data['template']['elements']));
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('generateContent - template_data structure: ' . print_r($this->template_data, true));
+            $logger->debug_log('generateContent - isset template: ' . isset($this->template_data['template']));
+            $logger->debug_log('generateContent - isset elements: ' . isset($this->template_data['template']['elements']));
             if (isset($this->template_data['template']['elements'])) {
-                error_log('[PDF Builder] generateContent - elements count: ' . count($this->template_data['template']['elements']));
-                error_log('[PDF Builder] generateContent - elements: ' . print_r($this->template_data['template']['elements'], true));
+                $logger->debug_log('generateContent - elements count: ' . count($this->template_data['template']['elements']));
+                $logger->debug_log('generateContent - elements: ' . print_r($this->template_data['template']['elements'], true));
             }
         }
         
         if (!isset($this->template_data['template']['elements'])) {
-            error_log('[PDF Builder] generateContent - NO ELEMENTS FOUND, returning empty content');
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('generateContent - NO ELEMENTS FOUND, returning empty content');
             return $content;
         }
 
@@ -178,7 +181,8 @@ abstract class BaseGenerator
         }
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder] generateContent - final content length: ' . strlen($content));
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('generateContent - final content length: ' . strlen($content));
         }
         
         return $content;
@@ -195,15 +199,17 @@ abstract class BaseGenerator
         $type = $element['type'] ?? 'unknown';
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder] renderElement - processing element type: ' . $type);
-            error_log('[PDF Builder] renderElement - element data: ' . print_r($element, true));
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('renderElement - processing element type: ' . $type);
+            $logger->debug_log('renderElement - element data: ' . print_r($element, true));
         }
         
         $method = 'render' . ucfirst($type) . 'Element';
         if (method_exists($this, $method)) {
             $result = $this->$method($element);
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[PDF Builder] renderElement - rendered HTML: ' . $result);
+                $logger = PDF_Builder_Logger::get_instance();
+                $logger->debug_log('renderElement - rendered HTML: ' . $result);
             }
             return $result;
         }
@@ -303,28 +309,32 @@ abstract class BaseGenerator
     protected function injectVariables(string $text): string
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder] injectVariables - input text: ' . $text);
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('injectVariables - input text: ' . $text);
         }
         
         // Recherche des variables {{variable}}
         preg_match_all('/\{\{([^}]+)\}\}/', $text, $matches);
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder] injectVariables - found variables: ' . print_r($matches[1], true));
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('injectVariables - found variables: ' . print_r($matches[1], true));
         }
         
         foreach ($matches[1] as $variable) {
             $value = $this->data_provider->getVariableValue(trim($variable));
             
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[PDF Builder] injectVariables - variable: ' . $variable . ' -> value: ' . $value);
+                $logger = PDF_Builder_Logger::get_instance();
+                $logger->debug_log('injectVariables - variable: ' . $variable . ' -> value: ' . $value);
             }
             
             $text = str_replace("{{{$variable}}}", $value, $text);
         }
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder] injectVariables - output text: ' . $text);
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->debug_log('injectVariables - output text: ' . $text);
         }
         
         return $text;
