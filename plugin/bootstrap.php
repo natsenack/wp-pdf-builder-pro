@@ -527,40 +527,38 @@ function pdf_builder_load_core()
     // 🚀 CHARGEMENT OPTIMISÉ DE REACT POUR L'ÉDITEUR
     add_action('admin_enqueue_scripts', function($hook) {
         // Charger seulement sur la page de l'éditeur React
-        if ($hook !== 'pdf-builder_page_pdf-builder-react-editor') {
-            return;
+        if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
+            error_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook);
+
+            // Charger React depuis WordPress Core (optimisé)
+            wp_enqueue_script('react', false, [], false, true);
+            wp_enqueue_script('react-dom', false, ['react'], false, true);
+
+            // Charger le bundle PDF Builder (optimisé avec code splitting)
+            $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/dist/pdf-builder-react.js';
+            wp_enqueue_script(
+                'pdf-builder-react-bundle',
+                $bundle_url,
+                ['react', 'react-dom', 'jquery'],
+                PDF_BUILDER_VERSION . '-' . time(),
+                true
+            );
+
+            // Localiser les variables nécessaires
+            wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', [
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_ajax'),
+                'version' => PDF_BUILDER_VERSION,
+                'timestamp' => time(),
+                'debug' => WP_DEBUG,
+                'strings' => [
+                    'loading' => __('Chargement...', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                ]
+            ]);
         }
-
-        // Charger React depuis WordPress Core (optimisé)
-        wp_enqueue_script('react', false, [], false, true);
-        wp_enqueue_script('react-dom', false, ['react'], false, true);
-
-        // Charger le bundle PDF Builder (optimisé avec code splitting)
-        $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/dist/pdf-builder-react.js';
-        wp_enqueue_script(
-            'pdf-builder-react-bundle',
-            $bundle_url,
-            ['react', 'react-dom', 'jquery'],
-            PDF_BUILDER_VERSION . '-' . time(),
-            true
-        );
-
-        // Localiser les variables nécessaires
-        wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax'),
-            'version' => PDF_BUILDER_VERSION,
-            'timestamp' => time(),
-            'debug' => WP_DEBUG,
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-            ]
-        ]);
-    });
-
-    // Charger le handler AJAX pour générer les styles des éléments
+    });    // Charger le handler AJAX pour générer les styles des éléments
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php';
     }

@@ -552,32 +552,9 @@ class PdfBuilderAdmin
             $template_type = 'custom';
         }
 
-        // Prepare localization data
-        $localize_data = [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax'),
-            'version' => PDF_BUILDER_PRO_VERSION,
-            'templateId' => $template_id,
-            'isEdit' => $template_id > 0,
-        ];
-
-        // Charger les données du template si template_id est fourni
-        if ($template_id > 0) {
-            $existing_template_data = $this->template_processor->loadTemplateRobust($template_id);
-            if ($existing_template_data && isset($existing_template_data['elements'])) {
-                $localize_data['initialElements'] = $existing_template_data['elements'];
-                $localize_data['initialTemplate'] = $existing_template_data;
-            }
-        }
-
         // Enqueue React scripts are now handled in enqueueAdminScripts()
 
         ?>
-        <script>
-        console.log('🔧 [PAGE] Setting window.pdfBuilderData in page head');
-        window.pdfBuilderData = <?php echo wp_json_encode($localize_data); ?>;
-        console.log('🔧 [PAGE] window.pdfBuilderData set to', window.pdfBuilderData);
-        </script>
         <div class="wrap">
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
