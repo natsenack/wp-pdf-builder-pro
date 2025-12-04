@@ -660,14 +660,15 @@ class PdfBuilderAdmin
 
                         if (this.isReactReady()) {
                             clearInterval(checkInterval);
-                            setTimeout(() => this.hide(), 300); // Small delay for smooth transition
+                            console.log('[PDF Builder] React is ready, initializing...');
+                            this.initializeReact();
                             return;
                         }
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
                             console.warn('[PDF Builder] React loading timeout - showing editor anyway');
-                            this.hide();
+                            this.hide(); // Fallback: show editor even if React init fails
                         }
                     }, 500);
                 },
@@ -676,6 +677,22 @@ class PdfBuilderAdmin
                     return typeof window.pdfBuilderReact !== 'undefined' &&
                            window.pdfBuilderReact &&
                            typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
+                },
+
+                initializeReact: function() {
+                    if (this.isReactReady()) {
+                        console.log('[PDF Builder] Initializing React...');
+                        try {
+                            const result = window.pdfBuilderReact.initPDFBuilderReact();
+                            console.log('[PDF Builder] React initialization result:', result);
+                            // React will handle hiding the loader internally
+                            return true;
+                        } catch (error) {
+                            console.error('[PDF Builder] React initialization failed:', error);
+                            return false;
+                        }
+                    }
+                    return false;
                 }
             };
 
@@ -689,7 +706,7 @@ class PdfBuilderAdmin
             // Listen for React ready event
             document.addEventListener('pdfBuilderReactLoaded', function() {
                 console.log('[PDF Builder] React loaded event received');
-                setTimeout(() => loader.hide(), 300);
+                loader.initializeReact();
             });
 
         })();
