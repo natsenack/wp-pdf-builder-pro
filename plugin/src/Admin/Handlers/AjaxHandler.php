@@ -326,6 +326,13 @@ class AjaxHandler
 
             error_log('[PDF Builder] About to call loadTemplateRobust for template ID: ' . $template_id);
 
+            // Vérifier que template_processor existe
+            if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
+                error_log('[PDF Builder] ERROR: template_processor not available');
+                wp_send_json_error('Erreur interne: template_processor non disponible');
+                return;
+            }
+
             // Charger le template en utilisant le template processor
             $this->debug_log('ajaxGetTemplate: Calling loadTemplateRobust for template ID ' . $template_id);
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
