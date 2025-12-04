@@ -146,6 +146,11 @@ class PdfBuilderAdmin
         // Initialiser les managers spécialisés
         $this->settings_manager = new SettingsManager($this);
 
+        // Initialiser le template manager
+        if (class_exists('PDF_Builder\Managers\PdfBuilderTemplateManager')) {
+            $this->template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager($this);
+        }
+
         // Initialiser les nouveaux modules spécialisés
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
 
@@ -247,6 +252,14 @@ class PdfBuilderAdmin
             return $this->dashboard_data_provider->getPluginVersion();
         }
         return '1.0.0';
+    }
+
+    /**
+     * Récupère l'instance du template manager
+     */
+    public function getTemplateManager()
+    {
+        return $this->template_manager;
     }
 
     /**

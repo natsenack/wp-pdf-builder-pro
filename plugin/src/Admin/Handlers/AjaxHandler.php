@@ -301,29 +301,33 @@ class AjaxHandler
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
 
             if ($template) {
-            // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
-            $template_name = '';
-            if (isset($template['_db_name']) && !empty($template['_db_name'])) {
-                $template_name = $template['_db_name'];
-            } elseif (isset($template['name']) && !empty($template['name'])) {
-                $template_name = $template['name'];
-            } elseif (isset($template['template_name']) && !empty($template['template_name'])) {
-                $template_name = $template['template_name'];
-            } else {
-                // Fallback vers la colonne name de la DB
-                global $wpdb;
-                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                $db_template = $wpdb->get_row($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
-                if ($db_template && !empty($db_template['name'])) {
-                    $template_name = $db_template['name'];
+                // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
+                $template_name = '';
+                $db_template = null;
+
+                if (isset($template['_db_name']) && !empty($template['_db_name'])) {
+                    $template_name = $template['_db_name'];
+                } elseif (isset($template['name']) && !empty($template['name'])) {
+                    $template_name = $template['name'];
+                } elseif (isset($template['template_name']) && !empty($template['template_name'])) {
+                    $template_name = $template['template_name'];
                 } else {
-                    $template_name = 'Template ' . $template_id;
+                    // Fallback vers la colonne name de la DB
+                    global $wpdb;
+                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                    $db_template = $wpdb->get_row($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+                    if ($db_template && !empty($db_template['name'])) {
+                        $template_name = $db_template['name'];
+                    } else {
+                        $template_name = 'Template ' . $template_id;
+                    }
                 }
-            }                // Debug logging
+
+                // Debug logging
                 error_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id);
                 error_log('[PDF Builder] ajaxGetTemplate - Template data has name: ' . (isset($template['name']) ? $template['name'] : 'NO'));
                 error_log('[PDF Builder] ajaxGetTemplate - Template data has _db_name: ' . (isset($template['_db_name']) ? $template['_db_name'] : 'NO'));
-                error_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template['name'] ?? 'NO DB RECORD'));
+                error_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD'));
                 error_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name);
 
                 wp_send_json_success([
