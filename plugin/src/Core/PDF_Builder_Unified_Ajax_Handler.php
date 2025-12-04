@@ -435,14 +435,71 @@ class PDF_Builder_Unified_Ajax_Handler {
         }, ARRAY_FILTER_USE_KEY);
         error_log("All debug fields in POST: " . json_encode($debug_fields));
 
-        // Process all POST fields
+        // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
+        foreach ($field_rules['bool_fields'] as $bool_field) {
+            if (isset($_POST[$bool_field])) {
+                // Field is present in POST - use its value
+                $option_key = '';
+                $option_value = ($_POST[$bool_field] === '1') ? 1 : 0;
+
+                if (strpos($bool_field, 'canvas_') === 0 || strpos($bool_field, 'zoom_') === 0 || strpos($bool_field, 'default_canvas_') === 0) {
+                    $option_key = 'pdf_builder_canvas_' . $bool_field;
+                    update_option($option_key, $option_value);
+                } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
+                    $option_key = $bool_field;
+                    $settings[$option_key] = $option_value;
+                } elseif (strpos($bool_field, 'debug_') === 0) {
+                    $option_key = 'pdf_builder_' . $bool_field;
+                    $settings[$option_key] = $option_value;
+                    // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                    if ($bool_field === 'debug_javascript') {
+                        error_log("[UNIFIED DEBUG JAVASCRIPT] Processing debug_javascript (present in POST):");
+                        error_log("  - field: '$bool_field'");
+                        error_log("  - option_key: '$option_key'");
+                        error_log("  - POST value: '" . $_POST[$bool_field] . "'");
+                        error_log("  - calculated option_value: $option_value");
+                    }
+                } else {
+                    $option_key = 'pdf_builder_' . $bool_field;
+                    $settings[$option_key] = $option_value;
+                }
+            } else {
+                // Field NOT present in POST - means checkbox was unchecked, set to 0
+                $option_key = '';
+                $option_value = 0;
+
+                if (strpos($bool_field, 'canvas_') === 0 || strpos($bool_field, 'zoom_') === 0 || strpos($bool_field, 'default_canvas_') === 0) {
+                    $option_key = 'pdf_builder_canvas_' . $bool_field;
+                    update_option($option_key, $option_value);
+                } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
+                    $option_key = $bool_field;
+                    $settings[$option_key] = $option_value;
+                } elseif (strpos($bool_field, 'debug_') === 0) {
+                    $option_key = 'pdf_builder_' . $bool_field;
+                    $settings[$option_key] = $option_value;
+                    // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                    if ($bool_field === 'debug_javascript') {
+                        error_log("[UNIFIED DEBUG JAVASCRIPT] Processing debug_javascript (NOT in POST - unchecked):");
+                        error_log("  - field: '$bool_field'");
+                        error_log("  - option_key: '$option_key'");
+                        error_log("  - setting to 0 (unchecked)");
+                    }
+                } else {
+                    $option_key = 'pdf_builder_' . $bool_field;
+                    $settings[$option_key] = $option_value;
+                }
+            }
+            $saved_count++;
+        }
+
+        // THEN: Process remaining non-boolean fields from POST
         foreach ($_POST as $key => $value) {
-            // Skip WordPress internal fields
-            if (in_array($key, ['action', 'nonce', 'current_tab'])) {
+            // Skip WordPress internal fields and already processed boolean fields
+            if (in_array($key, ['action', 'nonce', 'current_tab']) || in_array($key, $field_rules['bool_fields'])) {
                 continue;
             }
 
-            error_log("[UNIFIED HANDLER] Processing field: '$key' = '$value'");
+            error_log("[UNIFIED HANDLER] Processing non-bool field: '$key' = '$value'");
 
             $option_key = '';
             $option_value = null;
@@ -491,44 +548,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $settings[$option_key] = $option_value;
                 }
                 $saved_count++;
-            } elseif (in_array($key, $field_rules['bool_fields'])) {
-                // Special handling for canvas fields
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
-                    update_option($option_key, $option_value); // Canvas fields saved separately
-                } elseif (strpos($key, 'pdf_builder_') === 0) {
-                    // Already prefixed, save as-is
-                    $option_key = $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
-                    $settings[$option_key] = $option_value;
-                } elseif (strpos($key, 'debug_') === 0) {
-                    // Debug fields need pdf_builder_ prefix
-                    $option_key = 'pdf_builder_' . $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
-                    $settings[$option_key] = $option_value;
-
-                    // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
-                    if ($key === 'debug_javascript') {
-                        error_log("[UNIFIED DEBUG JAVASCRIPT] Processing debug_javascript:");
-                        error_log("  - key: '$key'");
-                        error_log("  - option_key: '$option_key'");
-                        error_log("  - isset in POST: " . (isset($_POST[$key]) ? 'YES' : 'NO'));
-                        error_log("  - value in POST: '" . ($_POST[$key] ?? 'NULL') . "'");
-                        error_log("  - calculated option_value: $option_value");
-                        error_log("  - will save to settings['$option_key'] = $option_value");
-                    }
-                } else {
-                    $option_key = 'pdf_builder_' . $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
-                    $settings[$option_key] = $option_value;
-                }
-                $saved_count++;
-
-                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
-                if (strpos($key, 'debug_javascript') !== false) {
-                    error_log("[UNIFIED DEBUG JAVASCRIPT] Bool field processed: key='$key', option_key='$option_key', value='$option_value'");
-                }
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
                     $option_key = 'pdf_builder_' . $key;
