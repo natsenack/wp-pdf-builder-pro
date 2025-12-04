@@ -24,6 +24,9 @@
             this.initialized = false;
 
             console.log('PDF Builder Notifications: Constructor called, settings:', this.settings);
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Notifications: Debug mode enabled, detailed logging active');
+            }
             this.init();
         }
 
@@ -152,15 +155,22 @@
          * Afficher une notification
          */
         show(message, type = 'info', options = {}) {
-            console.log('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
+        show(message, type = 'info', options = {}) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
+            }
 
             // Notifications enabled by default if not explicitly disabled
             if (this.settings.enabled === false) {
-                console.log('PDF Builder Notifications: Notifications disabled');
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.log('PDF Builder Notifications: Notifications disabled');
+                }
                 return;
             }
 
-            console.log('PDF Builder Notifications: Creating notification element...');
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Notifications: Creating notification element...');
+            }
 
             const notificationOptions = Object.assign({
                 message: message,
@@ -239,10 +249,15 @@
          * Ajouter une notification au conteneur
          */
         addToContainer(notification) {
-            console.log('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
+        addToContainer(notification) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
+            }
 
             if (!this.container) {
-                console.error('PDF Builder Notifications: No container found!');
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.error('PDF Builder Notifications: No container found!');
+                }
                 return;
             }
 
@@ -250,7 +265,9 @@
             const maxNotifications = this.settings.max_notifications || 5;
             const existingNotifications = this.container.querySelectorAll('.pdf-builder-notification');
 
-            console.log('PDF Builder Notifications: Adding notification, current count:', existingNotifications.length);
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Notifications: Adding notification, current count:', existingNotifications.length);
+            }
 
             if (existingNotifications.length >= maxNotifications) {
                 // Supprimer la plus ancienne
@@ -262,10 +279,13 @@
             this.container.appendChild(notification);
             this.notifications.push(notification);
 
-            console.log('PDF Builder Notifications: Notification added to DOM');
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Notifications: Notification added to DOM');
+            }
 
             // Ajouter le bouton "Tout fermer" si plusieurs notifications
             this.updateDismissAllButton();
+        }
         }
 
         /**

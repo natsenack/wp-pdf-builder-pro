@@ -82,6 +82,16 @@ class AdminScriptLoader
                 PDF_BUILDER_PRO_VERSION
             );
 
+            // Définir les paramètres de debug JavaScript pour les notifications aussi
+            $settings = get_option('pdf_builder_settings', array());
+            $debug_settings = [
+                'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
+                'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
+                'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
+                'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+            ];
+            wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
+
             // Localize notifications data pour les pages de paramètres
             wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
                 'ajax_url' => admin_url('admin-ajax.php'),
@@ -135,6 +145,16 @@ class AdminScriptLoader
 
         // Outils développeur asynchrones
         wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
+
+        // Définir les paramètres de debug JavaScript pour developer-tools.js
+        $settings = get_option('pdf_builder_settings', array());
+        $debug_settings = [
+            'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
+            'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
+            'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
+            'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+        ];
+        wp_add_inline_script('pdf-builder-developer-tools', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
         // Localize pdfBuilderAjax for API Preview scripts
         wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
@@ -216,6 +236,16 @@ class AdminScriptLoader
                 'close' => __('Fermer', 'pdf-builder-pro')
             ]
         ]);
+
+        // Définir les paramètres de debug JavaScript pour l'éditeur React aussi
+        $settings = get_option('pdf_builder_settings', array());
+        $debug_settings = [
+            'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
+            'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
+            'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
+            'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+        ];
+        wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';

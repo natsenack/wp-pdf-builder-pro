@@ -669,6 +669,11 @@
         }
 
         testNotification(type) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('PDF Builder Developer Tools: testNotification called with type:', type);
+                console.log('PDF Builder Developer Tools: debug settings:', window.pdfBuilderDebugSettings);
+            }
+
             const messages = {
                 success: 'Opération réussie ! Les données ont été sauvegardées.',
                 error: 'Erreur critique ! Impossible de traiter la demande.',
