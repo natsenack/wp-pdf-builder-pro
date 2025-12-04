@@ -164,6 +164,93 @@
     // Initialiser le bouton flottant aussi
     document.addEventListener('DOMContentLoaded', initSaveButton);
 
+    // Initialiser les notifications pour les toggles et contrôles interactifs
+    function initToggleNotifications() {
+        debugLog('PDF Builder - Initialisation des notifications de toggle...');
+
+        // Écouter les changements sur les checkboxes et radios
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+
+            // Ne traiter que les checkboxes et radios dans les formulaires PDF Builder
+            if ((target.type === 'checkbox' || target.type === 'radio') &&
+                target.closest('form') &&
+                target.name) {
+
+                // Obtenir un label descriptif pour le toggle
+                const label = getToggleLabel(target);
+                const isChecked = target.type === 'checkbox' ? target.checked : target.checked;
+                const action = isChecked ? 'activé' : 'désactivé';
+
+                // Messages personnalisés selon le type de toggle
+                let message = '';
+                let notificationType = isChecked ? 'success' : 'info';
+
+                if (target.name.includes('debug')) {
+                    message = `Mode debug ${action} pour ${label}`;
+                } else if (target.name.includes('enable') || target.name.includes('enabled')) {
+                    message = `${label} ${action}`;
+                } else if (target.name.includes('auto')) {
+                    message = `${label} ${action}`;
+                } else if (target.name.includes('cache')) {
+                    message = `Cache ${action}`;
+                } else if (target.name.includes('performance')) {
+                    message = `Optimisation performance ${action}`;
+                } else if (target.name.includes('backup')) {
+                    message = `Sauvegarde automatique ${action}`;
+                } else if (target.name.includes('maintenance')) {
+                    message = `Maintenance automatique ${action}`;
+                } else if (target.name.includes('license')) {
+                    message = `Gestion licence ${action}`;
+                } else {
+                    message = `${label} ${action}`;
+                }
+
+                // Afficher la notification
+                if (typeof window.showSuccessNotification === 'function' &&
+                    typeof window.showInfoNotification === 'function') {
+
+                    if (notificationType === 'success') {
+                        window.showSuccessNotification(message, { duration: 3000 });
+                    } else {
+                        window.showInfoNotification(message, { duration: 3000 });
+                    }
+                }
+
+                debugLog(`PDF Builder - Toggle changé: ${target.name} = ${isChecked}`);
+            }
+        });
+
+        debugLog('PDF Builder - Notifications de toggle initialisées');
+    }
+
+    // Fonction helper pour obtenir un label descriptif du toggle
+    function getToggleLabel(input) {
+        // Chercher d'abord un label associé
+        const label = document.querySelector(`label[for="${input.id}"]`);
+        if (label) {
+            return label.textContent.trim().replace(/[:*]$/, '');
+        }
+
+        // Chercher dans le parent (cas des toggles avec structure complexe)
+        const parent = input.closest('.form-group, .setting-group, .option-group');
+        if (parent) {
+            const parentLabel = parent.querySelector('label, h3, h4, .setting-title');
+            if (parentLabel) {
+                return parentLabel.textContent.trim().replace(/[:*]$/, '');
+            }
+        }
+
+        // Fallback: utiliser le nom du champ de manière plus lisible
+        return input.name
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase())
+            .replace(/Pdf Builder/g, 'PDF Builder');
+    }
+
+    // Initialiser les notifications de toggle
+    document.addEventListener('DOMContentLoaded', initToggleNotifications);
+
     // Exposer une API simple
     window.PDFBuilderTabsAPI = {
         switchToTab: function(tabId) {
@@ -368,25 +455,35 @@
      * Affiche un message de sauvegarde
      */
     function showSaveMessage(message, type) {
-        // Supprimer les anciens messages
-        const existingMessages = document.querySelectorAll('.pdf-builder-save-message');
-        existingMessages.forEach(msg => msg.remove());
-
-        // Créer le nouveau message
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `pdf-builder-save-message notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
-        messageDiv.innerHTML = `<p>${message}</p>`;
-
-        // Ajouter au conteneur de messages ou au début de la page
-        const container = document.querySelector('.wrap') || document.body;
-        container.insertBefore(messageDiv, container.firstChild);
-
-        // Auto-suppression après 5 secondes
-        setTimeout(() => {
-            if (messageDiv.parentNode) {
-                messageDiv.remove();
+        // Utiliser le système de notifications personnalisé si disponible
+        if (typeof window.showSuccessNotification === 'function' && typeof window.showErrorNotification === 'function') {
+            if (type === 'success') {
+                window.showSuccessNotification(message, { duration: 4000 });
+            } else {
+                window.showErrorNotification(message, { duration: 6000 });
             }
-        }, 5000);
+        } else {
+            // Fallback vers les messages WordPress classiques
+            // Supprimer les anciens messages
+            const existingMessages = document.querySelectorAll('.pdf-builder-save-message');
+            existingMessages.forEach(msg => msg.remove());
+
+            // Créer le nouveau message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `pdf-builder-save-message notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
+            messageDiv.innerHTML = `<p>${message}</p>`;
+
+            // Ajouter au conteneur de messages ou au début de la page
+            const container = document.querySelector('.wrap') || document.body;
+            container.insertBefore(messageDiv, container.firstChild);
+
+            // Auto-suppression après 5 secondes
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
     }
 
 })();
