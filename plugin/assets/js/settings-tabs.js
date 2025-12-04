@@ -1,34 +1,55 @@
 /**
- * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
+ * Paramètres PDF Builder Pro - Navigation des onglets
+ * Version: 2.1.0 - Logs conditionnés par paramètres développeur
+ * Date: 2025-12-04
  */
 
-// LOG IMMÉDIAT AU CHARGEMENT DU SCRIPT
-console.log('🎯 PDF BUILDER TABS: Script chargé et exécuté !');
-console.log('📍 PDF BUILDER TABS: URL actuelle:', window.location.href);
-console.log('🔍 PDF BUILDER TABS: User Agent:', navigator.userAgent);
+// Fonction utilitaire pour les logs conditionnés
+function pdfBuilderLog() {
+    if (typeof window.PDF_BUILDER_CONFIG !== 'undefined' && window.PDF_BUILDER_CONFIG.debug) {
+        console.log.apply(console, ['🎯 PDF BUILDER TABS:'].concat(Array.prototype.slice.call(arguments)));
+    }
+}
 
-// Test de visibilité des logs
-console.warn('🚨 PDF BUILDER TABS: LOG WARNING POUR TEST VISIBILITÉ');
-console.error('💥 PDF BUILDER TABS: LOG ERROR POUR TEST VISIBILITÉ');
+function pdfBuilderWarn() {
+    if (typeof window.PDF_BUILDER_CONFIG !== 'undefined' && window.PDF_BUILDER_CONFIG.debug) {
+        console.warn.apply(console, ['🚨 PDF BUILDER TABS:'].concat(Array.prototype.slice.call(arguments)));
+    }
+}
 
-// Test de l'API console
+function pdfBuilderError() {
+    if (typeof window.PDF_BUILDER_CONFIG !== 'undefined' && window.PDF_BUILDER_CONFIG.debug) {
+        console.error.apply(console, ['💥 PDF BUILDER TABS:'].concat(Array.prototype.slice.call(arguments)));
+    }
+}
+
+// LOG IMMÉDIAT AU CHARGEMENT DU SCRIPT (seulement en mode debug)
+pdfBuilderLog('Script chargé et exécuté !');
+pdfBuilderLog('URL actuelle:', window.location.href);
+pdfBuilderLog('User Agent:', navigator.userAgent);
+
+// Test de visibilité des logs (seulement en mode debug)
+pdfBuilderWarn('LOG WARNING POUR TEST VISIBILITÉ');
+pdfBuilderError('LOG ERROR POUR TEST VISIBILITÉ');
+
+// Test de l'API console (seulement en mode debug)
 if (typeof console === 'undefined') {
     alert('Console non disponible !');
 } else {
-    console.log('✅ Console disponible');
+    pdfBuilderLog('Console disponible');
 }
 
-// LOG QUI S'AFFICHE QUAND MÊME SI LE SCRIPT PLANTE
+// LOG QUI S'AFFICHE QUAND MÊME SI LE SCRIPT PLANTE (seulement en mode debug)
 try {
-    console.log('🔄 PDF BUILDER TABS: Début de l\'exécution du script');
+    pdfBuilderLog('Début de l\'exécution du script');
 } catch (e) {
-    console.error('❌ PDF BUILDER TABS: Erreur immédiate:', e);
+    pdfBuilderError('Erreur immédiate:', e);
 }
 
 (function() {
     'use strict';
 
-    // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
+    // Définition de PDF_BUILDER_CONFIG si elle n'existe pas (fallback)
     if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
         window.PDF_BUILDER_CONFIG = {
             debug: false,
@@ -37,7 +58,7 @@ try {
         };
     }
 
-    console.log('⚙️ PDF BUILDER TABS: Configuration définie', window.PDF_BUILDER_CONFIG);
+    pdfBuilderLog('Configuration définie', window.PDF_BUILDER_CONFIG);
 
     // Système de navigation des onglets simplifié
     function initTabs() {
@@ -45,7 +66,7 @@ try {
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
         if (!tabsContainer || !contentContainer) {
-            console.error('❌ PDF Builder: Conteneurs non trouvés');
+            pdfBuilderError('Conteneurs non trouvés');
             return;
         }
 
@@ -84,7 +105,7 @@ try {
             try {
                 localStorage.setItem('pdf_builder_active_tab', tabId);
             } catch (e) {
-                console.error('❌ PDF Builder: Erreur localStorage', e);
+                pdfBuilderError('Erreur localStorage', e);
             }
         });
 
@@ -100,7 +121,7 @@ try {
                 }
             }
         } catch (e) {
-            console.error('❌ PDF Builder: Erreur lors de la restauration localStorage', e);
+            pdfBuilderError('Erreur lors de la restauration localStorage', e);
         }
 
         // Activer le premier onglet par défaut
@@ -112,12 +133,12 @@ try {
 
     // Initialiser au chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 PDF Builder: DOM chargé, initialisation des onglets');
+        pdfBuilderLog('DOM chargé, initialisation des onglets');
         initTabs();
     });
 
     // Log de confirmation du chargement du script
-    console.log('📜 PDF Builder: Script settings-tabs.js chargé');
+    pdfBuilderLog('Script settings-tabs.js chargé');
 
     // Exposer une API simple
     window.PDFBuilderTabsAPI = {
@@ -249,31 +270,31 @@ try {
     function initSaveButton() {
         // Éviter les initialisations multiples
         if (saveButtonInitialized) {
-            console.log('🔄 PDF Builder: Bouton déjà initialisé, ignoré');
+            pdfBuilderLog('Bouton déjà initialisé, ignoré');
             return;
         }
 
-        console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant HTML...');
+        pdfBuilderLog('Recherche du bouton de sauvegarde flottant HTML...');
 
         const saveBtn = document.getElementById('pdf-builder-save-all');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
         if (saveBtn && floatingContainer) {
-            console.log('💾 PDF Builder: Bouton de sauvegarde flottant HTML trouvé, configuration');
+            pdfBuilderLog('Bouton de sauvegarde flottant HTML trouvé, configuration');
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 PDFBuilderTabsAPI.saveAllSettings();
             });
-            console.log('✅ PDF Builder: Bouton HTML configuré avec succès');
+            pdfBuilderLog('Bouton HTML configuré avec succès');
         } else {
-            console.error('❌ PDF Builder: Bouton de sauvegarde flottant HTML non trouvé');
-            console.error('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
-            console.error('   - Bouton #pdf-builder-save-all:', saveBtn ? 'trouvé' : 'manquant');
+            pdfBuilderError('Bouton de sauvegarde flottant HTML non trouvé');
+            pdfBuilderError('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
+            pdfBuilderError('   - Bouton #pdf-builder-save-all:', saveBtn ? 'trouvé' : 'manquant');
         }
 
         // Marquer comme initialisé
         saveButtonInitialized = true;
-        console.log('🔒 PDF Builder: Initialisation du bouton HTML terminée');
+        pdfBuilderLog('Initialisation du bouton HTML terminée');
     }
 
     // Initialiser au chargement du DOM
