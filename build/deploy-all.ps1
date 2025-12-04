@@ -862,7 +862,9 @@ if ($FileFilter -ne "all") {
             "custom" {
                 $include = $false
                 foreach ($pattern in $CustomFilter) {
-                    if ($fullName -like $pattern.ToLower()) {
+                    # Convertir le pattern pour Windows (remplacer / par \ et gérer les wildcards)
+                    $windowsPattern = $pattern.Replace("/", "\").ToLower()
+                    if ($fullName -like $windowsPattern) {
                         $include = $true
                         break
                     }
