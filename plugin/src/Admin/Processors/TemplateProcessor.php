@@ -40,66 +40,81 @@ class TemplateProcessor
      */
     public function loadTemplateRobust($template_id)
     {
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        try {
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        $this->admin->debug_log('loadTemplateRobust: Loading template ID ' . $template_id);
+            $this->admin->debug_log('loadTemplateRobust: Loading template ID ' . $template_id);
 
-        $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
-        if (!$template) {
-            $this->admin->debug_log('loadTemplateRobust: Template not found in database, returning default');
+            // Vérifier que la table existe
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+                $this->admin->debug_log('loadTemplateRobust: Table does not exist: ' . $table_templates);
+                return $this->getDefaultInvoiceTemplate();
+            }
+
+            $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+            if (!$template) {
+                $this->admin->debug_log('loadTemplateRobust: Template not found in database, returning default');
+                return $this->getDefaultInvoiceTemplate();
+            }
+
+            $this->admin->debug_log('loadTemplateRobust: Template found, attempting JSON decode');
+
+            // Essayer de décoder le JSON
+            $template_data = json_decode($template['template_data'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $this->admin->debug_log('loadTemplateRobust: Direct JSON decode successful');
+                // S'assurer qu'il y a toujours un nom de template
+                if (!isset($template_data['name']) || empty($template_data['name'])) {
+                    $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
+                }
+                return $template_data;
+            }
+
+            $this->admin->debug_log('loadTemplateRobust: Direct JSON decode failed with error: ' . json_last_error_msg() . ', trying cleanJsonData');
+
+            // Essayer le nettoyage normal
+            $clean_json = $this->admin->data_utils->cleanJsonData($template['template_data']);
+            if ($clean_json !== $template['template_data']) {
+                $template_data = json_decode($clean_json, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $this->admin->debug_log('loadTemplateRobust: cleanJsonData successful');
+                    // Ajouter le nom du template depuis la base de données
+                    if (isset($template['name']) && !isset($template_data['name'])) {
+                        $template_data['name'] = $template['name'];
+                    }
+                    return $template_data;
+                }
+            }
+
+            $this->admin->debug_log('loadTemplateRobust: cleanJsonData failed with error: ' . json_last_error_msg() . ', trying aggressiveJsonClean');
+
+            // Essayer le nettoyage agressif
+            $aggressive_clean = $this->admin->data_utils->aggressiveJsonClean($template['template_data']);
+            if ($aggressive_clean !== $template['template_data']) {
+                $template_data = json_decode($aggressive_clean, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $this->admin->debug_log('loadTemplateRobust: aggressiveJsonClean successful');
+                    // Ajouter le nom du template depuis la base de données
+                    if (isset($template['name']) && !isset($template_data['name'])) {
+                        $template_data['name'] = $template['name'];
+                    }
+                    return $template_data;
+                }
+            }
+
+            $this->admin->debug_log('loadTemplateRobust: All JSON parsing attempts failed, marking as corrupted and returning default. Final error: ' . json_last_error_msg());
+            // Marquer comme corrompu et utiliser un template par défaut
+            $this->markTemplateCorrupted($template_id);
+            return $this->getDefaultInvoiceTemplate();
+
+        } catch (Exception $e) {
+            $this->admin->debug_log('loadTemplateRobust: Exception caught: ' . $e->getMessage());
+            $this->admin->debug_log('loadTemplateRobust: Exception trace: ' . $e->getTraceAsString());
+            error_log('[PDF Builder] loadTemplateRobust Exception: ' . $e->getMessage());
+            error_log('[PDF Builder] loadTemplateRobust Trace: ' . $e->getTraceAsString());
             return $this->getDefaultInvoiceTemplate();
         }
-
-        $this->admin->debug_log('loadTemplateRobust: Template found, attempting JSON decode');
-
-        // Essayer de décoder le JSON
-        $template_data = json_decode($template['template_data'], true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $this->admin->debug_log('loadTemplateRobust: Direct JSON decode successful');
-            // S'assurer qu'il y a toujours un nom de template
-            if (!isset($template_data['name']) || empty($template_data['name'])) {
-                $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
-            }
-            return $template_data;
-        }
-
-        $this->admin->debug_log('loadTemplateRobust: Direct JSON decode failed, trying cleanJsonData');
-
-        // Essayer le nettoyage normal
-        $clean_json = $this->admin->data_utils->cleanJsonData($template['template_data']);
-        if ($clean_json !== $template['template_data']) {
-            $template_data = json_decode($clean_json, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $this->admin->debug_log('loadTemplateRobust: cleanJsonData successful');
-                // Ajouter le nom du template depuis la base de données
-                if (isset($template['name']) && !isset($template_data['name'])) {
-                    $template_data['name'] = $template['name'];
-                }
-                return $template_data;
-            }
-        }
-
-        $this->admin->debug_log('loadTemplateRobust: cleanJsonData failed, trying aggressiveJsonClean');
-
-        // Essayer le nettoyage agressif
-        $aggressive_clean = $this->admin->data_utils->aggressiveJsonClean($template['template_data']);
-        if ($aggressive_clean !== $template['template_data']) {
-            $template_data = json_decode($aggressive_clean, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $this->admin->debug_log('loadTemplateRobust: aggressiveJsonClean successful');
-                // Ajouter le nom du template depuis la base de données
-                if (isset($template['name']) && !isset($template_data['name'])) {
-                    $template_data['name'] = $template['name'];
-                }
-                return $template_data;
-            }
-        }
-
-        $this->admin->debug_log('loadTemplateRobust: All JSON parsing attempts failed, marking as corrupted and returning default');
-        // Marquer comme corrompu et utiliser un template par défaut
-        $this->markTemplateCorrupted($template_id);
-        return $this->getDefaultInvoiceTemplate();
     }
 
     /**

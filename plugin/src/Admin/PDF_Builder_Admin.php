@@ -245,9 +245,8 @@ class PdfBuilderAdmin
      */
     public function debug_log($message)
     {
-        if (get_option('pdf_builder_debug_javascript', '0') === '1') {
-            error_log('[PDF Builder Admin] ' . $message);
-        }
+        // Temporairement activé pour le débogage
+        error_log('[PDF Builder Admin] ' . $message);
     }
 
     /**

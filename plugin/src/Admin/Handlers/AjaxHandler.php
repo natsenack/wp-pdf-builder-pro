@@ -331,6 +331,8 @@ class AjaxHandler
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
             $this->debug_log('ajaxGetTemplate: loadTemplateRobust returned: ' . (is_array($template) ? 'array with ' . count($template) . ' keys' : gettype($template)));
 
+            error_log('[PDF Builder] loadTemplateRobust completed for template ID: ' . $template_id);
+
             if ($template) {
                 // Récupérer le nom du template depuis les données JSON en priorité, sinon depuis la DB
                 $template_name = '';
