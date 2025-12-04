@@ -56,6 +56,8 @@ class PDF_Builder_GDPR_Manager {
         // Hooks AJAX pour la gestion des consentements
         add_action('wp_ajax_pdf_builder_save_consent', [$this, 'ajax_save_consent']);
         add_action('wp_ajax_pdf_builder_revoke_consent', [$this, 'ajax_revoke_consent']);
+        add_action('wp_ajax_pdf_builder_load_gdpr_preferences', [$this, 'ajax_load_gdpr_preferences']);
+        add_action('wp_ajax_pdf_builder_save_gdpr_preferences', [$this, 'ajax_save_gdpr_preferences']);
         add_action('wp_ajax_pdf_builder_export_user_data', [$this, 'ajax_export_user_data']);
         add_action('wp_ajax_pdf_builder_delete_user_data', [$this, 'ajax_delete_user_data']);
 
@@ -159,6 +161,51 @@ class PDF_Builder_GDPR_Manager {
         $this->log_audit_action($user_id, 'consent_revoked', 'consent', $consent_type);
 
         wp_send_json_success(['message' => __('Consentement révoqué.', 'pdf-builder-pro')]);
+    }
+
+    /**
+     * AJAX - Charger les préférences GDPR
+     */
+    public function ajax_load_gdpr_preferences() {
+        check_ajax_referer('pdf_builder_gdpr', 'nonce');
+
+        $user_id = get_current_user_id();
+
+        // Récupérer tous les types de consentements disponibles
+        $consent_types = array_keys($this->gdpr_options['consent_types']);
+        $preferences = [];
+
+        // Récupérer le statut de chaque consentement
+        foreach ($consent_types as $consent_type) {
+            $preferences[$consent_type] = $this->is_consent_granted($user_id, $consent_type);
+        }
+
+        wp_send_json_success(['preferences' => $preferences]);
+    }
+
+    /**
+     * AJAX - Sauvegarder les préférences GDPR
+     */
+    public function ajax_save_gdpr_preferences() {
+        check_ajax_referer('pdf_builder_gdpr', 'nonce');
+
+        $user_id = get_current_user_id();
+        $preferences = $_POST['preferences'] ?? [];
+
+        if (!is_array($preferences)) {
+            wp_send_json_error(['message' => __('Données invalides.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Sauvegarder chaque préférence
+        foreach ($preferences as $consent_type => $granted) {
+            $this->save_user_consent($user_id, sanitize_text_field($consent_type), (bool) $granted);
+        }
+
+        // Logger l'action
+        $this->log_audit_action($user_id, 'preferences_saved', 'gdpr_preferences', count($preferences) . ' preferences');
+
+        wp_send_json_success(['message' => __('Préférences sauvegardées.', 'pdf-builder-pro')]);
     }
 
     /**
