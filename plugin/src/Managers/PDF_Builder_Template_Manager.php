@@ -395,6 +395,9 @@ class PdfBuilderTemplateManager
                         throw new \Exception('Erreur de mise à jour dans la table personnalisée: ' . $wpdb->last_error);
                     }
                     
+                    // Decode template data for thumbnail generation
+                    $saved_decoded = json_decode($template_data, true);
+                    
                     // Générer le thumbnail du template
                     $thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
                     $thumbnail_url = $thumbnail_manager->generateTemplateThumbnail($template_id, $saved_decoded);
@@ -407,8 +410,7 @@ class PdfBuilderTemplateManager
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
                     
-                    // Decode and re-check what was saved
-                    $saved_decoded = json_decode($template_data, true);
+                    // Re-check what was saved
                     if (isset($saved_decoded['elements'])) {
                         file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
                         
