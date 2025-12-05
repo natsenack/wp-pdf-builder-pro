@@ -20,16 +20,16 @@
                     <article class="general-info-box">
                         <h4 class="general-info-title">📋 Informations récupérées automatiquement de WooCommerce</h4>
                         <div class="general-info-content">
-                            <p><strong>Nom de l'entreprise :</strong> <?php echo pdf_builder_safe_esc_html(pdf_builder_safe_get_option('woocommerce_store_name', pdf_builder_safe_get_bloginfo('name'))); ?></p>
+                            <p><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
                             <p><strong>Adresse complète :</strong> <?php
-                            $address = pdf_builder_safe_get_option('woocommerce_store_address', '');
-                            $city = pdf_builder_safe_get_option('woocommerce_store_city', '');
-                            $postcode = pdf_builder_safe_get_option('woocommerce_store_postcode', '');
-                            $country = pdf_builder_safe_get_option('woocommerce_default_country', '');
+                            $address = get_option('woocommerce_store_address', '');
+                            $city = get_option('woocommerce_store_city', '');
+                            $postcode = get_option('woocommerce_store_postcode', '');
+                            $country = get_option('woocommerce_default_country', '');
                             $full_address = array_filter([$address, $city, $postcode, $country]);
-                            echo pdf_builder_safe_esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
+                            echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
                             ?></p>
-                            <p><strong>Email :</strong> <?php echo pdf_builder_safe_esc_html(pdf_builder_safe_get_option('admin_email', '<em>Non défini</em>')); ?></p>
+                            <p><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
                             <p class="general-info-hint">
                             ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
                             </p>

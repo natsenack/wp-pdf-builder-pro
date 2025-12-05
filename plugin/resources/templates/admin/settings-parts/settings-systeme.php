@@ -93,7 +93,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php pdf_builder_safe_checked($cache_enabled); ?>>
+                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked($cache_enabled); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
@@ -103,7 +103,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php pdf_builder_safe_checked($cache_compression); ?>>
+                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked($cache_compression); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
@@ -113,7 +113,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php pdf_builder_safe_checked($cache_auto_cleanup); ?>>
+                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked($cache_auto_cleanup); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>

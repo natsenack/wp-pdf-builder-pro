@@ -3,20 +3,20 @@
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 // Préparer les variables nécessaires
-$security_level = pdf_builder_safe_get_option('pdf_builder_security_level', 'medium');
-$enable_logging = pdf_builder_safe_get_option('pdf_builder_enable_logging', true);
-$gdpr_enabled = pdf_builder_safe_get_option('pdf_builder_gdpr_enabled', true);
-$gdpr_consent_required = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_required', true);
-$gdpr_data_retention = pdf_builder_safe_get_option('pdf_builder_gdpr_data_retention');
+$security_level = get_option('pdf_builder_security_level', 'medium');
+$enable_logging = get_option('pdf_builder_enable_logging', true);
+$gdpr_enabled = get_option('pdf_builder_gdpr_enabled', true);
+$gdpr_consent_required = get_option('pdf_builder_gdpr_consent_required', true);
+$gdpr_data_retention = get_option('pdf_builder_gdpr_data_retention');
 if ($gdpr_data_retention === false || $gdpr_data_retention === '') {
     $gdpr_data_retention = 2555; // Valeur par défaut si l'option n'existe pas
     update_option('pdf_builder_gdpr_data_retention', $gdpr_data_retention);
 }
-$gdpr_audit_enabled = pdf_builder_safe_get_option('pdf_builder_gdpr_audit_enabled', true);
-$gdpr_encryption_enabled = pdf_builder_safe_get_option('pdf_builder_gdpr_encryption_enabled', true);
-$gdpr_consent_analytics = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_analytics', true);
-$gdpr_consent_templates = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_templates', true);
-$gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_marketing', false);
+$gdpr_audit_enabled = get_option('pdf_builder_gdpr_audit_enabled', true);
+$gdpr_encryption_enabled = get_option('pdf_builder_gdpr_encryption_enabled', true);
+$gdpr_consent_analytics = get_option('pdf_builder_gdpr_consent_analytics', true);
+$gdpr_consent_templates = get_option('pdf_builder_gdpr_consent_templates', true);
+$gdpr_consent_marketing = get_option('pdf_builder_gdpr_consent_marketing', false);
 ?>
             <h2>🔒 Sécurité & Conformité</h2>
 
@@ -40,9 +40,9 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                             <th scope="row"><label for="security_level">Niveau de sécurité</label></th>
                             <td>
                                 <select id="security_level" name="security_level">
-                                    <option value="low" <?php pdf_builder_safe_selected($security_level, 'low'); ?>>Faible</option>
-                                    <option value="medium" <?php pdf_builder_safe_selected($security_level, 'medium'); ?>>Moyen</option>
-                                    <option value="high" <?php pdf_builder_safe_selected($security_level, 'high'); ?>>Élevé</option>
+                                    <option value="low" <?php selected($security_level, 'low'); ?>>Faible</option>
+                                    <option value="medium" <?php selected($security_level, 'medium'); ?>>Moyen</option>
+                                    <option value="high" <?php selected($security_level, 'high'); ?>>Élevé</option>
                                 </select>
                                 <p class="description">Niveau de sécurité pour la génération de PDF</p>
                             </td>
@@ -51,7 +51,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                             <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="enable_logging" name="enable_logging" value="1" <?php pdf_builder_safe_checked($enable_logging); ?>>
+                                    <input type="checkbox" id="enable_logging" name="enable_logging" value="1" <?php checked($enable_logging); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la journalisation des actions pour audit</p>
@@ -76,7 +76,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_enabled">RGPD Activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_enabled" name="gdpr_enabled" value="1" <?php pdf_builder_safe_checked($gdpr_enabled); ?>>
+                                        <input type="checkbox" id="gdpr_enabled" name="gdpr_enabled" value="1" <?php checked($gdpr_enabled); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Activer la conformité RGPD pour le plugin</p>
@@ -86,7 +86,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_consent_required">Consentement RGPD requis</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_required" name="gdpr_consent_required" value="1" <?php pdf_builder_safe_checked($gdpr_consent_required); ?>>
+                                        <input type="checkbox" id="gdpr_consent_required" name="gdpr_consent_required" value="1" <?php checked($gdpr_consent_required); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Exiger le consentement RGPD avant génération de PDF</p>
@@ -106,7 +106,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_audit_enabled">Audit Logging</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_audit_enabled" name="gdpr_audit_enabled" value="1" <?php pdf_builder_safe_checked($gdpr_audit_enabled); ?>>
+                                        <input type="checkbox" id="gdpr_audit_enabled" name="gdpr_audit_enabled" value="1" <?php checked($gdpr_audit_enabled); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Activer la journalisation des actions pour audit RGPD</p>
@@ -116,7 +116,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_encryption_enabled">Chiffrement des données</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_encryption_enabled" name="gdpr_encryption_enabled" value="1" <?php pdf_builder_safe_checked($gdpr_encryption_enabled); ?>>
+                                        <input type="checkbox" id="gdpr_encryption_enabled" name="gdpr_encryption_enabled" value="1" <?php checked($gdpr_encryption_enabled); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Chiffrer les données sensibles des utilisateurs</p>
@@ -131,7 +131,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_consent_analytics">Consentement Analytics</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_analytics" name="gdpr_consent_analytics" value="1" <?php pdf_builder_safe_checked($gdpr_consent_analytics); ?>>
+                                        <input type="checkbox" id="gdpr_consent_analytics" name="gdpr_consent_analytics" value="1" <?php checked($gdpr_consent_analytics); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Collecte de données d'utilisation anonymes pour améliorer le service</p>
@@ -141,7 +141,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_consent_templates">Consentement Templates</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_templates" name="gdpr_consent_templates" value="1" <?php pdf_builder_safe_checked($gdpr_consent_templates); ?>>
+                                        <input type="checkbox" id="gdpr_consent_templates" name="gdpr_consent_templates" value="1" <?php checked($gdpr_consent_templates); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Sauvegarde des templates personnalisés sur le serveur</p>
@@ -151,7 +151,7 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                                 <th scope="row"><label for="gdpr_consent_marketing">Consentement Marketing</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_marketing" name="gdpr_consent_marketing" value="1" <?php pdf_builder_safe_checked($gdpr_consent_marketing); ?>>
+                                        <input type="checkbox" id="gdpr_consent_marketing" name="gdpr_consent_marketing" value="1" <?php checked($gdpr_consent_marketing); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Réception d'informations sur les nouvelles fonctionnalités et mises à jour</p>
