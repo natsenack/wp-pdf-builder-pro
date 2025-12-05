@@ -532,11 +532,12 @@
                     detail: { formData: formData, response: data }
                 }));
 
-                // Recharger les données des rôles pour mettre à jour l'interface
+                // Tenter de recharger les données des rôles pour mettre à jour l'interface (optionnel)
                 reloadRolesData().then(updatedRoles => {
                     debugLog('PDF Builder - Interface mise à jour avec les rôles sauvegardés:', updatedRoles);
                 }).catch(error => {
-                    debugError('PDF Builder - Erreur lors de la mise à jour de l\'interface:', error);
+                    debugWarn('PDF Builder - Impossible de recharger automatiquement les rôles, mais la sauvegarde a réussi:', error);
+                    // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
                 });
             } else {
                 debugError('PDF Builder - Erreur de sauvegarde:', data);
