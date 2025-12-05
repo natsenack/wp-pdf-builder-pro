@@ -49,7 +49,6 @@
                     <div>
 
                         <!-- Access Settings Section (No Form - AJAX Centralized) -->
-                        <form id="acces-settings-form" method="post">
                         <section id="access-settings-container" aria-label="Paramètres d'accès">
 
                             <!-- Boutons de contrôle rapide -->
@@ -110,7 +109,6 @@
 
                             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
                         </section>
-                        </form>
                     </div> <!-- Fin colonne principale -->
 
                 <!-- Colonne informations -->
