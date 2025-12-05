@@ -206,9 +206,13 @@ class PDF_Builder_Task_Scheduler {
      * Se déclenche à chaque visite admin pour vérifier si une sauvegarde doit être faite
      */
     public function check_auto_backup_fallback() {
+        error_log('PDF Builder: [FALLBACK] check_auto_backup_fallback called');
+
         // Vérifier seulement si les sauvegardes automatiques sont activées
         $auto_backup_enabled = get_option('pdf_builder_auto_backup_enabled', '0');
+        error_log('PDF Builder: [FALLBACK] auto_backup_enabled option: ' . $auto_backup_enabled);
         if ($auto_backup_enabled !== '1' && $auto_backup_enabled !== 1) {
+            error_log('PDF Builder: [FALLBACK] Auto backup disabled, skipping');
             return;
         }
 
@@ -216,6 +220,8 @@ class PDF_Builder_Task_Scheduler {
         $frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
         $last_backup = get_option('pdf_builder_last_auto_backup', 0);
         $now = time();
+
+        error_log('PDF Builder: [FALLBACK] Frequency: ' . $frequency . ', Last backup: ' . $last_backup . ', Now: ' . $now);
 
         // Calculer l'intervalle en secondes selon la fréquence
         $intervals = [
@@ -226,6 +232,7 @@ class PDF_Builder_Task_Scheduler {
         ];
 
         $interval_seconds = $intervals[$frequency] ?? 86400;
+        error_log('PDF Builder: [FALLBACK] Interval seconds: ' . $interval_seconds);
 
         // Log de débogage
         if (is_admin()) {
@@ -235,9 +242,12 @@ class PDF_Builder_Task_Scheduler {
 
         // Vérifier si assez de temps s'est écoulé depuis la dernière sauvegarde
         if (($now - $last_backup) >= $interval_seconds) {
+            error_log('PDF Builder: [FALLBACK] Time to trigger backup');
+
             // Éviter les exécutions multiples en vérifiant un flag temporaire
             $backup_in_progress = get_transient('pdf_builder_auto_backup_in_progress');
             if ($backup_in_progress) {
+                error_log('PDF Builder: [FALLBACK] Backup already in progress, skipping');
                 if (is_admin()) {
                     echo "<script>console.log('[AUTO BACKUP FALLBACK] ⏳ Sauvegarde déjà en cours, ignorée');</script>";
                 }
@@ -246,9 +256,11 @@ class PDF_Builder_Task_Scheduler {
 
             // Marquer qu'une sauvegarde est en cours
             set_transient('pdf_builder_auto_backup_in_progress', true, 300); // 5 minutes max
+            error_log('PDF Builder: [FALLBACK] Set in progress transient');
 
             // Marquer que nous allons faire une sauvegarde pour éviter les exécutions multiples
             update_option('pdf_builder_last_auto_backup', $now);
+            error_log('PDF Builder: [FALLBACK] Updated last backup timestamp to: ' . $now);
 
             // Logger le fallback
             if (class_exists('PDF_Builder_Logger')) {
@@ -261,12 +273,15 @@ class PDF_Builder_Task_Scheduler {
                 echo "<script>console.log('[AUTO BACKUP FALLBACK] 🎯 DÉCLENCHEMENT - Système cron indisponible - sauvegarde automatique via fallback (dernière: {$time_since_last}min)');</script>";
             }
 
+            error_log('PDF Builder: [FALLBACK] Calling create_auto_backup');
             // Exécuter la sauvegarde automatique
             $this->create_auto_backup();
 
             // Nettoyer le flag de progression
             delete_transient('pdf_builder_auto_backup_in_progress');
+            error_log('PDF Builder: [FALLBACK] Cleaned up transient');
         } else {
+            error_log('PDF Builder: [FALLBACK] Not time yet');
             // Log quand on ne déclenche pas
             if (is_admin()) {
                 $remaining_seconds = $interval_seconds - ($now - $last_backup);
@@ -1009,8 +1024,10 @@ class PDF_Builder_Task_Scheduler {
                 return;
             }
 
+            error_log('PDF Builder: [AUTO BACKUP] Checking backup manager availability');
             // Utiliser le Backup Manager pour créer la sauvegarde
             if (class_exists('\\PDF_Builder\\Managers\\PdfBuilderBackupRestoreManager')) {
+                error_log('PDF Builder: [AUTO BACKUP] Backup manager found, creating backup');
                 $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
 
                 // Créer une sauvegarde automatique
@@ -1026,7 +1043,7 @@ class PDF_Builder_Task_Scheduler {
                     // Mettre à jour le timestamp de la dernière sauvegarde automatique
                     update_option('pdf_builder_last_auto_backup', time());
                 } else {
-                    error_log('PDF Builder: [AUTO BACKUP] Unexpected result format from createBackup');
+                    error_log('PDF Builder: [AUTO BACKUP] Unexpected result format from createBackup: ' . print_r($result, true));
                 }
             } else {
                 error_log('PDF Builder: [AUTO BACKUP] Backup manager not available');
@@ -1034,6 +1051,7 @@ class PDF_Builder_Task_Scheduler {
 
         } catch (\Exception $e) {
             error_log('PDF Builder: [AUTO BACKUP] Exception during auto backup: ' . $e->getMessage());
+            error_log('PDF Builder: [AUTO BACKUP] Stack trace: ' . $e->getTraceAsString());
         }
     }
 
