@@ -697,7 +697,6 @@
                 } else {
                     toggleSwitch.classList.remove('checked');
                 }
-                 ? 'checked ajoutée' : 'checked retirée'}`);
             } else {
                 console.warn(`PDF Builder - [UPDATE CHECKBOXES] Parent .toggle-switch non trouvé pour ${roleKey}`);
             }
@@ -707,7 +706,6 @@
         // Vérification finale
         
         roleCheckboxes.forEach((checkbox, index) => {
-            : checked=${checkbox.checked}, disabled=${checkbox.disabled}`);
         });
     }
 
@@ -766,7 +764,6 @@
                     checkbox.checked = false;
                 });
                 updateSelectedCount(1); // Administrator reste toujours sélectionné
-                ');
             });
         }
 
