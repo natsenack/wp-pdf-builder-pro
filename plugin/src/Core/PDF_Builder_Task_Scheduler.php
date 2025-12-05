@@ -103,6 +103,7 @@ class PDF_Builder_Task_Scheduler {
         // Hooks pour les tâches planifiées
         foreach (self::TASKS as $task_name => $task_config) {
             add_action($task_name, [$this, $task_config['callback']]);
+            error_log('PDF Builder: Registered action: ' . $task_name . ' -> ' . $task_config['callback']);
         }
 
         // Fallback pour les sauvegardes automatiques quand le cron système ne fonctionne pas
