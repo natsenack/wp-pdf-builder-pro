@@ -357,6 +357,19 @@
                     }
                 }
 
+                // TRAITEMENT SPÉCIAL pour pdf_builder_allowed_roles - collecter même les non-cochées
+                if (formId === 'acces-form') {
+                    const allowedRolesCheckboxes = form.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
+                    const selectedRoles = [];
+                    allowedRolesCheckboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            selectedRoles.push(checkbox.value);
+                        }
+                    });
+                    formObject.pdf_builder_allowed_roles = selectedRoles;
+                    debugLog(`PDF Builder - Rôles sélectionnés collectés: ${selectedRoles.length} rôles - ${selectedRoles.join(', ')}`);
+                }
+
                 // Ajouter les données du formulaire à allData
                 allData[formId] = formObject;
             }
@@ -438,6 +451,14 @@
         // Log spécifique pour pdf_builder_allowed_roles
         if (flattenedData.pdf_builder_allowed_roles) {
             debugLog('PDF Builder - pdf_builder_allowed_roles à envoyer:', flattenedData.pdf_builder_allowed_roles);
+        } else {
+            debugLog('PDF Builder - pdf_builder_allowed_roles est undefined ou vide');
+        }
+
+        // S'assurer que pdf_builder_allowed_roles est toujours envoyé, même vide
+        if (!flattenedData.hasOwnProperty('pdf_builder_allowed_roles')) {
+            flattenedData.pdf_builder_allowed_roles = [];
+            debugLog('PDF Builder - pdf_builder_allowed_roles forcé à array vide');
         }
 
         // DEBUG: Log debug fields being sent
