@@ -4,13 +4,14 @@
 
     global $wp_roles;
     $all_roles = $wp_roles->roles;
-    $settings = get_option('pdf_builder_settings', []);
-    $allowed_roles_raw = $settings['pdf_builder_allowed_roles'] ?? false;
-    if ($allowed_roles_raw === false || !is_array($allowed_roles_raw)) {
-        $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-    } else {
-        $allowed_roles = $allowed_roles_raw;
-    }
+
+    // Récupérer les rôles autorisés (simple et robuste)
+    $allowed_roles = pdf_builder_get_allowed_roles();
+
+    // DEBUG TEMPORAIRE - Afficher les valeurs pour vérification
+    echo "<div style='background: #e8f5e8; border: 1px solid #4caf50; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace;'>";
+    echo "<strong>✅ RÔLES AUTORISÉS (v" . time() . "):</strong> " . implode(', ', $allowed_roles);
+    echo "</div>";
 
     $role_descriptions = [
         'administrator' => 'Accès complet à toutes les fonctionnalités',

@@ -547,16 +547,22 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
                 $saved_count++;
             } elseif (in_array($key, $field_rules['array_fields']) || $key === 'pdf_builder_allowed_roles') {
-                if (is_array($value)) {
+                if ($key === 'pdf_builder_allowed_roles') {
+                    // Utiliser la fonction helper spécialisée pour les rôles
+                    require_once plugin_dir_path(__FILE__) . '../../resources/templates/admin/settings-helpers.php';
+                    $saved_roles = pdf_builder_save_allowed_roles($value);
+                    $saved_count++;
+                } elseif (is_array($value)) {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
+                    $saved_count++;
                 } else {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = [];
                     $settings[$option_key] = $option_value;
+                    $saved_count++;
                 }
-                $saved_count++;
             } else {
                 // Pour les champs non définis, essayer de deviner le type
                 if (strpos($key, 'pdf_builder_') === 0) {
