@@ -971,17 +971,27 @@ if ($cache_last_cleanup !== 'Jamais') {
             },
             success: function(response) {
                 if (response.success) {
-                    let output = '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #007cba;">';
-                    output += '<h4>📋 Sauvegardes disponibles :</h4>';
+                    let output = '<div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-left: 4px solid #007cba; border-radius: 4px;">';
+                    output += '<h4 style="margin-top: 0; color: #007cba;">📋 Sauvegardes disponibles :</h4>';
 
                     if (response.data.backups && response.data.backups.length > 0) {
-                        output += '<ul style="margin: 0; padding-left: 20px;">';
-                        response.data.backups.forEach(function(backup) {
-                            output += '<li>' + backup + '</li>';
+                        output += '<div class="backup-list" style="margin-top: 10px;">';
+                        response.data.backups.forEach(function(backup, index) {
+                            output += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; margin-bottom: 8px; background: white; border: 1px solid #dee2e6; border-radius: 4px;">';
+                            output += '<div class="backup-info" style="flex: 1;">';
+                            output += '<strong>' + backup.filename + '</strong><br>';
+                            output += '<small style="color: #6c757d;">' + backup.size_human + ' • ' + backup.modified_human + '</small>';
+                            output += '</div>';
+                            output += '<div class="backup-actions" style="display: flex; gap: 5px;">';
+                            output += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" title="Restaurer cette sauvegarde">🔄 Restaurer</button>';
+                            output += '<button type="button" class="button button-small button-primary download-backup-btn" data-filename="' + backup.filename + '" title="Télécharger cette sauvegarde">📥 Télécharger</button>';
+                            output += '<button type="button" class="button button-small button-danger delete-backup-btn" data-filename="' + backup.filename + '" title="Supprimer cette sauvegarde">🗑️ Supprimer</button>';
+                            output += '</div>';
+                            output += '</div>';
                         });
-                        output += '</ul>';
+                        output += '</div>';
                     } else {
-                        output += '<p style="margin: 0; color: #6c757d;">Aucune sauvegarde trouvée.</p>';
+                        output += '<p style="margin: 0; color: #6c757d; font-style: italic;">Aucune sauvegarde trouvée.</p>';
                     }
 
                     output += '</div>';
@@ -999,6 +1009,148 @@ if ($cache_last_cleanup !== 'Jamais') {
             complete: function() {
                 // Réactiver le bouton
                 $btn.prop('disabled', false).html('<span>📋</span> Lister les sauvegardes');
+            }
+        });
+    });
+
+    // Gestionnaire pour les boutons de restauration de sauvegarde
+    $(document).on('click', '.restore-backup-btn', function(e) {
+        e.preventDefault();
+
+        const filename = $(this).data('filename');
+        const $btn = $(this);
+
+        if (!confirm('Êtes-vous sûr de vouloir restaurer la sauvegarde "' + filename + '" ? Cette action écrasera les paramètres actuels.')) {
+            return;
+        }
+
+        // Désactiver le bouton pendant la restauration
+        $btn.prop('disabled', true).text('🔄 Restauration...');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_restore_backup',
+                filename: filename,
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    showSystemNotification(response.data.message, 'success');
+                    // Recharger la page pour appliquer les nouveaux paramètres
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    showSystemNotification(response.data.message || 'Erreur lors de la restauration', 'error');
+                    $btn.prop('disabled', false).text('🔄 Restaurer');
+                }
+            },
+            error: function(xhr, status, error) {
+                showSystemNotification('Erreur de connexion lors de la restauration', 'error');
+                $btn.prop('disabled', false).text('🔄 Restaurer');
+            }
+        });
+    });
+
+    // Gestionnaire pour les boutons de téléchargement de sauvegarde
+    $(document).on('click', '.download-backup-btn', function(e) {
+        e.preventDefault();
+
+        const filename = $(this).data('filename');
+        const $btn = $(this);
+
+        // Désactiver le bouton pendant le téléchargement
+        $btn.prop('disabled', true).text('📥 Téléchargement...');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        // Créer un formulaire temporaire pour le téléchargement
+        const form = $('<form>', {
+            method: 'POST',
+            action: ajaxurl,
+            style: 'display: none;'
+        });
+
+        form.append($('<input>', {
+            type: 'hidden',
+            name: 'action',
+            value: 'pdf_builder_download_backup'
+        }));
+
+        form.append($('<input>', {
+            type: 'hidden',
+            name: 'filename',
+            value: filename
+        }));
+
+        form.append($('<input>', {
+            type: 'hidden',
+            name: 'nonce',
+            value: nonce
+        }));
+
+        $('body').append(form);
+        form.submit();
+        form.remove();
+
+        // Réactiver le bouton après un court délai
+        setTimeout(function() {
+            $btn.prop('disabled', false).text('📥 Télécharger');
+        }, 1000);
+
+        showSystemNotification('Téléchargement de la sauvegarde démarré', 'success');
+    });
+
+    // Gestionnaire pour les boutons de suppression de sauvegarde
+    $(document).on('click', '.delete-backup-btn', function(e) {
+        e.preventDefault();
+
+        const filename = $(this).data('filename');
+        const $btn = $(this);
+
+        if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement la sauvegarde "' + filename + '" ? Cette action est irréversible.')) {
+            return;
+        }
+
+        // Désactiver le bouton pendant la suppression
+        $btn.prop('disabled', true).text('🗑️ Suppression...');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_delete_backup',
+                filename: filename,
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Supprimer l'élément de la liste
+                    $btn.closest('.backup-item').fadeOut(300, function() {
+                        $(this).remove();
+                        // Vérifier s'il reste des sauvegardes
+                        if ($('.backup-item').length === 0) {
+                            $('#backup-results').html('<div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-left: 4px solid #007cba; border-radius: 4px;"><p style="margin: 0; color: #6c757d; font-style: italic;">Aucune sauvegarde trouvée.</p></div>');
+                        }
+                    });
+                    showSystemNotification(response.data.message, 'success');
+                } else {
+                    showSystemNotification(response.data.message || 'Erreur lors de la suppression', 'error');
+                    $btn.prop('disabled', false).text('🗑️ Supprimer');
+                }
+            },
+            error: function(xhr, status, error) {
+                showSystemNotification('Erreur de connexion lors de la suppression', 'error');
+                $btn.prop('disabled', false).text('🗑️ Supprimer');
             }
         });
     });
