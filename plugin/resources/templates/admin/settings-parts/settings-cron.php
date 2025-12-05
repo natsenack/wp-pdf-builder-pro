@@ -64,7 +64,11 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
         <div class="auto-backup-controls" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
             <h4 style="margin-top: 0; color: #495057;"><?php _e('Automatic Backups', 'pdf-builder-pro'); ?></h4>
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <input type="checkbox" id="auto-backup-enabled" <?php checked(get_option('pdf_builder_auto_backup_enabled', '0'), '1'); ?>>
+                <?php
+                $settings = get_option('pdf_builder_settings', []);
+                $auto_backup_enabled = $settings['pdf_builder_systeme_auto_backup'] ?? '0';
+                ?>
+                <input type="checkbox" id="auto-backup-enabled" <?php checked($auto_backup_enabled, '1'); ?>>
                 <label for="auto-backup-enabled" style="margin-left: 8px; font-weight: 500;">
                     <?php _e('Enable automatic backups', 'pdf-builder-pro'); ?>
                 </label>
@@ -78,12 +82,16 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
         </div>
 
         <div class="backup-frequency-controls" style="margin-top: 10px;">
+            <?php
+            $settings = get_option('pdf_builder_settings', []);
+            $current_frequency = $settings['pdf_builder_systeme_auto_backup_frequency'] ?? 'daily';
+            ?>
             <label for="backup-frequency-select"><?php _e('Backup Frequency:', 'pdf-builder-pro'); ?></label>
             <select id="backup-frequency-select" class="small-text">
-                <option value="every_minute">Toutes les minutes (test)</option>
-                <option value="daily" selected>Quotidienne</option>
-                <option value="weekly">Hebdomadaire</option>
-                <option value="monthly">Mensuelle</option>
+                <option value="every_minute" <?php selected($current_frequency, 'every_minute'); ?>>Toutes les minutes (test)</option>
+                <option value="daily" <?php selected($current_frequency, 'daily'); ?>>Quotidienne</option>
+                <option value="weekly" <?php selected($current_frequency, 'weekly'); ?>>Hebdomadaire</option>
+                <option value="monthly" <?php selected($current_frequency, 'monthly'); ?>>Mensuelle</option>
             </select>
             <button type="button" id="change-frequency-btn" class="button button-small">
                 <?php _e('Change Frequency', 'pdf-builder-pro'); ?>
