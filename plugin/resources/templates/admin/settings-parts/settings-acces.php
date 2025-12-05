@@ -178,6 +178,7 @@ jQuery(document).ready(function($) {
 
         var $form = $(this);
         var $btn = $('#pdf-builder-save-floating-btn');
+        var originalText = $btn.html();
 
         // Désactiver le bouton et afficher le loading
         $btn.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> Sauvegarde...');
