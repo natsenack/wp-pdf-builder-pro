@@ -972,13 +972,17 @@ if ($cache_last_cleanup !== 'Jamais') {
                 nonce: nonce
             },
             success: function(response) {
+                console.log('[DEBUG] AJAX success response:', response);
                 if (response.success) {
+                    console.log('[DEBUG] Response data:', response.data);
                     let output = '<div style="margin-top: 10px;">';
 
                     if (response.data.backups && response.data.backups.length > 0) {
+                        console.log('[DEBUG] Found', response.data.backups.length, 'backups');
                         output += '<div class="backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px;">';
 
                         response.data.backups.forEach(function(backup, index) {
+                            console.log('[DEBUG] Processing backup:', backup.filename);
                             const accordionId = 'backup-' + index;
                             output += '<div class="backup-accordion-item" style="border-bottom: 1px solid #dee2e6;">';
                             output += '<div class="backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="toggleAccordion(\'' + accordionId + '\')">';
@@ -1008,6 +1012,7 @@ if ($cache_last_cleanup !== 'Jamais') {
 
                         output += '</div>';
                     } else {
+                        console.log('[DEBUG] No backups found');
                         output += '<div style="padding: 20px; text-align: center; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; color: #6c757d;">';
                         output += '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>';
                         output += '<h4 style="margin: 0 0 10px 0; color: #495057;">Aucune sauvegarde trouvée</h4>';
@@ -1016,9 +1021,12 @@ if ($cache_last_cleanup !== 'Jamais') {
                     }
 
                     output += '</div>';
+                    console.log('[DEBUG] Setting HTML content');
                     $results.html(output);
+                    console.log('[DEBUG] HTML content set successfully');
                     showSystemNotification('Liste des sauvegardes récupérée', 'success');
                 } else {
+                    console.log('[DEBUG] AJAX response not successful:', response);
                     $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors du listage</div>');
                     showSystemNotification('Erreur lors du listage des sauvegardes', 'error');
                 }
