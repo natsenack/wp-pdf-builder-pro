@@ -1488,7 +1488,7 @@ function pdf_builder_ajax_get_template()
 // ============================================================================
 
 // Inclure et initialiser les handlers AJAX
-$ajax_handlers_path = PDF_BUILDER_PLUGIN_DIR . 'src/Ajax/Ajax_Handlers.php';
+$ajax_handlers_path = PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/Ajax_Handlers.php';
 if (file_exists($ajax_handlers_path)) {
     require_once $ajax_handlers_path;
 }

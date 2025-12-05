@@ -4,6 +4,8 @@
  * Centralise la validation commune et la gestion d'erreurs
  */
 
+error_log('PDF Builder: [AJAX_HANDLERS.PHP] File loaded at ' . current_time('Y-m-d H:i:s'));
+
 abstract class PDF_Builder_Ajax_Base {
     protected $required_capability = 'manage_options';
     protected $nonce_action = 'pdf_builder_ajax';
