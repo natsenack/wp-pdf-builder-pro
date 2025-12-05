@@ -52,7 +52,7 @@ class AdminScriptLoader
                     'pdf-builder-settings-tabs',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.js',
                     ['jquery'],
-                    PDF_BUILDER_PRO_VERSION,
+                    $version_param,
                     true
                 );
             } else {
@@ -60,7 +60,7 @@ class AdminScriptLoader
                     'pdf-builder-settings-tabs',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs-improved.js',
                     ['jquery'],
-                    PDF_BUILDER_PRO_VERSION,
+                    $version_param,
                     true
                 );
             }

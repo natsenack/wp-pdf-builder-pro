@@ -40,6 +40,41 @@
         }
     }
 
+    /**
+     * Affiche un message de sauvegarde
+     */
+    function showSaveMessage(message, type) {
+        // Utiliser le système de notifications personnalisé si disponible
+        if (typeof window.showSuccessNotification === 'function' && typeof window.showErrorNotification === 'function') {
+            if (type === 'success') {
+                window.showSuccessNotification(message, { duration: 4000 });
+            } else {
+                window.showErrorNotification(message, { duration: 6000 });
+            }
+        } else {
+            // Fallback vers les messages WordPress classiques
+            // Supprimer les anciens messages
+            const existingMessages = document.querySelectorAll('.pdf-builder-save-message');
+            existingMessages.forEach(msg => msg.remove());
+
+            // Créer le nouveau message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `pdf-builder-save-message notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
+            messageDiv.innerHTML = `<p>${message}</p>`;
+
+            // Ajouter au conteneur de messages ou au début de la page
+            const container = document.querySelector('.wrap') || document.body;
+            container.insertBefore(messageDiv, container.firstChild);
+
+            // Auto-suppression après 5 secondes
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+    }
+
     // Système de navigation des onglets
     function initTabs() {
         console.log('PDF Builder - initTabs called');
@@ -588,6 +623,8 @@
             countElement.textContent = count;
         }
     }
+
+
 
     /**
      * Gestionnaire pour les boutons de contrôle rapide des rôles
