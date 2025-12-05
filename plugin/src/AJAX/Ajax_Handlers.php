@@ -563,6 +563,9 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
  * AJAX Handler pour récupérer les rôles autorisés
  */
 function pdf_builder_test_roles_handler() {
+    error_log('PDF Builder: [TEST ROLES HANDLER] Called at ' . current_time('Y-m-d H:i:s'));
+    error_log('PDF Builder: [TEST ROLES HANDLER] POST data: ' . print_r($_POST, true));
+    
     // Handler ultra-simple pour diagnostiquer
     wp_send_json_success([
         'allowed_roles' => ['administrator', 'editor', 'shop_manager'],
