@@ -362,6 +362,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     if ($key === 'pdf_builder_allowed_roles') {
                         error_log("[AJAX HANDLER] SPECIAL HANDLING: Processing pdf_builder_allowed_roles");
                         error_log("[AJAX HANDLER] SPECIAL HANDLING: Raw value received: '" . $value . "'");
+                        error_log("[AJAX HANDLER] SPECIAL HANDLING: Type of value: " . gettype($value));
 
                         // Utiliser la fonction spécialisée pour les rôles
                         if (function_exists('pdf_builder_save_allowed_roles')) {
@@ -624,8 +625,10 @@ function pdf_builder_test_roles_handler() {
     
     // Récupérer les rôles autorisés depuis les paramètres
     $settings = get_option('pdf_builder_settings', []);
+    error_log('PDF Builder: [TEST ROLES HANDLER] Full settings from DB: ' . print_r($settings, true));
     $allowed_roles_raw = isset($settings['pdf_builder_allowed_roles']) ? $settings['pdf_builder_allowed_roles'] : ['administrator'];
     error_log('PDF Builder: [TEST ROLES HANDLER] Raw allowed_roles from DB: ' . print_r($allowed_roles_raw, true));
+    error_log('PDF Builder: [TEST ROLES HANDLER] Type of allowed_roles_raw: ' . gettype($allowed_roles_raw));
     
     // S'assurer que c'est un tableau
     if (!is_array($allowed_roles_raw)) {
