@@ -189,6 +189,12 @@ class PDF_Builder_Task_Scheduler {
                 if (class_exists('PDF_Builder_Logger')) {
                     PDF_Builder_Logger::get_instance()->info('Automatic backup created successfully');
                 }
+
+                // Notification de succès
+                if (class_exists('PDF_Builder_Notification_Manager')) {
+                    $message = __('Sauvegarde automatique créée avec succès !', 'pdf-builder-pro');
+                    PDF_Builder_Notification_Manager::get_instance()->success($message, ['duration' => 8000]);
+                }
             }
 
         } catch (Exception $e) {
@@ -424,6 +430,12 @@ class PDF_Builder_Task_Scheduler {
             ]);
         } else {
             error_log("[PDF Builder Task Error] $task_name: " . $exception->getMessage());
+        }
+
+        // Notification d'erreur pour les tâches importantes
+        if (class_exists('PDF_Builder_Notification_Manager') && $task_name === 'auto_backup') {
+            $message = __('Échec de la sauvegarde automatique', 'pdf-builder-pro');
+            PDF_Builder_Notification_Manager::get_instance()->error($message, ['duration' => 10000]);
         }
     }
 
