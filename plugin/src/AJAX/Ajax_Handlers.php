@@ -565,32 +565,48 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
  * AJAX Handler pour récupérer les rôles autorisés
  */
 function pdf_builder_test_roles_handler() {
-    error_log('PDF Builder: [TEST ROLES HANDLER] Called at ' . current_time('Y-m-d H:i:s'));
+    error_log('PDF Builder: [TEST ROLES HANDLER] ===== DÉBUT DU HANDLER =====');
+    error_log('PDF Builder: [TEST ROLES HANDLER] Timestamp: ' . current_time('Y-m-d H:i:s'));
     error_log('PDF Builder: [TEST ROLES HANDLER] POST data: ' . print_r($_POST, true));
+    error_log('PDF Builder: [TEST ROLES HANDLER] REQUEST data: ' . print_r($_REQUEST, true));
     
     // Récupérer les rôles autorisés depuis les paramètres
-    $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+    $allowed_roles_raw = get_option('pdf_builder_allowed_roles', ['administrator']);
+    error_log('PDF Builder: [TEST ROLES HANDLER] Raw allowed_roles from DB: ' . print_r($allowed_roles_raw, true));
     
     // S'assurer que c'est un tableau
-    if (!is_array($allowed_roles)) {
+    if (!is_array($allowed_roles_raw)) {
+        error_log('PDF Builder: [TEST ROLES HANDLER] Converting to array (was not array)');
         $allowed_roles = ['administrator'];
+    } else {
+        $allowed_roles = $allowed_roles_raw;
     }
     
     // Filtrer les rôles vides
     $allowed_roles = array_filter($allowed_roles);
+    error_log('PDF Builder: [TEST ROLES HANDLER] After array_filter: ' . print_r($allowed_roles, true));
     
     // Si aucun rôle, utiliser administrator par défaut
     if (empty($allowed_roles)) {
+        error_log('PDF Builder: [TEST ROLES HANDLER] Empty array, using default administrator');
         $allowed_roles = ['administrator'];
     }
     
-    error_log('PDF Builder: [TEST ROLES HANDLER] Allowed roles: ' . print_r($allowed_roles, true));
+    $final_roles = array_values($allowed_roles);
+    error_log('PDF Builder: [TEST ROLES HANDLER] Final roles to return: ' . print_r($final_roles, true));
+    error_log('PDF Builder: [TEST ROLES HANDLER] Count: ' . count($final_roles));
     
-    wp_send_json_success([
-        'allowed_roles' => array_values($allowed_roles),
-        'count' => count($allowed_roles),
-        'status' => 'handler_called'
-    ]);
+    $response = [
+        'allowed_roles' => $final_roles,
+        'count' => count($final_roles),
+        'status' => 'handler_called',
+        'timestamp' => current_time('timestamp')
+    ];
+    
+    error_log('PDF Builder: [TEST ROLES HANDLER] Response: ' . print_r($response, true));
+    error_log('PDF Builder: [TEST ROLES HANDLER] ===== FIN DU HANDLER =====');
+    
+    wp_send_json_success($response);
 }
 error_log('PDF Builder: [AJAX REGISTRATION] Registering pdf_builder_test_roles action');
 add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
