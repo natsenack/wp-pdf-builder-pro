@@ -49,8 +49,10 @@ class PDF_Builder_Task_Scheduler {
     }
 
     private function __construct() {
+        error_log('PDF Builder: Task Scheduler constructor called');
         $this->init_hooks();
         $this->schedule_tasks();
+        error_log('PDF Builder: Task Scheduler initialized');
     }
 
     /**
@@ -108,10 +110,12 @@ class PDF_Builder_Task_Scheduler {
      * Enregistre les actions AJAX pour le diagnostic cron
      */
     private function register_ajax_actions() {
+        error_log('PDF Builder: Registering AJAX actions');
         add_action('wp_ajax_pdf_builder_diagnose_cron', [$this, 'ajax_diagnose_cron']);
         add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
+        error_log('PDF Builder: AJAX actions registered');
     }
 
     /**
@@ -794,25 +798,35 @@ class PDF_Builder_Task_Scheduler {
      * AJAX handler pour diagnostiquer le système cron
      */
     public function ajax_diagnose_cron() {
+        error_log('PDF Builder: ajax_diagnose_cron called');
+
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            error_log('PDF Builder: Invalid nonce in ajax_diagnose_cron');
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
+        error_log('PDF Builder: Nonce valid in ajax_diagnose_cron');
+
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder: Insufficient permissions in ajax_diagnose_cron');
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
             return;
         }
 
+        error_log('PDF Builder: Permissions OK in ajax_diagnose_cron');
+
         try {
             $result = $this->diagnose_cron_system();
+            error_log('PDF Builder: diagnose_cron_system completed successfully');
             wp_send_json_success([
                 'status' => $result['cron_disabled'] ? 'Cron désactivé' : 'Cron actif',
                 'details' => implode("\n", array_merge($result['issues'], $result['recommendations']))
             ]);
         } catch (Exception $e) {
+            error_log('PDF Builder: Exception in ajax_diagnose_cron: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors du diagnostic: ' . $e->getMessage()]);
         }
     }
