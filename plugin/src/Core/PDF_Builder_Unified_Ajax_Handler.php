@@ -556,8 +556,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $settings[$option_key] = $option_value;
                 }
                 $saved_count++;
-            } elseif (in_array($key, $field_rules['array_fields'])) {
+            } elseif (in_array($key, $field_rules['array_fields']) || $key === 'pdf_builder_allowed_roles') {
                 error_log('[PDF Builder AJAX] Processing array field: ' . $key . ' = ' . json_encode($value) . ' (type: ' . gettype($value) . ')');
+                error_log('[PDF Builder AJAX] Is pdf_builder_allowed_roles in array_fields? ' . (in_array('pdf_builder_allowed_roles', $field_rules['array_fields']) ? 'YES' : 'NO'));
+                error_log('[PDF Builder AJAX] array_fields contains: ' . json_encode($field_rules['array_fields']));
                 if (is_array($value)) {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
