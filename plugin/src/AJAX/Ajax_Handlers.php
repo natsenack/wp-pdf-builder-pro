@@ -666,7 +666,52 @@ function pdf_builder_test_roles_handler() {
     
     wp_send_json_success($response);
 }
+
+/**
+ * Handler AJAX pour récupérer les paramètres de debug actuels
+ */
+function pdf_builder_get_debug_settings_handler() {
+    error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] ===== DÉBUT DU HANDLER =====');
+    error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Timestamp: ' . current_time('Y-m-d H:i:s'));
+    
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Nonce invalide');
+        wp_send_json_error(['message' => 'Nonce invalide'], 403);
+        return;
+    }
+    
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Permissions insuffisantes');
+        wp_send_json_error(['message' => 'Permissions insuffisantes'], 403);
+        return;
+    }
+    
+    // Récupérer les paramètres depuis la base de données
+    $settings = get_option('pdf_builder_settings', []);
+    error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Settings from DB: ' . print_r($settings, true));
+    
+    // Extraire les paramètres de debug
+    $debug_settings = [
+        'debug_javascript' => isset($settings['pdf_builder_debug_javascript']) ? (bool)$settings['pdf_builder_debug_javascript'] : false,
+        'debug_javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) ? (bool)$settings['pdf_builder_debug_javascript_verbose'] : false,
+        'debug_ajax' => isset($settings['pdf_builder_debug_ajax']) ? (bool)$settings['pdf_builder_debug_ajax'] : false,
+        'debug_performance' => isset($settings['pdf_builder_debug_performance']) ? (bool)$settings['pdf_builder_debug_performance'] : false,
+        'debug_database' => isset($settings['pdf_builder_debug_database']) ? (bool)$settings['pdf_builder_debug_database'] : false,
+        'debug_php_errors' => isset($settings['pdf_builder_debug_php_errors']) ? (bool)$settings['pdf_builder_debug_php_errors'] : false,
+    ];
+    
+    error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Debug settings to return: ' . print_r($debug_settings, true));
+    error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] ===== FIN DU HANDLER =====');
+    
+    wp_send_json_success($debug_settings);
+}
+
 error_log('PDF Builder: [AJAX REGISTRATION] Registering pdf_builder_test_roles action');
 add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
+
+error_log('PDF Builder: [AJAX REGISTRATION] Registering pdf_builder_get_debug_settings action');
+add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_settings_handler');
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 ?>

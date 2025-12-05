@@ -560,6 +560,15 @@
                     console.warn('PDF Builder - Impossible de recharger automatiquement les rôles, mais la sauvegarde a réussi:', error);
                     // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
                 });
+
+                // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
+                console.log('PDF Builder - Tentative de rechargement des paramètres de debug après sauvegarde...');
+                reloadDebugSettings().then(updatedDebug => {
+                    console.log('PDF Builder - Interface mise à jour avec les paramètres de debug sauvegardés:', updatedDebug);
+                }).catch(error => {
+                    console.warn('PDF Builder - Impossible de recharger automatiquement les paramètres de debug, mais la sauvegarde a réussi:', error);
+                    // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
+                });
             } else {
                 debugError('PDF Builder - Erreur de sauvegarde:', data);
                 debugError('PDF Builder - Détails de l\'erreur:', data.data);
@@ -643,6 +652,79 @@
             console.error('PDF Builder - [RELOAD ROLES] Erreur dans la promesse:', error);
             console.error('PDF Builder - [RELOAD ROLES] Message d\'erreur:', error.message);
             console.error('PDF Builder - [RELOAD ROLES] Stack trace:', error.stack);
+            throw error;
+        });
+    }
+
+    /**
+     * Recharge les paramètres de debug depuis la base de données
+     */
+    function reloadDebugSettings() {
+        console.log('PDF Builder - [RELOAD DEBUG] ===== DÉBUT RECHARGEMENT DEBUG =====');
+
+        const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
+        const nonce = pdfBuilderAjax ? pdfBuilderAjax.nonce : '';
+
+        console.log('PDF Builder - [RELOAD DEBUG] URL AJAX:', ajaxUrl);
+        console.log('PDF Builder - [RELOAD DEBUG] Nonce:', nonce ? 'présent (' + nonce.substring(0, 8) + '...)' : 'vide');
+        console.log('PDF Builder - [RELOAD DEBUG] Action à envoyer: pdf_builder_get_debug_settings');
+
+        const requestData = new FormData();
+        requestData.append('action', 'pdf_builder_get_debug_settings');
+        requestData.append('nonce', nonce);
+
+        return fetch(ajaxUrl, {
+            method: 'POST',
+            body: requestData
+        })
+        .then(response => {
+            console.log('PDF Builder - [RELOAD DEBUG] Réponse HTTP reçue - Status:', response.status);
+            console.log('PDF Builder - [RELOAD DEBUG] Réponse OK:', response.ok);
+            if (!response.ok) {
+                console.error('PDF Builder - [RELOAD DEBUG] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
+                throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('PDF Builder - [RELOAD DEBUG] Données JSON reçues:', data);
+            console.log('PDF Builder - [RELOAD DEBUG] Success:', data.success);
+
+            if (data.success && data.data) {
+                console.log('PDF Builder - [RELOAD DEBUG] Paramètres de debug reçus:', data.data);
+
+                // Mettre à jour les checkboxes de debug
+                const debugFields = [
+                    'debug_javascript',
+                    'debug_javascript_verbose',
+                    'debug_ajax',
+                    'debug_performance',
+                    'debug_database',
+                    'debug_php_errors'
+                ];
+
+                debugFields.forEach(fieldName => {
+                    const checkbox = document.getElementById(fieldName);
+                    if (checkbox) {
+                        const newValue = data.data[fieldName] || false;
+                        console.log(`PDF Builder - [RELOAD DEBUG] Mise à jour ${fieldName}: ${newValue}`);
+                        checkbox.checked = newValue;
+                    } else {
+                        console.warn(`PDF Builder - [RELOAD DEBUG] Checkbox non trouvée: ${fieldName}`);
+                    }
+                });
+
+                console.log('PDF Builder - [RELOAD DEBUG] ===== FIN RECHARGEMENT DEBUG RÉUSSI =====');
+                return data.data;
+            } else {
+                console.error('PDF Builder - [RELOAD DEBUG] Erreur - données invalides:', data);
+                throw new Error(data.data?.message || 'Erreur lors du rechargement des paramètres de debug');
+            }
+        })
+        .catch(error => {
+            console.error('PDF Builder - [RELOAD DEBUG] Erreur dans la promesse:', error);
+            console.error('PDF Builder - [RELOAD DEBUG] Message d\'erreur:', error.message);
+            console.error('PDF Builder - [RELOAD DEBUG] Stack trace:', error.stack);
             throw error;
         });
     }
