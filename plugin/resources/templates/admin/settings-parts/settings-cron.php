@@ -263,60 +263,50 @@ jQuery(document).ready(function($) {
         autoBackupMonitorInterval = setInterval(function() {
             console.log('PDF Builder: [AUTO BACKUP] 🔍 Checking for new automatic backups at', new Date().toISOString());
 
-            // Check backup stats to see if count has changed
+            // Check backup list to see if count has changed (using the same action as auto-load)
             $.ajax({
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'pdf_builder_get_backup_stats',
+                    action: 'pdf_builder_list_backups',
                     nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
                 },
                 success: function(response) {
-                    if (response.success) {
-                        try {
-                            // Parse the backup stats to get current count
-                            var statsText = response.data;
-                            var backupLines = statsText.split('\n').filter(function(line) {
-                                return line.includes('backup-') || line.includes('auto_backup');
+                    if (response.success && response.data && response.data.backups) {
+                        var currentBackupCount = response.data.backups.length;
+
+                        if (lastBackupCount === 0) {
+                            // First check - initialize counter
+                            lastBackupCount = currentBackupCount;
+                            console.log('PDF Builder: [AUTO BACKUP] 📊 Initialized backup counter:', currentBackupCount);
+                        } else if (currentBackupCount > lastBackupCount) {
+                            // New backup detected!
+                            var newBackups = currentBackupCount - lastBackupCount;
+                            console.log('PDF Builder: [AUTO BACKUP] 🎉 NEW AUTOMATIC BACKUP DETECTED!');
+                            console.log('PDF Builder: [AUTO BACKUP] 📈 Backup count increased from', lastBackupCount, 'to', currentBackupCount);
+                            console.log('PDF Builder: [AUTO BACKUP] ➕', newBackups, 'new backup(s) created by cron');
+
+                            // Log details of new backups
+                            var newBackupDetails = response.data.backups.slice(-newBackups);
+                            newBackupDetails.forEach(function(backup, index) {
+                                console.log('PDF Builder: [AUTO BACKUP] 🆕 New backup #' + (index + 1) + ':', backup.filename, '(' + backup.type + ' - ' + backup.size_human + ')');
                             });
 
-                            var currentBackupCount = backupLines.length;
+                            // Update counter
+                            lastBackupCount = currentBackupCount;
 
-                            if (lastBackupCount === 0) {
-                                // First check - initialize counter
-                                lastBackupCount = currentBackupCount;
-                                console.log('PDF Builder: [AUTO BACKUP] 📊 Initialized backup counter:', currentBackupCount);
-                            } else if (currentBackupCount > lastBackupCount) {
-                                // New backup detected!
-                                var newBackups = currentBackupCount - lastBackupCount;
-                                console.log('PDF Builder: [AUTO BACKUP] 🎉 NEW AUTOMATIC BACKUP DETECTED!');
-                                console.log('PDF Builder: [AUTO BACKUP] 📈 Backup count increased from', lastBackupCount, 'to', currentBackupCount);
-                                console.log('PDF Builder: [AUTO BACKUP] ➕', newBackups, 'new backup(s) created by cron');
-
-                                // Log details of new backups
-                                var newBackupLines = backupLines.slice(-newBackups);
-                                newBackupLines.forEach(function(backupLine, index) {
-                                    console.log('PDF Builder: [AUTO BACKUP] 🆕 New backup #' + (index + 1) + ':', backupLine.trim());
-                                });
-
-                                // Update counter
-                                lastBackupCount = currentBackupCount;
-
-                                // Optional: Show notification to user
-                                if (window.showInfoNotification) {
-                                    window.showInfoNotification('<?php _e('Automatic backup completed', 'pdf-builder-pro'); ?>', '<?php _e('A new backup was created by the scheduled task.', 'pdf-builder-pro'); ?>');
-                                }
-                            } else if (currentBackupCount < lastBackupCount) {
-                                console.warn('PDF Builder: [AUTO BACKUP] ⚠️ Backup count decreased from', lastBackupCount, 'to', currentBackupCount);
-                                lastBackupCount = currentBackupCount;
-                            } else {
-                                console.log('PDF Builder: [AUTO BACKUP] ✅ No new backups detected (count:', currentBackupCount + ')');
+                            // Optional: Show notification to user
+                            if (window.showInfoNotification) {
+                                window.showInfoNotification('<?php _e('Automatic backup completed', 'pdf-builder-pro'); ?>', '<?php _e('A new backup was created by the scheduled task.', 'pdf-builder-pro'); ?>');
                             }
-                        } catch (error) {
-                            console.error('PDF Builder: [AUTO BACKUP] Error parsing backup stats:', error);
+                        } else if (currentBackupCount < lastBackupCount) {
+                            console.warn('PDF Builder: [AUTO BACKUP] ⚠️ Backup count decreased from', lastBackupCount, 'to', currentBackupCount);
+                            lastBackupCount = currentBackupCount;
+                        } else {
+                            console.log('PDF Builder: [AUTO BACKUP] ✅ No new backups detected (count:', currentBackupCount + ')');
                         }
                     } else {
-                        console.error('PDF Builder: [AUTO BACKUP] Failed to check backup stats:', response.data);
+                        console.error('PDF Builder: [AUTO BACKUP] Invalid response format:', response);
                     }
                 },
                 error: function(xhr, status, error) {
