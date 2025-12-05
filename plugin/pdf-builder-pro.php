@@ -531,6 +531,14 @@ function pdf_builder_register_ajax_handlers() {
 }
 
 /**
+ * Test AJAX handler - Simple handler that always returns success
+ */
+function pdf_builder_test_ajax_handler() {
+    error_log('PDF Builder: [TEST AJAX] Handler called successfully');
+    wp_send_json_success(['message' => 'Test AJAX handler works', 'timestamp' => current_time('timestamp')]);
+}
+
+/**
  * AJAX handler for optimizing database
  */
 function pdf_builder_optimize_database_handler() {
