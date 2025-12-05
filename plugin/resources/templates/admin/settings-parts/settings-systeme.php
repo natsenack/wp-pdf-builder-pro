@@ -356,11 +356,18 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <button type="button" id="create-backup-btn" class="button button-primary">
                                             <span>📦</span> Créer une sauvegarde
                                         </button>
-                                        <button type="button" id="list-backups-btn" class="button button-secondary">
-                                            <span>📋</span> Lister les sauvegardes
-                                        </button>
                                     </div>
-                                    <div id="backup-results"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Sauvegardes disponibles</th>
+                                <td>
+                                    <div id="backup-accordion-container">
+                                        <div style="text-align: center; padding: 20px; color: #6c757d;">
+                                            <div style="font-size: 24px; margin-bottom: 10px;">⏳</div>
+                                            <div>Chargement des sauvegardes...</div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -912,11 +919,9 @@ if ($cache_last_cleanup !== 'Jamais') {
         e.preventDefault();
 
         const $btn = $(this);
-        const $results = $('#backup-results');
 
         // Désactiver le bouton pendant la création
         $btn.prop('disabled', true).html('<span>📦</span> Création en cours...');
-        $results.html('<span style="color: #007cba;">Création de la sauvegarde en cours...</span>');
 
         // Générer un nonce pour la requête
         const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
@@ -930,15 +935,14 @@ if ($cache_last_cleanup !== 'Jamais') {
             },
             success: function(response) {
                 if (response.success) {
-                    $results.html('<div style="color: #28a745; margin-top: 10px;">' + response.data.message + '</div>');
                     showSystemNotification(response.data.message, 'success');
+                    // Recharger automatiquement l'accordéon des sauvegardes
+                    loadBackupsOnPageLoad();
                 } else {
-                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de la création</div>');
                     showSystemNotification('Erreur lors de la création de la sauvegarde', 'error');
                 }
             },
             error: function(xhr, status, error) {
-                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
                 showSystemNotification('Erreur de connexion lors de la création de la sauvegarde', 'error');
             },
             complete: function() {
@@ -948,18 +952,12 @@ if ($cache_last_cleanup !== 'Jamais') {
         });
     });
 
-    // Gestionnaire pour le bouton de listage des sauvegardes
-    console.log('[DEBUG] Setting up backup list handler - v3');
-    $('#list-backups-btn').off('click').on('click', function(e) {
-        e.preventDefault();
-        console.log('[DEBUG] Backup list button clicked - v3');
+    // Chargement automatique des sauvegardes au démarrage
+    console.log('[DEBUG] Loading backups automatically on page load');
+    loadBackupsOnPageLoad();
 
-        const $btn = $(this);
-        const $results = $('#backup-results');
-
-        // Désactiver le bouton pendant le listage
-        $btn.prop('disabled', true).html('<span>📋</span> Listage en cours...');
-        $results.html('<span style="color: #007cba;">Récupération de la liste des sauvegardes...</span>');
+    function loadBackupsOnPageLoad() {
+        const $container = $('#backup-accordion-container');
 
         // Générer un nonce pour la requête
         const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
@@ -972,17 +970,17 @@ if ($cache_last_cleanup !== 'Jamais') {
                 nonce: nonce
             },
             success: function(response) {
-                console.log('[DEBUG] AJAX success response:', response);
+                console.log('[DEBUG] Auto-load AJAX success response:', response);
                 if (response.success) {
-                    console.log('[DEBUG] Response data:', response.data);
-                    let output = '<div style="margin-top: 10px;">';
+                    console.log('[DEBUG] Auto-load response data:', response.data);
+                    let output = '';
 
                     if (response.data.backups && response.data.backups.length > 0) {
-                        console.log('[DEBUG] Found', response.data.backups.length, 'backups');
+                        console.log('[DEBUG] Auto-load found', response.data.backups.length, 'backups');
                         output += '<div class="backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px;">';
 
                         response.data.backups.forEach(function(backup, index) {
-                            console.log('[DEBUG] Processing backup:', backup.filename);
+                            console.log('[DEBUG] Auto-load processing backup:', backup.filename);
                             const accordionId = 'backup-' + index;
                             output += '<div class="backup-accordion-item" style="border-bottom: 1px solid #dee2e6;">';
                             output += '<div class="backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="toggleAccordion(\'' + accordionId + '\')">';
@@ -1012,7 +1010,7 @@ if ($cache_last_cleanup !== 'Jamais') {
 
                         output += '</div>';
                     } else {
-                        console.log('[DEBUG] No backups found');
+                        console.log('[DEBUG] Auto-load no backups found');
                         output += '<div style="padding: 20px; text-align: center; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; color: #6c757d;">';
                         output += '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>';
                         output += '<h4 style="margin: 0 0 10px 0; color: #495057;">Aucune sauvegarde trouvée</h4>';
@@ -1020,31 +1018,20 @@ if ($cache_last_cleanup !== 'Jamais') {
                         output += '</div>';
                     }
 
-                    output += '</div>';
-                    console.log('[DEBUG] Generated HTML output:', output);
-                    $results.html(output);
-                    console.log('[DEBUG] HTML content set successfully');
-                    console.log('[DEBUG] Results container after setting HTML:', $results.html().substring(0, 200) + '...');
-                    console.log('[DEBUG] Results container is visible:', $results.is(':visible'));
-                    console.log('[DEBUG] Results container has accordion:', $results.find('.backup-accordion').length > 0);
-                    console.log('[DEBUG] Page has accordion headers:', $('.backup-accordion-header').length);
-                    showSystemNotification('Liste des sauvegardes récupérée', 'success');
+                    console.log('[DEBUG] Auto-load setting HTML content');
+                    $container.html(output);
+                    console.log('[DEBUG] Auto-load HTML content set successfully');
                 } else {
-                    console.log('[DEBUG] AJAX response not successful:', response);
-                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors du listage</div>');
-                    showSystemNotification('Erreur lors du listage des sauvegardes', 'error');
+                    console.log('[DEBUG] Auto-load AJAX response not successful:', response);
+                    $container.html('<div style="color: #dc3545; padding: 20px; text-align: center;">❌ Erreur lors du chargement des sauvegardes</div>');
                 }
             },
             error: function(xhr, status, error) {
-                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
-                showSystemNotification('Erreur de connexion lors du listage des sauvegardes', 'error');
-            },
-            complete: function() {
-                // Réactiver le bouton
-                $btn.prop('disabled', false).html('<span>📋</span> Lister les sauvegardes');
+                console.log('[DEBUG] Auto-load AJAX error:', error);
+                $container.html('<div style="color: #dc3545; padding: 20px; text-align: center;">❌ Erreur de connexion lors du chargement des sauvegardes</div>');
             }
         });
-    });
+    }
 
     // Gestionnaire pour les boutons de restauration de sauvegarde
     $(document).on('click', '.restore-backup-btn', function(e) {
