@@ -8,6 +8,14 @@
  * Sauvegarde les rôles autorisés
  */
 function pdf_builder_save_allowed_roles($roles) {
+    // Décoder le JSON si c'est une string JSON
+    if (is_string($roles) && (strpos($roles, '[') === 0 || strpos($roles, '{') === 0)) {
+        $decoded = json_decode($roles, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $roles = $decoded;
+        }
+    }
+
     if (!class_exists('PDF_Builder\\Security\\Role_Manager')) {
         // Fallback si Role_Manager n'est pas disponible
         if (!is_array($roles)) {

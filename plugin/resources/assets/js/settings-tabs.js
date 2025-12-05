@@ -501,12 +501,23 @@
         debugLog('PDF Builder - Debug fields being sent:', debugFields);
         debugLog('PDF Builder - pdf_builder_debug_javascript value:', flattenedData['pdf_builder_debug_javascript']);
 
-        // Préparer les données pour AJAX
+        // Préparer les données pour AJAX - convertir les arrays en JSON
         const ajaxData = {
             action: 'pdf_builder_save_all_settings',
             nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : '',
-            ...flattenedData
         };
+
+        // Traiter chaque champ en convertissant les arrays en JSON
+        for (const key in flattenedData) {
+            if (flattenedData.hasOwnProperty(key)) {
+                if (Array.isArray(flattenedData[key])) {
+                    ajaxData[key] = JSON.stringify(flattenedData[key]);
+                    debugLog(`PDF Builder - Array converti en JSON pour ${key}:`, ajaxData[key]);
+                } else {
+                    ajaxData[key] = flattenedData[key];
+                }
+            }
+        }
 
         debugLog('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
 
