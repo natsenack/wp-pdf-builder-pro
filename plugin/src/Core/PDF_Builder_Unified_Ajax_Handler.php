@@ -447,6 +447,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         // DEBUG: Log all received POST data
         error_log('[PDF Builder AJAX] RECEIVED POST DATA: ' . json_encode($_POST));
 
+        // DEBUG: Check specifically for pdf_builder_allowed_roles
+        if (isset($_POST['pdf_builder_allowed_roles'])) {
+            error_log('[PDF Builder AJAX] pdf_builder_allowed_roles FOUND in POST: ' . json_encode($_POST['pdf_builder_allowed_roles']) . ' (type: ' . gettype($_POST['pdf_builder_allowed_roles']) . ')');
+        } else {
+            error_log('[PDF Builder AJAX] pdf_builder_allowed_roles NOT FOUND in POST');
+        }
+
         // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
         foreach ($field_rules['bool_fields'] as $bool_field) {
             if (isset($_POST[$bool_field])) {
