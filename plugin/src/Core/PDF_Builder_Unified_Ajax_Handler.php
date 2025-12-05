@@ -391,6 +391,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $settings = get_option('pdf_builder_settings', []);
 
         error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
+        if (isset($_POST['pdf_builder_allowed_roles'])) {
+            error_log('[PDF Builder AJAX] pdf_builder_allowed_roles received: ' . json_encode($_POST['pdf_builder_allowed_roles']));
+        }
 
         // Define field type rules (same as in Ajax_Handlers.php)
         $field_rules = [
@@ -581,6 +584,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         // Save the settings array
+        if (isset($settings['pdf_builder_allowed_roles'])) {
+            error_log('[PDF Builder AJAX] About to save pdf_builder_allowed_roles: ' . json_encode($settings['pdf_builder_allowed_roles']));
+        }
         update_option('pdf_builder_settings', $settings);
         error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' settings to pdf_builder_settings option');
 

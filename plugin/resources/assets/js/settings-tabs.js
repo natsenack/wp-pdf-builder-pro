@@ -401,6 +401,10 @@
         });
 
         debugLog('PDF Builder - Données collectées:', allData);
+        // Log spécifique pour les données d'accès
+        if (allData.acces && allData.acces.pdf_builder_allowed_roles) {
+            debugLog('PDF Builder - Données acces collectées:', allData.acces.pdf_builder_allowed_roles);
+        }
         return allData;
     }
 
@@ -427,6 +431,12 @@
                     }
                 }
             }
+        }
+
+        debugLog('PDF Builder - Données aplaties:', flattenedData);
+        // Log spécifique pour pdf_builder_allowed_roles
+        if (flattenedData.pdf_builder_allowed_roles) {
+            debugLog('PDF Builder - pdf_builder_allowed_roles à envoyer:', flattenedData.pdf_builder_allowed_roles);
         }
 
         // DEBUG: Log debug fields being sent
