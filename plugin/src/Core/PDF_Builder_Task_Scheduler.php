@@ -98,6 +98,10 @@ class PDF_Builder_Task_Scheduler {
         }
 
         // Fallback pour les sauvegardes automatiques quand le cron système ne fonctionne pas
+        add_action('wp_ajax_pdf_builder_check_wp_cron_config', [$this, 'ajax_check_wp_cron_config']);
+        add_action('wp_ajax_pdf_builder_check_scheduled_tasks', [$this, 'ajax_check_scheduled_tasks']);
+        add_action('wp_ajax_pdf_builder_cron_test', [$this, 'ajax_cron_test']);
+    }
         add_action('admin_init', [$this, 'check_auto_backup_fallback']);
 
         // S'assurer que les actions AJAX sont enregistrées pour l'admin
@@ -991,6 +995,77 @@ class PDF_Builder_Task_Scheduler {
 
         error_log("PDF Builder: Backup frequency changed to $frequency");
         return true;
+    }
+
+    /**
+     * AJAX handler pour vérifier la configuration WP Cron
+     */
+    public function ajax_check_wp_cron_config() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $cron_disabled = defined('DISABLE_WP_CRON') && DISABLE_WP_CRON;
+
+        wp_send_json_success([
+            'cron_disabled' => $cron_disabled,
+            'cron_constant_defined' => defined('DISABLE_WP_CRON')
+        ]);
+    }
+
+    /**
+     * AJAX handler pour vérifier les tâches planifiées
+     */
+    public function ajax_check_scheduled_tasks() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $scheduled_tasks = [];
+        foreach (self::TASKS as $task_name => $config) {
+            if (wp_next_scheduled($task_name)) {
+                $scheduled_tasks[] = $task_name;
+            }
+        }
+
+        wp_send_json_success([
+            'scheduled_tasks' => $scheduled_tasks,
+            'total_tasks' => count(self::TASKS)
+        ]);
+    }
+
+    /**
+     * AJAX handler pour tester la réponse du système cron
+     */
+    public function ajax_cron_test() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_GET['nonce'] ?? '', 'pdf_builder_cron_test')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Test simple de réponse
+        wp_send_json_success([
+            'test' => 'ok',
+            'timestamp' => time(),
+            'message' => 'WP Cron system is responding'
+        ]);
     }
 }
 
