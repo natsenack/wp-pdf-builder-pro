@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <a href="#" class="nav-tab nav-tab-active" data-tab="general">General</a>
 <a href="#" class="nav-tab" data-tab="licence">License</a>
 <a href="#" class="nav-tab" data-tab="systeme">System</a>
+<a href="#" class="nav-tab" data-tab="cron">Cron</a>
 <a href="#" class="nav-tab" data-tab="acces">Access</a>
 <a href="#" class="nav-tab" data-tab="securite">Security</a>
 <a href="#" class="nav-tab" data-tab="pdf">PDF</a>
@@ -75,6 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <div id="tab-content-systeme" class="tab-content">
 <?php require_once __DIR__ . '/settings-parts/settings-systeme.php'; ?>
+</div>
+<div id="tab-content-cron" class="tab-content">
+<?php require_once __DIR__ . '/settings-parts/settings-cron.php'; ?>
 </div>
 <div id="tab-content-acces" class="tab-content">
 <?php require_once __DIR__ . '/settings-parts/settings-acces.php'; ?>
