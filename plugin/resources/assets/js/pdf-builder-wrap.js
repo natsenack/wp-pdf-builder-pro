@@ -48,7 +48,7 @@
                 document.dispatchEvent(event);
                 
             } catch (e) {
-                console.error('[pdf-builder-wrap] Error dispatching event:', e);
+                // console.error('[pdf-builder-wrap] Error dispatching event:', e);
             }
             return;
         }

@@ -176,7 +176,7 @@
                     }
                 },
                 error: function() {
-                    console.error('Erreur AJAX dans le GDPR');
+                    // console.error('Erreur AJAX dans le GDPR');
                 }
             });
         }

@@ -509,7 +509,7 @@
                 reloadRolesData().then(updatedRoles => {
                     
                 }).catch(error => {
-                    console.warn('PDF Builder - Impossible de recharger automatiquement les rôles, mais la sauvegarde a réussi:', error);
+                    // console.warn('PDF Builder - Impossible de recharger automatiquement les rôles, mais la sauvegarde a réussi:', error);
                     // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
                 });
 
@@ -518,7 +518,7 @@
                 reloadDebugSettings().then(updatedDebug => {
                     
                 }).catch(error => {
-                    console.warn('PDF Builder - Impossible de recharger automatiquement les paramètres de debug, mais la sauvegarde a réussi:', error);
+                    // console.warn('PDF Builder - Impossible de recharger automatiquement les paramètres de debug, mais la sauvegarde a réussi:', error);
                     // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
                 });
             } else {
@@ -557,7 +557,7 @@
         .then(response => {
 
             if (!response.ok) {
-                console.error('PDF Builder - [RELOAD ROLES] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
+                // console.error('PDF Builder - [RELOAD ROLES] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
                 throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
             }
             return response.json();
@@ -576,18 +576,18 @@
 
                 return data.data.allowed_roles;
             } else {
-                console.error('PDF Builder - [RELOAD ROLES] Erreur - données invalides:', data);
-                console.error('PDF Builder - [RELOAD ROLES] Data.success:', data.success);
-                console.error('PDF Builder - [RELOAD ROLES] Data.data:', data.data);
-                console.error('PDF Builder - [RELOAD ROLES] Allowed_roles isArray:', Array.isArray(data.data?.allowed_roles));
-                console.error('PDF Builder - [RELOAD ROLES] Full response structure:', JSON.stringify(data, null, 2));
+                // console.error('PDF Builder - [RELOAD ROLES] Erreur - données invalides:', data);
+                // console.error('PDF Builder - [RELOAD ROLES] Data.success:', data.success);
+                // console.error('PDF Builder - [RELOAD ROLES] Data.data:', data.data);
+                // console.error('PDF Builder - [RELOAD ROLES] Allowed_roles isArray:', Array.isArray(data.data?.allowed_roles));
+                // console.error('PDF Builder - [RELOAD ROLES] Full response structure:', JSON.stringify(data, null, 2));
                 throw new Error(data.data || 'Erreur lors du rechargement des rôles');
             }
         })
         .catch(error => {
-            console.error('PDF Builder - [RELOAD ROLES] Erreur dans la promesse:', error);
-            console.error('PDF Builder - [RELOAD ROLES] Message d\'erreur:', error.message);
-            console.error('PDF Builder - [RELOAD ROLES] Stack trace:', error.stack);
+            // console.error('PDF Builder - [RELOAD ROLES] Erreur dans la promesse:', error);
+            // console.error('PDF Builder - [RELOAD ROLES] Message d\'erreur:', error.message);
+            // console.error('PDF Builder - [RELOAD ROLES] Stack trace:', error.stack);
             throw error;
         });
     }
@@ -611,7 +611,7 @@
         .then(response => {
 
             if (!response.ok) {
-                console.error('PDF Builder - [RELOAD DEBUG] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
+                // console.error('PDF Builder - [RELOAD DEBUG] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
                 throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
             }
             return response.json();
@@ -637,20 +637,20 @@
                         
                         checkbox.checked = newValue;
                     } else {
-                        console.warn(`PDF Builder - [RELOAD DEBUG] Checkbox non trouvée: ${fieldName}`);
+                        // console.warn(`PDF Builder - [RELOAD DEBUG] Checkbox non trouvée: ${fieldName}`);
                     }
                 });
 
                 return data.data;
             } else {
-                console.error('PDF Builder - [RELOAD DEBUG] Erreur - données invalides:', data);
+                // console.error('PDF Builder - [RELOAD DEBUG] Erreur - données invalides:', data);
                 throw new Error(data.data?.message || 'Erreur lors du rechargement des paramètres de debug');
             }
         })
         .catch(error => {
-            console.error('PDF Builder - [RELOAD DEBUG] Erreur dans la promesse:', error);
-            console.error('PDF Builder - [RELOAD DEBUG] Message d\'erreur:', error.message);
-            console.error('PDF Builder - [RELOAD DEBUG] Stack trace:', error.stack);
+            // console.error('PDF Builder - [RELOAD DEBUG] Erreur dans la promesse:', error);
+            // console.error('PDF Builder - [RELOAD DEBUG] Message d\'erreur:', error.message);
+            // console.error('PDF Builder - [RELOAD DEBUG] Stack trace:', error.stack);
             throw error;
         });
     }

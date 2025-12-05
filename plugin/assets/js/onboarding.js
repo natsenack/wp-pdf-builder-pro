@@ -155,7 +155,7 @@
                     }
                 },
                 error: function() {
-                    console.error('Erreur AJAX dans l\'onboarding');
+                    // console.error('Erreur AJAX dans l\'onboarding');
                 }
             });
         }

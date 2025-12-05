@@ -477,26 +477,26 @@ function pdf_builder_restore_backup_ajax() {
 function pdf_builder_register_ajax_handlers() {
     static $handlers_registered = false;
     
-    error_log('PDF Builder: [AJAX REGISTRATION] Function called at ' . current_time('Y-m-d H:i:s'));
+    // error_log('PDF Builder: [AJAX REGISTRATION] Function called at ' . current_time('Y-m-d H:i:s'));
     
     if ($handlers_registered) {
-        error_log('PDF Builder: [AJAX REGISTRATION] Handlers already registered, skipping');
+        // error_log('PDF Builder: [AJAX REGISTRATION] Handlers already registered, skipping');
         return;
     }
     
-    error_log('PDF Builder: [AJAX REGISTRATION] Starting AJAX handlers registration');
+    // error_log('PDF Builder: [AJAX REGISTRATION] Starting AJAX handlers registration');
     
     // Check if functions exist before registering
     if (!function_exists('pdf_builder_create_backup_ajax')) {
-        error_log('PDF Builder: [AJAX REGISTRATION] ERROR: pdf_builder_create_backup_ajax function not found');
+        // error_log('PDF Builder: [AJAX REGISTRATION] ERROR: pdf_builder_create_backup_ajax function not found');
     } else {
-        error_log('PDF Builder: [AJAX REGISTRATION] pdf_builder_create_backup_ajax function found');
+        // error_log('PDF Builder: [AJAX REGISTRATION] pdf_builder_create_backup_ajax function found');
     }
     
     if (!function_exists('pdf_builder_list_backups_ajax')) {
-        error_log('PDF Builder: [AJAX REGISTRATION] ERROR: pdf_builder_list_backups_ajax function not found');
+        // error_log('PDF Builder: [AJAX REGISTRATION] ERROR: pdf_builder_list_backups_ajax function not found');
     } else {
-        error_log('PDF Builder: [AJAX REGISTRATION] pdf_builder_list_backups_ajax function found');
+        // error_log('PDF Builder: [AJAX REGISTRATION] pdf_builder_list_backups_ajax function found');
     }
     
     // Simplified AJAX handlers registration - complex factory system removed
@@ -527,7 +527,7 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax');
     add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_ajax_handler_dispatch');
 
-    error_log('PDF Builder: [AJAX REGISTRATION] AJAX handlers registration completed');
+    // error_log('PDF Builder: [AJAX REGISTRATION] AJAX handlers registration completed');
     
     $handlers_registered = true;
     

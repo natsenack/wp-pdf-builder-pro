@@ -499,8 +499,8 @@ class PdfBuilderTemplateManager
                     if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
                     }
                 }
             } catch (\Exception $e) {
@@ -808,15 +808,15 @@ class PdfBuilderTemplateManager
         // Log pour débogage (only in debug mode)
         if (self::isDebugMode()) {
             $log_file = WP_CONTENT_DIR . '/debug_pdf_template.log';
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
+            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
+            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
 
             // Vérifier si la table existe
             $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") === $table_templates;
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
+            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
 
             if (!$table_exists) {
-                file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
+                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
                 return false;
             }
 

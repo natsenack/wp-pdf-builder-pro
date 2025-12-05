@@ -50,7 +50,7 @@ if (typeof window !== 'undefined' && window.React) {
       // Log hook access for debugging
       if (typeof prop === 'string' && (prop.startsWith('use') || prop === 'createElement')) {
         if (!value) {
-          console.warn(`⚠️ [react-shim] Hook ${prop} is undefined on React object`, { target, value });
+          // console.warn(`⚠️ [react-shim] Hook ${prop} is undefined on React object`, { target, value });
         }
       }
       

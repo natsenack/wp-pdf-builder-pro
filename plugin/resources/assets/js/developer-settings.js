@@ -172,13 +172,13 @@
                     this.showNotification('Paramètre sauvegardé avec succès', 'success');
                     return data;
                 } else {
-                    console.error('[PDF Builder Developer] Save failed:', data);
+                    // console.error('[PDF Builder Developer] Save failed:', data);
                     this.showNotification('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
                     throw new Error('Save failed');
                 }
             })
             .catch(error => {
-                console.error('[PDF Builder Developer] AJAX error:', error);
+                // console.error('[PDF Builder Developer] AJAX error:', error);
                 this.showNotification('Erreur de connexion: ' + error.message, 'error');
                 throw error;
             });
