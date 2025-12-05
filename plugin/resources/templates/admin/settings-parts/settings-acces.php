@@ -29,7 +29,7 @@
 
             <!-- Simple form with checkboxes -->
             <form method="post" action="" id="roles-form" style="background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-                <?php wp_nonce_field('pdf_builder_save_roles', 'roles_nonce'); ?>
+                <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_acces_nonce'); ?>
 
                 <div class="roles-grid" style="display: grid; gap: 15px;">
                     <?php foreach ($all_roles as $role_key => $role) :
@@ -66,12 +66,64 @@
 
             <!-- Message d'aide pour la sauvegarde -->
             <aside style="background: #f0f8ff; border: 1px solid #007cba; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                <h4 style="margin: 0 0 10px 0; color: #007cba;">💡 Comment sauvegarder les rôles ?</h4>
+                <h4 style="margin: 0 0 10px 0; color: #007cba;">💡 Comment sauvegarder les rôles</h4>
                 <p style="margin: 0;">
-                    Utilisez le bouton <strong>"💾 Enregistrer"</strong> flottant en bas à droite de l'écran pour sauvegarder les paramètres d'accès.
-                    Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
+                    Cochez/décochez les rôles souhaités, puis utilisez le bouton <strong>"💾 Enregistrer"</strong> flottant en bas à droite pour sauvegarder.
                 </p>
             </aside>
+
+            <script>
+            jQuery(document).ready(function($) {
+
+                // Fonction pour mettre à jour le compteur global
+                function updateGlobalStatus() {
+                    var selectedRoles = [];
+                    $('input[name="pdf_builder_allowed_roles[]"]:checked:not(:disabled)').each(function() {
+                        selectedRoles.push($(this).val());
+                    });
+
+                    var count = selectedRoles.length;
+                    $('#roles-count').text(count + ' rôle(s) sélectionné(s)');
+
+                    // Mettre à jour la liste des rôles actifs
+                    var roleNames = selectedRoles.map(function(role) {
+                        return $('label[for="role_' + role + '"] strong').text() || role;
+                    });
+
+                    $('#roles-count').next().find('strong').text(roleNames.join(', ') || 'Aucun');
+                }
+
+                // Activer automatiquement les rôles demandés (Auteur, Contributeur, Abonné, Client)
+                function activateSpecificRoles() {
+                    var rolesToActivate = ['author', 'contributor', 'subscriber', 'customer'];
+
+                    rolesToActivate.forEach(function(roleKey) {
+                        var $checkbox = $('input[name="pdf_builder_allowed_roles[]"][value="' + roleKey + '"]:not(:disabled)');
+                        if ($checkbox.length && !$checkbox.prop('checked')) {
+                            $checkbox.prop('checked', true);
+                            console.log('✅ Activation automatique du rôle:', roleKey);
+                        }
+                    });
+
+                    updateGlobalStatus();
+                }
+
+                // Mettre à jour le compteur quand on change les checkboxes
+                $(document).on('change', 'input[name="pdf_builder_allowed_roles[]"]', function() {
+                    updateGlobalStatus();
+                });
+
+                // Initialiser le compteur
+                updateGlobalStatus();
+
+                // Activer automatiquement les rôles demandés au chargement de la page
+                setTimeout(function() {
+                    activateSpecificRoles();
+                }, 500);
+
+                console.log('🔄 Système de rôles initialisé - rôles activés automatiquement');
+            });
+            </script>
 
 
 
