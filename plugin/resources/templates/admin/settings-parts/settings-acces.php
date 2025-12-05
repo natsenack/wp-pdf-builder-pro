@@ -23,6 +23,15 @@
     echo "<!-- DEBUG: allowed_roles = " . json_encode($allowed_roles) . " -->";
     error_log('[PDF Builder ACCES] Retrieved allowed_roles_raw: ' . json_encode($allowed_roles_raw) . ', processed: ' . json_encode($allowed_roles));
 
+    // DEBUG: Afficher directement dans la page pour vérification immédiate
+    echo "<div style='background: #f0f8ff; border: 1px solid #007cba; padding: 10px; margin: 10px 0; border-radius: 4px;'>";
+    echo "<strong>🔍 DEBUG - Valeurs récupérées depuis la base de données:</strong><br>";
+    echo "allowed_roles_raw: <code>" . json_encode($allowed_roles_raw) . "</code><br>";
+    echo "allowed_roles (processed): <code>" . json_encode($allowed_roles) . "</code><br>";
+    echo "Settings complets: <code>" . json_encode($settings) . "</code><br>";
+    echo "</div>";
+    error_log('[PDF Builder ACCES] Full settings array: ' . json_encode($settings));
+
     $role_descriptions = [
         'administrator' => 'Accès complet à toutes les fonctionnalités',
         'editor' => 'Peut publier et gérer les articles',

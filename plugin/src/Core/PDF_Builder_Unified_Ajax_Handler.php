@@ -208,7 +208,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'backup_retention' => get_option('pdf_builder_backup_retention', 30),
 
                     // Accès
-                    'allowed_roles' => get_option('pdf_builder_allowed_roles', ['administrator']),
+                    'allowed_roles' => get_option('pdf_builder_settings')['pdf_builder_allowed_roles'] ?? ['administrator'],
 
                     // Sécurité
                     'security_level' => get_option('pdf_builder_security_level', 'medium'),
@@ -593,6 +593,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         update_option('pdf_builder_settings', $settings);
         error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' settings to pdf_builder_settings option');
+
+        // DEBUG: Vérifier immédiatement si les données ont été sauvegardées
+        $saved_settings = get_option('pdf_builder_settings', []);
+        if (isset($saved_settings['pdf_builder_allowed_roles'])) {
+            error_log('[PDF Builder AJAX] VERIFICATION - pdf_builder_allowed_roles saved successfully: ' . json_encode($saved_settings['pdf_builder_allowed_roles']));
+        } else {
+            error_log('[PDF Builder AJAX] VERIFICATION - pdf_builder_allowed_roles NOT found after save!');
+        }
+        error_log('[PDF Builder AJAX] VERIFICATION - Full saved settings: ' . json_encode($saved_settings));
 
         return $saved_count;
     }
