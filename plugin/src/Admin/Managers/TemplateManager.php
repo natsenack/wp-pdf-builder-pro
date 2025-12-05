@@ -35,7 +35,7 @@ class TemplateManager
     private function debug_log($message)
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF Builder TemplateManager: ' . $message);
+            // error_log('PDF Builder TemplateManager: ' . $message);
         }
     }
 
@@ -221,18 +221,18 @@ class TemplateManager
     public function ajaxSaveTemplateV3()
     {
         try {
-            $this->debug_log('TemplateManager ajaxSaveTemplateV3 called');
+            // $this->debug_log('TemplateManager ajaxSaveTemplateV3 called');
             
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                $this->debug_log('Permissions insuffisantes');
+                // $this->debug_log('Permissions insuffisantes');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
             // Vérifier le nonce
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                $this->debug_log('Nonce invalide');
+                // $this->debug_log('Nonce invalide');
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -241,10 +241,10 @@ class TemplateManager
             $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
 
-            $this->debug_log('Template data received - name: ' . $template_name . ', id: ' . $template_id . ', data size: ' . strlen($_POST['template_data'] ?? ''));
+            // $this->debug_log('Template data received - name: ' . $template_name . ', id: ' . $template_id . ', data size: ' . strlen($_POST['template_data'] ?? ''));
 
             if (!$template_data || empty($template_name)) {
-                $this->debug_log('Données de template ou nom manquant');
+                // $this->debug_log('Données de template ou nom manquant');
                 wp_send_json_error('Données de template ou nom manquant');
                 return;
             }
@@ -260,24 +260,24 @@ class TemplateManager
                 ]
             ];
 
-            $this->debug_log('Post data prepared: ' . print_r($post_data, true));
+            // $this->debug_log('Post data prepared: ' . print_r($post_data, true));
 
             if ($template_id) {
                 $post_data['ID'] = $template_id;
-                $this->debug_log('Updating existing template ID: ' . $template_id);
+                // $this->debug_log('Updating existing template ID: ' . $template_id);
                 $result = wp_update_post($post_data);
             } else {
-                $this->debug_log('Creating new template');
+                // $this->debug_log('Creating new template');
                 $result = wp_insert_post($post_data);
             }
 
             if (is_wp_error($result)) {
-                $this->debug_log('Error saving template: ' . $result->get_error_message());
+                // $this->debug_log('Error saving template: ' . $result->get_error_message());
                 wp_send_json_error('Erreur lors de la sauvegarde: ' . $result->get_error_message());
                 return;
             }
 
-            $this->debug_log('Template saved successfully with ID: ' . $result);
+            // $this->debug_log('Template saved successfully with ID: ' . $result);
             wp_send_json_success([
                 'template_id' => $result,
                 'message' => 'Template sauvegardé avec succès'
@@ -315,15 +315,15 @@ class TemplateManager
 
             $template_data = get_post_meta($template_id, '_pdf_template_data', true);
 
-            $this->debug_log('Loading template ID: ' . $template_id . ', data found: ' . ($template_data ? 'yes' : 'no'));
+            // $this->debug_log('Loading template ID: ' . $template_id . ', data found: ' . ($template_data ? 'yes' : 'no'));
 
             if (!$template_data) {
-                $this->debug_log('Template data not found for ID: ' . $template_id);
+                // $this->debug_log('Template data not found for ID: ' . $template_id);
                 wp_send_json_error('Template introuvable');
                 return;
             }
 
-            $this->debug_log('Template loaded successfully, data size: ' . strlen(json_encode($template_data)));
+            // $this->debug_log('Template loaded successfully, data size: ' . strlen(json_encode($template_data)));
             wp_send_json_success([
                 'template' => $template_data,
                 'message' => 'Template chargé avec succès'

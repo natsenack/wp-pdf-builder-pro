@@ -12,7 +12,7 @@
             const entry = { ts: ts, msg: message, data: data };
             window.pdfBuilderRootLog.push(entry);
             if (DEBUG) {
-                debugLog('📡 PDF-ROOT:', message, data || '');
+                
             }
         } catch (e) {}
     }
@@ -191,10 +191,11 @@
             });
             console.groupEnd();
         } catch(e) {
-            debugLog('Error dumping root log', e);
+            
         }
         return window.pdfBuilderRootLog;
     };
 
     logRoot('tabs-root-monitor initialized (DEBUG=' + DEBUG + ')');
 })();
+

@@ -26,7 +26,6 @@
                 return;
             }
 
-
             templateData.elements.forEach(element => {
                 applyElementStyles(null, element);
             });
@@ -184,3 +183,4 @@
         initializeCanvasStyleInjector();
     }
 })();
+

@@ -137,24 +137,24 @@
 
 <script>
 jQuery(document).ready(function($) {
-    console.log('PDF Builder - Access tab JavaScript loaded');
+    
 
     // Fonction pour mettre à jour le compteur
     function updateSelectedCount() {
         var count = $('input[name="pdf_builder_allowed_roles[]"]:checked:not(:disabled)').length;
         $('#selected-count').text(count);
-        console.log('PDF Builder - Updated count:', count);
+        
     }
 
     // Gestion des boutons de contrôle rapide
     $('#select-all-roles').on('click', function() {
-        console.log('PDF Builder - Select all clicked');
+        
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', true);
         updateSelectedCount();
     });
 
     $('#select-common-roles').on('click', function() {
-        console.log('PDF Builder - Select common clicked');
+        
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', false);
         // Sélectionner les rôles courants
         $('input[name="pdf_builder_allowed_roles[]"][value="administrator"]').prop('checked', true);
@@ -164,7 +164,7 @@ jQuery(document).ready(function($) {
     });
 
     $('#select-none-roles').on('click', function() {
-        console.log('PDF Builder - Select none clicked');
+        
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', false);
         updateSelectedCount();
     });
@@ -177,7 +177,7 @@ jQuery(document).ready(function($) {
     // Initialiser le compteur
     updateSelectedCount();
 
-    console.log('PDF Builder - Access tab JavaScript initialized');
+    
 });
 </script>
 

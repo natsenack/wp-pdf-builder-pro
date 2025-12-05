@@ -1063,7 +1063,7 @@ class PDF_Builder_Test_Suite {
                 'trace' => $exception->getTraceAsString()
             ]);
         } else {
-            error_log("[PDF Builder Test Error] $operation: " . $exception->getMessage());
+            // error_log("[PDF Builder Test Error] $operation: " . $exception->getMessage());
         }
     }
 

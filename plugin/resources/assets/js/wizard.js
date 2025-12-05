@@ -216,8 +216,6 @@ var pdfBuilderWizard = {
     finish: function() {
         // Rediriger vers la page principale du plugin
 
-
-        
         if (typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.adminUrl) {
             window.location.href = pdfBuilderWizardData.adminUrl;
         } else {
@@ -377,3 +375,4 @@ var pdfBuilderWizard = {
 jQuery(document).ready(function() {
     pdfBuilderWizard.init();
 });
+

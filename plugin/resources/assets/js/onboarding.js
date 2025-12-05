@@ -484,9 +484,6 @@
 
         handleCompleteStep() {
 
-
-
-
             // Désactiver le bouton pour éviter les clics multiples
             const $button = $('.complete-step');
             const originalText = $button.text();
@@ -573,7 +570,6 @@
 
         handleSkipOnboarding() {
 
-
             if (confirm('Êtes-vous sûr de vouloir ignorer complètement l\'assistant de configuration ?')) {
                 // Désactiver le bouton
                 const $button = $('[data-action="skip-onboarding"]');
@@ -625,7 +621,6 @@
         finishOnboarding() {
             // Finaliser l'onboarding
 
-            
             // Marquer comme terminé
             this.markOnboardingComplete();
             
@@ -647,7 +642,6 @@
         loadStep(stepNumber) {
             // Charger une étape spécifique via AJAX
 
-
             $.ajax({
                 url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
@@ -658,7 +652,6 @@
                 },
                 success: (response) => {
                     if (response.success) {
-
 
                         this.applyStepData(stepNumber, response.data);
                     } else {
@@ -689,10 +682,8 @@
             // Vérifier les boutons existants avant remplacement
             const existingButtons = $content.find('.complete-step');
 
-
             // Vérifier aussi tous les boutons dans la modal
             const allButtonsInModal = $modal.find('.complete-step');
-
 
             // Mettre à jour le contenu de la modal
             $content.html(data.content);
@@ -700,10 +691,8 @@
             // Vérifier les boutons après remplacement
             const newButtons = $content.find('.complete-step');
 
-
             // Vérifier aussi tous les boutons dans la modal après
             const allButtonsInModalAfter = $modal.find('.complete-step');
-
 
             // Gérer les boutons du footer qui persistent entre les étapes
             const $footer = $modal.find('.modal-footer');
@@ -712,11 +701,9 @@
             // Supprimer tous les boutons existants du footer
             footerButtons.remove();
 
-
             // Générer tous les boutons nécessaires pour cette étape
             const footerHtml = this.generateFooterButtons(step, data);
             $footer.html(footerHtml);
-
 
             // Gérer le bouton précédent dans le header
             this.updatePreviousButton(step);
@@ -737,7 +724,6 @@
                 const templateName = templateNames[this.selectedTemplate] || this.selectedTemplate;
                 $('#selected-template-name').text(templateName);
             }
-
 
         }
 
@@ -924,9 +910,7 @@
 
         completeStep(step, actionType = 'next') {
 
-
             const $button = $(`.complete-step[data-step="${step}"]`);
-
 
             // Sauvegarder le texte original
             const originalText = $button.text();
@@ -934,7 +918,6 @@
 
             // Désactiver le bouton avec feedback visuel
             $button.prop('disabled', true);
-
 
             // Texte de chargement selon le type d'action
             const loadingText = actionType === 'finish' ? 'Finalisation...' : 'Chargement...';
@@ -965,9 +948,7 @@
                 success: (response) => {
                     clearTimeout(timeoutId);
 
-
                     if (response.success) {
-
 
                         // Feedback de succès selon le type d'action
                         if (actionType === 'finish') {
@@ -1101,7 +1082,6 @@
         selectTemplate($card) {
             const templateId = $card.data('template');
 
-
             // Vérifier si ce template est déjà sélectionné
             if (this.selectedTemplate === templateId) {
                 // Désélectionner le template
@@ -1125,7 +1105,6 @@
 
         selectFreemiumMode($card) {
             const modeId = $card.data('mode');
-
 
             // Sélectionner le mode
             $('.mode-card').removeClass('selected');
@@ -1159,7 +1138,6 @@
                 // Logique cohérente : désactiver seulement si requires_selection est true
                 const shouldDisable = stepData.requires_selection === true;
                 $primaryButton.prop('disabled', shouldDisable);
-
 
             }
             
@@ -1639,9 +1617,6 @@
         generateFooterButtons(step, data) {
             // Générer tous les boutons du footer pour une étape
 
-
-
-
             let buttonsHtml = '';
 
             // Bouton skip (si applicable)
@@ -1679,8 +1654,6 @@
 
                 const isDisabled = shouldDisable ? 'disabled' : '';
 
-
-
                 buttonsHtml += `
                     <button class="button ${buttonClass} complete-step"
                             data-step="${step}"
@@ -1690,7 +1663,6 @@
                     </button>
                 `;
             }
-
 
             return buttonsHtml;
         }
@@ -1728,8 +1700,6 @@
             // Régénérer les boutons du footer pour l'étape actuelle
             // Cela est nécessaire quand l'état change (par exemple, sélection de template)
 
-
-
             // Simuler les données de l'étape actuelle (on pourrait les récupérer du cache)
             const stepData = this.getStepData(this.currentStep);
 
@@ -1742,13 +1712,10 @@
                 requires_selection: stepData.requires_selection || false
             };
 
-
-
             // Régénérer les boutons
             const $footer = $('#pdf-builder-onboarding-modal .modal-footer');
             const footerHtml = this.generateFooterButtons(this.currentStep, data);
             $footer.html(footerHtml);
-
 
         }
 
@@ -1769,7 +1736,6 @@
 
             const $modal = $('#pdf-builder-onboarding-modal');
             const allButtons = $modal.find('.complete-step');
-
 
             // Lister tous les boutons avec leur chemin DOM
             allButtons.each(function(index) {
@@ -1881,8 +1847,6 @@
                 assignmentData.template_actions.push($(this).val());
             });
 
-
-
             // Sauvegarder via AJAX
             $.ajax({
                 url: pdfBuilderOnboarding.ajax_url,
@@ -1916,3 +1880,4 @@
     });
 
 })(jQuery);
+

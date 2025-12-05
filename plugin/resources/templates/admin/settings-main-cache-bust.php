@@ -5,7 +5,7 @@ echo "<script>
 function addFloatingSaveButton() {
     // Vérifier si le bouton existe déjà
     if (document.getElementById('pdf-builder-floating-save-btn')) {
-        console.log('🎯 Bouton flottant déjà présent');
+        
         return;
     }
 
@@ -27,11 +27,11 @@ function addFloatingSaveButton() {
     // Ajouter le conteneur au body
     document.body.appendChild(container);
 
-    console.log('🎯 BOUTON FLOTTANT AJOUTÉ CÔTÉ CLIENT - ' + new Date().toLocaleTimeString());
+    .toLocaleTimeString());
 
     // Ajouter un événement de clic
     button.addEventListener('click', function() {
-        console.log('💾 Bouton flottant cliqué !');
+        
         alert('Bouton flottant fonctionnel !');
     });
 }
@@ -56,6 +56,6 @@ var retryInterval = setInterval(function() {
     addFloatingSaveButton();
 }, 1000);
 
-console.log('🚀 SCRIPT CLIENT CHARGÉ - ' + new Date().toLocaleTimeString());
+.toLocaleTimeString());
 </script>";
 ?>

@@ -103,59 +103,59 @@ class PdfBuilderTemplateManager
         };
 
         // Log avant le try pour capturer les erreurs fatales
-        $debugLog('ajaxSaveTemplateV3 method called');
+        // $debugLog('ajaxSaveTemplateV3 method called');
 
         try {
             // Log pour debug - TEMPORAIRE
-            $debugLog('ajaxSaveTemplateV3 started');
-            $debugLog('REQUEST: ' . print_r($_REQUEST, true));
-            $debugLog('POST keys: ' . implode(', ', array_keys($_POST)));
-            $debugLog('SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+            // $debugLog('ajaxSaveTemplateV3 started');
+            // $debugLog('REQUEST: ' . print_r($_REQUEST, true));
+            // $debugLog('POST keys: ' . implode(', ', array_keys($_POST)));
+            // $debugLog('SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
             // Write to uploads directory for guaranteed access (only in debug mode)
             if (self::isDebugMode()) {
                 $upload_dir = wp_upload_dir();
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
+                // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
+                // file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
             }
 
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
-                $debugLog('Permission check failed');
+                // $debugLog('Permission check failed');
                 \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
-            $debugLog('Permission check passed');
+            // $debugLog('Permission check passed');
 
             // Vérification du nonce - TEMPORAIREMENT DÉSACTIVÉ POUR DÉVELOPPEMENT
             $nonce_valid = true; // Toujours accepter pour le développement
-            $debugLog('Nonce validation bypassed for development');
+            // $debugLog('Nonce validation bypassed for development');
 
             if (!$nonce_valid) {
-                $debugLog('Nonce validation failed');
+                // $debugLog('Nonce validation failed');
                 \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
-            $debugLog('Nonce validation passed');
+            // $debugLog('Nonce validation passed');
 
             // Récupération et nettoyage des données
-            $debugLog('Starting data processing');            // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
+            // $debugLog('Starting data processing');            // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
             
             $json_data = null;
             if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
-                $debugLog('Processing JSON data');
+                // $debugLog('Processing JSON data');
                 $json_input = file_get_contents('php://input');
                 
                 $json_data = json_decode($json_input, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    $debugLog('JSON decode error: ' . json_last_error_msg());
+                    // $debugLog('JSON decode error: ' . json_last_error_msg());
                     \wp_send_json_error('Données JSON invalides dans le corps de la requête: ' . json_last_error_msg());
                     return;
                 }
-                $debugLog('JSON data decoded successfully');
+                // $debugLog('JSON data decoded successfully');
             } else {
-                $debugLog('Processing FormData');
+                // $debugLog('Processing FormData');
             }
 
             // Support pour les clés camelCase (frontend) et snake_case (ancien)
@@ -194,7 +194,7 @@ class PdfBuilderTemplateManager
                               (isset($json_data['template_id']) ? \intval($json_data['template_id']) : 0);
             } else {
                 // Données FormData
-                $debugLog('Processing FormData fields');
+                // $debugLog('Processing FormData fields');
                 $template_data = isset($_POST['template_data']) ? \trim(\wp_unslash($_POST['template_data'])) : 
                                 (isset($_POST['templateData']) ? \trim(\wp_unslash($_POST['templateData'])) : '');
                 $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : 
@@ -211,7 +211,7 @@ class PdfBuilderTemplateManager
                               (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
             }
 
-            $debugLog('Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
+            // $debugLog('Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
 
             
 
@@ -261,21 +261,21 @@ class PdfBuilderTemplateManager
                 if (self::isDebugMode()) {
                     $upload_dir = wp_upload_dir();
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
+                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
                     // Log order_number elements specifically BEFORE saving
                     foreach ($elements_data as $el) {
                         if (isset($el['type']) && $el['type'] === 'order_number') {
-                            file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
+                            // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
                         }
                     }
 
                     // ✅ CRITICAL: Log TOUTES les propriétés de tous les éléments avant de créer template_structure
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
+                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
                     foreach ($elements_data as $idx => $el) {
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
                         if (isset($el['type']) && $el['type'] === 'order_number') {
-                            file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                            // file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
                         }
                     }
                 }
@@ -365,13 +365,13 @@ class PdfBuilderTemplateManager
             }
 
             // Validation des données obligatoires
-            $debugLog('Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
+            // $debugLog('Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
             if (empty($template_data) || empty($template_name)) {
                 
                 \wp_send_json_error('Données template ou nom manquant');
                 return;
             }
-            $debugLog('Required data validation passed');
+            // $debugLog('Required data validation passed');
 
             // Sauvegarde en utilisant les posts WordPress ou la table personnalisée
             try {
@@ -442,16 +442,16 @@ class PdfBuilderTemplateManager
                     if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
                         
                         // Re-check what was saved
                         if (isset($saved_decoded['elements'])) {
-                            file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
+                            // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
                             
                             // Find order_number in saved data
                             foreach ($saved_decoded['elements'] as $el) {
                                 if (isset($el['type']) && $el['type'] === 'order_number') {
-                                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
                                 }
                             }
                         }

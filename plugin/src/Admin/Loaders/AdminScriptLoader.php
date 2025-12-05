@@ -30,14 +30,14 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
-        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
+        // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
 
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
         // Charger SETTINGS CSS et JS pour les pages settings
         if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false) {
-            error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook);
+            // error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook);
 
             wp_enqueue_style(
                 'pdf-builder-settings-tabs',
@@ -145,9 +145,9 @@ class AdminScriptLoader
 
         // Outils développeur asynchrones
         wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js');
-        error_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
-        error_log('[WP AdminScriptLoader] Current hook: ' . $hook);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js');
+        // error_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
+        // error_log('[WP AdminScriptLoader] Current hook: ' . $hook);
 
         // Définir les paramètres de debug JavaScript pour developer-tools.js
         $settings = get_option('pdf_builder_settings', array());
@@ -187,10 +187,10 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-            error_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']);
+            // error_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']);
             $this->loadReactEditorScripts();
         } else {
-            error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
+            // error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
         }
     }
 
@@ -199,7 +199,7 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts()
     {
-        error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s'));
+        // error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s'));
 
         $cache_bust = time();
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
@@ -207,17 +207,17 @@ class AdminScriptLoader
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
         wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
 
         // Notifications system
         $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js';
         wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url);
 
         // Notifications CSS
         $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css';
         wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url);
 
         // Localize notifications data
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
@@ -253,7 +253,7 @@ class AdminScriptLoader
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Bundle React
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
@@ -267,22 +267,22 @@ class AdminScriptLoader
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
         ];
 
-        error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
+        // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
 
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
-            error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
+            // error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
             $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
                 $localize_data['initialElements'] = $existing_template_data['elements'];
                 $localize_data['existingTemplate'] = $existing_template_data;
                 $localize_data['hasExistingData'] = true;
-                error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
-                error_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
-                error_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data));
+                // error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
+                // error_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
+                // error_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data));
             } else {
-                error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
+                // error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
             }
         }
 

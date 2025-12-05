@@ -5,27 +5,15 @@
  */
 
 // Fonctions de debug conditionnel - RÉACTIVÉES pour mesurer les FPS
-function isDebugEnabled() {
-    // Debug activé si explicitement forcé ou si activé dans les paramètres
-    return window.location.search.includes('debug=force') || (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
-}
 
-function debugLog(...args) {
+function  {
     if (isDebugEnabled()) {
-        debugLog(...args);
+        
     }
 }
 
-function debugError(...args) {
-    if (isDebugEnabled()) {
-        console.error(...args);
-    }
 }
 
-function debugWarn(...args) {
-    if (isDebugEnabled()) {
-        console.warn(...args);
-    }
 }
 
 class PDFPreviewAPI {
@@ -61,12 +49,11 @@ class PDFPreviewAPI {
      * Génère un aperçu depuis l'éditeur (données fictives)
      */
     async generateEditorPreview(templateData, options = {}) {
-        debugLog('🎨 [JS] generateEditorPreview appelée avec:', { templateData, options });
-        debugLog('🎨 [JS] isDebugEnabled():', isDebugEnabled());
-        debugLog('🎨 [JS] window.location.search:', window.location.search);
+        
+        :', isDebugEnabled());
 
         if (this.isGenerating) {
-            debugWarn('⚠️ [JS] Génération déjà en cours...');
+            
             return null;
         }
 
@@ -74,7 +61,7 @@ class PDFPreviewAPI {
         this.showLoadingIndicator();
 
         try {
-            debugLog('🎨 [JS] Préparation FormData...');
+            
             const formData = new FormData();
             formData.append('action', 'wp_pdf_preview_image');
             formData.append('nonce', this.nonce);
@@ -92,7 +79,6 @@ class PDFPreviewAPI {
                 format: options.format || 'png'
             });
 
-            debugLog('🎨 [JS] Envoi requête fetch vers:', this.endpoint);
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
@@ -107,16 +93,14 @@ class PDFPreviewAPI {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                debugError('❌ [JS] Erreur HTTP:', { status: response.status, statusText: response.statusText, errorText });
+                
                 throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
 
-            debugLog('🎨 [JS] Parsing réponse JSON...');
             const result = await response.json();
-            debugLog('🎨 [JS] Résultat JSON parsé:', result);
 
             if (result.success) {
-                debugLog('✅ [JS] Génération réussie, données:', result.data);
+                
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
@@ -138,7 +122,7 @@ class PDFPreviewAPI {
      */
     async generateOrderPreview(templateData, orderId, options = {}) {
         if (this.isGenerating) {
-            debugWarn('⚠️ Génération déjà en cours...');
+            
             return null;
         }
 
@@ -154,8 +138,6 @@ class PDFPreviewAPI {
             formData.append('order_id', orderId);
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
-
-            
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -175,12 +157,12 @@ class PDFPreviewAPI {
                 this.displayPreview(result.data.image_url, 'metabox', orderId);
                 return result.data;
             } else {
-                debugError('❌ Erreur génération commande:', result.data);
+                
                 this.showError('Erreur lors de la génération de l\'aperçu de commande');
                 return null;
             }
         } catch (error) {
-            debugError('❌ Erreur réseau:', error);
+            
             this.showError('Erreur de connexion');
             return null;
         } finally {
@@ -300,7 +282,6 @@ class PDFPreviewAPI {
         // Afficher la modal en togglant la classe
         previewModal.classList.add('visible');
 
-        
     }
 
     /**
@@ -850,7 +831,7 @@ class PDFPreviewAPI {
             const dragDuration = performance.now() - this.dragStartTime;
             if (dragDuration > 10) { // Seulement pour les drags significatifs (>10ms)
                 const fps = 1000 / dragDuration;
-                debugLog(`[PDF Preview] Drag performance: ${dragDuration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
+                }ms (${fps.toFixed(1)}fps)`);
             }
         }
     }
@@ -904,7 +885,6 @@ class PDFPreviewAPI {
         link.click();
         document.body.removeChild(link);
 
-        
     }
 
     /**
@@ -932,7 +912,6 @@ class PDFPreviewAPI {
         ');
         printWindow.document.close();
 
-        
     }
 
     /**
@@ -965,7 +944,7 @@ class PDFPreviewAPI {
      */
     showError(message) {
         // No UI notification: log error to console
-        debugError(message);
+        
     }
 }
 
@@ -981,12 +960,7 @@ window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
 
-
-
-debugLog('   - generateEditorPreview(templateData)');
-debugLog('   - generateOrderPreview(templateData, orderId)');
-
-
-
+');
+');
 
 

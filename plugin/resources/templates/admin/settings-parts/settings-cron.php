@@ -67,30 +67,30 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-    console.log('PDF Builder: Cron diagnostics script loaded');
-    console.log('PDF Builder: ajaxurl:', typeof ajaxurl !== 'undefined' ? ajaxurl : 'NOT DEFINED');
-    console.log('PDF Builder: Current timestamp:', new Date().toISOString());
+    
+    
+    .toISOString());
 
     // Diagnose cron system
     $('#diagnose-cron-btn').on('click', function() {
-        console.log('PDF Builder: [CRON] Diagnose button clicked at', new Date().toISOString());
+        .toISOString());
         $(this).prop('disabled', true).text('<?php _e('Diagnosing...', 'pdf-builder-pro'); ?>');
 
         var ajaxData = {
             action: 'pdf_builder_diagnose_cron',
             nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
         };
-        console.log('PDF Builder: [CRON] Sending AJAX data:', ajaxData);
+        
 
         $.ajax({
             url: ajaxurl,
             type: 'POST',
             data: ajaxData,
             success: function(response) {
-                console.log('PDF Builder: [CRON] AJAX success response:', response);
-                console.log('PDF Builder: [CRON] Response success:', response.success);
+                
+                
                 if (response.success) {
-                    console.log('PDF Builder: [CRON] Cron status updated successfully');
+                    
                     $('#cron-status-display').html('<pre>' + JSON.stringify(response.data, null, 2) + '</pre>');
                     $('#cron-results').show();
                     $('#cron-results-content').html('<pre>Diagnostics completed successfully</pre>');
@@ -114,11 +114,11 @@ jQuery(document).ready(function($) {
     // Repair cron system
     $('#repair-cron-btn').on('click', function() {
         if (!confirm('<?php _e('Are you sure you want to repair the cron system? This may restart scheduled tasks.', 'pdf-builder-pro'); ?>')) {
-            console.log('PDF Builder: [CRON] Repair cancelled by user');
+            
             return;
         }
 
-        console.log('PDF Builder: [CRON] Repair button clicked at', new Date().toISOString());
+        .toISOString());
         $(this).prop('disabled', true).text('<?php _e('Repairing...', 'pdf-builder-pro'); ?>');
 
         $.ajax({
@@ -129,10 +129,10 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
-                console.log('PDF Builder: [CRON] Repair AJAX response:', response);
+                
                 $('#repair-cron-btn').prop('disabled', false).text('<?php _e('Repair Cron System', 'pdf-builder-pro'); ?>');
                 if (response.success) {
-                    console.log('PDF Builder: [CRON] Cron system repaired successfully');
+                    
                     alert('<?php _e('Cron system repaired successfully!', 'pdf-builder-pro'); ?>');
                     $('#diagnose-cron-btn').click(); // Refresh status
                 } else {
@@ -150,7 +150,7 @@ jQuery(document).ready(function($) {
 
     // View backup statistics
     $('#backup-stats-btn').on('click', function() {
-        console.log('PDF Builder: [BACKUP] Statistics button clicked at', new Date().toISOString());
+        .toISOString());
         $(this).prop('disabled', true).text('<?php _e('Loading...', 'pdf-builder-pro'); ?>');
 
         $.ajax({
@@ -161,10 +161,10 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
-                console.log('PDF Builder: [BACKUP] Statistics AJAX response:', response);
+                
                 $('#backup-stats-btn').prop('disabled', false).text('<?php _e('View Backup Statistics', 'pdf-builder-pro'); ?>');
                 if (response.success) {
-                    console.log('PDF Builder: [BACKUP] Statistics loaded successfully');
+                    
                     $('#cron-results').show();
                     $('#cron-results-content').html('<pre>' + response.data + '</pre>');
                 } else {
@@ -183,11 +183,11 @@ jQuery(document).ready(function($) {
     // Create manual backup
     $('#manual-backup-btn').on('click', function() {
         if (!confirm('<?php _e('Are you sure you want to create a manual backup now?', 'pdf-builder-pro'); ?>')) {
-            console.log('PDF Builder: [BACKUP] Manual backup cancelled by user');
+            
             return;
         }
 
-        console.log('PDF Builder: [BACKUP] Manual backup button clicked at', new Date().toISOString());
+        .toISOString());
         $(this).prop('disabled', true).text('<?php _e('Creating Backup...', 'pdf-builder-pro'); ?>');
 
         $.ajax({
@@ -198,10 +198,10 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
-                console.log('PDF Builder: [BACKUP] Manual backup AJAX response:', response);
+                
                 $('#manual-backup-btn').prop('disabled', false).text('<?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>');
                 if (response.success) {
-                    console.log('PDF Builder: [BACKUP] Manual backup created successfully');
+                    
                     alert('<?php _e('Manual backup created successfully!', 'pdf-builder-pro'); ?>');
                     $('#backup-stats-btn').click(); // Refresh stats
                 } else {
@@ -238,7 +238,7 @@ jQuery(document).ready(function($) {
     }
 
     function checkWpCronStatus() {
-        console.log('PDF Builder: [WP CRON] Checking WP Cron status...');
+        
 
         // Check if WP Cron is enabled (PHP side check)
         updateWpCronStatusIndicator('wp-cron-enabled', 'warning', '<?php _e('Checking WP Cron configuration...', 'pdf-builder-pro'); ?>');
@@ -254,7 +254,7 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
-                console.log('PDF Builder: [WP CRON] Config check response:', response);
+                
                 if (response.success) {
                     if (response.data.cron_disabled) {
                         updateWpCronStatusIndicator('wp-cron-enabled', 'error', '<?php _e('WP Cron is DISABLED (DISABLE_WP_CRON = true)', 'pdf-builder-pro'); ?>');
@@ -279,7 +279,7 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
-                console.log('PDF Builder: [WP CRON] Scheduled tasks check response:', response);
+                
                 if (response.success) {
                     var taskCount = response.data.scheduled_tasks ? response.data.scheduled_tasks.length : 0;
                     if (taskCount > 0) {
@@ -302,7 +302,7 @@ jQuery(document).ready(function($) {
             type: 'GET',
             timeout: 10000, // 10 second timeout
             success: function(response) {
-                console.log('PDF Builder: [WP CRON] Cron response test:', response);
+                
                 if (response && response.success) {
                     updateWpCronStatusIndicator('wp-cron-response', 'good', '<?php _e('Cron system responding correctly', 'pdf-builder-pro'); ?>');
                 } else {
@@ -310,7 +310,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status) {
-                console.log('PDF Builder: [WP CRON] Cron response error:', {xhr: xhr, status: status});
+                
                 if (status === 'timeout') {
                     updateWpCronStatusIndicator('wp-cron-response', 'warning', '<?php _e('Cron response slow (timeout)', 'pdf-builder-pro'); ?>');
                 } else {
@@ -330,8 +330,8 @@ jQuery(document).ready(function($) {
     });
 
     // Auto-refresh logs for cron monitoring
-    console.log('PDF Builder: [CRON] Cron diagnostics interface initialized');
-    console.log('PDF Builder: [BACKUP] Backup controls initialized');
+    
+    
 
     // Initialize WP Cron status check on page load
     checkWpCronStatus();

@@ -967,7 +967,7 @@ if ($cache_last_cleanup !== 'Jamais') {
     }
 
     // Chargement automatique des sauvegardes au démarrage
-    console.log('[DEBUG] Loading backups automatically on page load');
+    
     loadBackupsOnPageLoad();
 
     function loadBackupsOnPageLoad() {
@@ -984,13 +984,13 @@ if ($cache_last_cleanup !== 'Jamais') {
                 nonce: nonce
             },
             success: function(response) {
-                console.log('[DEBUG] Auto-load AJAX success response:', response);
+                
                 if (response.success) {
-                    console.log('[DEBUG] Auto-load response data:', response.data);
+                    
                     let output = '';
 
                     if (response.data.backups && response.data.backups.length > 0) {
-                        console.log('[DEBUG] Auto-load found', response.data.backups.length, 'backups');
+                        
 
                         // Mettre à jour le compteur dans le header
                         const backupCount = response.data.backups.length;
@@ -1011,7 +1011,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                         output += '<style>@keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); } 20% { opacity: 1; transform: scale(1.1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.8); } } .backup-count-plus-one { animation: fadeInOut 3s ease-in-out; }</style>';
 
                         response.data.backups.forEach(function(backup, index) {
-                            console.log('[DEBUG] Auto-load processing backup:', backup.filename);
+                            
                             output += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 10px; background: white; border: 1px solid #dee2e6; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
                             output += '<div class="backup-item-info" style="flex: 1; display: flex; align-items: center; gap: 12px;">';
                             output += '<div class="backup-icon" style="font-size: 20px;">📄</div>';
@@ -1025,13 +1025,13 @@ if ($cache_last_cleanup !== 'Jamais') {
                             output += '<button type="button" class="button button-small download-backup-btn" data-filename="' + backup.filename + '" style="background: #007cba; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📥 Télécharger</button>';
                             output += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Supprimer</button>';
                             output += '</div>';
-                            console.log('[DEBUG] Generated buttons for backup:', backup.filename);
+                            
                             output += '</div>';
                         });
 
                         output += '</div>';
                     } else {
-                        console.log('[DEBUG] Auto-load no backups found');
+                        
 
                         // Mettre à jour le compteur dans le header
                         $('#backup-count-info').text('0 sauvegarde disponible');
@@ -1047,9 +1047,9 @@ if ($cache_last_cleanup !== 'Jamais') {
                         output += '</div>';
                     }
 
-                    console.log('[DEBUG] Auto-load setting HTML content');
+                    
                     $container.html(output);
-                    console.log('[DEBUG] Auto-load HTML content set successfully');
+                    
 
                     // Ouvrir automatiquement l'accordéon principal après le chargement
                     setTimeout(function() {
@@ -1057,7 +1057,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                         $('.main-backup-accordion-toggle').css('transform', 'rotate(180deg)');
                     }, 500);
                 } else {
-                    console.log('[DEBUG] Auto-load AJAX response not successful:', response);
+                    
                     $('#backup-count-info').text('Erreur de chargement');
                     
                     // Désactiver le bouton si erreur (probablement pas premium)
@@ -1068,7 +1068,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                 }
             },
             error: function(xhr, status, error) {
-                console.log('[DEBUG] Auto-load AJAX error:', error);
+                
                 $('#backup-count-info').text('Erreur de connexion');
                 $container.html('<div style="color: #dc3545; padding: 20px; text-align: center;">❌ Erreur de connexion lors du chargement des sauvegardes</div>');
             }

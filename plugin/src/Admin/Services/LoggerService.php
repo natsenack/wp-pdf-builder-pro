@@ -43,11 +43,11 @@ class LoggerService
 
         // Log WordPress si debug activé
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log(
-                '[PDF Builder] Role permissions changed: ' .
-                'Old: ' . wp_json_encode($old_roles) . ', ' .
-                'New: ' . wp_json_encode($new_roles) . ', ' .
-                'By: ' . $log_entry['user_login']
+            // error_log(
+            //     '[PDF Builder] Role permissions changed: ' .
+            //     'Old: ' . wp_json_encode($old_roles) . ', ' .
+            //     'New: ' . wp_json_encode($new_roles) . ', ' .
+            //     'By: ' . $log_entry['user_login']
             );
         }
 

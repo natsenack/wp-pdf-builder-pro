@@ -219,25 +219,25 @@ if (function_exists('add_action')) {
  * AJAX handler for creating backups
  */
 function pdf_builder_create_backup_ajax() {
-    error_log('PDF Builder: [CREATE BACKUP] Function called');
+    // error_log('PDF Builder: [CREATE BACKUP] Function called');
     
     // Check nonce
     if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-        error_log('PDF Builder: [CREATE BACKUP] Nonce verification failed');
+        // error_log('PDF Builder: [CREATE BACKUP] Nonce verification failed');
         wp_send_json_error('Nonce invalide');
         return;
     }
     
     // Check permissions
     if (!current_user_can('manage_options')) {
-        error_log('PDF Builder: [CREATE BACKUP] Permission denied');
+        // error_log('PDF Builder: [CREATE BACKUP] Permission denied');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     // Check if user is premium
     if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
-        error_log('PDF Builder: [CREATE BACKUP] User is not premium');
+        // error_log('PDF Builder: [CREATE BACKUP] User is not premium');
         wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
     }
@@ -250,13 +250,13 @@ function pdf_builder_create_backup_ajax() {
         $all_backup_files = array_merge($files, $manual_files);
         
         if (count($all_backup_files) >= 50) {
-            error_log('PDF Builder: [CREATE BACKUP] Backup limit reached: ' . count($all_backup_files));
+            // error_log('PDF Builder: [CREATE BACKUP] Backup limit reached: ' . count($all_backup_files));
             wp_send_json_error('Limite de 50 sauvegardes atteinte. Veuillez supprimer des sauvegardes anciennes avant d\'en créer de nouvelles.');
             return;
         }
     }
 
-    error_log('PDF Builder: [CREATE BACKUP] Permission granted, proceeding');
+    // error_log('PDF Builder: [CREATE BACKUP] Permission granted, proceeding');
 
     try {
         // Create backup directory if it doesn't exist
@@ -314,38 +314,38 @@ function pdf_builder_create_backup_ajax() {
  * AJAX handler for listing backups
  */
 function pdf_builder_list_backups_ajax() {
-    error_log('PDF Builder: [BACKUP LIST] Handler called - REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . ', action: ' . ($_POST['action'] ?? 'NO_ACTION'));
-    error_log('PDF Builder: [BACKUP LIST] POST data keys: ' . json_encode(array_keys($_POST)));
+    // error_log('PDF Builder: [BACKUP LIST] Handler called - REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . ', action: ' . ($_POST['action'] ?? 'NO_ACTION'));
+    // error_log('PDF Builder: [BACKUP LIST] POST data keys: ' . json_encode(array_keys($_POST)));
     
     // Check nonce
     if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-        error_log('PDF Builder: [BACKUP LIST] Nonce verification failed');
+        // error_log('PDF Builder: [BACKUP LIST] Nonce verification failed');
         wp_send_json_error(['message' => 'Nonce invalide']);
         return;
     }
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        error_log('PDF Builder: [BACKUP LIST] Permission denied - user cannot manage_options');
+        // error_log('PDF Builder: [BACKUP LIST] Permission denied - user cannot manage_options');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     // Check if user is premium
     if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
-        error_log('PDF Builder: [BACKUP LIST] User is not premium');
+        // error_log('PDF Builder: [BACKUP LIST] User is not premium');
         wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
     }
 
-    error_log('PDF Builder: [BACKUP LIST] Starting backup list request');
+    // error_log('PDF Builder: [BACKUP LIST] Starting backup list request');
 
     try {
         $backup_dir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR . '/pdf-builder-backups' : ABSPATH . 'wp-content/pdf-builder-backups';
-        error_log('PDF Builder: [BACKUP LIST] Backup dir: ' . $backup_dir);
+        // error_log('PDF Builder: [BACKUP LIST] Backup dir: ' . $backup_dir);
 
         if (!file_exists($backup_dir) || !is_dir($backup_dir)) {
-            error_log('PDF Builder: [BACKUP LIST] Backup directory does not exist: ' . $backup_dir);
+            // error_log('PDF Builder: [BACKUP LIST] Backup directory does not exist: ' . $backup_dir);
             wp_send_json_success(array('backups' => array()));
             return;
         }
@@ -354,9 +354,9 @@ function pdf_builder_list_backups_ajax() {
         $files_manual = glob($backup_dir . '/pdf-builder-backup-*.json');
         $files = array_merge($files, $files_manual);
 
-        error_log('PDF Builder: [BACKUP LIST] Found ' . count($files) . ' backup files');
+        // error_log('PDF Builder: [BACKUP LIST] Found ' . count($files) . ' backup files');
         foreach ($files as $file) {
-            error_log('PDF Builder: [BACKUP LIST] File: ' . basename($file));
+            // error_log('PDF Builder: [BACKUP LIST] File: ' . basename($file));
         }
 
         $backups = array();
@@ -394,11 +394,11 @@ function pdf_builder_list_backups_ajax() {
             return $b['modified'] - $a['modified'];
         });
 
-        error_log('PDF Builder: [BACKUP LIST] Returning ' . count($backups) . ' backups successfully');
+        // error_log('PDF Builder: [BACKUP LIST] Returning ' . count($backups) . ' backups successfully');
         wp_send_json_success(array('backups' => $backups));
 
     } catch (Exception $e) {
-        error_log('PDF Builder: [BACKUP LIST] Exception: ' . $e->getMessage());
+        // error_log('PDF Builder: [BACKUP LIST] Exception: ' . $e->getMessage());
         wp_send_json_error('Erreur lors de la récupération des sauvegardes: ' . $e->getMessage());
     }
 }
@@ -407,25 +407,25 @@ function pdf_builder_list_backups_ajax() {
  * AJAX handler for restoring backups
  */
 function pdf_builder_restore_backup_ajax() {
-    error_log('PDF Builder: [RESTORE BACKUP] Function called');
+    // error_log('PDF Builder: [RESTORE BACKUP] Function called');
     
     // Check nonce
     if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-        error_log('PDF Builder: [RESTORE BACKUP] Nonce verification failed');
+        // error_log('PDF Builder: [RESTORE BACKUP] Nonce verification failed');
         wp_send_json_error('Nonce invalide');
         return;
     }
     
     // Check permissions
     if (!current_user_can('manage_options')) {
-        error_log('PDF Builder: [RESTORE BACKUP] Permission denied');
+        // error_log('PDF Builder: [RESTORE BACKUP] Permission denied');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     // Check if user is premium
     if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
-        error_log('PDF Builder: [RESTORE BACKUP] User is not premium');
+        // error_log('PDF Builder: [RESTORE BACKUP] User is not premium');
         wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
     }

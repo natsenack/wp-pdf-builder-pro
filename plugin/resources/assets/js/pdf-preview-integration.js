@@ -436,7 +436,6 @@ class PDFMetaboxPreviewIntegration {
             }
         }
 
-
         return null;
     }
 
@@ -817,7 +816,6 @@ window.generateAutoPreview = async function(templateData = null, orderId = null)
             const id = orderId || window.pdfMetaboxPreview?.getOrderId();
             return await window.generateOrderPreview(data, id);
         }
-
 
         return null;
 
@@ -1504,10 +1502,5 @@ window.updateDebugCardPreview = function() {
         statusIndicator.className = `status-indicator ${debugEnabled ? 'enabled' : 'disabled'}`;
     }
 };
-
-
-
-
-
 
 

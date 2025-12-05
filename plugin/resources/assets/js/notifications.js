@@ -9,22 +9,14 @@
     'use strict';
 
     // Fonction de debug conditionnel
-    function isDebugEnabled() {
-        return window.location.search.includes('debug=force') ||
-               (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
-    }
 
-    function debugLog(...args) {
+    function  {
         if (isDebugEnabled()) {
-            console.log(...args);
+            
         }
     }
 
     // LOG INCONDITIONNEL - toujours affiché
-    debugLog('🚨 NOTIFICATIONS.JS LOADED - Version avec debug étendu');
-    debugLog('📊 window.pdfBuilderNotifications:', window.pdfBuilderNotifications);
-    debugLog('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
-    debugLog('⚙️ document.readyState:', document.readyState);
 
     /**
      * Classe principale pour la gestion des notifications frontend
@@ -41,9 +33,8 @@
             this.container = null;
             this.initialized = false;
 
-            debugLog('PDF Builder Notifications: Constructor called, settings:', this.settings);
             if (window.pdfBuilderDebugSettings?.javascript) {
-                debugLog('PDF Builder Notifications: Debug mode enabled, detailed logging active');
+                
             }
             this.init();
         }
@@ -59,7 +50,7 @@
             this.clear(); // Clear any existing notifications on init
             this.initialized = true;
 
-            if (window.pdfBuilderDebugSettings?.javascript) debugLog('PDF Builder Notifications: Initialized', this.settings);
+            if (window.pdfBuilderDebugSettings?.javascript) 
         }
 
         /**
@@ -174,19 +165,19 @@
          */
         show(message, type = 'info', options = {}) {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                debugLog('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
+                 called with:', { message, type, options, settings: this.settings });
             }
 
             // Notifications enabled by default if not explicitly disabled
             if (this.settings.enabled === false) {
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    debugLog('PDF Builder Notifications: Notifications disabled');
+                    
                 }
                 return;
             }
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                debugLog('PDF Builder Notifications: Creating notification element...');
+                
             }
 
             const notificationOptions = Object.assign({
@@ -267,7 +258,7 @@
          */
         addToContainer(notification) {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                debugLog('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
+                
             }
 
             if (!this.container) {
@@ -282,7 +273,7 @@
             const existingNotifications = this.container.querySelectorAll('.pdf-builder-notification');
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                debugLog('PDF Builder Notifications: Adding notification, current count:', existingNotifications.length);
+                
             }
 
             if (existingNotifications.length >= maxNotifications) {
@@ -296,7 +287,7 @@
             this.notifications.push(notification);
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                debugLog('PDF Builder Notifications: Notification added to DOM');
+                
             }
 
             // Ajouter le bouton "Tout fermer" si plusieurs notifications
@@ -411,7 +402,6 @@
             }
         }
 
-
         /**
          * Échapper le HTML
          */
@@ -457,7 +447,7 @@
             $.post(this.ajaxUrl, data)
                 .done((response) => {
                     if (response.success) {
-                        if (window.pdfBuilderDebugSettings?.javascript) debugLog('Notification AJAX sent successfully');
+                        if (window.pdfBuilderDebugSettings?.javascript) 
                     }
                 })
                 .fail((error) => {
@@ -499,7 +489,6 @@
             this.initialized = false;
         }
     }
-
 
     // Instance globale
     window.PDF_Builder_Notifications = PDF_Builder_Notifications;
@@ -545,8 +534,6 @@
 
     // Alias pour la compatibilité - définis immédiatement
     window.showSuccessNotification = function(message, options) {
-        debugLog('Global showSuccessNotification called with:', message);
-        debugLog('Global: window.pdfBuilderNotificationsInstance exists:', !!window.pdfBuilderNotificationsInstance);
 
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.success(message, options);
@@ -643,15 +630,10 @@
         }
     };
 
-    debugLog('🎯 GLOBAL NOTIFICATION FUNCTIONS DEFINED');
-    debugLog('✅ window.showSuccessNotification:', typeof window.showSuccessNotification);
-    debugLog('✅ window.showErrorNotification:', typeof window.showErrorNotification);
-    debugLog('✅ window.showWarningNotification:', typeof window.showWarningNotification);
-    debugLog('✅ window.showInfoNotification:', typeof window.showInfoNotification);
-
     // Initialisation automatique
     $(document).ready(function() {
         window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
     });
 
 })(jQuery);
+
