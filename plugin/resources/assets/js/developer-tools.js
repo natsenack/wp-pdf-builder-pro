@@ -247,9 +247,6 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                 const section = $(`#${sectionId}`);
                 if (section.length) {
                     section.toggle(isEnabled);
-                    if (window.pdfBuilderDebugSettings?.javascript) {
-                        }] ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
-                    }
                 }
             });
         }

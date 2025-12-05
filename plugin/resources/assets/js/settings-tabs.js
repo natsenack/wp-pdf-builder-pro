@@ -369,7 +369,6 @@
                         }
                     });
                     formObject.pdf_builder_allowed_roles = selectedRoles;
-                    } - ${Date.now()}`);
                 }
 
                 // Ajouter les données du formulaire à allData
