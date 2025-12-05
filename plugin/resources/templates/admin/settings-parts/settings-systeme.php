@@ -907,5 +907,101 @@ if ($cache_last_cleanup !== 'Jamais') {
         executeNextAction();
     }
 
+    // Gestionnaire pour le bouton de création de sauvegarde
+    $('#create-backup-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $results = $('#backup-results');
+
+        // Désactiver le bouton pendant la création
+        $btn.prop('disabled', true).html('<span>📦</span> Création en cours...');
+        $results.html('<span style="color: #007cba;">Création de la sauvegarde en cours...</span>');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_create_backup',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $results.html('<div style="color: #28a745; margin-top: 10px;">' + response.data.message + '</div>');
+                    showSystemNotification(response.data.message, 'success');
+                } else {
+                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de la création</div>');
+                    showSystemNotification('Erreur lors de la création de la sauvegarde', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
+                showSystemNotification('Erreur de connexion lors de la création de la sauvegarde', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).html('<span>📦</span> Créer une sauvegarde');
+            }
+        });
+    });
+
+    // Gestionnaire pour le bouton de listage des sauvegardes
+    $('#list-backups-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $results = $('#backup-results');
+
+        // Désactiver le bouton pendant le listage
+        $btn.prop('disabled', true).html('<span>📋</span> Listage en cours...');
+        $results.html('<span style="color: #007cba;">Récupération de la liste des sauvegardes...</span>');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_list_backups',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    let output = '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #007cba;">';
+                    output += '<h4>📋 Sauvegardes disponibles :</h4>';
+
+                    if (response.data.backups && response.data.backups.length > 0) {
+                        output += '<ul style="margin: 0; padding-left: 20px;">';
+                        response.data.backups.forEach(function(backup) {
+                            output += '<li>' + backup + '</li>';
+                        });
+                        output += '</ul>';
+                    } else {
+                        output += '<p style="margin: 0; color: #6c757d;">Aucune sauvegarde trouvée.</p>';
+                    }
+
+                    output += '</div>';
+                    $results.html(output);
+                    showSystemNotification('Liste des sauvegardes récupérée', 'success');
+                } else {
+                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors du listage</div>');
+                    showSystemNotification('Erreur lors du listage des sauvegardes', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
+                showSystemNotification('Erreur de connexion lors du listage des sauvegardes', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).html('<span>📋</span> Lister les sauvegardes');
+            }
+        });
+    });
+
 })(jQuery);
 </script>
