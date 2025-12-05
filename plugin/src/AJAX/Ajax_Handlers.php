@@ -562,7 +562,7 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
 /**
  * AJAX Handler pour récupérer les rôles autorisés
  */
-function pdf_builder_get_allowed_roles_ajax_handler() {
+function pdf_builder_test_roles_handler() {
     // Handler ultra-simple pour diagnostiquer
     wp_send_json_success([
         'allowed_roles' => ['administrator', 'editor', 'shop_manager'],
@@ -570,6 +570,6 @@ function pdf_builder_get_allowed_roles_ajax_handler() {
         'status' => 'handler_called'
     ]);
 }
-add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
+add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 ?>

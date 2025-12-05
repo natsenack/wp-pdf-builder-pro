@@ -577,7 +577,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
-                action: 'pdf_builder_get_allowed_roles',
+                action: 'pdf_builder_test_roles',
                 nonce: nonce
             })
         })
