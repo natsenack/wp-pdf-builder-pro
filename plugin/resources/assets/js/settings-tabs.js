@@ -505,14 +505,7 @@
                     detail: { formData: formData, response: data }
                 }));
 
-                // Tenter de recharger les données des rôles pour mettre à jour l'interface (optionnel)
-                
-                reloadRolesData().then(updatedRoles => {
-                    
-                }).catch(error => {
-                    // console.warn('PDF Builder - Impossible de recharger automatiquement les rôles, mais la sauvegarde a réussi:', error);
-                    // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
-                });
+                // SUPPRIMÉ: Plus d'appel automatique à reloadRolesData() pour éviter les conflits avec l'onglet "acces"
 
                 // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
                 
@@ -783,6 +776,9 @@
         initRoleControlButtons();
         
     });
-
 })();
+
+// FORCE CACHE BUST - Modified: 2025-12-05 23:41:15 - Removed reloadRolesData calls
+// Cache bust timestamp: 1733440875
+
 
