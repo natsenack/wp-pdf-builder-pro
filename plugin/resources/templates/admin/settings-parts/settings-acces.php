@@ -11,6 +11,7 @@
     // DEBUG TEMPORAIRE - Afficher les valeurs pour vérification
     echo "<div style='background: #e8f5e8; border: 1px solid #4caf50; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace;'>";
     echo "<strong>✅ RÔLES AUTORISÉS (v" . time() . "):</strong> " . implode(', ', $allowed_roles);
+    echo "<br><strong>📊 Données brutes DB:</strong> " . json_encode(get_option('pdf_builder_settings', [])['pdf_builder_allowed_roles'] ?? 'NON TROUVÉ');
     echo "</div>";
 
     $role_descriptions = [

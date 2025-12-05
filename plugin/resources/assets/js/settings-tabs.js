@@ -369,6 +369,7 @@
                         }
                     });
                     formObject.pdf_builder_allowed_roles = selectedRoles;
+                    console.log('[DEBUG] Rôles collectés pour sauvegarde:', selectedRoles);
                 }
 
                 // Ajouter les données du formulaire à allData
@@ -567,7 +568,7 @@
             if (data.success && data.data && Array.isArray(data.data.allowed_roles)) {
 
                 // Mettre à jour l'état des cases à cocher
-                
+                console.log('[DEBUG] Rôles reçus du serveur:', data.data.allowed_roles);
                 updateRoleCheckboxes(data.data.allowed_roles);
 
                 // Mettre à jour le compteur
@@ -659,6 +660,7 @@
      * Met à jour l'état des cases à cocher des rôles
      */
     function updateRoleCheckboxes(allowedRoles) {
+        console.log('[DEBUG] Mise à jour des checkboxes avec les rôles:', allowedRoles);
 
         const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
 
@@ -674,6 +676,7 @@
         roleCheckboxes.forEach((checkbox, index) => {
             const roleKey = checkbox.value;
             const shouldBeChecked = allowedRoles.includes(roleKey);
+            console.log(`[DEBUG] Checkbox ${roleKey}: shouldBeChecked=${shouldBeChecked}, current=${checkbox.checked}`);
 
             // Ne pas modifier les administrateurs (toujours cochés et désactivés)
             if (roleKey === 'administrator') {
