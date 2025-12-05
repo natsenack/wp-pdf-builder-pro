@@ -833,12 +833,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : array();
         // error_log('[PDF Builder DEBUG] Saving access settings: ' . json_encode($allowed_roles));
 
-        // Save to settings array like other tabs
-        $settings = get_option('pdf_builder_settings', []);
-        $settings['pdf_builder_allowed_roles'] = $allowed_roles;
-        update_option('pdf_builder_settings', $settings);
+        // Utiliser la fonction helper spécialisée pour les rôles
+        require_once plugin_dir_path(__FILE__) . '../../resources/templates/admin/settings-helpers.php';
+        $saved_roles = pdf_builder_save_allowed_roles($allowed_roles);
 
-        // error_log('[PDF Builder DEBUG] Saved access settings to settings array');
+        // error_log('[PDF Builder DEBUG] Saved access settings using helper function');
         return 1;
     }
 
