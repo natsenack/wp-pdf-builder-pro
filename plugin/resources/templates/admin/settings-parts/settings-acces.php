@@ -134,9 +134,6 @@
                 </div> <!-- Fin colonne informations -->
 
             </div> <!-- Fin disposition en colonnes -->
-        </div>
-    </div>
-</div>
 
 <script>
 jQuery(document).ready(function($) {
