@@ -68,6 +68,9 @@
                                     $is_selected = in_array($role_key, $allowed_roles);
                                     $description = $role_descriptions[$role_key] ?? 'Rôle personnalisé';
                                     $is_admin = $role_key === 'administrator';
+
+                                    // DEBUG: Afficher les valeurs pour chaque rôle
+                                    echo "<!-- DEBUG {$role_key}: is_selected = " . ($is_selected ? 'true' : 'false') . ", in_array = " . (in_array($role_key, $allowed_roles) ? 'true' : 'false') . " -->";
                                     ?>
                                     <article class="role-toggle-item <?php echo $is_admin ? 'admin-role' : ''; ?>">
                                         <header class="role-info">
