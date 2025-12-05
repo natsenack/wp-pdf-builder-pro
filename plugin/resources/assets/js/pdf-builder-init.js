@@ -17,8 +17,8 @@
         
         // Check if pdfBuilderReact exists
         if (typeof window.pdfBuilderReact !== 'undefined') {
-            console.log('✅ [pdf-builder-init] window.pdfBuilderReact is now available!');
-            console.log('✅ [pdf-builder-init] Dispatching pdfBuilderReactLoaded event');
+            debugLog('✅ [pdf-builder-init] window.pdfBuilderReact is now available!');
+            debugLog('✅ [pdf-builder-init] Dispatching pdfBuilderReactLoaded event');
             
             // Dispatch the ready event for the initialization script
             document.dispatchEvent(new Event('pdfBuilderReactLoaded'));
@@ -28,7 +28,7 @@
         
         // Log periodically
         if (checkCount === 1 || checkCount % 25 === 0) {
-            console.log('⏳ [pdf-builder-init] Waiting for pdfBuilderReact... (' + checkCount + '/' + MAX_CHECKS + ')');
+            debugLog('⏳ [pdf-builder-init] Waiting for pdfBuilderReact... (' + checkCount + '/' + MAX_CHECKS + ')');
         }
         
         // Keep checking
@@ -37,14 +37,14 @@
         } else {
             console.error('❌ [pdf-builder-init] TIMEOUT: pdfBuilderReact not found after ' + MAX_CHECKS + ' attempts');
             // Try one more time with diagnostic info
-            console.log('🔍 [pdf-builder-init] Diagnostic info:');
-            console.log('  - window type:', typeof window);
-            console.log('  - window.pdfBuilderReact type:', typeof window.pdfBuilderReact);
-            console.log('  - Available on window:', Object.keys(window).filter(k => k.includes('pdf') || k.includes('Builder')).slice(0, 10));
+            debugLog('🔍 [pdf-builder-init] Diagnostic info:');
+            debugLog('  - window type:', typeof window);
+            debugLog('  - window.pdfBuilderReact type:', typeof window.pdfBuilderReact);
+            debugLog('  - Available on window:', Object.keys(window).filter(k => k.includes('pdf') || k.includes('Builder')).slice(0, 10));
         }
     }
     
     // Start checking
-    console.log('🚀 [pdf-builder-init] Initializer script loaded, checking for pdfBuilderReact...');
+    debugLog('🚀 [pdf-builder-init] Initializer script loaded, checking for pdfBuilderReact...');
     checkAndInitialize();
 })();

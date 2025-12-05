@@ -71,11 +71,11 @@ class PDF_Builder_Nonce_Manager {
         $action = isset($this->nonce_mappings[$context]) ? $this->nonce_mappings[$context] : $this->nonce_action;
 
         // Debug: Log the nonce validation attempt
-        error_log('[PDF Builder Nonce DEBUG] Validating nonce: ' . substr($nonce, 0, 10) . '... for action: ' . $action . ' in context: ' . $context);
+        // // error_log('[PDF Builder Nonce DEBUG] Validating nonce: ' . substr($nonce, 0, 10) . '... for action: ' . $action . ' in context: ' . $context);
 
         $is_valid = wp_verify_nonce($nonce, $action);
 
-        error_log('[PDF Builder Nonce DEBUG] Validation result: ' . ($is_valid ? 'VALID' : 'INVALID'));
+        // // error_log('[PDF Builder Nonce DEBUG] Validation result: ' . ($is_valid ? 'VALID' : 'INVALID'));
 
         if (!$is_valid) {
             $this->log_error('Nonce invalide', $context, [
@@ -154,7 +154,7 @@ class PDF_Builder_Nonce_Manager {
             $log_data['extra'] = $extra;
         }
 
-        error_log('[PDF Builder Nonce] ERROR: ' . json_encode($log_data));
+        // // error_log('[PDF Builder Nonce] ERROR: ' . json_encode($log_data));
     }
 
     /**
@@ -175,7 +175,7 @@ class PDF_Builder_Nonce_Manager {
             $log_data['extra'] = $extra;
         }
 
-        error_log('[PDF Builder Nonce] INFO: ' . json_encode($log_data));
+        // // error_log('[PDF Builder Nonce] INFO: ' . json_encode($log_data));
     }
 
     /**

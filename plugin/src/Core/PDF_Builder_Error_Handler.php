@@ -226,7 +226,7 @@ class PDF_Builder_Error_Handler {
             ]);
         } else {
             // Fallback vers error_log
-            error_log('[PDF Builder Error] ' . json_encode($error_data));
+            // // error_log('[PDF Builder Error] ' . json_encode($error_data));
         }
 
         // Stocker en base pour les erreurs critiques

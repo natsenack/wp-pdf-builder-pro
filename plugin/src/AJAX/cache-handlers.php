@@ -46,7 +46,7 @@ function pdf_builder_test_cache_integration_ajax() {
 
     // Vérifier le nonce (accepte cache_actions ou ajax)
     if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
-        error_log('PDF Builder Cache Test: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
+        // error_log('PDF Builder Cache Test: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
         wp_send_json_error('Nonce invalide');
         return;
     }
@@ -142,7 +142,7 @@ function pdf_builder_clear_all_cache_ajax() {
 
     // Vérifier le nonce (accepte cache_actions ou ajax)
     if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
-        error_log('PDF Builder Clear Cache: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
+        // error_log('PDF Builder Clear Cache: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
         wp_send_json_error('Nonce invalide');
         return;
     }
@@ -212,19 +212,19 @@ function pdf_builder_clear_all_cache_ajax() {
 function pdf_builder_get_cache_metrics_ajax() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        error_log('PDF Builder Cache Metrics: Permissions insuffisantes');
+        // error_log('PDF Builder Cache Metrics: Permissions insuffisantes');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     // Vérifier le nonce (accepte cache_actions ou ajax)
     if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
-        error_log('PDF Builder Cache Metrics: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
+        // error_log('PDF Builder Cache Metrics: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
         wp_send_json_error('Nonce invalide');
         return;
     }
 
-    error_log('PDF Builder Cache Metrics: Début de traitement');
+    // error_log('PDF Builder Cache Metrics: Début de traitement');
 
     try {
         $metrics = [];
@@ -250,7 +250,7 @@ function pdf_builder_get_cache_metrics_ajax() {
         global $wpdb;
         $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
         if ($wpdb->last_error) {
-            error_log('PDF Builder Cache Metrics: Erreur SQL transients - ' . $wpdb->last_error);
+            // error_log('PDF Builder Cache Metrics: Erreur SQL transients - ' . $wpdb->last_error);
         }
         $metrics['transient_count'] = intval($transient_count);
 
@@ -265,7 +265,7 @@ function pdf_builder_get_cache_metrics_ajax() {
         }
         $metrics['last_cleanup'] = $last_cleanup;
 
-        error_log('PDF Builder Cache Metrics: Succès - Métriques récupérées');
+        // error_log('PDF Builder Cache Metrics: Succès - Métriques récupérées');
 
         wp_send_json_success([
             'metrics' => $metrics,
@@ -273,7 +273,7 @@ function pdf_builder_get_cache_metrics_ajax() {
         ]);
 
     } catch (Exception $e) {
-        error_log('PDF Builder Cache Metrics: Exception - ' . $e->getMessage());
+        // error_log('PDF Builder Cache Metrics: Exception - ' . $e->getMessage());
         wp_send_json_error('Erreur lors de la récupération des métriques: ' . $e->getMessage());
     }
 }
@@ -282,31 +282,31 @@ function pdf_builder_get_cache_metrics_ajax() {
  * AJAX Handler - Optimiser la base de données
  */
 function pdf_builder_optimize_database_ajax() {
-    error_log('PDF Builder Optimize DB: Handler appelé');
+    // error_log('PDF Builder Optimize DB: Handler appelé');
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        error_log('PDF Builder Optimize DB: Permissions insuffisantes');
+        // error_log('PDF Builder Optimize DB: Permissions insuffisantes');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     // Vérifier le nonce (accepte cache_actions ou ajax)
     $received_nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
-    error_log('PDF Builder Optimize DB: Nonce reçu: ' . substr($received_nonce, 0, 12) . '...');
+    // error_log('PDF Builder Optimize DB: Nonce reçu: ' . substr($received_nonce, 0, 12) . '...');
 
     $verify_cache = wp_verify_nonce($received_nonce, 'pdf_builder_cache_actions');
     $verify_ajax = wp_verify_nonce($received_nonce, 'pdf_builder_ajax');
 
-    error_log('PDF Builder Optimize DB: Vérification nonce - cache_actions: ' . intval($verify_cache) . ', ajax: ' . intval($verify_ajax));
+    // error_log('PDF Builder Optimize DB: Vérification nonce - cache_actions: ' . intval($verify_cache) . ', ajax: ' . intval($verify_ajax));
 
     if (!pdf_builder_verify_maintenance_nonce($received_nonce)) {
-        error_log('PDF Builder Optimize DB: Nonce invalide ou manquant - Nonce reçu: ' . substr($received_nonce, 0, 12) . '...');
+        // error_log('PDF Builder Optimize DB: Nonce invalide ou manquant - Nonce reçu: ' . substr($received_nonce, 0, 12) . '...');
         wp_send_json_error('Nonce invalide');
         return;
     }
 
-    error_log('PDF Builder Optimize DB: Nonce valide, début de l\'optimisation');
+    // error_log('PDF Builder Optimize DB: Nonce valide, début de l\'optimisation');
 
     try {
         $optimized_tables = [];
@@ -322,30 +322,30 @@ function pdf_builder_optimize_database_ajax() {
         ];
 
         foreach ($tables_to_optimize as $table) {
-            error_log('PDF Builder Optimize DB: Vérification table: ' . $table);
+            // error_log('PDF Builder Optimize DB: Vérification table: ' . $table);
             $exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table));
             if ($exists == $table) {
-                error_log('PDF Builder Optimize DB: Table trouvée, optimisation: ' . $table);
+                // error_log('PDF Builder Optimize DB: Table trouvée, optimisation: ' . $table);
                 $result = $wpdb->query("OPTIMIZE TABLE $table");
                 if ($result !== false) {
                     $optimized_tables[] = $table;
-                    error_log('PDF Builder Optimize DB: Table optimisée: ' . $table);
+                    // error_log('PDF Builder Optimize DB: Table optimisée: ' . $table);
                 } else {
-                    error_log('PDF Builder Optimize DB: Échec OPTIMIZE TABLE ' . $table . ' - WP Error: ' . $wpdb->last_error);
+                    // error_log('PDF Builder Optimize DB: Échec OPTIMIZE TABLE ' . $table . ' - WP Error: ' . $wpdb->last_error);
                 }
             } else {
-                error_log('PDF Builder Optimize DB: Table non trouvée: ' . $table);
+                // error_log('PDF Builder Optimize DB: Table non trouvée: ' . $table);
             }
         }
 
         // Nettoyer les options orphelines
-        error_log('PDF Builder Optimize DB: Nettoyage des options');
+        // error_log('PDF Builder Optimize DB: Nettoyage des options');
         $cleaned_options = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_%' AND option_value = ''");
         if ($cleaned_options === false) {
-            error_log('PDF Builder Optimize DB: Échec nettoyage options - WP Error: ' . $wpdb->last_error);
+            // error_log('PDF Builder Optimize DB: Échec nettoyage options - WP Error: ' . $wpdb->last_error);
             $cleaned_options = 0;
         } else {
-            error_log('PDF Builder Optimize DB: Options nettoyées: ' . $cleaned_options);
+            // error_log('PDF Builder Optimize DB: Options nettoyées: ' . $cleaned_options);
         }
 
         if (empty($optimized_tables) && $cleaned_options == 0) {
@@ -360,7 +360,7 @@ function pdf_builder_optimize_database_ajax() {
             }
         }
 
-        error_log('PDF Builder Optimize DB: Succès - ' . $message);
+        // error_log('PDF Builder Optimize DB: Succès - ' . $message);
 
         wp_send_json_success([
             'message' => $message,
@@ -370,7 +370,7 @@ function pdf_builder_optimize_database_ajax() {
         ]);
 
     } catch (Exception $e) {
-        error_log('PDF Builder Optimize DB: Exception - ' . $e->getMessage());
+        // error_log('PDF Builder Optimize DB: Exception - ' . $e->getMessage());
         wp_send_json_error('Erreur lors de l\'optimisation: ' . $e->getMessage());
     }
 }
@@ -387,7 +387,7 @@ function pdf_builder_repair_templates_ajax() {
 
     // Vérifier le nonce (accepte cache_actions ou ajax)
     if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
-        error_log('PDF Builder Repair Templates: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
+        // error_log('PDF Builder Repair Templates: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
         wp_send_json_error('Nonce invalide');
         return;
     }

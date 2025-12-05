@@ -820,7 +820,7 @@ class PDF_Builder_Continuous_Deployment {
                 'trace' => $exception->getTraceAsString()
             ]);
         } else {
-            error_log("[PDF Builder Deployment Error] $operation: " . $exception->getMessage());
+            // // error_log("[PDF Builder Deployment Error] $operation: " . $exception->getMessage());
         }
     }
 

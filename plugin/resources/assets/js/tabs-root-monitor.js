@@ -12,7 +12,7 @@
             const entry = { ts: ts, msg: message, data: data };
             window.pdfBuilderRootLog.push(entry);
             if (DEBUG) {
-                console.log('📡 PDF-ROOT:', message, data || '');
+                debugLog('📡 PDF-ROOT:', message, data || '');
             }
         } catch (e) {}
     }
@@ -191,7 +191,7 @@
             });
             console.groupEnd();
         } catch(e) {
-            console.log('Error dumping root log', e);
+            debugLog('Error dumping root log', e);
         }
         return window.pdfBuilderRootLog;
     };

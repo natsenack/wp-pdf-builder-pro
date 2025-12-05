@@ -58,9 +58,9 @@ class PDF_Builder_Migration_System
             if (version_compare($from_version, $version, '<')) {
                 try {
                     call_user_func($callback);
-                    error_log("PDF Builder: Migration to {$version} completed successfully");
+                    // // // // error_log("PDF Builder: Migration to {$version} completed successfully");
                 } catch (Exception $e) {
-                    error_log("PDF Builder: Migration to {$version} failed: " . $e->getMessage());
+                    // // // // error_log("PDF Builder: Migration to {$version} failed: " . $e->getMessage());
                 }
             }
         }

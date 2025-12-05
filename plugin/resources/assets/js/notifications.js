@@ -9,10 +9,10 @@
     'use strict';
 
     // LOG INCONDITIONNEL - toujours affiché
-    console.log('🚨 NOTIFICATIONS.JS LOADED - Version avec debug étendu');
-    console.log('📊 window.pdfBuilderNotifications:', window.pdfBuilderNotifications);
-    console.log('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
-    console.log('⚙️ document.readyState:', document.readyState);
+    debugLog('🚨 NOTIFICATIONS.JS LOADED - Version avec debug étendu');
+    debugLog('📊 window.pdfBuilderNotifications:', window.pdfBuilderNotifications);
+    debugLog('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+    debugLog('⚙️ document.readyState:', document.readyState);
 
     /**
      * Classe principale pour la gestion des notifications frontend
@@ -29,9 +29,9 @@
             this.container = null;
             this.initialized = false;
 
-            console.log('PDF Builder Notifications: Constructor called, settings:', this.settings);
+            debugLog('PDF Builder Notifications: Constructor called, settings:', this.settings);
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Notifications: Debug mode enabled, detailed logging active');
+                debugLog('PDF Builder Notifications: Debug mode enabled, detailed logging active');
             }
             this.init();
         }
@@ -47,7 +47,7 @@
             this.clear(); // Clear any existing notifications on init
             this.initialized = true;
 
-            if (window.pdfBuilderDebugSettings?.javascript) console.log('PDF Builder Notifications: Initialized', this.settings);
+            if (window.pdfBuilderDebugSettings?.javascript) debugLog('PDF Builder Notifications: Initialized', this.settings);
         }
 
         /**
@@ -162,19 +162,19 @@
          */
         show(message, type = 'info', options = {}) {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
+                debugLog('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
             }
 
             // Notifications enabled by default if not explicitly disabled
             if (this.settings.enabled === false) {
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log('PDF Builder Notifications: Notifications disabled');
+                    debugLog('PDF Builder Notifications: Notifications disabled');
                 }
                 return;
             }
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Notifications: Creating notification element...');
+                debugLog('PDF Builder Notifications: Creating notification element...');
             }
 
             const notificationOptions = Object.assign({
@@ -255,7 +255,7 @@
          */
         addToContainer(notification) {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
+                debugLog('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
             }
 
             if (!this.container) {
@@ -270,7 +270,7 @@
             const existingNotifications = this.container.querySelectorAll('.pdf-builder-notification');
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Notifications: Adding notification, current count:', existingNotifications.length);
+                debugLog('PDF Builder Notifications: Adding notification, current count:', existingNotifications.length);
             }
 
             if (existingNotifications.length >= maxNotifications) {
@@ -284,7 +284,7 @@
             this.notifications.push(notification);
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Notifications: Notification added to DOM');
+                debugLog('PDF Builder Notifications: Notification added to DOM');
             }
 
             // Ajouter le bouton "Tout fermer" si plusieurs notifications
@@ -445,7 +445,7 @@
             $.post(this.ajaxUrl, data)
                 .done((response) => {
                     if (response.success) {
-                        if (window.pdfBuilderDebugSettings?.javascript) console.log('Notification AJAX sent successfully');
+                        if (window.pdfBuilderDebugSettings?.javascript) debugLog('Notification AJAX sent successfully');
                     }
                 })
                 .fail((error) => {
@@ -533,8 +533,8 @@
 
     // Alias pour la compatibilité - définis immédiatement
     window.showSuccessNotification = function(message, options) {
-        console.log('Global showSuccessNotification called with:', message);
-        console.log('Global: window.pdfBuilderNotificationsInstance exists:', !!window.pdfBuilderNotificationsInstance);
+        debugLog('Global showSuccessNotification called with:', message);
+        debugLog('Global: window.pdfBuilderNotificationsInstance exists:', !!window.pdfBuilderNotificationsInstance);
 
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.success(message, options);
@@ -631,11 +631,11 @@
         }
     };
 
-    console.log('🎯 GLOBAL NOTIFICATION FUNCTIONS DEFINED');
-    console.log('✅ window.showSuccessNotification:', typeof window.showSuccessNotification);
-    console.log('✅ window.showErrorNotification:', typeof window.showErrorNotification);
-    console.log('✅ window.showWarningNotification:', typeof window.showWarningNotification);
-    console.log('✅ window.showInfoNotification:', typeof window.showInfoNotification);
+    debugLog('🎯 GLOBAL NOTIFICATION FUNCTIONS DEFINED');
+    debugLog('✅ window.showSuccessNotification:', typeof window.showSuccessNotification);
+    debugLog('✅ window.showErrorNotification:', typeof window.showErrorNotification);
+    debugLog('✅ window.showWarningNotification:', typeof window.showWarningNotification);
+    debugLog('✅ window.showInfoNotification:', typeof window.showInfoNotification);
 
     // Initialisation automatique
     $(document).ready(function() {

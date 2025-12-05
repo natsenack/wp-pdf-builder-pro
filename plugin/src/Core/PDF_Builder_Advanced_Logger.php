@@ -367,7 +367,7 @@ class PDF_Builder_Advanced_Logger {
         $result = file_put_contents($this->current_log_file, $entry, FILE_APPEND | LOCK_EX);
 
         if ($result === false) {
-            error_log('PDF Builder: Unable to write to log file: ' . $this->current_log_file);
+            // error_log('PDF Builder: Unable to write to log file: ' . $this->current_log_file);
         }
     }
 

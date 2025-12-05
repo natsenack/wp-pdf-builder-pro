@@ -5,14 +5,14 @@
  */
 
 // LOG ABSOLU - toujours affiché, même si le script ne s'initialise pas
-console.log('🔧 DEVELOPER-TOOLS.JS FILE LOADED - ABSOLUTE LOG');
-console.log('🔧 Current location:', window.location.href);
-console.log('🔧 pdfBuilderAjax defined:', typeof pdfBuilderAjax);
-console.log('🔧 pdf_builder_ajax defined:', typeof pdf_builder_ajax);
+debugLog('🔧 DEVELOPER-TOOLS.JS FILE LOADED - ABSOLUTE LOG');
+debugLog('🔧 Current location:', window.location.href);
+debugLog('🔧 pdfBuilderAjax defined:', typeof pdfBuilderAjax);
+debugLog('🔧 pdf_builder_ajax defined:', typeof pdf_builder_ajax);
 
 // Assurer que les données nécessaires sont disponibles
 if (typeof window.pdfBuilderNotifications === 'undefined') {
-    console.log('🔧 Setting up fallback pdfBuilderNotifications');
+    debugLog('🔧 Setting up fallback pdfBuilderNotifications');
     window.pdfBuilderNotifications = {
         ajax_url: (window.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php')),
         nonce: 'fallback-nonce',
@@ -35,7 +35,7 @@ if (typeof window.pdfBuilderNotifications === 'undefined') {
 }
 
 if (typeof window.pdfBuilderDebugSettings === 'undefined') {
-    console.log('🔧 Setting up fallback pdfBuilderDebugSettings');
+    debugLog('🔧 Setting up fallback pdfBuilderDebugSettings');
     window.pdfBuilderDebugSettings = {
         javascript: true,
         javascript_verbose: true,
@@ -48,8 +48,8 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
     'use strict';
 
     // LOG INCONDITIONNEL - toujours affiché
-    console.log('🛠️ DEVELOPER-TOOLS.JS LOADED - Version avec debug étendu');
-    console.log('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+    debugLog('🛠️ DEVELOPER-TOOLS.JS LOADED - Version avec debug étendu');
+    debugLog('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
 
     class PDFBuilderDeveloper {
         constructor() {
@@ -68,7 +68,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                         const isEnabled = (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_developer_enabled === '1') || $('#developer_enabled').is(':checked');
                         this.updateDeveloperSectionsVisibility(isEnabled);
                         this.updateDeveloperStatusIndicator();
-                        console.log('[DEV TOGGLES] forceSync executed, developerEnabled:', isEnabled);
+                        debugLog('[DEV TOGGLES] forceSync executed, developerEnabled:', isEnabled);
                     } catch (e) {
                         console.error('[DEV TOGGLES] forceSync failed:', e);
                     }
@@ -87,9 +87,9 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                         // Mettre à jour window.pdfBuilderDebugSettings.javascript en fonction des paramètres sauvegardés
                         window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0');
                         if (window.pdfBuilderDebugSettings.javascript) {
-                            console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug enabled');
+                            debugLog('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug enabled');
                         } else {
-                            console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug disabled');
+                            debugLog('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug disabled');
                         }
                         // Re-sync developer toggles and visibility if necessary
                         if (window.pdfBuilderDeveloperToggles && typeof window.pdfBuilderDeveloperToggles.forceSync === 'function') {
@@ -102,7 +102,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
             }
 
             // Module initialized - no unconditional logging
-            console.log('✅ PDFBuilderDeveloper MODULE INITIALIZED');
+            debugLog('✅ PDFBuilderDeveloper MODULE INITIALIZED');
         }
 
         bindEvents() {
@@ -168,7 +168,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
             $(document).on('click', '#test_notification_clear', (e) => this.clearAllNotifications());
             $(document).on('click', '#test_notification_stats', (e) => this.showNotificationStats());
 
-            console.log('🎯 NOTIFICATION EVENT HANDLERS ATTACHED');
+            debugLog('🎯 NOTIFICATION EVENT HANDLERS ATTACHED');
         }
 
         // Ensure all dev sections are closed by default and set correct toggle icons
@@ -199,7 +199,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
             this.updateDeveloperStatusIndicator();
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔧 [MODE DÉVELOPPEUR] Initialisation terminée - État:', developerEnabled ? 'ACTIF' : 'INACTIF');
+                debugLog('🔧 [MODE DÉVELOPPEUR] Initialisation terminée - État:', developerEnabled ? 'ACTIF' : 'INACTIF');
             }
 
             // Initialize license test key display
@@ -228,7 +228,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
             this.updateDeveloperStatusIndicator();
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔧 [MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
+                debugLog('🔧 [MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
             }
         }
 
@@ -253,7 +253,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                 if (section.length) {
                     section.toggle(isEnabled);
                     if (window.pdfBuilderDebugSettings?.javascript) {
-                        console.log(`🔧 [SECTION ${sectionId.toUpperCase()}] ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
+                        debugLog(`🔧 [SECTION ${sectionId.toUpperCase()}] ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
                     }
                 }
             });
@@ -272,7 +272,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                 });
 
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log(`🔧 [INDICATEUR STATUT] Mis à jour: ${status}`);
+                    debugLog(`🔧 [INDICATEUR STATUT] Mis à jour: ${status}`);
                 }
             }
         }
@@ -716,9 +716,9 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
         }
 
         testNotification(type) {
-            console.log('Developer Tools: testNotification called with type:', type);
-            console.log('Developer Tools: window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
-            console.log('Developer Tools: window.showSuccessNotification exists:', typeof window.showSuccessNotification);
+            debugLog('Developer Tools: testNotification called with type:', type);
+            debugLog('Developer Tools: window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+            debugLog('Developer Tools: window.showSuccessNotification exists:', typeof window.showSuccessNotification);
 
             const messages = {
                 success: 'Opération réussie ! Les données ont été sauvegardées.',
@@ -731,15 +731,15 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
 
             // Try to use the real notification system first
             const notificationFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
-            console.log('Developer Tools: notificationFunction for', type, ':', typeof notificationFunction);
+            debugLog('Developer Tools: notificationFunction for', type, ':', typeof notificationFunction);
 
             if (notificationFunction && typeof notificationFunction === 'function') {
-                console.log('Developer Tools: Calling notification function for', type);
+                debugLog('Developer Tools: Calling notification function for', type);
                 notificationFunction(messages[type], { duration: 4000 });
                 this.addNotificationLog(`✅ ${type} notification affichée via système réel`, 'success');
             } else if (window.pdfBuilderNotify && window.pdfBuilderNotify[type]) {
                 // Fallback to the old system
-                console.log('Developer Tools: Using fallback notification system for', type);
+                debugLog('Developer Tools: Using fallback notification system for', type);
                 window.pdfBuilderNotify[type](messages[type], 4000);
                 this.addNotificationLog(`✅ ${type} notification affichée via fallback`, 'success');
             } else {
@@ -1038,16 +1038,16 @@ Notifications actives: ${activeNotifications}
         const shouldInitialize = window.location.href.indexOf('wp-admin') !== -1 ||
                                 window.location.href.indexOf('admin.php') !== -1;
 
-        console.log('Developer Tools: shouldInitialize check:', shouldInitialize);
-        console.log('Developer Tools: current URL:', window.location.href);
+        debugLog('Developer Tools: shouldInitialize check:', shouldInitialize);
+        debugLog('Developer Tools: current URL:', window.location.href);
 
         if (shouldInitialize) {
-            console.log('Developer Tools: Initializing...');
+            debugLog('Developer Tools: Initializing...');
             setTimeout(() => {
                 new PDFBuilderDeveloper();
             }, 500); // Reduced delay for better UX
         } else {
-            console.log('Developer Tools: NOT initializing - not on admin page');
+            debugLog('Developer Tools: NOT initializing - not on admin page');
         }
 
 })(jQuery);

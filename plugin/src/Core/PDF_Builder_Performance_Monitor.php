@@ -223,7 +223,7 @@ class PDF_Builder_Performance_Monitor {
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->warning("Performance issue: $type", $data);
         } else {
-            error_log("[PDF Builder Performance] $type: " . json_encode($data));
+            // // error_log("[PDF Builder Performance] $type: " . json_encode($data));
         }
 
         // Stocker pour analyse

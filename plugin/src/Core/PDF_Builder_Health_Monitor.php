@@ -756,7 +756,7 @@ class PDF_Builder_Health_Monitor {
                     $logger->info("Alerte de santé système: $message", $details);
             }
         } else {
-            error_log("[PDF Builder Health] $level: $message");
+            // // error_log("[PDF Builder Health] $level: $message");
         }
     }
 

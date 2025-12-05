@@ -24,7 +24,7 @@
 
     function debugLog(...args) {
         if (isDebugEnabled()) {
-            console.log(...args);
+            debugLog(...args);
         }
     }
 
@@ -77,15 +77,15 @@
 
     // Système de navigation des onglets
     function initTabs() {
-        console.log('PDF Builder - initTabs called');
+        debugLog('PDF Builder - initTabs called');
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
-        console.log('PDF Builder - tabsContainer:', tabsContainer);
-        console.log('PDF Builder - contentContainer:', contentContainer);
+        debugLog('PDF Builder - tabsContainer:', tabsContainer);
+        debugLog('PDF Builder - contentContainer:', contentContainer);
 
         if (!tabsContainer || !contentContainer) {
-            console.log('PDF Builder - Containers not found, exiting');
+            debugLog('PDF Builder - Containers not found, exiting');
             return;
         }
 
@@ -116,13 +116,13 @@
 
             // Activer le contenu correspondant
             const content = contentContainer.querySelector('#' + tabId);
-            console.log('PDF Builder - Looking for content with selector:', '#' + tabId);
-            console.log('PDF Builder - Found content element:', content);
+            debugLog('PDF Builder - Looking for content with selector:', '#' + tabId);
+            debugLog('PDF Builder - Found content element:', content);
             if (content) {
                 content.classList.add('active');
-                console.log('PDF Builder - Added active class to content');
+                debugLog('PDF Builder - Added active class to content');
             } else {
-                console.log('PDF Builder - Content element not found!');
+                debugLog('PDF Builder - Content element not found!');
             }
 
             // Sauvegarder dans localStorage
@@ -150,12 +150,12 @@
 
         // Activer le premier onglet par défaut
         const firstTab = tabsContainer.querySelector('.nav-tab');
-        console.log('PDF Builder - First tab found:', firstTab);
+        debugLog('PDF Builder - First tab found:', firstTab);
         if (firstTab) {
-            console.log('PDF Builder - Clicking first tab');
+            debugLog('PDF Builder - Clicking first tab');
             firstTab.click();
         } else {
-            console.log('PDF Builder - No first tab found');
+            debugLog('PDF Builder - No first tab found');
         }
     }
 
@@ -340,7 +340,7 @@
      * Collecte toutes les données de tous les formulaires de tous les onglets
      */
     function collectAllFormData() {
-        console.log('PDF Builder - Collecte des données de tous les formulaires...');
+        debugLog('PDF Builder - Collecte des données de tous les formulaires...');
 
         const allData = {};
 
@@ -373,7 +373,7 @@
         formIds.forEach(formId => {
             const form = document.getElementById(formId);
             if (form) {
-                console.log(`PDF Builder - Collecte du formulaire: ${formId}`);
+                debugLog(`PDF Builder - Collecte du formulaire: ${formId}`);
                 const formData = new FormData(form);
                 const formObject = {};
 
@@ -394,18 +394,18 @@
 
                 // TRAITEMENT SPÉCIAL pour pdf_builder_allowed_roles - collecter même les non-cochées
                 if (formId === 'acces-form') {
-                    console.log('PDF Builder - Collecte spéciale des rôles...');
+                    debugLog('PDF Builder - Collecte spéciale des rôles...');
                     const allowedRolesCheckboxes = form.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
-                    console.log('PDF Builder - Cases à cocher trouvées:', allowedRolesCheckboxes.length);
+                    debugLog('PDF Builder - Cases à cocher trouvées:', allowedRolesCheckboxes.length);
                     const selectedRoles = [];
                     allowedRolesCheckboxes.forEach((checkbox, index) => {
-                        console.log(`PDF Builder - Case ${index + 1}: ${checkbox.value} - checked: ${checkbox.checked} - disabled: ${checkbox.disabled}`);
+                        debugLog(`PDF Builder - Case ${index + 1}: ${checkbox.value} - checked: ${checkbox.checked} - disabled: ${checkbox.disabled}`);
                         if (checkbox.checked) {
                             selectedRoles.push(checkbox.value);
                         }
                     });
                     formObject.pdf_builder_allowed_roles = selectedRoles;
-                    console.log(`PDF Builder - Rôles sélectionnés collectés: ${selectedRoles.length} rôles - ${selectedRoles.join(', ')} - ${Date.now()}`);
+                    debugLog(`PDF Builder - Rôles sélectionnés collectés: ${selectedRoles.length} rôles - ${selectedRoles.join(', ')} - ${Date.now()}`);
                 }
 
                 // Ajouter les données du formulaire à allData
@@ -464,8 +464,8 @@
      * Sauvegarde toutes les données via AJAX
      */
     function saveAllSettings(formData) {
-        console.log('PDF Builder - Sauvegarde de toutes les données...');
-        console.log('PDF Builder - Données à envoyer:', formData);
+        debugLog('PDF Builder - Sauvegarde de toutes les données...');
+        debugLog('PDF Builder - Données à envoyer:', formData);
 
         // Afficher un indicateur de chargement
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
@@ -485,26 +485,26 @@
             }
         }
 
-        console.log('PDF Builder - Données aplaties:', flattenedData);
+        debugLog('PDF Builder - Données aplaties:', flattenedData);
         // Log spécifique pour pdf_builder_allowed_roles
         if (flattenedData.pdf_builder_allowed_roles) {
-            console.log('PDF Builder - pdf_builder_allowed_roles à envoyer:', flattenedData.pdf_builder_allowed_roles);
-            console.log('PDF Builder - Type de pdf_builder_allowed_roles:', typeof flattenedData.pdf_builder_allowed_roles);
-            console.log('PDF Builder - Longueur de pdf_builder_allowed_roles:', flattenedData.pdf_builder_allowed_roles.length);
+            debugLog('PDF Builder - pdf_builder_allowed_roles à envoyer:', flattenedData.pdf_builder_allowed_roles);
+            debugLog('PDF Builder - Type de pdf_builder_allowed_roles:', typeof flattenedData.pdf_builder_allowed_roles);
+            debugLog('PDF Builder - Longueur de pdf_builder_allowed_roles:', flattenedData.pdf_builder_allowed_roles.length);
         } else {
-            console.log('PDF Builder - pdf_builder_allowed_roles est undefined ou vide');
+            debugLog('PDF Builder - pdf_builder_allowed_roles est undefined ou vide');
         }
 
         // S'assurer que pdf_builder_allowed_roles est toujours envoyé, même vide
         if (!flattenedData.hasOwnProperty('pdf_builder_allowed_roles')) {
             flattenedData.pdf_builder_allowed_roles = [];
-            console.log('PDF Builder - pdf_builder_allowed_roles forcé à array vide');
+            debugLog('PDF Builder - pdf_builder_allowed_roles forcé à array vide');
         }
 
         // DEBUG: Log debug fields being sent
         const debugFields = Object.keys(flattenedData).filter(key => key.includes('debug'));
-        console.log('PDF Builder - Debug fields being sent:', debugFields);
-        console.log('PDF Builder - pdf_builder_debug_javascript value:', flattenedData['pdf_builder_debug_javascript']);
+        debugLog('PDF Builder - Debug fields being sent:', debugFields);
+        debugLog('PDF Builder - pdf_builder_debug_javascript value:', flattenedData['pdf_builder_debug_javascript']);
 
         // Préparer les données pour AJAX - convertir les arrays en JSON
         const ajaxData = {
@@ -517,14 +517,14 @@
             if (flattenedData.hasOwnProperty(key)) {
                 if (Array.isArray(flattenedData[key])) {
                     ajaxData[key] = JSON.stringify(flattenedData[key]);
-                    console.log(`PDF Builder - Array converti en JSON pour ${key}:`, ajaxData[key]);
+                    debugLog(`PDF Builder - Array converti en JSON pour ${key}:`, ajaxData[key]);
                 } else {
                     ajaxData[key] = flattenedData[key];
                 }
             }
         }
 
-        console.log('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
+        debugLog('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
 
         // Envoyer via AJAX - Utiliser FormData au lieu de URLSearchParams pour éviter les problèmes d'échappement JSON
         const ajaxFormData = new FormData();
@@ -540,10 +540,10 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('PDF Builder - Réponse de sauvegarde:', data);
+            debugLog('PDF Builder - Réponse de sauvegarde:', data);
 
             if (data.success) {
-                console.log('PDF Builder - Sauvegarde réussie, données sauvegardées:', data.saved_count);
+                debugLog('PDF Builder - Sauvegarde réussie, données sauvegardées:', data.saved_count);
                 // Afficher un message de succès
                 showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
 
@@ -553,18 +553,18 @@
                 }));
 
                 // Tenter de recharger les données des rôles pour mettre à jour l'interface (optionnel)
-                console.log('PDF Builder - Tentative de rechargement des rôles après sauvegarde...');
+                debugLog('PDF Builder - Tentative de rechargement des rôles après sauvegarde...');
                 reloadRolesData().then(updatedRoles => {
-                    console.log('PDF Builder - Interface mise à jour avec les rôles sauvegardés:', updatedRoles);
+                    debugLog('PDF Builder - Interface mise à jour avec les rôles sauvegardés:', updatedRoles);
                 }).catch(error => {
                     console.warn('PDF Builder - Impossible de recharger automatiquement les rôles, mais la sauvegarde a réussi:', error);
                     // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
                 });
 
                 // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
-                console.log('PDF Builder - Tentative de rechargement des paramètres de debug après sauvegarde...');
+                debugLog('PDF Builder - Tentative de rechargement des paramètres de debug après sauvegarde...');
                 reloadDebugSettings().then(updatedDebug => {
-                    console.log('PDF Builder - Interface mise à jour avec les paramètres de debug sauvegardés:', updatedDebug);
+                    debugLog('PDF Builder - Interface mise à jour avec les paramètres de debug sauvegardés:', updatedDebug);
                 }).catch(error => {
                     console.warn('PDF Builder - Impossible de recharger automatiquement les paramètres de debug, mais la sauvegarde a réussi:', error);
                     // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
@@ -591,16 +591,16 @@
      * Recharge les données des rôles depuis la base de données
      */
     function reloadRolesData() {
-        console.log('PDF Builder - [RELOAD ROLES] ===== DÉBUT RECHARGEMENT =====');
-        console.log('PDF Builder - [RELOAD ROLES] pdfBuilderAjax défini:', typeof pdfBuilderAjax !== 'undefined');
-        console.log('PDF Builder - [RELOAD ROLES] pdfBuilderAjax contenu:', pdfBuilderAjax);
+        debugLog('PDF Builder - [RELOAD ROLES] ===== DÉBUT RECHARGEMENT =====');
+        debugLog('PDF Builder - [RELOAD ROLES] pdfBuilderAjax défini:', typeof pdfBuilderAjax !== 'undefined');
+        debugLog('PDF Builder - [RELOAD ROLES] pdfBuilderAjax contenu:', pdfBuilderAjax);
 
         const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
         const nonce = pdfBuilderAjax ? pdfBuilderAjax.nonce : '';
 
-        console.log('PDF Builder - [RELOAD ROLES] URL AJAX:', ajaxUrl);
-        console.log('PDF Builder - [RELOAD ROLES] Nonce:', nonce ? 'présent (' + nonce.substring(0, 8) + '...)' : 'vide');
-        console.log('PDF Builder - [RELOAD ROLES] Action à envoyer: pdf_builder_test_roles');
+        debugLog('PDF Builder - [RELOAD ROLES] URL AJAX:', ajaxUrl);
+        debugLog('PDF Builder - [RELOAD ROLES] Nonce:', nonce ? 'présent (' + nonce.substring(0, 8) + '...)' : 'vide');
+        debugLog('PDF Builder - [RELOAD ROLES] Action à envoyer: pdf_builder_test_roles');
 
         const requestData = new FormData();
         requestData.append('action', 'pdf_builder_test_roles');
@@ -611,8 +611,8 @@
             body: requestData
         })
         .then(response => {
-            console.log('PDF Builder - [RELOAD ROLES] Réponse HTTP reçue - Status:', response.status);
-            console.log('PDF Builder - [RELOAD ROLES] Réponse OK:', response.ok);
+            debugLog('PDF Builder - [RELOAD ROLES] Réponse HTTP reçue - Status:', response.status);
+            debugLog('PDF Builder - [RELOAD ROLES] Réponse OK:', response.ok);
             if (!response.ok) {
                 console.error('PDF Builder - [RELOAD ROLES] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
                 throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
@@ -620,24 +620,24 @@
             return response.json();
         })
         .then(data => {
-            console.log('PDF Builder - [RELOAD ROLES] Données JSON reçues:', data);
-            console.log('PDF Builder - [RELOAD ROLES] Success:', data.success);
-            console.log('PDF Builder - [RELOAD ROLES] Data object:', data.data);
+            debugLog('PDF Builder - [RELOAD ROLES] Données JSON reçues:', data);
+            debugLog('PDF Builder - [RELOAD ROLES] Success:', data.success);
+            debugLog('PDF Builder - [RELOAD ROLES] Data object:', data.data);
 
             if (data.success && data.data && Array.isArray(data.data.allowed_roles)) {
-                console.log('PDF Builder - [RELOAD ROLES] Rôles autorisés reçus:', data.data.allowed_roles);
-                console.log('PDF Builder - [RELOAD ROLES] Nombre de rôles:', data.data.allowed_roles.length);
-                console.log('PDF Builder - [RELOAD ROLES] Status du handler:', data.data.status);
+                debugLog('PDF Builder - [RELOAD ROLES] Rôles autorisés reçus:', data.data.allowed_roles);
+                debugLog('PDF Builder - [RELOAD ROLES] Nombre de rôles:', data.data.allowed_roles.length);
+                debugLog('PDF Builder - [RELOAD ROLES] Status du handler:', data.data.status);
 
                 // Mettre à jour l'état des cases à cocher
-                console.log('PDF Builder - [RELOAD ROLES] Mise à jour des cases à cocher...');
+                debugLog('PDF Builder - [RELOAD ROLES] Mise à jour des cases à cocher...');
                 updateRoleCheckboxes(data.data.allowed_roles);
 
                 // Mettre à jour le compteur
-                console.log('PDF Builder - [RELOAD ROLES] Mise à jour du compteur...');
+                debugLog('PDF Builder - [RELOAD ROLES] Mise à jour du compteur...');
                 updateSelectedCount(data.data.allowed_roles.length);
 
-                console.log('PDF Builder - [RELOAD ROLES] ===== FIN RECHARGEMENT RÉUSSI =====');
+                debugLog('PDF Builder - [RELOAD ROLES] ===== FIN RECHARGEMENT RÉUSSI =====');
                 return data.data.allowed_roles;
             } else {
                 console.error('PDF Builder - [RELOAD ROLES] Erreur - données invalides:', data);
@@ -660,14 +660,14 @@
      * Recharge les paramètres de debug depuis la base de données
      */
     function reloadDebugSettings() {
-        console.log('PDF Builder - [RELOAD DEBUG] ===== DÉBUT RECHARGEMENT DEBUG =====');
+        debugLog('PDF Builder - [RELOAD DEBUG] ===== DÉBUT RECHARGEMENT DEBUG =====');
 
         const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
         const nonce = pdfBuilderAjax ? pdfBuilderAjax.nonce : '';
 
-        console.log('PDF Builder - [RELOAD DEBUG] URL AJAX:', ajaxUrl);
-        console.log('PDF Builder - [RELOAD DEBUG] Nonce:', nonce ? 'présent (' + nonce.substring(0, 8) + '...)' : 'vide');
-        console.log('PDF Builder - [RELOAD DEBUG] Action à envoyer: pdf_builder_get_debug_settings');
+        debugLog('PDF Builder - [RELOAD DEBUG] URL AJAX:', ajaxUrl);
+        debugLog('PDF Builder - [RELOAD DEBUG] Nonce:', nonce ? 'présent (' + nonce.substring(0, 8) + '...)' : 'vide');
+        debugLog('PDF Builder - [RELOAD DEBUG] Action à envoyer: pdf_builder_get_debug_settings');
 
         const requestData = new FormData();
         requestData.append('action', 'pdf_builder_get_debug_settings');
@@ -678,8 +678,8 @@
             body: requestData
         })
         .then(response => {
-            console.log('PDF Builder - [RELOAD DEBUG] Réponse HTTP reçue - Status:', response.status);
-            console.log('PDF Builder - [RELOAD DEBUG] Réponse OK:', response.ok);
+            debugLog('PDF Builder - [RELOAD DEBUG] Réponse HTTP reçue - Status:', response.status);
+            debugLog('PDF Builder - [RELOAD DEBUG] Réponse OK:', response.ok);
             if (!response.ok) {
                 console.error('PDF Builder - [RELOAD DEBUG] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
                 throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
@@ -687,11 +687,11 @@
             return response.json();
         })
         .then(data => {
-            console.log('PDF Builder - [RELOAD DEBUG] Données JSON reçues:', data);
-            console.log('PDF Builder - [RELOAD DEBUG] Success:', data.success);
+            debugLog('PDF Builder - [RELOAD DEBUG] Données JSON reçues:', data);
+            debugLog('PDF Builder - [RELOAD DEBUG] Success:', data.success);
 
             if (data.success && data.data) {
-                console.log('PDF Builder - [RELOAD DEBUG] Paramètres de debug reçus:', data.data);
+                debugLog('PDF Builder - [RELOAD DEBUG] Paramètres de debug reçus:', data.data);
 
                 // Mettre à jour les checkboxes de debug
                 const debugFields = [
@@ -707,14 +707,14 @@
                     const checkbox = document.getElementById(fieldName);
                     if (checkbox) {
                         const newValue = data.data[fieldName] || false;
-                        console.log(`PDF Builder - [RELOAD DEBUG] Mise à jour ${fieldName}: ${newValue}`);
+                        debugLog(`PDF Builder - [RELOAD DEBUG] Mise à jour ${fieldName}: ${newValue}`);
                         checkbox.checked = newValue;
                     } else {
                         console.warn(`PDF Builder - [RELOAD DEBUG] Checkbox non trouvée: ${fieldName}`);
                     }
                 });
 
-                console.log('PDF Builder - [RELOAD DEBUG] ===== FIN RECHARGEMENT DEBUG RÉUSSI =====');
+                debugLog('PDF Builder - [RELOAD DEBUG] ===== FIN RECHARGEMENT DEBUG RÉUSSI =====');
                 return data.data;
             } else {
                 console.error('PDF Builder - [RELOAD DEBUG] Erreur - données invalides:', data);
@@ -733,50 +733,67 @@
      * Met à jour l'état des cases à cocher des rôles
      */
     function updateRoleCheckboxes(allowedRoles) {
-        console.log('PDF Builder - [UPDATE CHECKBOXES] ===== DÉBUT MISE À JOUR =====');
-        console.log('PDF Builder - [UPDATE CHECKBOXES] Rôles autorisés reçus:', allowedRoles);
-        console.log('PDF Builder - [UPDATE CHECKBOXES] Type des rôles:', typeof allowedRoles);
-        console.log('PDF Builder - [UPDATE CHECKBOXES] Longueur du tableau:', allowedRoles.length);
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] ===== DÉBUT MISE À JOUR =====');
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] Rôles autorisés reçus:', allowedRoles);
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] Type des rôles:', typeof allowedRoles);
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] Longueur du tableau:', allowedRoles.length);
 
         const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
-        console.log('PDF Builder - [UPDATE CHECKBOXES] Nombre de cases trouvées:', roleCheckboxes.length);
-        console.log('PDF Builder - [UPDATE CHECKBOXES] Cases trouvées:', roleCheckboxes);
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] Nombre de cases trouvées:', roleCheckboxes.length);
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] Cases trouvées:', roleCheckboxes);
 
         if (roleCheckboxes.length === 0) {
             console.error('PDF Builder - [UPDATE CHECKBOXES] AUCUNE CASE À COCHER TROUVÉE!');
             console.error('PDF Builder - [UPDATE CHECKBOXES] Vérification du DOM...');
             const allInputs = document.querySelectorAll('input');
-            console.log('PDF Builder - [UPDATE CHECKBOXES] Tous les inputs sur la page:', allInputs.length);
+            debugLog('PDF Builder - [UPDATE CHECKBOXES] Tous les inputs sur la page:', allInputs.length);
             const roleInputs = Array.from(allInputs).filter(input => input.name && input.name.includes('roles'));
-            console.log('PDF Builder - [UPDATE CHECKBOXES] Inputs avec "roles" dans le name:', roleInputs);
+            debugLog('PDF Builder - [UPDATE CHECKBOXES] Inputs avec "roles" dans le name:', roleInputs);
         }
 
         roleCheckboxes.forEach((checkbox, index) => {
             const roleKey = checkbox.value;
             const shouldBeChecked = allowedRoles.includes(roleKey);
 
-            console.log(`PDF Builder - [UPDATE CHECKBOXES] Case ${index + 1}: role="${roleKey}", shouldBeChecked=${shouldBeChecked}, currentChecked=${checkbox.checked}, disabled=${checkbox.disabled}`);
+            debugLog(`PDF Builder - [UPDATE CHECKBOXES] Case ${index + 1}: role="${roleKey}", shouldBeChecked=${shouldBeChecked}, currentChecked=${checkbox.checked}, disabled=${checkbox.disabled}`);
 
             // Ne pas modifier les administrateurs (toujours cochés et désactivés)
             if (roleKey === 'administrator') {
-                console.log('PDF Builder - [UPDATE CHECKBOXES] Administrator détecté - forçage checked=true, disabled=true');
+                debugLog('PDF Builder - [UPDATE CHECKBOXES] Administrator détecté - forçage checked=true, disabled=true');
                 checkbox.checked = true;
                 checkbox.disabled = true;
-                console.log('PDF Builder - [UPDATE CHECKBOXES] Administrator mis à jour - checked:', checkbox.checked, 'disabled:', checkbox.disabled);
+                debugLog('PDF Builder - [UPDATE CHECKBOXES] Administrator mis à jour - checked:', checkbox.checked, 'disabled:', checkbox.disabled);
                 return;
             }
 
-            console.log(`PDF Builder - [UPDATE CHECKBOXES] Mise à jour case ${roleKey}: ${shouldBeChecked ? 'cochée' : 'décochée'}`);
+            debugLog(`PDF Builder - [UPDATE CHECKBOXES] Mise à jour case ${roleKey}: ${shouldBeChecked ? 'cochée' : 'décochée'}`);
             checkbox.checked = shouldBeChecked;
-            console.log(`PDF Builder - [UPDATE CHECKBOXES] Case ${roleKey} après mise à jour: checked=${checkbox.checked}`);
+
+            // Déclencher un événement change pour s'assurer que le CSS se met à jour
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Mettre à jour la classe CSS du parent toggle-switch pour assurer le rendu visuel
+            const toggleSwitch = checkbox.closest('.toggle-switch');
+            if (toggleSwitch) {
+                if (shouldBeChecked) {
+                    toggleSwitch.classList.add('checked');
+                } else {
+                    toggleSwitch.classList.remove('checked');
+                }
+                debugLog(`PDF Builder - [UPDATE CHECKBOXES] Classe CSS du parent mise à jour: ${toggleSwitch.classList.contains('checked') ? 'checked ajoutée' : 'checked retirée'}`);
+            } else {
+                console.warn(`PDF Builder - [UPDATE CHECKBOXES] Parent .toggle-switch non trouvé pour ${roleKey}`);
+            }
+
+            debugLog(`PDF Builder - [UPDATE CHECKBOXES] Case ${roleKey} après mise à jour: checked=${checkbox.checked}`);
         });
 
-        console.log('PDF Builder - [UPDATE CHECKBOXES] ===== FIN MISE À JOUR =====');
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] ===== FIN MISE À JOUR =====');
         
         // Vérification finale
-        console.log('PDF Builder - [UPDATE CHECKBOXES] VÉRIFICATION FINALE:');
+        debugLog('PDF Builder - [UPDATE CHECKBOXES] VÉRIFICATION FINALE:');
         roleCheckboxes.forEach((checkbox, index) => {
-            console.log(`PDF Builder - [UPDATE CHECKBOXES] Case finale ${index + 1} (${checkbox.value}): checked=${checkbox.checked}, disabled=${checkbox.disabled}`);
+            debugLog(`PDF Builder - [UPDATE CHECKBOXES] Case finale ${index + 1} (${checkbox.value}): checked=${checkbox.checked}, disabled=${checkbox.disabled}`);
         });
     }
 

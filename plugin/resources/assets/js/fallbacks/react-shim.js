@@ -4,7 +4,7 @@
  */
 
 if (typeof window !== 'undefined' && window.React) {
-  console.log('🔧 [react-shim] Setting up React shim for hooks...');
+  debugLog('🔧 [react-shim] Setting up React shim for hooks...');
   
   // Get the original React object
   const OriginalReact = window.React;
@@ -89,8 +89,8 @@ if (typeof window !== 'undefined' && window.React) {
   window.React.StrictMode = StrictMode;
   window.React.Profiler = Profiler;
   
-  console.log('✅ [react-shim] React shim initialized, all hooks available on window.React');
-  console.log('✅ [react-shim] window.React.useRef:', typeof window.React.useRef);
-  console.log('✅ [react-shim] window.React.useState:', typeof window.React.useState);
-  console.log('✅ [react-shim] window.React.useEffect:', typeof window.React.useEffect);
+  debugLog('✅ [react-shim] React shim initialized, all hooks available on window.React');
+  debugLog('✅ [react-shim] window.React.useRef:', typeof window.React.useRef);
+  debugLog('✅ [react-shim] window.React.useState:', typeof window.React.useState);
+  debugLog('✅ [react-shim] window.React.useEffect:', typeof window.React.useEffect);
 }

@@ -28,20 +28,20 @@
 
     // Create initial stub but DON'T assign to window yet
     var stub = createStub();
-    console.log('✅ [pdf-builder-wrap] Stub pdfBuilderReact created (not assigned to window yet)');
+    debugLog('✅ [pdf-builder-wrap] Stub pdfBuilderReact created (not assigned to window yet)');
 
     // Check if webpack bundle has replaced the stub
     // Look for the webpack bundle flag
     var checkRealModule = setInterval(function() {
-        console.log('🔍 [pdf-builder-wrap] Checking for real module...');
-        console.log('🔍 [pdf-builder-wrap] window.pdfBuilderReact exists:', !!window.pdfBuilderReact);
+        debugLog('🔍 [pdf-builder-wrap] Checking for real module...');
+        debugLog('🔍 [pdf-builder-wrap] window.pdfBuilderReact exists:', !!window.pdfBuilderReact);
         if (window.pdfBuilderReact) {
-            console.log('🔍 [pdf-builder-wrap] window.pdfBuilderReact:', window.pdfBuilderReact);
-            console.log('🔍 [pdf-builder-wrap] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-            console.log('🔍 [pdf-builder-wrap] _isWebpackBundle:', window.pdfBuilderReact._isWebpackBundle);
+            debugLog('🔍 [pdf-builder-wrap] window.pdfBuilderReact:', window.pdfBuilderReact);
+            debugLog('🔍 [pdf-builder-wrap] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+            debugLog('🔍 [pdf-builder-wrap] _isWebpackBundle:', window.pdfBuilderReact._isWebpackBundle);
         }
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function' && window.pdfBuilderReact._isWebpackBundle) {
-            console.log('✅ [pdf-builder-wrap] Real pdfBuilderReact loaded from webpack (detected via flag)');
+            debugLog('✅ [pdf-builder-wrap] Real pdfBuilderReact loaded from webpack (detected via flag)');
             isInitialized = true;
             clearInterval(checkRealModule);
             
@@ -49,7 +49,7 @@
             try {
                 var event = new Event('pdfBuilderReactReady');
                 document.dispatchEvent(event);
-                console.log('✅ [pdf-builder-wrap] pdfBuilderReactReady event dispatched');
+                debugLog('✅ [pdf-builder-wrap] pdfBuilderReactReady event dispatched');
             } catch (e) {
                 console.error('[pdf-builder-wrap] Error dispatching event:', e);
             }
@@ -65,9 +65,9 @@
             if (!window.pdfBuilderReact || !window.pdfBuilderReact._isWebpackBundle) {
                 window.pdfBuilderReact = stub;
                 Object.assign(initialized, window.pdfBuilderReact);
-                console.log('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
+                debugLog('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
             } else {
-                console.log('✅ [pdf-builder-wrap] Keeping real pdfBuilderReact from webpack bundle');
+                debugLog('✅ [pdf-builder-wrap] Keeping real pdfBuilderReact from webpack bundle');
             }
             // Still dispatch event so initialization can proceed
             try {

@@ -1,7 +1,7 @@
 <?php
 /**
  * PDF Builder Pro - Système de logging avancé
- * Remplace les error_log() par un système structuré et configurable
+ * Remplace les // // error_log() par un système structuré et configurable
  */
 
 class PDF_Builder_Logger {
@@ -91,7 +91,7 @@ class PDF_Builder_Logger {
 
         // Log aussi les erreurs critiques dans error_log de PHP
         if ($level >= self::LEVEL_ERROR) {
-            error_log('[PDF Builder] ' . $message);
+            // // error_log('[PDF Builder] ' . $message);
         }
     }
 
@@ -119,14 +119,14 @@ class PDF_Builder_Logger {
     }
 
     /**
-     * Log un message dans error_log() seulement si le debug PHP est activé
+     * Log un message dans // // error_log() seulement si le debug PHP est activé
      */
     public function debug_log($message) {
         $settings = get_option('pdf_builder_settings', []);
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
 
         if ($debug_php_errors) {
-            error_log('[PDF Builder Debug] ' . $message);
+            // // error_log('[PDF Builder Debug] ' . $message);
         }
     }
 

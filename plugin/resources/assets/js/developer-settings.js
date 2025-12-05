@@ -13,11 +13,11 @@
         currentLogs: [],
 
         init: function() {
-            console.log('[PDF Builder Developer] Initializing developer settings...');
+            debugLog('[PDF Builder Developer] Initializing developer settings...');
 
             // Get configuration
             this.config = window.pdfBuilderDeveloperConfig || {};
-            console.log('[PDF Builder Developer] Config loaded:', this.config);
+            debugLog('[PDF Builder Developer] Config loaded:', this.config);
 
             // Cache elements
             this.cacheElements();
@@ -28,7 +28,7 @@
             // Initialize state
             this.updateUI();
 
-            console.log('[PDF Builder Developer] Developer settings initialized successfully');
+            debugLog('[PDF Builder Developer] Developer settings initialized successfully');
         },
 
         cacheElements: function() {
@@ -157,7 +157,7 @@
         },
 
         saveSetting: function(key, value) {
-            console.log(`[PDF Builder Developer] Saving setting: ${key} = ${value}`);
+            debugLog(`[PDF Builder Developer] Saving setting: ${key} = ${value}`);
 
             const formData = new FormData();
             formData.append('action', this.config.action);
@@ -172,7 +172,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    console.log(`[PDF Builder Developer] Setting saved successfully: ${key}`);
+                    debugLog(`[PDF Builder Developer] Setting saved successfully: ${key}`);
                     this.showNotification('Paramètre sauvegardé avec succès', 'success');
                     return data;
                 } else {
@@ -198,7 +198,7 @@
         },
 
         loadJsLogs: function() {
-            console.log('[PDF Builder Developer] Loading JS logs...');
+            debugLog('[PDF Builder Developer] Loading JS logs...');
 
             this.elements.jsLogsContainer.html(`
                 <div class="dev-logs-loading">
@@ -355,7 +355,7 @@
         },
 
         loadSystemInfo: function() {
-            console.log('[PDF Builder Developer] Loading system info...');
+            debugLog('[PDF Builder Developer] Loading system info...');
 
             this.elements.systemInfoContent.html(`
                 <div class="dev-loading-spinner" style="margin: 40px auto;"></div>
@@ -422,7 +422,7 @@
 
         clearSystemCache: function() {
             if (confirm('Vider le cache système ? Cette action peut améliorer les performances.')) {
-                console.log('[PDF Builder Developer] Clearing system cache...');
+                debugLog('[PDF Builder Developer] Clearing system cache...');
 
                 // Simulate cache clearing
                 setTimeout(() => {
@@ -485,7 +485,7 @@
 
         resetDeveloperSettings: function() {
             if (confirm('Réinitialiser tous les paramètres développeur ? Cette action est irréversible.')) {
-                console.log('[PDF Builder Developer] Resetting developer settings...');
+                debugLog('[PDF Builder Developer] Resetting developer settings...');
 
                 // Reset all settings to defaults
                 this.saveSetting('pdf_builder_developer_enabled', '0');

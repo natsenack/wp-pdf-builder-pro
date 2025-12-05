@@ -98,7 +98,7 @@ class PdfBuilderTemplateManager
         // Fonction utilitaire pour les logs conditionnels
         $debugLog = function($message) use ($isDebugMode) {
             if ($isDebugMode()) {
-                error_log('PDF Builder Save: ' . $message);
+                // // error_log('PDF Builder Save: ' . $message);
             }
         };
 
