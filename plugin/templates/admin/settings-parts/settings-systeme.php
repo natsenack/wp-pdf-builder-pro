@@ -42,7 +42,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_system_info',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 if (response.success) {
@@ -67,7 +67,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_clear_cache',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 if (response.success) {
