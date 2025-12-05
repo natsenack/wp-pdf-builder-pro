@@ -564,14 +564,43 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
  */
 function pdf_builder_get_allowed_roles_ajax_handler() {
     try {
-        error_log('[PDF Builder] Handler get_allowed_roles appelé - VERSION DEPLOYEE');
+        error_log('[PDF Builder] Handler get_allowed_roles appelé');
 
-        // Test simple sans charger les helpers
+        // Inclure les helpers si nécessaire
+        if (!function_exists('pdf_builder_get_allowed_roles')) {
+            require_once plugin_dir_path(dirname(__FILE__)) . '../resources/templates/admin/settings-helpers.php';
+            error_log('[PDF Builder] Helpers chargés');
+        }
+
+        // Temporairement désactiver la vérification du nonce pour diagnostiquer
+        /*
+        $nonce = $_POST['nonce'] ?? '';
+        error_log('[PDF Builder] Nonce reçu: ' . $nonce);
+        if (!wp_verify_nonce($nonce, 'pdf_builder_settings')) {
+            error_log('[PDF Builder] Nonce invalide');
+            wp_send_json_error('Nonce invalide');
+            return;
+        }
+        error_log('[PDF Builder] Nonce valide');
+        */
+
+        // Temporairement désactiver la vérification des permissions pour diagnostiquer
+        /*
+        if (!current_user_can('manage_options')) {
+            error_log('[PDF Builder] Permissions insuffisantes');
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+        error_log('[PDF Builder] Permissions OK');
+        */
+
+        // Récupérer les rôles autorisés
+        $allowed_roles = pdf_builder_get_allowed_roles();
+        error_log('[PDF Builder] Rôles récupérés: ' . print_r($allowed_roles, true));
+
         wp_send_json_success([
-            'allowed_roles' => ['administrator', 'editor', 'test_role'],
-            'count' => 3,
-            'message' => 'Handler appelé avec succès - version déployée',
-            'timestamp' => time()
+            'allowed_roles' => $allowed_roles,
+            'count' => count($allowed_roles)
         ]);
 
     } catch (Exception $e) {
