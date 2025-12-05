@@ -309,6 +309,11 @@
 
         const allData = {};
 
+        // Fonction pour normaliser les noms de champs (retirer [] à la fin)
+        function normalizeFieldName(name) {
+            return name.replace(/\[\]$/, '');
+        }
+
         // Liste des IDs de formulaires à collecter
         const formIds = [
             'developpeur-form',
@@ -339,14 +344,15 @@
                 // Convertir FormData en objet
                 for (let [key, value] of formData.entries()) {
                     // Gérer les cases à cocher multiples
-                    if (formObject[key]) {
-                        if (Array.isArray(formObject[key])) {
-                            formObject[key].push(value);
+                    const normalizedKey = normalizeFieldName(key);
+                    if (formObject[normalizedKey]) {
+                        if (Array.isArray(formObject[normalizedKey])) {
+                            formObject[normalizedKey].push(value);
                         } else {
-                            formObject[key] = [formObject[key], value];
+                            formObject[normalizedKey] = [formObject[normalizedKey], value];
                         }
                     } else {
-                        formObject[key] = value;
+                        formObject[normalizedKey] = value;
                     }
                 }
 
@@ -359,6 +365,7 @@
         const allInputs = document.querySelectorAll('input[name], select[name], textarea[name]');
         allInputs.forEach(input => {
             if (input.name && input.name !== '') {
+                const normalizedName = normalizeFieldName(input.name);
                 const inputForm = input.closest('form');
                 // Ne collecter que si ce n'est pas déjà dans un formulaire traité
                 if (!inputForm || !formIds.includes(inputForm.id)) {
@@ -371,28 +378,29 @@
                     }
 
                     if (input.type === 'checkbox') {
-                        // Gérer les cases à cocher multiples
-                        if (input.checked) {
-                            if (!allData[sectionId][input.name]) {
-                                allData[sectionId][input.name] = [];
-                            } else if (!Array.isArray(allData[sectionId][input.name])) {
-                                allData[sectionId][input.name] = [allData[sectionId][input.name]];
+                        if (allData[sectionId][normalizedName]) {
+                            if (Array.isArray(allData[sectionId][normalizedName])) {
+                                if (input.checked) {
+                                    allData[sectionId][normalizedName].push(input.value);
+                                }
+                            } else {
+                                allData[sectionId][normalizedName] = input.checked ? [allData[sectionId][normalizedName], input.value] : [allData[sectionId][normalizedName]];
                             }
-                            allData[sectionId][input.name].push(input.value);
+                        } else {
+                            allData[sectionId][normalizedName] = input.checked ? [input.value] : [];
                         }
                     } else if (input.type === 'radio') {
                         if (input.checked) {
-                            allData[sectionId][input.name] = input.value;
+                            allData[sectionId][normalizedName] = input.value;
                         }
                     } else {
-                        allData[sectionId][input.name] = input.value;
+                        allData[sectionId][normalizedName] = input.value;
                     }
                 }
             }
         });
 
         debugLog('PDF Builder - Données collectées:', allData);
-        console.log('PDF Builder - Données collectées détaillées:', JSON.stringify(allData, null, 2));
         return allData;
     }
 
