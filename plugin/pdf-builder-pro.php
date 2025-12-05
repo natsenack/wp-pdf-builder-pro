@@ -623,10 +623,6 @@ function pdf_builder_init()
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
 
-    // Charger les handlers AJAX des paramètres
-    require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
-    require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
-
     // Initialiser le système de nonce unifié
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
     $unified_handler = PDF_Builder_Unified_Ajax_Handler::get_instance();
