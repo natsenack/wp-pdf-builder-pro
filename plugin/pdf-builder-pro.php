@@ -212,11 +212,16 @@ if (function_exists('add_action')) {
  * AJAX handler for creating backups
  */
 function pdf_builder_create_backup_ajax() {
+    error_log('PDF Builder: [CREATE BACKUP] Function called');
+    
     // Check permissions
     if (!current_user_can('manage_options')) {
+        error_log('PDF Builder: [CREATE BACKUP] Permission denied');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
+
+    error_log('PDF Builder: [CREATE BACKUP] Permission granted, proceeding');
 
     try {
         // Create backup directory if it doesn't exist
@@ -361,11 +366,16 @@ function pdf_builder_list_backups_ajax() {
  * AJAX handler for restoring backups
  */
 function pdf_builder_restore_backup_ajax() {
+    error_log('PDF Builder: [RESTORE BACKUP] Function called');
+    
     // Check permissions
     if (!current_user_can('manage_options')) {
+        error_log('PDF Builder: [RESTORE BACKUP] Permission denied');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
+
+    error_log('PDF Builder: [RESTORE BACKUP] Permission granted, proceeding');
 
     try {
         $filename = sanitize_file_name($_POST['filename'] ?? '');
@@ -410,6 +420,21 @@ function pdf_builder_restore_backup_ajax() {
 }
 
 function pdf_builder_register_ajax_handlers() {
+    error_log('PDF Builder: [AJAX REGISTRATION] Starting AJAX handlers registration');
+    
+    // Check if functions exist before registering
+    if (!function_exists('pdf_builder_create_backup_ajax')) {
+        error_log('PDF Builder: [AJAX REGISTRATION] ERROR: pdf_builder_create_backup_ajax function not found');
+    } else {
+        error_log('PDF Builder: [AJAX REGISTRATION] pdf_builder_create_backup_ajax function found');
+    }
+    
+    if (!function_exists('pdf_builder_list_backups_ajax')) {
+        error_log('PDF Builder: [AJAX REGISTRATION] ERROR: pdf_builder_list_backups_ajax function not found');
+    } else {
+        error_log('PDF Builder: [AJAX REGISTRATION] pdf_builder_list_backups_ajax function found');
+    }
+    
     // Simplified AJAX handlers registration - complex factory system removed
     // All handlers are now registered directly without factory initialization
 
@@ -438,6 +463,8 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax');
     add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_ajax_handler_dispatch');
 
+    error_log('PDF Builder: [AJAX REGISTRATION] AJAX handlers registration completed');
+    
     // Handlers de licence - maintenant gérés par le gestionnaire de licences
     add_action('wp_ajax_pdf_builder_test_license', 'pdf_builder_ajax_handler_dispatch');
 
