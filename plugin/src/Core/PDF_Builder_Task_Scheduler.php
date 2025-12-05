@@ -1074,6 +1074,293 @@ class PDF_Builder_Task_Scheduler {
             'message' => 'WP Cron system is responding'
         ]);
     }
+
+    /**
+     * AJAX handler pour changer la fréquence de sauvegarde
+     */
+    public function ajax_change_backup_frequency() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        $frequency = sanitize_text_field($_POST['frequency'] ?? 'daily');
+
+        // Valider la fréquence
+        $valid_frequencies = ['every_minute', 'daily', 'weekly', 'monthly'];
+        if (!in_array($frequency, $valid_frequencies)) {
+            wp_send_json_error(['message' => 'Fréquence invalide']);
+            return;
+        }
+
+        // Sauvegarder la nouvelle fréquence
+        update_option('pdf_builder_auto_backup_frequency', $frequency);
+
+        // Reprogrammer la tâche cron
+        $this->reschedule_auto_backup($frequency);
+
+        wp_send_json_success([
+            'message' => 'Fréquence de sauvegarde mise à jour',
+            'frequency' => $frequency
+        ]);
+    }
+
+    /**
+     * AJAX handler pour diagnostiquer le système cron
+     */
+    public function ajax_diagnose_cron() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        $diagnostics = [
+            'wp_cron_enabled' => defined('DISABLE_WP_CRON') && DISABLE_WP_CRON ? false : true,
+            'scheduled_tasks' => [],
+            'next_scheduled' => []
+        ];
+
+        // Vérifier les tâches programmées
+        foreach (self::TASKS as $task_name => $task_config) {
+            $next = wp_next_scheduled($task_name);
+            $diagnostics['scheduled_tasks'][$task_name] = $next ? date('Y-m-d H:i:s', $next) : false;
+            $diagnostics['next_scheduled'][$task_name] = $next;
+        }
+
+        wp_send_json_success($diagnostics);
+    }
+
+    /**
+     * AJAX handler pour réparer le système cron
+     */
+    public function ajax_repair_cron() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Reprogrammer toutes les tâches
+        $this->unschedule_all_tasks();
+        $this->schedule_tasks();
+
+        wp_send_json_success(['message' => 'Système cron réparé']);
+    }
+
+    /**
+     * AJAX handler pour obtenir les statistiques de sauvegarde
+     */
+    public function ajax_get_backup_stats() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        $stats = [
+            'total_backups' => 0,
+            'auto_backups' => 0,
+            'manual_backups' => 0,
+            'last_backup' => null
+        ];
+
+        // Scanner le dossier de sauvegarde
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/';
+        if (is_dir($backup_dir)) {
+            $files = glob($backup_dir . '*.json');
+            if ($files) {
+                $stats['total_backups'] = count($files);
+
+                foreach ($files as $file) {
+                    $filename = basename($file);
+                    if (strpos($filename, 'auto_backup') !== false) {
+                        $stats['auto_backups']++;
+                    } else {
+                        $stats['manual_backups']++;
+                    }
+                }
+
+                // Trier par date (le plus récent en premier)
+                usort($files, function($a, $b) {
+                    return filemtime($b) - filemtime($a);
+                });
+
+                if (!empty($files)) {
+                    $stats['last_backup'] = basename($files[0]);
+                }
+            }
+        }
+
+        wp_send_json_success($stats);
+    }
+
+    /**
+     * AJAX handler pour créer une sauvegarde manuelle
+     */
+    public function ajax_create_backup() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        try {
+            if (class_exists('\\PDF_Builder\\Managers\\PdfBuilderBackupRestoreManager')) {
+                $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+                $result = $backup_manager->createBackup();
+
+                if (is_wp_error($result)) {
+                    wp_send_json_error(['message' => $result->get_error_message()]);
+                } else {
+                    wp_send_json_success([
+                        'message' => 'Sauvegarde créée avec succès',
+                        'file' => $result['filename'] ?? null
+                    ]);
+                }
+            } else {
+                wp_send_json_error(['message' => 'Gestionnaire de sauvegarde non disponible']);
+            }
+        } catch (\Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Callback pour créer une sauvegarde automatique
+     */
+    public function create_auto_backup() {
+        error_log('PDF Builder: [AUTO BACKUP] Starting automatic backup creation');
+
+        try {
+            // Vérifier si les sauvegardes automatiques sont activées
+            $auto_backup_enabled = get_option('pdf_builder_auto_backup_enabled', '0');
+            if ($auto_backup_enabled !== '1' && $auto_backup_enabled !== 1) {
+                error_log('PDF Builder: [AUTO BACKUP] Auto backup disabled, skipping');
+                return;
+            }
+
+            // Utiliser le Backup Manager pour créer la sauvegarde
+            if (class_exists('\\PDF_Builder\\Managers\\PdfBuilderBackupRestoreManager')) {
+                $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+
+                // Créer une sauvegarde automatique
+                $result = $backup_manager->createBackup([
+                    'auto_backup' => true,
+                    'description' => 'Sauvegarde automatique planifiée'
+                ]);
+
+                if (isset($result['success']) && $result['success'] === false) {
+                    error_log('PDF Builder: [AUTO BACKUP] Error creating backup: ' . ($result['message'] ?? 'Unknown error'));
+                } elseif (isset($result['success']) && $result['success'] === true) {
+                    error_log('PDF Builder: [AUTO BACKUP] Backup created successfully: ' . ($result['filename'] ?? 'unknown'));
+                } else {
+                    error_log('PDF Builder: [AUTO BACKUP] Unexpected result format from createBackup');
+                }
+            } else {
+                error_log('PDF Builder: [AUTO BACKUP] Backup manager not available');
+            }
+
+        } catch (\Exception $e) {
+            error_log('PDF Builder: [AUTO BACKUP] Exception during auto backup: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Callback pour nettoyer le cache expiré
+     */
+    public function cleanup_expired_cache() {
+        error_log('PDF Builder: [CACHE CLEANUP] Starting cache cleanup');
+
+        try {
+            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Cache_Manager')) {
+                $cache_manager = new \PDF_Builder\Managers\PDF_Builder_Cache_Manager();
+                $cache_manager->cleanup_expired_cache();
+                error_log('PDF Builder: [CACHE CLEANUP] Cache cleanup completed');
+            } else {
+                error_log('PDF Builder: [CACHE CLEANUP] Cache manager not available');
+            }
+        } catch (\Exception $e) {
+            error_log('PDF Builder: [CACHE CLEANUP] Exception during cleanup: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Callback pour la rotation des logs
+     */
+    public function rotate_logs() {
+        error_log('PDF Builder: [LOG ROTATION] Starting log rotation');
+
+        try {
+            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Advanced_Logger')) {
+                $logger = new \PDF_Builder\Managers\PDF_Builder_Advanced_Logger();
+                $logger->rotate_logs();
+                error_log('PDF Builder: [LOG ROTATION] Log rotation completed');
+            } else {
+                error_log('PDF Builder: [LOG ROTATION] Logger not available');
+            }
+        } catch (\Exception $e) {
+            error_log('PDF Builder: [LOG ROTATION] Exception during rotation: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Callback pour nettoyer les données de performance
+     */
+    public function cleanup_performance_data() {
+        error_log('PDF Builder: [PERFORMANCE CLEANUP] Starting performance data cleanup');
+
+        try {
+            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Performance_Monitor')) {
+                $performance_monitor = new \PDF_Builder\Managers\PDF_Builder_Performance_Monitor();
+                $performance_monitor->cleanup_old_data();
+                error_log('PDF Builder: [PERFORMANCE CLEANUP] Performance cleanup completed');
+            } else {
+                error_log('PDF Builder: [PERFORMANCE CLEANUP] Performance monitor not available');
+            }
+        } catch (\Exception $e) {
+            error_log('PDF Builder: [PERFORMANCE CLEANUP] Exception during cleanup: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Callback pour la vérification de santé sécurité
+     */
+    public function security_health_check() {
+        error_log('PDF Builder: [SECURITY CHECK] Starting security health check');
+
+        try {
+            if (class_exists('\\PDF_Builder\\Core\\PDF_Builder_Security_Validator')) {
+                $security_validator = \PDF_Builder\Core\PDF_Builder_Security_Validator::get_instance();
+                $security_validator->run_security_check();
+                error_log('PDF Builder: [SECURITY CHECK] Security check completed');
+            } else {
+                error_log('PDF Builder: [SECURITY CHECK] Security validator not available');
+            }
+        } catch (\Exception $e) {
+            error_log('PDF Builder: [SECURITY CHECK] Exception during check: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Callback pour l'optimisation de la base de données
+     */
+    public function optimize_database() {
+        error_log('PDF Builder: [DATABASE OPTIMIZATION] Starting database optimization');
+
+        try {
+            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Database_Query_Optimizer')) {
+                $db_optimizer = new \PDF_Builder\Managers\PDF_Builder_Database_Query_Optimizer();
+                $db_optimizer->optimize_tables();
+                error_log('PDF Builder: [DATABASE OPTIMIZATION] Database optimization completed');
+            } else {
+                error_log('PDF Builder: [DATABASE OPTIMIZATION] Database optimizer not available');
+            }
+        } catch (\Exception $e) {
+            error_log('PDF Builder: [DATABASE OPTIMIZATION] Exception during optimization: ' . $e->getMessage());
+        }
+    }
 }
 
 // Fonctions globales
