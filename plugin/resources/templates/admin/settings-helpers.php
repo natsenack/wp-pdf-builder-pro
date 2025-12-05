@@ -133,17 +133,28 @@ function pdf_builder_get_allowed_roles() {
     $settings = get_option('pdf_builder_settings', []);
     $roles = $settings['pdf_builder_allowed_roles'] ?? null;
 
+    // DEBUG: Log what we're getting
+    error_log('[GET ROLES] Settings: ' . json_encode($settings));
+    error_log('[GET ROLES] Roles from settings: ' . json_encode($roles));
+    error_log('[GET ROLES] Is array: ' . (is_array($roles) ? 'yes' : 'no'));
+    error_log('[GET ROLES] Is empty: ' . (empty($roles) ? 'yes' : 'no'));
+
     if (!is_array($roles) || empty($roles)) {
         // Valeurs par défaut
-        return ['administrator', 'editor', 'shop_manager'];
+        $default_roles = ['administrator', 'editor', 'shop_manager'];
+        error_log('[GET ROLES] Using defaults: ' . json_encode($default_roles));
+        return $default_roles;
     }
 
     // Toujours inclure administrator
     if (!in_array('administrator', $roles)) {
         $roles[] = 'administrator';
+        error_log('[GET ROLES] Added administrator, final roles: ' . json_encode($roles));
     }
 
-    return array_unique($roles);
+    $final_roles = array_unique($roles);
+    error_log('[GET ROLES] Final roles: ' . json_encode($final_roles));
+    return $final_roles;
 }
 
 /**
