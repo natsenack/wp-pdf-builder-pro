@@ -1026,11 +1026,12 @@ if ($cache_last_cleanup !== 'Jamais') {
                         $('#backup-count-info').text(countText);
 
                         output += '<div class="backup-list" style="margin-top: 15px;">';
+                        output += '<style>.backup-item-info { margin-bottom: 0 !important; }</style>';
 
                         response.data.backups.forEach(function(backup, index) {
                             console.log('[DEBUG] Auto-load processing backup:', backup.filename);
                             output += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 10px; background: white; border: 1px solid #dee2e6; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
-                            output += '<div class="backup-info" style="flex: 1; display: flex; align-items: center; gap: 12px;">';
+                            output += '<div class="backup-item-info" style="flex: 1; display: flex; align-items: center; gap: 12px;">';
                             output += '<div class="backup-icon" style="font-size: 20px;">📄</div>';
                             output += '<div class="backup-details">';
                             output += '<div class="backup-filename" style="font-weight: 600; color: #007cba; margin-bottom: 2px;">' + backup.filename + '</div>';
