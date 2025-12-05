@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit('No direct access');
 // Include the cron diagnostic interface
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
 
-$task_scheduler = new PDF_Builder_Task_Scheduler();
+$task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
 ?>
 
 <div class="pdf-builder-cron-diagnostics">
