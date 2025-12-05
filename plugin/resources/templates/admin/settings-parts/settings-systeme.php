@@ -1021,9 +1021,10 @@ if ($cache_last_cleanup !== 'Jamais') {
                     }
 
                     output += '</div>';
-                    console.log('[DEBUG] Setting HTML content');
+                    console.log('[DEBUG] Generated HTML output:', output);
                     $results.html(output);
                     console.log('[DEBUG] HTML content set successfully');
+                    console.log('[DEBUG] Results container after setting HTML:', $results.html().substring(0, 200) + '...');
                     showSystemNotification('Liste des sauvegardes récupérée', 'success');
                 } else {
                     console.log('[DEBUG] AJAX response not successful:', response);
