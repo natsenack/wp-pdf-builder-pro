@@ -2003,8 +2003,12 @@ function pdf_builder_create_backup_ajax() {
  * AJAX handler for listing backups
  */
 function pdf_builder_list_backups_ajax() {
+    error_log('PDF Builder: [BACKUP LIST] AJAX function called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+    error_log('PDF Builder: [BACKUP LIST] POST data: ' . print_r($_POST, true));
+
     // Check nonce
     if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+        error_log('PDF Builder: [BACKUP LIST] Nonce verification failed');
         wp_send_json_error(['message' => 'Nonce invalide']);
         return;
     }
@@ -2048,6 +2052,14 @@ function pdf_builder_list_backups_ajax() {
                 $file_size = filesize($file_path);
                 $file_modified = filemtime($file_path);
 
+        foreach ($files as $file) {
+            $filename = basename($file);
+            $file_path = $backup_dir . '/' . $filename;
+
+            if (is_file($file_path) && is_readable($file_path)) {
+                $file_size = filesize($file_path);
+                $file_modified = filemtime($file_path);
+
                 // Parse filename to extract date - handle multiple formats
                 $date_match = array();
                 if (preg_match('/pdf[-_]builder[-_]backup[_-](\d{4}[-]\d{2}[-]\d{2})[_-](\d{2}[-]\d{2}[-]\d{2})\.json/', $filename, $date_match)) {
@@ -2074,10 +2086,12 @@ function pdf_builder_list_backups_ajax() {
         });
 
         error_log('PDF Builder: [BACKUP LIST] Returning ' . count($backups) . ' backups successfully');
+        error_log('PDF Builder: [BACKUP LIST] Response data: ' . json_encode(array('backups' => $backups)));
         wp_send_json_success(array('backups' => $backups));
 
     } catch (Exception $e) {
         error_log('PDF Builder: [BACKUP LIST] Exception: ' . $e->getMessage());
+        error_log('PDF Builder: [BACKUP LIST] Stack trace: ' . $e->getTraceAsString());
         wp_send_json_error('Erreur lors de la récupération des sauvegardes: ' . $e->getMessage());
     }
 }
