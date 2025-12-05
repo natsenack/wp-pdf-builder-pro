@@ -5,9 +5,17 @@
     global $wp_roles;
     $all_roles = $wp_roles->roles;
     $allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+
+    // DEBUG: Afficher les valeurs récupérées
+    echo "<!-- DEBUG: allowed_roles = " . json_encode($allowed_roles) . " -->";
+
     if (!is_array($allowed_roles)) {
         $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+        echo "<!-- DEBUG: Conversion en array par défaut -->";
     }
+
+    // DEBUG: Afficher le nombre de rôles
+    echo "<!-- DEBUG: Nombre de rôles récupérés = " . count($allowed_roles) . " -->";
 
     $role_descriptions = [
         'administrator' => 'Accès complet à toutes les fonctionnalités',
