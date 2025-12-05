@@ -75,7 +75,7 @@
             tab.setAttribute('aria-selected', 'true');
 
             // Activer le contenu correspondant
-            const content = document.getElementById('tab-content-' + tabId);
+            const content = document.getElementById(tabId);
             if (content) {
                 content.classList.add('active');
             }
@@ -93,7 +93,7 @@
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab) {
                 const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = document.getElementById('tab-content-' + savedTab);
+                const savedContent = document.getElementById(savedTab);
                 if (savedTabElement && savedContent) {
                     savedTabElement.click();
                     return;
