@@ -496,6 +496,13 @@
                 document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', {
                     detail: { formData: formData, response: data }
                 }));
+
+                // Recharger les données des rôles pour mettre à jour l'interface
+                reloadRolesData().then(updatedRoles => {
+                    debugLog('PDF Builder - Interface mise à jour avec les rôles sauvegardés:', updatedRoles);
+                }).catch(error => {
+                    debugError('PDF Builder - Erreur lors de la mise à jour de l\'interface:', error);
+                });
             } else {
                 debugError('PDF Builder - Erreur de sauvegarde:', data);
                 debugError('PDF Builder - Détails de l\'erreur:', data.data);
@@ -515,38 +522,134 @@
     }
 
     /**
-     * Affiche un message de sauvegarde
+     * Recharge les données des rôles depuis la base de données
      */
-    function showSaveMessage(message, type) {
-        // Utiliser le système de notifications personnalisé si disponible
-        if (typeof window.showSuccessNotification === 'function' && typeof window.showErrorNotification === 'function') {
-            if (type === 'success') {
-                window.showSuccessNotification(message, { duration: 4000 });
+    function reloadRolesData() {
+        debugLog('PDF Builder - Rechargement des données de rôles...');
+
+        return fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'pdf_builder_get_allowed_roles',
+                nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : ''
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data && Array.isArray(data.data.allowed_roles)) {
+                debugLog('PDF Builder - Données de rôles rechargées:', data.data.allowed_roles);
+
+                // Mettre à jour l'état des cases à cocher
+                updateRoleCheckboxes(data.data.allowed_roles);
+
+                // Mettre à jour le compteur
+                updateSelectedCount(data.data.allowed_roles.length);
+
+                return data.data.allowed_roles;
             } else {
-                window.showErrorNotification(message, { duration: 6000 });
+                debugError('PDF Builder - Erreur lors du rechargement des rôles:', data);
+                throw new Error(data.data || 'Erreur lors du rechargement des rôles');
             }
-        } else {
-            // Fallback vers les messages WordPress classiques
-            // Supprimer les anciens messages
-            const existingMessages = document.querySelectorAll('.pdf-builder-save-message');
-            existingMessages.forEach(msg => msg.remove());
+        });
+    }
 
-            // Créer le nouveau message
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `pdf-builder-save-message notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
-            messageDiv.innerHTML = `<p>${message}</p>`;
+    /**
+     * Met à jour l'état des cases à cocher des rôles
+     */
+    function updateRoleCheckboxes(allowedRoles) {
+        debugLog('PDF Builder - Mise à jour des cases à cocher avec les rôles:', allowedRoles);
 
-            // Ajouter au conteneur de messages ou au début de la page
-            const container = document.querySelector('.wrap') || document.body;
-            container.insertBefore(messageDiv, container.firstChild);
+        const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
+        roleCheckboxes.forEach(checkbox => {
+            const roleKey = checkbox.value;
+            const shouldBeChecked = allowedRoles.includes(roleKey);
 
-            // Auto-suppression après 5 secondes
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 5000);
+            // Ne pas modifier les administrateurs (toujours cochés et désactivés)
+            if (roleKey === 'administrator') {
+                checkbox.checked = true;
+                checkbox.disabled = true;
+                return;
+            }
+
+            checkbox.checked = shouldBeChecked;
+            debugLog(`PDF Builder - Case ${roleKey}: ${shouldBeChecked ? 'cochée' : 'décochée'}`);
+        });
+    }
+
+    /**
+     * Met à jour le compteur de rôles sélectionnés
+     */
+    function updateSelectedCount(count) {
+        const countElement = document.getElementById('selected-count');
+        if (countElement) {
+            countElement.textContent = count;
         }
     }
+
+    /**
+     * Gestionnaire pour les boutons de contrôle rapide des rôles
+     */
+    function initRoleControlButtons() {
+        // Bouton "Sélectionner Tout"
+        const selectAllBtn = document.getElementById('select-all-roles');
+        if (selectAllBtn) {
+            selectAllBtn.addEventListener('click', function() {
+                const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:not([disabled])');
+                roleCheckboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                updateSelectedCount(roleCheckboxes.length + 1); // +1 pour administrator qui est toujours sélectionné
+                debugLog('PDF Builder - Tous les rôles sélectionnés');
+            });
+        }
+
+        // Bouton "Rôles Courants"
+        const selectCommonBtn = document.getElementById('select-common-roles');
+        if (selectCommonBtn) {
+            selectCommonBtn.addEventListener('click', function() {
+                const commonRoles = ['administrator', 'editor', 'shop_manager'];
+                const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
+                roleCheckboxes.forEach(checkbox => {
+                    const roleKey = checkbox.value;
+                    if (roleKey === 'administrator') {
+                        checkbox.checked = true; // Toujours coché
+                    } else {
+                        checkbox.checked = commonRoles.includes(roleKey);
+                    }
+                });
+                updateSelectedCount(commonRoles.length);
+                debugLog('PDF Builder - Rôles courants sélectionnés:', commonRoles);
+            });
+        }
+
+        // Bouton "Désélectionner Tout"
+        const selectNoneBtn = document.getElementById('select-none-roles');
+        if (selectNoneBtn) {
+            selectNoneBtn.addEventListener('click', function() {
+                const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:not([disabled])');
+                roleCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateSelectedCount(1); // Administrator reste toujours sélectionné
+                debugLog('PDF Builder - Tous les rôles désélectionnés (sauf administrator)');
+            });
+        }
+
+        // Mettre à jour le compteur initial
+        const initialChecked = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:checked').length;
+        updateSelectedCount(initialChecked);
+    }
+
+    // Initialiser les gestionnaires d'événements au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        debugLog('PDF Builder - Initialisation des gestionnaires d\'événements...');
+        initTabs();
+        initSaveButton();
+        initRoleControlButtons();
+        debugLog('PDF Builder - Tous les gestionnaires initialisés');
+    });
 
 })();

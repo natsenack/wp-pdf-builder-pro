@@ -558,4 +558,41 @@ function pdf_builder_init_ajax_handlers() {
 
 // Initialiser les handlers unifiés
 add_action('init', 'pdf_builder_init_ajax_handlers');
+
+/**
+ * AJAX Handler pour récupérer les rôles autorisés
+ */
+function pdf_builder_get_allowed_roles_ajax_handler() {
+    try {
+        // Inclure les helpers si nécessaire
+        if (!function_exists('pdf_builder_get_allowed_roles')) {
+            require_once plugin_dir_path(dirname(__FILE__)) . '../resources/templates/admin/settings-helpers.php';
+        }
+
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+            wp_send_json_error('Nonce invalide');
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Récupérer les rôles autorisés
+        $allowed_roles = pdf_builder_get_allowed_roles();
+
+        wp_send_json_success([
+            'allowed_roles' => $allowed_roles,
+            'count' => count($allowed_roles)
+        ]);
+
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur dans pdf_builder_get_allowed_roles_ajax_handler: ' . $e->getMessage());
+        wp_send_json_error('Erreur interne du serveur');
+    }
+}
+add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 ?>
