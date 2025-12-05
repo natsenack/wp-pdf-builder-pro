@@ -141,7 +141,7 @@ class PDF_Template_Status_Manager {
         } elseif (class_exists('WC_Order') && method_exists('WC_Order', 'get_statuses')) {
             return WC_Order::get_statuses();
         } else {
-            $statuses = pdf_builder_safe_get_option('wc_order_statuses', []);
+            $statuses = get_option('wc_order_statuses', []);
             return !empty($statuses) ? $statuses : [
                 'wc-pending' => 'En attente de paiement',
                 'wc-processing' => 'En cours',
@@ -213,7 +213,7 @@ class PDF_Template_Status_Manager {
 
     // Chargement des mappings
     private function load_mappings() {
-        $this->current_mappings = pdf_builder_safe_get_option('pdf_builder_order_status_templates', []);
+        $this->current_mappings = get_option('pdf_builder_order_status_templates', []);
 
         // Nettoyer les mappings obsolètes
         if (!empty($this->current_mappings) && !empty($this->order_statuses)) {
@@ -221,7 +221,7 @@ class PDF_Template_Status_Manager {
             $this->current_mappings = array_intersect_key($this->current_mappings, array_flip($valid_statuses));
 
             // Sauvegarder si nécessaire
-            if (count($this->current_mappings) !== count(pdf_builder_safe_get_option('pdf_builder_order_status_templates', []))) {
+            if (count($this->current_mappings) !== count(get_option('pdf_builder_order_status_templates', []))) {
                 update_option('pdf_builder_order_status_templates', $this->current_mappings);
             }
         }
@@ -230,7 +230,7 @@ class PDF_Template_Status_Manager {
     // Détection du plugin pour un statut personnalisé
     private function detect_custom_status_plugin($status_key) {
         // 1. Vérifier les options WooCommerce
-        $custom_statuses = pdf_builder_safe_get_option('wc_order_statuses', []);
+        $custom_statuses = get_option('wc_order_statuses', []);
         if (!empty($custom_statuses) && isset($custom_statuses['wc-' . $status_key])) {
             $status_data = $custom_statuses['wc-' . $status_key];
             if (is_array($status_data) && isset($status_data['label'])) {
@@ -296,7 +296,7 @@ class PDF_Template_Status_Manager {
     private function detect_plugin_from_active_plugins($status_key) {
         global $wpdb;
 
-        $active_plugins = pdf_builder_safe_get_option('active_plugins', []);
+        $active_plugins = get_option('active_plugins', []);
         $excluded_plugins = ['woocommerce/woocommerce.php'];
         $active_plugins = array_diff($active_plugins, $excluded_plugins);
 
@@ -546,7 +546,7 @@ $current_mappings = $status_manager->get_current_mappings();
                                     <option value="">-- Aucun template --</option>
                                     <?php foreach ($templates as $template_id => $template_title): ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
-                                                <?php pdf_builder_safe_selected($current_mappings[$status_key] ?? '', $template_id); ?>>
+                                                <?php selected($current_mappings[$status_key] ?? '', $template_id); ?>>
                                             <?php echo esc_html($template_title); ?>
                                         </option>
                                     <?php endforeach; ?>
