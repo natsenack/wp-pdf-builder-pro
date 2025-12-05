@@ -561,15 +561,23 @@
      */
     function reloadRolesData() {
         debugLog('PDF Builder - Rechargement des données de rôles...');
+        debugLog('PDF Builder - pdfBuilderAjax défini:', typeof pdfBuilderAjax !== 'undefined');
+        debugLog('PDF Builder - pdfBuilderAjax contenu:', pdfBuilderAjax);
 
-        return fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
+        const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
+        const nonce = pdfBuilderAjax ? pdfBuilderAjax.nonce : '';
+
+        debugLog('PDF Builder - URL AJAX:', ajaxUrl);
+        debugLog('PDF Builder - Nonce:', nonce ? 'présent' : 'vide');
+
+        return fetch(ajaxUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
                 action: 'pdf_builder_get_allowed_roles',
-                nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : ''
+                nonce: nonce
             })
         })
         .then(response => response.json())
