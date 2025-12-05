@@ -363,7 +363,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row">Sauvegardes disponibles</th>
                                 <td>
                                     <div class="main-backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px; margin-top: 10px;">
-                                        <div class="main-backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="toggleMainBackupAccordion()">
+                                        <div class="main-backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" id="main-backup-accordion-header">
                                             <div class="main-backup-header-info" style="display: flex; align-items: center; gap: 10px;">
                                                 <span style="font-size: 18px;">📦</span>
                                                 <div>
@@ -966,6 +966,20 @@ if ($cache_last_cleanup !== 'Jamais') {
         });
     });
 
+    // Gestionnaire pour l'accordéon principal des sauvegardes
+    $('#main-backup-accordion-header').on('click', function() {
+        const content = $('#main-backup-accordion-content');
+        const toggle = $('.main-backup-accordion-toggle');
+
+        if (content.is(':visible')) {
+            content.slideUp(200);
+            toggle.css('transform', 'rotate(0deg)');
+        } else {
+            content.slideDown(200);
+            toggle.css('transform', 'rotate(180deg)');
+        }
+    });
+
     // Fonction pour gérer l'accordéon principal des sauvegardes
     function toggleMainBackupAccordion() {
         const content = $('#main-backup-accordion-content');
@@ -1059,6 +1073,12 @@ if ($cache_last_cleanup !== 'Jamais') {
                     console.log('[DEBUG] Auto-load setting HTML content');
                     $container.html(output);
                     console.log('[DEBUG] Auto-load HTML content set successfully');
+
+                    // Ouvrir automatiquement l'accordéon principal après le chargement
+                    setTimeout(function() {
+                        $('#main-backup-accordion-content').slideDown(300);
+                        $('.main-backup-accordion-toggle').css('transform', 'rotate(180deg)');
+                    }, 500);
                 } else {
                     console.log('[DEBUG] Auto-load AJAX response not successful:', response);
                     $('#backup-count-info').text('Erreur de chargement');
