@@ -825,33 +825,33 @@ class PdfBuilderTemplateManager
                 ARRAY_A
             );
 
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
+            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
 
             if (!$template) {
-                file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
+                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
                 return false;
             }
 
             $template_data_raw = $template['template_data'];
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
+            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
 
             // Vérifier si les données contiennent des backslashes (échappement PHP)
             if (strpos($template_data_raw, '\\') !== false) {
                 $template_data_raw = stripslashes($template_data_raw);
-                file_put_contents($log_file, date('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
+                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
             }
 
             $template_data = json_decode($template_data_raw, true);
             $json_error = json_last_error();
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
+            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
 
             if ($template_data === null && $json_error !== JSON_ERROR_NONE) {
-                file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
+                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
                 return false;
             }
         }
 
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
+        // file_put_contents($log_file, date('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
         return [
             'name' => $template['name'],
             'data' => $template_data

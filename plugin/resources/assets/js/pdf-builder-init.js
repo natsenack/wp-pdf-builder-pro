@@ -33,7 +33,7 @@
         if (checkCount < MAX_CHECKS) {
             setTimeout(checkAndInitialize, 100);
         } else {
-            console.error('❌ [pdf-builder-init] TIMEOUT: pdfBuilderReact not found after ' + MAX_CHECKS + ' attempts');
+            // console.error('❌ [pdf-builder-init] TIMEOUT: pdfBuilderReact not found after ' + MAX_CHECKS + ' attempts');
             // Try one more time with diagnostic info
 
             .filter(k => k.includes('pdf') || k.includes('Builder')).slice(0, 10));

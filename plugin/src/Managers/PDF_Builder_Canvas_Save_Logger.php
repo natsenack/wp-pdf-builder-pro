@@ -97,7 +97,7 @@ class PdfBuilderCanvasSaveLogger
      */
     public function logSaveStart($template_id, $template_name)
     {
-        $this->log('INFO', 'Canvas Save Started', [
+        // $this->log('INFO', 'Canvas Save Started', [
             'template_id' => $template_id,
             'template_name' => $template_name,
             'user_id' => get_current_user_id(),
@@ -110,7 +110,7 @@ class PdfBuilderCanvasSaveLogger
      */
     public function logElementsReceived($elements, $count)
     {
-        $this->log('DEBUG', "Received $count element(s) from frontend", [
+        // $this->log('DEBUG', "Received $count element(s) from frontend", [
             'element_count' => $count,
             'first_element' => !empty($elements) ? $elements[0] : null,
             'elements_summary' => array_map(function ($el) {
@@ -132,7 +132,7 @@ class PdfBuilderCanvasSaveLogger
      */
     public function logCanvasProperties($canvas)
     {
-        $this->log('DEBUG', 'Canvas Properties Received', [
+        // $this->log('DEBUG', 'Canvas Properties Received', [
             'zoom' => $canvas['zoom'] ?? 100,
             'width' => $canvas['width'] ?? 794,
             'height' => $canvas['height'] ?? 1123,
@@ -188,14 +188,14 @@ class PdfBuilderCanvasSaveLogger
         }
 
         if (!empty($validation_errors)) {
-            $this->log('WARNING', 'Validation Issues Found', [
+            // $this->log('WARNING', 'Validation Issues Found', [
                 'error_count' => count($validation_errors),
                 'errors' => $validation_errors,
             ]);
             return false;
         }
 
-        $this->log('DEBUG', 'Validation Passed', [
+        // $this->log('DEBUG', 'Validation Passed', [
             'element_count' => count($elements),
             'canvas_zoom' => $canvas['zoom'],
         ]);
@@ -207,7 +207,7 @@ class PdfBuilderCanvasSaveLogger
      */
     public function logSaveError($error_message, $error_data = null)
     {
-        $this->log('ERROR', 'Canvas Save Error: ' . $error_message, [
+        // $this->log('ERROR', 'Canvas Save Error: ' . $error_message, [
             'error' => $error_message,
             'additional_data' => $error_data,
             'php_error' => error_get_last(),
@@ -219,7 +219,7 @@ class PdfBuilderCanvasSaveLogger
      */
     public function logSaveSuccess($template_id, $element_count)
     {
-        $this->log('INFO', 'Canvas Save Successful', [
+        // $this->log('INFO', 'Canvas Save Successful', [
             'template_id' => $template_id,
             'elements_saved' => $element_count,
             'memory_used' => memory_get_usage(true),
@@ -257,7 +257,7 @@ class PdfBuilderCanvasSaveLogger
         }
 
         // file_put_contents($this->log_file, implode("\n", $new_lines) . "\n", LOCK_EX);
-        $this->log('INFO', 'Old logs cleaned', ['lines_removed' => count($lines) - count($new_lines)]);
+        // $this->log('INFO', 'Old logs cleaned', ['lines_removed' => count($lines) - count($new_lines)]);
     }
 
     /**

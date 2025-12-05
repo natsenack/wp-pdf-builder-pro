@@ -276,7 +276,7 @@ jQuery(document).ready(function($) {
                 test: 'diagnostic'
             },
             success: function(response) {
-                console.log('Diagnostic response:', response);
+                // console.log('Diagnostic response:', response);
                 if (response.success) {
                     $('#ajax-test-result').html('<div style="color: green;">✅ AJAX Diagnostic fonctionne !<br>Message: ' + response.data.message + '<br>User ID: ' + response.data.user_id + '</div>');
                 } else {
@@ -284,7 +284,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Diagnostic AJAX error:', xhr, status, error);
+                // console.error('Diagnostic AJAX error:', xhr, status, error);
                 $('#ajax-test-result').html('<div style="color: red;">❌ Erreur AJAX Diagnostic: ' + error + '<br>Status: ' + status + '<br>Response: ' + xhr.responseText.substring(0, 200) + '...</div>');
             },
             complete: function() {
@@ -305,7 +305,7 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
             },
             success: function(response) {
-                console.log('Backup list response:', response);
+                // console.log('Backup list response:', response);
                 if (response.success) {
                     $('#ajax-test-result').html('<div style="color: green;">✅ AJAX Sauvegardes fonctionne !<br>Sauvegardes trouvées: ' + (response.data.backups ? response.data.backups.length : 'N/A') + '</div>');
                 } else {
@@ -313,7 +313,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Backup list AJAX error:', xhr, status, error);
+                // console.error('Backup list AJAX error:', xhr, status, error);
                 $('#ajax-test-result').html('<div style="color: red;">❌ Erreur AJAX Sauvegardes: ' + error + '<br>Status: ' + status + '<br>Response: ' + xhr.responseText.substring(0, 200) + '...</div>');
             },
             complete: function() {

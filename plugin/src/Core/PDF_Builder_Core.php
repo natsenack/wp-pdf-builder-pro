@@ -897,7 +897,7 @@ class PdfBuilderCore
                 };
             } catch (e) {
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.error('Erreur lors du chargement des données PDF Builder:', e);
+                    // console.error('Erreur lors du chargement des données PDF Builder:', e);
                 }
                 window.pdfBuilderData = {
                     templateId: null,

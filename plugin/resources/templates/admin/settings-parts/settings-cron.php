@@ -95,16 +95,16 @@ jQuery(document).ready(function($) {
                     $('#cron-results').show();
                     $('#cron-results-content').html('<pre>Diagnostics completed successfully</pre>');
                 } else {
-                    console.error('PDF Builder: [CRON] Error diagnosing cron system:', response.data);
+                    // console.error('PDF Builder: [CRON] Error diagnosing cron system:', response.data);
                     alert('<?php _e('Error diagnosing cron system:', 'pdf-builder-pro'); ?> ' + response.data);
                 }
                 $('#diagnose-cron-btn').prop('disabled', false).text('<?php _e('Diagnose Cron System', 'pdf-builder-pro'); ?>');
             },
             error: function(xhr, status, error) {
-                console.error('PDF Builder: [CRON] AJAX error - xhr:', xhr);
-                console.error('PDF Builder: [CRON] AJAX error - status:', status);
-                console.error('PDF Builder: [CRON] AJAX error - error:', error);
-                console.error('PDF Builder: [CRON] AJAX error - response text:', xhr.responseText);
+                // console.error('PDF Builder: [CRON] AJAX error - xhr:', xhr);
+                // console.error('PDF Builder: [CRON] AJAX error - status:', status);
+                // console.error('PDF Builder: [CRON] AJAX error - error:', error);
+                // console.error('PDF Builder: [CRON] AJAX error - response text:', xhr.responseText);
                 $('#diagnose-cron-btn').prop('disabled', false).text('<?php _e('Diagnose Cron System', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }
@@ -136,12 +136,12 @@ jQuery(document).ready(function($) {
                     alert('<?php _e('Cron system repaired successfully!', 'pdf-builder-pro'); ?>');
                     $('#diagnose-cron-btn').click(); // Refresh status
                 } else {
-                    console.error('PDF Builder: [CRON] Error repairing cron system:', response.data);
+                    // console.error('PDF Builder: [CRON] Error repairing cron system:', response.data);
                     alert('<?php _e('Error repairing cron system:', 'pdf-builder-pro'); ?> ' + response.data);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('PDF Builder: [CRON] Repair AJAX error:', {xhr: xhr, status: status, error: error});
+                // console.error('PDF Builder: [CRON] Repair AJAX error:', {xhr: xhr, status: status, error: error});
                 $('#repair-cron-btn').prop('disabled', false).text('<?php _e('Repair Cron System', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }
@@ -168,12 +168,12 @@ jQuery(document).ready(function($) {
                     $('#cron-results').show();
                     $('#cron-results-content').html('<pre>' + response.data + '</pre>');
                 } else {
-                    console.error('PDF Builder: [BACKUP] Error loading backup statistics:', response.data);
+                    // console.error('PDF Builder: [BACKUP] Error loading backup statistics:', response.data);
                     alert('<?php _e('Error loading backup statistics:', 'pdf-builder-pro'); ?> ' + response.data);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('PDF Builder: [BACKUP] Statistics AJAX error:', {xhr: xhr, status: status, error: error});
+                // console.error('PDF Builder: [BACKUP] Statistics AJAX error:', {xhr: xhr, status: status, error: error});
                 $('#backup-stats-btn').prop('disabled', false).text('<?php _e('View Backup Statistics', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }
@@ -205,12 +205,12 @@ jQuery(document).ready(function($) {
                     alert('<?php _e('Manual backup created successfully!', 'pdf-builder-pro'); ?>');
                     $('#backup-stats-btn').click(); // Refresh stats
                 } else {
-                    console.error('PDF Builder: [BACKUP] Error creating manual backup:', response.data);
+                    // console.error('PDF Builder: [BACKUP] Error creating manual backup:', response.data);
                     alert('<?php _e('Error creating manual backup:', 'pdf-builder-pro'); ?> ' + response.data);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('PDF Builder: [BACKUP] Manual backup AJAX error:', {xhr: xhr, status: status, error: error});
+                // console.error('PDF Builder: [BACKUP] Manual backup AJAX error:', {xhr: xhr, status: status, error: error});
                 $('#manual-backup-btn').prop('disabled', false).text('<?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }

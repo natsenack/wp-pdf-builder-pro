@@ -205,7 +205,7 @@ if (!function_exists('pdf_builder_debug_log')) {
         );
 
         if (function_exists('error_log')) {
-            error_log($log_message);
+            // error_log($log_message);
         }
     }
 }

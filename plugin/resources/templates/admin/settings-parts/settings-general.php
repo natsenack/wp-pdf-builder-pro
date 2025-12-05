@@ -48,7 +48,7 @@ require_once __DIR__ . '/../settings-helpers.php';
                                         value="<?php 
                                         $settings = get_option('pdf_builder_settings', []);
                                         $phone_value = $settings['pdf_builder_company_phone_manual'] ?? '';
-                                        error_log("PDF Builder Template: company_phone_manual value = '{$phone_value}'");
+                                        // error_log("PDF Builder Template: company_phone_manual value = '{$phone_value}'");
                                         echo esc_attr($phone_value); 
                                         ?>"
                                         placeholder="+33 1 23 45 67 89" />

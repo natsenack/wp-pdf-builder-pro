@@ -66,7 +66,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                         this.updateDeveloperStatusIndicator();
                         
                     } catch (e) {
-                        console.error('[DEV TOGGLES] forceSync failed:', e);
+                        // console.error('[DEV TOGGLES] forceSync failed:', e);
                     }
                 }
             };
@@ -92,7 +92,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                             window.pdfBuilderDeveloperToggles.forceSync();
                         }
                     } catch (err) {
-                        console.warn('[DEV TOGGLES] Error handling pdfBuilder:debugSettingsChanged', err);
+                        // console.warn('[DEV TOGGLES] Error handling pdfBuilder:debugSettingsChanged', err);
                     }
                 });
             }
@@ -617,7 +617,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                 // Execution result logged to UI only
             } catch (error) {
                 $('#code_result').text('❌ Erreur: ' + error.message).css('color', '#dc3545');
-                console.error('📝 [CONSOLE CODE] Erreur:', error);
+                // console.error('📝 [CONSOLE CODE] Erreur:', error);
             }
         }
 
@@ -731,7 +731,7 @@ if (typeof window.pdfBuilderDebugSettings === 'undefined') {
                 window.pdfBuilderNotify[type](messages[type], 4000);
                 this.addNotificationLog(`✅ ${type} notification affichée via fallback`, 'success');
             } else {
-                console.error('Developer Tools: No notification system available for', type);
+                // console.error('Developer Tools: No notification system available for', type);
                 this.showError(`Système de notification ${type} non disponible`);
                 this.addNotificationLog(`❌ ${type} notification échouée`, 'error');
             }
@@ -971,14 +971,14 @@ Notifications actives: ${activeNotifications}
                         }
                     },
                     error: (xhr, status, error) => {
-                        console.error(`❌ [AJAX ${action}] Erreur:`, error);
+                        // console.error(`❌ [AJAX ${action}] Erreur:`, error);
                         if (errorCallback) {
                             errorCallback({ data: { message: 'Erreur de connexion' } });
                         }
                     }
                 });
             }).catch(() => {
-                console.error('❌ [AJAX] Impossible d\'obtenir un nonce frais');
+                // console.error('❌ [AJAX] Impossible d\'obtenir un nonce frais');
                 if (errorCallback) {
                     errorCallback({ data: { message: 'Erreur de sécurité' } });
                 }

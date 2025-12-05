@@ -255,7 +255,7 @@
 
             if (!this.container) {
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.error('PDF Builder Notifications: No container found!');
+                    // console.error('PDF Builder Notifications: No container found!');
                 }
                 return;
             }
@@ -443,7 +443,7 @@
                     }
                 })
                 .fail((error) => {
-                    if (window.pdfBuilderDebugSettings?.javascript) console.error('Failed to send AJAX notification:', error);
+                    if (window.pdfBuilderDebugSettings?.javascript) // console.error('Failed to send AJAX notification:', error);
                 });
         }
 
@@ -530,7 +530,7 @@
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.success(message, options);
         } else {
-            console.warn('Global: Instance not ready, initializing...');
+            // console.warn('Global: Instance not ready, initializing...');
             // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
                 // Wait for DOM ready if not ready yet
@@ -550,11 +550,11 @@
         }
     };
     window.showErrorNotification = function(message, options) {
-        console.trace('showErrorNotification called with:', message);
+        // console.trace('showErrorNotification called with:', message);
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.error(message, options);
         } else {
-            console.warn('PDF Builder Notifications: Instance not ready, initializing...');
+            // console.warn('PDF Builder Notifications: Instance not ready, initializing...');
             // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
                 // Wait for DOM ready if not ready yet
@@ -574,11 +574,11 @@
         }
     };
     window.showWarningNotification = function(message, options) {
-        console.trace('showWarningNotification called with:', message);
+        // console.trace('showWarningNotification called with:', message);
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.warning(message, options);
         } else {
-            console.warn('PDF Builder Notifications: Instance not ready, initializing...');
+            // console.warn('PDF Builder Notifications: Instance not ready, initializing...');
             // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
                 // Wait for DOM ready if not ready yet
@@ -598,11 +598,11 @@
         }
     };
     window.showInfoNotification = function(message, options) {
-        console.trace('showInfoNotification called with:', message);
+        // console.trace('showInfoNotification called with:', message);
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.info(message, options);
         } else {
-            console.warn('PDF Builder Notifications: Instance not ready, initializing...');
+            // console.warn('PDF Builder Notifications: Instance not ready, initializing...');
             // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
                 // Wait for DOM ready if not ready yet

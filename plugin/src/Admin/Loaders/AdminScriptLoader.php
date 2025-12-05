@@ -287,14 +287,14 @@ class AdminScriptLoader
         }
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
-        error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react with data: ' . json_encode($localize_data));
+        // error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react with data: ' . json_encode($localize_data));
 
         // Also set window.pdfBuilderData directly
-        wp_add_inline_script('pdf-builder-react', 'console.log("🔧 [WP INLINE] Setting window.pdfBuilderData"); window.pdfBuilderData = ' . wp_json_encode($localize_data) . '; console.log("🔧 [WP INLINE] window.pdfBuilderData set to", window.pdfBuilderData);', 'before');
-        error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
+        wp_add_inline_script('pdf-builder-react', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
+        // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
         // Définir les paramètres de debug JavaScript pour React
         $settings = get_option('pdf_builder_settings', array());
@@ -309,7 +309,7 @@ class AdminScriptLoader
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
         wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 
         // Scripts de l'API Preview
         $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
@@ -321,48 +321,48 @@ class AdminScriptLoader
 
         // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "
-        console.log('🔧 [WP] Script d\'initialisation exécuté à ' + new Date().toISOString());
-        console.log('🔧 [WP] Vérification window.pdfBuilderData dans 100ms...');
+        // console.log('🔧 [WP] Script d\'initialisation exécuté à ' + new Date().toISOString());
+        // console.log('🔧 [WP] Vérification window.pdfBuilderData dans 100ms...');
         setTimeout(function() {
-            console.log('🔧 [WP] Localized data après timeout:', window.pdfBuilderData);
+            // console.log('🔧 [WP] Localized data après timeout:', window.pdfBuilderData);
             if (window.pdfBuilderData) {
-                console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
-                console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
-                console.log('✅ [WP] version:', window.pdfBuilderData.version);
-                console.log('✅ [WP] templateId:', window.pdfBuilderData.templateId);
-                console.log('✅ [WP] Toutes les clés:', Object.keys(window.pdfBuilderData));
+                // console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
+                // console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
+                // console.log('✅ [WP] version:', window.pdfBuilderData.version);
+                // console.log('✅ [WP] templateId:', window.pdfBuilderData.templateId);
+                // console.log('✅ [WP] Toutes les clés:', Object.keys(window.pdfBuilderData));
             } else {
-                console.error('❌ [WP] pdfBuilderData not found on window après timeout');
-                console.log('❌ [WP] window keys avec pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
-                console.log('❌ [WP] Toutes les clés window:', Object.keys(window));
+                // console.error('❌ [WP] pdfBuilderData not found on window après timeout');
+                // console.log('❌ [WP] window keys avec pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
+                // console.log('❌ [WP] Toutes les clés window:', Object.keys(window));
             }
         }, 100);
         ";
         wp_add_inline_script('pdf-builder-react', $init_script, 'after');
-        error_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react');
+        // error_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react');
 
         // Script de diagnostic supplémentaire qui s'exécute plus tôt
         $diagnostic_script = "
         jQuery(document).ready(function($) {
-            console.log('🔧 [WP] Document ready - vérification pdfBuilderData à ' + new Date().toISOString());
+            // console.log('🔧 [WP] Document ready - vérification pdfBuilderData à ' + new Date().toISOString());
             setTimeout(function() {
-                console.log('🔧 [WP] pdfBuilderData dans document ready:', window.pdfBuilderData);
+                // console.log('🔧 [WP] pdfBuilderData dans document ready:', window.pdfBuilderData);
                 if (!window.pdfBuilderData) {
-                    console.error('❌ [WP] pdfBuilderData toujours undefined dans document ready');
-                    console.log('❌ [WP] Vérification des scripts chargés...');
+                    // console.error('❌ [WP] pdfBuilderData toujours undefined dans document ready');
+                    // console.log('❌ [WP] Vérification des scripts chargés...');
                     var scripts = document.getElementsByTagName('script');
                     for (var i = 0; i < scripts.length; i++) {
                         if (scripts[i].src && scripts[i].src.includes('pdf-builder-react')) {
-                            console.log('❌ [WP] Script trouvé:', scripts[i].src);
+                            // console.log('❌ [WP] Script trouvé:', scripts[i].src);
                         }
                     }
                 } else {
-                    console.log('✅ [WP] pdfBuilderData trouvé dans document ready');
+                    // console.log('✅ [WP] pdfBuilderData trouvé dans document ready');
                 }
             }, 500);
         });
         ";
         wp_add_inline_script('jquery', $diagnostic_script, 'after');
-        error_log('[WP AdminScriptLoader] Diagnostic script added to jquery');
+        // error_log('[WP AdminScriptLoader] Diagnostic script added to jquery');
     }
 }

@@ -663,8 +663,8 @@
         const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
 
         if (roleCheckboxes.length === 0) {
-            console.error('PDF Builder - [UPDATE CHECKBOXES] AUCUNE CASE À COCHER TROUVÉE!');
-            console.error('PDF Builder - [UPDATE CHECKBOXES] Vérification du DOM...');
+            // console.error('PDF Builder - [UPDATE CHECKBOXES] AUCUNE CASE À COCHER TROUVÉE!');
+            // console.error('PDF Builder - [UPDATE CHECKBOXES] Vérification du DOM...');
             const allInputs = document.querySelectorAll('input');
             
             const roleInputs = Array.from(allInputs).filter(input => input.name && input.name.includes('roles'));
@@ -698,7 +698,7 @@
                     toggleSwitch.classList.remove('checked');
                 }
             } else {
-                console.warn(`PDF Builder - [UPDATE CHECKBOXES] Parent .toggle-switch non trouvé pour ${roleKey}`);
+                // console.warn(`PDF Builder - [UPDATE CHECKBOXES] Parent .toggle-switch non trouvé pour ${roleKey}`);
             }
 
         });

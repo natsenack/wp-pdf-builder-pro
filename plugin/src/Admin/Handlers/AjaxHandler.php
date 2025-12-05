@@ -219,7 +219,7 @@ class AjaxHandler
      */
     public function ajaxLoadTemplate()
     {
-        error_log('[PDF Builder] ajaxLoadTemplate called - START');
+        // error_log('[PDF Builder] ajaxLoadTemplate called - START');
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
@@ -324,11 +324,11 @@ class AjaxHandler
                 }
 
                 // Debug logging
-                error_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id);
-                error_log('[PDF Builder] ajaxGetTemplate - Template data has name: ' . (isset($template['name']) ? $template['name'] : 'NO'));
-                error_log('[PDF Builder] ajaxGetTemplate - Template data has _db_name: ' . (isset($template['_db_name']) ? $template['_db_name'] : 'NO'));
-                error_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD'));
-                error_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name);
+                // error_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id);
+                // error_log('[PDF Builder] ajaxGetTemplate - Template data has name: ' . (isset($template['name']) ? $template['name'] : 'NO'));
+                // error_log('[PDF Builder] ajaxGetTemplate - Template data has _db_name: ' . (isset($template['_db_name']) ? $template['_db_name'] : 'NO'));
+                // error_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD'));
+                // error_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name);
 
                 wp_send_json_success([
                     'template' => $template,

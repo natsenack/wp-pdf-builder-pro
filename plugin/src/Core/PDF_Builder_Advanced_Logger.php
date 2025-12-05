@@ -141,23 +141,23 @@ class PDF_Builder_Advanced_Logger {
      * Méthodes de logging par niveau
      */
     public function debug($message, $context = array()) {
-        $this->log($message, self::LEVEL_DEBUG, $context);
+        // $this->log($message, self::LEVEL_DEBUG, $context);
     }
 
     public function info($message, $context = array()) {
-        $this->log($message, self::LEVEL_INFO, $context);
+        // $this->log($message, self::LEVEL_INFO, $context);
     }
 
     public function warning($message, $context = array()) {
-        $this->log($message, self::LEVEL_WARNING, $context);
+        // $this->log($message, self::LEVEL_WARNING, $context);
     }
 
     public function error($message, $context = array()) {
-        $this->log($message, self::LEVEL_ERROR, $context);
+        // $this->log($message, self::LEVEL_ERROR, $context);
     }
 
     public function critical($message, $context = array()) {
-        $this->log($message, self::LEVEL_CRITICAL, $context);
+        // $this->log($message, self::LEVEL_CRITICAL, $context);
     }
 
     /**
@@ -319,7 +319,7 @@ class PDF_Builder_Advanced_Logger {
             'type' => 'php_error',
         );
 
-        $this->log($errstr, $level, $context);
+        // $this->log($errstr, $level, $context);
     }
 
     /**
@@ -364,11 +364,11 @@ class PDF_Builder_Advanced_Logger {
         // Rotation si nécessaire avant d'écrire
         $this->rotate_if_needed();
 
-        $result = file_put_contents($this->current_log_file, $entry, FILE_APPEND | LOCK_EX);
+        // $result = file_put_contents($this->current_log_file, $entry, FILE_APPEND | LOCK_EX);
 
-        if ($result === false) {
+        // if ($result === false) {
             // error_log('PDF Builder: Unable to write to log file: ' . $this->current_log_file);
-        }
+        // }
     }
 
     /**

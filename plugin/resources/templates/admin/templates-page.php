@@ -649,7 +649,7 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
         }
     })
     .catch(error => {
-        console.error('Erreur vérification limite:', error);
+        // console.error('Erreur vérification limite:', error);
         showUpgradeModal('template');
     });
 });

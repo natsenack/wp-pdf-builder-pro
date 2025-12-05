@@ -286,7 +286,7 @@ class PdfBuilderDragDropManager
     {
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
-            $logger->log(
+            // $logger->log(
                 'drag_drop',
                 $event_type,
                 array_merge(

@@ -327,7 +327,7 @@ class PdfBuilderResizeManager
     {
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
-            $logger->log(
+            // $logger->log(
                 'resize',
                 $event_type,
                 array_merge(

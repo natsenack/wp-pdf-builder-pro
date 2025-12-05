@@ -74,7 +74,7 @@ class PreviewImageAPI
                 $result = wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
                 if (!$result) {
                     // Cron système indisponible - utiliser une approche alternative
-                    error_log('PDF Builder: Cron système indisponible - planification manuelle du nettoyage cache');
+                    // error_log('PDF Builder: Cron système indisponible - planification manuelle du nettoyage cache');
 
                     // Enregistrer une option pour indiquer que le cron manuel est nécessaire
                     update_option('pdf_builder_manual_cache_cleanup_needed', '1');
@@ -87,7 +87,7 @@ class PreviewImageAPI
                 }
             }
         } catch (Exception $e) {
-            error_log('PDF Builder: Exception lors de la planification du cron preview cache: ' . $e->getMessage());
+            // error_log('PDF Builder: Exception lors de la planification du cron preview cache: ' . $e->getMessage());
 
             // En cas d'exception, activer le mode manuel
             update_option('pdf_builder_manual_cache_cleanup_needed', '1');
@@ -100,11 +100,11 @@ class PreviewImageAPI
             if (!wp_next_scheduled('wp_pdf_cleanup_intelligent_cache')) {
                 $result = wp_schedule_event(time(), 'daily', 'wp_pdf_cleanup_intelligent_cache');
                 if (!$result) {
-                    error_log('PDF Builder: Impossible de planifier wp_pdf_cleanup_intelligent_cache - cron system unavailable');
+                    // error_log('PDF Builder: Impossible de planifier wp_pdf_cleanup_intelligent_cache - cron system unavailable');
                 }
             }
         } catch (Exception $e) {
-            error_log('PDF Builder: Exception lors de la planification du cron intelligent cache: ' . $e->getMessage());
+            // error_log('PDF Builder: Exception lors de la planification du cron intelligent cache: ' . $e->getMessage());
         }
     }
 
@@ -126,7 +126,7 @@ class PreviewImageAPI
         if ($time_since_last_cleanup > 21600) {
             self::cleanup_cache();
             update_option('pdf_builder_last_manual_cleanup', time());
-            error_log('PDF Builder: Nettoyage manuel du cache preview exécuté (cron indisponible)');
+            // error_log('PDF Builder: Nettoyage manuel du cache preview exécuté (cron indisponible)');
         }
     }
 
@@ -586,9 +586,9 @@ class PreviewImageAPI
             
             // Logging pour debug
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[PDF Builder API] generateRealImage - template_data: ' . print_r($template_data, true));
-                error_log('[PDF Builder API] generateRealImage - context: ' . ($params['context'] ?? 'unknown'));
-                error_log('[PDF Builder API] generateRealImage - data_provider: ' . get_class($data_provider));
+                // error_log('[PDF Builder API] generateRealImage - template_data: ' . print_r($template_data, true));
+                // error_log('[PDF Builder API] generateRealImage - context: ' . ($params['context'] ?? 'unknown'));
+                // error_log('[PDF Builder API] generateRealImage - data_provider: ' . get_class($data_provider));
             }
             
 // Utiliser GeneratorManager pour générer l'image
@@ -1030,11 +1030,11 @@ class PreviewImageAPI
 
             // Log du nettoyage
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[PDF Builder] Cache intelligent nettoyé automatiquement');
+                // error_log('[PDF Builder] Cache intelligent nettoyé automatiquement');
             }
 
         } catch (\Exception $e) {
-            error_log('[PDF Builder] Erreur nettoyage cache intelligent: ' . $e->getMessage());
+            // error_log('[PDF Builder] Erreur nettoyage cache intelligent: ' . $e->getMessage());
         }
     }
 
@@ -1057,11 +1057,11 @@ class PreviewImageAPI
             RendererCache::deleteByPattern($pattern);
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[PDF Builder] Cache invalidé pour template ' . $template_id . ' (' . $context . ')');
+                // error_log('[PDF Builder] Cache invalidé pour template ' . $template_id . ' (' . $context . ')');
             }
 
         } catch (\Exception $e) {
-            error_log('[PDF Builder] Erreur invalidation cache template: ' . $e->getMessage());
+            // error_log('[PDF Builder] Erreur invalidation cache template: ' . $e->getMessage());
         }
     }
 

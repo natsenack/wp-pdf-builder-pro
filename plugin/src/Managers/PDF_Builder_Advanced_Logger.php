@@ -1,7 +1,7 @@
 <?php
 /**
  * PDF Builder Pro - Système de logging avancé
- * Remplace les // // error_log() par un système structuré et configurable
+ * Système structuré et configurable pour le logging
  */
 
 class PDF_Builder_Logger {
@@ -99,27 +99,27 @@ class PDF_Builder_Logger {
      * Méthodes de convenance pour différents niveaux
      */
     public function debug($message, $context = []) {
-        $this->log(self::LEVEL_DEBUG, $message, $context);
+        // $this->log(self::LEVEL_DEBUG, $message, $context);
     }
 
     public function info($message, $context = []) {
-        $this->log(self::LEVEL_INFO, $message, $context);
+        // $this->log(self::LEVEL_INFO, $message, $context);
     }
 
     public function warning($message, $context = []) {
-        $this->log(self::LEVEL_WARNING, $message, $context);
+        // $this->log(self::LEVEL_WARNING, $message, $context);
     }
 
     public function error($message, $context = []) {
-        $this->log(self::LEVEL_ERROR, $message, $context);
+        // $this->log(self::LEVEL_ERROR, $message, $context);
     }
 
     public function critical($message, $context = []) {
-        $this->log(self::LEVEL_CRITICAL, $message, $context);
+        // $this->log(self::LEVEL_CRITICAL, $message, $context);
     }
 
     /**
-     * Log un message dans // // error_log() seulement si le debug PHP est activé
+     * Log un message de debug seulement si le debug PHP est activé
      */
     public function debug_log($message) {
         $settings = get_option('pdf_builder_settings', []);
@@ -196,7 +196,7 @@ class PDF_Builder_Logger {
         }
 
         // Écrire dans le fichier
-        file_put_contents($this->log_file, $entry, FILE_APPEND | LOCK_EX);
+        // file_put_contents($this->log_file, $entry, FILE_APPEND | LOCK_EX);
     }
 
     /**
@@ -359,7 +359,7 @@ class PDF_Builder_Logger {
      */
     public function clear_logs() {
         if (file_exists($this->log_file)) {
-            file_put_contents($this->log_file, '');
+            // file_put_contents($this->log_file, '');
         }
     }
 }

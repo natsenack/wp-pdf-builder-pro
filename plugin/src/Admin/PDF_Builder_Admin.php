@@ -661,7 +661,7 @@ class PdfBuilderAdmin
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
                     if (!this.element || !this.editor) {
-                        console.error('[PDF Builder] Loader elements not found');
+                        // console.error('[PDF Builder] Loader elements not found');
                         return;
                     }
 
@@ -672,7 +672,7 @@ class PdfBuilderAdmin
                     if (this.element && this.editor) {
                         this.element.style.display = 'none';
                         this.editor.style.display = 'block';
-                        console.log('[PDF Builder] Editor loaded and displayed');
+                        // console.log('[PDF Builder] Editor loaded and displayed');
                     }
                 },
 
@@ -685,14 +685,14 @@ class PdfBuilderAdmin
 
                         if (this.isReactReady()) {
                             clearInterval(checkInterval);
-                            console.log('[PDF Builder] React is ready, initializing...');
+                            // console.log('[PDF Builder] React is ready, initializing...');
                             this.initializeReact();
                             return;
                         }
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            console.warn('[PDF Builder] React loading timeout - showing editor anyway');
+                            // console.warn('[PDF Builder] React loading timeout - showing editor anyway');
                             this.hide(); // Fallback: show editor even if React init fails
                         }
                     }, 500);
@@ -706,14 +706,14 @@ class PdfBuilderAdmin
 
                 initializeReact: function() {
                     if (this.isReactReady()) {
-                        console.log('[PDF Builder] Initializing React...');
+                        // console.log('[PDF Builder] Initializing React...');
                         try {
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
-                            console.log('[PDF Builder] React initialization result:', result);
+                            // console.log('[PDF Builder] React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
                         } catch (error) {
-                            console.error('[PDF Builder] React initialization failed:', error);
+                            // console.error('[PDF Builder] React initialization failed:', error);
                             return false;
                         }
                     }
@@ -730,7 +730,7 @@ class PdfBuilderAdmin
 
             // Listen for React ready event
             document.addEventListener('pdfBuilderReactLoaded', function() {
-                console.log('[PDF Builder] React loaded event received');
+                // console.log('[PDF Builder] React loaded event received');
                 loader.initializeReact();
             });
 
