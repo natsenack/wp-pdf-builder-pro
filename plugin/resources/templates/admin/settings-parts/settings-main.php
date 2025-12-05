@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit('Direct access forbidden');
-if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Access denied');
+if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 $settings = get_option('pdf_builder_settings', array());
 ?>
 <!-- Settings page loaded -->
