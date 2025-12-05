@@ -1042,6 +1042,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                             output += '<button type="button" class="button button-small download-backup-btn" data-filename="' + backup.filename + '" style="background: #007cba; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📥 Télécharger</button>';
                             output += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Supprimer</button>';
                             output += '</div>';
+                            console.log('[DEBUG] Generated buttons for backup:', backup.filename);
                             output += '</div>';
                         });
 
