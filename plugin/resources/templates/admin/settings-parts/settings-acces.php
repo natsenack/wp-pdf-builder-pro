@@ -47,6 +47,7 @@
                     <div>
 
                         <!-- Access Settings Section (No Form - AJAX Centralized) -->
+                        <form id="acces-settings-form" method="post">
                         <section id="access-settings-container" aria-label="Paramètres d'accès">
 
                             <!-- Boutons de contrôle rapide -->
@@ -106,7 +107,9 @@
 
 
                             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
-                        </section>                    </div> <!-- Fin colonne principale -->
+                        </section>
+                        </form>
+                    </div> <!-- Fin colonne principale -->
 
                 <!-- Colonne informations -->
                 <div>
@@ -168,6 +171,53 @@ jQuery(document).ready(function($) {
         var count = $('input[name="pdf_builder_allowed_roles[]"]:checked').length;
         $('#selected-count').text(count);
     }
+
+    // Gestionnaire de soumission du formulaire Accès
+    $('#acces-settings-form').on('submit', function(e) {
+        e.preventDefault();
+
+        var $form = $(this);
+        var $btn = $('#pdf-builder-save-floating-btn');
+
+        // Désactiver le bouton et afficher le loading
+        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> Sauvegarde...');
+
+        // Collecter les rôles sélectionnés
+        var selectedRoles = [];
+        $('input[name="pdf_builder_allowed_roles[]"]:checked').each(function() {
+            selectedRoles.push($(this).val());
+        });
+
+        // AJAX call pour sauvegarder
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_save_settings',
+                tab: 'acces',
+                pdf_builder_allowed_roles: selectedRoles,
+                nonce: '<?php echo wp_create_nonce('pdf_builder_save_settings_nonce'); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Afficher un message de succès
+                    showNotice('Paramètres d\'accès sauvegardés avec succès !', 'success');
+
+                    // Mettre à jour le compteur
+                    updateSelectedCount();
+                } else {
+                    showNotice('Erreur lors de la sauvegarde : ' + (response.data || 'Erreur inconnue'), 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                showNotice('Erreur de communication avec le serveur', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
 
     // Gestionnaire pour le bouton de sauvegarde flottant spécifique à l'onglet Accès
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
