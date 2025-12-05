@@ -24,7 +24,7 @@
 
     function debugLog(...args) {
         if (isDebugEnabled()) {
-            debugLog(...args);
+            console.log(...args);
         }
     }
 

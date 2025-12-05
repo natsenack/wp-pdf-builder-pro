@@ -8,6 +8,18 @@
 (function($) {
     'use strict';
 
+    // Fonction de debug conditionnel
+    function isDebugEnabled() {
+        return window.location.search.includes('debug=force') ||
+               (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
+    }
+
+    function debugLog(...args) {
+        if (isDebugEnabled()) {
+            console.log(...args);
+        }
+    }
+
     // LOG INCONDITIONNEL - toujours affiché
     debugLog('🚨 NOTIFICATIONS.JS LOADED - Version avec debug étendu');
     debugLog('📊 window.pdfBuilderNotifications:', window.pdfBuilderNotifications);

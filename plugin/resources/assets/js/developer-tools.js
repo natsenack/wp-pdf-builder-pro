@@ -4,6 +4,18 @@
  * Version complète recréée - 2025-11-30
  */
 
+// Fonction de debug conditionnel
+function isDebugEnabled() {
+    return window.location.search.includes('debug=force') ||
+           (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+        console.log(...args);
+    }
+}
+
 // LOG ABSOLU - toujours affiché, même si le script ne s'initialise pas
 debugLog('🔧 DEVELOPER-TOOLS.JS FILE LOADED - ABSOLUTE LOG');
 debugLog('🔧 Current location:', window.location.href);
