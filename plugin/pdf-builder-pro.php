@@ -34,12 +34,12 @@ if (function_exists('add_action')) {
         if (file_exists($bootstrap)) {
             require_once $bootstrap;
         }
-        
-        // Enregistrer les handlers AJAX dès que possible
-        if (function_exists('pdf_builder_register_ajax_handlers')) {
-            pdf_builder_register_ajax_handlers();
-        }
     }, 1);
+}
+
+// Enregistrer les handlers AJAX immédiatement si possible
+if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
+    pdf_builder_register_ajax_handlers();
 }
 
 /**
