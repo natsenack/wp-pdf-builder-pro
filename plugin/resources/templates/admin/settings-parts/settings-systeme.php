@@ -176,28 +176,24 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <span id="cache-size-display"><?php echo $cache_file_count; ?> fichiers</span>
                                     </div>
                                     <div class="metric-label">Taille du cache</div>
-                                    <div class="metric-hint">Cliquez pour détails</div>
                                 </div>
                                 <div class="cache-metric-card" data-metric="transients">
                                     <div class="metric-value">
                                         <?php echo intval($transient_count); ?>
                                     </div>
                                     <div class="metric-label">Transients actifs</div>
-                                    <div class="metric-hint">Cliquez pour détails</div>
                                 </div>
                                 <div class="cache-metric-card systeme-cache-status" data-metric="status">
                                     <div class="cache-enabled-indicator metric-value">
                                     <?php echo $cache_enabled ? 'Cache activé' : 'Cache désactivé'; ?>
                                     </div>
                                     <div class="metric-label">État du cache</div>
-                                    <div class="metric-hint">Cliquez pour configurer</div>
                                 </div>
                                 <div class="cache-metric-card" data-metric="cleanup">
                                     <div class="metric-value">
                                         <?php echo $cache_last_cleanup; ?>
                                     </div>
                                     <div class="metric-label">Dernier nettoyage</div>
-                                    <div class="metric-hint">Cliquez pour nettoyer</div>
                                 </div>
                             </div>
                         </article>
