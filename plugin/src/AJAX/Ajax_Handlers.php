@@ -563,35 +563,13 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
  * AJAX Handler pour récupérer les rôles autorisés
  */
 function pdf_builder_get_allowed_roles_ajax_handler() {
-    try {
-        error_log('[PDF Builder] Handler get_allowed_roles appelé');
-
-        // Fonction inline pour éviter les problèmes d'inclusion de fichiers
-        $settings = get_option('pdf_builder_settings', []);
-        $roles = $settings['pdf_builder_allowed_roles'] ?? null;
-
-        if (!is_array($roles) || empty($roles)) {
-            // Valeurs par défaut
-            $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-        } else {
-            // Toujours inclure administrator
-            if (!in_array('administrator', $roles)) {
-                $roles[] = 'administrator';
-            }
-            $allowed_roles = array_unique($roles);
-        }
-
-        error_log('[PDF Builder] Rôles récupérés: ' . print_r($allowed_roles, true));
-
-        wp_send_json_success([
-            'allowed_roles' => $allowed_roles,
-            'count' => count($allowed_roles)
-        ]);
-
-    } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur dans pdf_builder_get_allowed_roles_ajax_handler: ' . $e->getMessage());
-        wp_send_json_error('Erreur interne du serveur');
-    }
+    // Handler ultra-simple pour diagnostiquer
+    wp_send_json_success([
+        'allowed_roles' => ['administrator', 'editor', 'shop_manager'],
+        'count' => 3,
+        'status' => 'handler_called'
+    ]);
 }
+add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 ?>
