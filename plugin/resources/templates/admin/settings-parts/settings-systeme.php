@@ -1025,6 +1025,9 @@ if ($cache_last_cleanup !== 'Jamais') {
                     $results.html(output);
                     console.log('[DEBUG] HTML content set successfully');
                     console.log('[DEBUG] Results container after setting HTML:', $results.html().substring(0, 200) + '...');
+                    console.log('[DEBUG] Results container is visible:', $results.is(':visible'));
+                    console.log('[DEBUG] Results container has accordion:', $results.find('.backup-accordion').length > 0);
+                    console.log('[DEBUG] Page has accordion headers:', $('.backup-accordion-header').length);
                     showSystemNotification('Liste des sauvegardes récupérée', 'success');
                 } else {
                     console.log('[DEBUG] AJAX response not successful:', response);
