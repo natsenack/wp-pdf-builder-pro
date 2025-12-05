@@ -444,6 +444,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             'array_fields' => ['order_status_templates', 'pdf_builder_allowed_roles']
         ];
 
+        // DEBUG: Log all received POST data
+        error_log('[PDF Builder AJAX] RECEIVED POST DATA: ' . json_encode($_POST));
+
         // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
         foreach ($field_rules['bool_fields'] as $bool_field) {
             if (isset($_POST[$bool_field])) {
@@ -547,14 +550,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
                 $saved_count++;
             } elseif (in_array($key, $field_rules['array_fields'])) {
+                error_log('[PDF Builder AJAX] Processing array field: ' . $key . ' = ' . json_encode($value) . ' (type: ' . gettype($value) . ')');
                 if (is_array($value)) {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
+                    error_log('[PDF Builder AJAX] Saved array field ' . $option_key . ' = ' . json_encode($option_value));
                 } else {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = [];
                     $settings[$option_key] = $option_value;
+                    error_log('[PDF Builder AJAX] Saved empty array for non-array field ' . $option_key);
                 }
                 $saved_count++;
             } else {
