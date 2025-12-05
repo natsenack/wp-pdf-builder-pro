@@ -1,4 +1,7 @@
 <?php
+// Load WordPress
+require_once dirname(__FILE__) . '/../../../wp-load.php';
+
 // Clean up corrupted PDF Builder settings
 $settings = get_option('pdf_builder_settings', []);
 
