@@ -971,27 +971,46 @@ if ($cache_last_cleanup !== 'Jamais') {
             },
             success: function(response) {
                 if (response.success) {
-                    let output = '<div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-left: 4px solid #007cba; border-radius: 4px;">';
-                    output += '<h4 style="margin-top: 0; color: #007cba;">📋 Sauvegardes disponibles :</h4>';
+                    let output = '<div style="margin-top: 10px;">';
 
                     if (response.data.backups && response.data.backups.length > 0) {
-                        output += '<div class="backup-list" style="margin-top: 10px;">';
+                        output += '<div class="backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px;">';
+
                         response.data.backups.forEach(function(backup, index) {
-                            output += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; margin-bottom: 8px; background: white; border: 1px solid #dee2e6; border-radius: 4px;">';
-                            output += '<div class="backup-info" style="flex: 1;">';
-                            output += '<strong>' + backup.filename + '</strong><br>';
-                            output += '<small style="color: #6c757d;">' + backup.size_human + ' • ' + backup.modified_human + '</small>';
+                            const accordionId = 'backup-' + index;
+                            output += '<div class="backup-accordion-item" style="border-bottom: 1px solid #dee2e6;">';
+                            output += '<div class="backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="toggleAccordion(\'' + accordionId + '\')">';
+                            output += '<div class="backup-header-info">';
+                            output += '<strong style="color: #007cba;">' + backup.filename + '</strong>';
+                            output += '<div style="font-size: 12px; color: #6c757d; margin-top: 2px;">' + backup.size_human + ' • ' + backup.modified_human + '</div>';
                             output += '</div>';
-                            output += '<div class="backup-actions" style="display: flex; gap: 5px;">';
-                            output += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" title="Restaurer cette sauvegarde">🔄 Restaurer</button>';
-                            output += '<button type="button" class="button button-small button-primary download-backup-btn" data-filename="' + backup.filename + '" title="Télécharger cette sauvegarde">📥 Télécharger</button>';
-                            output += '<button type="button" class="button button-small button-danger delete-backup-btn" data-filename="' + backup.filename + '" title="Supprimer cette sauvegarde">🗑️ Supprimer</button>';
+                            output += '<div class="backup-accordion-toggle" style="transition: transform 0.2s;">▼</div>';
+                            output += '</div>';
+                            output += '<div id="' + accordionId + '" class="backup-accordion-content" style="display: none; padding: 15px; background: white; border-top: 1px solid #dee2e6;">';
+                            output += '<div class="backup-details" style="margin-bottom: 15px;">';
+                            output += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">';
+                            output += '<div><strong>Type:</strong> ' + backup.type.toUpperCase() + '</div>';
+                            output += '<div><strong>Taille:</strong> ' + backup.size_human + '</div>';
+                            output += '<div><strong>Modifié:</strong> ' + backup.modified_human + '</div>';
+                            output += '<div><strong>Emplacement:</strong> ' + backup.filepath + '</div>';
+                            output += '</div>';
+                            output += '</div>';
+                            output += '<div class="backup-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">';
+                            output += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🔄 Restaurer</button>';
+                            output += '<button type="button" class="button button-small download-backup-btn" data-filename="' + backup.filename + '" style="background: #007cba; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">📥 Télécharger</button>';
+                            output += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🗑️ Supprimer</button>';
+                            output += '</div>';
                             output += '</div>';
                             output += '</div>';
                         });
+
                         output += '</div>';
                     } else {
-                        output += '<p style="margin: 0; color: #6c757d; font-style: italic;">Aucune sauvegarde trouvée.</p>';
+                        output += '<div style="padding: 20px; text-align: center; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; color: #6c757d;">';
+                        output += '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>';
+                        output += '<h4 style="margin: 0 0 10px 0; color: #495057;">Aucune sauvegarde trouvée</h4>';
+                        output += '<p style="margin: 0; font-style: italic;">Créez votre première sauvegarde en utilisant le bouton "Créer une sauvegarde" ci-dessus.</p>';
+                        output += '</div>';
                     }
 
                     output += '</div>';
@@ -1154,6 +1173,23 @@ if ($cache_last_cleanup !== 'Jamais') {
             }
         });
     });
+
+    // Fonction pour basculer l'accordéon
+    function toggleAccordion(accordionId) {
+        const content = document.getElementById(accordionId);
+        const header = content.previousElementSibling;
+        const toggle = header.querySelector('.backup-accordion-toggle');
+
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            toggle.style.transform = 'rotate(180deg)';
+            header.style.background = '#e9ecef';
+        } else {
+            content.style.display = 'none';
+            toggle.style.transform = 'rotate(0deg)';
+            header.style.background = '#f8f9fa';
+        }
+    }
 
 })(jQuery);
 </script>
