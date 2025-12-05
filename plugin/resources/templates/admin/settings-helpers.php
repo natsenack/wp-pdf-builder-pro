@@ -7,154 +7,60 @@
 /**
  * Sauvegarde les rôles autorisés
  */
+/**
+ * Sauvegarde les rôles autorisés - Version simplifiée
+ */
 function pdf_builder_save_allowed_roles($roles) {
-    // // // error_log('[SAVE ROLES] ===== DÉBUT SAUVEGARDE RÔLES =====');
-    // // // error_log('[SAVE ROLES] Raw input: ' . print_r($roles, true));
-    // // // error_log('[SAVE ROLES] Type of input: ' . gettype($roles));
-    
-    // Unslash the input first (WordPress slashes POST data)
+    // Nettoyer l'input
     $roles = wp_unslash($roles);
-    // // // error_log('[SAVE ROLES] After wp_unslash: ' . print_r($roles, true));
-    
-    // Décoder le JSON si c'est une string JSON
-    if (is_string($roles) && (strpos($roles, '[') === 0 || strpos($roles, '{') === 0)) {
-        // // // error_log('[SAVE ROLES] Input is JSON string, decoding...');
-        $decoded = json_decode($roles, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $roles = $decoded;
-            // // // error_log('[SAVE ROLES] JSON decoded successfully: ' . print_r($roles, true));
-        } else {
-            // // // error_log('[SAVE ROLES] JSON decode error: ' . json_last_error_msg());
-        }
-    }
 
-    if (!class_exists('PDF_Builder\\Security\\Role_Manager')) {
-        // // // error_log('[SAVE ROLES] Role_Manager class not available, using fallback');
-        // Fallback si Role_Manager n'est pas disponible
-        if (!is_array($roles)) {
-            // // // error_log('[SAVE ROLES] Roles is not array, converting to empty array');
-            $roles = [];
-        }
-
-        // Nettoyer et valider les rôles
-        $valid_roles = [];
-        global $wp_roles;
-        $all_roles = array_keys($wp_roles->roles);
-        // // // error_log('[SAVE ROLES] Available WordPress roles: ' . print_r($all_roles, true));
-
-        foreach ($roles as $role) {
-            // // // error_log('[SAVE ROLES] Checking role: ' . $role);
-            if (in_array($role, $all_roles)) {
-                $valid_roles[] = $role;
-                // // // error_log('[SAVE ROLES] Role valid: ' . $role);
-            } else {
-                // // // error_log('[SAVE ROLES] Role invalid: ' . $role);
-            }
-        }
-
-        // Toujours inclure administrator
-        if (!in_array('administrator', $valid_roles)) {
-            $valid_roles[] = 'administrator';
-            // // // error_log('[SAVE ROLES] Added administrator role');
-        }
-
-        // // // error_log('[SAVE ROLES] Final valid roles: ' . print_r($valid_roles, true));
-        
-        $settings = get_option('pdf_builder_settings', []);
-        // // // error_log('[SAVE ROLES] Current settings before save: ' . print_r($settings, true));
-        
-        $settings['pdf_builder_allowed_roles'] = $valid_roles;
-        update_option('pdf_builder_settings', $settings);
-        
-        // // // error_log('[SAVE ROLES] Settings after save: ' . print_r($settings, true));
-        // // // error_log('[SAVE ROLES] ===== FIN SAUVEGARDE RÔLES =====');
-
-        return $valid_roles;
-    }
-
-    // Utiliser le Role_Manager si disponible - COMMENTÉ POUR CONCORDANCE AVEC GET_ALLOWED_ROLES
-    /*
-    // // // error_log('[SAVE ROLES] Using Role_Manager class');
-    \PDF_Builder\Security\Role_Manager::setAllowedRoles($roles);
-    $result = \PDF_Builder\Security\Role_Manager::getAllowedRoles();
-    // // // error_log('[SAVE ROLES] Role_Manager result: ' . print_r($result, true));
-    // // // error_log('[SAVE ROLES] ===== FIN SAUVEGARDE RÔLES =====');
-    return $result;
-    */
-
-    // TOUJOURS UTILISER LE FALLBACK POUR CONCORDANCE AVEC pdf_builder_get_allowed_roles
-    // // // error_log('[SAVE ROLES] Using fallback for consistency with get_allowed_roles');
+    // S'assurer que c'est un tableau
     if (!is_array($roles)) {
-        // // // error_log('[SAVE ROLES] Roles is not array, converting to empty array');
         $roles = [];
     }
 
-    // Nettoyer et valider les rôles
+    // Valider les rôles contre les rôles WordPress existants
     $valid_roles = [];
     global $wp_roles;
     $all_roles = array_keys($wp_roles->roles);
-    // // // error_log('[SAVE ROLES] Available WordPress roles: ' . print_r($all_roles, true));
 
     foreach ($roles as $role) {
-        // // // error_log('[SAVE ROLES] Checking role: ' . $role);
         if (in_array($role, $all_roles)) {
             $valid_roles[] = $role;
-            // // // error_log('[SAVE ROLES] Role valid: ' . $role);
-        } else {
-            // // // error_log('[SAVE ROLES] Role invalid: ' . $role);
         }
     }
 
     // Toujours inclure administrator
     if (!in_array('administrator', $valid_roles)) {
         $valid_roles[] = 'administrator';
-        // // // error_log('[SAVE ROLES] Added administrator role');
     }
 
-    // // // error_log('[SAVE ROLES] Final valid roles: ' . print_r($valid_roles, true));
-    
+    // Sauvegarder dans les options
     $settings = get_option('pdf_builder_settings', []);
-    // // // error_log('[SAVE ROLES] Current settings before save: ' . print_r($settings, true));
-    
-    $settings['pdf_builder_allowed_roles'] = $valid_roles;
+    $settings['pdf_builder_allowed_roles'] = array_unique($valid_roles);
     update_option('pdf_builder_settings', $settings);
-    
-    // // // error_log('[SAVE ROLES] Settings after save: ' . print_r($settings, true));
-    // // // error_log('[SAVE ROLES] ===== FIN SAUVEGARDE RÔLES =====');
 
     return $valid_roles;
 }
 
 /**
- * Récupère les rôles autorisés
+ * Récupère les rôles autorisés - Version simplifiée et fiable
  */
 function pdf_builder_get_allowed_roles() {
-    // Simplified version - always use fallback to avoid class loading issues
     $settings = get_option('pdf_builder_settings', []);
-    $roles = $settings['pdf_builder_allowed_roles'] ?? null;
+    $roles = isset($settings['pdf_builder_allowed_roles']) ? $settings['pdf_builder_allowed_roles'] : null;
 
-    // DEBUG: Log what we're getting
-    error_log('[GET ROLES] Settings: ' . json_encode($settings));
-    error_log('[GET ROLES] Roles from settings: ' . json_encode($roles));
-    error_log('[GET ROLES] Is array: ' . (is_array($roles) ? 'yes' : 'no'));
-    error_log('[GET ROLES] Is empty: ' . (empty($roles) ? 'yes' : 'no'));
-
+    // Si pas de rôles définis ou tableau vide, utiliser les valeurs par défaut
     if (!is_array($roles) || empty($roles)) {
-        // Valeurs par défaut
-        $default_roles = ['administrator', 'editor', 'shop_manager'];
-        error_log('[GET ROLES] Using defaults: ' . json_encode($default_roles));
-        return $default_roles;
+        return ['administrator', 'editor', 'shop_manager'];
     }
 
-    // Toujours inclure administrator
+    // S'assurer qu'administrator est toujours inclus
     if (!in_array('administrator', $roles)) {
         $roles[] = 'administrator';
-        error_log('[GET ROLES] Added administrator, final roles: ' . json_encode($roles));
     }
 
-    $final_roles = array_unique($roles);
-    error_log('[GET ROLES] Final roles: ' . json_encode($final_roles));
-    return $final_roles;
+    return array_unique($roles);
 }
 
 /**
