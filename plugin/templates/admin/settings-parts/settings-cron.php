@@ -55,14 +55,15 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access 
     </div>
 
     <div class="pdf-builder-card">
-        <h3>Actions manuelles</h3>
+        <h3>🔧 Test du système AJAX</h3>
+        <p>Test rapide du système AJAX pour diagnostiquer les problèmes de sauvegardes.</p>
 
-        <div class="manual-actions">
-            <button type="button" id="create-backup-now-btn" class="button button-primary">📦 Créer une sauvegarde maintenant</button>
-            <button type="button" id="test-fallback-btn" class="button">🧪 Tester le système de fallback</button>
+        <div class="ajax-test-actions" style="margin-top: 20px;">
+            <button type="button" id="test-ajax-diagnostic-btn" class="button">🧪 Tester AJAX Diagnostic</button>
+            <button type="button" id="test-ajax-backups-btn" class="button">📦 Tester AJAX Sauvegardes</button>
         </div>
 
-        <div id="backup-result" style="margin-top: 10px;"></div>
+        <div id="ajax-test-result" style="margin-top: 10px; padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: none;"></div>
     </div>
 </div>
 
@@ -261,6 +262,65 @@ jQuery(document).ready(function($) {
 
         $('#system-status').html(html);
     }
+
+    // Tests AJAX pour diagnostiquer les problèmes
+    $('#test-ajax-diagnostic-btn').on('click', function() {
+        $(this).prop('disabled', true).text('🧪 Test en cours...');
+        $('#ajax-test-result').show().html('<p>Testing AJAX diagnostic handler...</p>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_diagnostic',
+                test: 'diagnostic'
+            },
+            success: function(response) {
+                console.log('Diagnostic response:', response);
+                if (response.success) {
+                    $('#ajax-test-result').html('<div style="color: green;">✅ AJAX Diagnostic fonctionne !<br>Message: ' + response.data.message + '<br>User ID: ' + response.data.user_id + '</div>');
+                } else {
+                    $('#ajax-test-result').html('<div style="color: red;">❌ AJAX Diagnostic a échoué: ' + JSON.stringify(response) + '</div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Diagnostic AJAX error:', xhr, status, error);
+                $('#ajax-test-result').html('<div style="color: red;">❌ Erreur AJAX Diagnostic: ' + error + '<br>Status: ' + status + '<br>Response: ' + xhr.responseText.substring(0, 200) + '...</div>');
+            },
+            complete: function() {
+                $('#test-ajax-diagnostic-btn').prop('disabled', false).text('🧪 Tester AJAX Diagnostic');
+            }
+        });
+    });
+
+    $('#test-ajax-backups-btn').on('click', function() {
+        $(this).prop('disabled', true).text('📦 Test en cours...');
+        $('#ajax-test-result').show().html('<p>Testing backup list handler...</p>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_list_backups',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+            },
+            success: function(response) {
+                console.log('Backup list response:', response);
+                if (response.success) {
+                    $('#ajax-test-result').html('<div style="color: green;">✅ AJAX Sauvegardes fonctionne !<br>Sauvegardes trouvées: ' + (response.data.backups ? response.data.backups.length : 'N/A') + '</div>');
+                } else {
+                    $('#ajax-test-result').html('<div style="color: orange;">⚠️ AJAX Sauvegardes a répondu mais avec une erreur: ' + JSON.stringify(response) + '</div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Backup list AJAX error:', xhr, status, error);
+                $('#ajax-test-result').html('<div style="color: red;">❌ Erreur AJAX Sauvegardes: ' + error + '<br>Status: ' + status + '<br>Response: ' + xhr.responseText.substring(0, 200) + '...</div>');
+            },
+            complete: function() {
+                $('#test-ajax-backups-btn').prop('disabled', false).text('📦 Tester AJAX Sauvegardes');
+            }
+        });
+    });
 });
 </script>
 
@@ -290,14 +350,22 @@ jQuery(document).ready(function($) {
     flex-wrap: wrap;
 }
 
+.ajax-test-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 @media (max-width: 782px) {
     .system-actions,
-    .manual-actions {
+    .manual-actions,
+    .ajax-test-actions {
         flex-direction: column;
     }
 
     .system-actions button,
-    .manual-actions button {
+    .manual-actions button,
+    .ajax-test-actions button {
         width: 100%;
     }
 }
