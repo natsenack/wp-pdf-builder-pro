@@ -124,6 +124,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'acces':
                     $saved_count = $this->save_access_settings();
                     $saved_options = $this->get_saved_options_for_tab('acces');
+                    // Mettre à jour l'horodatage de la dernière sauvegarde des rôles
+                    update_option('pdf_builder_last_roles_save', current_time('mysql'));
                     break;
                 case 'securite':
                     $saved_count = $this->save_security_settings();
