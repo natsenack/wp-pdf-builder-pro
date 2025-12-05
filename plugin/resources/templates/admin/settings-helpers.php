@@ -350,8 +350,11 @@ if (!isset($settings)) {
     $settings = get_option('pdf_builder_settings', array());
 }
 
-// Ensure nonce is available
-global $nonce;
-if (!isset($nonce)) {
-    $nonce = wp_create_nonce('pdf_builder_ajax');
+// Only run this code when not included in AJAX context
+if (!defined('DOING_AJAX') || !DOING_AJAX) {
+    // Ensure nonce is available
+    global $nonce;
+    if (!isset($nonce)) {
+        $nonce = wp_create_nonce('pdf_builder_ajax');
+    }
 }
