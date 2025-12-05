@@ -1208,9 +1208,16 @@ if ($cache_last_cleanup !== 'Jamais') {
                     // Supprimer l'élément de la liste
                     $btn.closest('.backup-item').fadeOut(300, function() {
                         $(this).remove();
-                        // Vérifier s'il reste des sauvegardes
-                        if ($('.backup-item').length === 0) {
-                            $('#backup-results').html('<div style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-left: 4px solid #007cba; border-radius: 4px;"><p style="margin: 0; color: #6c757d; font-style: italic;">Aucune sauvegarde trouvée.</p></div>');
+                        // Mettre à jour le compteur de sauvegardes
+                        const remainingItems = $('.backup-item').length;
+                        if (remainingItems === 0) {
+                            // Aucune sauvegarde restante, afficher le message approprié
+                            $('#backup-accordion-container').html('<div style="padding: 20px; text-align: center; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; color: #6c757d;"><div style="font-size: 48px; margin-bottom: 10px;">📦</div><h4 style="margin: 0 0 10px 0; color: #495057;">Aucune sauvegarde trouvée</h4><p style="margin: 0; font-style: italic;">Créez votre première sauvegarde en utilisant le bouton "Créer une sauvegarde" ci-dessus.</p></div>');
+                            $('#backup-count-info').text('0 sauvegarde disponible');
+                        } else {
+                            // Mettre à jour le compteur
+                            const countText = remainingItems + ' sauvegarde' + (remainingItems > 1 ? 's' : '') + ' disponible' + (remainingItems > 1 ? 's' : '');
+                            $('#backup-count-info').text(countText);
                         }
                     });
                     showSystemNotification(response.data.message, 'success');
