@@ -96,6 +96,9 @@ class PDF_Builder_Task_Scheduler {
         // Fallback pour les sauvegardes automatiques quand le cron système ne fonctionne pas
         add_action('admin_init', [$this, 'check_auto_backup_fallback']);
 
+        // S'assurer que les actions AJAX sont enregistrées pour l'admin
+        add_action('admin_init', [$this, 'register_ajax_actions']);
+
         // Reprogrammer les tâches quand les paramètres changent
         add_action('update_option_pdf_builder_backup_frequency', [$this, 'on_backup_frequency_changed'], 10, 3);
         add_action('update_option_pdf_builder_auto_backup_enabled', [$this, 'on_auto_backup_enabled_changed'], 10, 3);
@@ -941,6 +944,6 @@ function pdf_builder_unschedule_task($task_name) {
 }
 
 // Initialiser le planificateur de tâches
-add_action('plugins_loaded', function() {
+add_action('init', function() {
     PDF_Builder_Task_Scheduler::get_instance();
 });
