@@ -5,7 +5,7 @@
 
 function pdf_builder_media_diagnostic_ajax() {
     // Vérifier nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         wp_send_json_error('Nonce verification failed');
     }
     

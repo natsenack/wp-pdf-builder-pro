@@ -61,7 +61,7 @@ class Validation
     /**
      * Valider un nonce
      */
-    public static function verifyNonce($nonce, $action = 'pdf_builder_nonce')
+    public static function verifyNonce($nonce, $action = 'pdf_builder_ajax')
     {
         return wp_verify_nonce($nonce, $action);
     }

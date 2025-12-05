@@ -290,7 +290,7 @@ if (!isset($settings)) {
 // Ensure nonce is available
 global $nonce;
 if (!isset($nonce)) {
-    $nonce = wp_create_nonce('pdf_builder_nonce');
+    $nonce = wp_create_nonce('pdf_builder_ajax');
 }
 
 ?>

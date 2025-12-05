@@ -22,7 +22,7 @@ header("Expires: 0");
 require_once __DIR__ . '/settings-parts/settings-helpers.php';
 
 $settings = get_option('pdf_builder_settings', array());
-$nonce = wp_create_nonce('pdf_builder_nonce');
+$nonce = wp_create_nonce('pdf_builder_ajax');
 
 // DEBUG: Force output to verify file is loaded
 echo "<script>console.log('🔥 PDF BUILDER DEBUG: settings-main.php LOADED - " . date('H:i:s') . " - CACHE BUSTER: " . time() . "');</script>";

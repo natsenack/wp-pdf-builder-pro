@@ -13,7 +13,7 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
 }
 
 $settings = get_option('pdf_builder_settings', array());
-$nonce = wp_create_nonce('pdf_builder_nonce');
+$nonce = wp_create_nonce('pdf_builder_ajax');
 ?>
 <!DOCTYPE html>
 <html>
