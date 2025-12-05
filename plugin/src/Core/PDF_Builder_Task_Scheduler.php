@@ -947,10 +947,20 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Met à jour la dernière exécution d'une tâche
+     * Change la fréquence de sauvegarde automatique
      */
-    private function update_last_run($task_name) {
-        update_option("pdf_builder_last_run_$task_name", current_time('mysql'));
+    public function set_backup_frequency($frequency) {
+        $allowed_frequencies = ['every_minute', 'daily', 'weekly', 'monthly'];
+
+        if (!in_array($frequency, $allowed_frequencies)) {
+            return false;
+        }
+
+        update_option('pdf_builder_auto_backup_frequency', $frequency);
+        $this->reschedule_auto_backup($frequency);
+
+        error_log("PDF Builder: Backup frequency changed to $frequency");
+        return true;
     }
 }
 
@@ -976,3 +986,10 @@ function pdf_builder_unschedule_task($task_name) {
 add_action('init', function() {
     PDF_Builder_Task_Scheduler::get_instance();
 });
+
+/**
+ * Fonction utilitaire pour changer la fréquence de sauvegarde
+ */
+function pdf_builder_set_backup_frequency($frequency) {
+    return PDF_Builder_Task_Scheduler::get_instance()->set_backup_frequency($frequency);
+}
