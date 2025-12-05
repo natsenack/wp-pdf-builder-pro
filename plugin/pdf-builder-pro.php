@@ -2048,14 +2048,6 @@ function pdf_builder_list_backups_ajax() {
                 $file_size = filesize($file_path);
                 $file_modified = filemtime($file_path);
 
-        foreach ($files as $file) {
-            $filename = basename($file);
-            $file_path = $backup_dir . '/' . $filename;
-
-            if (is_file($file_path) && is_readable($file_path)) {
-                $file_size = filesize($file_path);
-                $file_modified = filemtime($file_path);
-
                 // Parse filename to extract date - handle multiple formats
                 $date_match = array();
                 if (preg_match('/pdf[-_]builder[-_]backup[_-](\d{4}[-]\d{2}[-]\d{2})[_-](\d{2}[-]\d{2}[-]\d{2})\.json/', $filename, $date_match)) {
