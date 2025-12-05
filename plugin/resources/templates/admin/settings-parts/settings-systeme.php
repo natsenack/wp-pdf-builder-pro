@@ -18,6 +18,9 @@ $next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée
 $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
 $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
+// Vérifier le statut premium de l'utilisateur
+$is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+
 // Calculer les métriques de cache
 $cache_file_count = 0;
 $cache_dirs = [
@@ -332,6 +335,31 @@ if ($cache_last_cleanup !== 'Jamais') {
                     </header>
 
                     <div class="system-section-content">
+                        <?php if (!$is_premium): ?>
+                        <!-- Version gratuite - Sauvegardes non disponibles -->
+                        <article class="backup-info premium-feature">
+                            <header>
+                                <h4>🔒 Sauvegardes - Fonctionnalité Premium</h4>
+                            </header>
+                            <div class="premium-feature-content" style="padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #007cba; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 48px; margin-bottom: 15px;">⭐</div>
+                                <h3 style="color: #007cba; margin: 0 0 15px 0;">Sauvegardes Disponibles en Version Premium</h3>
+                                <p style="margin: 0 0 20px 0; color: #495057; font-size: 16px;">
+                                    La fonctionnalité de sauvegarde n'est disponible que dans la version premium de PDF Builder Pro.
+                                </p>
+                                <ul style="text-align: left; display: inline-block; margin: 0 0 20px 0; padding-left: 20px;">
+                                    <li>Création de sauvegardes illimitée de vos paramètres</li>
+                                    <li>Restauration facile en cas de problème</li>
+                                    <li>Support technique prioritaire</li>
+                                    <li>Fonctionnalités avancées supplémentaires</li>
+                                </ul>
+                                <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=licence'); ?>" class="button button-primary button-large" style="background: #007cba; border-color: #007cba;">
+                                    🚀 Passer à la Version Premium
+                                </a>
+                            </div>
+                        </article>
+                        <?php else: ?>
+                        <!-- Version premium - Sauvegardes disponibles -->
                         <!-- Informations sur les sauvegardes -->
                         <article class="backup-info">
                             <header>
@@ -340,6 +368,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                             <ul>
                                 <li>Les sauvegardes contiennent tous vos paramètres PDF Builder</li>
                                 <li>Créez des sauvegardes manuellement selon vos besoins</li>
+                                <li>Limite : 50 sauvegardes maximum</li>
                             </ul>
                         </article>
 
@@ -403,6 +432,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 </div>
                             </div>
                         </article>
+                        <?php endif; ?>
                     </div>
                 </section>
 
@@ -967,6 +997,15 @@ if ($cache_last_cleanup !== 'Jamais') {
                         const countText = backupCount + ' sauvegarde' + (backupCount > 1 ? 's' : '') + ' disponible' + (backupCount > 1 ? 's' : '');
                         $('#backup-count-info').text(countText);
 
+                        // Vérifier la limite de 50 sauvegardes
+                        if (backupCount >= 50) {
+                            $('#create-backup-btn').prop('disabled', true).html('<span>📦</span> Limite atteinte (50 max)');
+                            $('#create-backup-btn').attr('title', 'Vous avez atteint la limite de 50 sauvegardes. Supprimez des sauvegardes anciennes pour en créer de nouvelles.');
+                        } else {
+                            $('#create-backup-btn').prop('disabled', false).html('<span>📦</span> Créer une sauvegarde');
+                            $('#create-backup-btn').removeAttr('title');
+                        }
+
                         output += '<div class="backup-list" style="margin-top: 15px;">';
                         output += '<style>.backup-item-info { margin-bottom: 0 !important; }</style>';
                         output += '<style>@keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); } 20% { opacity: 1; transform: scale(1.1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.8); } } .backup-count-plus-one { animation: fadeInOut 3s ease-in-out; }</style>';
@@ -997,6 +1036,10 @@ if ($cache_last_cleanup !== 'Jamais') {
                         // Mettre à jour le compteur dans le header
                         $('#backup-count-info').text('0 sauvegarde disponible');
 
+                        // Activer le bouton de création si pas à la limite
+                        $('#create-backup-btn').prop('disabled', false).html('<span>📦</span> Créer une sauvegarde');
+                        $('#create-backup-btn').removeAttr('title');
+
                         output += '<div style="padding: 20px; text-align: center; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; color: #6c757d;">';
                         output += '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>';
                         output += '<h4 style="margin: 0 0 10px 0; color: #495057;">Aucune sauvegarde trouvée</h4>';
@@ -1016,6 +1059,11 @@ if ($cache_last_cleanup !== 'Jamais') {
                 } else {
                     console.log('[DEBUG] Auto-load AJAX response not successful:', response);
                     $('#backup-count-info').text('Erreur de chargement');
+                    
+                    // Désactiver le bouton si erreur (probablement pas premium)
+                    $('#create-backup-btn').prop('disabled', true).html('<span>🔒</span> Premium requis');
+                    $('#create-backup-btn').attr('title', 'La fonctionnalité de sauvegarde nécessite la version premium.');
+                    
                     $container.html('<div style="color: #dc3545; padding: 20px; text-align: center;">❌ Erreur lors du chargement des sauvegardes</div>');
                 }
             },

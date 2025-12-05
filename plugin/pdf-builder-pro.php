@@ -235,6 +235,27 @@ function pdf_builder_create_backup_ajax() {
         return;
     }
 
+    // Check if user is premium
+    if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+        error_log('PDF Builder: [CREATE BACKUP] User is not premium');
+        wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
+        return;
+    }
+
+    // Check backup limit (50 max for premium users)
+    $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+    if (file_exists($backup_dir)) {
+        $files = glob($backup_dir . '/pdf_builder_backup_*.json');
+        $manual_files = glob($backup_dir . '/pdf-builder-backup-*.json');
+        $all_backup_files = array_merge($files, $manual_files);
+        
+        if (count($all_backup_files) >= 50) {
+            error_log('PDF Builder: [CREATE BACKUP] Backup limit reached: ' . count($all_backup_files));
+            wp_send_json_error('Limite de 50 sauvegardes atteinte. Veuillez supprimer des sauvegardes anciennes avant d\'en créer de nouvelles.');
+            return;
+        }
+    }
+
     error_log('PDF Builder: [CREATE BACKUP] Permission granted, proceeding');
 
     try {
@@ -307,6 +328,13 @@ function pdf_builder_list_backups_ajax() {
     if (!current_user_can('manage_options')) {
         error_log('PDF Builder: [BACKUP LIST] Permission denied - user cannot manage_options');
         wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Check if user is premium
+    if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+        error_log('PDF Builder: [BACKUP LIST] User is not premium');
+        wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
     }
 
@@ -392,6 +420,13 @@ function pdf_builder_restore_backup_ajax() {
     if (!current_user_can('manage_options')) {
         error_log('PDF Builder: [RESTORE BACKUP] Permission denied');
         wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Check if user is premium
+    if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+        error_log('PDF Builder: [RESTORE BACKUP] User is not premium');
+        wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
     }
 
