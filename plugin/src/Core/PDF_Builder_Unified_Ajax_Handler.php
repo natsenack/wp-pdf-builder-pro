@@ -782,6 +782,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             update_option('pdf_builder_' . $key, $value);
         }
 
+        // Reprogrammer la sauvegarde automatique si la fréquence a changé
+        if (isset($settings['auto_backup_frequency'])) {
+            if (class_exists('PDF_Builder_Task_Scheduler')) {
+                PDF_Builder_Task_Scheduler::get_instance()->reschedule_auto_backup($settings['auto_backup_frequency']);
+            }
+        }
+
         return count($settings);
     }
 

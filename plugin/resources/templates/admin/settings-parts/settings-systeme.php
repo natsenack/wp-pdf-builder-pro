@@ -402,6 +402,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 </th>
                                 <td>
                                     <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" <?php echo ($auto_backup === '0') ? 'disabled' : ''; ?>>
+                                        <option value="every_minute" <?php pdf_builder_safe_selected($auto_backup_frequency, 'every_minute'); ?>>⚡ Toutes les minutes (test)</option>
                                         <option value="daily" <?php pdf_builder_safe_selected($auto_backup_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
                                         <option value="weekly" <?php pdf_builder_safe_selected($auto_backup_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
                                         <option value="monthly" <?php pdf_builder_safe_selected($auto_backup_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>

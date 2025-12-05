@@ -15,7 +15,7 @@ class PDF_Builder_Task_Scheduler {
             'description' => 'Nettoie le cache expiré'
         ],
         'pdf_builder_auto_backup' => [
-            'interval' => 'daily',
+            'interval' => 'dynamic', // Sera déterminé dynamiquement
             'callback' => 'create_auto_backup',
             'description' => 'Crée une sauvegarde automatique'
         ],
@@ -87,18 +87,26 @@ class PDF_Builder_Task_Scheduler {
             'display' => 'Une fois par mois'
         ];
 
+        $schedules['every_minute'] = [
+            'interval' => 60, // 1 minute pour les tests
+            'display' => 'Toutes les minutes (test)'
+        ];
+
         return $schedules;
     }
 
     /**
-     * Planifie toutes les tâches définies
+     * Mappe la fréquence utilisateur à un intervalle cron
      */
-    private function schedule_tasks() {
-        foreach (self::TASKS as $task_name => $task_config) {
-            if (!wp_next_scheduled($task_name)) {
-                wp_schedule_event(time(), $task_config['interval'], $task_name);
-            }
-        }
+    private function map_frequency_to_interval($frequency) {
+        $mapping = [
+            'every_minute' => 'every_minute',
+            'daily' => 'daily',
+            'weekly' => 'weekly',
+            'monthly' => 'monthly'
+        ];
+
+        return $mapping[$frequency] ?? 'daily';
     }
 
     /**
@@ -108,6 +116,37 @@ class PDF_Builder_Task_Scheduler {
         foreach (self::TASKS as $task_name => $task_config) {
             wp_clear_scheduled_hook($task_name);
         }
+    }
+
+    /**
+     * Mappe la fréquence utilisateur à un intervalle cron
+     */
+    private function map_frequency_to_interval($frequency) {
+        $mapping = [
+            'every_minute' => 'every_minute',
+            'daily' => 'daily',
+            'weekly' => 'weekly',
+            'monthly' => 'monthly'
+        ];
+
+        return $mapping[$frequency] ?? 'daily';
+    }
+
+    /**
+     * Met à jour la planification de la sauvegarde automatique selon la nouvelle fréquence
+     */
+    public function reschedule_auto_backup($new_frequency = null) {
+        // Annuler la tâche existante
+        wp_clear_scheduled_hook('pdf_builder_auto_backup');
+
+        // Déterminer la fréquence à utiliser
+        if ($new_frequency === null) {
+            $new_frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
+        }
+
+        // Programmer avec la nouvelle fréquence
+        $interval = $this->map_frequency_to_interval($new_frequency);
+        wp_schedule_event(time(), $interval, 'pdf_builder_auto_backup');
     }
 
     /**
