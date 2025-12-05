@@ -52,7 +52,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions de sauvegarde
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'handle_create_backup']);
-        add_action('wp_ajax_pdf_builder_list_backups', [$this, 'handle_list_backups']);
+        // add_action('wp_ajax_pdf_builder_list_backups', [$this, 'handle_list_backups']); // Commented out - using main implementation
         add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'handle_restore_backup']);
         add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'handle_delete_backup']);
         add_action('wp_ajax_pdf_builder_download_backup', [$this, 'handle_download_backup']);

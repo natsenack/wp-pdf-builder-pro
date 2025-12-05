@@ -65,7 +65,7 @@ class PdfBuilderBackupRestoreManager
         add_action('wp_ajax_pdf_builder_import_templates', [$this, 'importTemplates']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajaxCreateBackup']);
         add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'ajaxRestoreBackup']);
-        add_action('wp_ajax_pdf_builder_list_backups', [$this, 'ajaxListBackups']);
+        // add_action('wp_ajax_pdf_builder_list_backups', [$this, 'ajaxListBackups']); // Commented out - using main implementation
         add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'ajaxDeleteBackup']);
         add_action('wp_ajax_pdf_builder_download_backup', [$this, 'ajaxDownloadBackup']);
     }
