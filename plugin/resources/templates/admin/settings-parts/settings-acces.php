@@ -58,6 +58,9 @@
                     <div>
 
                         <!-- Access Settings Section (No Form - AJAX Centralized) -->
+                        <form method="post" id="acces-form">
+                        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_acces_nonce'); ?>
+                        <input type="hidden" name="submit_acces" value="1">
                         <section id="access-settings-container" aria-label="Paramètres d'accès">
 
                             <!-- Boutons de contrôle rapide -->
@@ -118,6 +121,7 @@
 
                             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
                         </section>
+                        </form>
                     </div> <!-- Fin colonne principale -->
 
                 <!-- Colonne informations -->
