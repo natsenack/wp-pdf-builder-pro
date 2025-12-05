@@ -815,11 +815,16 @@ class PDF_Builder_Task_Scheduler {
      * AJAX handler pour tester la réponse du système cron
      */
     public function ajax_cron_test() {
+        error_log('PDF Builder: [CRON TEST] ajax_cron_test method called');
+        
         // Vérifier le nonce
         if (!wp_verify_nonce($_GET['nonce'] ?? '', 'pdf_builder_cron_test')) {
+            error_log('PDF Builder: [CRON TEST] Nonce verification failed');
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
+
+        error_log('PDF Builder: [CRON TEST] Nonce verified, sending success response');
 
         // Test simple de réponse
         wp_send_json_success([

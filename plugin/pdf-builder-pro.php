@@ -34,6 +34,11 @@ if (function_exists('add_action')) {
         if (file_exists($bootstrap)) {
             require_once $bootstrap;
         }
+        
+        // Enregistrer les handlers AJAX dès que possible
+        if (function_exists('pdf_builder_register_ajax_handlers')) {
+            pdf_builder_register_ajax_handlers();
+        }
     }, 1);
 }
 
@@ -420,6 +425,13 @@ function pdf_builder_restore_backup_ajax() {
 }
 
 function pdf_builder_register_ajax_handlers() {
+    static $handlers_registered = false;
+    
+    if ($handlers_registered) {
+        error_log('PDF Builder: [AJAX REGISTRATION] Handlers already registered, skipping');
+        return;
+    }
+    
     error_log('PDF Builder: [AJAX REGISTRATION] Starting AJAX handlers registration');
     
     // Check if functions exist before registering
@@ -464,6 +476,8 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_ajax_handler_dispatch');
 
     error_log('PDF Builder: [AJAX REGISTRATION] AJAX handlers registration completed');
+    
+    $handlers_registered = true;
     
     // Handlers de licence - maintenant gérés par le gestionnaire de licences
     add_action('wp_ajax_pdf_builder_test_license', 'pdf_builder_ajax_handler_dispatch');
@@ -877,7 +891,7 @@ function pdf_builder_init()
     }
 
     // Enregistrer les handlers AJAX au hook init
-    add_action('init', 'pdf_builder_register_ajax_handlers');
+    // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers() sur plugins_loaded
 
     // Initialiser les sauvegardes automatiques
     add_action('init', 'pdf_builder_init_auto_backup');
