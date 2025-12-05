@@ -53,6 +53,29 @@ class PDF_Builder_Task_Scheduler {
         $this->schedule_tasks();
     }
 
+    /**
+     * Programme toutes les tâches définies
+     */
+    private function schedule_tasks() {
+        foreach (self::TASKS as $task_name => $task_config) {
+            if (!wp_next_scheduled($task_name)) {
+                $interval = $task_config['interval'];
+                
+                // Pour les tâches dynamiques, déterminer l'intervalle
+                if ($interval === 'dynamic') {
+                    if ($task_name === 'pdf_builder_auto_backup') {
+                        $frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
+                        $interval = $this->map_frequency_to_interval($frequency);
+                    } else {
+                        $interval = 'daily'; // fallback
+                    }
+                }
+                
+                wp_schedule_event(time(), $interval, $task_name);
+            }
+        }
+    }
+
     private function init_hooks() {
         // Activation/désactivation des tâches
         add_action('wp_ajax_pdf_builder_schedule_task', [$this, 'schedule_task_ajax']);
