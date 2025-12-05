@@ -575,11 +575,15 @@ if ($cache_last_cleanup !== 'Jamais') {
 
     // Fonction utilitaire pour afficher les notifications
     function showSystemNotification(message, type = 'info') {
-        // Utiliser le système de notification centralisé s'il existe
-        if (window.simpleNotificationSystem) {
-            window.simpleNotificationSystem.show(message, type);
-        } else if (window.pdfBuilderNotifications) {
-            window.pdfBuilderNotifications.show(message, type);
+        // Utiliser les fonctions de notification globales
+        if (type === 'success' && window.showSuccessNotification) {
+            window.showSuccessNotification(message);
+        } else if (type === 'error' && window.showErrorNotification) {
+            window.showErrorNotification(message);
+        } else if (type === 'warning' && window.showWarningNotification) {
+            window.showWarningNotification(message);
+        } else if (type === 'info' && window.showInfoNotification) {
+            window.showInfoNotification(message);
         } else {
             // Fallback: créer une notification temporaire
             const notification = $('<div class="system-notification ' + type + '">' + message + '</div>');
