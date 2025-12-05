@@ -304,7 +304,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             case 'acces':
                 $saved_options = [
-                    'allowed_roles' => get_option('pdf_builder_allowed_roles', ['administrator']),
+                    'allowed_roles' => get_option('pdf_builder_settings')['pdf_builder_allowed_roles'] ?? ['administrator'],
                 ];
                 break;
 
