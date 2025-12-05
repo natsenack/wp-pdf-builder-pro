@@ -489,7 +489,7 @@ class PDF_Builder_Update_Manager {
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->info("Update Manager: $message");
         } else {
-            error_log("[PDF Builder Update] $message");
+            // error_log("[PDF Builder Update] $message");
         }
     }
 
@@ -500,7 +500,7 @@ class PDF_Builder_Update_Manager {
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->error("Update Manager Error: $error");
         } else {
-            error_log("[PDF Builder Update Error] $error");
+            // error_log("[PDF Builder Update Error] $error");
         }
     }
 

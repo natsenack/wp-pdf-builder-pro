@@ -89,7 +89,7 @@ class PdfBuilderCanvasSaveLogger
         }
 
         $log_entry .= "\n" . str_repeat('-', 80) . "\n";
-        file_put_contents($this->log_file, $log_entry, FILE_APPEND | LOCK_EX);
+        // file_put_contents($this->log_file, $log_entry, FILE_APPEND | LOCK_EX);
     }
 
     /**
@@ -256,7 +256,7 @@ class PdfBuilderCanvasSaveLogger
             }
         }
 
-        file_put_contents($this->log_file, implode("\n", $new_lines) . "\n", LOCK_EX);
+        // file_put_contents($this->log_file, implode("\n", $new_lines) . "\n", LOCK_EX);
         $this->log('INFO', 'Old logs cleaned', ['lines_removed' => count($lines) - count($new_lines)]);
     }
 
@@ -279,7 +279,7 @@ class PdfBuilderCanvasSaveLogger
     public function clearLogs()
     {
         if (file_exists($this->log_file)) {
-            file_put_contents($this->log_file, '');
+            // file_put_contents($this->log_file, '');
         }
     }
 }

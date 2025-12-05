@@ -139,14 +139,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                     break;
                 case 'developpeur':
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log('PDF Builder: Processing developer tab save');
-                        error_log('PDF Builder: Developer enabled POST: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set'));
-                        error_log('PDF Builder: Debug PHP errors POST: ' . ($_POST['debug_php_errors'] ?? 'not set'));
+                        // error_log('PDF Builder: Processing developer tab save');
+                        // error_log('PDF Builder: Developer enabled POST: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set'));
+                        // error_log('PDF Builder: Debug PHP errors POST: ' . ($_POST['debug_php_errors'] ?? 'not set'));
                     }
                     $saved_count = $this->save_developer_settings();
                     $saved_options = $this->get_saved_options_for_tab('developpeur');
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log('PDF Builder: Developer settings saved, count: ' . $saved_count);
+                        // error_log('PDF Builder: Developer settings saved, count: ' . $saved_count);
                     }
                     break;
                 case 'licence':

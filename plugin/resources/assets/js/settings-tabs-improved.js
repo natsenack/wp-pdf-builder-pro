@@ -74,14 +74,14 @@
         log('🌐 PDF BUILDER TABS: User Agent:', typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A');
         
         // Logs de test pour visibilité (temporaires)
-        console.warn('🚨 PDF BUILDER TABS: LOG WARNING POUR TEST VISIBILITÉ');
-        console.error('💥 PDF BUILDER TABS: LOG ERROR POUR TEST VISIBILITÉ');
+        // console.warn('🚨 PDF BUILDER TABS: LOG WARNING POUR TEST VISIBILITÉ');
+        // console.error('💥 PDF BUILDER TABS: LOG ERROR POUR TEST VISIBILITÉ');
         
-        log('✅ PDF BUILDER TABS: Console disponible');
-        log('🔄 PDF BUILDER TABS: Début de l\'exécution du script');
-        log('  - Container principal:', container ? '✅ Trouvé' : '❌ Non trouvé');
-        log('  - Container onglets:', tabsContainer ? '✅ Trouvé' : '❌ Non trouvé');
-        log('  - Container contenu:', contentContainer ? '✅ Trouvé' : '❌ Non trouvé');
+        // log('✅ PDF BUILDER TABS: Console disponible');
+        // log('🔄 PDF BUILDER TABS: Début de l\'exécution du script');
+        // log('  - Container principal:', container ? '✅ Trouvé' : '❌ Non trouvé');
+        // log('  - Container onglets:', tabsContainer ? '✅ Trouvé' : '❌ Non trouvé');
+        // log('  - Container contenu:', contentContainer ? '✅ Trouvé' : '❌ Non trouvé');
         
         if (tabsContainer) {
             tabButtons = tabsContainer.querySelectorAll('.nav-tab');

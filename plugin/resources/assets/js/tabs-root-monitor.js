@@ -185,11 +185,11 @@
 
     window.pdfBuilderRootLogDump = function() {
         try {
-            console.group('PDF Builder Root Log Dump - ' + window.pdfBuilderRootLog.length + ' entries');
+            // console.group('PDF Builder Root Log Dump - ' + window.pdfBuilderRootLog.length + ' entries');
             window.pdfBuilderRootLog.forEach(function(entry) {
-                console.info(entry.ts, entry.msg, entry.data || '');
+                // console.info(entry.ts, entry.msg, entry.data || '');
             });
-            console.groupEnd();
+            // console.groupEnd();
         } catch(e) {
             
         }

@@ -141,10 +141,10 @@ class PdfBuilderPerformanceMonitor
             $lines = explode("\n", $content);
 // Garder seulement les 2000 dernières lignes
             $lines = array_slice($lines, -2000);
-            file_put_contents($log_file, implode("\n", $lines));
+            // file_put_contents($log_file, implode("\n", $lines));
         }
 
-        file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
+        // file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
 // Log aussi dans le logger du plugin
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::log("Performance [$type]: " . json_encode($data), 'info');
@@ -251,7 +251,7 @@ class PdfBuilderPerformanceMonitor
             }
         }
 
-        file_put_contents($log_file, implode("\n", $filtered_lines) . "\n");
+        // file_put_contents($log_file, implode("\n", $filtered_lines) . "\n");
     }
 }
 

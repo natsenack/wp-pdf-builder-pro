@@ -68,10 +68,10 @@ class PdfBuilderSecureShellManager
             $lines = explode("\n", $content);
 // Garder seulement les 1000 dernières lignes
             $lines = array_slice($lines, -1000);
-            file_put_contents($security_log_file, implode("\n", $lines));
+            // file_put_contents($security_log_file, implode("\n", $lines));
         }
 
-        file_put_contents($security_log_file, $log_entry, FILE_APPEND | LOCK_EX);
+        // file_put_contents($security_log_file, $log_entry, FILE_APPEND | LOCK_EX);
     }
 
     /**
