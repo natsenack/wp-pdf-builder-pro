@@ -526,13 +526,17 @@
 
         console.log('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
 
-        // Envoyer via AJAX
+        // Envoyer via AJAX - Utiliser FormData au lieu de URLSearchParams pour éviter les problèmes d'échappement JSON
+        const formData = new FormData();
+        for (const key in ajaxData) {
+            if (ajaxData.hasOwnProperty(key)) {
+                formData.append(key, ajaxData[key]);
+            }
+        }
+
         fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(ajaxData)
+            body: formData
         })
         .then(response => response.json())
         .then(data => {
@@ -589,17 +593,12 @@
         console.log('PDF Builder - [RELOAD ROLES] Nonce:', nonce ? 'présent (' + nonce.substring(0, 8) + '...)' : 'vide');
         console.log('PDF Builder - [RELOAD ROLES] Action à envoyer: pdf_builder_test_roles');
 
-        const requestData = new URLSearchParams({
-            action: 'pdf_builder_test_roles',
-            nonce: nonce
-        });
-        console.log('PDF Builder - [RELOAD ROLES] Données de requête:', requestData.toString());
+        const requestData = new FormData();
+        requestData.append('action', 'pdf_builder_test_roles');
+        requestData.append('nonce', nonce);
 
         return fetch(ajaxUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
             body: requestData
         })
         .then(response => {
