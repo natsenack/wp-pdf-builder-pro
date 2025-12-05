@@ -1025,33 +1025,22 @@ if ($cache_last_cleanup !== 'Jamais') {
                         const countText = backupCount + ' sauvegarde' + (backupCount > 1 ? 's' : '') + ' disponible' + (backupCount > 1 ? 's' : '');
                         $('#backup-count-info').text(countText);
 
-                        output += '<div class="backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px;">';
+                        output += '<div class="backup-list" style="margin-top: 15px;">';
 
                         response.data.backups.forEach(function(backup, index) {
                             console.log('[DEBUG] Auto-load processing backup:', backup.filename);
-                            const accordionId = 'backup-' + index;
-                            output += '<div class="backup-accordion-item" style="border-bottom: 1px solid #dee2e6;">';
-                            output += '<div class="backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="toggleAccordion(\'' + accordionId + '\')">';
-                            output += '<div class="backup-header-info">';
-                            output += '<strong style="color: #007cba;">' + backup.filename + '</strong>';
-                            output += '<div style="font-size: 12px; color: #6c757d; margin-top: 2px;">' + backup.size_human + ' • ' + backup.modified_human + '</div>';
-                            output += '</div>';
-                            output += '<div class="backup-accordion-toggle" style="transition: transform 0.2s;">▼</div>';
-                            output += '</div>';
-                            output += '<div id="' + accordionId + '" class="backup-accordion-content" style="display: none; padding: 15px; background: white; border-top: 1px solid #dee2e6;">';
-                            output += '<div class="backup-details" style="margin-bottom: 15px;">';
-                            output += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">';
-                            output += '<div><strong>Type:</strong> ' + backup.type.toUpperCase() + '</div>';
-                            output += '<div><strong>Taille:</strong> ' + backup.size_human + '</div>';
-                            output += '<div><strong>Modifié:</strong> ' + backup.modified_human + '</div>';
-                            output += '<div><strong>Emplacement:</strong> ' + backup.filepath + '</div>';
+                            output += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 10px; background: white; border: 1px solid #dee2e6; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
+                            output += '<div class="backup-info" style="flex: 1; display: flex; align-items: center; gap: 12px;">';
+                            output += '<div class="backup-icon" style="font-size: 20px;">📄</div>';
+                            output += '<div class="backup-details">';
+                            output += '<div class="backup-filename" style="font-weight: 600; color: #007cba; margin-bottom: 2px;">' + backup.filename + '</div>';
+                            output += '<div class="backup-meta" style="font-size: 12px; color: #6c757d;">' + backup.size_human + ' • ' + backup.modified_human + ' • ' + backup.type.toUpperCase() + '</div>';
                             output += '</div>';
                             output += '</div>';
-                            output += '<div class="backup-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">';
-                            output += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🔄 Restaurer</button>';
-                            output += '<button type="button" class="button button-small download-backup-btn" data-filename="' + backup.filename + '" style="background: #007cba; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">📥 Télécharger</button>';
-                            output += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">🗑️ Supprimer</button>';
-                            output += '</div>';
+                            output += '<div class="backup-actions" style="display: flex; gap: 8px;">';
+                            output += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">🔄 Restaurer</button>';
+                            output += '<button type="button" class="button button-small download-backup-btn" data-filename="' + backup.filename + '" style="background: #007cba; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📥 Télécharger</button>';
+                            output += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Supprimer</button>';
                             output += '</div>';
                             output += '</div>';
                         });
@@ -1234,23 +1223,6 @@ if ($cache_last_cleanup !== 'Jamais') {
             }
         });
     });
-
-    // Fonction pour basculer l'accordéon
-    function toggleAccordion(accordionId) {
-        const content = document.getElementById(accordionId);
-        const header = content.previousElementSibling;
-        const toggle = header.querySelector('.backup-accordion-toggle');
-
-        if (content.style.display === 'none' || content.style.display === '') {
-            content.style.display = 'block';
-            toggle.style.transform = 'rotate(180deg)';
-            header.style.background = '#e9ecef';
-        } else {
-            content.style.display = 'none';
-            toggle.style.transform = 'rotate(0deg)';
-            header.style.background = '#f8f9fa';
-        }
-    }
 
 })(jQuery);
 </script>
