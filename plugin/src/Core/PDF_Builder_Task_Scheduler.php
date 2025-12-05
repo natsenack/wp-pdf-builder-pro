@@ -421,10 +421,6 @@ class PDF_Builder_Task_Scheduler {
             'filename' => 'test_backup_' . date('Y-m-d_H-i-s') . '.json'
         ]);
     }
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la création de la sauvegarde: ' . $e->getMessage());
-        }
-    }
 
     /**
      * Tester le système de fallback
