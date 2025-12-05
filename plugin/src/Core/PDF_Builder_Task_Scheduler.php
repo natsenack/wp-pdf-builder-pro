@@ -190,6 +190,11 @@ class PDF_Builder_Task_Scheduler {
                     PDF_Builder_Logger::get_instance()->info('Automatic backup created successfully');
                 }
 
+                // Log JavaScript pour le débogage côté client
+                if (is_admin()) {
+                    echo "<script>console.log('[AUTO BACKUP PHP] ✅ Sauvegarde automatique créée avec succès:', '" . addslashes($backup_name) . "');</script>";
+                }
+
                 // Notification de succès
                 if (class_exists('PDF_Builder_Notification_Manager')) {
                     $message = __('Sauvegarde automatique créée avec succès !', 'pdf-builder-pro');

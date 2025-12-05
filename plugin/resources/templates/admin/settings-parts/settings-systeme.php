@@ -1254,16 +1254,23 @@ if ($cache_last_cleanup !== 'Jamais') {
             clearInterval(backupCheckInterval);
         }
 
+        console.log('[AUTO BACKUP MONITOR] 🚀 Démarrage de la surveillance des sauvegardes automatiques');
+        console.log('[AUTO BACKUP MONITOR] ⏰ Vérification toutes les 30 secondes');
+
         // Démarrer la vérification périodique
         backupCheckInterval = setInterval(function() {
             // Vérifier seulement si l'utilisateur est actif sur la page (pas d'inactivité prolongée)
             if (document.visibilityState === 'visible') {
                 checkForNewBackups();
+            } else {
+                console.log('[AUTO BACKUP MONITOR] ⏸️ Vérification ignorée (page non visible)');
             }
         }, 30000); // Toutes les 30 secondes
     }
 
     function checkForNewBackups() {
+        console.log('[AUTO BACKUP MONITOR] 🔍 Vérification des nouvelles sauvegardes...');
+
         const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
         $.ajax({
@@ -1276,18 +1283,29 @@ if ($cache_last_cleanup !== 'Jamais') {
             success: function(response) {
                 if (response.success && response.data.backups) {
                     const currentCount = response.data.backups.length;
+                    console.log('[AUTO BACKUP MONITOR] 📊 Nombre actuel de sauvegardes:', currentCount, '(précédent:', lastBackupCount, ')');
 
                     if (lastBackupCount > 0 && currentCount > lastBackupCount) {
                         // Nouvelle sauvegarde détectée !
-                        console.log('[DEBUG] New backup detected! Count changed from', lastBackupCount, 'to', currentCount);
+                        console.log('[AUTO BACKUP MONITOR] 🎉 NOUVELLE SAUVEGARDE AUTOMATIQUE DETECTEE!');
+                        console.log('[AUTO BACKUP MONITOR] 📈 Compteur passé de', lastBackupCount, 'à', currentCount);
+                        console.log('[AUTO BACKUP MONITOR] 🔄 Déclenchement de la mise à jour de l\'interface...');
+
                         window.updateBackupCount();
+                    } else if (lastBackupCount === 0 && currentCount > 0) {
+                        console.log('[AUTO BACKUP MONITOR] 📋 Initialisation du compteur de sauvegardes:', currentCount);
+                    } else {
+                        console.log('[AUTO BACKUP MONITOR] ✅ Aucun changement détecté');
                     }
 
                     lastBackupCount = currentCount;
+                } else {
+                    console.log('[AUTO BACKUP MONITOR] ⚠️ Réponse invalide ou aucune sauvegarde trouvée');
                 }
             },
             error: function(xhr, status, error) {
-                console.log('[DEBUG] Error checking for new backups:', error);
+                console.log('[AUTO BACKUP MONITOR] ❌ Erreur lors de la vérification des sauvegardes:', error);
+                console.log('[AUTO BACKUP MONITOR] 📋 Détails de l\'erreur:', xhr.status, xhr.statusText);
             }
         });
     }
@@ -1296,6 +1314,7 @@ if ($cache_last_cleanup !== 'Jamais') {
     $(document).ready(function() {
         // Attendre un peu avant de commencer la surveillance pour laisser le temps au chargement initial
         setTimeout(function() {
+            console.log('[AUTO BACKUP MONITOR] 🎯 Initialisation de la surveillance des sauvegardes automatiques');
             startBackupCountMonitoring();
         }, 2000);
     });
@@ -1309,6 +1328,8 @@ if ($cache_last_cleanup !== 'Jamais') {
 
     // Fonction globale pour mettre à jour le compteur de sauvegardes en temps réel
     window.updateBackupCount = function() {
+        console.log('[AUTO BACKUP UPDATE] 🔄 Début de la mise à jour du compteur de sauvegardes');
+
         const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
         $.ajax({
@@ -1323,11 +1344,15 @@ if ($cache_last_cleanup !== 'Jamais') {
                     const backupCount = response.data.backups.length;
                     const countText = backupCount + ' sauvegarde' + (backupCount > 1 ? 's' : '') + ' disponible' + (backupCount > 1 ? 's' : '');
 
+                    console.log('[AUTO BACKUP UPDATE] 📊 Mise à jour du compteur:', countText, '(' + backupCount + ' sauvegarde(s))');
+
                     // Animation du compteur pour indiquer le changement
                     const $countInfo = $('#backup-count-info');
                     const currentText = $countInfo.text();
 
                     if (currentText !== countText) {
+                        console.log('[AUTO BACKUP UPDATE] ✨ Animation du compteur:', currentText, '→', countText);
+
                         $countInfo.fadeOut(200, function() {
                             $(this).text(countText).fadeIn(200);
                         });
@@ -1337,17 +1362,27 @@ if ($cache_last_cleanup !== 'Jamais') {
                         const $plusOne = $('<span class="backup-count-plus-one" style="color: #28a745; font-weight: bold; margin-left: 8px; animation: fadeInOut 3s ease-in-out;">+1</span>');
                         $headerInfo.append($plusOne);
 
+                        console.log('[AUTO BACKUP UPDATE] 🎯 Indicateur "+1" ajouté');
+
                         // Supprimer l'indicateur après l'animation
                         setTimeout(function() {
                             $plusOne.fadeOut(500, function() {
                                 $(this).remove();
                             });
+                            console.log('[AUTO BACKUP UPDATE] 🗑️ Indicateur "+1" supprimé');
                         }, 2500);
+                    } else {
+                        console.log('[AUTO BACKUP UPDATE] ℹ️ Aucun changement visuel nécessaire');
                     }
+
+                    console.log('[AUTO BACKUP UPDATE] ✅ Mise à jour terminée avec succès');
+                } else {
+                    console.log('[AUTO BACKUP UPDATE] ⚠️ Réponse invalide lors de la mise à jour');
                 }
             },
             error: function(xhr, status, error) {
-                console.log('[DEBUG] Erreur lors de la mise à jour du compteur:', error);
+                console.log('[AUTO BACKUP UPDATE] ❌ Erreur lors de la mise à jour du compteur:', error);
+                console.log('[AUTO BACKUP UPDATE] 📋 Détails de l\'erreur:', xhr.status, xhr.statusText);
             }
         });
     };
