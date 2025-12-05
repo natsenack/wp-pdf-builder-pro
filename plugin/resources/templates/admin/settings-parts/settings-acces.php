@@ -504,10 +504,46 @@ jQuery(document).ready(function($) {
 
     // Intercepter la soumission du formulaire (pour le bouton flottant)
     $('#acces-settings-form').on('submit', function(e) {
+        console.log('🎯 Formulaire acces-settings-form soumis, interception...');
         e.preventDefault();
         Utils.saveRoles();
         return false;
     });
+
+    // Debug: Écouter tous les événements submit sur le document
+    $(document).on('submit', 'form', function(e) {
+        console.log('📝 Événement submit détecté sur formulaire:', e.target.id || 'sans ID');
+    });
+
+    // Debug: Écouter les clics sur le bouton flottant
+    $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
+        console.log('🖱️ Clic détecté sur le bouton flottant');
+    });
+
+    // Désactiver les sauvegardes automatiques pour cet onglet
+    $(document).off('pdf_builder_auto_save.acces');
+    $(document).off('pdf_builder_reload_settings.acces');
+
+    // Bloquer les appels AJAX automatiques qui écrasent nos paramètres
+    let originalAjax = $.ajax;
+    $.ajax = function(settings) {
+        // Bloquer les appels saveAllSettings automatiques pour l'onglet acces
+        if (settings.data && typeof settings.data === 'string' &&
+            settings.data.includes('action=pdf_builder_save_all_settings') &&
+            window.location.href.includes('page=pdf-builder-settings')) {
+            console.log('🚫 Blocage sauvegarde automatique saveAllSettings pour onglet acces');
+            return $.Deferred().resolve({success: true}).promise();
+        }
+
+        // Bloquer les appels reloadRolesData automatiques
+        if (settings.data && typeof settings.data === 'string' &&
+            settings.data.includes('action=pdf_builder_reload_roles')) {
+            console.log('🚫 Blocage reload automatique des rôles pour onglet acces');
+            return $.Deferred().resolve({success: true}).promise();
+        }
+
+        return originalAjax.apply(this, arguments);
+    };
 
     // Initialisation
     EventHandlers.init();
