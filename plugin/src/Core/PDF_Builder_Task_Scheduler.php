@@ -598,8 +598,6 @@ class PDF_Builder_Task_Scheduler {
                 foreach ($files as $file) {
                     $filename = basename($file);
                     $stats['manual_backups']++;
-                        $stats['manual_backups']++;
-                    }
                 }
 
                 // Trier par date (le plus récent en premier)
