@@ -6,16 +6,6 @@
 
 // Fonctions de debug conditionnel - RÉACTIVÉES pour mesurer les FPS
 
-function  {
-    if (isDebugEnabled()) {
-        
-    }
-}
-
-}
-
-}
-
 class PDFPreviewAPI {
     constructor() {
         this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';

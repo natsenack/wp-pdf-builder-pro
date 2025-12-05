@@ -8,12 +8,6 @@
     return false;
 }
 
-function  {
-    if (isDebugEnabled()) {
-        
-    }
-}
-
 (function() {
     'use strict';
 

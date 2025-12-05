@@ -10,12 +10,6 @@
 
     // Fonction de debug conditionnel
 
-    function  {
-        if (isDebugEnabled()) {
-            
-        }
-    }
-
     // LOG INCONDITIONNEL - toujours affiché
 
     /**

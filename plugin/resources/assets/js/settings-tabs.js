@@ -18,16 +18,6 @@
 
     // Fonctions de debug conditionnel
 
-    function  {
-        if (isDebugEnabled()) {
-            
-        }
-    }
-
-    }
-
-    }
-
     /**
      * Affiche un message de sauvegarde
      */

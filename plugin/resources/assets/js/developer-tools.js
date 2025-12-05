@@ -6,12 +6,6 @@
 
 // Fonction de debug conditionnel
 
-function  {
-    if (isDebugEnabled()) {
-        
-    }
-}
-
 // LOG ABSOLU - toujours affiché, même si le script ne s'initialise pas
 
 // Assurer que les données nécessaires sont disponibles
