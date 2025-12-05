@@ -262,7 +262,7 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Diagnostiquer l'état du système cron
+     * Diagnostique l'état du système cron
      */
     public function diagnose_cron_system() {
         $issues = [];
@@ -274,6 +274,18 @@ class PDF_Builder_Task_Scheduler {
             $recommendations[] = "Définir DISABLE_WP_CRON à false dans wp-config.php ou supprimer cette ligne";
         }
 
+        // Vérifier les permissions de la base de données
+        global $wpdb;
+        $test_option = 'pdf_builder_cron_test_' . time();
+        $test_result = add_option($test_option, 'test', '', 'no');
+        if (!$test_result) {
+            $issues[] = "Impossible d'écrire dans la table wp_options";
+            $recommendations[] = "Vérifier les permissions de la base de données";
+            $recommendations[] = "Vérifier que l'utilisateur MySQL a les droits INSERT/UPDATE";
+        } else {
+            delete_option($test_option);
+        }
+
         // Vérifier si les tâches peuvent être sauvegardées
         $test_hook = 'pdf_builder_cron_test_' . time();
         $scheduled = wp_schedule_single_event(time() + 3600, $test_hook);
@@ -282,6 +294,7 @@ class PDF_Builder_Task_Scheduler {
             $issues[] = "Impossible de planifier des événements cron";
             $recommendations[] = "Vérifier les permissions d'écriture sur la base de données";
             $recommendations[] = "Vérifier que la table wp_options est accessible";
+            $recommendations[] = "Vérifier la taille de la table wp_options (elle pourrait être corrompue)";
         } else {
             // Nettoyer le test
             wp_clear_scheduled_hook($test_hook);
