@@ -351,7 +351,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $settings[$option_key] = $option_value;
                 }
                 $saved_count++;
-                error_log("[AJAX HANDLER] Array field processed: '$key' = " . json_encode($option_value)); else {
+                error_log("[AJAX HANDLER] Array field processed: '$key' = " . json_encode($option_value));
+            } else {
                 // Pour les champs non définis, essayer de deviner le type
                 if (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
