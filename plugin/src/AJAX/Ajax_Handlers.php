@@ -573,6 +573,7 @@ function pdf_builder_test_roles_handler() {
         'status' => 'handler_called'
     ]);
 }
+error_log('PDF Builder: [AJAX REGISTRATION] Registering pdf_builder_test_roles action');
 add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 ?>
