@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
 
         var ajaxData = {
             action: 'pdf_builder_diagnose_cron',
-            nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+            nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
         };
         console.log('PDF Builder: [CRON] Sending AJAX data:', ajaxData);
 
@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_repair_cron',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 console.log('PDF Builder: [CRON] Repair AJAX response:', response);
@@ -171,7 +171,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_get_backup_stats',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 console.log('PDF Builder: [BACKUP] Statistics AJAX response:', response);
@@ -208,7 +208,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_create_backup',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 console.log('PDF Builder: [BACKUP] Manual backup AJAX response:', response);
@@ -410,7 +410,7 @@ jQuery(document).ready(function($) {
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_list_backups',
-                    nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
                 },
                 success: function(response) {
                     if (response.success && response.data && response.data.backups) {

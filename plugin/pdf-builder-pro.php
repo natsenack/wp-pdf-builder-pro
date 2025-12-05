@@ -2003,6 +2003,12 @@ function pdf_builder_create_backup_ajax() {
  * AJAX handler for listing backups
  */
 function pdf_builder_list_backups_ajax() {
+    // Check nonce
+    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+        wp_send_json_error(['message' => 'Nonce invalide']);
+        return;
+    }
+
     // Check permissions
     if (!current_user_can('manage_options')) {
         error_log('PDF Builder: [BACKUP LIST] Permission denied - user cannot manage_options');
