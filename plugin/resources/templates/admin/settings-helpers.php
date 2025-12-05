@@ -8,51 +8,64 @@
  * Sauvegarde les rôles autorisés
  */
 function pdf_builder_save_allowed_roles($roles) {
-    if (!is_array($roles)) {
-        $roles = [];
-    }
-
-    // Nettoyer et valider les rôles
-    $valid_roles = [];
-    global $wp_roles;
-    $all_roles = array_keys($wp_roles->roles);
-
-    foreach ($roles as $role) {
-        if (in_array($role, $all_roles)) {
-            $valid_roles[] = $role;
+    if (!class_exists('PDF_Builder\\Security\\Role_Manager')) {
+        // Fallback si Role_Manager n'est pas disponible
+        if (!is_array($roles)) {
+            $roles = [];
         }
+
+        // Nettoyer et valider les rôles
+        $valid_roles = [];
+        global $wp_roles;
+        $all_roles = array_keys($wp_roles->roles);
+
+        foreach ($roles as $role) {
+            if (in_array($role, $all_roles)) {
+                $valid_roles[] = $role;
+            }
+        }
+
+        // Toujours inclure administrator
+        if (!in_array('administrator', $valid_roles)) {
+            $valid_roles[] = 'administrator';
+        }
+
+        $settings = get_option('pdf_builder_settings', []);
+        $settings['pdf_builder_allowed_roles'] = $valid_roles;
+        update_option('pdf_builder_settings', $settings);
+
+        return $valid_roles;
     }
 
-    // Toujours inclure administrator
-    if (!in_array('administrator', $valid_roles)) {
-        $valid_roles[] = 'administrator';
-    }
-
-    $settings = get_option('pdf_builder_settings', []);
-    $settings['pdf_builder_allowed_roles'] = $valid_roles;
-    update_option('pdf_builder_settings', $settings);
-
-    return $valid_roles;
+    // Utiliser le Role_Manager si disponible
+    \PDF_Builder\Security\Role_Manager::setAllowedRoles($roles);
+    return \PDF_Builder\Security\Role_Manager::getAllowedRoles();
 }
 
 /**
  * Récupère les rôles autorisés
  */
 function pdf_builder_get_allowed_roles() {
-    $settings = get_option('pdf_builder_settings', []);
-    $roles = $settings['pdf_builder_allowed_roles'] ?? null;
+    if (!class_exists('PDF_Builder\\Security\\Role_Manager')) {
+        // Fallback si Role_Manager n'est pas disponible
+        $settings = get_option('pdf_builder_settings', []);
+        $roles = $settings['pdf_builder_allowed_roles'] ?? null;
 
-    if (!is_array($roles) || empty($roles)) {
-        // Valeurs par défaut
-        return ['administrator', 'editor', 'shop_manager'];
+        if (!is_array($roles) || empty($roles)) {
+            // Valeurs par défaut
+            return ['administrator', 'editor', 'shop_manager'];
+        }
+
+        // Toujours inclure administrator
+        if (!in_array('administrator', $roles)) {
+            $roles[] = 'administrator';
+        }
+
+        return array_unique($roles);
     }
 
-    // Toujours inclure administrator
-    if (!in_array('administrator', $roles)) {
-        $roles[] = 'administrator';
-    }
-
-    return array_unique($roles);
+    // Utiliser le Role_Manager si disponible
+    return \PDF_Builder\Security\Role_Manager::getAllowedRoles();
 }
 
 /**
