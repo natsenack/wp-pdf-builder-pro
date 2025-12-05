@@ -882,6 +882,215 @@ class PDF_Builder_Task_Scheduler {
     private function update_last_run($task_name) {
         update_option("pdf_builder_last_run_$task_name", current_time('mysql'));
     }
+
+    /**
+     * Enregistre les actions AJAX pour le diagnostic cron
+     */
+    private function register_ajax_actions() {
+        add_action('wp_ajax_pdf_builder_diagnose_cron', [$this, 'ajax_diagnose_cron']);
+        add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
+        add_action('wp_ajax_pdf_builder_backup_stats', [$this, 'ajax_backup_stats']);
+        add_action('wp_ajax_pdf_builder_manual_backup', [$this, 'ajax_manual_backup']);
+    }
+
+    /**
+     * Diagnostique le système cron
+     */
+    public function diagnose_cron_system() {
+        $status = [];
+        $details = [];
+
+        // Vérifier si WP-Cron est activé
+        $status[] = "WP-Cron activé: " . (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON ? "NON" : "OUI");
+
+        // Vérifier les tâches programmées
+        $scheduled_tasks = _get_cron_array();
+        $our_tasks = 0;
+        $next_runs = [];
+
+        foreach ($scheduled_tasks as $timestamp => $cron) {
+            foreach ($cron as $hook => $schedule) {
+                if (isset(self::TASKS[$hook])) {
+                    $our_tasks++;
+                    $next_runs[$hook] = date('Y-m-d H:i:s', $timestamp);
+                }
+            }
+        }
+
+        $status[] = "Tâches PDF Builder programmées: $our_tasks/" . count(self::TASKS);
+        $details[] = "Prochaines exécutions:";
+
+        foreach (self::TASKS as $task_name => $task_config) {
+            $next_run = isset($next_runs[$task_name]) ? $next_runs[$task_name] : "Non programmée";
+            $details[] = "  - $task_name: $next_run";
+        }
+
+        // Vérifier les dernières exécutions
+        $details[] = "\nDernières exécutions:";
+        foreach (self::TASKS as $task_name => $task_config) {
+            $last_run = get_option("pdf_builder_last_run_$task_name", "Jamais");
+            $details[] = "  - $task_name: $last_run";
+        }
+
+        return [
+            'status' => implode("\n", $status),
+            'details' => implode("\n", $details)
+        ];
+    }
+
+    /**
+     * Répare le système cron
+     */
+    public function repair_cron_system() {
+        $this->unschedule_all_tasks();
+        $this->schedule_tasks();
+
+        // Forcer une exécution de WP-Cron
+        spawn_cron();
+
+        return [
+            'success' => true,
+            'message' => 'Système cron réparé et tâches reprogrammées'
+        ];
+    }
+
+    /**
+     * Obtient les statistiques des sauvegardes
+     */
+    public function get_backup_statistics() {
+        $stats = [];
+
+        // Compter les sauvegardes dans le répertoire
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/';
+        if (is_dir($backup_dir)) {
+            $files = glob($backup_dir . '*.json');
+            $stats[] = "Nombre total de sauvegardes: " . count($files);
+
+            // Trier par date (les plus récentes en premier)
+            usort($files, function($a, $b) {
+                return filemtime($b) - filemtime($a);
+            });
+
+            $stats[] = "\nDernières sauvegardes:";
+            $count = 0;
+            foreach ($files as $file) {
+                if ($count >= 5) break; // Limiter à 5
+                $filename = basename($file);
+                $date = date('Y-m-d H:i:s', filemtime($file));
+                $size = round(filesize($file) / 1024, 1) . ' KB';
+                $stats[] = "  - $filename ($date, $size)";
+                $count++;
+            }
+        } else {
+            $stats[] = "Répertoire de sauvegardes introuvable";
+        }
+
+        // Statistiques des sauvegardes automatiques
+        $last_auto_backup = get_option('pdf_builder_last_auto_backup', 0);
+        if ($last_auto_backup) {
+            $stats[] = "\nDernière sauvegarde automatique: " . date('Y-m-d H:i:s', $last_auto_backup);
+        } else {
+            $stats[] = "\nAucune sauvegarde automatique effectuée";
+        }
+
+        return implode("\n", $stats);
+    }
+
+    /**
+     * Crée une sauvegarde manuelle
+     */
+    public function create_manual_backup() {
+        // Utiliser la classe de sauvegarde si elle existe
+        if (class_exists('PDF_Builder_Backup_Recovery_System')) {
+            $backup_system = new PDF_Builder_Backup_Recovery_System();
+            $result = $backup_system->create_backup('manual_backup_' . date('Y-m-d_H-i-s'));
+
+            if ($result['success']) {
+                update_option('pdf_builder_last_manual_backup', time());
+                return [
+                    'success' => true,
+                    'message' => 'Sauvegarde manuelle créée avec succès',
+                    'filename' => $result['filename']
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Erreur lors de la création de la sauvegarde: ' . ($result['error'] ?? 'Erreur inconnue')
+                ];
+            }
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Système de sauvegarde non disponible'
+        ];
+    }
+
+    // === MÉTHODES AJAX ===
+
+    /**
+     * AJAX: Diagnostique le système cron
+     */
+    public function ajax_diagnose_cron() {
+        check_ajax_referer('pdf_builder_cron_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die('Accès refusé');
+        }
+
+        $diagnosis = $this->diagnose_cron_system();
+
+        wp_send_json_success($diagnosis);
+    }
+
+    /**
+     * AJAX: Répare le système cron
+     */
+    public function ajax_repair_cron() {
+        check_ajax_referer('pdf_builder_cron_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die('Accès refusé');
+        }
+
+        $result = $this->repair_cron_system();
+
+        wp_send_json_success($result);
+    }
+
+    /**
+     * AJAX: Obtient les statistiques des sauvegardes
+     */
+    public function ajax_backup_stats() {
+        check_ajax_referer('pdf_builder_cron_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die('Accès refusé');
+        }
+
+        $stats = $this->get_backup_statistics();
+
+        wp_send_json_success($stats);
+    }
+
+    /**
+     * AJAX: Crée une sauvegarde manuelle
+     */
+    public function ajax_manual_backup() {
+        check_ajax_referer('pdf_builder_cron_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die('Accès refusé');
+        }
+
+        $result = $this->create_manual_backup();
+
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result['message']);
+        }
+    }
 }
 
 // Fonctions globales
