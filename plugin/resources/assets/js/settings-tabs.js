@@ -338,7 +338,7 @@
         formIds.forEach(formId => {
             const form = document.getElementById(formId);
             if (form) {
-                console.log(`PDF Builder - Collecte du formulaire: ${formId}`);
+                debugLog(`PDF Builder - Collecte du formulaire: ${formId}`);
                 const formData = new FormData(form);
                 const formObject = {};
 
