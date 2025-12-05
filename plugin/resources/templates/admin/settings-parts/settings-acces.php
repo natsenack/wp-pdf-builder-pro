@@ -21,6 +21,7 @@
     // DEBUG: Afficher les valeurs récupérées
     echo "<!-- DEBUG: allowed_roles_raw = " . json_encode($allowed_roles_raw) . " -->";
     echo "<!-- DEBUG: allowed_roles = " . json_encode($allowed_roles) . " -->";
+    echo "<div style='background: #ffebee; padding: 10px; margin: 10px 0; border: 1px solid #f44336; color: #c62828;'>DEBUG: allowed_roles_raw = " . json_encode($allowed_roles_raw) . "<br>DEBUG: allowed_roles = " . json_encode($allowed_roles) . "</div>";
     error_log('[PDF Builder ACCES] Retrieved allowed_roles_raw: ' . json_encode($allowed_roles_raw) . ', processed: ' . json_encode($allowed_roles));
 
     $role_descriptions = [
