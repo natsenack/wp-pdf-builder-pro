@@ -347,12 +347,25 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     
                     // TRAITEMENT SPÉCIAL POUR LES RÔLES AUTORISÉS
                     if ($key === 'pdf_builder_allowed_roles') {
+                        error_log("[AJAX HANDLER] SPECIAL HANDLING: Processing pdf_builder_allowed_roles");
+                        error_log("[AJAX HANDLER] SPECIAL HANDLING: Raw value received: '" . $value . "'");
+
                         // Utiliser la fonction spécialisée pour les rôles
                         if (function_exists('pdf_builder_save_allowed_roles')) {
+                            error_log("[AJAX HANDLER] SPECIAL HANDLING: pdf_builder_save_allowed_roles function exists, calling it");
                             $saved_roles = pdf_builder_save_allowed_roles($value);
                             $option_value = $saved_roles;
-                            error_log("[AJAX HANDLER] Special handling for pdf_builder_allowed_roles: saved " . json_encode($saved_roles));
+                            error_log("[AJAX HANDLER] SPECIAL HANDLING: Saved roles: " . json_encode($saved_roles));
+
+                            // Vérifier immédiatement si la sauvegarde a fonctionné
+                            $settings_check = get_option('pdf_builder_settings', []);
+                            if (isset($settings_check['pdf_builder_allowed_roles'])) {
+                                error_log("[AJAX HANDLER] SPECIAL HANDLING: VERIFICATION - Roles saved in DB: " . json_encode($settings_check['pdf_builder_allowed_roles']));
+                            } else {
+                                error_log("[AJAX HANDLER] SPECIAL HANDLING: VERIFICATION - Roles NOT found in DB after save!");
+                            }
                         } else {
+                            error_log("[AJAX HANDLER] SPECIAL HANDLING: ERROR - pdf_builder_save_allowed_roles function NOT found!");
                             // Fallback si la fonction n'existe pas
                             if (is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
                                 $decoded = json_decode($value, true);
