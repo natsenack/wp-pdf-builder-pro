@@ -519,6 +519,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_load_predefined_into_editor_handler');
     add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_check_template_limit_handler');
 
+    // Handler de diagnostic pour tester le système AJAX
+    add_action('wp_ajax_pdf_builder_diagnostic', 'pdf_builder_diagnostic_ajax_handler');
+
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
     add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax_handler');
@@ -528,6 +531,23 @@ function pdf_builder_register_ajax_handlers() {
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
     add_action('pdf_builder_weekly_maintenance', 'pdf_builder_execute_weekly_maintenance');
     add_action('admin_action_pdf_builder_download_backup', 'pdf_builder_download_backup');
+}
+
+/**
+ * Handler AJAX de diagnostic - Test simple pour vérifier le système AJAX
+ */
+function pdf_builder_diagnostic_ajax_handler() {
+    error_log('PDF Builder: [DIAGNOSTIC] Handler called - this proves AJAX system works');
+    error_log('PDF Builder: [DIAGNOSTIC] POST data: ' . json_encode($_POST));
+    error_log('PDF Builder: [DIAGNOSTIC] REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
+    error_log('PDF Builder: [DIAGNOSTIC] Current user: ' . (get_current_user_id() ? 'logged in' : 'not logged in'));
+    
+    wp_send_json_success([
+        'message' => 'Diagnostic AJAX handler works perfectly',
+        'timestamp' => current_time('timestamp'),
+        'user_id' => get_current_user_id(),
+        'post_data' => $_POST
+    ]);
 }
 
 /**
