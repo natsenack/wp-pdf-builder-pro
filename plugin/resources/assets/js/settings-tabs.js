@@ -546,8 +546,6 @@
         const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
         const nonce = pdfBuilderAjax ? pdfBuilderAjax.nonce : '';
 
-         + '...)' : 'vide');
-
         const requestData = new FormData();
         requestData.append('action', 'pdf_builder_test_roles');
         requestData.append('nonce', nonce);

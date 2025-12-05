@@ -439,7 +439,7 @@
             $.post(this.ajaxUrl, data)
                 .done((response) => {
                     if (response.success) {
-                        if (window.pdfBuilderDebugSettings?.javascript) 
+                        // Notification sent successfully
                     }
                 })
                 .fail((error) => {
