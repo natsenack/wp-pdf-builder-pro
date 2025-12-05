@@ -114,7 +114,7 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_loaded', [$this, 'check_auto_backup_fallback']);
 
         // S'assurer que les actions AJAX sont enregistrées pour l'admin
-        add_action('admin_init', [$this, 'register_ajax_actions']);
+        add_action('init', [$this, 'register_ajax_actions']);
 
         // Reprogrammer les tâches quand les paramètres changent
         add_action('update_option_pdf_builder_backup_frequency', [$this, 'on_backup_frequency_changed'], 10, 3);
