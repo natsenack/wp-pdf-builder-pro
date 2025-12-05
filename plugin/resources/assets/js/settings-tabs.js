@@ -80,8 +80,8 @@
             tab.setAttribute('aria-selected', 'true');
 
             // Activer le contenu correspondant
-            const content = contentContainer.querySelector('#tab-content-' + tabId);
-            console.log('PDF Builder - Looking for content with selector:', '#tab-content-' + tabId);
+            const content = contentContainer.querySelector('#' + tabId);
+            console.log('PDF Builder - Looking for content with selector:', '#' + tabId);
             console.log('PDF Builder - Found content element:', content);
             if (content) {
                 content.classList.add('active');
@@ -103,7 +103,7 @@
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab) {
                 const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = contentContainer.querySelector('#tab-content-' + savedTab);
+                const savedContent = contentContainer.querySelector('#' + savedTab);
                 if (savedTabElement && savedContent) {
                     savedTabElement.click();
                     return;
