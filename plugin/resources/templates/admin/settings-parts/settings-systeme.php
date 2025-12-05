@@ -362,10 +362,24 @@ if ($cache_last_cleanup !== 'Jamais') {
                             <tr>
                                 <th scope="row">Sauvegardes disponibles</th>
                                 <td>
-                                    <div id="backup-accordion-container">
-                                        <div style="text-align: center; padding: 20px; color: #6c757d;">
-                                            <div style="font-size: 24px; margin-bottom: 10px;">⏳</div>
-                                            <div>Chargement des sauvegardes...</div>
+                                    <div class="main-backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px; margin-top: 10px;">
+                                        <div class="main-backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" onclick="toggleMainBackupAccordion()">
+                                            <div class="main-backup-header-info" style="display: flex; align-items: center; gap: 10px;">
+                                                <span style="font-size: 18px;">📦</span>
+                                                <div>
+                                                    <strong style="color: #007cba;">Sauvegardes disponibles</strong>
+                                                    <div style="font-size: 12px; color: #6c757d; margin-top: 2px;" id="backup-count-info">Chargement...</div>
+                                                </div>
+                                            </div>
+                                            <div class="main-backup-accordion-toggle" style="transition: transform 0.2s;">▼</div>
+                                        </div>
+                                        <div id="main-backup-accordion-content" class="main-backup-accordion-content" style="display: none; padding: 15px; background: white; border-top: 1px solid #dee2e6;">
+                                            <div id="backup-accordion-container">
+                                                <div style="text-align: center; padding: 20px; color: #6c757d;">
+                                                    <div style="font-size: 24px; margin-bottom: 10px;">⏳</div>
+                                                    <div>Chargement des sauvegardes...</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -952,6 +966,20 @@ if ($cache_last_cleanup !== 'Jamais') {
         });
     });
 
+    // Fonction pour gérer l'accordéon principal des sauvegardes
+    function toggleMainBackupAccordion() {
+        const content = $('#main-backup-accordion-content');
+        const toggle = $('.main-backup-accordion-toggle');
+
+        if (content.is(':visible')) {
+            content.slideUp(200);
+            toggle.css('transform', 'rotate(0deg)');
+        } else {
+            content.slideDown(200);
+            toggle.css('transform', 'rotate(180deg)');
+        }
+    }
+
     // Chargement automatique des sauvegardes au démarrage
     console.log('[DEBUG] Loading backups automatically on page load');
     loadBackupsOnPageLoad();
@@ -977,6 +1005,12 @@ if ($cache_last_cleanup !== 'Jamais') {
 
                     if (response.data.backups && response.data.backups.length > 0) {
                         console.log('[DEBUG] Auto-load found', response.data.backups.length, 'backups');
+
+                        // Mettre à jour le compteur dans le header
+                        const backupCount = response.data.backups.length;
+                        const countText = backupCount + ' sauvegarde' + (backupCount > 1 ? 's' : '') + ' disponible' + (backupCount > 1 ? 's' : '');
+                        $('#backup-count-info').text(countText);
+
                         output += '<div class="backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px;">';
 
                         response.data.backups.forEach(function(backup, index) {
@@ -1011,6 +1045,10 @@ if ($cache_last_cleanup !== 'Jamais') {
                         output += '</div>';
                     } else {
                         console.log('[DEBUG] Auto-load no backups found');
+
+                        // Mettre à jour le compteur dans le header
+                        $('#backup-count-info').text('0 sauvegarde disponible');
+
                         output += '<div style="padding: 20px; text-align: center; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; color: #6c757d;">';
                         output += '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>';
                         output += '<h4 style="margin: 0 0 10px 0; color: #495057;">Aucune sauvegarde trouvée</h4>';
@@ -1023,11 +1061,13 @@ if ($cache_last_cleanup !== 'Jamais') {
                     console.log('[DEBUG] Auto-load HTML content set successfully');
                 } else {
                     console.log('[DEBUG] Auto-load AJAX response not successful:', response);
+                    $('#backup-count-info').text('Erreur de chargement');
                     $container.html('<div style="color: #dc3545; padding: 20px; text-align: center;">❌ Erreur lors du chargement des sauvegardes</div>');
                 }
             },
             error: function(xhr, status, error) {
                 console.log('[DEBUG] Auto-load AJAX error:', error);
+                $('#backup-count-info').text('Erreur de connexion');
                 $container.html('<div style="color: #dc3545; padding: 20px; text-align: center;">❌ Erreur de connexion lors du chargement des sauvegardes</div>');
             }
         });
