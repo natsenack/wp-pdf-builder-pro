@@ -992,6 +992,11 @@ class PDF_Builder_Task_Scheduler {
         error_log('PDF Builder: [TEST] Manual backup test triggered');
         $this->create_auto_backup();
     }
+
+    /**
+     * Callback pour créer une sauvegarde automatique
+     */
+    public function create_auto_backup() {
         error_log('PDF Builder: [AUTO BACKUP] Starting automatic backup creation - TIMESTAMP: ' . time());
 
         try {
