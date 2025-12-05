@@ -418,108 +418,18 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Effectue la rotation des logs
      */
-    public function rotate_logs() {
-        try {
-            if (!class_exists('PDF_Builder_Logger')) {
-                return;
-            }
-
-            $logger = PDF_Builder_Logger::get_instance();
-            $rotated = $logger->rotate_logs();
-
-            if ($rotated) {
-                $logger->info('Log rotation completed');
-            }
-
-        } catch (Exception $e) {
-            $this->log_task_error('log_rotation', $e);
-        }
-    }
 
     /**
      * Nettoie les données de performance anciennes
      */
-    public function cleanup_performance_data() {
-        try {
-            if (!class_exists('PDF_Builder_Performance_Monitor')) {
-                return;
-            }
-
-            $monitor = PDF_Builder_Performance_Monitor::get_instance();
-            $monitor->cleanup_performance_logs();
-
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Performance data cleanup completed');
-            }
-
-        } catch (Exception $e) {
-            $this->log_task_error('performance_cleanup', $e);
-        }
-    }
 
     /**
      * Vérifie la santé sécurité
      */
-    public function security_health_check() {
-        try {
-            if (!class_exists('PDF_Builder_Security_Validator')) {
-                return;
-            }
-
-            $validator = PDF_Builder_Security_Validator::get_instance();
-
-            // Vérifier les tokens CSRF expirés
-            $validator->cleanup_csrf_tokens();
-
-            // Vérifier la santé générale
-            $health = pdf_builder_health_check();
-
-            if ($health['status'] !== 'healthy') {
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->warning('Security health check found issues', [
-                        'issues' => $health['issues']
-                    ]);
-                }
-            }
-
-        } catch (Exception $e) {
-            $this->log_task_error('security_check', $e);
-        }
-    }
 
     /**
      * Optimise les tables de base de données
      */
-    public function optimize_database() {
-        try {
-            global $wpdb;
-
-            $tables = [
-                $wpdb->prefix . 'pdf_builder_templates',
-                $wpdb->prefix . 'pdf_builder_cache',
-                $wpdb->prefix . 'pdf_builder_errors',
-                $wpdb->prefix . 'pdf_builder_performance_metrics',
-                $wpdb->prefix . 'pdf_builder_performance_issues',
-                $wpdb->prefix . 'pdf_builder_backups'
-            ];
-
-            $optimized_tables = 0;
-
-            foreach ($tables as $table) {
-                if ($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table) {
-                    $wpdb->query("OPTIMIZE TABLE $table");
-                    $optimized_tables++;
-                }
-            }
-
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info("Database optimization completed: $optimized_tables tables optimized");
-            }
-
-        } catch (Exception $e) {
-            $this->log_task_error('database_optimization', $e);
-        }
-    }
 
     /**
      * Rassemble les données pour la sauvegarde
@@ -1111,78 +1021,18 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Callback pour la rotation des logs
      */
-    public function rotate_logs() {
-        error_log('PDF Builder: [LOG ROTATION] Starting log rotation');
-
-        try {
-            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Advanced_Logger')) {
-                $logger = new \PDF_Builder\Managers\PDF_Builder_Advanced_Logger();
-                $logger->rotate_logs();
-                error_log('PDF Builder: [LOG ROTATION] Log rotation completed');
-            } else {
-                error_log('PDF Builder: [LOG ROTATION] Logger not available');
-            }
-        } catch (\Exception $e) {
-            error_log('PDF Builder: [LOG ROTATION] Exception during rotation: ' . $e->getMessage());
-        }
-    }
 
     /**
      * Callback pour nettoyer les données de performance
      */
-    public function cleanup_performance_data() {
-        error_log('PDF Builder: [PERFORMANCE CLEANUP] Starting performance data cleanup');
-
-        try {
-            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Performance_Monitor')) {
-                $performance_monitor = new \PDF_Builder\Managers\PDF_Builder_Performance_Monitor();
-                $performance_monitor->cleanup_old_data();
-                error_log('PDF Builder: [PERFORMANCE CLEANUP] Performance cleanup completed');
-            } else {
-                error_log('PDF Builder: [PERFORMANCE CLEANUP] Performance monitor not available');
-            }
-        } catch (\Exception $e) {
-            error_log('PDF Builder: [PERFORMANCE CLEANUP] Exception during cleanup: ' . $e->getMessage());
-        }
-    }
 
     /**
      * Callback pour la vérification de santé sécurité
      */
-    public function security_health_check() {
-        error_log('PDF Builder: [SECURITY CHECK] Starting security health check');
-
-        try {
-            if (class_exists('\\PDF_Builder\\Core\\PDF_Builder_Security_Validator')) {
-                $security_validator = \PDF_Builder\Core\PDF_Builder_Security_Validator::get_instance();
-                $security_validator->run_security_check();
-                error_log('PDF Builder: [SECURITY CHECK] Security check completed');
-            } else {
-                error_log('PDF Builder: [SECURITY CHECK] Security validator not available');
-            }
-        } catch (\Exception $e) {
-            error_log('PDF Builder: [SECURITY CHECK] Exception during check: ' . $e->getMessage());
-        }
-    }
 
     /**
      * Callback pour l'optimisation de la base de données
      */
-    public function optimize_database() {
-        error_log('PDF Builder: [DATABASE OPTIMIZATION] Starting database optimization');
-
-        try {
-            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Database_Query_Optimizer')) {
-                $db_optimizer = new \PDF_Builder\Managers\PDF_Builder_Database_Query_Optimizer();
-                $db_optimizer->optimize_tables();
-                error_log('PDF Builder: [DATABASE OPTIMIZATION] Database optimization completed');
-            } else {
-                error_log('PDF Builder: [DATABASE OPTIMIZATION] Database optimizer not available');
-            }
-        } catch (\Exception $e) {
-            error_log('PDF Builder: [DATABASE OPTIMIZATION] Exception during optimization: ' . $e->getMessage());
-        }
-    }
 }
 
 // Fonctions globales
