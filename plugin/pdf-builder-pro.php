@@ -2017,6 +2017,9 @@ function pdf_builder_list_backups_ajax() {
         }
 
         $files = glob($backup_dir . '/pdf_builder_backup_*.json');
+        $files_manual = glob($backup_dir . '/pdf-builder-backup-*.json');
+        $files_auto = glob($backup_dir . '/pdf_builder_auto_backup_*.json');
+        $files = array_merge($files, $files_manual, $files_auto);
         $backups = array();
 
         foreach ($files as $file) {
@@ -2027,9 +2030,9 @@ function pdf_builder_list_backups_ajax() {
                 $file_size = filesize($file_path);
                 $file_modified = filemtime($file_path);
 
-                // Parse filename to extract date
+                // Parse filename to extract date - handle multiple formats
                 $date_match = array();
-                if (preg_match('/pdf_builder_backup_(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})\.json/', $filename, $date_match)) {
+                if (preg_match('/pdf[-_]builder[-_]backup[_-](\d{4}[-]\d{2}[-]\d{2})[_-](\d{2}[-]\d{2}[-]\d{2})\.json/', $filename, $date_match)) {
                     $date_str = $date_match[1] . ' ' . str_replace('-', ':', $date_match[2]);
                     $backup_date = strtotime($date_str);
                 } else {
