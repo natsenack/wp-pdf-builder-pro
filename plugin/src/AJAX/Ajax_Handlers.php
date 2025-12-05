@@ -568,10 +568,27 @@ function pdf_builder_test_roles_handler() {
     error_log('PDF Builder: [TEST ROLES HANDLER] Called at ' . current_time('Y-m-d H:i:s'));
     error_log('PDF Builder: [TEST ROLES HANDLER] POST data: ' . print_r($_POST, true));
     
-    // Handler ultra-simple pour diagnostiquer
+    // Récupérer les rôles autorisés depuis les paramètres
+    $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+    
+    // S'assurer que c'est un tableau
+    if (!is_array($allowed_roles)) {
+        $allowed_roles = ['administrator'];
+    }
+    
+    // Filtrer les rôles vides
+    $allowed_roles = array_filter($allowed_roles);
+    
+    // Si aucun rôle, utiliser administrator par défaut
+    if (empty($allowed_roles)) {
+        $allowed_roles = ['administrator'];
+    }
+    
+    error_log('PDF Builder: [TEST ROLES HANDLER] Allowed roles: ' . print_r($allowed_roles, true));
+    
     wp_send_json_success([
-        'allowed_roles' => ['administrator', 'editor', 'shop_manager'],
-        'count' => 3,
+        'allowed_roles' => array_values($allowed_roles),
+        'count' => count($allowed_roles),
         'status' => 'handler_called'
     ]);
 }
