@@ -42,10 +42,15 @@
 
     // Système de navigation des onglets
     function initTabs() {
+        console.log('PDF Builder - initTabs called');
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
+        console.log('PDF Builder - tabsContainer:', tabsContainer);
+        console.log('PDF Builder - contentContainer:', contentContainer);
+
         if (!tabsContainer || !contentContainer) {
+            console.log('PDF Builder - Containers not found, exiting');
             return;
         }
 
