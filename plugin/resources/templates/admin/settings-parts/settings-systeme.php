@@ -737,5 +737,157 @@ if ($cache_last_cleanup !== 'Jamais') {
         }
     }
 
+    // Gestionnaire pour les boutons de maintenance
+    $('.maintenance-action-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const action = $btn.data('action');
+        const metric = $btn.data('metric');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        // Désactiver le bouton pendant l'action
+        $btn.prop('disabled', true);
+        const originalText = $btn.find('.action-text').text();
+        $btn.find('.action-text').text('En cours...');
+
+        let ajaxAction = '';
+        let confirmMessage = '';
+
+        switch(action) {
+            case 'run-maintenance':
+                ajaxAction = 'pdf_builder_run_full_maintenance';
+                confirmMessage = 'Êtes-vous sûr de vouloir lancer la maintenance complète ?';
+                break;
+            case 'schedule-maintenance':
+                ajaxAction = 'pdf_builder_schedule_maintenance';
+                confirmMessage = 'Programmer la prochaine maintenance automatique ?';
+                break;
+            case 'toggle-maintenance':
+                ajaxAction = 'pdf_builder_toggle_auto_maintenance';
+                break;
+            case 'run-manual-maintenance':
+                ajaxAction = 'pdf_builder_run_manual_maintenance';
+                confirmMessage = 'Lancer la maintenance manuelle complète ?';
+                break;
+            default:
+                showSystemNotification('Action non reconnue', 'error');
+                $btn.prop('disabled', false);
+                $btn.find('.action-text').text(originalText);
+                return;
+        }
+
+        // Demander confirmation si nécessaire
+        if (confirmMessage && !confirm(confirmMessage)) {
+            $btn.prop('disabled', false);
+            $btn.find('.action-text').text(originalText);
+            return;
+        }
+
+        // Pour la maintenance complète, exécuter les trois actions séquentiellement
+        if (action === 'run-maintenance' || action === 'run-manual-maintenance') {
+            runFullMaintenance($btn, originalText, nonce);
+        } else {
+            // Actions simples
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: ajaxAction,
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showSystemNotification(response.data.message || 'Action exécutée avec succès', 'success');
+                        
+                        // Mettre à jour l'affichage si nécessaire
+                        if (action === 'toggle-maintenance') {
+                            // Basculer l'état visuel
+                            const $icon = $btn.find('.metric-icon');
+                            const $status = $btn.find('.metric-status');
+                            const $value = $btn.find('.metric-value .status-badge');
+                            
+                            if ($icon.text() === '✅') {
+                                $icon.text('❌');
+                                $status.attr('data-status', 'inactive');
+                                $value.removeClass('status-active').addClass('status-inactive').text('Désactivée');
+                            } else {
+                                $icon.text('✅');
+                                $status.attr('data-status', 'active');
+                                $value.removeClass('status-inactive').addClass('status-active').text('Activée');
+                            }
+                        }
+                    } else {
+                        showSystemNotification(response.data.message || 'Erreur lors de l\'action', 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showSystemNotification('Erreur de connexion: ' + error, 'error');
+                },
+                complete: function() {
+                    // Réactiver le bouton
+                    $btn.prop('disabled', false);
+                    $btn.find('.action-text').text(originalText);
+                }
+            });
+        }
+    });
+
+    // Fonction pour exécuter la maintenance complète (optimisation DB + réparation templates + suppression fichiers temp)
+    function runFullMaintenance($btn, originalText, nonce) {
+        const actions = [
+            { action: 'pdf_builder_optimize_database', name: 'Optimisation DB' },
+            { action: 'pdf_builder_repair_templates', name: 'Réparation templates' },
+            { action: 'pdf_builder_remove_temp_files', name: 'Suppression fichiers temp' }
+        ];
+        
+        let currentAction = 0;
+        let results = [];
+        
+        function executeNextAction() {
+            if (currentAction >= actions.length) {
+                // Toutes les actions terminées
+                let message = 'Maintenance complète terminée:\n';
+                results.forEach(result => {
+                    message += '• ' + result.name + ': ' + result.status + '\n';
+                });
+                showSystemNotification(message, 'success');
+                $btn.prop('disabled', false);
+                $btn.find('.action-text').text(originalText);
+                return;
+            }
+            
+            const current = actions[currentAction];
+            $btn.find('.action-text').text(current.name + '...');
+            
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: current.action,
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        results.push({ name: current.name, status: '✅ Succès' });
+                    } else {
+                        results.push({ name: current.name, status: '❌ Échec: ' + (response.data.message || 'Erreur inconnue') });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    results.push({ name: current.name, status: '❌ Erreur: ' + error });
+                },
+                complete: function() {
+                    currentAction++;
+                    executeNextAction();
+                }
+            });
+        }
+        
+        executeNextAction();
+    }
+
 })(jQuery);
 </script>

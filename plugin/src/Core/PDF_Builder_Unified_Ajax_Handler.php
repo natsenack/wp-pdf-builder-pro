@@ -47,6 +47,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'handle_remove_temp_files']);
         add_action('wp_ajax_pdf_builder_repair_templates', [$this, 'handle_repair_templates']);
         add_action('wp_ajax_pdf_builder_clear_temp', [$this, 'handle_clear_temp_files']);
+        add_action('wp_ajax_pdf_builder_toggle_auto_maintenance', [$this, 'handle_toggle_auto_maintenance']);
+        add_action('wp_ajax_pdf_builder_schedule_maintenance', [$this, 'handle_schedule_maintenance']);
 
         // Actions de sauvegarde
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'handle_create_backup']);
@@ -1197,6 +1199,55 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => '❌ Erreur lors de la réparation: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Handler pour basculer la maintenance automatique
+     */
+    public function handle_toggle_auto_maintenance() {
+        if (!$this->nonce_manager->validate_ajax_request('toggle_auto_maintenance')) {
+            return;
+        }
+
+        try {
+            $current_state = get_option('pdf_builder_auto_maintenance', '1');
+            $new_state = $current_state === '1' ? '0' : '1';
+
+            update_option('pdf_builder_auto_maintenance', $new_state);
+
+            $message = $new_state === '1' ? '✅ Maintenance automatique activée' : '❌ Maintenance automatique désactivée';
+
+            wp_send_json_success(['message' => $message]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => '❌ Erreur lors du basculement: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Handler pour programmer la prochaine maintenance
+     */
+    public function handle_schedule_maintenance() {
+        if (!$this->nonce_manager->validate_ajax_request('schedule_maintenance')) {
+            return;
+        }
+
+        try {
+            // Programmer la prochaine maintenance pour dimanche prochain à 02:00
+            $next_sunday = strtotime('next Sunday 02:00');
+            if ($next_sunday < time()) {
+                $next_sunday = strtotime('next Sunday 02:00', strtotime('+1 week'));
+            }
+
+            update_option('pdf_builder_next_maintenance', $next_sunday);
+
+            $message = '📅 Prochaine maintenance programmée pour le ' . date('d/m/Y à H:i', $next_sunday);
+
+            wp_send_json_success(['message' => $message]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => '❌ Erreur lors de la programmation: ' . $e->getMessage()]);
         }
     }
 
