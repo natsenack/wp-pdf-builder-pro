@@ -367,7 +367,7 @@
                         }
                     });
                     formObject.pdf_builder_allowed_roles = selectedRoles;
-                    debugLog(`PDF Builder - Rôles sélectionnés collectés: ${selectedRoles.length} rôles - ${selectedRoles.join(', ')}`);
+                    debugLog(`PDF Builder - Rôles sélectionnés collectés: ${selectedRoles.length} rôles - ${selectedRoles.join(', ')} - ${Date.now()}`);
                 }
 
                 // Ajouter les données du formulaire à allData
