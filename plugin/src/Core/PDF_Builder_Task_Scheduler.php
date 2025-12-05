@@ -195,6 +195,9 @@ class PDF_Builder_Task_Scheduler {
                     $message = __('Sauvegarde automatique créée avec succès !', 'pdf-builder-pro');
                     PDF_Builder_Notification_Manager::get_instance()->success($message, ['duration' => 8000]);
                 }
+
+                // Déclencher une action pour mettre à jour l'interface en temps réel
+                do_action('pdf_builder_auto_backup_created');
             }
 
         } catch (Exception $e) {

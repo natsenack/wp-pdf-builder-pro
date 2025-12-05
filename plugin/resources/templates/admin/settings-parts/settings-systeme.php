@@ -1028,6 +1028,7 @@ if ($cache_last_cleanup !== 'Jamais') {
 
                         output += '<div class="backup-list" style="margin-top: 15px;">';
                         output += '<style>.backup-item-info { margin-bottom: 0 !important; }</style>';
+                        output += '<style>@keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); } 20% { opacity: 1; transform: scale(1.1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.8); } } .backup-count-plus-one { animation: fadeInOut 3s ease-in-out; }</style>';
 
                         response.data.backups.forEach(function(backup, index) {
                             console.log('[DEBUG] Auto-load processing backup:', backup.filename);
@@ -1233,6 +1234,123 @@ if ($cache_last_cleanup !== 'Jamais') {
             }
         });
     });
+
+    // Écouter les événements de sauvegarde automatique
+    $(document).on('pdf_builder_auto_backup_created', function() {
+        console.log('[DEBUG] Auto backup created event received, updating count...');
+        // Mettre à jour le compteur après un court délai pour laisser le temps à la sauvegarde de s'enregistrer
+        setTimeout(function() {
+            window.updateBackupCount();
+        }, 1500);
+    });
+
+    // Vérification périodique des nouvelles sauvegardes (toutes les 30 secondes si la page est active)
+    let lastBackupCount = 0;
+    let backupCheckInterval;
+
+    function startBackupCountMonitoring() {
+        // Arrêter l'intervalle existant s'il y en a un
+        if (backupCheckInterval) {
+            clearInterval(backupCheckInterval);
+        }
+
+        // Démarrer la vérification périodique
+        backupCheckInterval = setInterval(function() {
+            // Vérifier seulement si l'utilisateur est actif sur la page (pas d'inactivité prolongée)
+            if (document.visibilityState === 'visible') {
+                checkForNewBackups();
+            }
+        }, 30000); // Toutes les 30 secondes
+    }
+
+    function checkForNewBackups() {
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_list_backups',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success && response.data.backups) {
+                    const currentCount = response.data.backups.length;
+
+                    if (lastBackupCount > 0 && currentCount > lastBackupCount) {
+                        // Nouvelle sauvegarde détectée !
+                        console.log('[DEBUG] New backup detected! Count changed from', lastBackupCount, 'to', currentCount);
+                        window.updateBackupCount();
+                    }
+
+                    lastBackupCount = currentCount;
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('[DEBUG] Error checking for new backups:', error);
+            }
+        });
+    }
+
+    // Démarrer la surveillance quand la page se charge
+    $(document).ready(function() {
+        // Attendre un peu avant de commencer la surveillance pour laisser le temps au chargement initial
+        setTimeout(function() {
+            startBackupCountMonitoring();
+        }, 2000);
+    });
+
+    // Arrêter la surveillance quand l'utilisateur quitte la page
+    $(window).on('beforeunload', function() {
+        if (backupCheckInterval) {
+            clearInterval(backupCheckInterval);
+        }
+    });
+
+    // Fonction globale pour mettre à jour le compteur de sauvegardes en temps réel
+    window.updateBackupCount = function() {
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_list_backups',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success && response.data.backups) {
+                    const backupCount = response.data.backups.length;
+                    const countText = backupCount + ' sauvegarde' + (backupCount > 1 ? 's' : '') + ' disponible' + (backupCount > 1 ? 's' : '');
+
+                    // Animation du compteur pour indiquer le changement
+                    const $countInfo = $('#backup-count-info');
+                    const currentText = $countInfo.text();
+
+                    if (currentText !== countText) {
+                        $countInfo.fadeOut(200, function() {
+                            $(this).text(countText).fadeIn(200);
+                        });
+
+                        // Ajouter un indicateur visuel "+1" temporaire
+                        const $headerInfo = $('.main-backup-header-info');
+                        const $plusOne = $('<span class="backup-count-plus-one" style="color: #28a745; font-weight: bold; margin-left: 8px; animation: fadeInOut 3s ease-in-out;">+1</span>');
+                        $headerInfo.append($plusOne);
+
+                        // Supprimer l'indicateur après l'animation
+                        setTimeout(function() {
+                            $plusOne.fadeOut(500, function() {
+                                $(this).remove();
+                            });
+                        }, 2500);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('[DEBUG] Erreur lors de la mise à jour du compteur:', error);
+            }
+        });
+    };
 
 })(jQuery);
 </script>
