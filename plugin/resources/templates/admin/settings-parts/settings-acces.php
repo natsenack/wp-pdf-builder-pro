@@ -502,6 +502,13 @@ jQuery(document).ready(function($) {
         }
     });
 
+    // Intercepter la soumission du formulaire (pour le bouton flottant)
+    $('#acces-settings-form').on('submit', function(e) {
+        e.preventDefault();
+        Utils.saveRoles();
+        return false;
+    });
+
     // Initialisation
     EventHandlers.init();
 
