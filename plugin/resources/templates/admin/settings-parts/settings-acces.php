@@ -6,31 +6,11 @@
     $all_roles = $wp_roles->roles;
     $settings = get_option('pdf_builder_settings', []);
     $allowed_roles_raw = $settings['pdf_builder_allowed_roles'] ?? false;
-    if ($allowed_roles_raw === false) {
+    if ($allowed_roles_raw === false || !is_array($allowed_roles_raw)) {
         $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-    } elseif (is_array($allowed_roles_raw)) {
-        $allowed_roles = $allowed_roles_raw;
-    } elseif ($allowed_roles_raw === '1') {
-        $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-    } elseif ($allowed_roles_raw === '0') {
-        $allowed_roles = [];
     } else {
-        $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+        $allowed_roles = $allowed_roles_raw;
     }
-
-    // DEBUG: Afficher les valeurs récupérées
-    echo "<!-- DEBUG: allowed_roles_raw = " . json_encode($allowed_roles_raw) . " -->";
-    echo "<!-- DEBUG: allowed_roles = " . json_encode($allowed_roles) . " -->";
-    error_log('[PDF Builder ACCES] Retrieved allowed_roles_raw: ' . json_encode($allowed_roles_raw) . ', processed: ' . json_encode($allowed_roles));
-
-    // DEBUG: Afficher directement dans la page pour vérification immédiate
-    echo "<div style='background: #f0f8ff; border: 1px solid #007cba; padding: 10px; margin: 10px 0; border-radius: 4px;'>";
-    echo "<strong>🔍 DEBUG - Valeurs récupérées depuis la base de données:</strong><br>";
-    echo "allowed_roles_raw: <code>" . json_encode($allowed_roles_raw) . "</code><br>";
-    echo "allowed_roles (processed): <code>" . json_encode($allowed_roles) . "</code><br>";
-    echo "Settings complets: <code>" . json_encode($settings) . "</code><br>";
-    echo "</div>";
-    error_log('[PDF Builder ACCES] Full settings array: ' . json_encode($settings));
 
     $role_descriptions = [
         'administrator' => 'Accès complet à toutes les fonctionnalités',

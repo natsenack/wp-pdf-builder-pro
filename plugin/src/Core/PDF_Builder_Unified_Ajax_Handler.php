@@ -444,16 +444,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             'array_fields' => ['order_status_templates', 'pdf_builder_allowed_roles']
         ];
 
-        // DEBUG: Log all received POST data
-        error_log('[PDF Builder AJAX] RECEIVED POST DATA: ' . json_encode($_POST));
-
-        // DEBUG: Check specifically for pdf_builder_allowed_roles
-        if (isset($_POST['pdf_builder_allowed_roles'])) {
-            error_log('[PDF Builder AJAX] pdf_builder_allowed_roles FOUND in POST: ' . json_encode($_POST['pdf_builder_allowed_roles']) . ' (type: ' . gettype($_POST['pdf_builder_allowed_roles']) . ')');
-        } else {
-            error_log('[PDF Builder AJAX] pdf_builder_allowed_roles NOT FOUND in POST');
-        }
-
         // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
         foreach ($field_rules['bool_fields'] as $bool_field) {
             if (isset($_POST[$bool_field])) {
@@ -557,19 +547,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
                 $saved_count++;
             } elseif (in_array($key, $field_rules['array_fields']) || $key === 'pdf_builder_allowed_roles') {
-                error_log('[PDF Builder AJAX] Processing array field: ' . $key . ' = ' . json_encode($value) . ' (type: ' . gettype($value) . ')');
-                error_log('[PDF Builder AJAX] Is pdf_builder_allowed_roles in array_fields? ' . (in_array('pdf_builder_allowed_roles', $field_rules['array_fields']) ? 'YES' : 'NO'));
-                error_log('[PDF Builder AJAX] array_fields contains: ' . json_encode($field_rules['array_fields']));
                 if (is_array($value)) {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
-                    error_log('[PDF Builder AJAX] Saved array field ' . $option_key . ' = ' . json_encode($option_value));
                 } else {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = [];
                     $settings[$option_key] = $option_value;
-                    error_log('[PDF Builder AJAX] Saved empty array for non-array field ' . $option_key);
                 }
                 $saved_count++;
             } else {
@@ -601,22 +586,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         // Save the settings array
-        if (isset($settings['pdf_builder_allowed_roles'])) {
-            error_log('[PDF Builder AJAX] About to save pdf_builder_allowed_roles: ' . json_encode($settings['pdf_builder_allowed_roles']));
-        } else {
-            error_log('[PDF Builder AJAX] pdf_builder_allowed_roles NOT in settings array');
-        }
         update_option('pdf_builder_settings', $settings);
         error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' settings to pdf_builder_settings option');
-
-        // DEBUG: Vérifier immédiatement si les données ont été sauvegardées
-        $saved_settings = get_option('pdf_builder_settings', []);
-        if (isset($saved_settings['pdf_builder_allowed_roles'])) {
-            error_log('[PDF Builder AJAX] VERIFICATION - pdf_builder_allowed_roles saved successfully: ' . json_encode($saved_settings['pdf_builder_allowed_roles']));
-        } else {
-            error_log('[PDF Builder AJAX] VERIFICATION - pdf_builder_allowed_roles NOT found after save!');
-        }
-        error_log('[PDF Builder AJAX] VERIFICATION - Full saved settings: ' . json_encode($saved_settings));
 
         return $saved_count;
     }
