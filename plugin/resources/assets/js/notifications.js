@@ -157,7 +157,7 @@
          */
         show(message, type = 'info', options = {}) {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                 called with:', { message, type, options, settings: this.settings });
+                // Debug code removed
             }
 
             // Notifications enabled by default if not explicitly disabled

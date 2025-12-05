@@ -479,8 +479,6 @@
             }
         }
 
-        :', ajaxData);
-
         // Envoyer via AJAX - Utiliser FormData au lieu de URLSearchParams pour éviter les problèmes d'échappement JSON
         const ajaxFormData = new FormData();
         for (const key in ajaxData) {
