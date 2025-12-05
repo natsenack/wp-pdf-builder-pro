@@ -4,18 +4,22 @@
 
     global $wp_roles;
     $all_roles = $wp_roles->roles;
-    $allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
-
-    // DEBUG: Afficher les valeurs récupérées
-    echo "<!-- DEBUG: allowed_roles = " . json_encode($allowed_roles) . " -->";
-
-    if (!is_array($allowed_roles)) {
+    $allowed_roles_raw = pdf_builder_safe_get_option('pdf_builder_allowed_roles', false);
+    if ($allowed_roles_raw === false) {
         $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-        echo "<!-- DEBUG: Conversion en array par défaut -->";
+    } elseif (is_array($allowed_roles_raw)) {
+        $allowed_roles = $allowed_roles_raw;
+    } elseif ($allowed_roles_raw === '1') {
+        $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+    } elseif ($allowed_roles_raw === '0') {
+        $allowed_roles = [];
+    } else {
+        $allowed_roles = ['administrator', 'editor', 'shop_manager'];
     }
 
-    // DEBUG: Afficher le nombre de rôles
-    echo "<!-- DEBUG: Nombre de rôles récupérés = " . count($allowed_roles) . " -->";
+    // DEBUG: Afficher les valeurs récupérées
+    echo "<!-- DEBUG: allowed_roles_raw = " . json_encode($allowed_roles_raw) . " -->";
+    echo "<!-- DEBUG: allowed_roles = " . json_encode($allowed_roles) . " -->";
 
     $role_descriptions = [
         'administrator' => 'Accès complet à toutes les fonctionnalités',
