@@ -164,6 +164,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             // Use flattened data directly from POST
             $flattened_data = $_POST;
             error_log("[AJAX HANDLER] Using flattened data directly from POST, fields: " . count($flattened_data));
+            error_log("[AJAX HANDLER] ALL POST FIELDS: " . json_encode(array_keys($_POST)));
+            error_log("[AJAX HANDLER] pdf_builder_allowed_roles in POST: " . (isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : 'NOT_FOUND'));
         }
 
         // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
@@ -208,7 +210,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin',
                 'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled'
             ],
-            'array_fields' => ['order_status_templates']
+            'array_fields' => ['order_status_templates', 'pdf_builder_allowed_roles']
         ];
 
         // Traiter tous les champs POST
@@ -334,12 +336,22 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
                 } else {
+                    // Traiter les JSON strings pour les arrays
+                    if (is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
+                        $decoded = json_decode($value, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $option_value = array_map('sanitize_text_field', $decoded);
+                        } else {
+                            $option_value = [];
+                        }
+                    } else {
+                        $option_value = [];
+                    }
                     $option_key = 'pdf_builder_' . $key;
-                    $option_value = [];
                     $settings[$option_key] = $option_value;
                 }
                 $saved_count++;
-            } else {
+                error_log("[AJAX HANDLER] Array field processed: '$key' = " . json_encode($option_value)); else {
                 // Pour les champs non définis, essayer de deviner le type
                 if (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
@@ -610,7 +622,8 @@ function pdf_builder_test_roles_handler() {
     error_log('PDF Builder: [TEST ROLES HANDLER] REQUEST data: ' . print_r($_REQUEST, true));
     
     // Récupérer les rôles autorisés depuis les paramètres
-    $allowed_roles_raw = get_option('pdf_builder_allowed_roles', ['administrator']);
+    $settings = get_option('pdf_builder_settings', []);
+    $allowed_roles_raw = isset($settings['pdf_builder_allowed_roles']) ? $settings['pdf_builder_allowed_roles'] : ['administrator'];
     error_log('PDF Builder: [TEST ROLES HANDLER] Raw allowed_roles from DB: ' . print_r($allowed_roles_raw, true));
     
     // S'assurer que c'est un tableau
