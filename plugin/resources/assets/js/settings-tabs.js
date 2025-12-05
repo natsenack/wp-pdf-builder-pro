@@ -348,13 +348,6 @@
                     const normalizedKey = normalizeFieldName(key);
                     if (formObject[normalizedKey]) {
                         if (Array.isArray(formObject[normalizedKey])) {
-
-                // Convertir FormData en objet
-                for (let [key, value] of formData.entries()) {
-                    // Gérer les cases à cocher multiples
-                    const normalizedKey = normalizeFieldName(key);
-                    if (formObject[normalizedKey]) {
-                        if (Array.isArray(formObject[normalizedKey])) {
                             formObject[normalizedKey].push(value);
                         } else {
                             formObject[normalizedKey] = [formObject[normalizedKey], value];
