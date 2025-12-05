@@ -560,6 +560,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
     add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax_handler');
 
+    // Handler pour récupérer les rôles autorisés
+    add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
+
     // Actions programmées
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
