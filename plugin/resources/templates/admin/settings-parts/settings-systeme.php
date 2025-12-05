@@ -1,22 +1,25 @@
-<?php // Systeme tab content - Updated: 2025-11-18 20:20:00
+<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
 require_once __DIR__ . '/settings-helpers.php';
 
+// Récupération des paramètres depuis le tableau unifié
+$settings = get_option('pdf_builder_settings', []);
+
 // Préparer toutes les variables nécessaires
-$cache_enabled = pdf_builder_safe_get_option('pdf_builder_cache_enabled', false);
-$cache_compression = pdf_builder_safe_get_option('pdf_builder_cache_compression', true);
-$cache_auto_cleanup = pdf_builder_safe_get_option('pdf_builder_cache_auto_cleanup', true);
-$cache_max_size = intval(pdf_builder_safe_get_option('pdf_builder_cache_max_size', 100));
-$cache_ttl = intval(pdf_builder_safe_get_option('pdf_builder_cache_ttl', 3600));
-$performance_auto_optimization = pdf_builder_safe_get_option('pdf_builder_performance_auto_optimization', '0');
-$auto_maintenance = pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0');
-$last_maintenance = pdf_builder_safe_get_option('pdf_builder_last_maintenance', 'Jamais');
-$next_maintenance = pdf_builder_safe_get_option('pdf_builder_next_maintenance', 'Non planifiée');
-$auto_backup = pdf_builder_safe_get_option('pdf_builder_auto_backup', '0');
-$auto_backup_frequency = pdf_builder_safe_get_option('pdf_builder_auto_backup_frequency', 'daily');
-$backup_retention = pdf_builder_safe_get_option('pdf_builder_backup_retention', 30);
-$last_backup = pdf_builder_safe_get_option('pdf_builder_last_backup', 'Jamais');
-$cache_last_cleanup = pdf_builder_safe_get_option('pdf_builder_cache_last_cleanup', 'Jamais');
+$cache_enabled = $settings['pdf_builder_cache_enabled'] ?? false;
+$cache_compression = $settings['pdf_builder_cache_compression'] ?? true;
+$cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? true;
+$cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
+$cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
+$performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
+$auto_maintenance = $settings['pdf_builder_systeme_auto_maintenance'] ?? '0';
+$last_maintenance = $settings['pdf_builder_last_maintenance'] ?? 'Jamais';
+$next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
+$auto_backup = $settings['pdf_builder_systeme_auto_backup'] ?? '0';
+$auto_backup_frequency = $settings['pdf_builder_systeme_auto_backup_frequency'] ?? 'daily';
+$backup_retention = intval($settings['pdf_builder_systeme_backup_retention'] ?? 30);
+$last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
+$cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
 // Calculer les métriques de cache
 $cache_file_count = 0;

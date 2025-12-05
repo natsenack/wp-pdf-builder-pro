@@ -395,11 +395,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             'text_fields' => [
                 'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
                 'pdf_quality', 'default_format', 'default_orientation', 'default_template', 'systeme_auto_backup_frequency',
+                'systeme_auto_backup_frequency_hidden',
                 'pdf_builder_developer_password',
                 // License text fields
                 'pdf_builder_license_status', 'pdf_builder_license_key', 'pdf_builder_license_expires',
                 'pdf_builder_license_activated_at', 'pdf_builder_license_test_key', 'pdf_builder_license_test_key_expires',
                 'pdf_builder_license_reminder_email',
+                // System text fields
+                'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup', 'pdf_builder_cache_last_cleanup',
                 // Canvas text fields
                 'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_export_format',
                 'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
