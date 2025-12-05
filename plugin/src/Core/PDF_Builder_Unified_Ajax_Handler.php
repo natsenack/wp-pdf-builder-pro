@@ -543,11 +543,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $saved_count++;
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
-                    $option_key = 'pdf_builder_' . $key;
+                    $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
                 } else {
-                    $option_key = 'pdf_builder_' . $key;
+                    $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = [];
                     $settings[$option_key] = $option_value;
                 }
