@@ -50,7 +50,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_diagnose_cron',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_cron_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
             },
             success: function(response) {
                 $('#diagnose-cron-btn').prop('disabled', false).text('<?php _e('Diagnose Cron System', 'pdf-builder-pro'); ?>');
@@ -82,7 +82,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_repair_cron',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_cron_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
             },
             success: function(response) {
                 $('#repair-cron-btn').prop('disabled', false).text('<?php _e('Repair Cron System', 'pdf-builder-pro'); ?>');
@@ -108,8 +108,8 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'pdf_builder_backup_stats',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_cron_nonce'); ?>'
+                action: 'pdf_builder_get_backup_stats',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
             },
             success: function(response) {
                 $('#backup-stats-btn').prop('disabled', false).text('<?php _e('View Backup Statistics', 'pdf-builder-pro'); ?>');
@@ -139,8 +139,8 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'pdf_builder_manual_backup',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_cron_nonce'); ?>'
+                action: 'pdf_builder_create_backup',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
             },
             success: function(response) {
                 $('#manual-backup-btn').prop('disabled', false).text('<?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>');
