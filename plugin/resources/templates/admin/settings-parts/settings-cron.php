@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) exit('No direct access');
 
 // Include the cron diagnostic interface
-require_once plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Core/PDF_Builder_Task_Scheduler.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
 
 $task_scheduler = new PDF_Builder_Task_Scheduler();
 ?>
