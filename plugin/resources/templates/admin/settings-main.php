@@ -25,7 +25,7 @@ $settings = get_option('pdf_builder_settings', array());
 $nonce = wp_create_nonce('pdf_builder_ajax');
 
 // DEBUG: Force output to verify file is loaded
-echo "<script> . " - CACHE BUSTER: " . time() . "');</script>";
+echo "<script>console.log('CACHE BUSTER: " . time() . "');</script>";
 echo "<script>
 document.addEventListener('DOMContentLoaded', function() {
     

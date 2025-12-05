@@ -9,7 +9,7 @@ $settings = get_option('pdf_builder_settings', array());
 $nonce = wp_create_nonce('pdf_builder_ajax');
 
 // DEBUG: Force output to verify file is loaded
-echo "<script> . "');</script>";
+echo "<script>console.log('Settings page loaded - CACHE BUSTER: " . time() . "');</script>";
 ?>
 <div class="wrap">
 <h1>PDF Builder Pro Settings</h1>

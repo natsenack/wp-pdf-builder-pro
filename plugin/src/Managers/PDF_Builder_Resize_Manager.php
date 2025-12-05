@@ -327,16 +327,8 @@ class PdfBuilderResizeManager
     {
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
-            // $logger->log(
-                'resize',
-                $event_type,
-                array_merge(
-                    [
-                    'session_id' => $session_id
-                    ],
-                    $data
-                )
-            );
+            // Logger commented out to avoid syntax issues
+            // $logger->log('resize', $event_type, array_merge(['session_id' => $session_id], $data));
         }
     }
 
