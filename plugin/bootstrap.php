@@ -430,7 +430,8 @@ function pdf_builder_load_core()
         'PDF_Builder_Security_Validator.php',
         'PDF_Builder_MU_Plugin_Blocker.php',
         'PDF_Builder_Nonce_Manager.php',
-        'PDF_Builder_Unified_Ajax_Handler.php'
+        'PDF_Builder_Unified_Ajax_Handler.php',
+        'PDF_Builder_Task_Scheduler.php'
     );
     foreach ($core_classes as $core_class) {
         $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
@@ -1661,24 +1662,19 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 });
 
 // ============================================================================
-// ✅ CHARGEMENT DU PLANIFICATEUR DE TÂCHES
+// ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
 
-/**
- * Charger le planificateur de tâches
- */
-function pdf_builder_load_task_scheduler() {
-    $task_scheduler_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
-    if (file_exists($task_scheduler_path)) {
-        require_once $task_scheduler_path;
-        error_log('PDF Builder: Task Scheduler loaded successfully');
+// Initialiser le planificateur de tâches après le chargement de WordPress
+add_action('init', function() {
+    if (class_exists('PDF_Builder_Task_Scheduler')) {
+        $scheduler = PDF_Builder_Task_Scheduler::get_instance();
+        $scheduler->init();
+        error_log('PDF Builder: Task Scheduler initialized successfully');
     } else {
-        error_log('PDF Builder: Task Scheduler file not found: ' . $task_scheduler_path);
+        error_log('PDF Builder: Task Scheduler class not found during initialization');
     }
-}
-
-// Charger le planificateur de tâches au démarrage
-add_action('init', 'pdf_builder_load_task_scheduler', 5);
+}, 5);
 
 // ============================================================================
 // FIN DU BOOTSTRAP

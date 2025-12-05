@@ -52,6 +52,14 @@ class PDF_Builder_Task_Scheduler {
 
     private function __construct() {
         error_log('PDF Builder: Task Scheduler constructor called');
+        // init_hooks() will be called later when WordPress is loaded
+        error_log('PDF Builder: Task Scheduler instance created');
+    }
+
+    /**
+     * Initialize the task scheduler when WordPress is ready
+     */
+    public function init() {
         $this->init_hooks();
         $this->schedule_tasks();
         error_log('PDF Builder: Task Scheduler initialized');
@@ -101,7 +109,6 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_check_wp_cron_config', [$this, 'ajax_check_wp_cron_config']);
         add_action('wp_ajax_pdf_builder_check_scheduled_tasks', [$this, 'ajax_check_scheduled_tasks']);
         add_action('wp_ajax_pdf_builder_cron_test', [$this, 'ajax_cron_test']);
-    }
         add_action('admin_init', [$this, 'check_auto_backup_fallback']);
 
         // S'assurer que les actions AJAX sont enregistrées pour l'admin
@@ -1086,11 +1093,6 @@ function pdf_builder_unschedule_task($task_name) {
     wp_clear_scheduled_hook($task_name);
     return true;
 }
-
-// Initialiser le planificateur de tâches
-add_action('init', function() {
-    PDF_Builder_Task_Scheduler::get_instance();
-});
 
 /**
  * Fonction utilitaire pour changer la fréquence de sauvegarde
