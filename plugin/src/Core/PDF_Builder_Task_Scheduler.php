@@ -117,6 +117,7 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
+        add_action('wp_ajax_pdf_builder_change_backup_frequency', [$this, 'ajax_change_backup_frequency']);
         error_log('PDF Builder: AJAX actions registered');
     }
 
@@ -915,6 +916,35 @@ class PDF_Builder_Task_Scheduler {
             wp_send_json_success(['message' => 'Sauvegarde manuelle créée avec succès']);
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de la création de la sauvegarde: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * AJAX handler pour changer la fréquence de sauvegarde
+     */
+    public function ajax_change_backup_frequency() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $frequency = sanitize_text_field($_POST['frequency'] ?? '');
+
+        try {
+            if ($this->set_backup_frequency($frequency)) {
+                wp_send_json_success(['message' => 'Fréquence de sauvegarde changée avec succès']);
+            } else {
+                wp_send_json_error(['message' => 'Fréquence non valide']);
+            }
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors du changement de fréquence: ' . $e->getMessage()]);
         }
     }
 

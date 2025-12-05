@@ -31,6 +31,19 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
         <button type="button" id="manual-backup-btn" class="button button-secondary">
             <?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>
         </button>
+
+        <div class="backup-frequency-controls" style="margin-top: 10px;">
+            <label for="backup-frequency-select"><?php _e('Backup Frequency:', 'pdf-builder-pro'); ?></label>
+            <select id="backup-frequency-select" class="small-text">
+                <option value="every_minute">Toutes les minutes (test)</option>
+                <option value="daily" selected>Quotidienne</option>
+                <option value="weekly">Hebdomadaire</option>
+                <option value="monthly">Mensuelle</option>
+            </select>
+            <button type="button" id="change-frequency-btn" class="button button-small">
+                <?php _e('Change Frequency', 'pdf-builder-pro'); ?>
+            </button>
+        </div>
     </div>
 
     <div class="cron-results-section" id="cron-results" style="display: none;">
@@ -164,6 +177,39 @@ jQuery(document).ready(function($) {
             },
             error: function() {
                 $('#manual-backup-btn').prop('disabled', false).text('<?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>');
+                alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
+            }
+        });
+    });
+
+    // Change backup frequency
+    $('#change-frequency-btn').on('click', function() {
+        var newFrequency = $('#backup-frequency-select').val();
+        if (!confirm('<?php _e('Change backup frequency to:', 'pdf-builder-pro'); ?> ' + newFrequency + '?')) {
+            return;
+        }
+
+        $(this).prop('disabled', true).text('<?php _e('Changing...', 'pdf-builder-pro'); ?>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_change_backup_frequency',
+                frequency: newFrequency,
+                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+            },
+            success: function(response) {
+                $('#change-frequency-btn').prop('disabled', false).text('<?php _e('Change Frequency', 'pdf-builder-pro'); ?>');
+                if (response.success) {
+                    alert('<?php _e('Backup frequency changed successfully!', 'pdf-builder-pro'); ?>');
+                    $('#diagnose-cron-btn').click(); // Refresh status
+                } else {
+                    alert('<?php _e('Error changing frequency:', 'pdf-builder-pro'); ?> ' + response.data);
+                }
+            },
+            error: function() {
+                $('#change-frequency-btn').prop('disabled', false).text('<?php _e('Change Frequency', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }
         });
