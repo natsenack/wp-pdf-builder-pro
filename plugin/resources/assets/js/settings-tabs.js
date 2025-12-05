@@ -329,8 +329,7 @@
             'canvas-interactions-form',
             'canvas-export-form',
             'canvas-performance-form',
-            'canvas-debug-form',
-            'acces-form'
+            'canvas-debug-form'
         ];
 
         // Collecter les données de chaque formulaire
@@ -354,22 +353,6 @@
                     } else {
                         formObject[normalizedKey] = value;
                     }
-                }
-
-                // TRAITEMENT SPÉCIAL pour pdf_builder_allowed_roles - collecter même les non-cochées
-                if (formId === 'acces-form') {
-                    
-                    const allowedRolesCheckboxes = form.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
-                    
-                    const selectedRoles = [];
-                    allowedRolesCheckboxes.forEach((checkbox, index) => {
-                        
-                        if (checkbox.checked) {
-                            selectedRoles.push(checkbox.value);
-                        }
-                    });
-                    formObject.pdf_builder_allowed_roles = selectedRoles;
-                    console.log('[DEBUG] Rôles collectés pour sauvegarde:', selectedRoles);
                 }
 
                 // Ajouter les données du formulaire à allData
@@ -416,10 +399,6 @@
             }
         });
 
-        // Log spécifique pour les données d'accès
-        if (allData.acces && allData.acces.pdf_builder_allowed_roles) {
-            
-        }
         return allData;
     }
 
@@ -444,19 +423,6 @@
                     }
                 }
             }
-        }
-
-        // Log spécifique pour pdf_builder_allowed_roles
-        if (flattenedData.pdf_builder_allowed_roles) {
-
-        } else {
-            
-        }
-
-        // S'assurer que pdf_builder_allowed_roles est toujours envoyé, même vide
-        if (!flattenedData.hasOwnProperty('pdf_builder_allowed_roles')) {
-            flattenedData.pdf_builder_allowed_roles = [];
-            
         }
 
         // DEBUG: Log debug fields being sent
@@ -505,8 +471,6 @@
                     detail: { formData: formData, response: data }
                 }));
 
-                // SUPPRIMÉ: Plus d'appel automatique à reloadRolesData() pour éviter les conflits avec l'onglet "acces"
-
                 // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
                 
                 reloadDebugSettings().then(updatedDebug => {
@@ -529,60 +493,6 @@
             // Restaurer le bouton
             saveBtn.textContent = originalText;
             saveBtn.disabled = false;
-        });
-    }
-
-    /**
-     * Recharge les données des rôles depuis la base de données
-     */
-    function reloadRolesData() {
-
-        const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
-        const nonce = pdfBuilderAjax ? pdfBuilderAjax.nonce : '';
-
-        const requestData = new FormData();
-        requestData.append('action', 'pdf_builder_test_roles');
-        requestData.append('nonce', nonce);
-
-        return fetch(ajaxUrl, {
-            method: 'POST',
-            body: requestData
-        })
-        .then(response => {
-
-            if (!response.ok) {
-                // console.error('PDF Builder - [RELOAD ROLES] HTTP ERROR - Status:', response.status, 'StatusText:', response.statusText);
-                throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-
-            if (data.success && data.data && Array.isArray(data.data.allowed_roles)) {
-
-                // Mettre à jour l'état des cases à cocher
-                console.log('[DEBUG] Rôles reçus du serveur:', data.data.allowed_roles);
-                updateRoleCheckboxes(data.data.allowed_roles);
-
-                // Mettre à jour le compteur
-                
-                updateSelectedCount(data.data.allowed_roles.length);
-
-                return data.data.allowed_roles;
-            } else {
-                // console.error('PDF Builder - [RELOAD ROLES] Erreur - données invalides:', data);
-                // console.error('PDF Builder - [RELOAD ROLES] Data.success:', data.success);
-                // console.error('PDF Builder - [RELOAD ROLES] Data.data:', data.data);
-                // console.error('PDF Builder - [RELOAD ROLES] Allowed_roles isArray:', Array.isArray(data.data?.allowed_roles));
-                // console.error('PDF Builder - [RELOAD ROLES] Full response structure:', JSON.stringify(data, null, 2));
-                throw new Error(data.data || 'Erreur lors du rechargement des rôles');
-            }
-        })
-        .catch(error => {
-            // console.error('PDF Builder - [RELOAD ROLES] Erreur dans la promesse:', error);
-            // console.error('PDF Builder - [RELOAD ROLES] Message d\'erreur:', error.message);
-            // console.error('PDF Builder - [RELOAD ROLES] Stack trace:', error.stack);
-            throw error;
         });
     }
 
@@ -649,136 +559,16 @@
         });
     }
 
-    /**
-     * Met à jour l'état des cases à cocher des rôles
-     */
-    function updateRoleCheckboxes(allowedRoles) {
-        console.log('[DEBUG] Mise à jour des checkboxes avec les rôles:', allowedRoles);
-
-        const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
-
-        if (roleCheckboxes.length === 0) {
-            // console.error('PDF Builder - [UPDATE CHECKBOXES] AUCUNE CASE À COCHER TROUVÉE!');
-            // console.error('PDF Builder - [UPDATE CHECKBOXES] Vérification du DOM...');
-            const allInputs = document.querySelectorAll('input');
-            
-            const roleInputs = Array.from(allInputs).filter(input => input.name && input.name.includes('roles'));
-            
-        }
-
-        roleCheckboxes.forEach((checkbox, index) => {
-            const roleKey = checkbox.value;
-            const shouldBeChecked = allowedRoles.includes(roleKey);
-            console.log(`[DEBUG] Checkbox ${roleKey}: shouldBeChecked=${shouldBeChecked}, current=${checkbox.checked}`);
-
-            // Ne pas modifier les administrateurs (toujours cochés et désactivés)
-            if (roleKey === 'administrator') {
-                
-                checkbox.checked = true;
-                checkbox.disabled = true;
-                
-                return;
-            }
-
-            checkbox.checked = shouldBeChecked;
-
-            // Déclencher un événement change pour s'assurer que le CSS se met à jour
-            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-
-            // Mettre à jour la classe CSS du parent toggle-switch pour assurer le rendu visuel
-            const toggleSwitch = checkbox.closest('.toggle-switch');
-            if (toggleSwitch) {
-                if (shouldBeChecked) {
-                    toggleSwitch.classList.add('checked');
-                } else {
-                    toggleSwitch.classList.remove('checked');
-                }
-            } else {
-                // console.warn(`PDF Builder - [UPDATE CHECKBOXES] Parent .toggle-switch non trouvé pour ${roleKey}`);
-            }
-
-        });
-
-        // Vérification finale
-        
-        roleCheckboxes.forEach((checkbox, index) => {
-        });
-    }
-
-    /**
-     * Met à jour le compteur de rôles sélectionnés
-     */
-    function updateSelectedCount(count) {
-        const countElement = document.getElementById('selected-count');
-        if (countElement) {
-            countElement.textContent = count;
-        }
-    }
-
-    /**
-     * Gestionnaire pour les boutons de contrôle rapide des rôles
-     */
-    function initRoleControlButtons() {
-        // Bouton "Sélectionner Tout"
-        const selectAllBtn = document.getElementById('select-all-roles');
-        if (selectAllBtn) {
-            selectAllBtn.addEventListener('click', function() {
-                const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:not([disabled])');
-                roleCheckboxes.forEach(checkbox => {
-                    checkbox.checked = true;
-                });
-                updateSelectedCount(roleCheckboxes.length + 1); // +1 pour administrator qui est toujours sélectionné
-                
-            });
-        }
-
-        // Bouton "Rôles Courants"
-        const selectCommonBtn = document.getElementById('select-common-roles');
-        if (selectCommonBtn) {
-            selectCommonBtn.addEventListener('click', function() {
-                const commonRoles = ['administrator', 'editor', 'shop_manager'];
-                const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]');
-                roleCheckboxes.forEach(checkbox => {
-                    const roleKey = checkbox.value;
-                    if (roleKey === 'administrator') {
-                        checkbox.checked = true; // Toujours coché
-                    } else {
-                        checkbox.checked = commonRoles.includes(roleKey);
-                    }
-                });
-                updateSelectedCount(commonRoles.length);
-                
-            });
-        }
-
-        // Bouton "Désélectionner Tout"
-        const selectNoneBtn = document.getElementById('select-none-roles');
-        if (selectNoneBtn) {
-            selectNoneBtn.addEventListener('click', function() {
-                const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:not([disabled])');
-                roleCheckboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                updateSelectedCount(1); // Administrator reste toujours sélectionné
-            });
-        }
-
-        // Mettre à jour le compteur initial
-        const initialChecked = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:checked').length;
-        updateSelectedCount(initialChecked);
-    }
-
     // Initialiser les gestionnaires d'événements au chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
         
         initTabs();
         initSaveButton();
-        initRoleControlButtons();
         
     });
 })();
 
-// FORCE CACHE BUST - Modified: 2025-12-05 23:41:15 - Removed reloadRolesData calls
+// FORCE CACHE BUST - Modified: 2025-12-06 - Removed access tab and role functions
 // Cache bust timestamp: 1733440875
 
 

@@ -121,12 +121,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $saved_count = $this->save_backup_settings();
                     $saved_options = $this->get_saved_options_for_tab('sauvegarde');
                     break;
-                case 'acces':
-                    $saved_count = $this->save_access_settings();
-                    $saved_options = $this->get_saved_options_for_tab('acces');
-                    // Mettre à jour l'horodatage de la dernière sauvegarde des rôles
-                    update_option('pdf_builder_last_roles_save', current_time('mysql'));
-                    break;
                 case 'securite':
                     $saved_count = $this->save_security_settings();
                     $saved_options = $this->get_saved_options_for_tab('securite');
@@ -208,9 +202,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Système
                     'auto_maintenance' => get_option('pdf_builder_auto_maintenance', '1'),
                     'backup_retention' => get_option('pdf_builder_backup_retention', 30),
-
-                    // Accès
-                    'allowed_roles' => get_option('pdf_builder_settings')['pdf_builder_allowed_roles'] ?? ['administrator'],
 
                     // Sécurité
                     'security_level' => get_option('pdf_builder_security_level', 'medium'),
@@ -304,12 +295,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                 ];
                 break;
 
-            case 'acces':
-                $saved_options = [
-                    'allowed_roles' => get_option('pdf_builder_settings')['pdf_builder_allowed_roles'] ?? ['administrator'],
-                ];
-                break;
-
             case 'contenu':
                 $saved_options = [
                     'template_library_enabled' => get_option('pdf_builder_template_library_enabled', '1'),
@@ -393,11 +378,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         $settings = get_option('pdf_builder_settings', []);
 
         // error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
-        if (isset($_POST['pdf_builder_allowed_roles'])) {
-            // error_log('[PDF Builder AJAX] pdf_builder_allowed_roles received: ' . json_encode($_POST['pdf_builder_allowed_roles']));
-        } else {
-            // error_log('[PDF Builder AJAX] pdf_builder_allowed_roles NOT received in POST');
-        }
 
         // Define field type rules (same as in Ajax_Handlers.php)
         $field_rules = [
@@ -443,7 +423,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'gdpr_consent_analytics', 'gdpr_consent_templates', 'gdpr_consent_marketing',
                 'pdf_metadata_enabled', 'pdf_print_optimized'
             ],
-            'array_fields' => ['order_status_templates', 'pdf_builder_allowed_roles']
+            'array_fields' => ['order_status_templates']
         ];
 
         // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
@@ -548,13 +528,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $settings[$option_key] = $option_value;
                 }
                 $saved_count++;
-            } elseif (in_array($key, $field_rules['array_fields']) || $key === 'pdf_builder_allowed_roles') {
-                if ($key === 'pdf_builder_allowed_roles') {
-                    // Utiliser la fonction helper spécialisée pour les rôles
-                    require_once plugin_dir_path(__FILE__) . '../../resources/templates/admin/settings-helpers.php';
-                    $saved_roles = pdf_builder_save_allowed_roles($value);
-                    $saved_count++;
-                } elseif (is_array($value)) {
+            } elseif (in_array($key, $field_rules['array_fields'])) {
+                if (is_array($value)) {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
@@ -831,18 +806,6 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Sauvegarde des paramètres d'accès
      */
-    private function save_access_settings() {
-        $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : array();
-        // error_log('[PDF Builder DEBUG] Saving access settings: ' . json_encode($allowed_roles));
-
-        // Utiliser la fonction helper spécialisée pour les rôles
-        require_once plugin_dir_path(__FILE__) . '../../resources/templates/admin/settings-helpers.php';
-        $saved_roles = pdf_builder_save_allowed_roles($allowed_roles);
-
-        // error_log('[PDF Builder DEBUG] Saved access settings using helper function');
-        return 1;
-    }
-
     /**
      * Sauvegarde des paramètres sécurité
      */

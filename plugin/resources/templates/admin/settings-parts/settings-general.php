@@ -4,7 +4,7 @@
  * Updated: 2025-12-02 21:20:00
  */
 
-require_once __DIR__ . '/../settings-helpers.php';
+// require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 ?>
             <h2>🏠 Paramètres Généraux</h2>
 

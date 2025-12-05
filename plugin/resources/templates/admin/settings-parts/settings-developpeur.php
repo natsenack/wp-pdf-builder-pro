@@ -1,6 +1,6 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
-require_once __DIR__ . '/../settings-helpers.php';
+// require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 // Variables nécessaires pour l'onglet développeur
 $license_test_mode = (isset($settings) && isset($settings['pdf_builder_license_test_mode_enabled'])) ? $settings['pdf_builder_license_test_mode_enabled'] : false;

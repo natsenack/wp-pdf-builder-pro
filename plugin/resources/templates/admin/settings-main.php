@@ -19,7 +19,7 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 // Include helper functions
-require_once __DIR__ . '/settings-parts/settings-helpers.php';
+// require_once __DIR__ . '/settings-parts/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 $settings = get_option('pdf_builder_settings', array());
 $nonce = wp_create_nonce('pdf_builder_ajax');

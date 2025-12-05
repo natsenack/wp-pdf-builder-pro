@@ -729,13 +729,6 @@ function pdf_builder_load_bootstrap()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Rate_Limiter.php';
     }
 
-    // CHARGER LE GESTIONNAIRE DES RÔLES ET PERMISSIONS
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Role_Manager.php';
-        // Initialiser le gestionnaire des rôles
-        \PDF_Builder\Security\Role_Manager::init();
-    }
-
     // INITIALISER LE VALIDATEUR DE SÉCURITÉ APRÈS LE CHARGEMENT DE WORDPRESS
     if (class_exists('PDF_Builder\\Core\\PDF_Builder_Security_Validator')) {
         \PDF_Builder\Core\PDF_Builder_Security_Validator::get_instance()->init();

@@ -7,7 +7,7 @@
 
 // Include helper functions if not already included
 if (!function_exists('pdf_builder_safe_get_option')) {
-    require_once __DIR__ . '/../settings-helpers.php';
+    // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 }
 ?>
 

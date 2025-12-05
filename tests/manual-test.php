@@ -21,7 +21,7 @@ if (function_exists('pdf_builder_switch_tab')) {
 
 // Test 2: Check tab navigation elements
 echo "\nTest 2: Tab navigation elements\n";
-$tabs = ['general', 'licence', 'acces', 'templates', 'developpeur'];
+$tabs = ['general', 'licence', 'templates', 'developpeur'];
 $found_elements = 0;
 
 foreach ($tabs as $tab) {
@@ -48,7 +48,7 @@ echo "\nFound $js_functions_found out of " . count($js_functions) . " JavaScript
 echo "\nTest 4: Basic functionality simulation\n";
 
 // Simulate tab switching
-$test_tabs = ['general', 'licence', 'acces'];
+$test_tabs = ['general', 'licence'];
 echo "Simulating tab switching...\n";
 
 foreach ($test_tabs as $tab) {
