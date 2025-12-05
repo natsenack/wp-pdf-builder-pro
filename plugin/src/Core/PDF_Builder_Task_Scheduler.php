@@ -110,7 +110,7 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_check_wp_cron_config', [$this, 'ajax_check_wp_cron_config']);
         add_action('wp_ajax_pdf_builder_check_scheduled_tasks', [$this, 'ajax_check_scheduled_tasks']);
         add_action('wp_ajax_pdf_builder_cron_test', [$this, 'ajax_cron_test']);
-        add_action('admin_init', [$this, 'check_auto_backup_fallback']);
+        add_action('wp_loaded', [$this, 'check_auto_backup_fallback']);
 
         // S'assurer que les actions AJAX sont enregistrées pour l'admin
         add_action('admin_init', [$this, 'register_ajax_actions']);
