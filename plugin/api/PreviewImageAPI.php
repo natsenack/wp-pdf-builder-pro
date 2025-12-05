@@ -61,20 +61,37 @@ class PreviewImageAPI
         // pour éviter les conflits de double enregistrement
 
 
-        // Nettoyage automatique du cache avec gestion d'erreur
+        // Ajouter un hook pour le nettoyage manuel lors des visites admin
+        add_action('admin_init', array(__CLASS__, 'maybe_trigger_manual_cleanup'));
+
+        // Nettoyage automatique du cache avec gestion d'erreur améliorée
         add_action('wp_pdf_cleanup_preview_cache', array(__CLASS__, 'cleanup_cache'));
 
-        // Essayer de planifier l'événement cron avec gestion d'erreur
+        // Essayer de planifier l'événement cron avec gestion d'erreur améliorée
         try {
             wp_clear_scheduled_hook('wp_pdf_cleanup_preview_cache');
             if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
                 $result = wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
                 if (!$result) {
-                    error_log('PDF Builder: Impossible de planifier wp_pdf_cleanup_preview_cache - cron system unavailable');
+                    // Cron système indisponible - utiliser une approche alternative
+                    error_log('PDF Builder: Cron système indisponible - planification manuelle du nettoyage cache');
+
+                    // Enregistrer une option pour indiquer que le cron manuel est nécessaire
+                    update_option('pdf_builder_manual_cache_cleanup_needed', '1');
+
+                    // Essayer de déclencher un nettoyage immédiat si nécessaire
+                    self::maybe_trigger_manual_cleanup();
+                } else {
+                    // Cron réussi - supprimer le flag manuel
+                    delete_option('pdf_builder_manual_cache_cleanup_needed');
                 }
             }
         } catch (Exception $e) {
             error_log('PDF Builder: Exception lors de la planification du cron preview cache: ' . $e->getMessage());
+
+            // En cas d'exception, activer le mode manuel
+            update_option('pdf_builder_manual_cache_cleanup_needed', '1');
+            self::maybe_trigger_manual_cleanup();
         }
 
         // Nettoyage du cache intelligent avec gestion d'erreur
@@ -88,6 +105,28 @@ class PreviewImageAPI
             }
         } catch (Exception $e) {
             error_log('PDF Builder: Exception lors de la planification du cron intelligent cache: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Vérifier et déclencher un nettoyage manuel si nécessaire
+     * Utilisé quand le système cron n'est pas disponible
+     */
+    public static function maybe_trigger_manual_cleanup() {
+        // Vérifier si un nettoyage manuel est nécessaire
+        if (get_option('pdf_builder_manual_cache_cleanup_needed') !== '1') {
+            return;
+        }
+
+        // Vérifier le dernier nettoyage manuel
+        $last_manual_cleanup = get_option('pdf_builder_last_manual_cleanup', 0);
+        $time_since_last_cleanup = time() - $last_manual_cleanup;
+
+        // Nettoyer toutes les 6 heures (21600 secondes) si nécessaire
+        if ($time_since_last_cleanup > 21600) {
+            self::cleanup_cache();
+            update_option('pdf_builder_last_manual_cleanup', time());
+            error_log('PDF Builder: Nettoyage manuel du cache preview exécuté (cron indisponible)');
         }
     }
 
