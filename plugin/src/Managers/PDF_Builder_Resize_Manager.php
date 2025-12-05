@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion des interactions de redimensionnement des éléments
  *
  * @version 1.0.0
+ * @fix Corrigé les caractères nuls causant des erreurs de syntaxe
  */
 
 
