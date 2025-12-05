@@ -9,13 +9,18 @@ require_once __DIR__ . '/settings-helpers.php';
                 
 
                 <?php
-                    $license_status = pdf_builder_safe_get_option('pdf_builder_license_status', 'free');
-                    $license_key = pdf_builder_safe_get_option('pdf_builder_license_key', '');
-                    $license_expires = pdf_builder_safe_get_option('pdf_builder_license_expires', '');
-                    $license_activated_at = pdf_builder_safe_get_option('pdf_builder_license_activated_at', '');
-                    $test_mode_enabled = pdf_builder_safe_get_option('pdf_builder_license_test_mode_enabled', false);
-                    $test_key = pdf_builder_safe_get_option('pdf_builder_license_test_key', '');
-                    $test_key_expires = pdf_builder_safe_get_option('pdf_builder_license_test_key_expires', '');
+                    // Récupération des paramètres depuis le tableau unifié
+                    $settings = get_option('pdf_builder_settings', []);
+
+                    $license_status = $settings['pdf_builder_license_status'] ?? 'free';
+                    $license_key = $settings['pdf_builder_license_key'] ?? '';
+                    $license_expires = $settings['pdf_builder_license_expires'] ?? '';
+                    $license_activated_at = $settings['pdf_builder_license_activated_at'] ?? '';
+                    $test_mode_enabled = $settings['pdf_builder_license_test_mode_enabled'] ?? false;
+                    $test_key = $settings['pdf_builder_license_test_key'] ?? '';
+                    $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
+                    $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
+                    $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? pdf_builder_safe_get_option('admin_email', '');
                     // Email notifications removed — no UI or settings for license expiration notifications
                     // is_premium si vraie licence OU si clé de test existe
                     $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
@@ -43,16 +48,20 @@ require_once __DIR__ . '/settings-helpers.php';
                             </div>', 'Activation désactivée', ['response' => 403]);
                     }
 
-                    // Traitement désactivation licence
+                    // Traitement désactivation licence (legacy - devrait être remplacé par AJAX unifié)
                     if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
 
                         if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
-                            delete_option('pdf_builder_license_key');
-                            delete_option('pdf_builder_license_expires');
-                            delete_option('pdf_builder_license_activated_at');
-                            delete_option('pdf_builder_license_test_key');
-                            delete_option('pdf_builder_license_test_mode_enabled');
-                            update_option('pdf_builder_license_status', 'free');
+                            // Mise à jour du tableau unifié au lieu d'options séparées
+                            $settings = get_option('pdf_builder_settings', []);
+                            $settings['pdf_builder_license_key'] = '';
+                            $settings['pdf_builder_license_expires'] = '';
+                            $settings['pdf_builder_license_activated_at'] = '';
+                            $settings['pdf_builder_license_test_key'] = '';
+                            $settings['pdf_builder_license_test_mode_enabled'] = false;
+                            $settings['pdf_builder_license_status'] = 'free';
+                            update_option('pdf_builder_settings', $settings);
+
                             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
                             $is_premium = false;
                             $license_key = '';
@@ -645,7 +654,7 @@ require_once __DIR__ . '/settings-helpers.php';
                                 <td>
                                     <label class="toggle-switch">
                                         <input type="checkbox" id="license_email_reminders" name="license_email_reminders"
-                                            value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_license_email_reminders', '0'), '1'); ?> />
+                                            value="1" <?php pdf_builder_safe_checked($license_email_reminders, '1'); ?> />
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Recevoir des rappels par email 30 jours, 7 jours et 1 jour avant l'expiration</p>
@@ -655,7 +664,7 @@ require_once __DIR__ . '/settings-helpers.php';
                                 <th scope="row"><label for="license_reminder_email">Adresse email</label></th>
                                 <td>
                                     <input type="email" id="license_reminder_email" name="license_reminder_email"
-                                        value="<?php echo pdf_builder_safe_esc_attr(pdf_builder_safe_get_option('pdf_builder_license_reminder_email', pdf_builder_safe_get_option('admin_email', ''))); ?>"
+                                        value="<?php echo pdf_builder_safe_esc_attr($license_reminder_email); ?>"
                                         placeholder="votre@email.com" class="form-input" />
                                     <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>
                                 </td>

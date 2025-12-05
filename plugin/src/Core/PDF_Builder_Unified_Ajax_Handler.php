@@ -396,6 +396,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
                 'pdf_quality', 'default_format', 'default_orientation', 'default_template', 'systeme_auto_backup_frequency',
                 'pdf_builder_developer_password',
+                // License text fields
+                'pdf_builder_license_status', 'pdf_builder_license_key', 'pdf_builder_license_expires',
+                'pdf_builder_license_activated_at', 'pdf_builder_license_test_key', 'pdf_builder_license_test_key_expires',
+                'pdf_builder_license_reminder_email',
                 // Canvas text fields
                 'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_export_format',
                 'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
@@ -411,6 +415,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
+                // License bool fields
+                'pdf_builder_license_email_reminders',
                 // Debug fields - CORRIGÉ: utilisation des vrais noms de champs du formulaire
                 'pdf_builder_debug_javascript', 'pdf_builder_debug_javascript_verbose',
                 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
