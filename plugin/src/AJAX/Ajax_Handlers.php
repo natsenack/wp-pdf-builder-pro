@@ -564,13 +564,14 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
  */
 function pdf_builder_get_allowed_roles_ajax_handler() {
     try {
-        error_log('[PDF Builder] Handler get_allowed_roles appelé - TEST SIMPLE');
+        error_log('[PDF Builder] Handler get_allowed_roles appelé - VERSION DEPLOYEE');
 
         // Test simple sans charger les helpers
         wp_send_json_success([
-            'allowed_roles' => ['administrator', 'editor'],
-            'count' => 2,
-            'test' => true
+            'allowed_roles' => ['administrator', 'editor', 'test_role'],
+            'count' => 3,
+            'message' => 'Handler appelé avec succès - version déployée',
+            'timestamp' => time()
         ]);
 
     } catch (Exception $e) {
