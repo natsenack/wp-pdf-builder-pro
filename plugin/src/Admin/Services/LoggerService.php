@@ -48,7 +48,7 @@ class LoggerService
             //     'Old: ' . wp_json_encode($old_roles) . ', ' .
             //     'New: ' . wp_json_encode($new_roles) . ', ' .
             //     'By: ' . $log_entry['user_login']
-            );
+            // );
         }
 
         /**
