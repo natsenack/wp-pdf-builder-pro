@@ -205,8 +205,6 @@ class PDF_Builder_Unified_Ajax_Handler {
 
                     // Système
                     'auto_maintenance' => get_option('pdf_builder_auto_maintenance', '1'),
-                    'auto_backup' => get_option('pdf_builder_auto_backup', '1'),
-                    'auto_backup_frequency' => get_option('pdf_builder_auto_backup_frequency', 'daily'),
                     'backup_retention' => get_option('pdf_builder_backup_retention', 30),
 
                     // Accès

@@ -16,11 +16,6 @@ class PDF_Builder_Task_Scheduler {
             'callback' => 'cleanup_expired_cache',
             'description' => 'Nettoie le cache expiré'
         ],
-        'pdf_builder_auto_backup' => [
-            'interval' => 'dynamic', // Sera déterminé dynamiquement
-            'callback' => 'create_auto_backup',
-            'description' => 'Crée une sauvegarde automatique'
-        ],
         'pdf_builder_log_rotation' => [
             'interval' => 'daily',
             'callback' => 'rotate_logs',
@@ -72,18 +67,6 @@ class PDF_Builder_Task_Scheduler {
         foreach (self::TASKS as $task_name => $task_config) {
             if (!wp_next_scheduled($task_name)) {
                 $interval = $task_config['interval'];
-                
-                // Pour les tâches dynamiques, déterminer l'intervalle
-                if ($interval === 'dynamic') {
-                    if ($task_name === 'pdf_builder_auto_backup') {
-                        $settings = get_option('pdf_builder_settings', []);
-                        $frequency = $settings['pdf_builder_systeme_auto_backup_frequency'] ?? 'daily';
-                        $interval = $this->map_frequency_to_interval($frequency);
-                    } else {
-                        $interval = 'daily'; // fallback
-                    }
-                }
-                
                 wp_schedule_event(time(), $interval, $task_name);
             }
         }
@@ -111,14 +94,9 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_check_wp_cron_config', [$this, 'ajax_check_wp_cron_config']);
         add_action('wp_ajax_pdf_builder_check_scheduled_tasks', [$this, 'ajax_check_scheduled_tasks']);
         add_action('wp_ajax_pdf_builder_cron_test', [$this, 'ajax_cron_test']);
-        add_action('wp_loaded', [$this, 'check_auto_backup_fallback']);
 
         // S'assurer que les actions AJAX sont enregistrées pour l'admin
         add_action('init', [$this, 'register_ajax_actions']);
-
-        // Reprogrammer les tâches quand les paramètres changent
-        add_action('update_option_pdf_builder_backup_frequency', [$this, 'on_backup_frequency_changed'], 10, 3);
-        add_action('update_option_pdf_builder_auto_backup_enabled', [$this, 'on_auto_backup_enabled_changed'], 10, 3);
     }
 
     /**
@@ -130,9 +108,6 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
-        add_action('wp_ajax_pdf_builder_change_backup_frequency', [$this, 'ajax_change_backup_frequency']);
-        add_action('wp_ajax_pdf_builder_test_manual_backup', [$this, 'ajax_test_manual_backup']);
-        add_action('wp_ajax_pdf_builder_toggle_auto_backup', [$this, 'ajax_toggle_auto_backup']);
         error_log('PDF Builder: [TASK SCHEDULER] AJAX actions registered');
     }
 
@@ -183,115 +158,6 @@ class PDF_Builder_Task_Scheduler {
     public function unschedule_all_tasks() {
         foreach (self::TASKS as $task_name => $task_config) {
             wp_clear_scheduled_hook($task_name);
-        }
-    }
-
-    /**
-     * Met à jour la planification de la sauvegarde automatique selon la nouvelle fréquence
-     */
-    public function reschedule_auto_backup($new_frequency = null) {
-        // Annuler la tâche existante
-        wp_clear_scheduled_hook('pdf_builder_auto_backup');
-
-        // Déterminer la fréquence à utiliser
-        if ($new_frequency === null) {
-            $settings = get_option('pdf_builder_settings', []);
-            $new_frequency = $settings['pdf_builder_systeme_auto_backup_frequency'] ?? 'daily';
-        }
-
-        // Programmer avec la nouvelle fréquence
-        $interval = $this->map_frequency_to_interval($new_frequency);
-        wp_schedule_event(time(), $interval, 'pdf_builder_auto_backup');
-    }
-
-    /**
-     * Fallback pour les sauvegardes automatiques quand le cron système ne fonctionne pas
-     * Se déclenche à chaque visite admin pour vérifier si une sauvegarde doit être faite
-     */
-    public function check_auto_backup_fallback() {
-        error_log('PDF Builder: [FALLBACK] check_auto_backup_fallback called');
-
-        // Utiliser les paramètres de l'onglet système
-        $settings = get_option('pdf_builder_settings', []);
-        $auto_backup_enabled = $settings['pdf_builder_systeme_auto_backup'] ?? '0';
-        error_log('PDF Builder: [FALLBACK] systeme_auto_backup setting: ' . $auto_backup_enabled);
-        if ($auto_backup_enabled !== '1' && $auto_backup_enabled !== 1) {
-            error_log('PDF Builder: [FALLBACK] Auto backup disabled, skipping');
-            return;
-        }
-
-        // Récupérer la fréquence configurée
-        $frequency = $settings['pdf_builder_systeme_auto_backup_frequency'] ?? 'daily';
-        $last_backup = get_option('pdf_builder_last_auto_backup', 0);
-        $now = time();
-
-        error_log('PDF Builder: [FALLBACK] Frequency: ' . $frequency . ', Last backup: ' . $last_backup . ', Now: ' . $now);
-
-        // Calculer l'intervalle en secondes selon la fréquence
-        $intervals = [
-            'every_minute' => 60,
-            'daily' => 86400, // 24h
-            'weekly' => 604800, // 7 jours
-            'monthly' => 2592000 // 30 jours
-        ];
-
-        $interval_seconds = $intervals[$frequency] ?? 86400;
-        error_log('PDF Builder: [FALLBACK] Interval seconds: ' . $interval_seconds);
-
-        // Log de débogage
-        if (is_admin()) {
-            $time_since_last = round(($now - $last_backup) / 60, 1);
-            echo "<script>console.log('[AUTO BACKUP FALLBACK] 🔍 Vérification sauvegarde auto - Fréquence: {$frequency}, Intervalle: {$interval_seconds}s, Dernière: {$time_since_last}min, Maintenant: {$now}');</script>";
-        }
-
-        // Vérifier si assez de temps s'est écoulé depuis la dernière sauvegarde
-        if (($now - $last_backup) >= $interval_seconds) {
-            error_log('PDF Builder: [FALLBACK] Time to trigger backup');
-
-            // Éviter les exécutions multiples en vérifiant un flag temporaire
-            $backup_in_progress = get_transient('pdf_builder_auto_backup_in_progress');
-            if ($backup_in_progress) {
-                error_log('PDF Builder: [FALLBACK] Backup already in progress, skipping');
-                if (is_admin()) {
-                    echo "<script>console.log('[AUTO BACKUP FALLBACK] ⏳ Sauvegarde déjà en cours, ignorée');</script>";
-                }
-                return;
-            }
-
-            // Marquer qu'une sauvegarde est en cours
-            set_transient('pdf_builder_auto_backup_in_progress', true, 300); // 5 minutes max
-            error_log('PDF Builder: [FALLBACK] Set in progress transient');
-
-            // Marquer que nous allons faire une sauvegarde pour éviter les exécutions multiples
-            update_option('pdf_builder_last_auto_backup', $now);
-            error_log('PDF Builder: [FALLBACK] Updated last backup timestamp to: ' . $now);
-
-            // Logger le fallback
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Auto backup fallback triggered - cron system unavailable');
-            }
-
-            // Log JavaScript pour indiquer l'utilisation du fallback
-            if (is_admin()) {
-                $time_since_last = round(($now - $last_backup) / 60, 1);
-                echo "<script>console.log('[AUTO BACKUP FALLBACK] 🎯 DÉCLENCHEMENT - Système cron indisponible - sauvegarde automatique via fallback (dernière: {$time_since_last}min)');</script>";
-            }
-
-            error_log('PDF Builder: [FALLBACK] Calling create_auto_backup');
-            // Exécuter la sauvegarde automatique
-            $this->create_auto_backup();
-
-            // Nettoyer le flag de progression
-            delete_transient('pdf_builder_auto_backup_in_progress');
-            error_log('PDF Builder: [FALLBACK] Cleaned up transient');
-        } else {
-            error_log('PDF Builder: [FALLBACK] Not time yet');
-            // Log quand on ne déclenche pas
-            if (is_admin()) {
-                $remaining_seconds = $interval_seconds - ($now - $last_backup);
-                $remaining_minutes = round($remaining_seconds / 60, 1);
-                echo "<script>console.log('[AUTO BACKUP FALLBACK] ⏰ Pas encore le moment - Prochaine sauvegarde dans {$remaining_minutes}min');</script>";
-            }
         }
     }
 
@@ -372,54 +238,6 @@ class PDF_Builder_Task_Scheduler {
 
         return $results;
     }
-    public function get_backup_statistics() {
-        $stats = [
-            'total_backups' => 0,
-            'last_backup' => null,
-            'next_backup' => null,
-            'backup_frequency' => get_option('pdf_builder_backup_frequency', 'daily'),
-            'cron_status' => 'unknown',
-            'fallback_executions' => 0,
-            'errors' => []
-        ];
-
-        // Compter les sauvegardes totales
-        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/';
-        if (is_dir($backup_dir)) {
-            $files = glob($backup_dir . '*.json');
-            $stats['total_backups'] = count($files);
-
-            if (!empty($files)) {
-                // Trier par date de modification
-                usort($files, function($a, $b) {
-                    return filemtime($b) - filemtime($a);
-                });
-                $stats['last_backup'] = date('Y-m-d H:i:s', filemtime($files[0]));
-            }
-        }
-
-        // Vérifier la prochaine exécution programmée
-        $next_scheduled = wp_next_scheduled('pdf_builder_auto_backup');
-        if ($next_scheduled) {
-            $stats['next_backup'] = date('Y-m-d H:i:s', $next_scheduled);
-            $stats['cron_status'] = 'active';
-        } else {
-            $stats['cron_status'] = 'inactive';
-        }
-
-        // Compter les exécutions de fallback
-        $fallback_count = get_option('pdf_builder_fallback_executions', 0);
-        $stats['fallback_executions'] = $fallback_count;
-
-        // Récupérer les erreurs récentes
-        $error_logs = get_option('pdf_builder_backup_errors', []);
-        if (is_array($error_logs) && !empty($error_logs)) {
-            $stats['errors'] = array_slice($error_logs, -5); // Dernières 5 erreurs
-        }
-
-        return $stats;
-    }
-
     /**
      * Tester le système de fallback
      */
@@ -452,84 +270,6 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Optimise les tables de base de données
      */
-
-    /**
-     * Rassemble les données pour la sauvegarde
-     */
-    private function gather_backup_data() {
-        global $wpdb;
-
-        $backup_data = [
-            'timestamp' => current_time('mysql'),
-            'version' => PDF_BUILDER_VERSION,
-            'templates' => [],
-            'settings' => [],
-            'metadata' => []
-        ];
-
-        // Sauvegarder les templates
-        $templates = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}pdf_builder_templates", ARRAY_A);
-        $backup_data['templates'] = $templates;
-
-        // Sauvegarder les paramètres
-        $backup_data['settings'] = get_option('pdf_builder_config', []);
-
-        // Métadonnées
-        $backup_data['metadata'] = [
-            'total_templates' => count($templates),
-            'database_size' => $this->get_database_size(),
-            'wordpress_version' => get_bloginfo('version'),
-            'php_version' => PHP_VERSION
-        ];
-
-        return $backup_data;
-    }
-
-    /**
-     * Sauvegarde les données
-     */
-    private function save_backup($name, $data, $type = 'manual') {
-        global $wpdb;
-
-        $table = $wpdb->prefix . 'pdf_builder_backups';
-
-        $wpdb->insert(
-            $table,
-            [
-                'name' => $name,
-                'description' => "Sauvegarde $type créée automatiquement",
-                'backup_data' => wp_json_encode($data),
-                'user_id' => 0, // Système
-                'created_at' => current_time('mysql')
-            ],
-            ['%s', '%s', '%s', '%d', '%s']
-        );
-
-        // Nettoyer les anciennes sauvegardes automatiques
-        $retention_count = pdf_builder_config('backup_retention_count', 10);
-        $this->cleanup_old_backups($retention_count);
-    }
-
-    /**
-     * Nettoie les anciennes sauvegardes
-     */
-    private function cleanup_old_backups($keep_count) {
-        global $wpdb;
-
-        $table = $wpdb->prefix . 'pdf_builder_backups';
-
-        // Supprimer les sauvegardes les plus anciennes, en gardant les N plus récentes
-        $wpdb->query($wpdb->prepare("
-            DELETE FROM $table
-            WHERE id NOT IN (
-                SELECT id FROM (
-                    SELECT id FROM $table
-                    ORDER BY created_at DESC
-                    LIMIT %d
-                ) tmp
-            )
-        ", $keep_count));
-    }
 
     /**
      * Obtient la taille de la base de données
@@ -714,51 +454,6 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Callback quand la fréquence de sauvegarde change
-     */
-    public function on_backup_frequency_changed($old_value, $new_value, $option) {
-        if ($old_value !== $new_value) {
-            $this->reschedule_auto_backup($new_value);
-            error_log("PDF Builder: Fréquence de sauvegarde changée de '$old_value' à '$new_value', reprogrammation effectuée");
-        }
-    }
-
-    /**
-     * Callback quand l'activation des sauvegardes automatiques change
-     */
-    public function on_auto_backup_enabled_changed($old_value, $new_value, $option) {
-        if ($old_value !== $new_value) {
-            if ($new_value === '1') {
-                // Réactiver les sauvegardes
-                $frequency = get_option('pdf_builder_backup_frequency', 'daily');
-                $this->reschedule_auto_backup($frequency);
-                error_log("PDF Builder: Sauvegardes automatiques activées, fréquence: $frequency");
-            } else {
-                // Désactiver les sauvegardes
-                wp_clear_scheduled_hook('pdf_builder_auto_backup');
-                error_log("PDF Builder: Sauvegardes automatiques désactivées");
-            }
-        }
-    }
-
-    /**
-     * Change la fréquence de sauvegarde automatique
-     */
-    public function set_backup_frequency($frequency) {
-        $allowed_frequencies = ['every_minute', 'daily', 'weekly', 'monthly'];
-
-        if (!in_array($frequency, $allowed_frequencies)) {
-            return false;
-        }
-
-        update_option('pdf_builder_auto_backup_frequency', $frequency);
-        $this->reschedule_auto_backup($frequency);
-
-        error_log("PDF Builder: Backup frequency changed to $frequency");
-        return true;
-    }
-
-    /**
      * AJAX handler pour vérifier la configuration WP Cron
      */
     public function ajax_check_wp_cron_config() {
@@ -835,104 +530,6 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * AJAX handler pour changer la fréquence de sauvegarde
-     */
-    public function ajax_change_backup_frequency() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        $frequency = sanitize_text_field($_POST['frequency'] ?? 'daily');
-
-        // Valider la fréquence
-        $valid_frequencies = ['every_minute', 'daily', 'weekly', 'monthly'];
-        if (!in_array($frequency, $valid_frequencies)) {
-            wp_send_json_error(['message' => 'Fréquence invalide']);
-            return;
-        }
-
-        // Sauvegarder dans les paramètres système
-        $settings = get_option('pdf_builder_settings', []);
-        $settings['pdf_builder_systeme_auto_backup_frequency'] = $frequency;
-        update_option('pdf_builder_settings', $settings);
-
-        // Reprogrammer la tâche cron
-        $this->reschedule_auto_backup($frequency);
-
-        wp_send_json_success([
-            'message' => 'Fréquence de sauvegarde mise à jour',
-            'frequency' => $frequency
-        ]);
-    }
-
-    /**
-     * AJAX handler pour activer/désactiver les sauvegardes automatiques
-     */
-    public function ajax_toggle_auto_backup() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
-        }
-
-        $enabled = isset($_POST['enabled']) ? sanitize_text_field($_POST['enabled']) : '0';
-        $enabled = in_array($enabled, ['0', '1']) ? $enabled : '0';
-
-        // Sauvegarder dans les paramètres système
-        $settings = get_option('pdf_builder_settings', []);
-        $settings['pdf_builder_systeme_auto_backup'] = $enabled;
-        update_option('pdf_builder_settings', $settings);
-
-        // Reprogrammer les tâches cron si nécessaire
-        if ($enabled === '0') {
-            wp_clear_scheduled_hook('pdf_builder_auto_backup');
-            error_log('PDF Builder: [TOGGLE] Auto backup disabled, cleared scheduled hook');
-        } else {
-            // Forcer la reprogrammation
-            $this->unschedule_all_tasks();
-            $this->schedule_tasks();
-            error_log('PDF Builder: [TOGGLE] Auto backup enabled, rescheduled tasks');
-        }
-
-        wp_send_json_success([
-            'message' => $enabled === '1' ? 'Sauvegardes automatiques activées' : 'Sauvegardes automatiques désactivées',
-            'enabled' => $enabled
-        ]);
-    }
-
-    /**
-     * AJAX handler pour tester manuellement une sauvegarde
-     */
-    public function ajax_test_manual_backup() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
-        }
-
-        try {
-            $this->test_manual_backup();
-            wp_send_json_success(['message' => 'Test de sauvegarde manuel déclenché - vérifiez les logs']);
-        } catch (\Exception $e) {
-            wp_send_json_error(['message' => 'Erreur lors du test: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
      * AJAX handler pour diagnostiquer le système cron
      */
     public function ajax_diagnose_cron() {
@@ -987,7 +584,6 @@ class PDF_Builder_Task_Scheduler {
 
         $stats = [
             'total_backups' => 0,
-            'auto_backups' => 0,
             'manual_backups' => 0,
             'last_backup' => null
         ];
@@ -1001,9 +597,7 @@ class PDF_Builder_Task_Scheduler {
 
                 foreach ($files as $file) {
                     $filename = basename($file);
-                    if (strpos($filename, 'auto_backup') !== false) {
-                        $stats['auto_backups']++;
-                    } else {
+                    $stats['manual_backups']++;
                         $stats['manual_backups']++;
                     }
                 }
@@ -1050,61 +644,6 @@ class PDF_Builder_Task_Scheduler {
             }
         } catch (\Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Méthode de test pour déclencher manuellement une sauvegarde automatique
-     */
-    public function test_manual_backup() {
-        error_log('PDF Builder: [TEST] Manual backup test triggered');
-        $this->create_auto_backup();
-    }
-
-    /**
-     * Callback pour créer une sauvegarde automatique
-     */
-    public function create_auto_backup() {
-        error_log('PDF Builder: [AUTO BACKUP] Starting automatic backup creation - TIMESTAMP: ' . time());
-
-        try {
-            // Utiliser les paramètres de l'onglet système
-            $settings = get_option('pdf_builder_settings', []);
-            $auto_backup_enabled = $settings['pdf_builder_systeme_auto_backup'] ?? '0';
-            error_log('PDF Builder: [AUTO BACKUP] systeme_auto_backup setting: ' . $auto_backup_enabled);
-            if ($auto_backup_enabled !== '1' && $auto_backup_enabled !== 1) {
-                error_log('PDF Builder: [AUTO BACKUP] Auto backup disabled, skipping');
-                return;
-            }
-
-            error_log('PDF Builder: [AUTO BACKUP] Checking backup manager availability');
-            // Utiliser le Backup Manager pour créer la sauvegarde
-            if (class_exists('\\PDF_Builder\\Managers\\PdfBuilderBackupRestoreManager')) {
-                error_log('PDF Builder: [AUTO BACKUP] Backup manager found, creating backup');
-                $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
-
-                // Créer une sauvegarde automatique
-                $result = $backup_manager->createBackup([
-                    'auto_backup' => true,
-                    'description' => 'Sauvegarde automatique planifiée'
-                ]);
-
-                if (isset($result['success']) && $result['success'] === false) {
-                    error_log('PDF Builder: [AUTO BACKUP] Error creating backup: ' . ($result['message'] ?? 'Unknown error'));
-                } elseif (isset($result['success']) && $result['success'] === true) {
-                    error_log('PDF Builder: [AUTO BACKUP] Backup created successfully: ' . ($result['filename'] ?? 'unknown'));
-                    // Mettre à jour le timestamp de la dernière sauvegarde automatique
-                    update_option('pdf_builder_last_auto_backup', time());
-                } else {
-                    error_log('PDF Builder: [AUTO BACKUP] Unexpected result format from createBackup: ' . print_r($result, true));
-                }
-            } else {
-                error_log('PDF Builder: [AUTO BACKUP] Backup manager not available');
-            }
-
-        } catch (\Exception $e) {
-            error_log('PDF Builder: [AUTO BACKUP] Exception during auto backup: ' . $e->getMessage());
-            error_log('PDF Builder: [AUTO BACKUP] Stack trace: ' . $e->getTraceAsString());
         }
     }
 
@@ -1160,11 +699,4 @@ function pdf_builder_schedule_task($task_name) {
 function pdf_builder_unschedule_task($task_name) {
     wp_clear_scheduled_hook($task_name);
     return true;
-}
-
-/**
- * Fonction utilitaire pour changer la fréquence de sauvegarde
- */
-function pdf_builder_set_backup_frequency($frequency) {
-    return PDF_Builder_Task_Scheduler::get_instance()->set_backup_frequency($frequency);
 }

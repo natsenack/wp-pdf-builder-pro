@@ -286,8 +286,7 @@ class PdfBuilderBackupRestoreManager
             'pdf_builder_allowed_roles',
             'pdf_builder_settings',
             'pdf_builder_license_key',
-            'pdf_builder_license_status',
-            'pdf_builder_auto_backup_frequency'
+            'pdf_builder_license_status'
         ];
 
         foreach ($option_keys as $key) {

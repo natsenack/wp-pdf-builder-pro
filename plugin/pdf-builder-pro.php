@@ -324,8 +324,7 @@ function pdf_builder_list_backups_ajax() {
 
         $files = glob($backup_dir . '/pdf_builder_backup_*.json');
         $files_manual = glob($backup_dir . '/pdf-builder-backup-*.json');
-        $files_auto = glob($backup_dir . '/pdf_builder_auto_backup_*.json');
-        $files = array_merge($files, $files_manual, $files_auto);
+        $files = array_merge($files, $files_manual);
 
         error_log('PDF Builder: [BACKUP LIST] Found ' . count($files) . ' backup files');
         foreach ($files as $file) {
@@ -357,7 +356,7 @@ function pdf_builder_list_backups_ajax() {
                     'size_human' => size_format($file_size),
                     'modified' => $file_modified,
                     'modified_human' => wp_date(get_option('date_format') . ' ' . get_option('time_format'), $file_modified),
-                    'type' => strpos($filename, 'auto_backup') !== false ? 'automatic' : 'manual'
+                    'type' => 'manual'
                 );
             }
         }
@@ -931,9 +930,6 @@ function pdf_builder_init()
     // Enregistrer les handlers AJAX au hook init
     // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers() sur plugins_loaded
 
-    // Initialiser les sauvegardes automatiques
-    add_action('init', 'pdf_builder_init_auto_backup');
-
     // Vérifier les mises à jour de schéma de base de données
     add_action('admin_init', 'pdf_builder_check_database_updates');
 
@@ -1331,154 +1327,8 @@ function pdf_builder_calculate_next_backup_time($frequency) {
             return strtotime('tomorrow 02:00:00');
     }
 }
-
-/**
- * Réinitialise les sauvegardes automatiques (désactive et reprogramme avec nouvelle fréquence)
- */
-function pdf_builder_reinit_auto_backup() {
-    // Désactiver l'ancien cron s'il existe
-    $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
-    if ($timestamp) {
-        wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
-    }
-
-    // Réinitialiser avec la nouvelle configuration
-    pdf_builder_init_auto_backup();
-}
-
-/**
- * Initialiser les sauvegardes automatiques
- */
-function pdf_builder_init_auto_backup() {
-    // Vérifier si les sauvegardes automatiques sont activées
-    $auto_backup_enabled = get_option('pdf_builder_auto_backup', '0');
-    $auto_backup_frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
-
-    // Mapping des fréquences vers les intervalles WordPress
-    $frequency_mapping = array(
-        'daily' => 'daily',
-        'weekly' => 'weekly',
-        'monthly' => 'monthly'
-    );
-
-    $wp_schedule = isset($frequency_mapping[$auto_backup_frequency]) ? $frequency_mapping[$auto_backup_frequency] : 'daily';
-
-    if ($auto_backup_enabled === '1') {
-        // Programmer la sauvegarde automatique selon la fréquence choisie
-        if (!wp_next_scheduled('pdf_builder_daily_backup')) {
-            // Calculer le prochain timestamp selon la fréquence
-            $next_timestamp = pdf_builder_calculate_next_backup_time($auto_backup_frequency);
-            wp_schedule_event($next_timestamp, $wp_schedule, 'pdf_builder_daily_backup');
-        }
-    } else {
-        // Désactiver la sauvegarde automatique si elle était programmée
-        $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
-        if ($timestamp) {
-            wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
-        }
-    }
-
-    // Programmer le nettoyage automatique des anciennes sauvegardes
-    if (!wp_next_scheduled('pdf_builder_cleanup_old_backups')) {
-        wp_schedule_event(strtotime('tomorrow 03:00:00'), 'daily', 'pdf_builder_cleanup_old_backups');
-    }
-
-    // Programmer la maintenance automatique hebdomadaire
-    $auto_maintenance_enabled = get_option('pdf_builder_auto_maintenance', '0');
-    if ($auto_maintenance_enabled === '1') {
-        if (!wp_next_scheduled('pdf_builder_weekly_maintenance')) {
-            // Programmer pour le prochain dimanche à 02:00
-            $next_sunday = strtotime('next Sunday 02:00:00');
-            if ($next_sunday < current_time('timestamp')) {
-                $next_sunday = strtotime('next Sunday 02:00:00', strtotime('+1 week'));
-            }
-            wp_schedule_event($next_sunday, 'weekly', 'pdf_builder_weekly_maintenance');
-        }
-    } else {
-        // Désactiver la maintenance automatique si elle était programmée
-        $timestamp = wp_next_scheduled('pdf_builder_weekly_maintenance');
-        if ($timestamp) {
             wp_unschedule_event($timestamp, 'pdf_builder_weekly_maintenance');
         }
-    }
-}
-
-/**
- * Exécuter la sauvegarde automatique quotidienne
- */
-function pdf_builder_execute_daily_backup() {
-    try {
-        // Créer le dossier de sauvegarde s'il n'existe pas
-        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
-        if (!file_exists($backup_dir)) {
-            if (!wp_mkdir_p($backup_dir)) {
-                return;
-            }
-        }
-
-        // Récupérer toutes les options du plugin
-        global $wpdb;
-        $options = $wpdb->get_results(
-            $wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", 'pdf_builder_%'),
-            ARRAY_A
-        );
-
-        // Créer le nom du fichier de sauvegarde avec timezone
-        $timestamp = current_time('timestamp');
-        $filename = 'pdf_builder_auto_backup_' . wp_date('Y-m-d_H-i-s', $timestamp) . '.json';
-        $filepath = $backup_dir . '/' . $filename;
-
-        // Préparer les données de sauvegarde
-        $backup_data = array(
-            'version' => '1.0',
-            'timestamp' => $timestamp,
-            'date' => wp_date('Y-m-d H:i:s', $timestamp),
-            'timezone' => wp_timezone_string(),
-            'type' => 'automatic',
-            'options' => array()
-        );
-
-        foreach ($options as $option) {
-            $backup_data['options'][$option['option_name']] = maybe_unserialize($option['option_value']);
-        }
-
-        // Écrire le fichier de sauvegarde
-        if (file_put_contents($filepath, json_encode($backup_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
-        } else {
-        }
-
-    } catch (Exception $e) {
-    }
-}
-
-/**
- * Nettoyer les anciennes sauvegardes automatiquement
- */
-function pdf_builder_cleanup_old_backups() {
-    try {
-        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
-        $retention_days = intval(get_option('pdf_builder_backup_retention', 30));
-
-        if (!file_exists($backup_dir) || !is_dir($backup_dir)) {
-            return;
-        }
-
-        $files = glob($backup_dir . '/pdf_builder_backup_*.json');
-        $now = current_time('timestamp');
-        $deleted_count = 0;
-
-        foreach ($files as $file) {
-            $file_timestamp = filemtime($file);
-            $age_days = ($now - $file_timestamp) / (60 * 60 * 24);
-
-            if ($age_days > $retention_days) {
-                if (unlink($file)) {
-                    $deleted_count++;
-                }
-            }
-        }
-
-    } catch (Exception $e) {
     }
 }
 

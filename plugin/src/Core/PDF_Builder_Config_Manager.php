@@ -72,12 +72,6 @@ class PDF_Builder_Global_Config_Manager {
             'log_max_file_size' => 10, // MB
             'log_rotation_enabled' => true,
 
-            // Paramètres de sauvegarde
-            'auto_backup_enabled' => true,
-            'backup_interval' => 86400, // 24 heures
-            'backup_retention_count' => 10,
-            'backup_compression' => true,
-
             // Paramètres d'interface
             'default_template_width' => 210, // mm (A4)
             'default_template_height' => 297, // mm (A4)

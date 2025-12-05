@@ -712,11 +712,6 @@ class PdfBuilderCore
         if (isset($_POST['pdf_builder_backup_frequency'])) {
             update_option('pdf_builder_backup_frequency', sanitize_text_field($_POST['pdf_builder_backup_frequency']));
         }
-        if (isset($_POST['pdf_builder_auto_backup_enabled'])) {
-            update_option('pdf_builder_auto_backup_enabled', '1');
-        } else {
-            update_option('pdf_builder_auto_backup_enabled', '0');
-        }
 
         // Traiter les informations entreprise spécifiques
         if (isset($_POST['company_vat'])) {
