@@ -1243,8 +1243,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             update_option('pdf_builder_next_maintenance', $next_sunday);
 
             $message = '📅 Prochaine maintenance programmée pour le ' . date('d/m/Y à H:i', $next_sunday);
+            $formatted_date = date('d/m/Y à H:i', $next_sunday);
 
-            wp_send_json_success(['message' => $message]);
+            wp_send_json_success([
+                'message' => $message,
+                'next_maintenance' => $formatted_date,
+                'timestamp' => $next_sunday
+            ]);
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => '❌ Erreur lors de la programmation: ' . $e->getMessage()]);

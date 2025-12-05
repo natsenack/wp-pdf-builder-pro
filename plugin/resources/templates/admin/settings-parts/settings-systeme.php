@@ -818,6 +818,12 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 $status.attr('data-status', 'active');
                                 $value.removeClass('status-inactive').addClass('status-active').text('Activée');
                             }
+                        } else if (action === 'schedule-maintenance') {
+                            // Mettre à jour la date de prochaine maintenance
+                            if (response.data.next_maintenance) {
+                                $btn.find('.metric-value').text(response.data.next_maintenance);
+                                $btn.find('.metric-status').attr('data-status', 'scheduled');
+                            }
                         }
                     } else {
                         showSystemNotification(response.data.message || 'Erreur lors de l\'action', 'error');
