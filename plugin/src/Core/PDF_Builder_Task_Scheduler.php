@@ -111,7 +111,7 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Enregistre les actions AJAX pour le diagnostic cron
      */
-    private function register_ajax_actions() {
+    public function register_ajax_actions() {
         error_log('PDF Builder: Registering AJAX actions');
         add_action('wp_ajax_pdf_builder_diagnose_cron', [$this, 'ajax_diagnose_cron']);
         add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
