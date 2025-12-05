@@ -66,6 +66,9 @@ class PDF_Builder_Task_Scheduler {
         foreach (self::TASKS as $task_name => $task_config) {
             add_action($task_name, [$this, $task_config['callback']]);
         }
+
+        // Fallback pour les sauvegardes automatiques quand le cron système ne fonctionne pas
+        add_action('admin_init', [$this, 'check_auto_backup_fallback']);
     }
 
     /**
@@ -119,20 +122,6 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Mappe la fréquence utilisateur à un intervalle cron
-     */
-    private function map_frequency_to_interval($frequency) {
-        $mapping = [
-            'every_minute' => 'every_minute',
-            'daily' => 'daily',
-            'weekly' => 'weekly',
-            'monthly' => 'monthly'
-        ];
-
-        return $mapping[$frequency] ?? 'daily';
-    }
-
-    /**
      * Met à jour la planification de la sauvegarde automatique selon la nouvelle fréquence
      */
     public function reschedule_auto_backup($new_frequency = null) {
@@ -147,6 +136,52 @@ class PDF_Builder_Task_Scheduler {
         // Programmer avec la nouvelle fréquence
         $interval = $this->map_frequency_to_interval($new_frequency);
         wp_schedule_event(time(), $interval, 'pdf_builder_auto_backup');
+    }
+
+    /**
+     * Fallback pour les sauvegardes automatiques quand le cron système ne fonctionne pas
+     * Se déclenche à chaque visite admin pour vérifier si une sauvegarde doit être faite
+     */
+    public function check_auto_backup_fallback() {
+        // Vérifier seulement si les sauvegardes automatiques sont activées
+        if (!function_exists('pdf_builder_config') || !pdf_builder_config('auto_backup_enabled')) {
+            return;
+        }
+
+        // Récupérer la fréquence configurée
+        $frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
+        $last_backup = get_option('pdf_builder_last_auto_backup', 0);
+        $now = time();
+
+        // Calculer l'intervalle en secondes selon la fréquence
+        $intervals = [
+            'every_minute' => 60,
+            'daily' => 86400, // 24h
+            'weekly' => 604800, // 7 jours
+            'monthly' => 2592000 // 30 jours
+        ];
+
+        $interval_seconds = $intervals[$frequency] ?? 86400;
+
+        // Vérifier si assez de temps s'est écoulé depuis la dernière sauvegarde
+        if (($now - $last_backup) >= $interval_seconds) {
+            // Marquer que nous allons faire une sauvegarde pour éviter les exécutions multiples
+            update_option('pdf_builder_last_auto_backup', $now);
+
+            // Logger le fallback
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->info('Auto backup fallback triggered - cron system unavailable');
+            }
+
+            // Log JavaScript pour indiquer l'utilisation du fallback
+            if (is_admin()) {
+                $time_since_last = round(($now - $last_backup) / 60, 1);
+                echo "<script>console.log('[AUTO BACKUP FALLBACK] 🔄 Système cron indisponible - sauvegarde automatique déclenchée via fallback (dernière sauvegarde: " . $time_since_last . " min)');</script>";
+            }
+
+            // Exécuter la sauvegarde automatique
+            $this->create_auto_backup();
+        }
     }
 
     /**
@@ -192,7 +227,7 @@ class PDF_Builder_Task_Scheduler {
 
                 // Log JavaScript pour le débogage côté client
                 if (is_admin()) {
-                    echo "<script>console.log('[AUTO BACKUP PHP] ✅ Sauvegarde automatique créée avec succès:', '" . addslashes($backup_name) . "');</script>";
+                    echo "<script>console.log('[AUTO BACKUP PHP] ✅ Sauvegarde automatique créée avec succès (via fallback):', '" . addslashes($backup_name) . "');</script>";
                 }
 
                 // Notification de succès
