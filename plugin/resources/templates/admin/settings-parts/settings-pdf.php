@@ -21,9 +21,9 @@
                             <th scope="row"><label for="pdf_quality">Qualité</label></th>
                             <td>
                                 <select id="pdf_quality" name="pdf_quality">
-                                    <option value="low" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_pdf_quality', 'high'), 'low'); ?>>Rapide (fichiers légers)</option>
-                                    <option value="medium" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_pdf_quality', 'high'), 'medium'); ?>>Équilibré</option>
-                                    <option value="high" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_pdf_quality', 'high'), 'high'); ?>>Haute qualité</option>
+                                    <option value="low" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'low'); ?>>Rapide (fichiers légers)</option>
+                                    <option value="medium" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'medium'); ?>>Équilibré</option>
+                                    <option value="high" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'high'); ?>>Haute qualité</option>
                                 </select>
                             </td>
                         </tr>
@@ -31,9 +31,9 @@
                             <th scope="row"><label for="default_format">Format de page</label></th>
                             <td>
                                 <select id="default_format" name="default_format">
-                                    <option value="A4" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_default_format', 'A4'), 'A4'); ?>>A4</option>
-                                    <option value="A3" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_default_format', 'A4'), 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
-                                    <option value="Letter" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_default_format', 'A4'), 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
+                                    <option value="A4" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'A4'); ?>>A4</option>
+                                    <option value="A3" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
+                                    <option value="Letter" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
                                 </select>
                                 <p class="description" style="margin-top:6px; color:#6c757d; font-size:12px;">Les formats A3 et Letter sont prévus; sélection désactivée pour l'instant.</p>
                             </td>

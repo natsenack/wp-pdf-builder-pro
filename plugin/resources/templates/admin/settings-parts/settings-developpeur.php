@@ -645,7 +645,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <strong>Instructions :</strong><br>
                             1. Ouvrez l'éditeur PDF dans un nouvel onglet<br>
                             2. Cliquez sur "Tester FPS"<br>
-                            3. Observez le FPS affiché (devrait être proche de la cible configurée : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS)<br>
+                            3. Observez le FPS affiché (devrait être proche de la cible configurée : <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS)<br>
                             <strong>💡 Conseil :</strong> Utilisez les DevTools (F12 → Performance) pour un monitoring avancé
                         </div>
                         <p class="description">Teste la fluidité du canvas et vérifie que le FPS cible est atteint</p>
@@ -664,11 +664,11 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             • Upload max : <?php echo ini_get('upload_max_filesize'); ?><br>
                             • Post max : <?php echo ini_get('post_max_size'); ?><br>
                             <strong>Paramètres Performance :</strong><br>
-                            • FPS cible : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS<br>
-                            • Mémoire JS : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_memory_limit_js', 256)); ?> MB<br>
-                            • Mémoire PHP : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_memory_limit_php', 256)); ?> MB<br>
-                            • Lazy Loading Éditeur : <?php echo pdf_builder_safe_get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1' ? 'Activé' : 'Désactivé'; ?><br>
-                            • Lazy Loading Plugin : <?php echo pdf_builder_safe_get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1' ? 'Activé' : 'Désactivé'; ?>
+                            • FPS cible : <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS<br>
+                            • Mémoire JS : <?php echo intval(get_option('pdf_builder_canvas_memory_limit_js', 256)); ?> MB<br>
+                            • Mémoire PHP : <?php echo intval(get_option('pdf_builder_canvas_memory_limit_php', 256)); ?> MB<br>
+                            • Lazy Loading Éditeur : <?php echo get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1' ? 'Activé' : 'Désactivé'; ?><br>
+                            • Lazy Loading Plugin : <?php echo get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1' ? 'Activé' : 'Désactivé'; ?>
                         </div>
                         <p class="description">Affiche les informations système et configuration actuelle</p>
                     </td>

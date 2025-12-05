@@ -20,7 +20,7 @@
                     $test_key = $settings['pdf_builder_license_test_key'] ?? '';
                     $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
                     $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
-                    $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? pdf_builder_safe_get_option('admin_email', '');
+                    $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', '');
                     // Email notifications removed — no UI or settings for license expiration notifications
                     // is_premium si vraie licence OU si clé de test existe
                     $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
@@ -654,7 +654,7 @@
                                 <td>
                                     <label class="toggle-switch">
                                         <input type="checkbox" id="license_email_reminders" name="license_email_reminders"
-                                            value="1" <?php pdf_builder_safe_checked($license_email_reminders, '1'); ?> />
+                                            value="1" <?php checked($license_email_reminders, '1'); ?> />
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Recevoir des rappels par email 30 jours, 7 jours et 1 jour avant l'expiration</p>
@@ -664,7 +664,7 @@
                                 <th scope="row"><label for="license_reminder_email">Adresse email</label></th>
                                 <td>
                                     <input type="email" id="license_reminder_email" name="license_reminder_email"
-                                        value="<?php echo pdf_builder_safe_esc_attr($license_reminder_email); ?>"
+                                        value="<?php echo esc_attr($license_reminder_email); ?>"
                                         placeholder="votre@email.com" class="form-input" />
                                     <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>
                                 </td>
