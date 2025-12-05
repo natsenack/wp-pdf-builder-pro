@@ -280,7 +280,7 @@ class PdfBuilderDragDropManager
     }
 
     /**
-     * Logger les événements de drag
+     * Logger les événements de drag - corrigé
      */
     private function logDragEvent($event_type, $session_id, $data = [])
     {
