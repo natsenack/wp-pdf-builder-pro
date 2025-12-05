@@ -246,7 +246,7 @@ jQuery(document).ready(function($) {
         var ajaxData = {
             action: 'pdf_builder_change_backup_frequency',
             frequency: newFrequency,
-            nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+            nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
         };
         console.log('PDF Builder: [BACKUP] Sending frequency change AJAX data:', ajaxData);
 
