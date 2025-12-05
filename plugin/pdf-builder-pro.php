@@ -220,6 +220,13 @@ if (function_exists('add_action')) {
 function pdf_builder_create_backup_ajax() {
     error_log('PDF Builder: [CREATE BACKUP] Function called');
     
+    // Check nonce
+    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+        error_log('PDF Builder: [CREATE BACKUP] Nonce verification failed');
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+    
     // Check permissions
     if (!current_user_can('manage_options')) {
         error_log('PDF Builder: [CREATE BACKUP] Permission denied');
@@ -289,7 +296,7 @@ function pdf_builder_list_backups_ajax() {
     error_log('PDF Builder: [BACKUP LIST] POST data: ' . json_encode($_POST));
     
     // Check nonce
-    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
         error_log('PDF Builder: [BACKUP LIST] Nonce verification failed');
         wp_send_json_error(['message' => 'Nonce invalide']);
         return;
@@ -373,6 +380,13 @@ function pdf_builder_list_backups_ajax() {
  */
 function pdf_builder_restore_backup_ajax() {
     error_log('PDF Builder: [RESTORE BACKUP] Function called');
+    
+    // Check nonce
+    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+        error_log('PDF Builder: [RESTORE BACKUP] Nonce verification failed');
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
     
     // Check permissions
     if (!current_user_can('manage_options')) {
