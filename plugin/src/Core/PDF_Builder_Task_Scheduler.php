@@ -963,11 +963,12 @@ class PDF_Builder_Task_Scheduler {
      * Callback pour créer une sauvegarde automatique
      */
     public function create_auto_backup() {
-        error_log('PDF Builder: [AUTO BACKUP] Starting automatic backup creation');
+        error_log('PDF Builder: [AUTO BACKUP] Starting automatic backup creation - TIMESTAMP: ' . time());
 
         try {
             // Vérifier si les sauvegardes automatiques sont activées
             $auto_backup_enabled = get_option('pdf_builder_auto_backup_enabled', '0');
+            error_log('PDF Builder: [AUTO BACKUP] Auto backup enabled setting: ' . $auto_backup_enabled);
             if ($auto_backup_enabled !== '1' && $auto_backup_enabled !== 1) {
                 error_log('PDF Builder: [AUTO BACKUP] Auto backup disabled, skipping');
                 return;
@@ -987,6 +988,8 @@ class PDF_Builder_Task_Scheduler {
                     error_log('PDF Builder: [AUTO BACKUP] Error creating backup: ' . ($result['message'] ?? 'Unknown error'));
                 } elseif (isset($result['success']) && $result['success'] === true) {
                     error_log('PDF Builder: [AUTO BACKUP] Backup created successfully: ' . ($result['filename'] ?? 'unknown'));
+                    // Mettre à jour le timestamp de la dernière sauvegarde automatique
+                    update_option('pdf_builder_last_auto_backup', time());
                 } else {
                     error_log('PDF Builder: [AUTO BACKUP] Unexpected result format from createBackup');
                 }
