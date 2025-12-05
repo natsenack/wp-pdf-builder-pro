@@ -15,9 +15,6 @@ $performance_auto_optimization = $settings['pdf_builder_performance_auto_optimiz
 $auto_maintenance = $settings['pdf_builder_systeme_auto_maintenance'] ?? '0';
 $last_maintenance = $settings['pdf_builder_last_maintenance'] ?? 'Jamais';
 $next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
-$auto_backup = $settings['pdf_builder_systeme_auto_backup'] ?? '0';
-$auto_backup_frequency = $settings['pdf_builder_systeme_auto_backup_frequency'] ?? 'daily';
-$backup_retention = intval($settings['pdf_builder_systeme_backup_retention'] ?? 30);
 $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
 $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
@@ -330,7 +327,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                         <h3>
                             <span>
                                 💾 Gestion des Sauvegardes
-                                <span class="backup-status"><?php echo $auto_backup === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
                     </header>
@@ -343,8 +339,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                             </header>
                             <ul>
                                 <li>Les sauvegardes contiennent tous vos paramètres PDF Builder</li>
-                                <li>Les sauvegardes automatiques sont créées quotidiennement</li>
-                                <li>Les anciennes sauvegardes sont supprimées automatiquement selon la rétention configurée</li>
+                                <li>Créez des sauvegardes manuellement selon vos besoins</li>
                             </ul>
                         </article>
 
@@ -384,46 +379,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <th scope="row">
-                                    <label for="systeme_auto_backup">Sauvegarde automatique</label>
-                                </th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php pdf_builder_safe_checked($auto_backup, '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <span>Active la création automatique de sauvegardes</span>
-                                </td>
-                            </tr>
-                            <tr id="auto_backup_frequency_row">
-                                <th scope="row">
-                                    <label for="systeme_auto_backup_frequency">Fréquence des sauvegardes</label>
-                                </th>
-                                <td>
-                                    <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" <?php echo ($auto_backup === '0') ? 'disabled' : ''; ?>>
-                                        <option value="every_minute" <?php pdf_builder_safe_selected($auto_backup_frequency, 'every_minute'); ?>>⚡ Toutes les minutes (test)</option>
-                                        <option value="daily" <?php pdf_builder_safe_selected($auto_backup_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
-                                        <option value="weekly" <?php pdf_builder_safe_selected($auto_backup_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
-                                        <option value="monthly" <?php pdf_builder_safe_selected($auto_backup_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
-                                    </select>
-                                    <!-- Champ hidden pour garantir que la valeur est toujours soumise, même si le select est disabled -->
-                                    <input type="hidden" name="systeme_auto_backup_frequency_hidden" value="<?php echo esc_attr($auto_backup_frequency); ?>" id="systeme_auto_backup_frequency_hidden">
-                                    <p class="description">Détermine la fréquence de création automatique des sauvegardes</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <label for="systeme_backup_retention">Rétention des sauvegardes</label>
-                                </th>
-                                <td>
-                                    <div class="backup-retention-input">
-                                        <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr($backup_retention); ?>" min="1" max="365">
-                                        <span>jours</span>
-                                    </div>
-                                    <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes (1-365 jours)</p>
-                                </td>
-                            </tr>
                         </table>
 
                         <!-- Métriques de sauvegarde -->
@@ -445,20 +400,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                     </div>
                                     <div class="metric-label">Total sauvegardes</div>
                                     <div class="metric-hint">Cliquez pour lister</div>
-                                </div>
-                                <div class="backup-metric-card" data-metric="auto-status">
-                                    <div class="metric-value">
-                                        <?php echo $auto_backup === '1' ? 'Activée' : 'Désactivée'; ?>
-                                    </div>
-                                    <div class="metric-label">Sauvegarde auto</div>
-                                    <div class="metric-hint">Cliquez pour configurer</div>
-                                </div>
-                                <div class="backup-metric-card" data-metric="retention">
-                                    <div class="metric-value">
-                                        <?php echo $backup_retention; ?>j
-                                    </div>
-                                    <div class="metric-label">Rétention</div>
-                                    <div class="metric-hint">Cliquez pour modifier</div>
                                 </div>
                             </div>
                         </article>
@@ -1234,158 +1175,6 @@ if ($cache_last_cleanup !== 'Jamais') {
             }
         });
     });
-
-    // Écouter les événements de sauvegarde automatique
-    $(document).on('pdf_builder_auto_backup_created', function() {
-        console.log('[DEBUG] Auto backup created event received, updating count...');
-        // Mettre à jour le compteur après un court délai pour laisser le temps à la sauvegarde de s'enregistrer
-        setTimeout(function() {
-            window.updateBackupCount();
-        }, 1500);
-    });
-
-    // Vérification périodique des nouvelles sauvegardes (toutes les 30 secondes si la page est active)
-    let lastBackupCount = 0;
-    let backupCheckInterval;
-
-    function startBackupCountMonitoring() {
-        // Arrêter l'intervalle existant s'il y en a un
-        if (backupCheckInterval) {
-            clearInterval(backupCheckInterval);
-        }
-
-        console.log('[AUTO BACKUP MONITOR] 🚀 Démarrage de la surveillance des sauvegardes automatiques');
-        console.log('[AUTO BACKUP MONITOR] ⏰ Vérification toutes les 30 secondes');
-
-        // Démarrer la vérification périodique
-        backupCheckInterval = setInterval(function() {
-            // Vérifier seulement si l'utilisateur est actif sur la page (pas d'inactivité prolongée)
-            if (document.visibilityState === 'visible') {
-                checkForNewBackups();
-            } else {
-                console.log('[AUTO BACKUP MONITOR] ⏸️ Vérification ignorée (page non visible)');
-            }
-        }, 30000); // Toutes les 30 secondes
-    }
-
-    function checkForNewBackups() {
-        console.log('[AUTO BACKUP MONITOR] 🔍 Vérification des nouvelles sauvegardes...');
-
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
-
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_list_backups',
-                nonce: nonce
-            },
-            success: function(response) {
-                if (response.success && response.data.backups) {
-                    const currentCount = response.data.backups.length;
-                    console.log('[AUTO BACKUP MONITOR] 📊 Nombre actuel de sauvegardes:', currentCount, '(précédent:', lastBackupCount, ')');
-
-                    if (lastBackupCount > 0 && currentCount > lastBackupCount) {
-                        // Nouvelle sauvegarde détectée !
-                        console.log('[AUTO BACKUP MONITOR] 🎉 NOUVELLE SAUVEGARDE AUTOMATIQUE DETECTEE!');
-                        console.log('[AUTO BACKUP MONITOR] 📈 Compteur passé de', lastBackupCount, 'à', currentCount);
-                        console.log('[AUTO BACKUP MONITOR] 🔄 Déclenchement de la mise à jour de l\'interface...');
-
-                        window.updateBackupCount();
-                    } else if (lastBackupCount === 0 && currentCount > 0) {
-                        console.log('[AUTO BACKUP MONITOR] 📋 Initialisation du compteur de sauvegardes:', currentCount);
-                    } else {
-                        console.log('[AUTO BACKUP MONITOR] ✅ Aucun changement détecté');
-                    }
-
-                    lastBackupCount = currentCount;
-                } else {
-                    console.log('[AUTO BACKUP MONITOR] ⚠️ Réponse invalide ou aucune sauvegarde trouvée');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.log('[AUTO BACKUP MONITOR] ❌ Erreur lors de la vérification des sauvegardes:', error);
-                console.log('[AUTO BACKUP MONITOR] 📋 Détails de l\'erreur:', xhr.status, xhr.statusText);
-            }
-        });
-    }
-
-    // Démarrer la surveillance quand la page se charge
-    $(document).ready(function() {
-        // Attendre un peu avant de commencer la surveillance pour laisser le temps au chargement initial
-        setTimeout(function() {
-            console.log('[AUTO BACKUP MONITOR] 🎯 Initialisation de la surveillance des sauvegardes automatiques');
-            startBackupCountMonitoring();
-        }, 2000);
-    });
-
-    // Arrêter la surveillance quand l'utilisateur quitte la page
-    $(window).on('beforeunload', function() {
-        if (backupCheckInterval) {
-            clearInterval(backupCheckInterval);
-        }
-    });
-
-    // Fonction globale pour mettre à jour le compteur de sauvegardes en temps réel
-    window.updateBackupCount = function() {
-        console.log('[AUTO BACKUP UPDATE] 🔄 Début de la mise à jour du compteur de sauvegardes');
-
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
-
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_list_backups',
-                nonce: nonce
-            },
-            success: function(response) {
-                if (response.success && response.data.backups) {
-                    const backupCount = response.data.backups.length;
-                    const countText = backupCount + ' sauvegarde' + (backupCount > 1 ? 's' : '') + ' disponible' + (backupCount > 1 ? 's' : '');
-
-                    console.log('[AUTO BACKUP UPDATE] 📊 Mise à jour du compteur:', countText, '(' + backupCount + ' sauvegarde(s))');
-
-                    // Animation du compteur pour indiquer le changement
-                    const $countInfo = $('#backup-count-info');
-                    const currentText = $countInfo.text();
-
-                    if (currentText !== countText) {
-                        console.log('[AUTO BACKUP UPDATE] ✨ Animation du compteur:', currentText, '→', countText);
-
-                        $countInfo.fadeOut(200, function() {
-                            $(this).text(countText).fadeIn(200);
-                        });
-
-                        // Ajouter un indicateur visuel "+1" temporaire
-                        const $headerInfo = $('.main-backup-header-info');
-                        const $plusOne = $('<span class="backup-count-plus-one" style="color: #28a745; font-weight: bold; margin-left: 8px; animation: fadeInOut 3s ease-in-out;">+1</span>');
-                        $headerInfo.append($plusOne);
-
-                        console.log('[AUTO BACKUP UPDATE] 🎯 Indicateur "+1" ajouté');
-
-                        // Supprimer l'indicateur après l'animation
-                        setTimeout(function() {
-                            $plusOne.fadeOut(500, function() {
-                                $(this).remove();
-                            });
-                            console.log('[AUTO BACKUP UPDATE] 🗑️ Indicateur "+1" supprimé');
-                        }, 2500);
-                    } else {
-                        console.log('[AUTO BACKUP UPDATE] ℹ️ Aucun changement visuel nécessaire');
-                    }
-
-                    console.log('[AUTO BACKUP UPDATE] ✅ Mise à jour terminée avec succès');
-                } else {
-                    console.log('[AUTO BACKUP UPDATE] ⚠️ Réponse invalide lors de la mise à jour');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.log('[AUTO BACKUP UPDATE] ❌ Erreur lors de la mise à jour du compteur:', error);
-                console.log('[AUTO BACKUP UPDATE] 📋 Détails de l\'erreur:', xhr.status, xhr.statusText);
-            }
-        });
-    };
 
 })(jQuery);
 </script>

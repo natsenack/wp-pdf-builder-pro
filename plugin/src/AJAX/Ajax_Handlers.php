@@ -179,14 +179,14 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $field_rules = [
             'text_fields' => [
                 'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
-                'pdf_quality', 'default_format', 'default_orientation', 'default_template', 'systeme_auto_backup_frequency',
+                'pdf_quality', 'default_format', 'default_orientation', 'default_template',
                 'pdf_builder_developer_password',
                 // Canvas text fields
                 'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_export_format',
                 'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
             ],
             'int_fields' => [
-                'cache_max_size', 'cache_ttl', 'systeme_backup_retention',
+                'cache_max_size', 'cache_ttl',
                 // Canvas int fields
                 'zoom_min', 'zoom_max', 'zoom_default', 'zoom_step', 'canvas_grid_size', 'canvas_export_quality',
                 'canvas_fps_target', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_dpi',
@@ -194,7 +194,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             ],
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
-                'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
+                'systeme_auto_maintenance', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
                 // Debug fields - AJOUTÉ POUR CORRIGER LE TOGGLE DEBUG JAVASCRIPT
                 'debug_javascript', 'pdf_builder_debug_javascript', 'debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose',

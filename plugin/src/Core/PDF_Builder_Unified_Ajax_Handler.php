@@ -396,8 +396,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $field_rules = [
             'text_fields' => [
                 'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
-                'pdf_quality', 'default_format', 'default_orientation', 'default_template', 'systeme_auto_backup_frequency',
-                'systeme_auto_backup_frequency_hidden',
+                'pdf_quality', 'default_format', 'default_orientation', 'default_template',
                 'pdf_builder_developer_password',
                 // License text fields
                 'pdf_builder_license_status', 'pdf_builder_license_key', 'pdf_builder_license_expires',
@@ -410,7 +409,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
             ],
             'int_fields' => [
-                'cache_max_size', 'cache_ttl', 'systeme_backup_retention',
+                'cache_max_size', 'cache_ttl',
                 // Canvas int fields
                 'zoom_min', 'zoom_max', 'zoom_default', 'zoom_step', 'canvas_grid_size', 'canvas_export_quality',
                 'canvas_fps_target', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_dpi',
@@ -418,7 +417,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             ],
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
-                'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
+                'systeme_auto_maintenance', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
                 // License bool fields
                 'pdf_builder_license_email_reminders',
@@ -771,20 +770,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
             'performance_auto_optimization' => isset($_POST['performance_auto_optimization']) ? '1' : '0',
             'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
-            'auto_backup' => $_POST['systeme_auto_backup'] ?? '0',
-            'auto_backup_frequency' => sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? $_POST['systeme_auto_backup_frequency_hidden'] ?? 'daily'),
-            'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
         ];
 
         foreach ($settings as $key => $value) {
             update_option('pdf_builder_' . $key, $value);
-        }
-
-        // Reprogrammer la sauvegarde automatique si la fréquence a changé
-        if (isset($settings['auto_backup_frequency'])) {
-            if (class_exists('PDF_Builder_Task_Scheduler')) {
-                PDF_Builder_Task_Scheduler::get_instance()->reschedule_auto_backup($settings['auto_backup_frequency']);
-            }
         }
 
         return count($settings);
