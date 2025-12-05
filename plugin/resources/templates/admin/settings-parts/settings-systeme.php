@@ -171,25 +171,25 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <h4>📊 État du système de cache</h4>
                             </header>
                             <div class="metric-grid">
-                                <div class="cache-metric-card" data-metric="size">
+                                <div class="cache-metric-card" data-metric="size" style="pointer-events: none; cursor: default;">
                                     <div class="metric-value">
                                         <span id="cache-size-display"><?php echo $cache_file_count; ?> fichiers</span>
                                     </div>
                                     <div class="metric-label">Taille du cache</div>
                                 </div>
-                                <div class="cache-metric-card" data-metric="transients">
+                                <div class="cache-metric-card" data-metric="transients" style="pointer-events: none; cursor: default;">
                                     <div class="metric-value">
                                         <?php echo intval($transient_count); ?>
                                     </div>
                                     <div class="metric-label">Transients actifs</div>
                                 </div>
-                                <div class="cache-metric-card systeme-cache-status" data-metric="status">
+                                <div class="cache-metric-card systeme-cache-status" data-metric="status" style="pointer-events: none; cursor: default;">
                                     <div class="cache-enabled-indicator metric-value">
                                     <?php echo $cache_enabled ? 'Cache activé' : 'Cache désactivé'; ?>
                                     </div>
                                     <div class="metric-label">État du cache</div>
                                 </div>
-                                <div class="cache-metric-card" data-metric="cleanup">
+                                <div class="cache-metric-card" data-metric="cleanup" style="pointer-events: none; cursor: default;">
                                     <div class="metric-value">
                                         <?php echo $cache_last_cleanup; ?>
                                     </div>
