@@ -61,6 +61,22 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
             <?php _e('Test Auto Backup', 'pdf-builder-pro'); ?>
         </button>
 
+        <div class="auto-backup-controls" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+            <h4 style="margin-top: 0; color: #495057;"><?php _e('Automatic Backups', 'pdf-builder-pro'); ?></h4>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <input type="checkbox" id="auto-backup-enabled" <?php checked(get_option('pdf_builder_auto_backup_enabled', '0'), '1'); ?>>
+                <label for="auto-backup-enabled" style="margin-left: 8px; font-weight: 500;">
+                    <?php _e('Enable automatic backups', 'pdf-builder-pro'); ?>
+                </label>
+            </div>
+            <p style="margin: 0; font-size: 12px; color: #6c757d;">
+                <?php _e('When enabled, the system will automatically create backups according to the selected frequency.', 'pdf-builder-pro'); ?>
+            </p>
+            <button type="button" id="toggle-auto-backup-btn" class="button button-small" style="margin-top: 10px;">
+                <?php _e('Save Auto Backup Setting', 'pdf-builder-pro'); ?>
+            </button>
+        </div>
+
         <div class="backup-frequency-controls" style="margin-top: 10px;">
             <label for="backup-frequency-select"><?php _e('Backup Frequency:', 'pdf-builder-pro'); ?></label>
             <select id="backup-frequency-select" class="small-text">
@@ -272,6 +288,41 @@ jQuery(document).ready(function($) {
                 console.error('PDF Builder: [TEST] AJAX error - error:', error);
                 $('#test-backup-btn').prop('disabled', false).text('<?php _e('Test Auto Backup', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
+            }
+        });
+    });
+
+    // Toggle auto backup enabled/disabled
+    $('#toggle-auto-backup-btn').on('click', function() {
+        var isEnabled = $('#auto-backup-enabled').is(':checked');
+        console.log('PDF Builder: [BACKUP] Toggle auto backup button clicked at', new Date().toISOString());
+        console.log('PDF Builder: [BACKUP] Auto backup enabled:', isEnabled);
+
+        $(this).prop('disabled', true).text('<?php _e('Saving...', 'pdf-builder-pro'); ?>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_toggle_auto_backup',
+                enabled: isEnabled ? '1' : '0',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+            },
+            success: function(response) {
+                console.log('PDF Builder: [BACKUP] Toggle auto backup AJAX response:', response);
+                $('#toggle-auto-backup-btn').prop('disabled', false).text('<?php _e('Save Auto Backup Setting', 'pdf-builder-pro'); ?>');
+                if (response.success) {
+                    console.log('PDF Builder: [BACKUP] Auto backup setting saved successfully');
+                    showSuccessNotification('<?php _e('Auto backup setting saved successfully!', 'pdf-builder-pro'); ?>');
+                } else {
+                    console.error('PDF Builder: [BACKUP] Error saving auto backup setting:', response.data);
+                    showErrorNotification('<?php _e('Error saving auto backup setting:', 'pdf-builder-pro'); ?> ' + response.data);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('PDF Builder: [BACKUP] Toggle auto backup AJAX error:', {xhr: xhr, status: status, error: error});
+                $('#toggle-auto-backup-btn').prop('disabled', false).text('<?php _e('Save Auto Backup Setting', 'pdf-builder-pro'); ?>');
+                showErrorNotification('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }
         });
     });

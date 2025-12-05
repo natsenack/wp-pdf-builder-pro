@@ -131,6 +131,7 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
         add_action('wp_ajax_pdf_builder_change_backup_frequency', [$this, 'ajax_change_backup_frequency']);
         add_action('wp_ajax_pdf_builder_test_manual_backup', [$this, 'ajax_test_manual_backup']);
+        add_action('wp_ajax_pdf_builder_toggle_auto_backup', [$this, 'ajax_toggle_auto_backup']);
         error_log('PDF Builder: AJAX actions registered');
     }
 
@@ -853,6 +854,44 @@ class PDF_Builder_Task_Scheduler {
         wp_send_json_success([
             'message' => 'Fréquence de sauvegarde mise à jour',
             'frequency' => $frequency
+        ]);
+    }
+
+    /**
+     * AJAX handler pour activer/désactiver les sauvegardes automatiques
+     */
+    public function ajax_toggle_auto_backup() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $enabled = isset($_POST['enabled']) ? sanitize_text_field($_POST['enabled']) : '0';
+        $enabled = in_array($enabled, ['0', '1']) ? $enabled : '0';
+
+        // Sauvegarder l'option
+        update_option('pdf_builder_auto_backup_enabled', $enabled);
+
+        // Si désactivé, annuler les tâches programmées
+        if ($enabled === '0') {
+            wp_clear_scheduled_hook('pdf_builder_auto_backup');
+            error_log('PDF Builder: [TOGGLE] Auto backup disabled, cleared scheduled hook');
+        } else {
+            // Si activé, reprogrammer les tâches
+            $this->schedule_tasks();
+            error_log('PDF Builder: [TOGGLE] Auto backup enabled, scheduled tasks');
+        }
+
+        wp_send_json_success([
+            'message' => $enabled === '1' ? 'Sauvegardes automatiques activées' : 'Sauvegardes automatiques désactivées',
+            'enabled' => $enabled
         ]);
     }
 
