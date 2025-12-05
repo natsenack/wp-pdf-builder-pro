@@ -4141,7 +4141,7 @@ input:checked + .toggle-slider:before {
 
 /* Contenu des onglets */
 .tab-content {
-    display: none;
+    display: block; /* Temporaire pour debug */
 }
 
 .tab-content.active {
