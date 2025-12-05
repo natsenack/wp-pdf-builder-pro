@@ -102,251 +102,13 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Enregistre les actions AJAX pour le diagnostic et la réparation du système cron
+     * Enregistre les actions AJAX pour le diagnostic cron
      */
     private function register_ajax_actions() {
         add_action('wp_ajax_pdf_builder_diagnose_cron', [$this, 'ajax_diagnose_cron']);
         add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
-    }
-
-    /**
-     * AJAX handler pour diagnostiquer le système cron
-     */
-    public function ajax_diagnose_cron() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
-        }
-
-        try {
-            $status = $this->diagnose_cron_system();
-            wp_send_json_success([
-                'status' => $status['status'],
-                'details' => $status['details']
-            ]);
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur lors du diagnostic: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * AJAX handler pour réparer le système cron
-     */
-    public function ajax_repair_cron() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
-        }
-
-        try {
-            $result = $this->repair_cron_system();
-            wp_send_json_success(['message' => $result['message']]);
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur lors de la réparation: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * AJAX handler pour obtenir les statistiques de sauvegarde
-     */
-    public function ajax_get_backup_stats() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
-        }
-
-        try {
-            $stats = $this->get_backup_statistics();
-            wp_send_json_success(['stats' => $stats]);
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur lors de la récupération des statistiques: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * AJAX handler pour créer une sauvegarde manuelle
-     */
-    public function ajax_create_backup() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
-            return;
-        }
-
-        try {
-            $result = $this->create_manual_backup();
-            wp_send_json_success(['message' => $result['message']]);
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur lors de la création de la sauvegarde: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Diagnostique le système cron
-     */
-    private function diagnose_cron_system() {
-        $status = [];
-        $details = [];
-
-        // Vérifier si WP Cron est activé
-        if (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) {
-            $status[] = '❌ WP Cron est désactivé (DISABLE_WP_CRON = true)';
-            $details[] = 'Le cron WordPress est désactivé. Les tâches planifiées ne s\'exécuteront pas automatiquement.';
-        } else {
-            $status[] = '✅ WP Cron est activé';
-        }
-
-        // Vérifier les tâches planifiées
-        $scheduled_tasks = [];
-        foreach (self::TASKS as $task_name => $task_config) {
-            $next_run = wp_next_scheduled($task_name);
-            if ($next_run) {
-                $scheduled_tasks[] = "✅ $task_name - Prochaine exécution: " . date('Y-m-d H:i:s', $next_run);
-            } else {
-                $scheduled_tasks[] = "❌ $task_name - Non planifiée";
-            }
-        }
-
-        if (!empty($scheduled_tasks)) {
-            $status[] = 'Tâches planifiées:';
-            $details = array_merge($details, $scheduled_tasks);
-        }
-
-        // Vérifier les dernières exécutions
-        $last_runs = [];
-        foreach (self::TASKS as $task_name => $task_config) {
-            $last_run = get_option("pdf_builder_last_run_$task_name");
-            if ($last_run) {
-                $last_runs[] = "$task_name: $last_run";
-            }
-        }
-
-        if (!empty($last_runs)) {
-            $details[] = '';
-            $details[] = 'Dernières exécutions:';
-            $details = array_merge($details, $last_runs);
-        }
-
-        return [
-            'status' => implode("\n", $status),
-            'details' => implode("\n", $details)
-        ];
-    }
-
-    /**
-     * Répare le système cron
-     */
-    private function repair_cron_system() {
-        // Annuler toutes les tâches existantes
-        $this->unschedule_all_tasks();
-
-        // Reprogrammer toutes les tâches
-        $this->schedule_tasks();
-
-        return [
-            'message' => 'Système cron réparé. Toutes les tâches ont été reprogrammées.'
-        ];
-    }
-
-    /**
-     * Obtient les statistiques de sauvegarde
-     */
-    private function get_backup_statistics() {
-        $backup_dir = PDF_BUILDER_PLUGIN_DIR . 'backups/pdf-builder-backups/';
-        $stats = [
-            'total_backups' => 0,
-            'total_size' => 0,
-            'last_backup' => null,
-            'oldest_backup' => null
-        ];
-
-        if (is_dir($backup_dir)) {
-            $files = glob($backup_dir . '*.json');
-            $stats['total_backups'] = count($files);
-
-            $sizes = [];
-            $dates = [];
-
-            foreach ($files as $file) {
-                $sizes[] = filesize($file);
-                $dates[] = filemtime($file);
-            }
-
-            if (!empty($sizes)) {
-                $stats['total_size'] = array_sum($sizes);
-            }
-
-            if (!empty($dates)) {
-                $stats['last_backup'] = date('Y-m-d H:i:s', max($dates));
-                $stats['oldest_backup'] = date('Y-m-d H:i:s', min($dates));
-            }
-        }
-
-        return $stats;
-    }
-
-    /**
-     * Crée une sauvegarde manuelle
-     */
-    private function create_manual_backup() {
-        // Utiliser la fonction existante de sauvegarde si elle existe
-        if (function_exists('pdf_builder_create_backup')) {
-            $result = pdf_builder_create_backup('manual');
-            if ($result) {
-                return ['message' => 'Sauvegarde manuelle créée avec succès.'];
-            }
-        }
-
-        // Fallback: créer un fichier de sauvegarde basique
-        $backup_data = [
-            'timestamp' => current_time('mysql'),
-            'type' => 'manual',
-            'settings' => get_option('pdf_builder_settings', []),
-            'version' => PDF_BUILDER_VERSION ?? '1.0.0'
-        ];
-
-        $backup_dir = PDF_BUILDER_PLUGIN_DIR . 'backups/pdf-builder-backups/';
-        if (!is_dir($backup_dir)) {
-            wp_mkdir_p($backup_dir);
-        }
-
-        $filename = 'pdf-builder-backup-manual-' . date('Y-m-d-H-i-s') . '.json';
-        $filepath = $backup_dir . $filename;
-
-        if (file_put_contents($filepath, json_encode($backup_data, JSON_PRETTY_PRINT))) {
-            return ['message' => 'Sauvegarde manuelle créée: ' . $filename];
-        } else {
-            throw new Exception('Impossible de créer le fichier de sauvegarde');
-        }
     }
 
     /**
@@ -1091,6 +853,105 @@ class PDF_Builder_Task_Scheduler {
         }
 
         return $stats;
+    }
+
+    /**
+     * AJAX handler pour diagnostiquer le système cron
+     */
+    public function ajax_diagnose_cron() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        try {
+            $result = $this->diagnose_cron_system();
+            wp_send_json_success([
+                'status' => $result['cron_disabled'] ? 'Cron désactivé' : 'Cron actif',
+                'details' => implode("\n", array_merge($result['issues'], $result['recommendations']))
+            ]);
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors du diagnostic: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * AJAX handler pour réparer le système cron
+     */
+    public function ajax_repair_cron() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        try {
+            $result = $this->repair_cron_system();
+            wp_send_json_success(['message' => implode("\n", $result)]);
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors de la réparation: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * AJAX handler pour obtenir les statistiques de sauvegarde
+     */
+    public function ajax_get_backup_stats() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        try {
+            $stats = $this->get_backup_statistics();
+            wp_send_json_success(['stats' => $stats]);
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors de la récupération des statistiques: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * AJAX handler pour créer une sauvegarde manuelle
+     */
+    public function ajax_create_backup() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        try {
+            $this->create_auto_backup();
+            wp_send_json_success(['message' => 'Sauvegarde manuelle créée avec succès']);
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors de la création de la sauvegarde: ' . $e->getMessage()]);
+        }
     }
 
     /**
