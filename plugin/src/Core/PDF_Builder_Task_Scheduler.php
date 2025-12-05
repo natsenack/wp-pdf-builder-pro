@@ -741,7 +741,7 @@ class PDF_Builder_Task_Scheduler {
      */
     public function ajax_check_wp_cron_config() {
         // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
@@ -765,7 +765,7 @@ class PDF_Builder_Task_Scheduler {
      */
     public function ajax_check_scheduled_tasks() {
         // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }

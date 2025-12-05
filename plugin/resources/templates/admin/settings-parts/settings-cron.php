@@ -104,9 +104,9 @@ jQuery(document).ready(function($) {
                 console.log('PDF Builder: [CRON] Response success:', response.success);
                 if (response.success) {
                     console.log('PDF Builder: [CRON] Cron status updated successfully');
-                    $('#cron-status-display').html('<pre>' + response.data.status + '</pre>');
+                    $('#cron-status-display').html('<pre>' + JSON.stringify(response.data, null, 2) + '</pre>');
                     $('#cron-results').show();
-                    $('#cron-results-content').html('<pre>' + response.data.details + '</pre>');
+                    $('#cron-results-content').html('<pre>Diagnostics completed successfully</pre>');
                 } else {
                     console.error('PDF Builder: [CRON] Error diagnosing cron system:', response.data);
                     alert('<?php _e('Error diagnosing cron system:', 'pdf-builder-pro'); ?> ' + response.data);
@@ -308,7 +308,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_check_wp_cron_config',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 console.log('PDF Builder: [WP CRON] Config check response:', response);
@@ -333,7 +333,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_check_scheduled_tasks',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
             success: function(response) {
                 console.log('PDF Builder: [WP CRON] Scheduled tasks check response:', response);
