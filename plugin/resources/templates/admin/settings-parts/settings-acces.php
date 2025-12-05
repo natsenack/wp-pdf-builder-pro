@@ -180,7 +180,8 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'pdf_builder_save_system_settings',
+                action: 'pdf_builder_save_settings',
+                tab: 'acces',
                 pdf_builder_allowed_roles: selectedRoles,
                 nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
             },
