@@ -12,6 +12,10 @@ function pdf_builder_save_allowed_roles($roles) {
     error_log('[SAVE ROLES] Raw input: ' . print_r($roles, true));
     error_log('[SAVE ROLES] Type of input: ' . gettype($roles));
     
+    // Unslash the input first (WordPress slashes POST data)
+    $roles = wp_unslash($roles);
+    error_log('[SAVE ROLES] After wp_unslash: ' . print_r($roles, true));
+    
     // Décoder le JSON si c'est une string JSON
     if (is_string($roles) && (strpos($roles, '[') === 0 || strpos($roles, '{') === 0)) {
         error_log('[SAVE ROLES] Input is JSON string, decoding...');

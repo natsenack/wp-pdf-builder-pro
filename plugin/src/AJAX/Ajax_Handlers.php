@@ -336,6 +336,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $option_value = array_map('sanitize_text_field', $value);
                     $settings[$option_key] = $option_value;
                 } else {
+                    // Unslash the value first (WordPress slashes POST data)
+                    $value = wp_unslash($value);
                     // Traiter les JSON strings pour les arrays
                     if (is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
                         $decoded = json_decode($value, true);
