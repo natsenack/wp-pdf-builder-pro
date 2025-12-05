@@ -1,6 +1,6 @@
 <?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
-require_once __DIR__ . '/settings-helpers.php';
+require_once __DIR__ . '/../settings-helpers.php';
 ?>
 
             <h2>📄 Configuration PDF</h2>

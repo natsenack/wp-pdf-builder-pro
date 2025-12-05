@@ -6,7 +6,7 @@
  * Updated: 2025-12-02 - Code réorganisé pour une meilleure lisibilité
  */
 
-require_once __DIR__ . '/settings-helpers.php';
+require_once __DIR__ . '/../settings-helpers.php';
 
 // =============================================================================
 // CLASSE UTILITAIRE POUR LA GESTION DES STATUTS ET PLUGINS

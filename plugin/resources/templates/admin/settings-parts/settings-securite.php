@@ -1,6 +1,6 @@
 <?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
-require_once __DIR__ . '/settings-helpers.php';
+require_once __DIR__ . '/../settings-helpers.php';
 
 // Préparer les variables nécessaires
 $security_level = pdf_builder_safe_get_option('pdf_builder_security_level', 'medium');

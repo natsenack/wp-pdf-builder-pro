@@ -1,6 +1,6 @@
 <?php // Acces tab content - Updated: 2025-11-18 20:20:00
 
-    require_once __DIR__ . '/settings-helpers.php';
+    require_once __DIR__ . '/../settings-helpers.php';
 
     global $wp_roles;
     $all_roles = $wp_roles->roles;
