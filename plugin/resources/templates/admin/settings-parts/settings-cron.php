@@ -41,18 +41,26 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+    console.log('PDF Builder: Cron diagnostics script loaded');
+    console.log('ajaxurl:', typeof ajaxurl !== 'undefined' ? ajaxurl : 'NOT DEFINED');
+
     // Diagnose cron system
     $('#diagnose-cron-btn').on('click', function() {
+        console.log('PDF Builder: Diagnose button clicked');
         $(this).prop('disabled', true).text('<?php _e('Diagnosing...', 'pdf-builder-pro'); ?>');
+
+        var ajaxData = {
+            action: 'pdf_builder_diagnose_cron',
+            nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
+        };
+        console.log('PDF Builder: Sending AJAX data:', ajaxData);
 
         $.ajax({
             url: ajaxurl,
             type: 'POST',
-            data: {
-                action: 'pdf_builder_diagnose_cron',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_admin_nonce'); ?>'
-            },
+            data: ajaxData,
             success: function(response) {
+                console.log('PDF Builder: AJAX success response:', response);
                 $('#diagnose-cron-btn').prop('disabled', false).text('<?php _e('Diagnose Cron System', 'pdf-builder-pro'); ?>');
                 if (response.success) {
                     $('#cron-status-display').html('<pre>' + response.data.status + '</pre>');
@@ -62,7 +70,10 @@ jQuery(document).ready(function($) {
                     alert('<?php _e('Error diagnosing cron system:', 'pdf-builder-pro'); ?> ' + response.data);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.log('PDF Builder: AJAX error - xhr:', xhr);
+                console.log('PDF Builder: AJAX error - status:', status);
+                console.log('PDF Builder: AJAX error - error:', error);
                 $('#diagnose-cron-btn').prop('disabled', false).text('<?php _e('Diagnose Cron System', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }

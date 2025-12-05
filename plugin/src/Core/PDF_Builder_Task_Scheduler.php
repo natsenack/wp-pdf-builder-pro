@@ -4,6 +4,8 @@
  * Gère les tâches automatiques et planifiées du plugin
  */
 
+error_log('PDF Builder: Task Scheduler file loaded');
+
 class PDF_Builder_Task_Scheduler {
     private static $instance = null;
 

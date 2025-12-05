@@ -1661,5 +1661,25 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 });
 
 // ============================================================================
+// ✅ CHARGEMENT DU PLANIFICATEUR DE TÂCHES
+// ============================================================================
+
+/**
+ * Charger le planificateur de tâches
+ */
+function pdf_builder_load_task_scheduler() {
+    $task_scheduler_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
+    if (file_exists($task_scheduler_path)) {
+        require_once $task_scheduler_path;
+        error_log('PDF Builder: Task Scheduler loaded successfully');
+    } else {
+        error_log('PDF Builder: Task Scheduler file not found: ' . $task_scheduler_path);
+    }
+}
+
+// Charger le planificateur de tâches au démarrage
+add_action('init', 'pdf_builder_load_task_scheduler', 5);
+
+// ============================================================================
 // FIN DU BOOTSTRAP
 // ============================================================================
