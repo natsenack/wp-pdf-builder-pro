@@ -366,11 +366,6 @@
 
                 // Ajouter les données du formulaire à allData
                 allData[formId] = formObject;
-
-                // DEBUG TEMPORAIRE pour acces-form
-                if (formId === 'acces-form') {
-                    console.log('PDF Builder - Données acces-form:', formObject);
-                }
             }
         });
 
@@ -465,9 +460,6 @@
         };
 
         debugLog('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
-
-        // DEBUG TEMPORAIRE - Log des données envoyées
-        console.log('PDF Builder - DONNÉES ENVOYÉES VIA AJAX:', ajaxData);
 
         // Envoyer via AJAX
         fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
