@@ -81,8 +81,13 @@
 
             // Activer le contenu correspondant
             const content = document.getElementById('tab-content-' + tabId);
+            console.log('PDF Builder - Looking for content with ID:', 'tab-content-' + tabId);
+            console.log('PDF Builder - Found content element:', content);
             if (content) {
                 content.classList.add('active');
+                console.log('PDF Builder - Added active class to content');
+            } else {
+                console.log('PDF Builder - Content element not found!');
             }
 
             // Sauvegarder dans localStorage
@@ -110,8 +115,12 @@
 
         // Activer le premier onglet par défaut
         const firstTab = tabsContainer.querySelector('.nav-tab');
+        console.log('PDF Builder - First tab found:', firstTab);
         if (firstTab) {
+            console.log('PDF Builder - Clicking first tab');
             firstTab.click();
+        } else {
+            console.log('PDF Builder - No first tab found');
         }
     }
 
