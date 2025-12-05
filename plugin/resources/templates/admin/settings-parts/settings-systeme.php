@@ -569,6 +569,133 @@ if ($cache_last_cleanup !== 'Jamais') {
         });
     });
 
+    // Gestionnaire pour le bouton d'optimisation de la base de données
+    $('#optimize-db-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $results = $('#maintenance-results');
+
+        // Désactiver le bouton pendant l'optimisation
+        $btn.prop('disabled', true).text('🗃️ Optimisation en cours...');
+        $results.html('<span style="color: #007cba;">Optimisation de la base de données en cours...</span>');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_optimize_database',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $results.html('<div style="color: #28a745; margin-top: 10px; white-space: pre-line;">' + response.data.message + '</div>');
+                    showSystemNotification('Base de données optimisée avec succès', 'success');
+                } else {
+                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de l\'optimisation</div>');
+                    showSystemNotification('Erreur lors de l\'optimisation de la base', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
+                showSystemNotification('Erreur de connexion lors de l\'optimisation', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).text('🗃️ Optimiser la base');
+            }
+        });
+    });
+
+    // Gestionnaire pour le bouton de réparation des templates
+    $('#repair-templates-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $results = $('#maintenance-results');
+
+        // Désactiver le bouton pendant la réparation
+        $btn.prop('disabled', true).text('🔧 Réparation en cours...');
+        $results.html('<span style="color: #007cba;">Vérification et réparation des templates en cours...</span>');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_repair_templates',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $results.html('<div style="color: #28a745; margin-top: 10px; white-space: pre-line;">' + response.data.message + '</div>');
+                    showSystemNotification('Templates vérifiés et réparés', 'success');
+                } else {
+                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de la réparation</div>');
+                    showSystemNotification('Erreur lors de la réparation des templates', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
+                showSystemNotification('Erreur de connexion lors de la réparation', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).text('🔧 Réparer les templates');
+            }
+        });
+    });
+
+    // Gestionnaire pour le bouton de suppression des fichiers temporaires
+    $('#remove-temp-btn').on('click', function(e) {
+        e.preventDefault();
+
+        if (!confirm('Êtes-vous sûr de vouloir supprimer tous les fichiers temporaires ? Cette action est irréversible.')) {
+            return;
+        }
+
+        const $btn = $(this);
+        const $results = $('#maintenance-results');
+
+        // Désactiver le bouton pendant le nettoyage
+        $btn.prop('disabled', true).text('🗂️ Suppression en cours...');
+        $results.html('<span style="color: #007cba;">Suppression des fichiers temporaires en cours...</span>');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_remove_temp_files',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $results.html('<div style="color: #28a745; margin-top: 10px; white-space: pre-line;">' + response.data.message + '</div>');
+                    showSystemNotification('Fichiers temporaires supprimés', 'success');
+                } else {
+                    $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de la suppression</div>');
+                    showSystemNotification('Erreur lors de la suppression des fichiers temporaires', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
+                showSystemNotification('Erreur de connexion lors de la suppression', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
+            }
+        });
+    });
+
     // Fonction utilitaire pour afficher les notifications
     function showSystemNotification(message, type = 'info') {
         // Utiliser les fonctions de notification globales

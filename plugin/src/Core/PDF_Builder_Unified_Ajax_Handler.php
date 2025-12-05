@@ -45,6 +45,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions de maintenance
         add_action('wp_ajax_pdf_builder_optimize_database', [$this, 'handle_optimize_database']);
         add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'handle_remove_temp_files']);
+        add_action('wp_ajax_pdf_builder_repair_templates', [$this, 'handle_repair_templates']);
         add_action('wp_ajax_pdf_builder_clear_temp', [$this, 'handle_clear_temp_files']);
 
         // Actions de sauvegarde
@@ -1051,7 +1052,45 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        wp_send_json_error(['message' => 'Handler not implemented']);
+        try {
+            global $wpdb;
+
+            // Obtenir la taille de la base avant optimisation
+            $size_before = $this->get_database_size();
+
+            // Optimiser toutes les tables du plugin
+            $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
+            $optimized_tables = 0;
+            $errors = [];
+
+            foreach ($tables as $table) {
+                $table_name = $table[0];
+                $result = $wpdb->query("OPTIMIZE TABLE `$table_name`");
+
+                if ($result === false) {
+                    $errors[] = "Erreur sur la table $table_name: " . $wpdb->last_error;
+                } else {
+                    $optimized_tables++;
+                }
+            }
+
+            // Obtenir la taille après optimisation
+            $size_after = $this->get_database_size();
+
+            $message = "✅ Base de données optimisée avec succès\n";
+            $message .= "• Tables optimisées: $optimized_tables\n";
+            $message .= "• Taille avant: {$size_before} MB\n";
+            $message .= "• Taille après: {$size_after} MB";
+
+            if (!empty($errors)) {
+                $message .= "\n⚠️ Erreurs rencontrées:\n" . implode("\n", $errors);
+            }
+
+            wp_send_json_success(['message' => $message]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => '❌ Erreur lors de l\'optimisation: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -1062,7 +1101,103 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        wp_send_json_error(['message' => 'Handler not implemented']);
+        try {
+            $upload_dir = wp_upload_dir();
+            $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+            $deleted_files = 0;
+            $deleted_size = 0;
+
+            // Supprimer les fichiers temporaires du plugin
+            if (is_dir($temp_dir)) {
+                $files = glob($temp_dir . '/*');
+                foreach ($files as $file) {
+                    if (is_file($file)) {
+                        $file_age = time() - filemtime($file);
+                        // Supprimer les fichiers de plus de 24 heures
+                        if ($file_age > 86400) {
+                            $file_size = filesize($file);
+                            if (unlink($file)) {
+                                $deleted_files++;
+                                $deleted_size += $file_size;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Nettoyer les transients temporaires du plugin
+            global $wpdb;
+            $transient_count = $wpdb->query(
+                $wpdb->prepare(
+                    "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = '1'",
+                    '_transient_pdf_builder_temp_%'
+                )
+            );
+
+            $message = "✅ Fichiers temporaires nettoyés\n";
+            $message .= "• Fichiers supprimés: $deleted_files\n";
+            $message .= "• Espace libéré: " . number_format($deleted_size / 1024, 1) . " KB\n";
+            $message .= "• Transients nettoyés: " . intval($transient_count);
+
+            wp_send_json_success(['message' => $message]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => '❌ Erreur lors du nettoyage: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Handler pour réparer les templates
+     */
+    public function handle_repair_templates() {
+        if (!$this->nonce_manager->validate_ajax_request('repair_templates')) {
+            return;
+        }
+
+        try {
+            $repaired_templates = 0;
+            $errors = [];
+
+            // Vérifier et réparer les templates par défaut
+            $default_templates = [
+                'invoice' => 'Template Facture',
+                'quote' => 'Template Devis',
+                'receipt' => 'Template Reçu',
+                'blank' => 'Template Vierge'
+            ];
+
+            foreach ($default_templates as $template_id => $template_name) {
+                $template_option = get_option("pdf_builder_template_{$template_id}", '');
+
+                if (empty($template_option)) {
+                    // Template manquant, le recréer avec des valeurs par défaut
+                    $default_content = $this->get_default_template_content($template_id);
+                    update_option("pdf_builder_template_{$template_id}", $default_content);
+                    $repaired_templates++;
+                }
+            }
+
+            // Vérifier l'intégrité des templates existants
+            $all_templates = get_option('pdf_builder_templates', []);
+            if (!is_array($all_templates)) {
+                update_option('pdf_builder_templates', []);
+                $errors[] = "Liste des templates corrompue, réinitialisée";
+            }
+
+            $message = "✅ Templates vérifiés et réparés\n";
+            $message .= "• Templates réparés: $repaired_templates\n";
+
+            if (!empty($errors)) {
+                $message .= "⚠️ Problèmes détectés:\n" . implode("\n", $errors);
+            } else {
+                $message .= "• Aucun problème détecté";
+            }
+
+            wp_send_json_success(['message' => $message]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => '❌ Erreur lors de la réparation: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -1732,7 +1867,19 @@ class PDF_Builder_Unified_Ajax_Handler {
 
          return $result ? $result->size_mb . ' MB' : 'Unknown';
      }
- }
 
-// Initialiser le handler unifié
+    /**
+     * Retourne le contenu par défaut d'un template
+     */
+    private function get_default_template_content($template_id) {
+        $templates = [
+            'invoice' => '<h1>Facture</h1><p>Template de facture par défaut</p>',
+            'quote' => '<h1>Devis</h1><p>Template de devis par défaut</p>',
+            'receipt' => '<h1>Reçu</h1><p>Template de reçu par défaut</p>',
+            'blank' => '<div style="text-align: center; padding: 50px;"><h1>Template Vierge</h1><p>Commencez à créer votre PDF ici</p></div>'
+        ];
+
+        return $templates[$template_id] ?? '<h1>Template</h1><p>Contenu par défaut</p>';
+     }
+}// Initialiser le handler unifié
 PDF_Builder_Unified_Ajax_Handler::get_instance();
