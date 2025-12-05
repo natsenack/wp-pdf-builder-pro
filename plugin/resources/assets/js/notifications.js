@@ -443,7 +443,7 @@
                     }
                 })
                 .fail((error) => {
-                    if (window.pdfBuilderDebugSettings?.javascript) // console.error('Failed to send AJAX notification:', error);
+                    // if (window.pdfBuilderDebugSettings?.javascript) console.error('Failed to send AJAX notification:', error);
                 });
         }
 
