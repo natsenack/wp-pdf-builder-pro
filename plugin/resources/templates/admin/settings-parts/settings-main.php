@@ -37,7 +37,7 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
 
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
-            <?php require_once 'settings-acces.php'; ?>
+            <?php require_once __DIR__ . '/settings-acces.php'; ?>
         </div>
 
         <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
