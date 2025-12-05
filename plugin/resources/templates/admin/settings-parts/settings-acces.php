@@ -89,7 +89,7 @@
                                                 id="role_<?php echo esc_attr($role_key); ?>"
                                                 name="pdf_builder_allowed_roles[]"
                                                 value="<?php echo esc_attr($role_key); ?>"
-                                                <?php pdf_builder_safe_checked($is_selected); ?>
+                                                <?php echo $is_selected ? 'checked="checked"' : ''; ?>
                                                 <?php echo $is_admin ? 'disabled' : ''; ?> />
                                             <label for="role_<?php echo esc_attr($role_key); ?>" class="toggle-slider"></label>
                                         </div>
@@ -137,13 +137,24 @@
 
 <script>
 jQuery(document).ready(function($) {
+    console.log('PDF Builder - Access tab JavaScript loaded');
+
+    // Fonction pour mettre à jour le compteur
+    function updateSelectedCount() {
+        var count = $('input[name="pdf_builder_allowed_roles[]"]:checked:not(:disabled)').length;
+        $('#selected-count').text(count);
+        console.log('PDF Builder - Updated count:', count);
+    }
+
     // Gestion des boutons de contrôle rapide
     $('#select-all-roles').on('click', function() {
+        console.log('PDF Builder - Select all clicked');
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', true);
         updateSelectedCount();
     });
 
     $('#select-common-roles').on('click', function() {
+        console.log('PDF Builder - Select common clicked');
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', false);
         // Sélectionner les rôles courants
         $('input[name="pdf_builder_allowed_roles[]"][value="administrator"]').prop('checked', true);
@@ -153,38 +164,20 @@ jQuery(document).ready(function($) {
     });
 
     $('#select-none-roles').on('click', function() {
+        console.log('PDF Builder - Select none clicked');
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', false);
         updateSelectedCount();
     });
 
-    // Mettre à jour le compteur de rôles sélectionnés
-    function updateSelectedCount() {
-        var count = $('input[name="pdf_builder_allowed_roles[]"]:checked').length;
-        $('#selected-count').text(count);
-    }
+    // Mettre à jour le compteur au changement des checkboxes
+    $(document).on('change', 'input[name="pdf_builder_allowed_roles[]"]', function() {
+        updateSelectedCount();
+    });
 
-    // Fonction pour afficher les notices
-    function showNotice(message, type) {
-        // Supprimer les notices existantes
-        $('.pdf-builder-notice').remove();
-
-        // Créer la nouvelle notice
-        var noticeClass = type === 'success' ? 'notice-success' : 'notice-error';
-        var notice = $('<div class="notice ' + noticeClass + ' is-dismissible pdf-builder-notice"><p>' + message + '</p></div>');
-
-        // Ajouter au début du conteneur principal
-        $('.wrap').prepend(notice);
-
-        // Auto-dismiss après 5 secondes
-        setTimeout(function() {
-            notice.fadeOut(function() {
-                $(this).remove();
-            });
-        }, 5000);
-    }
-
-    // Initialiser le compteur au chargement
+    // Initialiser le compteur
     updateSelectedCount();
+
+    console.log('PDF Builder - Access tab JavaScript initialized');
 });
 </script>
 
