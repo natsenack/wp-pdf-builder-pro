@@ -305,5 +305,3 @@ class PdfBuilderDragDropManager
         return $stats;
     }
 }
- 
- 

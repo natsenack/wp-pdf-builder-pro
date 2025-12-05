@@ -41,7 +41,7 @@
 
                         <!-- Access Settings Section (No Form - AJAX Centralized) -->
                         <form method="post" id="acces-form">
-                        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_acces_nonce'); ?>
+                        <?php wp_nonce_field('save_settings', 'pdf_builder_acces_nonce'); ?>
                         <input type="hidden" name="submit_acces" value="1">
                         <section id="access-settings-container" aria-label="Paramètres d'accès">
 
@@ -138,47 +138,93 @@
 
 <script>
 jQuery(document).ready(function($) {
-    
 
     // Fonction pour mettre à jour le compteur
     function updateSelectedCount() {
         var count = $('input[name="pdf_builder_allowed_roles[]"]:checked:not(:disabled)').length;
         $('#selected-count').text(count);
-        
+    }
+
+    // Fonction pour sauvegarder dynamiquement les rôles
+    function saveRolesDynamically() {
+        var selectedRoles = [];
+        $('input[name="pdf_builder_allowed_roles[]"]:checked:not(:disabled)').each(function() {
+            selectedRoles.push($(this).val());
+        });
+
+        // Afficher un indicateur de sauvegarde
+        var $indicator = $('<span class="saving-indicator" style="color: #007cba; margin-left: 10px;">💾 Sauvegarde...</span>');
+        $('.access-selected-count').append($indicator);
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_save_settings',
+                tab: 'acces',
+                pdf_builder_allowed_roles: selectedRoles,
+                pdf_builder_acces_nonce: $('#pdf_builder_acces_nonce').val()
+            },
+            success: function(response) {
+                $indicator.remove();
+                if (response.success) {
+                    // Afficher un message de succès temporaire
+                    var $success = $('<span class="save-success" style="color: #46b450; margin-left: 10px;">✅ Sauvegardé</span>');
+                    $('.access-selected-count').append($success);
+                    setTimeout(function() {
+                        $success.fadeOut(function() { $(this).remove(); });
+                    }, 2000);
+                } else {
+                    // Afficher un message d'erreur
+                    var $error = $('<span class="save-error" style="color: #d63638; margin-left: 10px;">❌ Erreur</span>');
+                    $('.access-selected-count').append($error);
+                    setTimeout(function() {
+                        $error.fadeOut(function() { $(this).remove(); });
+                    }, 3000);
+                }
+            },
+            error: function() {
+                $indicator.remove();
+                var $error = $('<span class="save-error" style="color: #d63638; margin-left: 10px;">❌ Erreur de connexion</span>');
+                $('.access-selected-count').append($error);
+                setTimeout(function() {
+                    $error.fadeOut(function() { $(this).remove(); });
+                }, 3000);
+            }
+        });
     }
 
     // Gestion des boutons de contrôle rapide
     $('#select-all-roles').on('click', function() {
-        
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', true);
         updateSelectedCount();
+        saveRolesDynamically();
     });
 
     $('#select-common-roles').on('click', function() {
-        
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', false);
         // Sélectionner les rôles courants
         $('input[name="pdf_builder_allowed_roles[]"][value="administrator"]').prop('checked', true);
         $('input[name="pdf_builder_allowed_roles[]"][value="editor"]').prop('checked', true);
         $('input[name="pdf_builder_allowed_roles[]"][value="shop_manager"]').prop('checked', true);
         updateSelectedCount();
+        saveRolesDynamically();
     });
 
     $('#select-none-roles').on('click', function() {
-        
         $('input[name="pdf_builder_allowed_roles[]"]:not(:disabled)').prop('checked', false);
         updateSelectedCount();
+        saveRolesDynamically();
     });
 
-    // Mettre à jour le compteur au changement des checkboxes
+    // Mettre à jour le compteur et sauvegarder au changement des checkboxes
     $(document).on('change', 'input[name="pdf_builder_allowed_roles[]"]', function() {
         updateSelectedCount();
+        saveRolesDynamically();
     });
 
     // Initialiser le compteur
     updateSelectedCount();
-
-    
 });
 </script>
 

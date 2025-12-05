@@ -75,22 +75,8 @@ Write-Host ("=" * 60) -ForegroundColor White
 
 Write-Host "`n1 Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
 
-try {
-    Push-Location $WorkingDir
-    Write-Host "   Execution: npm run build" -ForegroundColor Yellow
-    $buildResult = & npm run build 2>&1
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Erreur de compilation!" -ForegroundColor Red
-        Write-Host $buildResult -ForegroundColor Red
-        exit 1
-    }
-    Write-Host "Compilation reussie" -ForegroundColor Green
-    Pop-Location
-} catch {
-    Write-Host "Erreur: $($_.Exception.Message)" -ForegroundColor Red
-    exit 1
-}
+# TEMPORAIREMENT DÉSACTIVÉ POUR DÉPLOIEMENT PHP SEULEMENT
+Write-Host "   Compilation skippee (changements PHP seulement)" -ForegroundColor Yellow
 
 # 2 LISTER LES FICHIERS MODIFIES
 Write-Host "`n2 Detection des fichiers modifies..." -ForegroundColor Magenta
