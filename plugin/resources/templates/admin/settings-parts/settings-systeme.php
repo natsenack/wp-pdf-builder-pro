@@ -860,6 +860,18 @@ if ($cache_last_cleanup !== 'Jamais') {
                     message += '• ' + result.name + ': ' + result.status + '\n';
                 });
                 showSystemNotification(message, 'success');
+                
+                // Mettre à jour l'affichage de la dernière exécution
+                const now = new Date();
+                const timeString = now.toLocaleString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                $('.maintenance-metric-card[data-metric="last-run"] .metric-value').text('À l\'instant');
+                
                 $btn.prop('disabled', false);
                 $btn.find('.action-text').text(originalText);
                 return;

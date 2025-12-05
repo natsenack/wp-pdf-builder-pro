@@ -1088,6 +1088,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $message .= "\n⚠️ Erreurs rencontrées:\n" . implode("\n", $errors);
             }
 
+            // Mettre à jour la date de dernière maintenance
+            $current_time = current_time('mysql');
+            $settings = get_option('pdf_builder_settings', []);
+            $settings['pdf_builder_last_maintenance'] = $current_time;
+            update_option('pdf_builder_settings', $settings);
+
             wp_send_json_success(['message' => $message]);
 
         } catch (Exception $e) {
@@ -1140,6 +1146,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             $message .= "• Fichiers supprimés: $deleted_files\n";
             $message .= "• Espace libéré: " . number_format($deleted_size / 1024, 1) . " KB\n";
             $message .= "• Transients nettoyés: " . intval($transient_count);
+
+            // Mettre à jour la date de dernière maintenance
+            $current_time = current_time('mysql');
+            $settings = get_option('pdf_builder_settings', []);
+            $settings['pdf_builder_last_maintenance'] = $current_time;
+            update_option('pdf_builder_settings', $settings);
 
             wp_send_json_success(['message' => $message]);
 
@@ -1195,6 +1207,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $message .= "• Aucun problème détecté";
             }
 
+            // Mettre à jour la date de dernière maintenance
+            $current_time = current_time('mysql');
+            $settings = get_option('pdf_builder_settings', []);
+            $settings['pdf_builder_last_maintenance'] = $current_time;
+            update_option('pdf_builder_settings', $settings);
+
             wp_send_json_success(['message' => $message]);
 
         } catch (Exception $e) {
@@ -1214,6 +1232,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             $current_state = get_option('pdf_builder_auto_maintenance', '1');
             $new_state = $current_state === '1' ? '0' : '1';
 
+            // Mettre à jour dans le tableau unifié des paramètres
+            $settings = get_option('pdf_builder_settings', []);
+            $settings['pdf_builder_systeme_auto_maintenance'] = $new_state;
+            update_option('pdf_builder_settings', $settings);
+
+            // Garder aussi l'option individuelle pour compatibilité
             update_option('pdf_builder_auto_maintenance', $new_state);
 
             $message = $new_state === '1' ? '✅ Maintenance automatique activée' : '❌ Maintenance automatique désactivée';
@@ -1241,6 +1265,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             update_option('pdf_builder_next_maintenance', $next_sunday);
+
+            // Mettre à jour dans le tableau unifié des paramètres
+            $settings = get_option('pdf_builder_settings', []);
+            $settings['pdf_builder_next_maintenance'] = date('Y-m-d H:i:s', $next_sunday);
+            update_option('pdf_builder_settings', $settings);
 
             $message = '📅 Prochaine maintenance programmée pour le ' . date('d/m/Y à H:i', $next_sunday);
             $formatted_date = date('d/m/Y à H:i', $next_sunday);
