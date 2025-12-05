@@ -344,12 +344,37 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 if (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
-                    if (is_numeric($value)) {
+                    
+                    // TRAITEMENT SPÉCIAL POUR LES RÔLES AUTORISÉS
+                    if ($key === 'pdf_builder_allowed_roles') {
+                        // Utiliser la fonction spécialisée pour les rôles
+                        if (function_exists('pdf_builder_save_allowed_roles')) {
+                            $saved_roles = pdf_builder_save_allowed_roles($value);
+                            $option_value = $saved_roles;
+                            error_log("[AJAX HANDLER] Special handling for pdf_builder_allowed_roles: saved " . json_encode($saved_roles));
+                        } else {
+                            // Fallback si la fonction n'existe pas
+                            if (is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
+                                $decoded = json_decode($value, true);
+                                if (json_last_error() === JSON_ERROR_NONE) {
+                                    $option_value = $decoded;
+                                } else {
+                                    $option_value = [];
+                                }
+                            } else {
+                                $option_value = is_array($value) ? $value : [];
+                            }
+                            $settings[$option_key] = $option_value;
+                        }
+                    } elseif (is_numeric($value)) {
                         $option_value = intval($value);
+                        $settings[$option_key] = $option_value;
                     } elseif (is_array($value)) {
                         $option_value = array_map('sanitize_text_field', $value);
+                        $settings[$option_key] = $option_value;
                     } else {
                         $option_value = sanitize_text_field($value ?? '');
+                        $settings[$option_key] = $option_value;
                     }
                 } else {
                     // Add prefix
@@ -361,8 +386,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     } else {
                         $option_value = sanitize_text_field($value ?? '');
                     }
+                    $settings[$option_key] = $option_value;
                 }
-                $settings[$option_key] = $option_value;
                 $saved_count++;
             }
 
@@ -525,7 +550,8 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
     }
 }
 
-// Fonction d'initialisation des handlers AJAX
+// Inclure les fonctions utilitaires pour les paramètres
+require_once PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/settings-helpers.php';
 /**
  * Initialise les handlers AJAX unifiés pour PDF Builder Pro
  *
