@@ -10,6 +10,7 @@
  * License: GPL v2 or later
  * Text Domain: pdf-builder-pro
  * Domain Path: /languages
+ * date de début de la création du plugin : 15/10/2025
  */
 
 // Définir les constantes du plugin
@@ -2004,14 +2005,19 @@ function pdf_builder_create_backup_ajax() {
 function pdf_builder_list_backups_ajax() {
     // Check permissions
     if (!current_user_can('manage_options')) {
+        error_log('PDF Builder: [BACKUP LIST] Permission denied - user cannot manage_options');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
+    error_log('PDF Builder: [BACKUP LIST] Starting backup list request');
+
     try {
         $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        error_log('PDF Builder: [BACKUP LIST] Backup dir: ' . $backup_dir);
 
         if (!file_exists($backup_dir) || !is_dir($backup_dir)) {
+            error_log('PDF Builder: [BACKUP LIST] Backup directory does not exist: ' . $backup_dir);
             wp_send_json_success(array('backups' => array()));
             return;
         }
@@ -2020,6 +2026,12 @@ function pdf_builder_list_backups_ajax() {
         $files_manual = glob($backup_dir . '/pdf-builder-backup-*.json');
         $files_auto = glob($backup_dir . '/pdf_builder_auto_backup_*.json');
         $files = array_merge($files, $files_manual, $files_auto);
+
+        error_log('PDF Builder: [BACKUP LIST] Found ' . count($files) . ' backup files');
+        foreach ($files as $file) {
+            error_log('PDF Builder: [BACKUP LIST] File: ' . basename($file));
+        }
+
         $backups = array();
 
         foreach ($files as $file) {
@@ -2055,9 +2067,11 @@ function pdf_builder_list_backups_ajax() {
             return $b['modified'] - $a['modified'];
         });
 
+        error_log('PDF Builder: [BACKUP LIST] Returning ' . count($backups) . ' backups successfully');
         wp_send_json_success(array('backups' => $backups));
 
     } catch (Exception $e) {
+        error_log('PDF Builder: [BACKUP LIST] Exception: ' . $e->getMessage());
         wp_send_json_error('Erreur lors de la récupération des sauvegardes: ' . $e->getMessage());
     }
 }
