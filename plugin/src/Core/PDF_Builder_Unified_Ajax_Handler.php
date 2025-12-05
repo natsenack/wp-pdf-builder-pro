@@ -1511,23 +1511,23 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
-             $filepath = $backup_manager->backup_dir . $filename;
+             $filepath = WP_CONTENT_DIR . '/pdf-builder-backups/' . $filename;
 
              if (!file_exists($filepath)) {
                  wp_send_json_error(['message' => __('Fichier de sauvegarde introuvable.', 'pdf-builder-pro')]);
                  return;
              }
 
-             // Générer l'URL de téléchargement
-             $upload_dir = wp_upload_dir();
-             $relative_path = str_replace($upload_dir['basedir'], '', $filepath);
-             $download_url = $upload_dir['baseurl'] . $relative_path;
+             // Forcer le téléchargement du fichier
+             header('Content-Type: application/octet-stream');
+             header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+             header('Content-Length: ' . filesize($filepath));
+             header('Cache-Control: no-cache, no-store, must-revalidate');
+             header('Pragma: no-cache');
+             header('Expires: 0');
 
-             wp_send_json_success([
-                 'download_url' => $download_url,
-                 'filename' => $filename
-             ]);
+             readfile($filepath);
+             exit;
 
          } catch (Exception $e) {
              error_log('[PDF Builder AJAX] Erreur téléchargement sauvegarde: ' . $e->getMessage());
