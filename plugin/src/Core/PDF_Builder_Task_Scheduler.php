@@ -416,46 +416,6 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Crée une sauvegarde automatique
-     */
-    public function create_auto_backup() {
-        try {
-            if (!function_exists('pdf_builder_config') || !pdf_builder_config('auto_backup_enabled')) {
-                return;
-            }
-
-            // Créer une sauvegarde des templates
-            $backup_name = 'Sauvegarde automatique ' . date('Y-m-d H:i:s');
-            $backup_data = $this->gather_backup_data();
-
-            if (!empty($backup_data)) {
-                $this->save_backup($backup_name, $backup_data, 'auto');
-
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->info('Automatic backup created successfully');
-                }
-
-                // Log JavaScript pour le débogage côté client
-                if (is_admin()) {
-                    echo "<script>console.log('[AUTO BACKUP PHP] ✅ Sauvegarde automatique créée avec succès (via fallback):', '" . addslashes($backup_name) . "');</script>";
-                }
-
-                // Notification de succès
-                if (class_exists('PDF_Builder_Notification_Manager')) {
-                    $message = __('Sauvegarde automatique créée avec succès !', 'pdf-builder-pro');
-                    PDF_Builder_Notification_Manager::get_instance()->success($message, ['duration' => 8000]);
-                }
-
-                // Déclencher une action pour mettre à jour l'interface en temps réel
-                do_action('pdf_builder_auto_backup_created');
-            }
-
-        } catch (Exception $e) {
-            $this->log_task_error('auto_backup', $e);
-        }
-    }
-
-    /**
      * Effectue la rotation des logs
      */
     public function rotate_logs() {
