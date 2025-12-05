@@ -1327,10 +1327,6 @@ function pdf_builder_calculate_next_backup_time($frequency) {
             return strtotime('tomorrow 02:00:00');
     }
 }
-            wp_unschedule_event($timestamp, 'pdf_builder_weekly_maintenance');
-        }
-    }
-}
 
 /**
  * Exécuter la maintenance automatique hebdomadaire
