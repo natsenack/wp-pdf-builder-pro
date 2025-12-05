@@ -479,7 +479,7 @@ if ($cache_last_cleanup !== 'Jamais') {
         $output.empty();
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_test_cache_integration'); ?>';
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -539,7 +539,7 @@ if ($cache_last_cleanup !== 'Jamais') {
         $results.html('<span style="color: #007cba;">Vidage en cours...</span>');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_clear_cache'); ?>';
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
         $.ajax({
             url: ajaxurl,
