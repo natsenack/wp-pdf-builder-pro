@@ -461,4 +461,154 @@ if ($cache_last_cleanup !== 'Jamais') {
             <!-- Modales de cache et canvas - DÉPLACÉES vers la fin de settings-main.php pour éviter les conflits de structure -->
             <?php // require_once __DIR__ . '/settings-modals.php'; // Désactivé - les modales sont maintenant dans settings-main.php ?>
 
+<script type="text/javascript">
+(function($) {
+    'use strict';
 
+    // Gestionnaire pour le bouton de test du cache
+    $('#test-cache-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $results = $('#cache-test-results');
+        const $output = $('#cache-test-output');
+
+        // Désactiver le bouton pendant le test
+        $btn.prop('disabled', true).text('🧪 Test en cours...');
+        $results.html('<span style="color: #007cba;">Test en cours...</span>');
+        $output.empty();
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_test_cache_integration'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_test_cache_integration',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Afficher les résultats détaillés
+                    let output = '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #007cba;">';
+                    output += '<h4>Résultats du test :</h4>';
+                    output += '<ul style="margin: 0; padding-left: 20px;">';
+
+                    $.each(response.data.results, function(test, result) {
+                        output += '<li>' + test.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) + ': ' + result + '</li>';
+                    });
+
+                    output += '</ul></div>';
+
+                    $output.html(output);
+                    $results.html('<span style="color: #28a745;">✅ Test terminé</span>');
+
+                    // Notification de succès
+                    showSystemNotification(response.data.message, 'success');
+                } else {
+                    $results.html('<span style="color: #dc3545;">❌ Erreur</span>');
+                    showSystemNotification('Erreur lors du test du cache', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                $output.html('<div style="color: #dc3545; margin-top: 10px;">Erreur AJAX: ' + error + '</div>');
+                showSystemNotification('Erreur de connexion lors du test du cache', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).text('🧪 Tester l\'intégration du cache');
+            }
+        });
+    });
+
+    // Gestionnaire pour le bouton de vidage du cache
+    $('#clear-cache-general-btn').on('click', function(e) {
+        e.preventDefault();
+
+        if (!confirm('Êtes-vous sûr de vouloir vider tout le cache ? Cette action est irréversible.')) {
+            return;
+        }
+
+        const $btn = $(this);
+        const $results = $('#clear-cache-general-results');
+
+        // Désactiver le bouton pendant le vidage
+        $btn.prop('disabled', true).text('🗑️ Vidage en cours...');
+        $results.html('<span style="color: #007cba;">Vidage en cours...</span>');
+
+        // Générer un nonce pour la requête
+        const nonce = '<?php echo wp_create_nonce('pdf_builder_clear_cache'); ?>';
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_clear_cache',
+                nonce: nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
+
+                    // Mettre à jour l'affichage des métriques de cache
+                    $('#cache-size-display').text('0 fichiers');
+
+                    // Notification de succès
+                    showSystemNotification(response.data.message, 'success');
+                } else {
+                    $results.html('<span style="color: #dc3545;">❌ Erreur lors du vidage</span>');
+                    showSystemNotification('Erreur lors du vidage du cache', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                showSystemNotification('Erreur de connexion lors du vidage du cache', 'error');
+            },
+            complete: function() {
+                // Réactiver le bouton
+                $btn.prop('disabled', false).text('🗑️ Vider tout le cache');
+            }
+        });
+    });
+
+    // Fonction utilitaire pour afficher les notifications
+    function showSystemNotification(message, type = 'info') {
+        // Utiliser le système de notification centralisé s'il existe
+        if (window.simpleNotificationSystem) {
+            window.simpleNotificationSystem.show(message, type);
+        } else if (window.pdfBuilderNotifications) {
+            window.pdfBuilderNotifications.show(message, type);
+        } else {
+            // Fallback: créer une notification temporaire
+            const notification = $('<div class="system-notification ' + type + '">' + message + '</div>');
+            notification.css({
+                'position': 'fixed',
+                'top': '40px',
+                'right': '20px',
+                'background': type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007cba',
+                'color': 'white',
+                'padding': '12px 20px',
+                'border-radius': '4px',
+                'box-shadow': '0 2px 10px rgba(0,0,0,0.2)',
+                'z-index': '9999',
+                'max-width': '400px'
+            });
+
+            $('body').append(notification);
+
+            // Animation d'entrée
+            notification.animate({right: '20px', opacity: 1}, 300);
+
+            // Auto-suppression après 5 secondes
+            setTimeout(function() {
+                notification.animate({right: '-400px', opacity: 0}, 300, function() {
+                    notification.remove();
+                });
+            }, 5000);
+        }
+    }
+
+})(jQuery);
+</script>

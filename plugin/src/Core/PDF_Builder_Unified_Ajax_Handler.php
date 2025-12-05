@@ -38,6 +38,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions de cache
         add_action('wp_ajax_pdf_builder_get_cache_metrics', [$this, 'handle_get_cache_metrics']);
+        add_action('wp_ajax_pdf_builder_test_cache_integration', [$this, 'handle_test_cache_integration']);
         add_action('wp_ajax_pdf_builder_clear_all_cache', [$this, 'handle_clear_cache']);
         add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'handle_clear_cache']);
 
@@ -967,6 +968,65 @@ class PDF_Builder_Unified_Ajax_Handler {
             'message' => 'Métriques de cache récupérées',
             'cache_status' => 'OK'
         ]);
+    }
+
+    /**
+     * Handler pour tester l'intégration du cache
+     */
+    public function handle_test_cache_integration() {
+        if (!$this->nonce_manager->validate_ajax_request('test_cache_integration')) {
+            return;
+        }
+
+        try {
+            // Test 1: Vérifier si le cache WordPress fonctionne
+            $test_key = 'pdf_builder_cache_test_' . time();
+            $test_value = 'test_value_' . rand(1000, 9999);
+
+            wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
+            $retrieved_value = wp_cache_get($test_key, 'pdf_builder');
+
+            $cache_wp_ok = ($retrieved_value === $test_value);
+
+            // Nettoyer le test
+            wp_cache_delete($test_key, 'pdf_builder');
+
+            // Test 2: Vérifier les transients
+            $transient_key = 'pdf_builder_test_transient';
+            $transient_value = 'transient_test_' . rand(1000, 9999);
+
+            set_transient($transient_key, $transient_value, 300);
+            $transient_retrieved = get_transient($transient_key);
+
+            $transient_ok = ($transient_retrieved === $transient_value);
+
+            // Nettoyer
+            delete_transient($transient_key);
+
+            // Test 3: Vérifier les options
+            $option_test = get_option('pdf_builder_settings', []);
+            $options_ok = is_array($option_test);
+
+            // Résultats
+            $results = [
+                'cache_wordpress' => $cache_wp_ok ? '✅ Fonctionnel' : '❌ Défaillant',
+                'transients' => $transient_ok ? '✅ Fonctionnel' : '❌ Défaillant',
+                'options' => $options_ok ? '✅ Fonctionnel' : '❌ Défaillant'
+            ];
+
+            $all_ok = $cache_wp_ok && $transient_ok && $options_ok;
+
+            wp_send_json_success([
+                'message' => $all_ok ? '✅ Test d\'intégration du cache réussi' : '⚠️ Certains tests ont échoué',
+                'results' => $results,
+                'status' => $all_ok ? 'success' : 'warning'
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error([
+                'message' => '❌ Erreur lors du test du cache: ' . $e->getMessage()
+            ]);
+        }
     }
 
     /**
