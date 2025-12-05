@@ -15,6 +15,7 @@ $settings = get_option('pdf_builder_settings', array());
         <a id="tab-general" href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
         <a id="tab-licence" href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
         <a id="tab-systeme" href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
+        <a id="tab-cron" href="#cron" class="nav-tab" data-tab="cron" role="tab" aria-selected="false" aria-controls="cron">Cron</a>
         <a id="tab-acces" href="#acces" class="nav-tab" data-tab="acces" role="tab" aria-selected="false" aria-controls="acces">Accès</a>
         <a id="tab-securite" href="#securite" class="nav-tab" data-tab="securite" role="tab" aria-selected="false" aria-controls="securite">Sécurité</a>
         <a id="tab-pdf" href="#pdf" class="nav-tab" data-tab="pdf" role="tab" aria-selected="false" aria-controls="pdf">PDF</a>
@@ -34,6 +35,10 @@ $settings = get_option('pdf_builder_settings', array());
 
         <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
             <?php require_once 'settings-systeme.php'; ?>
+        </div>
+
+        <div id="cron" class="tab-content" role="tabpanel" aria-labelledby="tab-cron">
+            <?php require_once 'settings-cron.php'; ?>
         </div>
 
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
