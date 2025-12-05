@@ -820,7 +820,9 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_access_settings() {
         $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : array();
+        error_log('[PDF Builder DEBUG] Saving access settings: ' . json_encode($allowed_roles));
         update_option('pdf_builder_allowed_roles', $allowed_roles);
+        error_log('[PDF Builder DEBUG] Saved access settings, option value: ' . json_encode(get_option('pdf_builder_allowed_roles')));
         return 1;
     }
 

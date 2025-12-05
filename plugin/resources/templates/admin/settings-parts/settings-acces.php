@@ -198,7 +198,7 @@ jQuery(document).ready(function($) {
                 action: 'pdf_builder_save_settings',
                 tab: 'acces',
                 pdf_builder_allowed_roles: selectedRoles,
-                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                nonce: '<?php echo wp_create_nonce('pdf_builder_save_settings_nonce'); ?>'
             },
             success: function(response) {
                 if (response.success) {

@@ -11,6 +11,21 @@ class PDF_Builder_Nonce_Manager {
     private $nonce_ttl = 20 * 60 * 1000; // 20 minutes
     private $refresh_threshold = 5 * 60 * 1000; // 5 minutes avant expiration
     private $max_retries = 2;
+    private $nonce_mappings = [
+        'save_settings' => 'pdf_builder_save_settings_nonce',
+        'get_cache_metrics' => 'pdf_builder_ajax',
+        'test_cache_integration' => 'pdf_builder_ajax',
+        'clear_cache' => 'pdf_builder_ajax',
+        'optimize_database' => 'pdf_builder_ajax',
+        'remove_temp_files' => 'pdf_builder_ajax',
+        'repair_templates' => 'pdf_builder_ajax',
+        'toggle_auto_maintenance' => 'pdf_builder_ajax',
+        'schedule_maintenance' => 'pdf_builder_ajax',
+        'test_license' => 'pdf_builder_ajax',
+        'export_diagnostic' => 'pdf_builder_ajax',
+        'view_logs' => 'pdf_builder_ajax',
+        'test_ajax' => 'pdf_builder_ajax',
+    ];
 
     /**
      * Singleton pattern
@@ -53,10 +68,12 @@ class PDF_Builder_Nonce_Manager {
             return false;
         }
 
-        // Debug: Log the nonce validation attempt
-        error_log('[PDF Builder Nonce DEBUG] Validating nonce: ' . substr($nonce, 0, 10) . '... for action: ' . $this->nonce_action . ' in context: ' . $context);
+        $action = isset($this->nonce_mappings[$context]) ? $this->nonce_mappings[$context] : $this->nonce_action;
 
-        $is_valid = wp_verify_nonce($nonce, $this->nonce_action);
+        // Debug: Log the nonce validation attempt
+        error_log('[PDF Builder Nonce DEBUG] Validating nonce: ' . substr($nonce, 0, 10) . '... for action: ' . $action . ' in context: ' . $context);
+
+        $is_valid = wp_verify_nonce($nonce, $action);
 
         error_log('[PDF Builder Nonce DEBUG] Validation result: ' . ($is_valid ? 'VALID' : 'INVALID'));
 
