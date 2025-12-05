@@ -2,7 +2,7 @@
 /**
  * PDF Builder Pro - Handler AJAX unifié
  * Point d'entrée unique pour toutes les actions AJAX avec gestion centralisée des nonces
- * Version: 2.1.0 - Corrigé syntaxe PHP (04/12/2025)
+ * Version: 2.1.1 - Corrigé syntaxe PHP (05/12/2025)
  */
 
 class PDF_Builder_Unified_Ajax_Handler {
