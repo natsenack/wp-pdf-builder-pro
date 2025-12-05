@@ -125,7 +125,7 @@ class PDF_Builder_Task_Scheduler {
      * Enregistre les actions AJAX pour le diagnostic cron
      */
     public function register_ajax_actions() {
-        error_log('PDF Builder: Registering AJAX actions');
+        error_log('PDF Builder: [TASK SCHEDULER] Registering AJAX actions at ' . current_time('Y-m-d H:i:s'));
         add_action('wp_ajax_pdf_builder_diagnose_cron', [$this, 'ajax_diagnose_cron']);
         add_action('wp_ajax_pdf_builder_repair_cron', [$this, 'ajax_repair_cron']);
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
@@ -133,7 +133,7 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_change_backup_frequency', [$this, 'ajax_change_backup_frequency']);
         add_action('wp_ajax_pdf_builder_test_manual_backup', [$this, 'ajax_test_manual_backup']);
         add_action('wp_ajax_pdf_builder_toggle_auto_backup', [$this, 'ajax_toggle_auto_backup']);
-        error_log('PDF Builder: AJAX actions registered');
+        error_log('PDF Builder: [TASK SCHEDULER] AJAX actions registered');
     }
 
     /**

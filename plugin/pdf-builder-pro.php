@@ -293,8 +293,8 @@ function pdf_builder_create_backup_ajax() {
  * AJAX handler for listing backups
  */
 function pdf_builder_list_backups_ajax() {
-    error_log('PDF Builder: [BACKUP LIST] Function called - REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
-    error_log('PDF Builder: [BACKUP LIST] POST data: ' . json_encode($_POST));
+    error_log('PDF Builder: [BACKUP LIST] Handler called - REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . ', action: ' . ($_POST['action'] ?? 'NO_ACTION'));
+    error_log('PDF Builder: [BACKUP LIST] POST data keys: ' . json_encode(array_keys($_POST)));
     
     // Check nonce
     if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
@@ -442,6 +442,8 @@ function pdf_builder_restore_backup_ajax() {
 
 function pdf_builder_register_ajax_handlers() {
     static $handlers_registered = false;
+    
+    error_log('PDF Builder: [AJAX REGISTRATION] Function called at ' . current_time('Y-m-d H:i:s'));
     
     if ($handlers_registered) {
         error_log('PDF Builder: [AJAX REGISTRATION] Handlers already registered, skipping');
