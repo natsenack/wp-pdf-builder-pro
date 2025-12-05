@@ -371,7 +371,15 @@
                     }
 
                     if (input.type === 'checkbox') {
-                        allData[sectionId][input.name] = input.checked ? input.value : '';
+                        // Gérer les cases à cocher multiples
+                        if (input.checked) {
+                            if (!allData[sectionId][input.name]) {
+                                allData[sectionId][input.name] = [];
+                            } else if (!Array.isArray(allData[sectionId][input.name])) {
+                                allData[sectionId][input.name] = [allData[sectionId][input.name]];
+                            }
+                            allData[sectionId][input.name].push(input.value);
+                        }
                     } else if (input.type === 'radio') {
                         if (input.checked) {
                             allData[sectionId][input.name] = input.value;
@@ -384,6 +392,7 @@
         });
 
         debugLog('PDF Builder - Données collectées:', allData);
+        console.log('PDF Builder - Données collectées détaillées:', JSON.stringify(allData, null, 2));
         return allData;
     }
 
