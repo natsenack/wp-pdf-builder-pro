@@ -207,7 +207,8 @@ class PDF_Builder_Task_Scheduler {
      */
     public function check_auto_backup_fallback() {
         // Vérifier seulement si les sauvegardes automatiques sont activées
-        if (!function_exists('pdf_builder_config') || !pdf_builder_config('auto_backup_enabled')) {
+        $auto_backup_enabled = get_option('pdf_builder_auto_backup_enabled', '0');
+        if ($auto_backup_enabled !== '1' && $auto_backup_enabled !== 1) {
             return;
         }
 
