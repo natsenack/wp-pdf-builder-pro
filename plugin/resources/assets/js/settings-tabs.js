@@ -527,16 +527,16 @@
         console.log('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
 
         // Envoyer via AJAX - Utiliser FormData au lieu de URLSearchParams pour éviter les problèmes d'échappement JSON
-        const formData = new FormData();
+        const ajaxFormData = new FormData();
         for (const key in ajaxData) {
             if (ajaxData.hasOwnProperty(key)) {
-                formData.append(key, ajaxData[key]);
+                ajaxFormData.append(key, ajaxData[key]);
             }
         }
 
         fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
             method: 'POST',
-            body: formData
+            body: ajaxFormData
         })
         .then(response => response.json())
         .then(data => {
