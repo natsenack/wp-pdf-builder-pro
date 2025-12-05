@@ -2,8 +2,8 @@
 if (!defined('ABSPATH')) exit('No direct access');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 
-// TEMPORARY: Include cache-busted version
-include_once __DIR__ . '/settings-main-cache-bust.php';
+// TEMPORARY: Include cache-busted version - COMMENTED OUT FOR TESTING
+// include_once __DIR__ . '/settings-main-cache-bust.php';
 
 // FORCE COMPLETE PAGE RELOAD TO BYPASS CACHE
 echo "<script>
