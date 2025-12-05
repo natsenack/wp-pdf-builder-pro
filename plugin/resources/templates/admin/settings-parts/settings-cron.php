@@ -57,6 +57,9 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
         <button type="button" id="manual-backup-btn" class="button button-secondary">
             <?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>
         </button>
+        <button type="button" id="test-backup-btn" class="button button-secondary" style="background: #ff6b35; color: white;">
+            <?php _e('Test Auto Backup', 'pdf-builder-pro'); ?>
+        </button>
 
         <div class="backup-frequency-controls" style="margin-top: 10px;">
             <label for="backup-frequency-select"><?php _e('Backup Frequency:', 'pdf-builder-pro'); ?></label>
@@ -225,6 +228,49 @@ jQuery(document).ready(function($) {
             error: function(xhr, status, error) {
                 console.error('PDF Builder: [BACKUP] Manual backup AJAX error:', {xhr: xhr, status: status, error: error});
                 $('#manual-backup-btn').prop('disabled', false).text('<?php _e('Create Manual Backup', 'pdf-builder-pro'); ?>');
+                alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
+            }
+        });
+    });
+
+    // Test auto backup manually
+    $('#test-backup-btn').on('click', function() {
+        console.log('PDF Builder: [TEST] Test backup button clicked at', new Date().toISOString());
+
+        if (!confirm('<?php _e('This will manually trigger an automatic backup to test the system. Continue?', 'pdf-builder-pro'); ?>')) {
+            console.log('PDF Builder: [TEST] Test backup cancelled by user');
+            return;
+        }
+
+        $(this).prop('disabled', true).text('<?php _e('Testing...', 'pdf-builder-pro'); ?>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_test_manual_backup',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+            },
+            success: function(response) {
+                console.log('PDF Builder: [TEST] Manual backup test response:', response);
+                $('#test-backup-btn').prop('disabled', false).text('<?php _e('Test Auto Backup', 'pdf-builder-pro'); ?>');
+                if (response.success) {
+                    console.log('PDF Builder: [TEST] Manual backup test triggered successfully');
+                    alert('<?php _e('Test triggered! Check server logs and backup list for results.', 'pdf-builder-pro'); ?>');
+                    // Refresh backup list after a delay
+                    setTimeout(function() {
+                        $('#backup-stats-btn').click();
+                    }, 2000);
+                } else {
+                    console.error('PDF Builder: [TEST] Error triggering test:', response.data);
+                    alert('<?php _e('Error triggering test:', 'pdf-builder-pro'); ?> ' + response.data);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('PDF Builder: [TEST] AJAX error - xhr:', xhr);
+                console.error('PDF Builder: [TEST] AJAX error - status:', status);
+                console.error('PDF Builder: [TEST] AJAX error - error:', error);
+                $('#test-backup-btn').prop('disabled', false).text('<?php _e('Test Auto Backup', 'pdf-builder-pro'); ?>');
                 alert('<?php _e('AJAX error occurred', 'pdf-builder-pro'); ?>');
             }
         });

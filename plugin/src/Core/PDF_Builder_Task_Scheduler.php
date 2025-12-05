@@ -130,6 +130,7 @@ class PDF_Builder_Task_Scheduler {
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
         add_action('wp_ajax_pdf_builder_change_backup_frequency', [$this, 'ajax_change_backup_frequency']);
+        add_action('wp_ajax_pdf_builder_test_manual_backup', [$this, 'ajax_test_manual_backup']);
         error_log('PDF Builder: AJAX actions registered');
     }
 
@@ -840,6 +841,30 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
+     * AJAX handler pour tester manuellement une sauvegarde
+     */
+    public function ajax_test_manual_backup() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        try {
+            $this->test_manual_backup();
+            wp_send_json_success(['message' => 'Test de sauvegarde manuel déclenché - vérifiez les logs']);
+        } catch (\Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors du test: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
      * AJAX handler pour diagnostiquer le système cron
      */
     public function ajax_diagnose_cron() {
@@ -961,9 +986,12 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Callback pour créer une sauvegarde automatique
+     * Méthode de test pour déclencher manuellement une sauvegarde automatique
      */
-    public function create_auto_backup() {
+    public function test_manual_backup() {
+        error_log('PDF Builder: [TEST] Manual backup test triggered');
+        $this->create_auto_backup();
+    }
         error_log('PDF Builder: [AUTO BACKUP] Starting automatic backup creation - TIMESTAMP: ' . time());
 
         try {
