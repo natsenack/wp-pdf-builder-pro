@@ -949,10 +949,10 @@ if ($cache_last_cleanup !== 'Jamais') {
     });
 
     // Gestionnaire pour le bouton de listage des sauvegardes
-    console.log('[DEBUG] Setting up backup list handler - v2');
+    console.log('[DEBUG] Setting up backup list handler - v3');
     $('#list-backups-btn').off('click').on('click', function(e) {
         e.preventDefault();
-        console.log('[DEBUG] Backup list button clicked - v2');
+        console.log('[DEBUG] Backup list button clicked - v3');
 
         const $btn = $(this);
         const $results = $('#backup-results');
