@@ -311,7 +311,8 @@
             'canvas-interactions-form',
             'canvas-export-form',
             'canvas-performance-form',
-            'canvas-debug-form'
+            'canvas-debug-form',
+            'acces-settings-form'
         ];
 
         // Collecter les données de chaque formulaire
