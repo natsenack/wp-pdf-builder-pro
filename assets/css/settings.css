@@ -1082,16 +1082,35 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 /* === STYLES MODERNES POUR LES ONGLETS DES PARAMÈTRES GÉNÉRAUX === */
 
-/* Container principal des onglets - Design moderne */
+/* Container principal des onglets - Design moderne avec emojis */
 .nav-tab-wrapper {
     border-bottom: none;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(0,123,186,0.1);
+}
+
+.nav-tab-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #007cba 0%, #005a87 30%, #007cba 60%, #005a87 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: -200% 0; }
+    50% { background-position: 200% 0; }
 }
 
 .nav-tab-wrapper::before {
@@ -1105,23 +1124,80 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     opacity: 0.8;
 }
 
-/* Onglets individuels - Style moderne et élégant */
+/* Onglets individuels - Style moderne et élégant avec emojis */
 .nav-tab {
     border: none;
-    background: transparent;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     color: #6c757d;
-    padding: 12px 20px;
+    padding: 14px 24px;
     text-decoration: none;
-    display: inline-block;
-    margin-right: 6px;
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
     position: relative;
     overflow: hidden;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    min-height: 48px;
+    justify-content: center;
+}
+
+.nav-tab .tab-icon {
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.nav-tab .tab-text {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Effets de brillance pour les onglets actifs */
+.nav-tab-active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+    border-radius: 12px;
+    animation: glow 2s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes glow {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.6; }
+}
+
+/* Indicateur de statut pour les onglets avec contenu */
+.nav-tab[data-has-content="true"]::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 6px;
+    height: 6px;
+    background: #28a745;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(40, 167, 69, 0.5);
+}
+
+.nav-tab[data-has-warnings="true"]::before {
+    background: #ffc107;
+    box-shadow: 0 0 4px rgba(255, 193, 7, 0.5);
+}
+
+.nav-tab[data-has-errors="true"]::before {
+    background: #dc3545;
+    box-shadow: 0 0 4px rgba(220, 53, 69, 0.5);
 }
 
 .nav-tab::before {
@@ -1132,7 +1208,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
 }
 
 .nav-tab:hover::before {
@@ -1142,9 +1217,14 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 .nav-tab:hover {
     background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,123,186,0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,123,186,0.4);
     border-color: #007cba;
+}
+
+.nav-tab:hover .tab-icon {
+    transform: scale(1.1);
+    filter: brightness(1.2);
 }
 
 /* Onglet actif - Design premium avec indicateur visuel */
@@ -1153,9 +1233,29 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     color: white;
     border-bottom: none;
     margin-bottom: -1px;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0,123,186,0.4);
-    font-weight: 600;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,123,186,0.5);
+    font-weight: 700;
+    border-color: #005a87;
+    position: relative;
+}
+
+.nav-tab-active .tab-icon {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.nav-tab-active::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #007cba, #005a87);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0.3;
 }
 
 .nav-tab-active::after {
@@ -2856,7 +2956,6 @@ select option:disabled {
     opacity: 0;
     visibility: hidden;
     transform: translateX(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     position: relative;
     z-index: 1;
@@ -2877,7 +2976,6 @@ select option:disabled {
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: all 0.25s ease-out;
     pointer-events: none;
 }
 
@@ -2949,7 +3047,6 @@ select option:disabled {
     width: 0;
     height: 3px;
     background: linear-gradient(90deg, #007cba, #005a87);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(-50%);
 }
 
@@ -3047,7 +3144,6 @@ select option:disabled {
     font-size: 13px;
     font-weight: 500;
     color: #495057;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
@@ -3072,7 +3168,6 @@ select option:disabled {
     opacity: 0;
     visibility: hidden;
     transform: translateY(15px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     position: relative;
 }
@@ -3189,12 +3284,7 @@ select option:disabled {
 
 /* === ANIMATIONS FINALES ET TRANSITIONS FLUIDES === */
 
-/* Transitions globales pour tous les éléments interactifs */
-.nav-tab,
-.tab-content,
-.nav-tab-wrapper {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Transitions supprimées pour éviter les effets trop violents */
 
 /* Animation d'apparition progressive pour les onglets actifs */
 .tab-content.active {
@@ -3216,7 +3306,6 @@ select option:disabled {
 .nav-tab {
     position: relative;
     overflow: hidden;
-    will-change: transform, box-shadow;
 }
 
 .nav-tab::after {
@@ -3227,7 +3316,6 @@ select option:disabled {
     width: 0;
     height: 3px;
     background: linear-gradient(90deg, #007cba, #005a87);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(-50%);
 }
 
@@ -3241,11 +3329,65 @@ select option:disabled {
 
 /* États focus améliorés pour l'accessibilité */
 .nav-tab:focus-visible {
-    outline: 2px solid #007cba;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(0,123,186,0.2);
+    outline: 3px solid #007cba;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(0,123,186,0.25);
     z-index: 10;
     position: relative;
+    border-color: #007cba;
+}
+
+/* Styles responsives pour mobile */
+@media (max-width: 768px) {
+    .nav-tab-wrapper {
+        padding: 8px;
+        margin-bottom: 25px;
+        border-radius: 12px;
+    }
+
+    .nav-tab {
+        padding: 12px 16px;
+        font-size: 13px;
+        margin-right: 4px;
+        min-height: 44px; /* Taille minimale pour accessibilité tactile */
+    }
+
+    .nav-tab .tab-icon {
+        font-size: 16px;
+    }
+
+    .nav-tab .tab-text {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-tab-wrapper {
+        padding: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-tab {
+        padding: 10px 12px;
+        font-size: 12px;
+        margin-right: 2px;
+        margin-bottom: 4px;
+        min-height: 40px;
+    }
+
+    .nav-tab .tab-icon {
+        font-size: 14px;
+    }
+
+    .nav-tab .tab-text {
+        font-size: 12px;
+        display: none; /* Masquer le texte sur très petits écrans */
+    }
+
+    .nav-tab .tab-icon {
+        margin: 0; /* Centrer l'icône quand le texte est masqué */
+    }
 }
 
 /* Améliorations pour les sous-onglets spécifiques à l'onglet général */
@@ -3310,18 +3452,7 @@ select option:disabled {
     }
 }
 
-/* Amélioration des performances avec will-change */
-.nav-tab,
-.tab-content,
-.nav-tab-wrapper {
-    will-change: auto;
-}
-
-.nav-tab:hover,
-.nav-tab-active,
-.tab-content.active {
-    will-change: transform, opacity, box-shadow;
-}
+/* Optimisations de performance supprimées avec les transitions */
 
 /* Support pour les préférences de mouvement réduit */
 @media (prefers-reduced-motion: reduce) {

@@ -556,6 +556,7 @@
         });
 
         // Collecter aussi tous les champs input, select, textarea qui ne sont pas dans des formulaires
+        // mais seulement ceux qui sont dans les sections de paramètres ou qui ont déjà le préfixe pdf_builder_
         const allInputs = document.querySelectorAll('input[name], select[name], textarea[name]');
         allInputs.forEach(input => {
             if (input.name && input.name !== '') {
@@ -563,34 +564,39 @@
                 const inputForm = input.closest('form');
                 // Ne collecter que si ce n'est pas déjà dans un formulaire traité
                 if (!inputForm || !formIds.includes(inputForm.id)) {
-                    // Collecter aussi les champs dans des sections spécifiques (comme licence)
+                    // Collecter seulement les champs dans les sections de paramètres ou avec préfixe pdf_builder_
                     const section = input.closest('section');
                     const sectionId = section ? section.id : 'global';
+                    
+                    // Liste des sections de paramètres autorisées
+                    const allowedSections = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+                    
+                    // Ne collecter que si c'est dans une section autorisée ou si le champ a déjà le préfixe pdf_builder_
+                    if (allowedSections.includes(sectionId) || normalizedName.startsWith('pdf_builder_')) {
+                        if (!allData[sectionId]) {
+                            allData[sectionId] = {};
+                        }
 
-                    if (!allData[sectionId]) {
-                        allData[sectionId] = {};
-                    }
-
-                    if (input.type === 'checkbox') {
-                        if (allData[sectionId][normalizedName]) {
-                            if (Array.isArray(allData[sectionId][normalizedName])) {
-                                if (input.checked) {
-                                    allData[sectionId][normalizedName].push(input.value);
+                        if (input.type === 'checkbox') {
+                            if (allData[sectionId][normalizedName]) {
+                                if (Array.isArray(allData[sectionId][normalizedName])) {
+                                    if (input.checked) {
+                                        allData[sectionId][normalizedName].push(input.value);
+                                    }
+                                } else {
+                                    allData[sectionId][normalizedName] = input.checked ? [allData[sectionId][normalizedName], input.value] : [allData[sectionId][normalizedName]];
                                 }
                             } else {
-                                allData[sectionId][normalizedName] = input.checked ? [allData[sectionId][normalizedName], input.value] : [allData[sectionId][normalizedName]];
+                                allData[sectionId][normalizedName] = input.checked ? [input.value] : [];
+                            }
+                        } else if (input.type === 'radio') {
+                            if (input.checked) {
+                                allData[sectionId][normalizedName] = input.value;
                             }
                         } else {
-                            allData[sectionId][normalizedName] = input.checked ? [input.value] : [];
-                        }
-                    } else if (input.type === 'radio') {
-                        if (input.checked) {
                             allData[sectionId][normalizedName] = input.value;
                         }
-                    } else {
-                        allData[sectionId][normalizedName] = input.value;
                     }
-                }
             }
         });
 
