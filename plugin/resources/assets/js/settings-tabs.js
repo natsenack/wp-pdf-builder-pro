@@ -1106,14 +1106,20 @@
 
     // Gestionnaire pour le bouton flottant "Enregistrer"
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('PDF Builder: Initializing floating save button...');
         const floatingSaveBtn = document.getElementById('pdf-builder-save-floating-btn');
+        console.log('PDF Builder: Floating save button element:', floatingSaveBtn);
         if (floatingSaveBtn) {
+            console.log('PDF Builder: Adding click event listener to floating save button');
             floatingSaveBtn.addEventListener('click', function() {
+                console.log('PDF Builder: Floating save button clicked!');
                 const allFormData = collectAllFormData();
                 if (Object.keys(allFormData).length > 0) {
                     saveAllSettings(allFormData);
                 }
             });
+        } else {
+            console.error('PDF Builder: Floating save button not found!');
         }
     });
 

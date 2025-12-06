@@ -17,7 +17,7 @@ require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 // Add floating save button and JavaScript here for better execution context
 ?>
 <!-- Bouton de sauvegarde flottant global -->
-<div id="pdf-builder-save-floating" class="pdf-builder-save-floating">
+<div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="display: block !important; visibility: visible !important;">
     <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
         <span class="dashicons dashicons-yes"></span>
         💾 Enregistrer
