@@ -364,6 +364,49 @@
     // Initialiser les notifications de toggle
     document.addEventListener('DOMContentLoaded', initToggleNotifications);
 
+    // Initialiser tous les toggles pour qu'ils soient fonctionnels
+    function initToggles() {
+        // Trouver tous les toggles avec la classe toggle-switch
+        const toggles = document.querySelectorAll('.toggle-switch');
+
+        toggles.forEach(function(toggleLabel) {
+            const input = toggleLabel.querySelector('input[type="checkbox"]');
+            const slider = toggleLabel.querySelector('.toggle-slider');
+
+            if (input && slider) {
+                // S'assurer que l'input est caché
+                input.style.opacity = '0';
+                input.style.pointerEvents = 'none';
+
+                // Rendre le slider cliquable
+                slider.style.pointerEvents = 'auto';
+                slider.style.cursor = 'pointer';
+
+                // Gérer les clics sur le slider
+                slider.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    input.checked = !input.checked;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Laisser le label gérer naturellement le toggle du checkbox
+                toggleLabel.addEventListener('click', function(e) {
+                    // Petit délai pour laisser le navigateur mettre à jour l'état
+                    setTimeout(function() {
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }, 10);
+                });
+            }
+        });
+
+        if (PDF_BUILDER_CONFIG.debug) {
+            console.log(`[PDF Builder] Initialisé ${toggles.length} toggles`);
+        }
+    }
+
+    // Initialiser les toggles
+    document.addEventListener('DOMContentLoaded', initToggles);
+
     // Système de sauvegarde centralisé - Empêcher les soumissions individuelles des formulaires
     let centralizedSaveInitialized = false;
 
