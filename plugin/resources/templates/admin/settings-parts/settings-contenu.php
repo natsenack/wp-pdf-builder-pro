@@ -643,7 +643,7 @@ echo addslashes($content);
                         },
                         zoom: {
                             title: '🔍 Zoom & Navigation',
-                            content: <?php echo json_encode('
+                            content: '<?php echo htmlspecialchars('
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
@@ -662,11 +662,11 @@ echo addslashes($content);
                                         <input type="number" id="modal_canvas_zoom_step" name="modal_canvas_zoom_step" value="' . addslashes($settings['pdf_builder_canvas_zoom_step'] ?? '25') . '" min="5" max="50">
                                     </div>
                                 </div>
-                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         interactions: {
                             title: '🖱️ Interaction',
-                            content: <?php echo json_encode('
+                            content: '<?php echo htmlspecialchars('
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_drag_enabled">Glisser activé</label>
@@ -712,11 +712,11 @@ echo addslashes($content);
                                         </label>
                                     </div>
                                 </div>
-                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         export: {
                             title: '💾 Export',
-                            content: <?php echo json_encode('
+                            content: '<?php echo htmlspecialchars('
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_export_format">Format d\'export</label>
@@ -739,11 +739,11 @@ echo addslashes($content);
                                         </label>
                                     </div>
                                 </div>
-                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         performance: {
                             title: '⚡ Performance',
-                            content: <?php echo json_encode('
+                            content: '<?php echo htmlspecialchars('
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_fps_target">FPS cible</label>
@@ -779,11 +779,11 @@ echo addslashes($content);
                                         </label>
                                     </div>
                                 </div>
-                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         debug: {
                             title: '🐛 Debug & Maintenance',
-                            content: <?php echo json_encode('
+                            content: '<?php echo htmlspecialchars('
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_debug_enabled">Debug activé</label>
@@ -811,7 +811,7 @@ echo addslashes($content);
                                         <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="' . addslashes($settings['pdf_builder_canvas_memory_limit_php'] ?? '128') . '" min="32" max="1024">
                                     </div>
                                 </div>
-                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         }
                     };
 
