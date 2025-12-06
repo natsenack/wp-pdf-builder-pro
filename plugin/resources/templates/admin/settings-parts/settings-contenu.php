@@ -649,13 +649,14 @@ $settings = get_option('pdf_builder_settings', array());
                         modalTitle.textContent = titles[category] || 'Configuration';
 
                         // Show modal
-                        modalOverlay.style.display = 'flex';
+                        modalOverlay.classList.add('active');
                         modal.classList.add('active');
                     }
 
                     // Hide modal
                     function hideModal() {
-                        modalOverlay.style.display = 'none';
+                        console.log('Hiding modal');
+                        modalOverlay.classList.remove('active');
                         modal.classList.remove('active');
                         currentCategory = null;
                     }
@@ -710,17 +711,22 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Event listeners
                     document.addEventListener('click', function(e) {
+                        console.log('Click detected on:', e.target.className, e.target.id);
+
                         if (e.target.classList.contains('canvas-configure-btn')) {
+                            console.log('Opening modal');
                             const card = e.target.closest('.canvas-card');
                             const category = card.dataset.category;
                             showModal(category);
                         }
 
                         if (e.target.classList.contains('canvas-modal-close') || e.target.classList.contains('canvas-modal-cancel') || e.target === modalOverlay) {
+                            console.log('Closing modal - target:', e.target.className, e.target.id);
                             hideModal();
                         }
 
                         if (e.target.classList.contains('canvas-modal-save')) {
+                            console.log('Saving modal');
                             saveModalSettings();
                         }
                     });

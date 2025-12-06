@@ -2416,10 +2416,14 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     height: 100% !important;
     background: rgba(0,0,0,0.7) !important;
     z-index: 10000 !important;
-    display: flex !important;
+    display: none !important;
     align-items: center !important;
     justify-content: center !important;
     backdrop-filter: blur(2px);
+}
+
+.canvas-modal-overlay.active {
+    display: flex !important;
 }
 
 .canvas-modal {
