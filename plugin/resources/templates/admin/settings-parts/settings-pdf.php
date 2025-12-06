@@ -98,8 +98,10 @@ $settings = get_option('pdf_builder_settings', array());
                                     
                                     // Handle clicks on label (prevent default if clicking on slider to avoid double toggle)
                                     pdfCacheLabel.addEventListener('click', function(e) {
+                                        console.log('Label click target:', e.target, 'slider:', pdfCacheSlider, 'contains:', pdfCacheSlider.contains(e.target));
                                         if (e.target === pdfCacheSlider || pdfCacheSlider.contains(e.target)) {
                                             // Clicked on slider, let our slider handler handle it
+                                            console.log('Clicked on slider, ignoring label click');
                                             return;
                                         }
                                         console.log('PDF Label clicked (not on slider), current state:', pdfCacheInput.checked);
