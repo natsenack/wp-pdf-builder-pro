@@ -91,70 +91,78 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
 
 <!-- DEBUG: JavaScript pour vérifier le bouton flottant -->
 <script>
-try {
-    console.log('🚨 CONSOLE: Script de débogage CHARGÉ');
-    
-    // Test immédiat - créer un élément visible
-    var testDiv = document.createElement('div');
-    testDiv.id = 'js-test-indicator';
-    testDiv.style.cssText = 'position:fixed;top:100px;left:10px;background:purple;color:white;padding:10px;border:3px solid orange;font-size:14px;font-weight:bold;z-index:1000000;';
-    testDiv.textContent = '🚨 JS EXECUTED! Script chargé et exécuté.';
-    document.body.appendChild(testDiv);
-    
-    console.log('🚨 CONSOLE: Élément de test créé');
-    
-    // Test après DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚨 CONSOLE: DOMContentLoaded déclenché');
-        testDiv.innerHTML += '<br>🚨 DOMContentLoaded fired!';
-        
-        setTimeout(function() {
-            console.log('🚨 CONSOLE: Timeout 1s écoulé');
-            testDiv.innerHTML += '<br>🚨 Timeout 1s passed!';
-            
-            const floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
-            const floatingContainer = document.getElementById('pdf-builder-save-floating');
-            
-            console.log('🚨 CONSOLE: Recherche éléments - Container:', floatingContainer, 'Button:', floatingBtn);
-            
-            if (floatingContainer) {
-                testDiv.innerHTML += '<br>✅ Container found!';
-                testDiv.style.background = 'green';
-            } else {
-                testDiv.innerHTML += '<br>❌ Container NOT found!';
-                testDiv.style.background = 'red';
-            }
-            
-            if (floatingBtn) {
-                testDiv.innerHTML += '<br>✅ Button found! Forcing visibility...';
-                
-                // Force visible
-                floatingBtn.style.cssText += 'background:red;color:white;border:3px solid yellow;font-size:20px;padding:15px;z-index:999999;position:fixed;bottom:100px;right:50px;border-radius:10px;';
-                
-                testDiv.innerHTML += '<br>✅ Styles forced on button!';
-                
-            } else {
-                testDiv.innerHTML += '<br>❌ Button NOT found in DOM!';
-            }
-        }, 1000);
+// Test ultra-simple - juste pour vérifier que JS fonctionne
+console.log('🚨 PDF BUILDER DEBUG: JavaScript chargé!');
+
+// Créer un indicateur visible immédiatement
+var debugDiv = document.createElement('div');
+debugDiv.id = 'pdf-debug-indicator';
+debugDiv.innerHTML = '🚨 JS LOADED! Script exécuté avec succès.';
+debugDiv.style.cssText = 'position:fixed;top:150px;left:10px;background:lime;color:black;padding:10px;border:3px solid green;font-size:16px;font-weight:bold;z-index:1000000;border-radius:5px;';
+document.body.appendChild(debugDiv);
+
+// Attendre que le DOM soit prêt
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚨 PDF BUILDER DEBUG: DOMContentLoaded fired');
+
+    debugDiv.innerHTML += '<br>🚨 DOM prêt!';
+
+    // Chercher le bouton flottant
+    var floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
+    var floatingContainer = document.getElementById('pdf-builder-save-floating');
+
+    console.log('🚨 PDF BUILDER DEBUG: Recherche éléments:', {
+        button: floatingBtn,
+        container: floatingContainer
     });
-    
-    // Test window.onload aussi
-    window.addEventListener('load', function() {
-        console.log('🚨 CONSOLE: Window load déclenché');
-        if (testDiv) {
-            testDiv.innerHTML += '<br>🚨 Window load fired!';
-        }
-    });
-    
-} catch (error) {
-    console.error('🚨 ERREUR JavaScript:', error);
-    // Créer un élément d'erreur visible même en cas d'erreur
-    var errorDiv = document.createElement('div');
-    errorDiv.style.cssText = 'position:fixed;top:200px;left:10px;background:red;color:white;padding:10px;border:3px solid black;font-size:14px;font-weight:bold;z-index:1000000;';
-    errorDiv.textContent = '🚨 ERREUR JS: ' + error.message;
-    document.body.appendChild(errorDiv);
-}
+
+    if (floatingContainer) {
+        debugDiv.innerHTML += '<br>✅ Container trouvé!';
+        debugDiv.style.background = 'green';
+    } else {
+        debugDiv.innerHTML += '<br>❌ Container NON trouvé!';
+        debugDiv.style.background = 'red';
+    }
+
+    if (floatingBtn) {
+        debugDiv.innerHTML += '<br>✅ Bouton trouvé! Forçage visibilité...';
+
+        // Forcer la visibilité du bouton
+        floatingBtn.style.display = 'inline-block';
+        floatingBtn.style.visibility = 'visible';
+        floatingBtn.style.opacity = '1';
+        floatingBtn.style.background = 'red';
+        floatingBtn.style.color = 'white';
+        floatingBtn.style.border = '3px solid yellow';
+        floatingBtn.style.fontSize = '18px';
+        floatingBtn.style.padding = '12px 20px';
+        floatingBtn.style.position = 'fixed';
+        floatingBtn.style.bottom = '20px';
+        floatingBtn.style.right = '20px';
+        floatingBtn.style.zIndex = '999999';
+        floatingBtn.style.borderRadius = '8px';
+        floatingBtn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+
+        debugDiv.innerHTML += '<br>✅ Styles forcés appliqués!';
+
+        // Tester le clic
+        floatingBtn.addEventListener('click', function(e) {
+            alert('🚨 BOUTON CLIQUÉ! Le bouton flottant fonctionne!');
+            console.log('🚨 PDF BUILDER DEBUG: Bouton flottant cliqué');
+        });
+
+    } else {
+        debugDiv.innerHTML += '<br>❌ Bouton NON trouvé dans le DOM!';
+    }
+});
+
+// Test supplémentaire au window load
+window.addEventListener('load', function() {
+    console.log('🚨 PDF BUILDER DEBUG: Window load fired');
+    if (debugDiv) {
+        debugDiv.innerHTML += '<br>🚨 Window load terminé!';
+    }
+});
 </script>
 
 <!-- Styles pour le bouton flottant -->
