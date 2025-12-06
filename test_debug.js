@@ -1,1 +1,0 @@
-// console.log('pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings); // console.log('Debug enabled:', window.pdfBuilderDebugSettings?.javascript);

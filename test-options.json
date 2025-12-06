@@ -1,6 +1,0 @@
-{
-    "pdf_builder_allowed_roles": [
-        "administrator",
-        "contributor"
-    ]
-}

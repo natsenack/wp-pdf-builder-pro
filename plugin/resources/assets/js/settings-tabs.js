@@ -823,6 +823,17 @@
 
             // Aplatir les données du formulaire pour la sauvegarde
             const flattenedData = {};
+            for (const [sectionKey, sectionData] of Object.entries(formData)) {
+                if (typeof sectionData === 'object' && sectionData !== null) {
+                    // Pour chaque section, ajouter le préfixe pdf_builder_ aux noms de champs
+                    for (const [fieldKey, fieldValue] of Object.entries(sectionData)) {
+                        const prefixedKey = fieldKey.startsWith('pdf_builder_') ? fieldKey : 'pdf_builder_' + fieldKey;
+                        flattenedData[prefixedKey] = fieldValue;
+                    }
+                }
+            }
+
+            const flattenedData = {};
             for (const [key, value] of Object.entries(formData)) {
                 flattenedData[key] = value;
             }
