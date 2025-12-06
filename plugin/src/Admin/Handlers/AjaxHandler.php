@@ -721,6 +721,14 @@ class AjaxHandler
                     'backup_cleaned' => true
                 ]);
             } else {
+                // Debug: pourquoi update_option échoue
+                global $wpdb;
+                $last_error = $wpdb->last_error;
+                error_log('PDF Builder - update_option failed. Last DB error: ' . $last_error);
+                error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
+                error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
+                error_log('PDF Builder - New settings count: ' . count($settings_to_save));
+
                 // Rollback en cas d'échec
                 $this->rollbackSettings($backup_key);
                 wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
