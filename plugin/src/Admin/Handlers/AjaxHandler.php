@@ -695,6 +695,10 @@ class AjaxHandler
                     $sanitized_value = $this->sanitizeFieldValue($key, $value);
                     if ($sanitized_value !== '') {
                         $settings_to_save[$key] = $sanitized_value;
+                        // Debug pour license
+                        if ($key === 'pdf_builder_license_email_reminders') {
+                            error_log('PHP: Saving license_email_reminders: ' . $sanitized_value);
+                        }
                     }
                 }
             }
