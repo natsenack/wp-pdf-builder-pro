@@ -20,7 +20,7 @@
                         <tr>
                             <th scope="row"><label for="pdf_quality">Qualité</label></th>
                             <td>
-                                <select id="pdf_quality" name="pdf_quality">
+                                <select id="pdf_quality" name="pdf_builder_pdf_quality">
                                     <option value="low" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'low'); ?>>Rapide (fichiers légers)</option>
                                     <option value="medium" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'medium'); ?>>Équilibré</option>
                                     <option value="high" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'high'); ?>>Haute qualité</option>
@@ -30,7 +30,7 @@
                         <tr>
                             <th scope="row"><label for="default_format">Format de page</label></th>
                             <td>
-                                <select id="default_format" name="default_format">
+                                <select id="default_format" name="pdf_builder_default_format">
                                     <option value="A4" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'A4'); ?>>A4</option>
                                     <option value="A3" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
                                     <option value="Letter" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
@@ -41,7 +41,7 @@
                         <tr>
                             <th scope="row"><label for="default_orientation">Orientation</label></th>
                             <td>
-                                <select id="default_orientation" name="default_orientation">
+                                <select id="default_orientation" name="pdf_builder_default_orientation">
                                     <option value="portrait" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
                                     <option value="landscape" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
                                 </select>
@@ -71,7 +71,7 @@
                             <tr>
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
                                 <td>
-                                    <select id="pdf_compression" name="pdf_compression">
+                                    <select id="pdf_compression" name="pdf_builder_pdf_compression">
                                         <option value="none" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'none'); ?>>Aucune</option>
                                         <option value="medium" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'medium'); ?>>Moyenne</option>
                                         <option value="high" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'high'); ?>>Élevée</option>
@@ -83,7 +83,7 @@
                                 <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true), '1'); ?>>
+                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_builder_pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
@@ -93,7 +93,7 @@
                                 <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true), '1'); ?>>
+                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_builder_pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Ajuster les couleurs et la résolution pour l'impression</p>

@@ -369,7 +369,7 @@ if (!function_exists('pdf_builder_safe_get_option')) {
                     <tr>
                         <th scope="row"><label for="default_template">Template par défaut</label></th>
                         <td>
-                            <select id="default_template" name="default_template">
+                            <select id="default_template" name="pdf_builder_default_template">
                                 <option value="blank" <?php selected(get_option('pdf_builder_default_template', 'blank'), 'blank'); ?>>Page blanche</option>
                                 <option value="invoice" <?php selected(get_option('pdf_builder_default_template', 'blank'), 'invoice'); ?>>Facture</option>
                                 <option value="quote" <?php selected(get_option('pdf_builder_default_template', 'blank'), 'quote'); ?>>Devis</option>
@@ -381,7 +381,7 @@ if (!function_exists('pdf_builder_safe_get_option')) {
                         <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
                         <td>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="template_library_enabled" name="template_library_enabled" value="1" <?php checked(get_option('pdf_builder_template_library_enabled', true)); ?>>
+                                <input type="checkbox" id="template_library_enabled" name="pdf_builder_template_library_enabled" value="1" <?php checked(get_option('pdf_builder_template_library_enabled', true)); ?>>
                                 <span class="toggle-slider"></span>
                             </label>
                             <p class="description">Active la bibliothèque de templates prédéfinis</p>

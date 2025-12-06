@@ -72,7 +72,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                 </span>
                             </div>
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
-                            <input type="checkbox" id="license_test_mode" name="license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> style="display: none;" />
+                            <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> style="display: none;" />
                             <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_toggle_test_mode'); ?>" />
                         </td>
                     </tr>
@@ -244,7 +244,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['pdf_builder_force_https']) && $settings['pdf_builder_force_https'] ? 'checked' : ''; ?> />
+                                    <input type="checkbox" id="force_https" name="pdf_builder_force_https" value="1" <?php echo isset($settings['pdf_builder_force_https']) && $settings['pdf_builder_force_https'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label">HTTPS forcé</span>
@@ -626,7 +626,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="performance_monitoring" name="performance_monitoring" value="1" <?php echo isset($settings['pdf_builder_performance_monitoring']) && $settings['pdf_builder_performance_monitoring'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="performance_monitoring" name="pdf_builder_performance_monitoring" value="1" <?php echo isset($settings['pdf_builder_performance_monitoring']) && $settings['pdf_builder_performance_monitoring'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le monitoring des performances</span>

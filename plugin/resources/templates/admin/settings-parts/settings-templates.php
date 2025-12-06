@@ -460,7 +460,7 @@ $current_mappings = $status_manager->get_current_mappings();
                                 <label for="template_<?php echo esc_attr($status_key); ?>">
                                     Template par défaut :
                                 </label>
-                                <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]"
+                                <select name="pdf_builder_order_status_templates[<?php echo esc_attr($status_key); ?>]"
                                         id="template_<?php echo esc_attr($status_key); ?>"
                                         class="template-select">
                                     <option value="">-- Aucun template --</option>
