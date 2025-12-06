@@ -44,6 +44,12 @@ function pdf_builder_load_settings_assets($hook) {
         PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
         false // Chargé dans le header pour une exécution précoce
     );
+
+    // Localiser le script avec les données AJAX
+    wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_ajax')
+    ));
 }
 
 // Enregistrer le hook pour charger les assets
