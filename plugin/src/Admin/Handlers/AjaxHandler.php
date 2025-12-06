@@ -891,7 +891,6 @@ class AjaxHandler
             wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
         }
     }
-}
 
     /**
      * Sauvegarder les paramètres généraux
