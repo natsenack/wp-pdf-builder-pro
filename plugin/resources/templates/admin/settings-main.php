@@ -2,54 +2,8 @@
 if (!defined('ABSPATH')) exit('No direct access');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 
-// TEMPORARY: Include cache-busted version - COMMENTED OUT FOR TESTING
-// include_once __DIR__ . '/settings-main-cache-bust.php';
-
-// FORCE COMPLETE PAGE RELOAD TO BYPASS CACHE
-echo "<script>
-if (!sessionStorage.getItem('pdf_builder_cache_busted')) {
-    sessionStorage.setItem('pdf_builder_cache_busted', 'true');
-    window.location.reload(true);
-}
-</script>";
-
-// FORCE NO-CACHE HEADERS
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
-header("Expires: 0");
-
-// Include helper functions
-// require_once __DIR__ . '/settings-parts/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
-
 $settings = get_option('pdf_builder_settings', array());
 $nonce = wp_create_nonce('pdf_builder_ajax');
-
-// DEBUG: Force output to verify file is loaded
-echo "<script>console.log('CACHE BUSTER: " . time() . "');</script>";
-echo "<script>
-document.addEventListener('DOMContentLoaded', function() {
-    
-    const tabsContainer = document.getElementById('pdf-builder-tabs');
-    const contentContainer = document.getElementById('pdf-builder-tab-content');
-    
-    
-    if (tabsContainer) {
-        const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
-        
-        tabButtons.forEach((btn, i) => {
-             + '. ' + btn.textContent + ' (data-tab: ' + btn.getAttribute('data-tab') + ')');
-        });
-    }
-    if (contentContainer) {
-        const tabContents = contentContainer.querySelectorAll('.tab-content');
-        
-        tabContents.forEach((content, i) => {
-             + '. #' + content.id + ' - ' + (content.classList.contains('active') ? 'ACTIVE' : 'inactive'));
-        });
-    }
-    
-});
-</script>";
 ?>
 <div class="wrap">
 <h1>PDF Builder Pro Settings</h1>
@@ -58,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <a href="#" class="nav-tab nav-tab-active" data-tab="general">General</a>
 <a href="#" class="nav-tab" data-tab="licence">License</a>
 <a href="#" class="nav-tab" data-tab="systeme">System</a>
-<a href="#" class="nav-tab" data-tab="acces">Access</a>
 <a href="#" class="nav-tab" data-tab="securite">Security</a>
 <a href="#" class="nav-tab" data-tab="pdf">PDF</a>
 <a href="#" class="nav-tab" data-tab="contenu">Content</a>
@@ -95,7 +48,109 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <p class="submit"><button type="submit" class="button button-primary">Save Settings</button></p>
 
-<!-- Updated: 2025-12-03 23:30:00 - Bouton flottant supprimé (défini dans settings-parts/settings-main.php) - Cache bust: <?php echo time(); ?> -->
+<!-- Bouton de sauvegarde flottant -->
+<div id="pdf-builder-save-floating" class="pdf-builder-save-floating">
+    <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
+        <span class="dashicons dashicons-yes"></span>
+        💾 Enregistrer
+    </button>
+    <div id="save-status-indicator" class="save-status-indicator">
+        <span id="save-status-text">Prêt à enregistrer</span>
+    </div>
 </div>
 
-<!-- JavaScript moved to settings-parts/settings-main.php to avoid conflicts -->
+<!-- Styles pour le bouton flottant -->
+<style>
+.pdf-builder-save-floating {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.pdf-builder-save-btn {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-builder-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.pdf-builder-save-btn:active {
+    transform: translateY(0);
+}
+
+.pdf-builder-save-btn.saving {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.pdf-builder-save-btn.saving::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.save-status-indicator {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.save-status-indicator.visible {
+    opacity: 1;
+}
+
+.save-status-indicator.success {
+    background: rgba(40, 167, 69, 0.9);
+}
+
+.save-status-indicator.error {
+    background: rgba(220, 53, 69, 0.9);
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .pdf-builder-save-floating {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .pdf-builder-save-btn {
+        padding: 10px 20px !important;
+        font-size: 13px !important;
+        min-width: 120px;
+    }
+}
+</style>
+</div>
