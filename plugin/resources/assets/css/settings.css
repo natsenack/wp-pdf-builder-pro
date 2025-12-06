@@ -2415,7 +2415,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     width: 100% !important;
     height: 100% !important;
     background: rgba(0,0,0,0.7) !important;
-    z-index: 999999 !important;
+    z-index: 10000 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
