@@ -22,46 +22,53 @@ require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 </div>
 
 <script type="text/javascript">
-(function() {
-    console.log('🚨 PDF BUILDER: Floating button script loaded!');
-    
-    // Create debug indicator
-    var debugDiv = document.createElement('div');
-    debugDiv.id = 'pdf-js-test';
-    debugDiv.innerHTML = '🚨 JAVASCRIPT EXECUTED! Floating button script working at ' + new Date().toLocaleTimeString();
-    debugDiv.style.cssText = 'position:fixed;top:50px;left:10px;background:cyan;color:black;padding:15px;border:3px solid blue;font-size:14px;font-weight:bold;z-index:1000000;border-radius:5px;max-width:300px;';
-    
-    // Add to body when ready
-    function addDebugElement() {
-        if (document.body) {
-            document.body.appendChild(debugDiv);
-            console.log('🚨 PDF BUILDER: Debug element added to body');
-            
-            // Test floating button
-            setTimeout(function() {
-                var btn = document.getElementById('pdf-builder-save-floating-btn');
-                if (btn) {
-                    debugDiv.innerHTML += '<br>✅ Floating button found and visible!';
-                    debugDiv.style.background = 'lime';
-                    
-                    // Add click handler
-                    btn.addEventListener('click', function() {
-                        alert('🚨 SUCCESS! Floating save button is working!');
-                    });
-                    
-                } else {
-                    debugDiv.innerHTML += '<br>❌ Floating button NOT found!';
-                    debugDiv.style.background = 'orange';
-                }
-            }, 500);
-            
-        } else {
-            setTimeout(addDebugElement, 10);
-        }
-    }
-    addDebugElement();
-    
-})();
+// Script ultra-fiable qui s'exécute très tard
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        console.log('🚨 PDF BUILDER: Ultra-late script execution!');
+        
+        // Créer indicateur de debug ultra-visible
+        var debugDiv = document.createElement('div');
+        debugDiv.id = 'pdf-js-test';
+        debugDiv.innerHTML = '🚨 JAVASCRIPT WORKS! Script executed successfully at ' + new Date().toLocaleTimeString();
+        debugDiv.style.cssText = 'position:fixed;top:50px;left:10px;background:cyan;color:black;padding:15px;border:3px solid blue;font-size:14px;font-weight:bold;z-index:1000000;border-radius:5px;max-width:300px;';
+        
+        document.body.appendChild(debugDiv);
+        console.log('🚨 PDF BUILDER: Debug element added to body');
+        
+        // Forcer le bouton flottant visible
+        setTimeout(function() {
+            var btn = document.getElementById('pdf-builder-save-floating-btn');
+            if (btn) {
+                debugDiv.innerHTML += '<br>✅ Floating button found and forced visible!';
+                debugDiv.style.background = 'lime';
+                
+                // S'assurer qu'il est visible
+                btn.style.display = 'block !important';
+                btn.style.visibility = 'visible !important';
+                btn.style.opacity = '1 !important';
+                btn.style.background = 'red !important';
+                btn.style.color = 'white !important';
+                btn.style.border = '3px solid yellow !important';
+                btn.style.position = 'fixed !important';
+                btn.style.bottom = '20px !important';
+                btn.style.right = '20px !important';
+                btn.style.zIndex = '999999 !important';
+                btn.style.fontSize = '18px !important';
+                btn.style.padding = '12px 20px !important';
+                
+                // Ajouter un gestionnaire de clic
+                btn.addEventListener('click', function() {
+                    alert('🚨 SUCCESS! Floating save button is working!');
+                });
+                
+            } else {
+                debugDiv.innerHTML += '<br>❌ Floating button NOT found!';
+                debugDiv.style.background = 'orange';
+            }
+        }, 1000);
+    }, 2000); // Attendre 2 secondes après le load
+});
 </script>
 
 <style>
