@@ -391,8 +391,18 @@
                 slider.addEventListener('click', function(e) {
                     e.stopPropagation();
                     console.log('[PDF Builder] Slider clicked, toggling input');
+                    const oldState = input.checked;
                     input.checked = !input.checked;
+                    console.log(`[PDF Builder] Input state changed from ${oldState} to ${input.checked}`);
+                    
+                    // Forcer un re-render en modifiant temporairement une propriété
+                    input.style.display = 'none';
+                    input.offsetHeight; // Trigger reflow
+                    input.style.display = '';
+                    
+                    // Déclencher l'événement change
                     input.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('[PDF Builder] Change event dispatched');
                 });
 
                 // Ne pas interférer avec le comportement naturel du label
