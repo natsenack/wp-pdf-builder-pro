@@ -19,8 +19,8 @@
                     $test_mode_enabled = $settings['pdf_builder_license_test_mode_enabled'] ?? false;
                     $test_key = $settings['pdf_builder_license_test_key'] ?? '';
                     $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
-                    $license_email_reminders = get_option('pdf_builder_license_email_reminders', '0');
-                    $license_reminder_email = get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''));
+                    $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
+                    $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', '');
                     // Email notifications removed — no UI or settings for license expiration notifications
                     // is_premium si vraie licence OU si clé de test existe
                     $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
