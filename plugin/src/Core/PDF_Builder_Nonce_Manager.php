@@ -188,6 +188,3 @@ class PDF_Builder_Nonce_Manager {
         return false; // Pour l'instant, on laisse le JS gérer ça
     }
 }
-
-// Initialiser le gestionnaire de nonces
-PDF_Builder_Nonce_Manager::get_instance();

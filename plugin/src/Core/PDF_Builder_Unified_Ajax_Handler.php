@@ -1962,5 +1962,4 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         return $templates[$template_id] ?? '<h1>Template</h1><p>Contenu par défaut</p>';
      }
-}// Initialiser le handler unifié
-PDF_Builder_Unified_Ajax_Handler::get_instance();
+}
