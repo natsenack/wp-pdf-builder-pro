@@ -19,31 +19,78 @@ require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 <!-- Bouton de sauvegarde flottant global -->
 <div id="pdf-builder-save-floating" class="pdf-builder-save-floating">
     <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
-        <span class="dashicons dashicons-saved"></span>
+        <span class="dashicons dashicons-yes"></span>
         💾 Enregistrer
     </button>
+    <div id="save-status-indicator" class="save-status-indicator">
+        <span id="save-status-text">Prêt à enregistrer</span>
+    </div>
 </div>
 
-
+<!-- Styles pour le bouton flottant -->
 <style>
 .pdf-builder-save-floating {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 999999;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
 }
-.pdf-builder-save-floating .button {
-    background: #007cba;
-    color: white;
-    border: 1px solid #007cba;
-    font-size: 14px;
-    padding: 8px 16px;
+
+.pdf-builder-save-btn {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-builder-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.pdf-builder-save-btn:active {
+    transform: translateY(0);
+}
+
+.pdf-builder-save-btn.saving {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.save-status-indicator {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #666;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
-.pdf-builder-save-floating .button:hover {
-    background: #005a87;
-    border-color: #005a87;
+
+.save-status-indicator.visible {
+    opacity: 1;
+}
+
+.save-status-indicator.success {
+    color: #46b450;
+    border-color: #46b450;
+}
+
+.save-status-indicator.error {
+    color: #dc3232;
+    border-color: #dc3232;
 }
 </style>
 <?php

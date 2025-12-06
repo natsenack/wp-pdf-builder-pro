@@ -412,11 +412,16 @@
     // Initialiser le système de sauvegarde centralisé
     document.addEventListener('DOMContentLoaded', initCentralizedSaveSystem);
 
-    // Système de sauvegarde automatique pour tous les contrôles interactifs
-    let autoSaveTimeout = null;
-    const AUTO_SAVE_DELAY = 2000; // 2 secondes de délai
+    // Système de sauvegarde automatique DÉSACTIVÉ - L'utilisateur ne veut pas d'auto-save
+    // let autoSaveTimeout = null;
+    // const AUTO_SAVE_DELAY = 2000; // 2 secondes de délai
 
     function initAutoSaveSystem() {
+        // Auto-save désactivé sur demande de l'utilisateur
+        console.log('Auto-save system disabled by user request');
+        return;
+
+        /*
         // Écouter tous les changements sur les éléments de formulaire PDF Builder
         document.addEventListener('change', function(event) {
             const target = event.target;
