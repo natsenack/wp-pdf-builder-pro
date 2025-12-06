@@ -392,9 +392,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </form>
             </section>
 
-            <!-- Modals déplacés à la fin du fichier -->
-
-            <!-- Canvas Configuration Modal - Fullscreen Overlay -->
+            <!-- Canvas Configuration Modal - Fullscreen Overlay - DÉPLACÉ APRÈS TOUTES LES SECTIONS -->
             <div id="canvas-modal-overlay" class="canvas-modal-overlay" style="display: none;">
                 <div class="canvas-modal-container canvas-modal">
                     <div class="canvas-modal-header">
