@@ -821,6 +821,12 @@
                 return;
             }
 
+            // Aplatir les données du formulaire pour la sauvegarde
+            const flattenedData = {};
+            for (const [key, value] of Object.entries(formData)) {
+                flattenedData[key] = value;
+            }
+
             // Préparer les références pour l'interface utilisateur
             const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
             const originalText = saveBtn ? saveBtn.textContent : '';
