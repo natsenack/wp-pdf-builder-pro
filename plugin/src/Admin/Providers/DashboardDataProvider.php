@@ -81,7 +81,18 @@ class DashboardDataProvider
      */
     public function getPluginVersion()
     {
-        return pdf_builder_get_version();
+        static $version = null;
+
+        if ($version === null) {
+            if (defined('PDF_BUILDER_PLUGIN_FILE') && file_exists(PDF_BUILDER_PLUGIN_FILE)) {
+                $plugin_data = get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
+                $version = $plugin_data['Version'] ?: '1.1.0';
+            } else {
+                $version = '1.1.0';
+            }
+        }
+
+        return $version;
     }
 
     /**
