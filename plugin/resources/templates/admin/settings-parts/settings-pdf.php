@@ -42,8 +42,8 @@
                             <th scope="row"><label for="default_orientation">Orientation</label></th>
                             <td>
                                 <select id="default_orientation" name="default_orientation">
-                                    <option value="portrait" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
-                                    <option value="landscape" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
+                                    <option value="portrait" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
+                                    <option value="landscape" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
                                 </select>
                             </td>
                         </tr>
@@ -51,7 +51,7 @@
                             <th scope="row"><label for="pdf_builder_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_cache_enabled', false)); ?>>
+                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>
@@ -72,9 +72,9 @@
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
                                 <td>
                                     <select id="pdf_compression" name="pdf_compression">
-                                        <option value="none" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_pdf_compression', 'medium'), 'none'); ?>>Aucune</option>
-                                        <option value="medium" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_pdf_compression', 'medium'), 'medium'); ?>>Moyenne</option>
-                                        <option value="high" <?php pdf_builder_safe_selected(pdf_builder_safe_get_option('pdf_builder_pdf_compression', 'medium'), 'high'); ?>>Élevée</option>
+                                        <option value="none" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'none'); ?>>Aucune</option>
+                                        <option value="medium" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'medium'); ?>>Moyenne</option>
+                                        <option value="high" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'high'); ?>>Élevée</option>
                                     </select>
                                     <p class="description">Réduit la taille des fichiers PDF</p>
                                 </td>
@@ -83,7 +83,7 @@
                                 <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_pdf_metadata_enabled', true)); ?>>
+                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
@@ -93,7 +93,7 @@
                                 <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_pdf_print_optimized', true)); ?>>
+                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Ajuster les couleurs et la résolution pour l'impression</p>
