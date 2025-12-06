@@ -91,26 +91,25 @@ $settings = get_option('pdf_builder_settings', array());
                                     pdfCacheSlider.addEventListener('click', function(e) {
                                         e.stopPropagation();
                                         console.log('PDF Slider clicked, current state:', pdfCacheInput.checked);
+                                        pdfCacheInput.dataset.sliderClicked = 'true'; // Flag to prevent double toggle
                                         pdfCacheInput.checked = !pdfCacheInput.checked;
                                         pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
                                         console.log('PDF Cache enabled toggled to:', pdfCacheInput.checked);
                                     });
                                     
-                                    // Handle clicks on label (prevent default if clicking on slider to avoid double toggle)
+                                    // Handle clicks on label (prevent default and toggle manually)
                                     pdfCacheLabel.addEventListener('click', function(e) {
+                                        e.preventDefault(); // Prevent browser's automatic toggle
                                         console.log('Label click target:', e.target, 'slider:', pdfCacheSlider, 'contains:', pdfCacheSlider.contains(e.target));
-                                        if (e.target === pdfCacheSlider || pdfCacheSlider.contains(e.target)) {
-                                            // Clicked on slider, let our slider handler handle it
-                                            console.log('Clicked on slider, ignoring label click');
+                                        if (pdfCacheInput.dataset.sliderClicked) {
+                                            console.log('Slider already handled this click, skipping');
+                                            delete pdfCacheInput.dataset.sliderClicked;
                                             return;
                                         }
-                                        console.log('PDF Label clicked (not on slider), current state:', pdfCacheInput.checked);
-                                        // Let the browser handle the checkbox toggle
-                                        // The input will be toggled by the browser
-                                        setTimeout(function() {
-                                            console.log('PDF Cache enabled after label click:', pdfCacheInput.checked);
-                                            pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                        }, 10);
+                                        console.log('PDF Label clicked, toggling manually, current state:', pdfCacheInput.checked);
+                                        pdfCacheInput.checked = !pdfCacheInput.checked;
+                                        pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                        console.log('PDF Cache enabled toggled to:', pdfCacheInput.checked);
                                     });
                                     
                                     // Debug change event
