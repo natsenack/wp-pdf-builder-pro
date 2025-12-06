@@ -3,7 +3,7 @@
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
-            <section id="licence-container" aria-label="Gestion de la Licence">
+            <section id="licence" aria-label="Gestion de la Licence">
                 <h2 class="settings-page-title">🔐 Gestion de la Licence</h2>
 
                 
