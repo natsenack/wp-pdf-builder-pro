@@ -15,12 +15,13 @@ require_once plugin_dir_path(__FILE__) . 'settings-loader.php';
 require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 
 // Add floating save button and JavaScript here for better execution context
+echo '<!-- PDF BUILDER SETTINGS PAGE LOADED - DEBUG MARKER -->';
 ?>
 <!-- Bouton de sauvegarde flottant global -->
-<div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="display: block !important; visibility: visible !important;">
+<div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="display: block !important; visibility: visible !important; background: red !important; padding: 20px !important; border: 2px solid yellow !important;">
     <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
         <span class="dashicons dashicons-yes"></span>
-        💾 Enregistrer
+        💾 Enregistrer (DEBUG VISIBLE)
     </button>
     <div id="save-status-indicator" class="save-status-indicator">
         <span id="save-status-text">Prêt à enregistrer</span>
