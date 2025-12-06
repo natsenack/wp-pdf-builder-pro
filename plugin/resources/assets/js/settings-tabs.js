@@ -520,16 +520,21 @@
             if (input) {
                 if (input.type === 'checkbox') {
                     input.checked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                    // Déclencher un événement change pour mettre à jour l'interface (CSS, etc.)
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
                 } else if (input.type === 'radio') {
                     // Pour les radios, trouver celui avec la bonne valeur
                     const radios = document.querySelectorAll(`[name="${input.name}"]`);
                     radios.forEach(radio => {
                         radio.checked = radio.value == fieldValue;
+                        radio.dispatchEvent(new Event('change', { bubbles: true }));
                     });
                 } else if (input.tagName === 'SELECT') {
                     input.value = fieldValue;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
                 } else {
                     input.value = fieldValue;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
         }
