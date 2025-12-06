@@ -7,8 +7,8 @@ $settings = get_option('pdf_builder_settings', []);
 
 // Préparer toutes les variables nécessaires
 $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
-$cache_compression = $settings['pdf_builder_cache_compression'] ?? '1';
-$cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? '1';
+$cache_compression = '1'; // FORCÉ à 1 pour test
+$cache_auto_cleanup = '1'; // FORCÉ à 1 pour test
 $cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
 $cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
 $performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
