@@ -216,6 +216,76 @@ if (function_exists('add_action')) {
  */
 
 /**
+ * Execute daily backup
+ */
+function pdf_builder_execute_daily_backup() {
+    try {
+        // Create backup directory if it doesn't exist
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        if (!file_exists($backup_dir)) {
+            if (!wp_mkdir_p($backup_dir)) {
+                return;
+            }
+        }
+
+        // Get all plugin options
+        global $wpdb;
+        $options = $wpdb->get_results(
+            $wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", 'pdf_builder_%'),
+            ARRAY_A
+        );
+
+        // Create backup filename with timestamp
+        $timestamp = current_time('timestamp');
+        $filename = 'pdf_builder_backup_' . wp_date('Y-m-d_H-i-s', $timestamp) . '.json';
+        $filepath = $backup_dir . '/' . $filename;
+
+        // Prepare backup data
+        $backup_data = array(
+            'version' => '1.0',
+            'timestamp' => $timestamp,
+            'date' => wp_date('Y-m-d H:i:s', $timestamp),
+            'timezone' => wp_timezone_string(),
+            'type' => 'automatic',
+            'options' => array()
+        );
+
+        foreach ($options as $option) {
+            $backup_data['options'][$option['option_name']] = maybe_unserialize($option['option_value']);
+        }
+
+        // Write backup file
+        file_put_contents($filepath, json_encode($backup_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+    } catch (Exception $e) {
+        // Silent fail for cron job
+    }
+}
+
+/**
+ * Cleanup old backups
+ */
+function pdf_builder_cleanup_old_backups() {
+    global $wpdb;
+
+    // Récupérer tous les backups (max 5 derniers)
+    $backups = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT option_name FROM {$wpdb->options}
+             WHERE option_name LIKE %s
+             ORDER BY option_name DESC
+             LIMIT 999 OFFSET 5",
+            'pdf_builder_backup_%'
+        )
+    );
+
+    // Supprimer les anciens
+    foreach ($backups as $backup) {
+        delete_option($backup->option_name);
+    }
+}
+
+/**
  * AJAX handler for creating backups
  */
 function pdf_builder_create_backup_ajax() {

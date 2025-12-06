@@ -780,7 +780,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="pdf_builder_canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
@@ -790,7 +790,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_preload_critical" name="canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_preload_critical" name="pdf_builder_canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
@@ -838,7 +838,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_lazy_loading_plugin">Chargement paresseux (Plugin)</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_plugin" name="canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_lazy_loading_plugin" name="pdf_builder_canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Charge les données seulement quand nécessaire</p>

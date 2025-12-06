@@ -653,7 +653,7 @@
                                 <th scope="row"><label for="license_email_reminders">Activer les rappels</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="license_email_reminders" name="license_email_reminders"
+                                        <input type="checkbox" id="license_email_reminders" name="pdf_builder_license_email_reminders"
                                             value="1" <?php checked($license_email_reminders, '1'); ?> />
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -663,7 +663,7 @@
                             <tr>
                                 <th scope="row"><label for="license_reminder_email">Adresse email</label></th>
                                 <td>
-                                    <input type="email" id="license_reminder_email" name="license_reminder_email"
+                                    <input type="email" id="license_reminder_email" name="pdf_builder_license_reminder_email"
                                         value="<?php echo esc_attr($license_reminder_email); ?>"
                                         placeholder="votre@email.com" class="form-input" />
                                     <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>
