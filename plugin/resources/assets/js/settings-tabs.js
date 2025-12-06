@@ -1104,6 +1104,19 @@
         }
     };
 
+    // Gestionnaire pour le bouton flottant "Enregistrer"
+    document.addEventListener('DOMContentLoaded', function() {
+        const floatingSaveBtn = document.getElementById('pdf-builder-save-floating-btn');
+        if (floatingSaveBtn) {
+            floatingSaveBtn.addEventListener('click', function() {
+                const allFormData = collectAllFormData();
+                if (Object.keys(allFormData).length > 0) {
+                    saveAllSettings(allFormData);
+                }
+            });
+        }
+    });
+
 })();
 
 // FORCE CACHE BUST - Modified: 2025-12-06 - Added monitoring and security improvements
