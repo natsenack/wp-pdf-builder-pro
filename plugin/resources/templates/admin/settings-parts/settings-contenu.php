@@ -456,11 +456,11 @@ $settings = get_option('pdf_builder_settings', array());
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_bg_color">Couleur de fond</label>
-                                        <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="${<?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>">
+                                        <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="${<?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>}">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_border_color">Couleur bordure</label>
-                                        <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="${<?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>">
+                                        <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="${<?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>}">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_border_width">Épaisseur bordure (px)</label>
@@ -627,7 +627,7 @@ $settings = get_option('pdf_builder_settings', array());
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_memory_limit_php">Limite mémoire PHP (MB)</label>
-                                        <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="${<?php echo json_encode($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>" min="32" max="1024">
+                                        <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="${<?php echo json_encode($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>}" min="32" max="1024">
                                     </div>
                                 </div>
                             `
