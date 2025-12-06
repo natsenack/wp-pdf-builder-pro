@@ -63,8 +63,10 @@ $settings = get_option('pdf_builder_settings', array());
                         <script>
                             // Debug and fix toggle functionality for PDF cache - Updated: 2025-12-06
                             console.log('PDF Toggle script starting...');
-                            document.addEventListener('DOMContentLoaded', function() {
-                                console.log('DOMContentLoaded fired for PDF toggle');
+                            
+                            // Run immediately since the tab content is loaded dynamically
+                            function setupPDFToggle() {
+                                console.log('Setting up PDF toggle immediately');
                                 
                                 const pdfCacheInput = document.getElementById('pdf_builder_cache_enabled');
                                 const pdfCacheLabel = pdfCacheInput ? pdfCacheInput.closest('label') : null;
@@ -113,7 +115,14 @@ $settings = get_option('pdf_builder_settings', array());
                                 } else {
                                     console.error('PDF Toggle elements not found!');
                                 }
-                            });
+                            }
+                            
+                            // Try to setup immediately
+                            if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', setupPDFToggle);
+                            } else {
+                                setupPDFToggle();
+                            }
                         </script>
                     </table>
                 </section>
