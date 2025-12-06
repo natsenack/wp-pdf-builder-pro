@@ -89,6 +89,44 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
     </button>
 </div>
 
+<!-- DEBUG: JavaScript pour vérifier le bouton flottant -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
+        const floatingContainer = document.getElementById('pdf-builder-save-floating');
+        
+        console.log('DEBUG: Bouton flottant - Container:', floatingContainer);
+        console.log('DEBUG: Bouton flottant - Button:', floatingBtn);
+        
+        if (floatingContainer) {
+            console.log('DEBUG: Container styles:', getComputedStyle(floatingContainer));
+            console.log('DEBUG: Container rect:', floatingContainer.getBoundingClientRect());
+        }
+        
+        if (floatingBtn) {
+            console.log('DEBUG: Button styles:', getComputedStyle(floatingBtn));
+            console.log('DEBUG: Button rect:', floatingBtn.getBoundingClientRect());
+            
+            // Force visible pour test
+            floatingBtn.style.background = 'red !important';
+            floatingBtn.style.color = 'white !important';
+            floatingBtn.style.border = '3px solid yellow !important';
+            floatingBtn.style.fontSize = '20px !important';
+            floatingBtn.style.padding = '15px !important';
+            floatingBtn.style.zIndex = '999999 !important';
+            floatingBtn.style.position = 'fixed !important';
+            floatingBtn.style.bottom = '50px !important';
+            floatingBtn.style.right = '50px !important';
+            
+            console.log('DEBUG: Styles forcés appliqués');
+        } else {
+            console.error('DEBUG: Bouton flottant NON trouvé dans le DOM!');
+        }
+    }, 1000);
+});
+</script>
+
 <!-- Styles pour le bouton flottant -->
 <style>
 .pdf-builder-save-floating {
