@@ -955,7 +955,7 @@
     background-color: #ccc;
     transition: 0.3s;
     border-radius: 24px;
-    pointer-events: none;
+    /* pointer-events: none; */ /* Removed to allow slider clicks */
 }
 
 .toggle-slider:before {
