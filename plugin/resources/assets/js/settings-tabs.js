@@ -1,7 +1,7 @@
 /**
- * Paramètres PDF Builder Pro - Navigation des onglets
- * Version: 2.0.0 - Nettoyée (sans logs de debug)
- * Date: 2025-12-03
+ * PDF Builder Pro - Navigation des onglets
+ * Version: 2.1.0 - Sécurisé et optimisé
+ * Date: 2025-12-06
  */
 
 (function() {
@@ -16,7 +16,103 @@
         };
     }
 
-    // Fonctions de debug conditionnel
+    // Métriques de performance
+    const PerformanceMetrics = {
+        startTime: 0,
+        requestCount: 0,
+        errorCount: 0,
+
+        start(operation) {
+            this.startTime = performance.now();
+            if (PDF_BUILDER_CONFIG.debug) {
+                console.log(`[PDF Builder] Début ${operation}`);
+            }
+        },
+
+        end(operation) {
+            const duration = performance.now() - this.startTime;
+            this.requestCount++;
+
+            if (PDF_BUILDER_CONFIG.debug) {
+                console.log(`[PDF Builder] ${operation} terminé en ${duration.toFixed(2)}ms`);
+            }
+
+            // Stocker les métriques dans localStorage
+            this.storeMetrics(operation, duration);
+        },
+
+        error(operation, error) {
+            this.errorCount++;
+            if (PDF_BUILDER_CONFIG.debug) {
+                console.error(`[PDF Builder] Erreur ${operation}:`, error);
+            }
+        },
+
+        storeMetrics(operation, duration) {
+            try {
+                const metrics = JSON.parse(localStorage.getItem('pdf_builder_metrics') || '{}');
+                if (!metrics[operation]) {
+                    metrics[operation] = { count: 0, totalTime: 0, avgTime: 0, maxTime: 0 };
+                }
+
+                metrics[operation].count++;
+                metrics[operation].totalTime += duration;
+                metrics[operation].avgTime = metrics[operation].totalTime / metrics[operation].count;
+                metrics[operation].maxTime = Math.max(metrics[operation].maxTime, duration);
+
+                localStorage.setItem('pdf_builder_metrics', JSON.stringify(metrics));
+            } catch (e) {
+                // Ignore les erreurs localStorage
+            }
+        },
+
+        getMetrics() {
+            try {
+                return JSON.parse(localStorage.getItem('pdf_builder_metrics') || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+    };
+
+    // Compatibilité navigateurs - Fallback pour fetch
+    const AjaxCompat = {
+        fetch(url, options) {
+            // Utiliser fetch si disponible
+            if (window.fetch) {
+                return window.fetch(url, options);
+            }
+
+            // Fallback vers XMLHttpRequest
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+
+                xhr.open(options.method || 'GET', url);
+
+                // Headers
+                if (options.headers) {
+                    Object.keys(options.headers).forEach(key => {
+                        xhr.setRequestHeader(key, options.headers[key]);
+                    });
+                }
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve({
+                            ok: true,
+                            status: xhr.status,
+                            json: () => Promise.resolve(JSON.parse(xhr.responseText))
+                        });
+                    } else {
+                        reject(new Error(`HTTP ${xhr.status}`));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(options.body);
+            });
+        }
+    };
 
     /**
      * Affiche un message de sauvegarde
@@ -565,16 +661,28 @@
 
     /**
      * Cache local pour récupération en cas d'erreur
+     * Utilise sessionStorage pour éviter les conflits entre onglets
      */
     const LocalCache = {
         save: function(data) {
             try {
+                // Calculer un hash simple pour vérifier l'intégrité
+                const dataStr = JSON.stringify(data);
+                const hash = this.simpleHash(dataStr);
+
                 const cacheData = {
                     data: data,
                     timestamp: Date.now(),
-                    version: '1.0'
+                    version: '1.1',
+                    hash: hash,
+                    sessionId: this.getSessionId()
                 };
-                localStorage.setItem('pdf_builder_settings_backup', JSON.stringify(cacheData));
+
+                sessionStorage.setItem('pdf_builder_settings_backup', JSON.stringify(cacheData));
+
+                if (PDF_BUILDER_CONFIG.debug) {
+                    console.log('[PDF Builder] Cache sauvegardé, hash:', hash);
+                }
             } catch (e) {
                 console.warn('Impossible de sauvegarder dans le cache local:', e);
             }
@@ -582,15 +690,40 @@
 
         load: function() {
             try {
-                const cacheStr = localStorage.getItem('pdf_builder_settings_backup');
+                const cacheStr = sessionStorage.getItem('pdf_builder_settings_backup');
                 if (!cacheStr) return null;
 
                 const cache = JSON.parse(cacheStr);
 
-                // Vérifier si le cache n'est pas trop vieux (24h)
-                if (Date.now() - cache.timestamp > 24 * 60 * 60 * 1000) {
+                // Vérifier la version
+                if (cache.version !== '1.1') {
                     this.clear();
                     return null;
+                }
+
+                // Vérifier si le cache n'est pas trop vieux (2h pour sessionStorage)
+                if (Date.now() - cache.timestamp > 2 * 60 * 60 * 1000) {
+                    this.clear();
+                    return null;
+                }
+
+                // Vérifier la session
+                if (cache.sessionId !== this.getSessionId()) {
+                    this.clear();
+                    return null;
+                }
+
+                // Vérifier l'intégrité des données
+                const dataStr = JSON.stringify(cache.data);
+                const currentHash = this.simpleHash(dataStr);
+                if (currentHash !== cache.hash) {
+                    console.warn('Cache corrompu détecté, suppression');
+                    this.clear();
+                    return null;
+                }
+
+                if (PDF_BUILDER_CONFIG.debug) {
+                    console.log('[PDF Builder] Cache chargé depuis sessionStorage');
                 }
 
                 return cache.data;
@@ -602,10 +735,33 @@
 
         clear: function() {
             try {
-                localStorage.removeItem('pdf_builder_settings_backup');
+                sessionStorage.removeItem('pdf_builder_settings_backup');
+                if (PDF_BUILDER_CONFIG.debug) {
+                    console.log('[PDF Builder] Cache vidé');
+                }
             } catch (e) {
                 console.warn('Impossible de vider le cache local:', e);
             }
+        },
+
+        getSessionId: function() {
+            // Générer un ID de session basé sur l'onglet actuel
+            let sessionId = sessionStorage.getItem('pdf_builder_session_id');
+            if (!sessionId) {
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                sessionStorage.setItem('pdf_builder_session_id', sessionId);
+            }
+            return sessionId;
+        },
+
+        simpleHash: function(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convertir en 32 bits
+            }
+            return hash.toString();
         }
     };
     function validateFormData(formData) {
@@ -654,103 +810,136 @@
      * Sauvegarde toutes les données via AJAX
      */
     function saveAllSettings(formData, isAutoSave = false) {
+        PerformanceMetrics.start('saveAllSettings');
 
-        // Validation des données avant sauvegarde
-        const validationErrors = validateFormData(formData);
-        if (validationErrors.length > 0 && !isAutoSave) {
-            showSaveMessage('Erreurs de validation: ' + validationErrors.join(', '), 'error');
-            return;
-        }
+        try {
+            // Validation des données avant sauvegarde
+            const validationErrors = validateFormData(formData);
+            if (validationErrors.length > 0 && !isAutoSave) {
+                showSaveMessage('Erreurs de validation: ' + validationErrors.join(', '), 'error');
+                PerformanceMetrics.error('saveAllSettings', 'Validation failed');
+                return;
+            }
 
-        // Préparer les références pour l'interface utilisateur
-        const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
-        const originalText = saveBtn ? saveBtn.textContent : '';
+            // Préparer les références pour l'interface utilisateur
+            const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+            const originalText = saveBtn ? saveBtn.textContent : '';
 
-        // Pour les sauvegardes automatiques, ne pas modifier l'interface utilisateur
-        if (!isAutoSave && saveBtn) {
-            saveBtn.textContent = 'Sauvegarde...';
-            saveBtn.disabled = true;
-            updateSaveStatus('saving');
-        }
+            // Pour les sauvegardes automatiques, ne pas modifier l'interface utilisateur
+            if (!isAutoSave && saveBtn) {
+                saveBtn.textContent = 'Sauvegarde...';
+                saveBtn.disabled = true;
+                updateSaveStatus('saving');
+            }
 
-        // Sauvegarder dans le cache local avant envoi
-        LocalCache.save(flattenedData);
+            // Sauvegarder dans le cache local avant envoi
+            LocalCache.save(flattenedData);
 
-        // Préparer les données pour AJAX - convertir les arrays en JSON
-        const ajaxData = {
-            action: 'pdf_builder_save_all_settings',
-            nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : '',
-        };
+            // Préparer les données pour AJAX - convertir les arrays en JSON
+            const ajaxData = {
+                action: 'pdf_builder_ajax_handler',
+                action_type: 'save_all_settings',
+                nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : '',
+            };
 
-        // Traiter chaque champ en convertissant les arrays en JSON
-        for (const key in flattenedData) {
-            if (flattenedData.hasOwnProperty(key)) {
-                if (Array.isArray(flattenedData[key])) {
-                    ajaxData[key] = JSON.stringify(flattenedData[key]);
-                    
+            // Traiter chaque champ en convertissant les arrays en JSON
+            for (const key in flattenedData) {
+                if (flattenedData.hasOwnProperty(key)) {
+                    if (Array.isArray(flattenedData[key])) {
+                        ajaxData[key] = JSON.stringify(flattenedData[key]);
+                    } else {
+                        ajaxData[key] = flattenedData[key];
+                    }
+                }
+            }
+
+            // Envoyer via AJAX avec compatibilité navigateurs
+            const ajaxFormData = new FormData();
+            for (const key in ajaxData) {
+                if (ajaxData.hasOwnProperty(key)) {
+                    ajaxFormData.append(key, ajaxData[key]);
+                }
+            }
+
+            AjaxCompat.fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: ajaxFormData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                PerformanceMetrics.end('saveAllSettings');
+
+                if (data.success) {
+                    // Afficher un message de succès (plus discret pour les sauvegardes automatiques)
+                    if (isAutoSave) {
+                        updateSaveStatus('success', 'Sauvegardé automatiquement');
+                    } else {
+                        updateSaveStatus('success', 'Toutes les données ont été sauvegardées avec succès!');
+                        showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
+                    }
+
+                    // Mettre à jour les champs du formulaire avec les valeurs sauvegardées
+                    if (data.data && data.data.saved_settings) {
+                        updateFormFieldsWithSavedData(data.data.saved_settings);
+                    }
+
+                    // Déclencher un événement personnalisé
+                    document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', {
+                        detail: { formData: formData, response: data, isAutoSave: isAutoSave }
+                    }));
+
+                    // Réinitialiser le suivi des modifications après sauvegarde réussie
+                    if (!isAutoSave) {
+                        resetChangeTracking();
+                    }
+
+                    // Recharger les paramètres de debug silencieusement
+                    reloadDebugSettings().catch(error => {
+                        // Ne pas afficher d'erreur car la sauvegarde a réussi
+                    });
+
                 } else {
-                    ajaxData[key] = flattenedData[key];
+                    // Gestion d'erreur améliorée
+                    const errorMessage = data.data && data.data.message ? data.data.message : 'Erreur inconnue';
+                    updateSaveStatus('error', `Erreur: ${errorMessage}`);
+                    showSaveMessage(`Erreur lors de la sauvegarde: ${errorMessage}`, 'error');
+                    PerformanceMetrics.error('saveAllSettings', errorMessage);
                 }
-            }
-        }
+            })
+            .catch(error => {
+                PerformanceMetrics.error('saveAllSettings', error.message);
 
-        // Envoyer via AJAX - Utiliser FormData au lieu de URLSearchParams pour éviter les problèmes d'échappement JSON
-        const ajaxFormData = new FormData();
-        for (const key in ajaxData) {
-            if (ajaxData.hasOwnProperty(key)) {
-                ajaxFormData.append(key, ajaxData[key]);
-            }
-        }
-
-        fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
-            method: 'POST',
-            body: ajaxFormData
-        })
-        .then(response => response.json())
-        .then(data => {
-
-            if (data.success) {
-
-                // Afficher un message de succès (plus discret pour les sauvegardes automatiques)
-                if (isAutoSave) {
-                    updateSaveStatus('success', 'Sauvegardé automatiquement');
+                // Restaurer depuis le cache local en cas d'erreur réseau
+                const cachedData = LocalCache.load();
+                if (cachedData) {
+                    showSaveMessage('Erreur réseau - Données restaurées depuis le cache local', 'error');
+                    updateFormFieldsWithSavedData(cachedData);
                 } else {
-                    updateSaveStatus('success', 'Toutes les données ont été sauvegardées avec succès!');
-                    showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
+                    updateSaveStatus('error', 'Erreur réseau - Impossible de sauvegarder');
+                    showSaveMessage('Erreur réseau: ' + error.message, 'error');
                 }
 
-                // Mettre à jour les champs du formulaire avec les valeurs sauvegardées pour un comportement dynamique
-                if (data.data && data.data.saved_settings) {
-                    updateFormFieldsWithSavedData(data.data.saved_settings);
+                console.error('Erreur de sauvegarde:', error);
+            })
+            .finally(() => {
+                // Restaurer l'interface utilisateur
+                if (!isAutoSave && saveBtn) {
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
                 }
+            });
 
-                // Déclencher un événement personnalisé pour que d'autres scripts puissent réagir
-                document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', {
-                    detail: { formData: formData, response: data, isAutoSave: isAutoSave }
-                }));
-
-                // Réinitialiser le suivi des modifications après sauvegarde réussie
-                if (!isAutoSave) {
-                    resetChangeTracking();
-                }
-
-                // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
-
-                reloadDebugSettings().then(updatedDebug => {
-
-                }).catch(error => {
-                    // console.warn('PDF Builder - Impossible de recharger automatiquement les paramètres de debug, mais la sauvegarde a réussi:', error);
-                    // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
-                });
-            } else {
-
-                // Afficher un message d'erreur
-                updateSaveStatus('error', 'Erreur lors de la sauvegarde');
-                showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || data.message || 'Erreur inconnue'), 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Erreur de sauvegarde:', error);
+        } catch (error) {
+            PerformanceMetrics.error('saveAllSettings', error.message);
+            console.error('Erreur inattendue dans saveAllSettings:', error);
+            showSaveMessage('Erreur inattendue lors de la sauvegarde', 'error');
+        }
+    }
 
             // Tenter une récupération depuis le cache local
             const cachedData = LocalCache.load();
@@ -936,9 +1125,30 @@
         initSaveButton();
         initChangeTracking();
     });
+
+    // Exposer les fonctions de monitoring globalement pour le debug
+    window.PDF_BUILDER_DEBUG = {
+        getMetrics: () => PerformanceMetrics.getMetrics(),
+        clearMetrics: () => {
+            localStorage.removeItem('pdf_builder_metrics');
+            console.log('Métriques vidées');
+        },
+        getCache: () => LocalCache.load(),
+        clearCache: () => LocalCache.clear(),
+        getModifiedFields: () => Array.from(modifiedFields),
+        forceSave: () => saveAllSettings(collectAllFormData(), false),
+        getValidationErrors: () => validateFormData(collectAllFormData()),
+        testAjaxConnection: () => {
+            return AjaxCompat.fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: new FormData([['action', 'pdf_builder_ajax_handler'], ['action_type', 'get_settings']])
+            }).then(r => r.json());
+        }
+    };
+
 })();
 
-// FORCE CACHE BUST - Modified: 2025-12-06 - Removed access tab and role functions
+// FORCE CACHE BUST - Modified: 2025-12-06 - Added monitoring and security improvements
 // Cache bust timestamp: 1733440875
 
 

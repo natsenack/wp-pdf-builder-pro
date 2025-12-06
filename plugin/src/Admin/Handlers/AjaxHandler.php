@@ -34,7 +34,10 @@ class AjaxHandler
      */
     private function registerHooks()
     {
-        // Hooks AJAX principaux
+        // Hook AJAX unifié principal - point d'entrée unique pour toutes les actions de sauvegarde
+        add_action('wp_ajax_pdf_builder_ajax_handler', [$this, 'ajaxUnifiedHandler']);
+
+        // Hooks AJAX principaux (génération PDF, templates)
         add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajaxGeneratePdfFromCanvas']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
         add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
@@ -50,15 +53,6 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_execute_sql_repair', [$this, 'ajaxExecuteSqlRepair']);
         add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'ajaxClearCache']);
         add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajaxCheckIntegrity']);
-
-        // Hooks AJAX de paramètres - Désactivé pour éviter les conflits avec le système unifié
-        // add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
-        add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'ajaxSaveAllSettings']);
-        add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajaxSaveSettingsPage']);
-        add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajaxSaveGeneralSettings']);
-        add_action('wp_ajax_pdf_builder_save_performance_settings', [$this, 'ajaxSavePerformanceSettings']);
-
-        // Hooks AJAX templates
         add_action('wp_ajax_pdf_builder_check_template_limit', [$this, 'ajaxCheckTemplateLimit']);
 
         // Hooks AJAX canvas
@@ -611,13 +605,292 @@ class AjaxHandler
     }
 
     /**
-     * Sauvegarder la page de paramètres
+     * Handler AJAX unifié - point d'entrée unique pour toutes les actions
      */
-    public function ajaxSaveSettingsPage()
+    public function ajaxUnifiedHandler()
     {
         try {
-            // Vérifier les permissions
+            // Rate limiting basique
+            $this->checkRateLimit();
+
+            // Vérifier les permissions de base
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+                wp_send_json_error(['message' => 'Nonce invalide']);
+                return;
+            }
+
+            // Validation de taille des données
+            if (!$this->validateRequestSize()) {
+                wp_send_json_error(['message' => 'Données trop volumineuses']);
+                return;
+            }
+
+            // Déterminer l'action à effectuer
+            $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : '';
+
+            // Router vers la bonne méthode selon l'action
+            switch ($action) {
+                case 'save_all_settings':
+                case 'save_settings':
+                    $this->handleSaveAllSettings();
+                    break;
+
+                case 'save_settings_page':
+                    $this->handleSaveSettingsPage();
+                    break;
+
+                case 'save_general_settings':
+                    $this->handleSaveGeneralSettings();
+                    break;
+
+                case 'save_performance_settings':
+                    $this->handleSavePerformanceSettings();
+                    break;
+
+                case 'get_settings':
+                    $this->handleGetSettings();
+                    break;
+
+                case 'validate_settings':
+                    $this->handleValidateSettings();
+                    break;
+
+                default:
+                    // Action non reconnue - essayer l'ancien système de compatibilité
+                    $this->handleLegacyAction($action);
+                    break;
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder - Erreur handler unifié: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Gestion de la sauvegarde unifiée de tous les paramètres
+     */
+    private function handleSaveAllSettings()
+    {
+        // Créer un backup avant modification
+        $backup_key = 'pdf_builder_backup_' . time();
+        $existing_settings = get_option('pdf_builder_settings', []);
+        update_option($backup_key, $existing_settings, false);
+
+        // Nettoyer automatiquement les anciens backups (garder seulement les 5 derniers)
+        $this->cleanupOldBackups();
+
+        try {
+            // Collecter et sanitiser tous les paramètres PDF Builder depuis $_POST
+            $settings_to_save = [];
+            foreach ($_POST as $key => $value) {
+                // Ne traiter que les clés qui commencent par pdf_builder_
+                if (strpos($key, 'pdf_builder_') === 0) {
+                    $sanitized_value = $this->sanitizeFieldValue($key, $value);
+                    if ($sanitized_value !== '') {
+                        $settings_to_save[$key] = $sanitized_value;
+                    }
+                }
+            }
+
+            if (empty($settings_to_save)) {
+                wp_send_json_error(['message' => 'Aucune donnée valide à sauvegarder']);
+                return;
+            }
+
+            // Fusionner avec les paramètres existants
+            $updated_settings = array_merge($existing_settings, $settings_to_save);
+
+            // Sauvegarder dans la base de données
+            $saved = update_option('pdf_builder_settings', $updated_settings);
+
+            if ($saved) {
+                // Supprimer le backup si succès
+                delete_option($backup_key);
+
+                wp_send_json_success([
+                    'message' => 'Paramètres sauvegardés avec succès',
+                    'saved_settings' => $settings_to_save,
+                    'action' => 'save_all_settings',
+                    'backup_cleaned' => true
+                ]);
+            } else {
+                // Rollback en cas d'échec
+                $this->rollbackSettings($backup_key);
+                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+            }
+
+        } catch (Exception $e) {
+            // Rollback en cas d'exception
+            $this->rollbackSettings($backup_key);
+            error_log('PDF Builder - Erreur sauvegarde: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors du traitement des données']);
+        }
+    }
+
+    /**
+     * Gestion de la sauvegarde de la page de paramètres
+     */
+    private function handleSaveSettingsPage()
+    {
+        // Logique spécifique pour la page de paramètres
+        $this->handleSaveAllSettings(); // Pour l'instant, rediriger vers la sauvegarde unifiée
+    }
+
+    /**
+     * Gestion de la sauvegarde des paramètres généraux
+     */
+    private function handleSaveGeneralSettings()
+    {
+        // Collecter seulement les paramètres généraux
+        $general_settings = [];
+        $general_fields = [
+            'pdf_builder_company_phone_manual',
+            'pdf_builder_company_siret',
+            'pdf_builder_company_vat',
+            'pdf_builder_company_rcs',
+            'pdf_builder_company_capital'
+        ];
+
+        foreach ($general_fields as $field) {
+            if (isset($_POST[$field])) {
+                $general_settings[$field] = sanitize_text_field($_POST[$field]);
+            }
+        }
+
+        if (empty($general_settings)) {
+            wp_send_json_error(['message' => 'Aucun paramètre général à sauvegarder']);
+            return;
+        }
+
+        // Sauvegarder
+        $existing_settings = get_option('pdf_builder_settings', []);
+        $updated_settings = array_merge($existing_settings, $general_settings);
+        $saved = update_option('pdf_builder_settings', $updated_settings);
+
+        if ($saved) {
+            wp_send_json_success([
+                'message' => 'Paramètres généraux sauvegardés',
+                'saved_settings' => $general_settings,
+                'action' => 'save_general_settings'
+            ]);
+        } else {
+            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+        }
+    }
+
+    /**
+     * Gestion de la sauvegarde des paramètres de performance
+     */
+    private function handleSavePerformanceSettings()
+    {
+        // Collecter seulement les paramètres de performance
+        $performance_settings = [];
+        $performance_fields = [
+            'pdf_builder_cache_enabled',
+            'pdf_builder_cache_max_size',
+            'pdf_builder_cache_ttl',
+            'pdf_builder_performance_monitoring'
+        ];
+
+        foreach ($performance_fields as $field) {
+            if (isset($_POST[$field])) {
+                $performance_settings[$field] = sanitize_text_field($_POST[$field]);
+            }
+        }
+
+        if (empty($performance_settings)) {
+            wp_send_json_error(['message' => 'Aucun paramètre de performance à sauvegarder']);
+            return;
+        }
+
+        // Sauvegarder
+        $existing_settings = get_option('pdf_builder_settings', []);
+        $updated_settings = array_merge($existing_settings, $performance_settings);
+        $saved = update_option('pdf_builder_settings', $updated_settings);
+
+        if ($saved) {
+            wp_send_json_success([
+                'message' => 'Paramètres de performance sauvegardés',
+                'saved_settings' => $performance_settings,
+                'action' => 'save_performance_settings'
+            ]);
+        } else {
+            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+        }
+    }
+
+    /**
+     * Gestion de la récupération des paramètres
+     */
+    private function handleGetSettings()
+    {
+        $settings = get_option('pdf_builder_settings', []);
+        wp_send_json_success([
+            'settings' => $settings,
+            'action' => 'get_settings'
+        ]);
+    }
+
+    /**
+     * Gestion de la validation des paramètres
+     */
+    private function handleValidateSettings()
+    {
+        $errors = [];
+        $warnings = [];
+
+        // Validation des paramètres reçus
+        foreach ($_POST as $key => $value) {
+            if (strpos($key, 'pdf_builder_') === 0) {
+                // Validation spécifique selon le type de champ
+                if (strpos($key, '_email') !== false && !is_email($value)) {
+                    $errors[] = "Email invalide: $key";
+                }
+                if (strpos($key, '_url') !== false && !filter_var($value, FILTER_VALIDATE_URL)) {
+                    $errors[] = "URL invalide: $key";
+                }
+                // Ajouter d'autres validations selon les besoins
+            }
+        }
+
+        if (empty($errors)) {
+            wp_send_json_success([
+                'valid' => true,
+                'message' => 'Paramètres valides',
+                'warnings' => $warnings,
+                'action' => 'validate_settings'
+            ]);
+        } else {
+            wp_send_json_error([
+                'valid' => false,
+                'errors' => $errors,
+                'warnings' => $warnings,
+                'action' => 'validate_settings'
+            ]);
+        }
+    }
+
+    /**
+     * Gestion des actions legacy pour compatibilité
+     */
+    private function handleLegacyAction($action)
+    {
+        // Pour la compatibilité, essayer de deviner l'action depuis l'ancien système
+        if (strpos($_POST['action'] ?? '', 'save_all_settings') !== false) {
+            $this->handleSaveAllSettings();
+        } elseif (strpos($_POST['action'] ?? '', 'save_settings_page') !== false) {
+            $this->handleSaveSettingsPage();
+        } else {
+            wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
+        }
+    }
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
@@ -1656,5 +1929,112 @@ class AjaxHandler
 
         json_decode($string);
         return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    /**
+     * Rollback des paramètres en cas d'erreur
+     */
+    private function rollbackSettings($backup_key)
+    {
+        $backup = get_option($backup_key, false);
+        if ($backup !== false) {
+            update_option('pdf_builder_settings', $backup);
+            delete_option($backup_key);
+            error_log('PDF Builder - Rollback effectué depuis backup: ' . $backup_key);
+        }
+    }
+
+    /**
+     * Nettoyer les anciens backups automatiquement
+     */
+    private function cleanupOldBackups()
+    {
+        global $wpdb;
+
+        // Récupérer tous les backups (max 5 derniers)
+        $backups = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT option_name FROM {$wpdb->options}
+                 WHERE option_name LIKE %s
+                 ORDER BY option_name DESC
+                 LIMIT 999 OFFSET 5",
+                'pdf_builder_backup_%'
+            )
+        );
+
+        // Supprimer les anciens
+        foreach ($backups as $backup) {
+            delete_option($backup->option_name);
+        }
+    }
+
+    /**
+     * Rate limiting basique pour éviter les abus
+     */
+    private function checkRateLimit()
+    {
+        $user_id = get_current_user_id();
+        $transient_key = 'pdf_builder_rate_limit_' . $user_id;
+        $attempts = get_transient($transient_key);
+
+        if ($attempts === false) {
+            // Première tentative
+            set_transient($transient_key, 1, 60); // 1 minute
+        } elseif ($attempts >= 30) {
+            // Trop de tentatives
+            wp_send_json_error(['message' => 'Trop de requêtes. Veuillez patienter.']);
+            exit;
+        } else {
+            // Incrémenter le compteur
+            set_transient($transient_key, $attempts + 1, 60);
+        }
+    }
+
+    /**
+     * Validation de la taille des données de requête
+     */
+    private function validateRequestSize()
+    {
+        $max_size = 1024 * 1024; // 1MB max
+        $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0;
+
+        if ($content_length > $max_size) {
+            return false;
+        }
+
+        // Compter aussi la taille des fichiers POST
+        $total_size = 0;
+        foreach ($_POST as $key => $value) {
+            $total_size += strlen($key) + strlen(is_array($value) ? serialize($value) : $value);
+        }
+
+        return $total_size <= $max_size;
+    }
+
+    /**
+     * Sanitisation améliorée selon le type de champ
+     */
+    private function sanitizeFieldValue($key, $value)
+    {
+        // Déterminer le type de champ d'après le nom
+        if (strpos($key, '_email') !== false) {
+            return sanitize_email($value);
+        } elseif (strpos($key, '_url') !== false) {
+            return esc_url_raw($value);
+        } elseif (strpos($key, '_number') !== false || strpos($key, '_size') !== false || strpos($key, '_ttl') !== false) {
+            return is_numeric($value) ? (int)$value : 0;
+        } elseif (strpos($key, '_boolean') !== false || strpos($key, '_enabled') !== false) {
+            return in_array(strtolower($value), ['true', '1', 'yes', 'on']) ? '1' : '0';
+        } elseif ($this->isJson($value)) {
+            // Pour les arrays JSON, valider que c'est du JSON valide
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return wp_json_encode($decoded); // Re-encoder pour uniformité
+            }
+            return '';
+        } else {
+            // Texte standard
+            return sanitize_text_field($value);
+        }
     }
 }
