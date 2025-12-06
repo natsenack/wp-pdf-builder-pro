@@ -651,6 +651,12 @@ $settings = get_option('pdf_builder_settings', array());
                         // Show modal
                         modalOverlay.classList.add('active');
                         modal.classList.add('active');
+
+                        // Prevent body scroll
+                        document.documentElement.classList.add('canvas-modal-open');
+                        document.body.classList.add('canvas-modal-open');
+
+                        console.log('Modal opened for category:', category);
                     }
 
                     // Hide modal
@@ -658,6 +664,11 @@ $settings = get_option('pdf_builder_settings', array());
                         console.log('Hiding modal');
                         modalOverlay.classList.remove('active');
                         modal.classList.remove('active');
+
+                        // Restore body scroll
+                        document.documentElement.classList.remove('canvas-modal-open');
+                        document.body.classList.remove('canvas-modal-open');
+
                         currentCategory = null;
                     }
 
