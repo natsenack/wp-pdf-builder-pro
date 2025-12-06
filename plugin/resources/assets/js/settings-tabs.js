@@ -586,9 +586,8 @@
                                     if (input.checked) {
                                         allData[sectionId][normalizedName].push(input.value);
                                     }
-                                } else {
-                                    const currentValue = allData[sectionId][normalizedName];
-                                    allData[sectionId][normalizedName] = input.checked ? [currentValue, input.value] : currentValue;
+                                } else if (input.checked) {
+                                    allData[sectionId][normalizedName] = [allData[sectionId][normalizedName], input.value];
                                 }
                             } else {
                                 allData[sectionId][normalizedName] = input.checked ? [input.value] : [];
