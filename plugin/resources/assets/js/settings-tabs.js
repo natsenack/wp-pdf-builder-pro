@@ -535,7 +535,7 @@
                     const sectionId = section ? section.id : 'global';
                     
                     // Liste des sections de paramètres autorisées
-                    const allowedSections = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+                    const allowedSections = ['general', 'licence', 'licence-container', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
                     
                     // Ne collecter que si c'est dans une section autorisée ou si le champ a déjà le préfixe pdf_builder_
                     if (allowedSections.includes(sectionId) || normalizedName.startsWith('pdf_builder_')) {
