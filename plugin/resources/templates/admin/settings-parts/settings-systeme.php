@@ -7,8 +7,8 @@ $settings = get_option('pdf_builder_settings', []);
 
 // Préparer toutes les variables nécessaires
 $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
-$cache_compression = '1'; // FORCÉ à 1 pour test
-$cache_auto_cleanup = '1'; // FORCÉ à 1 pour test
+$cache_compression = $settings['pdf_builder_cache_compression'] ?? '1';
+$cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? '1';
 $cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
 $cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
 $performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
@@ -106,7 +106,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="cache_compression" name="pdf_builder_cache_compression" value="1" <?php checked($cache_compression, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <span style="font-size: 10px; color: #666; margin-left: 10px;">[DEBUG: cache_compression = <?php echo $cache_compression; ?>]</span>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
                                 </td>
                             </tr>
@@ -117,7 +116,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_cache_auto_cleanup" value="1" <?php checked($cache_auto_cleanup, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <span style="font-size: 10px; color: #666; margin-left: 10px;">[DEBUG: cache_auto_cleanup = <?php echo $cache_auto_cleanup; ?>]</span>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
                                 </td>
                             </tr>
