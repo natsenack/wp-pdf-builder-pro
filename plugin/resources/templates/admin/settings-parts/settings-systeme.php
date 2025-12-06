@@ -106,11 +106,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="cache_compression" name="pdf_builder_cache_compression" value="1" <?php checked($cache_compression, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <script>
-                                        document.getElementById('cache_compression').addEventListener('change', function() {
-                                            console.log('Cache compression changed to:', this.checked);
-                                        });
-                                    </script>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
                                 </td>
                             </tr>
@@ -121,11 +116,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_cache_auto_cleanup" value="1" <?php checked($cache_auto_cleanup, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <script>
-                                        document.getElementById('cache_auto_cleanup').addEventListener('change', function() {
-                                            console.log('Cache auto cleanup changed to:', this.checked);
-                                        });
-                                    </script>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
                                 </td>
                             </tr>
