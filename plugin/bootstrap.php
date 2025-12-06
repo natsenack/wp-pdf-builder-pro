@@ -281,6 +281,11 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/constants.php';
     }
 
+    // Charger le gestionnaire de configuration
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/config-manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/config-manager.php';
+    }
+
     // Initialiser le système de migration après le chargement des constantes
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
