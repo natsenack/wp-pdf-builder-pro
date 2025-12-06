@@ -334,10 +334,9 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour sauvegarder tous les paramètres
      */
     public function handle_save_all_settings() {
-        // Temporarily disable nonce validation for debugging
-        // if (!$this->nonce_manager->validate_ajax_request('save_all_settings')) {
-        //     return;
-        // }
+        if (!$this->nonce_manager->validate_ajax_request('save_all_settings')) {
+            return;
+        }
 
         try {
             // Check if data is sent as flattened POST data (new format) or JSON (legacy)

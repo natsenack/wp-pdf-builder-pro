@@ -463,9 +463,14 @@
         .then(data => {
 
             if (data.success) {
-                
+
                 // Afficher un message de succès
                 showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
+
+                // Mettre à jour les champs du formulaire avec les valeurs sauvegardées pour un comportement dynamique
+                if (data.data && data.data.saved_settings) {
+                    updateFormFieldsWithSavedData(data.data.saved_settings);
+                }
 
                 // Déclencher un événement personnalisé pour que d'autres scripts puissent réagir
                 document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', {
@@ -473,9 +478,9 @@
                 }));
 
                 // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
-                
+
                 reloadDebugSettings().then(updatedDebug => {
-                    
+
                 }).catch(error => {
                     // console.warn('PDF Builder - Impossible de recharger automatiquement les paramètres de debug, mais la sauvegarde a réussi:', error);
                     // Ne pas afficher d'erreur à l'utilisateur car la sauvegarde a fonctionné
@@ -498,8 +503,41 @@
     }
 
     /**
-     * Recharge les paramètres de debug depuis la base de données
+     * Met à jour les champs du formulaire avec les données sauvegardées pour un comportement dynamique
      */
+    function updateFormFieldsWithSavedData(savedSettings) {
+        // Mettre à jour tous les champs du formulaire avec les valeurs sauvegardées
+        for (const [fieldName, fieldValue] of Object.entries(savedSettings)) {
+            // Essayer d'abord le nom du champ tel quel, puis avec le préfixe pdf_builder_
+            let input = document.getElementById(fieldName) || document.querySelector(`[name="${fieldName}"]`) || document.querySelector(`[name="${fieldName}[]"]`);
+
+            if (!input) {
+                // Essayer avec le préfixe pdf_builder_
+                const prefixedName = 'pdf_builder_' + fieldName;
+                input = document.getElementById(prefixedName) || document.querySelector(`[name="${prefixedName}"]`) || document.querySelector(`[name="${prefixedName}[]"]`);
+            }
+
+            if (input) {
+                if (input.type === 'checkbox') {
+                    input.checked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                } else if (input.type === 'radio') {
+                    // Pour les radios, trouver celui avec la bonne valeur
+                    const radios = document.querySelectorAll(`[name="${input.name}"]`);
+                    radios.forEach(radio => {
+                        radio.checked = radio.value == fieldValue;
+                    });
+                } else if (input.tagName === 'SELECT') {
+                    input.value = fieldValue;
+                } else {
+                    input.value = fieldValue;
+                }
+            }
+        }
+    }
+
+    /**
+      * Recharge les paramètres de debug depuis la base de données
+      */
     function reloadDebugSettings() {
 
         const ajaxUrl = pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php';
