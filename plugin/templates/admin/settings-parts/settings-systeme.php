@@ -1,8 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit('No direct access');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
-?>
-
 <div class="pdf-builder-settings-section">
     <h2>Paramètres système</h2>
 

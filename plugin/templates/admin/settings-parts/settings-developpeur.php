@@ -1,7 +1,5 @@
 <?php
 if (!defined('ABSPATH')) exit('No direct access');
-?>
-
 <div class="pdf-builder-developer-settings">
     <h2>🛠️ Outils Développeur</h2>
     <p class="description">Outils avancés pour les développeurs. Utilisez avec précaution.</p>
