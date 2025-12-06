@@ -69,8 +69,8 @@ $settings = get_option('pdf_builder_settings', array());
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="color-preview bg" title="Fond"></div>
-                                <div class="color-preview border" title="Bordure"></div>
+                                <div id="card-bg-preview" class="color-preview bg" title="Fond"></div>
+                                <div id="card-border-preview" class="color-preview border" title="Bordure"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -91,7 +91,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="grid-preview-container">
+                                <div id="card-grid-preview" class="grid-preview-container">
                                     <div class="grid-canvas">
                                         <!-- Quadrillage principal -->
                                         <div class="grid-lines">
@@ -153,7 +153,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 <div class="zoom-preview-container">
                                     <div class="zoom-indicator">
                                         <button class="zoom-btn zoom-minus" disabled>−</button>
-                                        <span class="zoom-level">100%</span>
+                                        <span id="card-zoom-preview" class="zoom-level">100%</span>
                                         <button class="zoom-btn zoom-plus" disabled>+</button>
                                     </div>
                                     <div class="zoom-info">
@@ -270,7 +270,7 @@ $settings = get_option('pdf_builder_settings', array());
                                     <div class="performance-metrics">
                                         <div class="metric-item">
                                             <span class="metric-label">FPS</span>
-                                            <span class="metric-value">60</span>
+                                            <span id="card-perf-preview" class="metric-value">60</span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM JS</span>
@@ -415,6 +415,133 @@ $settings = get_option('pdf_builder_settings', array());
                     'use strict';
 
                     console.log('PDF Builder Modal System: Initializing...');
+
+                    // SYSTÈME CENTRALISÉ DE PREVIEWS DYNAMIQUES
+                    const previewSystem = {
+                        // Valeurs actuelles des paramètres
+                        values: {
+                            canvas_width: <?php echo json_encode($settings['pdf_builder_canvas_width'] ?? '794'); ?>,
+                            canvas_height: <?php echo json_encode($settings['pdf_builder_canvas_height'] ?? '1123'); ?>,
+                            canvas_dpi: <?php echo json_encode($settings['pdf_builder_canvas_dpi'] ?? '96'); ?>,
+                            canvas_format: <?php echo json_encode($settings['pdf_builder_canvas_format'] ?? 'A4'); ?>,
+                            canvas_bg_color: <?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>,
+                            canvas_border_color: <?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>,
+                            canvas_border_width: <?php echo json_encode($settings['pdf_builder_canvas_border_width'] ?? '1'); ?>,
+                            canvas_shadow_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1'); ?>,
+                            canvas_grid_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1'); ?>,
+                            canvas_grid_size: <?php echo json_encode($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?>,
+                            canvas_guides_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_guides_enabled'] ?? '1') === '1'); ?>,
+                            canvas_snap_to_grid: <?php echo json_encode(($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') === '1'); ?>,
+                            canvas_zoom_min: <?php echo json_encode($settings['pdf_builder_canvas_zoom_min'] ?? '25'); ?>,
+                            canvas_zoom_max: <?php echo json_encode($settings['pdf_builder_canvas_zoom_max'] ?? '500'); ?>,
+                            canvas_zoom_default: <?php echo json_encode($settings['pdf_builder_canvas_zoom_default'] ?? '100'); ?>,
+                            canvas_zoom_step: <?php echo json_encode($settings['pdf_builder_canvas_zoom_step'] ?? '25'); ?>,
+                            canvas_export_quality: <?php echo json_encode($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?>,
+                            canvas_export_transparent: <?php echo json_encode(($settings['pdf_builder_canvas_export_transparent'] ?? '0') === '1'); ?>,
+                            canvas_fps_target: <?php echo json_encode($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?>,
+                            canvas_memory_limit_js: <?php echo json_encode($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>,
+                            canvas_response_timeout: <?php echo json_encode($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?>,
+                            canvas_lazy_loading_editor: <?php echo json_encode(($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1') === '1'); ?>,
+                            canvas_performance_monitoring: <?php echo json_encode(($settings['pdf_builder_canvas_performance_monitoring'] ?? '0') === '1'); ?>,
+                            canvas_error_reporting: <?php echo json_encode(($settings['pdf_builder_canvas_error_reporting'] ?? '0') === '1'); ?>,
+                            canvas_memory_limit_php: <?php echo json_encode($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>
+                        },
+
+                        // Mettre à jour une valeur et rafraîchir les previews
+                        updateValue: function(key, value) {
+                            this.values[key] = value;
+                            this.refreshPreviews();
+                            console.log('Preview System: Updated', key, 'to', value);
+                        },
+
+                        // Calculer les dimensions en mm
+                        calculateMM: function(pixels, dpi) {
+                            return ((pixels / dpi) * 25.4).toFixed(1);
+                        },
+
+                        // Rafraîchir toutes les previews
+                        refreshPreviews: function() {
+                            const v = this.values;
+
+                            // Preview Dimensions
+                            const widthEl = document.getElementById('card-canvas-width');
+                            const heightEl = document.getElementById('card-canvas-height');
+                            const dpiEl = document.getElementById('card-canvas-dpi');
+
+                            if (widthEl) widthEl.textContent = v.canvas_width;
+                            if (heightEl) heightEl.textContent = v.canvas_height;
+                            if (dpiEl) {
+                                const format = v.canvas_format || 'A4';
+                                const widthMM = this.calculateMM(v.canvas_width, v.canvas_dpi);
+                                const heightMM = this.calculateMM(v.canvas_height, v.canvas_dpi);
+                                dpiEl.textContent = `${v.canvas_dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
+                            }
+
+                            // Preview Apparence
+                            const bgPreview = document.getElementById('card-bg-preview');
+                            const borderPreview = document.getElementById('card-border-preview');
+
+                            if (bgPreview) bgPreview.style.backgroundColor = v.canvas_bg_color;
+                            if (borderPreview) {
+                                borderPreview.style.borderColor = v.canvas_border_color;
+                                borderPreview.style.borderWidth = v.canvas_border_width + 'px';
+                                borderPreview.style.boxShadow = v.canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
+                            }
+
+                            // Preview Grille
+                            const gridPreview = document.getElementById('card-grid-preview');
+                            if (gridPreview) {
+                                gridPreview.style.backgroundImage = v.canvas_grid_enabled ?
+                                    `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)` : 'none';
+                                gridPreview.style.backgroundSize = v.canvas_grid_enabled ? `${v.canvas_grid_size}px ${v.canvas_grid_size}px` : 'auto';
+                            }
+
+                            // Preview Zoom
+                            const zoomPreview = document.getElementById('card-zoom-preview');
+                            if (zoomPreview) {
+                                zoomPreview.textContent = `${v.canvas_zoom_default}%`;
+                                zoomPreview.style.fontSize = Math.max(12, Math.min(24, v.canvas_zoom_default / 4)) + 'px';
+                            }
+
+                            // Preview Performance
+                            const perfPreview = document.getElementById('card-perf-preview');
+                            if (perfPreview) {
+                                perfPreview.textContent = `${v.canvas_fps_target} FPS`;
+                                perfPreview.style.color = v.canvas_fps_target >= 60 ? '#28a745' : v.canvas_fps_target >= 30 ? '#ffc107' : '#dc3545';
+                            }
+
+                            console.log('Preview System: All previews refreshed');
+                        },
+
+                        // Initialiser le système
+                        init: function() {
+                            this.refreshPreviews();
+                            this.setupEventListeners();
+                            console.log('Preview System: Initialized with values:', this.values);
+                        },
+
+                        // Configurer les event listeners pour les inputs des modales
+                        setupEventListeners: function() {
+                            const modalInputs = document.querySelectorAll('#pdf-builder-modal-overlay input, #pdf-builder-modal-overlay select');
+
+                            modalInputs.forEach(input => {
+                                input.addEventListener('input', (e) => {
+                                    const key = e.target.name.replace('modal_canvas_', 'canvas_');
+                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+
+                                    // Conversion des types
+                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
+                                    if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
+                                        value = value === true || value === '1' || value === 1;
+                                    }
+
+                                    this.updateValue(key, value);
+                                });
+                            });
+
+                            console.log('Preview System: Event listeners setup for', modalInputs.length, 'inputs');
+                        }
+                    };
 
                     // Configuration des modales
                     const modalConfigs = {
@@ -740,5 +867,7 @@ $settings = get_option('pdf_builder_settings', array());
                     });
 
                     console.log('Système de modal PDF Builder initialisé');
-                })();
+
+                    // Initialiser le système de previews dynamiques
+                    previewSystem.init();
             </script>
