@@ -96,6 +96,11 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked($cache_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
+                                    <script>
+                                        document.getElementById('general_cache_enabled').addEventListener('change', function() {
+                                            console.log('Cache enabled changed to:', this.checked);
+                                        });
+                                    </script>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
                                 </td>
                             </tr>
