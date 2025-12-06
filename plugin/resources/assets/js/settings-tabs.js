@@ -546,10 +546,6 @@
                         if (input.type === 'checkbox') {
                             // Pour les toggles simples, utiliser true/false au lieu d'arrays
                             allData[sectionId][normalizedName] = input.checked ? input.value : '0';
-                            // Debug pour license
-                            if (normalizedName === 'pdf_builder_license_email_reminders') {
-                                console.log('JS: Collected license_email_reminders:', allData[sectionId][normalizedName], 'from section:', sectionId);
-                            }
                         } else if (input.type === 'radio') {
                             if (input.checked) {
                                 allData[sectionId][normalizedName] = input.value;
