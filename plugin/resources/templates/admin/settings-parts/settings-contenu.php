@@ -672,6 +672,12 @@ $settings = get_option('pdf_builder_settings', array());
                         overlay.classList.add('pdf-builder-modal-open');
                         document.body.style.overflow = 'hidden';
 
+                        // Forcer le repositionnement au niveau document si nécessaire
+                        if (overlay.parentNode !== document.body) {
+                            document.body.appendChild(overlay);
+                            console.log('PDF Builder Modal System: Modal moved to document.body');
+                        }
+
                         console.log('PDF Builder Modal System: Modal class added, current style:', overlay.style.display);
                         console.log('PDF Builder Modal System: Modal computed style:', window.getComputedStyle(overlay).display);
                     }

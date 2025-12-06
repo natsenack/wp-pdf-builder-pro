@@ -4094,17 +4094,37 @@ select option:disabled {
    NOUVEAU SYSTÈME DE MODAL PDF BUILDER
    =========================================== */
 
-.pdf-builder-modal-overlay {
+/* MODAL OVERLAY - PRIORITÉ MAXIMALE */
+.pdf-builder-modal-overlay,
+.pdf-builder-modal-overlay.pdf-builder-modal-open {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    z-index: 999999 !important;
-    display: none !important;
+    z-index: 2147483647 !important; /* Valeur z-index maximale possible */
     background: rgba(0, 0, 0, 0.8) !important;
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
+    /* Échapper à tous les containers parents */
+    transform: translateZ(0) !important;
+    will-change: transform !important;
+    /* Forcer l'affichage */
+    display: none !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    /* Contourner les limitations des containers parents */
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    /* Forcer l'échappement des containers */
+    clip: none !important;
+    clip-path: none !important;
+    overflow: visible !important;
 }
 
 .pdf-builder-modal-overlay.pdf-builder-modal-open {
