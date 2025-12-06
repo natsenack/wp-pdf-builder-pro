@@ -579,7 +579,6 @@ $settings = get_option('pdf_builder_settings', array());
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_format\">Format prédéfini</label>" +
                                         "<select id=\"modal_canvas_format\" name=\"modal_canvas_format\">" +
-                                            "<option value=\"custom\">Personnalisé</option>" +
                                             "<option value=\"A4\"" + (previewSystem.values.canvas_format === "A4" ? " selected" : "") + ">A4 (210×297mm)</option>" +
                                             "<option value=\"A3\" disabled" + (previewSystem.values.canvas_format === "A3" ? " selected" : "") + ">A3 (297×420mm) - Bientôt</option>" +
                                             "<option value=\"Letter\" disabled" + (previewSystem.values.canvas_format === "Letter" ? " selected" : "") + ">Letter (8.5×11\") - Bientôt</option>" +
