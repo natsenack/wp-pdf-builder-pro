@@ -710,7 +710,12 @@ class AjaxHandler
             // Sauvegarder dans la base de données
             $saved = update_option('pdf_builder_settings', $updated_settings);
 
-            if ($saved) {
+            // Vérifier s'il y a eu une vraie erreur DB
+            global $wpdb;
+            $db_error = $wpdb->last_error;
+
+            if ($saved || empty($db_error)) {
+                // Succès : soit mis à jour, soit pas de changement (ce qui est normal)
                 // Supprimer le backup si succès
                 delete_option($backup_key);
 
@@ -721,10 +726,8 @@ class AjaxHandler
                     'backup_cleaned' => true
                 ]);
             } else {
-                // Debug: pourquoi update_option échoue
-                global $wpdb;
-                $last_error = $wpdb->last_error;
-                error_log('PDF Builder - update_option failed. Last DB error: ' . $last_error);
+                // Erreur DB réelle
+                error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
                 error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
                 error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
                 error_log('PDF Builder - New settings count: ' . count($settings_to_save));
