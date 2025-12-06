@@ -62,8 +62,9 @@ $settings = get_option('pdf_builder_settings', array());
                         </tr>
                         <script>
                             // Debug and fix toggle functionality for PDF cache - Updated: 2025-12-06
+                            console.log('PDF Toggle script starting...');
                             document.addEventListener('DOMContentLoaded', function() {
-                                console.log('Setting up PDF cache enabled toggle...');
+                                console.log('DOMContentLoaded fired for PDF toggle');
                                 
                                 const pdfCacheInput = document.getElementById('pdf_builder_cache_enabled');
                                 const pdfCacheLabel = pdfCacheInput ? pdfCacheInput.closest('label') : null;
@@ -74,6 +75,8 @@ $settings = get_option('pdf_builder_settings', array());
                                 console.log('PDF Slider found:', pdfCacheSlider);
                                 
                                 if (pdfCacheInput && pdfCacheLabel && pdfCacheSlider) {
+                                    console.log('Setting up PDF toggle...');
+                                    
                                     // Ensure input is properly hidden
                                     pdfCacheInput.style.opacity = '0';
                                     pdfCacheInput.style.pointerEvents = 'none';
