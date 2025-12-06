@@ -619,6 +619,7 @@ $settings = get_option('pdf_builder_settings', array());
                 // Canvas Modal Management
                 (function() {
                     const modalOverlay = document.getElementById('canvas-modal-overlay');
+                    const modal = modalOverlay.querySelector('.canvas-modal');
                     const modalTitle = document.getElementById('canvas-modal-title');
                     let currentCategory = null;
 
@@ -649,11 +650,13 @@ $settings = get_option('pdf_builder_settings', array());
 
                         // Show modal
                         modalOverlay.style.display = 'flex';
+                        modal.classList.add('active');
                     }
 
                     // Hide modal
                     function hideModal() {
                         modalOverlay.style.display = 'none';
+                        modal.classList.remove('active');
                         currentCategory = null;
                     }
 
