@@ -294,4 +294,3 @@ class PDF_Builder_Cache_Manager {
 add_action('plugins_loaded', function() {
     PDF_Builder_Cache_Manager::get_instance();
 });
-?>
