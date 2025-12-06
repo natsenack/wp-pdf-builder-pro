@@ -97,8 +97,23 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <script>
-                                        document.getElementById('general_cache_enabled').addEventListener('change', function() {
-                                            console.log('Cache enabled changed to:', this.checked);
+                                        // Test multiple event listeners
+                                        const cacheEnabledInput = document.getElementById('general_cache_enabled');
+                                        const cacheEnabledLabel = cacheEnabledInput.closest('label');
+                                        
+                                        cacheEnabledInput.addEventListener('change', function() {
+                                            console.log('Cache enabled INPUT changed to:', this.checked);
+                                        });
+                                        
+                                        cacheEnabledLabel.addEventListener('click', function() {
+                                            console.log('Cache enabled LABEL clicked');
+                                            setTimeout(() => {
+                                                console.log('Cache enabled state after click:', cacheEnabledInput.checked);
+                                            }, 10);
+                                        });
+                                        
+                                        cacheEnabledInput.addEventListener('click', function() {
+                                            console.log('Cache enabled INPUT clicked');
                                         });
                                     </script>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
