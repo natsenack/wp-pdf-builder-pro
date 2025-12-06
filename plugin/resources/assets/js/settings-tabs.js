@@ -531,7 +531,7 @@
                 // Ne collecter que si ce n'est pas déjà dans un formulaire traité
                 if (!inputForm || !formIds.includes(inputForm.id)) {
                     // Collecter seulement les champs dans les sections de paramètres ou avec préfixe pdf_builder_
-                    const section = input.closest('section');
+                    const section = input.closest('.tab-content');
                     const sectionId = section ? section.id : 'global';
                     
                     // Liste des sections de paramètres autorisées
