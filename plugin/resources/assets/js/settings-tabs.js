@@ -941,28 +941,6 @@
         }
     }
 
-            // Tenter une récupération depuis le cache local
-            const cachedData = LocalCache.load();
-            if (cachedData && !isAutoSave) {
-                updateSaveStatus('error', 'Erreur de connexion - Données récupérées du cache');
-                showSaveMessage('Erreur de connexion. Données récupérées depuis le cache local.', 'error');
-
-                // Restaurer les valeurs depuis le cache
-                updateFormFieldsWithSavedData(cachedData);
-            } else {
-                updateSaveStatus('error', 'Erreur de communication');
-                showSaveMessage('Erreur de communication avec le serveur. Réessayez plus tard.', 'error');
-            }
-        })
-        .finally(() => {
-            // Restaurer le bouton seulement pour les sauvegardes manuelles
-            if (!isAutoSave && saveBtn) {
-                saveBtn.textContent = originalText;
-                saveBtn.disabled = false;
-            }
-        });
-    }
-
     /**
      * Met à jour les champs du formulaire avec les données sauvegardées pour un comportement dynamique
      */
