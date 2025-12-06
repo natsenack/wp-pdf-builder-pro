@@ -392,11 +392,149 @@ $settings = get_option('pdf_builder_settings', array());
                 </form>
             </section>
 
-            <!-- Modals de configuration Canvas -->
+            <!-- Modals déplacés à la fin du fichier -->
+
+            <script>
+                // Canvas Modal Management
+                (function() {
+                    const modalOverlay = document.getElementById('canvas-modal-overlay');
+                    const modal = modalOverlay.querySelector('.canvas-modal');
+                    const modalTitle = document.getElementById('canvas-modal-title');
+                    let currentCategory = null;
+
+                    // Show modal for category
+                    function showModal(category) {
+                        currentCategory = category;
+                        const modalCategory = document.getElementById('modal-' + category);
+                        if (!modalCategory) return;
+
+                        // Hide all categories
+                        document.querySelectorAll('.modal-category').forEach(cat => cat.style.display = 'none');
+
+                        // Show current category
+                        modalCategory.style.display = 'block';
+
+                        // Set title
+                        const titles = {
+                            'dimensions': 'Dimensions & Format',
+                            'apparence': 'Apparence',
+                            'grille': 'Grille & Guides',
+                            'zoom': 'Zoom & Navigation',
+                            'interaction': 'Interaction',
+                            'export': 'Export',
+                            'performance': 'Performance',
+                            'debug': 'Debug & Maintenance'
+                        };
+                        modalTitle.textContent = titles[category] || 'Configuration';
+
+                        // Show modal
+                        modalOverlay.classList.add('active');
+                        modal.classList.add('active');
+
+                        // Prevent body scroll
+                        document.documentElement.classList.add('canvas-modal-open');
+                        document.body.classList.add('canvas-modal-open');
+
+                        console.log('Modal opened for category:', category);
+                    }
+
+                    // Hide modal
+                    function hideModal() {
+                        console.log('Hiding modal');
+                        modalOverlay.classList.remove('active');
+                        modal.classList.remove('active');
+
+                        // Restore body scroll
+                        document.documentElement.classList.remove('canvas-modal-open');
+                        document.body.classList.remove('canvas-modal-open');
+
+                        currentCategory = null;
+                    }
+
+                    // Save modal settings
+                    function saveModalSettings() {
+                        if (!currentCategory) return;
+
+                        const modalCategory = document.getElementById('modal-' + currentCategory);
+                        const inputs = modalCategory.querySelectorAll('input, select');
+
+                        inputs.forEach(input => {
+                            const settingName = 'pdf_builder_' + input.name.replace('modal_', '');
+                            const value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+
+                            // Update the main settings (this will be saved when the form is submitted)
+                            // For now, just update the preview if applicable
+                            if (settingName === 'pdf_builder_canvas_width' || settingName === 'pdf_builder_canvas_height') {
+                                updateCanvasPreview();
+                            }
+                        });
+
+                        hideModal();
+                    }
+
+                    // Update canvas preview
+                    function updateCanvasPreview() {
+                        const width = document.getElementById('modal_canvas_width').value;
+                        const height = document.getElementById('modal_canvas_height').value;
+                        const dpi = document.getElementById('modal_canvas_dpi').value;
+
+                        document.getElementById('card-canvas-width').textContent = width;
+                        document.getElementById('card-canvas-height').textContent = height;
+
+                        // Calculate physical size
+                        const mmWidth = (width / dpi * 25.4).toFixed(1);
+                        const mmHeight = (height / dpi * 25.4).toFixed(1);
+                        const inchesWidth = (width / dpi).toFixed(1);
+                        const inchesHeight = (height / dpi).toFixed(1);
+
+                        let sizeText = `${dpi} DPI`;
+                        if (Math.abs(mmWidth - 210) < 5 && Math.abs(mmHeight - 297) < 5) {
+                            sizeText += ` - A4 (${mmWidth}×${mmHeight}mm)`;
+                        } else if (Math.abs(inchesWidth - 8.5) < 0.2 && Math.abs(inchesHeight - 11) < 0.2) {
+                            sizeText += ` - Letter (${inchesWidth}×${inchesHeight}")`;
+                        } else {
+                            sizeText += ` - ${mmWidth}×${mmHeight}mm`;
+                        }
+
+                        document.getElementById('card-canvas-dpi').textContent = sizeText;
+                    }
+
+                    // Event listeners
+                    document.addEventListener('click', function(e) {
+                        console.log('Click detected on:', e.target.className, e.target.id);
+
+                        if (e.target.classList.contains('canvas-configure-btn')) {
+                            console.log('Opening modal');
+                            const card = e.target.closest('.canvas-card');
+                            const category = card.dataset.category;
+                            showModal(category);
+                        }
+
+                        if (e.target.classList.contains('canvas-modal-close') || e.target.classList.contains('canvas-modal-cancel') || e.target === modalOverlay) {
+                            console.log('Closing modal - target:', e.target.className, e.target.id);
+                            hideModal();
+                        }
+
+                        if (e.target.classList.contains('canvas-modal-save')) {
+                            console.log('Saving modal');
+                            saveModalSettings();
+                        }
+                    });
+
+                    // Update preview on modal input changes
+                    document.addEventListener('input', function(e) {
+                        if (e.target.id === 'modal_canvas_width' || e.target.id === 'modal_canvas_height' || e.target.id === 'modal_canvas_dpi') {
+                            updateCanvasPreview();
+                        }
+                    });
+                })();
+            </script>
+
+            <!-- Canvas Configuration Modal - Fullscreen Overlay -->
             <div id="canvas-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-                <div class="canvas-modal">
+                <div class="canvas-modal-container">
                     <div class="canvas-modal-header">
-                        <h3 id="canvas-modal-title">Configuration</h3>
+                        <h3 id="canvas-modal-title">Configuration Canvas</h3>
                         <button type="button" class="canvas-modal-close">&times;</button>
                     </div>
                     <div class="canvas-modal-content">
@@ -616,139 +754,63 @@ $settings = get_option('pdf_builder_settings', array());
             </div>
 
             <script>
-                // Canvas Modal Management
                 (function() {
-                    const modalOverlay = document.getElementById('canvas-modal-overlay');
-                    const modal = modalOverlay.querySelector('.canvas-modal');
-                    const modalTitle = document.getElementById('canvas-modal-title');
-                    let currentCategory = null;
+                    // Modal management functions
+                    function openCanvasModal(category) {
+                        const overlay = document.getElementById('canvas-modal-overlay');
+                        const title = document.getElementById('canvas-modal-title');
 
-                    // Show modal for category
-                    function showModal(category) {
-                        currentCategory = category;
-                        const modalCategory = document.getElementById('modal-' + category);
-                        if (!modalCategory) return;
-
-                        // Hide all categories
+                        // Hide all categories first
                         document.querySelectorAll('.modal-category').forEach(cat => cat.style.display = 'none');
 
-                        // Show current category
-                        modalCategory.style.display = 'block';
+                        // Show selected category
+                        const selectedCategory = document.getElementById('modal-' + category);
+                        if (selectedCategory) {
+                            selectedCategory.style.display = 'block';
+                            title.textContent = 'Configuration ' + category.charAt(0).toUpperCase() + category.slice(1);
+                        }
 
-                        // Set title
-                        const titles = {
-                            'dimensions': 'Dimensions & Format',
-                            'apparence': 'Apparence',
-                            'grille': 'Grille & Guides',
-                            'zoom': 'Zoom & Navigation',
-                            'interaction': 'Interaction',
-                            'export': 'Export',
-                            'performance': 'Performance',
-                            'debug': 'Debug & Maintenance'
-                        };
-                        modalTitle.textContent = titles[category] || 'Configuration';
-
-                        // Show modal
-                        modalOverlay.classList.add('active');
-                        modal.classList.add('active');
+                        // Show overlay
+                        overlay.style.display = 'flex';
 
                         // Prevent body scroll
-                        document.documentElement.classList.add('canvas-modal-open');
-                        document.body.classList.add('canvas-modal-open');
-
-                        console.log('Modal opened for category:', category);
+                        document.body.classList.add('modal-open');
+                        document.documentElement.classList.add('modal-open');
                     }
 
-                    // Hide modal
-                    function hideModal() {
-                        console.log('Hiding modal');
-                        modalOverlay.classList.remove('active');
-                        modal.classList.remove('active');
+                    function closeCanvasModal() {
+                        const overlay = document.getElementById('canvas-modal-overlay');
+                        overlay.style.display = 'none';
 
                         // Restore body scroll
-                        document.documentElement.classList.remove('canvas-modal-open');
-                        document.body.classList.remove('canvas-modal-open');
-
-                        currentCategory = null;
+                        document.body.classList.remove('modal-open');
+                        document.documentElement.classList.remove('modal-open');
                     }
 
-                    // Save modal settings
-                    function saveModalSettings() {
-                        if (!currentCategory) return;
-
-                        const modalCategory = document.getElementById('modal-' + currentCategory);
-                        const inputs = modalCategory.querySelectorAll('input, select');
-
-                        inputs.forEach(input => {
-                            const settingName = 'pdf_builder_' + input.name.replace('modal_', '');
-                            const value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
-
-                            // Update the main settings (this will be saved when the form is submitted)
-                            // For now, just update the preview if applicable
-                            if (settingName === 'pdf_builder_canvas_width' || settingName === 'pdf_builder_canvas_height') {
-                                updateCanvasPreview();
-                            }
-                        });
-
-                        hideModal();
-                    }
-
-                    // Update canvas preview
-                    function updateCanvasPreview() {
-                        const width = document.getElementById('modal_canvas_width').value;
-                        const height = document.getElementById('modal_canvas_height').value;
-                        const dpi = document.getElementById('modal_canvas_dpi').value;
-
-                        document.getElementById('card-canvas-width').textContent = width;
-                        document.getElementById('card-canvas-height').textContent = height;
-
-                        // Calculate physical size
-                        const mmWidth = (width / dpi * 25.4).toFixed(1);
-                        const mmHeight = (height / dpi * 25.4).toFixed(1);
-                        const inchesWidth = (width / dpi).toFixed(1);
-                        const inchesHeight = (height / dpi).toFixed(1);
-
-                        let sizeText = `${dpi} DPI`;
-                        if (Math.abs(mmWidth - 210) < 5 && Math.abs(mmHeight - 297) < 5) {
-                            sizeText += ` - A4 (${mmWidth}×${mmHeight}mm)`;
-                        } else if (Math.abs(inchesWidth - 8.5) < 0.2 && Math.abs(inchesHeight - 11) < 0.2) {
-                            sizeText += ` - Letter (${inchesWidth}×${inchesHeight}")`;
-                        } else {
-                            sizeText += ` - ${mmWidth}×${mmHeight}mm`;
-                        }
-
-                        document.getElementById('card-canvas-dpi').textContent = sizeText;
-                    }
-
-                    // Event listeners
+                    // Event listeners for modal buttons
                     document.addEventListener('click', function(e) {
-                        console.log('Click detected on:', e.target.className, e.target.id);
-
-                        if (e.target.classList.contains('canvas-configure-btn')) {
-                            console.log('Opening modal');
-                            const card = e.target.closest('.canvas-card');
-                            const category = card.dataset.category;
-                            showModal(category);
+                        if (e.target.classList.contains('canvas-config-btn')) {
+                            const category = e.target.getAttribute('data-category');
+                            openCanvasModal(category);
                         }
 
-                        if (e.target.classList.contains('canvas-modal-close') || e.target.classList.contains('canvas-modal-cancel') || e.target === modalOverlay) {
-                            console.log('Closing modal - target:', e.target.className, e.target.id);
-                            hideModal();
+                        if (e.target.classList.contains('canvas-modal-close') || e.target.classList.contains('canvas-modal-cancel')) {
+                            closeCanvasModal();
                         }
 
-                        if (e.target.classList.contains('canvas-modal-save')) {
-                            console.log('Saving modal');
-                            saveModalSettings();
+                        if (e.target.id === 'canvas-modal-overlay') {
+                            closeCanvasModal();
                         }
                     });
 
-                    // Update preview on modal input changes
-                    document.addEventListener('input', function(e) {
-                        if (e.target.id === 'modal_canvas_width' || e.target.id === 'modal_canvas_height' || e.target.id === 'modal_canvas_dpi') {
-                            updateCanvasPreview();
+                    // Close modal on Escape key
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            const overlay = document.getElementById('canvas-modal-overlay');
+                            if (overlay.style.display === 'flex') {
+                                closeCanvasModal();
+                            }
                         }
                     });
                 })();
             </script>
-
-
