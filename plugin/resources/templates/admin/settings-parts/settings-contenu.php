@@ -916,4 +916,5 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Initialiser le système de previews dynamiques
                     previewSystem.init();
+                })();
             </script>
