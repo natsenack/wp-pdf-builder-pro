@@ -364,60 +364,6 @@
     // Initialiser les notifications de toggle
     document.addEventListener('DOMContentLoaded', initToggleNotifications);
 
-    // Initialiser tous les toggles pour qu'ils soient fonctionnels
-    function initToggles() {
-        console.log('[PDF Builder] Initializing toggles...');
-
-        // Trouver tous les toggles avec la classe toggle-switch
-        const toggles = document.querySelectorAll('.toggle-switch');
-        console.log(`[PDF Builder] Found ${toggles.length} toggle elements`);
-
-        toggles.forEach(function(toggleLabel, index) {
-            const input = toggleLabel.querySelector('input[type="checkbox"]');
-            const slider = toggleLabel.querySelector('.toggle-slider');
-
-            console.log(`[PDF Builder] Toggle ${index + 1}: input=${!!input}, slider=${!!slider}`);
-
-            if (input && slider) {
-                // S'assurer que l'input est caché avec !important pour surcharger le CSS
-                input.style.setProperty('opacity', '0', 'important');
-                input.style.setProperty('pointer-events', 'none', 'important');
-
-                // Rendre le slider cliquable
-                slider.style.setProperty('pointer-events', 'auto', 'important');
-                slider.style.setProperty('cursor', 'pointer', 'important');
-
-                // Gérer les clics sur le slider
-                slider.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    console.log('[PDF Builder] Slider clicked, toggling input');
-                    const oldState = input.checked;
-                    input.checked = !input.checked;
-                    console.log(`[PDF Builder] Input state changed from ${oldState} to ${input.checked}`);
-                    
-                    // Forcer un re-render en modifiant temporairement une propriété
-                    input.style.display = 'none';
-                    input.offsetHeight; // Trigger reflow
-                    input.style.display = '';
-                    
-                    // Déclencher l'événement change
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log('[PDF Builder] Change event dispatched');
-                });
-
-                // Ne pas interférer avec le comportement naturel du label
-                // Le label va naturellement toggler le checkbox quand on clique dessus
-            }
-        });
-
-        if (PDF_BUILDER_CONFIG.debug) {
-            console.log(`[PDF Builder] Initialisé ${toggles.length} toggles`);
-        }
-    }
-
-    // Initialiser les toggles
-    document.addEventListener('DOMContentLoaded', initToggles);
-
     // Système de sauvegarde centralisé - Empêcher les soumissions individuelles des formulaires
     let centralizedSaveInitialized = false;
 
