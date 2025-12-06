@@ -611,28 +611,18 @@
     function validateFormData(formData) {
         const errors = [];
 
-        // Validation des champs requis
-        const requiredFields = [
-            'pdf_builder_license_key',
-            'pdf_builder_cache_max_size',
-            'pdf_builder_cache_ttl'
-        ];
+        // Validation des champs optionnels mais avec format spécifique
+        // Note: Ces champs ne sont PAS requis - ils peuvent être vides
 
-        for (const field of requiredFields) {
-            if (!formData[field] || formData[field] === '') {
-                errors.push(`Le champ ${field.replace('pdf_builder_', '').replace('_', ' ')} est requis`);
-            }
-        }
-
-        // Validation des types numériques
+        // Validation des types numériques (seulement si une valeur est fournie)
         const numericFields = ['pdf_builder_cache_max_size', 'pdf_builder_cache_ttl'];
         for (const field of numericFields) {
-            if (formData[field] && isNaN(parseInt(formData[field]))) {
+            if (formData[field] && formData[field] !== '' && isNaN(parseInt(formData[field]))) {
                 errors.push(`Le champ ${field.replace('pdf_builder_', '').replace('_', ' ')} doit être un nombre`);
             }
         }
 
-        // Validation des URLs
+        // Validation des URLs (seulement si une valeur est fournie)
         const urlFields = ['pdf_builder_api_endpoint'];
         for (const field of urlFields) {
             if (formData[field] && formData[field] !== '') {
@@ -641,6 +631,19 @@
                 } catch {
                     errors.push(`Le champ ${field.replace('pdf_builder_', '').replace('_', ' ')} doit être une URL valide`);
                 }
+            }
+        }
+
+        // Validation de la clé de licence (format basique si fournie)
+        if (formData['pdf_builder_license_key'] && formData['pdf_builder_license_key'] !== '') {
+            const licenseKey = formData['pdf_builder_license_key'];
+            // Vérifier que ce n'est pas juste des espaces
+            if (licenseKey.trim().length === 0) {
+                errors.push('La clé de licence ne peut pas être vide');
+            }
+            // Vérifier la longueur minimale (clé typique de 20+ caractères)
+            else if (licenseKey.length < 10) {
+                errors.push('La clé de licence semble trop courte');
             }
         }
 

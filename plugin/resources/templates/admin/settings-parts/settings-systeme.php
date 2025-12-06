@@ -122,14 +122,14 @@ if ($cache_last_cleanup !== 'Jamais') {
                             <tr>
                                 <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
                                 <td>
-                                    <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo $cache_max_size; ?>" min="10" max="1000" step="10" />
+                                    <input type="number" id="cache_max_size" name="pdf_builder_cache_max_size" value="<?php echo $cache_max_size; ?>" min="10" max="1000" step="10" />
                                     <p class="description">Taille maximale du dossier cache en mégaoctets</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
                                 <td>
-                                    <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo $cache_ttl; ?>" min="0" max="86400" />
+                                    <input type="number" id="cache_ttl" name="pdf_builder_cache_ttl" value="<?php echo $cache_ttl; ?>" min="0" max="86400" />
                                     <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                                 </td>
                             </tr>
