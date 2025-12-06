@@ -62,48 +62,55 @@ $settings = get_option('pdf_builder_settings', array());
                         </tr>
                         <script>
                             // Debug and fix toggle functionality for PDF cache
-                            console.log('Setting up PDF cache enabled toggle...');
-                            
-                            const pdfCacheInput = document.getElementById('pdf_builder_cache_enabled');
-                            const pdfCacheLabel = pdfCacheInput.closest('label');
-                            const pdfCacheSlider = pdfCacheLabel.querySelector('.toggle-slider');
-                            
-                            console.log('PDF Input found:', pdfCacheInput);
-                            console.log('PDF Label found:', pdfCacheLabel);
-                            console.log('PDF Slider found:', pdfCacheSlider);
-                            
-                            if (pdfCacheInput && pdfCacheLabel && pdfCacheSlider) {
-                                // Ensure input is properly hidden
-                                pdfCacheInput.style.opacity = '0';
-                                pdfCacheInput.style.pointerEvents = 'none';
+                            document.addEventListener('DOMContentLoaded', function() {
+                                console.log('Setting up PDF cache enabled toggle...');
                                 
-                                // Handle clicks on slider
-                                pdfCacheSlider.addEventListener('click', function(e) {
-                                    e.stopPropagation();
-                                    console.log('PDF Slider clicked, current state:', pdfCacheInput.checked);
-                                    pdfCacheInput.checked = !pdfCacheInput.checked;
-                                    pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                    console.log('PDF Cache enabled toggled to:', pdfCacheInput.checked);
-                                });
+                                const pdfCacheInput = document.getElementById('pdf_builder_cache_enabled');
+                                const pdfCacheLabel = pdfCacheInput ? pdfCacheInput.closest('label') : null;
+                                const pdfCacheSlider = pdfCacheLabel ? pdfCacheLabel.querySelector('.toggle-slider') : null;
                                 
-                                // Handle clicks on label
-                                pdfCacheLabel.addEventListener('click', function(e) {
-                                    e.preventDefault();
-                                    console.log('PDF Label clicked, current state:', pdfCacheInput.checked);
-                                    pdfCacheInput.checked = !pdfCacheInput.checked;
-                                    pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                    console.log('PDF Cache enabled toggled to:', pdfCacheInput.checked);
-                                });
+                                console.log('PDF Input found:', pdfCacheInput);
+                                console.log('PDF Label found:', pdfCacheLabel);
+                                console.log('PDF Slider found:', pdfCacheSlider);
                                 
-                                // Debug change event
-                                pdfCacheInput.addEventListener('change', function() {
-                                    console.log('PDF Cache enabled INPUT changed to:', this.checked);
-                                });
-                                
-                                console.log('PDF Toggle setup complete');
-                            } else {
-                                console.error('PDF Toggle elements not found!');
-                            }
+                                if (pdfCacheInput && pdfCacheLabel && pdfCacheSlider) {
+                                    // Ensure input is properly hidden
+                                    pdfCacheInput.style.opacity = '0';
+                                    pdfCacheInput.style.pointerEvents = 'none';
+                                    
+                                    // Make sure slider is clickable
+                                    pdfCacheSlider.style.pointerEvents = 'auto';
+                                    pdfCacheSlider.style.cursor = 'pointer';
+                                    
+                                    // Handle clicks on slider
+                                    pdfCacheSlider.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        console.log('PDF Slider clicked, current state:', pdfCacheInput.checked);
+                                        pdfCacheInput.checked = !pdfCacheInput.checked;
+                                        pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                        console.log('PDF Cache enabled toggled to:', pdfCacheInput.checked);
+                                    });
+                                    
+                                    // Handle clicks on label (but let default behavior work)
+                                    pdfCacheLabel.addEventListener('click', function(e) {
+                                        console.log('PDF Label clicked, current state:', pdfCacheInput.checked);
+                                        // Don't prevent default, let the browser handle the checkbox toggle
+                                        setTimeout(function() {
+                                            console.log('PDF Cache enabled after label click:', pdfCacheInput.checked);
+                                            pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                        }, 10);
+                                    });
+                                    
+                                    // Debug change event
+                                    pdfCacheInput.addEventListener('change', function() {
+                                        console.log('PDF Cache enabled INPUT changed to:', this.checked);
+                                    });
+                                    
+                                    console.log('PDF Toggle setup complete');
+                                } else {
+                                    console.error('PDF Toggle elements not found!');
+                                }
+                            });
                         </script>
                     </table>
                 </section>
