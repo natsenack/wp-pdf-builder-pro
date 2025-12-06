@@ -545,11 +545,53 @@ $settings = get_option('pdf_builder_settings', array());
                                         value = value === true || value === '1' || value === 1;
                                     }
 
+                                    // Gestion spéciale du format prédéfini
+                                    if (key === 'canvas_format') {
+                                        this.handleFormatChange(value);
+                                    }
+
                                     this.updateValue(key, value);
                                 });
                             });
 
                             console.log('Preview System: Event listeners setup for', modalInputs.length, 'inputs');
+                        },
+
+                        // Gérer le changement de format prédéfini
+                        handleFormatChange: function(format) {
+                            const widthInput = document.getElementById('modal_canvas_width');
+                            const heightInput = document.getElementById('modal_canvas_height');
+
+                            if (format === 'custom') {
+                                // Activer les champs personnalisés
+                                if (widthInput) widthInput.disabled = false;
+                                if (heightInput) heightInput.disabled = false;
+                            } else {
+                                // Désactiver les champs et définir les dimensions selon le format
+                                if (widthInput) widthInput.disabled = true;
+                                if (heightInput) heightInput.disabled = true;
+
+                                // Dimensions en mm selon le format
+                                const dimensions = {
+                                    'A4': { width: 210, height: 297 },
+                                    'A3': { width: 297, height: 420 },
+                                    'Letter': { width: 216, height: 279 }, // 8.5 * 25.4 ≈ 216mm, 11 * 25.4 ≈ 279mm
+                                    'Legal': { width: 216, height: 356 }   // 8.5 * 25.4 ≈ 216mm, 14 * 25.4 ≈ 356mm
+                                };
+
+                                if (dimensions[format]) {
+                                    const dpi = this.values.canvas_dpi || 96;
+                                    const widthPx = Math.round((dimensions[format].width / 25.4) * dpi);
+                                    const heightPx = Math.round((dimensions[format].height / 25.4) * dpi);
+
+                                    this.updateValue('canvas_width', widthPx);
+                                    this.updateValue('canvas_height', heightPx);
+
+                                    // Mettre à jour les inputs (même s'ils sont disabled pour l'affichage)
+                                    if (widthInput) widthInput.value = widthPx;
+                                    if (heightInput) heightInput.value = heightPx;
+                                }
+                            }
                         }
                     };
 
@@ -558,14 +600,15 @@ $settings = get_option('pdf_builder_settings', array());
                         dimensions: {
                             title: '📐 Dimensions & Format',
                             content: function() {
+                                const isCustomFormat = previewSystem.values.canvas_format === "custom" || !previewSystem.values.canvas_format;
                                 return "<div class=\"modal-form-grid\">" +
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_width\">Largeur (px)</label>" +
-                                        "<input type=\"number\" id=\"modal_canvas_width\" name=\"modal_canvas_width\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_width) + "\" min=\"100\" max=\"5000\">" +
+                                        "<input type=\"number\" id=\"modal_canvas_width\" name=\"modal_canvas_width\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_width) + "\" min=\"100\" max=\"5000\"" + (isCustomFormat ? "" : " disabled") + ">" +
                                     "</div>" +
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_height\">Hauteur (px)</label>" +
-                                        "<input type=\"number\" id=\"modal_canvas_height\" name=\"modal_canvas_height\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_height) + "\" min=\"100\" max=\"5000\">" +
+                                        "<input type=\"number\" id=\"modal_canvas_height\" name=\"modal_canvas_height\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_height) + "\" min=\"100\" max=\"5000\"" + (isCustomFormat ? "" : " disabled") + ">" +
                                     "</div>" +
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_dpi\">DPI</label>" +
@@ -844,6 +887,11 @@ $settings = get_option('pdf_builder_settings', array());
 
                         // Mettre à jour le contenu
                         modalBody.innerHTML = typeof config.content === 'function' ? config.content() : config.content;
+
+                        // Initialiser l'état des champs pour la modal dimensions
+                        if (category === 'dimensions') {
+                            previewSystem.handleFormatChange(previewSystem.values.canvas_format || 'custom');
+                        }
 
                         // Afficher l'overlay
                         overlay.classList.add('pdf-builder-modal-open');
