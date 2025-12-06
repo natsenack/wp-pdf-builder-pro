@@ -4107,6 +4107,12 @@ select option:disabled {
     -webkit-backdrop-filter: blur(4px) !important;
 }
 
+.pdf-builder-modal-overlay.pdf-builder-modal-open {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
 .pdf-builder-modal-backdrop {
     position: absolute;
     top: 0;

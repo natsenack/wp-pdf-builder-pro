@@ -669,15 +669,16 @@ $settings = get_option('pdf_builder_settings', array());
                         modalBody.innerHTML = config.content;
 
                         // Afficher l'overlay
-                        overlay.style.display = 'block';
+                        overlay.classList.add('pdf-builder-modal-open');
                         document.body.style.overflow = 'hidden';
 
-                        console.log('Modal ouverte:', category);
+                        console.log('PDF Builder Modal System: Modal class added, current style:', overlay.style.display);
+                        console.log('PDF Builder Modal System: Modal computed style:', window.getComputedStyle(overlay).display);
                     }
 
                     // Fermer la modal
                     function closeModal() {
-                        overlay.style.display = 'none';
+                        overlay.classList.remove('pdf-builder-modal-open');
                         document.body.style.overflow = '';
                         currentModalCategory = null;
                         console.log('Modal fermée');
@@ -727,7 +728,7 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Fermeture avec Échap
                     document.addEventListener('keydown', function(e) {
-                        if (e.key === 'Escape' && overlay.style.display === 'block') {
+                        if (e.key === 'Escape' && overlay.classList.contains('pdf-builder-modal-open')) {
                             closeModal();
                         }
                     });
