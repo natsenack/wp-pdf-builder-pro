@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Toggles</title>
+    <script src="test-toggles-complet.js"></script>
+</head>
+<body>
+    <h1>Test des toggles PDF Builder Pro</h1>
+    <div id="test-results"></div>
+    <script>
+        // Exécuter les tests automatiquement
+        setTimeout(() => {
+            const results = runAllToggleTests();
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<h2>Résultats des tests</h2><pre>' + JSON.stringify(results, null, 2) + '</pre>';
+        }, 100);
+    </script>
+</body>
+</html>
