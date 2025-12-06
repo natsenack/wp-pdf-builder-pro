@@ -51,10 +51,10 @@ $settings = get_option('pdf_builder_settings', array());
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="pdf_builder_cache_enabled">Cache activé</label></th>
+                            <th scope="row"><label for="pdf_builder_pdf_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked($settings['pdf_builder_cache_enabled'] ?? '0', '1'); ?>>
+                                    <input type="checkbox" id="pdf_builder_pdf_cache_enabled" name="pdf_builder_pdf_cache_enabled" value="1" <?php checked($settings['pdf_builder_pdf_cache_enabled'] ?? '0', '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>
@@ -63,7 +63,7 @@ $settings = get_option('pdf_builder_settings', array());
                         <script>
                             // PDF Cache toggle functionality
                             (function() {
-                                const pdfCacheInput = document.getElementById('pdf_builder_cache_enabled');
+                                const pdfCacheInput = document.getElementById('pdf_builder_pdf_cache_enabled');
                                 const pdfCacheLabel = pdfCacheInput ? pdfCacheInput.closest('label') : null;
                                 const pdfCacheSlider = pdfCacheLabel ? pdfCacheLabel.querySelector('.toggle-slider') : null;
                                 
