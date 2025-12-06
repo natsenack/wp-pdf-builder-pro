@@ -3671,4 +3671,415 @@ select option:disabled {
     visibility: visible !important;
 }
 
+/* === STYLES SPÉCIFIQUES POUR LES MODALES CANVAS === */
+
+/* Styles pour les formulaires dans les modales */
+.canvas-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.canvas-modal-form .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.canvas-modal-form label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.canvas-modal-form input[type="text"],
+.canvas-modal-form input[type="number"],
+.canvas-modal-form select,
+.canvas-modal-form textarea {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvas-modal-form input[type="text"]:focus,
+.canvas-modal-form input[type="number"]:focus,
+.canvas-modal-form select:focus,
+.canvas-modal-form textarea:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 3px rgba(0, 123, 186, 0.1);
+}
+
+.canvas-modal-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Styles pour les toggles dans les modales */
+.canvas-modal-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.canvas-modal-toggle label {
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Styles pour les aperçus dans les modales */
+.canvas-modal-preview {
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-top: 8px;
+}
+
+.canvas-modal-preview h5 {
+    margin: 0 0 12px 0;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Styles pour les sections dans les modales */
+.canvas-modal-section {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.canvas-modal-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+/* Styles pour les couleurs dans les modales */
+.color-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.color-input {
+    width: 60px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    background: none;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+}
+
+.color-value {
+    font-family: monospace;
+    font-size: 12px;
+    color: #666;
+    min-width: 70px;
+}
+
+/* Styles pour les sliders dans les modales */
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slider-input {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+}
+
+.slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007cba;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.slider-input::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007cba;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.slider-value {
+    font-family: monospace;
+    font-size: 14px;
+    color: #007cba;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Styles pour les options de sélection multiple */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #007cba;
+}
+
+.checkbox-item label {
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+}
+
+/* Styles pour les boutons radio */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.radio-item input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #007cba;
+}
+
+.radio-item label {
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+}
+
+/* Styles pour les listes d'options */
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.option-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.option-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Styles pour les indicateurs de statut dans les modales */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-indicator.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-indicator.inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-indicator.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Styles pour les messages d'aide dans les modales */
+.help-text {
+    color: #6c757d;
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.warning-text {
+    color: #856404;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+    padding: 8px 12px;
+    background: #fff3cd;
+    border-radius: 4px;
+    border-left: 3px solid #ffc107;
+}
+
+/* Styles pour les aperçus dynamiques */
+.live-preview {
+    position: relative;
+    padding: 16px;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.live-preview.updating {
+    opacity: 0.7;
+}
+
+.live-preview.updating::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007cba;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animation de chargement */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive pour les modales canvas */
+@media (max-width: 768px) {
+    .canvas-modal-content {
+        margin: 10px;
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 20px);
+    }
+
+    .canvas-modal-header {
+        padding: 16px 20px;
+    }
+
+    .canvas-modal-body {
+        padding: 20px;
+    }
+
+    .canvas-modal-footer {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .canvas-modal-save,
+    .canvas-modal-cancel {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .slider-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .color-picker-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .canvas-modal-content {
+        margin: 5px;
+        max-width: calc(100vw - 10px);
+        max-height: calc(100vh - 10px);
+    }
+
+    .canvas-modal-header h3 {
+        font-size: 18px;
+    }
+
+    .canvas-modal-body {
+        padding: 16px;
+    }
+
+    .canvas-modal-form .form-row {
+        gap: 6px;
+    }
+
+    .canvas-modal-form input[type="text"],
+    .canvas-modal-form input[type="number"],
+    .canvas-modal-form select,
+    .canvas-modal-form textarea {
+        padding: 12px;
+        font-size: 16px; /* Empêche le zoom sur iOS */
+    }
+}
+
 
