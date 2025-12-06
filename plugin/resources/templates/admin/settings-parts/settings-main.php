@@ -91,57 +91,65 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
 
 <!-- DEBUG: JavaScript pour vérifier le bouton flottant -->
 <script>
-// Test immédiat - devrait s'exécuter dès que le script est chargé
-alert('🚨 ALERT: JavaScript de débogage CHARGÉ! Cliquez OK pour continuer.');
-console.log('🚨 CONSOLE: JavaScript de débogage CHARGÉ');
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚨 CONSOLE: DOMContentLoaded déclenché');
-    alert('🚨 ALERT: DOMContentLoaded déclenché!');
+// Test immédiat - créer un élément visible
+(function() {
+    // Créer un élément de test visible immédiatement
+    var testDiv = document.createElement('div');
+    testDiv.id = 'js-test-indicator';
+    testDiv.style.position = 'fixed';
+    testDiv.style.top = '100px';
+    testDiv.style.left = '10px';
+    testDiv.style.background = 'purple';
+    testDiv.style.color = 'white';
+    testDiv.style.padding = '10px';
+    testDiv.style.border = '3px solid orange';
+    testDiv.style.fontSize = '14px';
+    testDiv.style.fontWeight = 'bold';
+    testDiv.style.zIndex = '1000000';
+    testDiv.innerHTML = '🚨 JS EXECUTED! Script chargé et exécuté.';
+    document.body.appendChild(testDiv);
     
-    setTimeout(function() {
-        console.log('🚨 CONSOLE: Timeout 1s écoulé');
-        alert('🚨 ALERT: Timeout 1s écoulé - Recherche du bouton...');
+    // Test après DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        testDiv.innerHTML += '<br>🚨 DOMContentLoaded fired!';
         
-        const floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
-        const floatingContainer = document.getElementById('pdf-builder-save-floating');
-        
-        console.log('🚨 CONSOLE: Bouton flottant - Container:', floatingContainer);
-        console.log('🚨 CONSOLE: Bouton flottant - Button:', floatingBtn);
-        
-        if (floatingContainer) {
-            console.log('🚨 CONSOLE: Container trouvé');
-            alert('🚨 ALERT: Container trouvé!');
-        } else {
-            console.error('🚨 CONSOLE: Container NON trouvé!');
-            alert('🚨 ALERT: Container NON trouvé!');
-        }
-        
-        if (floatingBtn) {
-            console.log('🚨 CONSOLE: Button trouvé');
-            alert('🚨 ALERT: Button trouvé! Application des styles forcés...');
+        setTimeout(function() {
+            testDiv.innerHTML += '<br>🚨 Timeout 1s passed!';
             
-            // Force visible pour test
-            floatingBtn.style.background = 'red';
-            floatingBtn.style.color = 'white';
-            floatingBtn.style.border = '3px solid yellow';
-            floatingBtn.style.fontSize = '20px';
-            floatingBtn.style.padding = '15px';
-            floatingBtn.style.zIndex = '999999';
-            floatingBtn.style.position = 'fixed';
-            floatingBtn.style.bottom = '50px';
-            floatingBtn.style.right = '50px';
-            floatingBtn.style.borderRadius = '10px';
+            const floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
+            const floatingContainer = document.getElementById('pdf-builder-save-floating');
             
-            console.log('🚨 CONSOLE: Styles forcés appliqués');
-            alert('🚨 ALERT: Styles forcés appliqués! Le bouton devrait maintenant être visible.');
+            if (floatingContainer) {
+                testDiv.innerHTML += '<br>✅ Container found!';
+                testDiv.style.background = 'green';
+            } else {
+                testDiv.innerHTML += '<br>❌ Container NOT found!';
+                testDiv.style.background = 'red';
+            }
             
-        } else {
-            console.error('🚨 CONSOLE: Bouton flottant NON trouvé!');
-            alert('🚨 ALERT: Bouton flottant NON trouvé dans le DOM!');
-        }
-    }, 1000);
-});
+            if (floatingBtn) {
+                testDiv.innerHTML += '<br>✅ Button found! Forcing visibility...';
+                
+                // Force visible
+                floatingBtn.style.background = 'red';
+                floatingBtn.style.color = 'white';
+                floatingBtn.style.border = '3px solid yellow';
+                floatingBtn.style.fontSize = '20px';
+                floatingBtn.style.padding = '15px';
+                floatingBtn.style.zIndex = '999999';
+                floatingBtn.style.position = 'fixed';
+                floatingBtn.style.bottom = '100px';
+                floatingBtn.style.right = '50px';
+                floatingBtn.style.borderRadius = '10px';
+                
+                testDiv.innerHTML += '<br>✅ Styles forced on button!';
+                
+            } else {
+                testDiv.innerHTML += '<br>❌ Button NOT found in DOM!';
+            }
+        }, 1000);
+    });
+})();
 </script>
 
 <!-- Styles pour le bouton flottant -->
