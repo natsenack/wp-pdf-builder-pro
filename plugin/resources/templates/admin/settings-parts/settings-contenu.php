@@ -823,8 +823,6 @@ echo addslashes($content);
                             ';
 echo addslashes($content);
 ?>
-                        }
-                    };
 
                     // État de la modal
                     let currentModalCategory = null;
