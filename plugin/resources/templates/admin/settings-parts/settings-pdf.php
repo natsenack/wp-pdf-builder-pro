@@ -79,7 +79,7 @@ $settings = get_option('pdf_builder_settings', array());
                                     
                                     // Ensure input is properly hidden
                                     pdfCacheInput.style.opacity = '0';
-                                    pdfCacheInput.style.pointerEvents = 'none';
+                                    // pdfCacheInput.style.pointerEvents = 'none'; // Removed to allow default label behavior
                                     
                                     // Make sure slider is clickable
                                     pdfCacheSlider.style.pointerEvents = 'auto';
