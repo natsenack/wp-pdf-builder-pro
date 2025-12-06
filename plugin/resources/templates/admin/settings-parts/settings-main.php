@@ -92,30 +92,35 @@ $settings = get_option('pdf_builder_settings', array());
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 9999;
-    display: flex;
+    z-index: 999999 !important; /* Très haute priorité */
+    display: flex !important;
     flex-direction: column;
     align-items: flex-end;
     gap: 10px;
+    background: rgba(255, 0, 0, 0.8) !important; /* Fond rouge visible pour debug */
+    padding: 10px !important;
+    border-radius: 10px !important;
+    border: 3px solid yellow !important;
 }
 
 .pdf-builder-save-btn {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
+    background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%) !important; /* Rouge visible pour debug */
     color: white !important;
-    border: none !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
+    border: 3px solid yellow !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
     border-radius: 25px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 4px 12px rgba(255,0,0,0.8) !important;
     transition: all 0.3s ease !important;
-    min-width: 160px;
-    max-width: 180px;
+    min-width: 180px;
+    max-width: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     cursor: pointer;
     white-space: nowrap;
+    padding: 12px 20px !important;
 }
 
 .pdf-builder-save-btn .dashicons {
