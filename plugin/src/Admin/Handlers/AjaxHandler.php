@@ -891,37 +891,7 @@ class AjaxHandler
             wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
         }
     }
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
-
-            // Collecter tous les paramètres
-            $settings = [];
-            foreach ($_POST as $key => $value) {
-                if (strpos($key, 'pdf_builder_') === 0) {
-                    $settings[$key] = sanitize_text_field($value);
-                }
-            }
-
-            // Sauvegarder
-            foreach ($settings as $key => $value) {
-                update_option($key, $value);
-            }
-
-            wp_send_json_success([
-                'message' => 'Paramètres sauvegardés avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
-        }
-    }
+}
 
     /**
      * Sauvegarder les paramètres généraux
