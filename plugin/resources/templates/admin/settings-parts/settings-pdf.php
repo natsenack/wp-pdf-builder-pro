@@ -61,7 +61,7 @@ $settings = get_option('pdf_builder_settings', array());
                             </td>
                         </tr>
                         <script>
-                            // Debug and fix toggle functionality for PDF cache
+                            // Debug and fix toggle functionality for PDF cache - Updated: 2025-12-06
                             document.addEventListener('DOMContentLoaded', function() {
                                 console.log('Setting up PDF cache enabled toggle...');
                                 
