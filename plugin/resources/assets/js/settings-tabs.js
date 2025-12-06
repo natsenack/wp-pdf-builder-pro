@@ -329,7 +329,8 @@
             'canvas-interactions-form',
             'canvas-export-form',
             'canvas-performance-form',
-            'canvas-debug-form'
+            'canvas-debug-form',
+            'acces-form'  // AJOUTÉ: Formulaire des rôles et permissions
         ];
 
         // Collecter les données de chaque formulaire

@@ -13,11 +13,11 @@ require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 
 // Add floating save button and JavaScript here for better execution context
 ?>
-<!-- Bouton de sauvegarde flottant global -->
-<div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999; display: block;">
-    <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn" style="background: red; color: white; border: 3px solid yellow; font-size: 18px; padding: 12px 20px;">
-        <span class="dashicons dashicons-saved"></span>
-        💾 Enregistrer
+<!-- Bouton de sauvegarde flottant global - ULTRA VISIBLE -->
+<div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 9999999 !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
+    <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn" style="background: #ff0000 !important; color: #ffffff !important; border: 4px solid #ffff00 !important; font-size: 20px !important; padding: 15px 25px !important; font-weight: bold !important; text-shadow: 1px 1px 2px #000 !important; box-shadow: 0 0 20px rgba(255,0,0,0.8) !important; border-radius: 10px !important;">
+        <span class="dashicons dashicons-saved" style="margin-right: 8px;"></span>
+        💾 ENREGISTRER TOUT
     </button>
 </div>
 
@@ -30,9 +30,9 @@ window.addEventListener('load', function() {
         // Créer indicateur de debug ultra-visible
         var debugDiv = document.createElement('div');
         debugDiv.id = 'pdf-js-test';
-        debugDiv.innerHTML = '🚨 JAVASCRIPT WORKS! Script executed successfully at ' + new Date().toLocaleTimeString();
+        debugDiv.innerHTML = '🚨 JAVASCRIPT WORKS! Script executed successfully at ' + new Date().toLocaleTimeString() + '<br>🔍 Looking for floating save button...';
         debugDiv.style.cssText = 'position:fixed;top:50px;left:10px;background:cyan;color:black;padding:15px;border:3px solid blue;font-size:14px;font-weight:bold;z-index:1000000;border-radius:5px;max-width:300px;';
-        
+
         document.body.appendChild(debugDiv);
         console.log('🚨 PDF BUILDER: Debug element added to body');
         
