@@ -97,23 +97,25 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <script>
-                                        // Test multiple event listeners
+                                        // Fix toggle functionality
                                         const cacheEnabledInput = document.getElementById('general_cache_enabled');
                                         const cacheEnabledLabel = cacheEnabledInput.closest('label');
+                                        const cacheEnabledSlider = cacheEnabledLabel.querySelector('.toggle-slider');
                                         
+                                        // Make slider clickable
+                                        cacheEnabledSlider.style.pointerEvents = 'auto';
+                                        
+                                        // Handle clicks on label or slider
+                                        cacheEnabledLabel.addEventListener('click', function(e) {
+                                            e.preventDefault();
+                                            cacheEnabledInput.checked = !cacheEnabledInput.checked;
+                                            cacheEnabledInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                            console.log('Cache enabled toggled to:', cacheEnabledInput.checked);
+                                        });
+                                        
+                                        // Debug event listener
                                         cacheEnabledInput.addEventListener('change', function() {
                                             console.log('Cache enabled INPUT changed to:', this.checked);
-                                        });
-                                        
-                                        cacheEnabledLabel.addEventListener('click', function() {
-                                            console.log('Cache enabled LABEL clicked');
-                                            setTimeout(() => {
-                                                console.log('Cache enabled state after click:', cacheEnabledInput.checked);
-                                            }, 10);
-                                        });
-                                        
-                                        cacheEnabledInput.addEventListener('click', function() {
-                                            console.log('Cache enabled INPUT clicked');
                                         });
                                     </script>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
