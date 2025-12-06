@@ -8,6 +8,9 @@ if (!defined('ABSPATH')) {
     exit('Direct access forbidden');
 }
 
+// Include settings loader (loads JavaScript and CSS assets)
+require_once plugin_dir_path(__FILE__) . 'settings-loader.php';
+
 // Include main settings logic (contains all navigation and tabs)
 require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 
