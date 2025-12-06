@@ -114,6 +114,7 @@ require_once __DIR__ . '/settings-helpers.php';
             <span id="save-status-text">Prêt à enregistrer</span>
         </div>
     </div>
+    <script>console.log('PHP: Floating save button HTML added to DOM');</script>
 
     <!-- Styles pour le bouton flottant -->
     <style>
