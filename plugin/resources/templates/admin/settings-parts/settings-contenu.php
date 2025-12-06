@@ -414,6 +414,8 @@ $settings = get_option('pdf_builder_settings', array());
                 (function() {
                     'use strict';
 
+                    console.log('PDF Builder Modal System: Initializing...');
+
                     // Configuration des modales
                     const modalConfigs = {
                         dimensions: {
@@ -642,8 +644,16 @@ $settings = get_option('pdf_builder_settings', array());
                     const modalTitle = document.getElementById('pdf-builder-modal-title');
                     const modalBody = document.querySelector('.pdf-builder-modal-body');
 
+                    console.log('PDF Builder Modal System: DOM elements found:', {
+                        overlay: !!overlay,
+                        modalTitle: !!modalTitle,
+                        modalBody: !!modalBody
+                    });
+
                     // Ouvrir une modal
                     function openModal(category) {
+                        console.log('PDF Builder Modal System: openModal called with category:', category);
+
                         if (!modalConfigs[category]) {
                             console.error('Configuration de modal introuvable pour:', category);
                             return;
@@ -682,11 +692,15 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
+                        console.log('PDF Builder Modal System: Click detected on:', e.target);
+
                         // Bouton de configuration d'une carte
                         if (e.target.closest('.canvas-configure-btn')) {
+                            console.log('PDF Builder Modal System: Configure button clicked');
                             e.preventDefault();
                             const card = e.target.closest('.canvas-card');
                             if (card && card.dataset.category) {
+                                console.log('PDF Builder Modal System: Opening modal for category:', card.dataset.category);
                                 openModal(card.dataset.category);
                             }
                             return;
