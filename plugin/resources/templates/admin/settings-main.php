@@ -95,19 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <p class="submit"><button type="submit" class="button button-primary">Save Settings</button></p>
 
-<!-- TEST VISUEL DU BOUTON - SI VOUS VOYEZ CE COMMENTAIRE, LE FICHIER EST DEPLOYE -->
-<!-- Bouton de sauvegarde flottant défini en HTML -->
-<div id="pdf-builder-save-floating" class="pdf-builder-save-floating">
-    <button id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
-        <span class="dashicons dashicons-yes"></span>
-        💾 Enregistrer
-    </button>
-    <div id="save-status-indicator" class="save-status-indicator">
-        <span id="save-status-text">Prêt à enregistrer</span>
-    </div>
-</div>
-
-<!-- Updated: 2025-12-03 23:30:00 - Bouton flottant défini uniquement en HTML - Cache bust: <?php echo time(); ?> -->
+<!-- Updated: 2025-12-03 23:30:00 - Bouton flottant supprimé (défini dans settings-parts/settings-main.php) - Cache bust: <?php echo time(); ?> -->
 </div>
 
 <!-- JavaScript moved to settings-parts/settings-main.php to avoid conflicts -->
