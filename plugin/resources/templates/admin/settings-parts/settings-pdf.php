@@ -14,7 +14,7 @@ $settings = get_option('pdf_builder_settings', array());
                 <input type="hidden" name="current_tab" value="pdf">
 
                 <!-- Section Principale -->
-                <section class="pdf-section">
+                <section id="pdf" class="pdf-section">
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
                         ⚙️ Paramètres principaux
                     </h3>
@@ -64,7 +64,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </section>
 
                 <!-- Section Avancée (repliable) -->
-                <section class="pdf-section">
+                <section id="pdf" class="pdf-section">
                     <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;" onclick="PDFBuilderTabsAPI.toggleAdvancedSection()">
                         🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
                     </h3>

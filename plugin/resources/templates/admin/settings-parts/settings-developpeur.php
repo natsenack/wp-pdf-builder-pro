@@ -12,6 +12,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
          <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
+                <div id="developpeur">
 
                 <h3 class="section-title">🔐 Contrôle d'Accès</h3>
 
@@ -707,6 +708,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     💾 Sauvegarder les Paramètres Développeur
                 </button>
             </div>
+                </div>
 
          </form>
 

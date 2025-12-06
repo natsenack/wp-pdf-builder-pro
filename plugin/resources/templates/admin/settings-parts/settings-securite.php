@@ -26,7 +26,7 @@ $gdpr_consent_marketing = get_option('pdf_builder_gdpr_consent_marketing', false
                 <input type="hidden" name="current_tab" value="securite">
 
                 <!-- Section Sécurité -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div id="securite" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             🛡️ Sécurité
@@ -61,7 +61,7 @@ $gdpr_consent_marketing = get_option('pdf_builder_gdpr_consent_marketing', false
                 </div>
 
                 <!-- Section RGPD -->
-                <div style="background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <div id="securite" style="background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
                     <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             📋 Gestion RGPD & Conformité
@@ -161,7 +161,7 @@ $gdpr_consent_marketing = get_option('pdf_builder_gdpr_consent_marketing', false
 
                         <!-- Section Actions Utilisateur -->
                         <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">👤 Actions RGPD Utilisateur</h4>
-                        <div class="gdpr-section" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <div id="securite" class="gdpr-section" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                             <p style="margin-top: 0; color: #495057;"><strong>Droits RGPD :</strong> En tant qu'administrateur, vous pouvez gérer vos propres données personnelles.</p>
 
                             <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
@@ -188,7 +188,7 @@ $gdpr_consent_marketing = get_option('pdf_builder_gdpr_consent_marketing', false
 
                         <!-- Section Logs d'Audit -->
                         <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📊 Logs d'Audit RGPD</h4>
-                        <div class="gdpr-section" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <div id="securite" class="gdpr-section" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                             <p style="margin-top: 0; color: #495057;">Consultez et exportez les logs d'audit RGPD pour vérifier la conformité.</p>
 
                             <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">

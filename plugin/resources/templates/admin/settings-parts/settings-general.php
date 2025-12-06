@@ -9,7 +9,7 @@
             <h2>🏠 Paramètres Généraux</h2>
 
             <!-- Pas de sous-onglets pour la page générale, juste le contenu direct -->
-            <section class="general-section">
+            <section id="general" class="general-section">
                 <h3>🏢 Informations Entreprise</h3>
 
                 <form method="post" action="" id="general-form">

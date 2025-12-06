@@ -77,7 +77,7 @@ if ($cache_last_cleanup !== 'Jamais') {
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
                 <!-- Section Cache et Performance -->
-                <section class="system-cache-section">
+                <section id="systeme" class="system-cache-section">
                     <header>
                         <h3>
                             <span>
@@ -200,7 +200,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                     </div>
                 </section>
                 <!-- Section Maintenance -->
-                <section class="system-maintenance-section">
+                <section id="systeme" class="system-maintenance-section">
                     <h3>
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             🔧 Maintenance
@@ -325,7 +325,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                     </div>
                 </section>
                 <!-- Section Sauvegarde -->
-                <section class="system-backup-section">
+                <section id="systeme" class="system-backup-section">
                     <header>
                         <h3>
                             <span>
