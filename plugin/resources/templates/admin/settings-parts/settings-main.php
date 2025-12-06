@@ -91,27 +91,35 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
 
 <!-- DEBUG: JavaScript pour vérifier le bouton flottant -->
 <script>
-console.log('🚨 DEBUG: JavaScript de débogage CHARGÉ');
+// Test immédiat - devrait s'exécuter dès que le script est chargé
+alert('🚨 ALERT: JavaScript de débogage CHARGÉ! Cliquez OK pour continuer.');
+console.log('🚨 CONSOLE: JavaScript de débogage CHARGÉ');
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚨 DEBUG: DOMContentLoaded déclenché');
+    console.log('🚨 CONSOLE: DOMContentLoaded déclenché');
+    alert('🚨 ALERT: DOMContentLoaded déclenché!');
+    
     setTimeout(function() {
-        console.log('🚨 DEBUG: Timeout 1s écoulé');
+        console.log('🚨 CONSOLE: Timeout 1s écoulé');
+        alert('🚨 ALERT: Timeout 1s écoulé - Recherche du bouton...');
+        
         const floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
         
-        console.log('🚨 DEBUG: Bouton flottant - Container:', floatingContainer);
-        console.log('🚨 DEBUG: Bouton flottant - Button:', floatingBtn);
+        console.log('🚨 CONSOLE: Bouton flottant - Container:', floatingContainer);
+        console.log('🚨 CONSOLE: Bouton flottant - Button:', floatingBtn);
         
         if (floatingContainer) {
-            console.log('🚨 DEBUG: Container trouvé, styles:', getComputedStyle(floatingContainer));
-            console.log('🚨 DEBUG: Container rect:', floatingContainer.getBoundingClientRect());
+            console.log('🚨 CONSOLE: Container trouvé');
+            alert('🚨 ALERT: Container trouvé!');
         } else {
-            console.error('🚨 DEBUG: Container NON trouvé!');
+            console.error('🚨 CONSOLE: Container NON trouvé!');
+            alert('🚨 ALERT: Container NON trouvé!');
         }
         
         if (floatingBtn) {
-            console.log('🚨 DEBUG: Button trouvé, styles:', getComputedStyle(floatingBtn));
-            console.log('🚨 DEBUG: Button rect:', floatingBtn.getBoundingClientRect());
+            console.log('🚨 CONSOLE: Button trouvé');
+            alert('🚨 ALERT: Button trouvé! Application des styles forcés...');
             
             // Force visible pour test
             floatingBtn.style.background = 'red';
@@ -125,23 +133,12 @@ document.addEventListener('DOMContentLoaded', function() {
             floatingBtn.style.right = '50px';
             floatingBtn.style.borderRadius = '10px';
             
-            console.log('🚨 DEBUG: Styles forcés appliqués');
+            console.log('🚨 CONSOLE: Styles forcés appliqués');
+            alert('🚨 ALERT: Styles forcés appliqués! Le bouton devrait maintenant être visible.');
             
-            // Ajouter un événement click visible
-            floatingBtn.addEventListener('click', function() {
-                alert('🚨 BOUTON CLIQUÉ! Le bouton fonctionne!');
-            });
         } else {
-            console.error('🚨 DEBUG: Bouton flottant NON trouvé dans le DOM!');
-            
-            // Chercher tous les boutons qui contiennent "enregistrer"
-            const allButtons = document.querySelectorAll('button');
-            console.log('🚨 DEBUG: Tous les boutons sur la page:', allButtons);
-            allButtons.forEach((btn, i) => {
-                if (btn.textContent.toLowerCase().includes('enregistrer')) {
-                    console.log('🚨 DEBUG: Bouton "enregistrer" trouvé:', btn);
-                }
-            });
+            console.error('🚨 CONSOLE: Bouton flottant NON trouvé!');
+            alert('🚨 ALERT: Bouton flottant NON trouvé dans le DOM!');
         }
     }, 1000);
 });
