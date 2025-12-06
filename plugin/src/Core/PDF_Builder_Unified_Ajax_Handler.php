@@ -422,7 +422,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'gdpr_consent_analytics', 'gdpr_consent_templates', 'gdpr_consent_marketing',
                 'pdf_metadata_enabled', 'pdf_print_optimized'
             ],
-            'array_fields' => ['order_status_templates']
+            'array_fields' => ['order_status_templates'],
+            'license_bool_fields' => [
+                'license_email_reminders'
+            ]
         ];
 
         // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
@@ -467,10 +470,25 @@ class PDF_Builder_Unified_Ajax_Handler {
             $saved_count++;
         }
 
+        // Handle license boolean fields
+        foreach ($field_rules['license_bool_fields'] as $bool_field) {
+            if (isset($_POST[$bool_field])) {
+                // Field is present in POST - use its value
+                $option_value = ($_POST[$bool_field] === '1') ? '1' : '0';
+                $option_key = 'pdf_builder_' . $bool_field;
+                $settings[$option_key] = $option_value;
+            } else {
+                // Field NOT present in POST - means checkbox was unchecked, set to 0
+                $option_key = 'pdf_builder_' . $bool_field;
+                $settings[$option_key] = '0';
+            }
+            $saved_count++;
+        }
+
         // THEN: Process remaining non-boolean fields from POST
         foreach ($_POST as $key => $value) {
             // Skip WordPress internal fields and already processed boolean fields
-            if (in_array($key, ['action', 'nonce', 'current_tab']) || in_array($key, $field_rules['bool_fields'])) {
+            if (in_array($key, ['action', 'nonce', 'current_tab']) || in_array($key, $field_rules['bool_fields']) || in_array($key, $field_rules['license_bool_fields'])) {
                 continue;
             }
 
