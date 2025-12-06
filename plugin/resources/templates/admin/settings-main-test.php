@@ -36,9 +36,6 @@ echo "<script>console.log('Settings page loaded - CACHE BUSTER: " . time() . "')
 <div id="tab-content-systeme" class="tab-content">
 <?php require_once __DIR__ . '/settings-parts/settings-systeme.php'; ?>
 </div>
-<div id="tab-content-acces" class="tab-content">
-<?php require_once __DIR__ . '/settings-parts/settings-acces.php'; ?>
-</div>
 <div id="tab-content-securite" class="tab-content">
 <?php require_once __DIR__ . '/settings-parts/settings-securite.php'; ?>
 </div>
