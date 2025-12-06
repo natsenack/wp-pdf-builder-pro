@@ -699,6 +699,9 @@ class AjaxHandler
                 }
             }
 
+            error_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST)));
+            error_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save)));
+
             if (empty($settings_to_save)) {
                 wp_send_json_error(['message' => 'Aucune donnée valide à sauvegarder']);
                 return;

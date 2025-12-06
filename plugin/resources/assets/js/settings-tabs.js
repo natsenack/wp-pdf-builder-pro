@@ -484,6 +484,7 @@
         formIds.forEach(formId => {
             const form = document.getElementById(formId);
             if (form) {
+                console.log('JS: Collecting from form:', formId);
                 
                 const formData = new FormData(form);
                 const formObject = {};
@@ -533,6 +534,8 @@
                     // Collecter seulement les champs dans les sections de paramètres ou avec préfixe pdf_builder_
                     const section = input.closest('.tab-content');
                     const sectionId = section ? section.id : 'global';
+                    
+                    console.log('JS: Collecting non-form input:', normalizedName, 'from section:', sectionId);
                     
                     // Liste des sections de paramètres autorisées
                     const allowedSections = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
