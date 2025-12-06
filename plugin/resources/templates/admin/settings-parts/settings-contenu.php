@@ -561,11 +561,11 @@ $settings = get_option('pdf_builder_settings', array());
                                 return "<div class=\"modal-form-grid\">" +
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_width\">Largeur (px)</label>" +
-                                        "<input type=\"number\" id=\"modal_canvas_width\" name=\"modal_canvas_width\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_width) + "\" min=\"100\" max=\"5000\">" +
+                                        "<input type=\"number\" id=\"modal_canvas_width\" name=\"modal_canvas_width\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_width) + "\" min=\"100\" max=\"5000\" readonly>" +
                                     "</div>" +
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_height\">Hauteur (px)</label>" +
-                                        "<input type=\"number\" id=\"modal_canvas_height\" name=\"modal_canvas_height\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_height) + "\" min=\"100\" max=\"5000\">" +
+                                        "<input type=\"number\" id=\"modal_canvas_height\" name=\"modal_canvas_height\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_height) + "\" min=\"100\" max=\"5000\" readonly>" +
                                     "</div>" +
                                     "<div class=\"form-group\">" +
                                         "<label for=\"modal_canvas_dpi\">DPI</label>" +
