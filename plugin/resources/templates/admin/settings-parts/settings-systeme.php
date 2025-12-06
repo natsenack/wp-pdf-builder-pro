@@ -96,58 +96,6 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked($cache_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <script>
-                                        // Debug and fix toggle functionality
-                                        console.log('Setting up cache enabled toggle...');
-                                        
-                                        const cacheEnabledInput = document.getElementById('general_cache_enabled');
-                                        const cacheEnabledLabel = cacheEnabledInput.closest('label');
-                                        const cacheEnabledSlider = cacheEnabledLabel.querySelector('.toggle-slider');
-                                        
-                                        console.log('Input found:', cacheEnabledInput);
-                                        console.log('Label found:', cacheEnabledLabel);
-                                        console.log('Slider found:', cacheEnabledSlider);
-                                        
-                                        if (cacheEnabledInput && cacheEnabledLabel && cacheEnabledSlider) {
-                                            // Make input temporarily visible for debugging
-                                            cacheEnabledInput.style.opacity = '0.5';
-                                            cacheEnabledInput.style.width = '20px';
-                                            cacheEnabledInput.style.height = '20px';
-                                            cacheEnabledInput.style.position = 'absolute';
-                                            cacheEnabledInput.style.zIndex = '10';
-                                            
-                                            // Make slider clickable
-                                            cacheEnabledSlider.style.pointerEvents = 'auto';
-                                            cacheEnabledSlider.style.zIndex = '5';
-                                            
-                                            // Handle clicks on slider
-                                            cacheEnabledSlider.addEventListener('click', function(e) {
-                                                e.stopPropagation();
-                                                console.log('Slider clicked, current state:', cacheEnabledInput.checked);
-                                                cacheEnabledInput.checked = !cacheEnabledInput.checked;
-                                                cacheEnabledInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                                console.log('Cache enabled toggled to:', cacheEnabledInput.checked);
-                                            });
-                                            
-                                            // Handle clicks on label
-                                            cacheEnabledLabel.addEventListener('click', function(e) {
-                                                e.preventDefault();
-                                                console.log('Label clicked, current state:', cacheEnabledInput.checked);
-                                                cacheEnabledInput.checked = !cacheEnabledInput.checked;
-                                                cacheEnabledInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                                console.log('Cache enabled toggled to:', cacheEnabledInput.checked);
-                                            });
-                                            
-                                            // Debug change event
-                                            cacheEnabledInput.addEventListener('change', function() {
-                                                console.log('Cache enabled INPUT changed to:', this.checked);
-                                            });
-                                            
-                                            console.log('Toggle setup complete');
-                                        } else {
-                                            console.error('Toggle elements not found!');
-                                        }
-                                    </script>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
                                 </td>
                             </tr>
