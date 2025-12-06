@@ -103,7 +103,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked($cache_compression); ?>>
+                                        <input type="checkbox" id="cache_compression" name="pdf_builder_cache_compression" value="1" <?php checked($cache_compression); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
@@ -113,7 +113,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked($cache_auto_cleanup); ?>>
+                                        <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_cache_auto_cleanup" value="1" <?php checked($cache_auto_cleanup); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
@@ -137,7 +137,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" <?php checked($performance_auto_optimization, '1'); ?>>
+                                        <input type="checkbox" id="performance_auto_optimization" name="pdf_builder_performance_auto_optimization" value="1" <?php checked($performance_auto_optimization, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
@@ -227,7 +227,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked($auto_maintenance, '1'); ?>>
+                                        <input type="checkbox" id="systeme_auto_maintenance" name="pdf_builder_systeme_auto_maintenance" value="1" <?php checked($auto_maintenance, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Active la maintenance automatique hebdomadaire</p>
