@@ -1105,23 +1105,63 @@
     };
 
     // Gestionnaire pour le bouton flottant "Enregistrer"
-    document.addEventListener('DOMContentLoaded', function() {
+    function initFloatingSaveButton() {
         console.log('PDF Builder: Initializing floating save button...');
-        const floatingSaveBtn = document.getElementById('pdf-builder-save-floating-btn');
-        console.log('PDF Builder: Floating save button element:', floatingSaveBtn);
-        if (floatingSaveBtn) {
-            console.log('PDF Builder: Adding click event listener to floating save button');
-            floatingSaveBtn.addEventListener('click', function() {
-                console.log('PDF Builder: Floating save button clicked!');
-                const allFormData = collectAllFormData();
-                if (Object.keys(allFormData).length > 0) {
-                    saveAllSettings(allFormData);
-                }
-            });
-        } else {
-            console.error('PDF Builder: Floating save button not found!');
+
+        // Fonction pour trouver et initialiser le bouton
+        function findAndInitButton() {
+            const floatingSaveBtn = document.getElementById('pdf-builder-save-floating-btn');
+            console.log('PDF Builder: Floating save button element:', floatingSaveBtn);
+
+            if (floatingSaveBtn) {
+                console.log('PDF Builder: Adding click event listener to floating save button');
+                floatingSaveBtn.addEventListener('click', function() {
+                    console.log('PDF Builder: Floating save button clicked!');
+                    const allFormData = collectAllFormData();
+                    if (Object.keys(allFormData).length > 0) {
+                        saveAllSettings(allFormData);
+                    }
+                });
+                return true; // Bouton trouvé et initialisé
+            }
+            return false; // Bouton pas trouvé
         }
-    });
+
+        // Essayer immédiatement
+        if (!findAndInitButton()) {
+            // Si pas trouvé, utiliser un MutationObserver pour surveiller les changements DOM
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList') {
+                        if (findAndInitButton()) {
+                            observer.disconnect(); // Arrêter l'observation une fois le bouton trouvé
+                        }
+                    }
+                });
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            // Fallback: essayer toutes les 500ms pendant 10 secondes
+            let attempts = 0;
+            const maxAttempts = 20;
+            const checkInterval = setInterval(function() {
+                attempts++;
+                if (findAndInitButton() || attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    if (attempts >= maxAttempts) {
+                        console.error('PDF Builder: Floating save button not found after', maxAttempts * 0.5, 'seconds');
+                    }
+                }
+            }, 500);
+        }
+    }
+
+    // Initialiser le bouton flottant
+    document.addEventListener('DOMContentLoaded', initFloatingSaveButton);
 
 })();
 
