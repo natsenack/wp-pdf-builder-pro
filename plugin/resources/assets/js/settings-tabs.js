@@ -366,36 +366,37 @@
 
     // Initialiser tous les toggles pour qu'ils soient fonctionnels
     function initToggles() {
+        console.log('[PDF Builder] Initializing toggles...');
+
         // Trouver tous les toggles avec la classe toggle-switch
         const toggles = document.querySelectorAll('.toggle-switch');
+        console.log(`[PDF Builder] Found ${toggles.length} toggle elements`);
 
-        toggles.forEach(function(toggleLabel) {
+        toggles.forEach(function(toggleLabel, index) {
             const input = toggleLabel.querySelector('input[type="checkbox"]');
             const slider = toggleLabel.querySelector('.toggle-slider');
 
+            console.log(`[PDF Builder] Toggle ${index + 1}: input=${!!input}, slider=${!!slider}`);
+
             if (input && slider) {
-                // S'assurer que l'input est caché
-                input.style.opacity = '0';
-                input.style.pointerEvents = 'none';
+                // S'assurer que l'input est caché avec !important pour surcharger le CSS
+                input.style.setProperty('opacity', '0', 'important');
+                input.style.setProperty('pointer-events', 'none', 'important');
 
                 // Rendre le slider cliquable
-                slider.style.pointerEvents = 'auto';
-                slider.style.cursor = 'pointer';
+                slider.style.setProperty('pointer-events', 'auto', 'important');
+                slider.style.setProperty('cursor', 'pointer', 'important');
 
                 // Gérer les clics sur le slider
                 slider.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    console.log('[PDF Builder] Slider clicked, toggling input');
                     input.checked = !input.checked;
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                 });
 
-                // Laisser le label gérer naturellement le toggle du checkbox
-                toggleLabel.addEventListener('click', function(e) {
-                    // Petit délai pour laisser le navigateur mettre à jour l'état
-                    setTimeout(function() {
-                        input.dispatchEvent(new Event('change', { bubbles: true }));
-                    }, 10);
-                });
+                // Ne pas interférer avec le comportement naturel du label
+                // Le label va naturellement toggler le checkbox quand on clique dessus
             }
         });
 
