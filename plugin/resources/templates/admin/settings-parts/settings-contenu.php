@@ -720,7 +720,7 @@ $settings = get_option('pdf_builder_settings', array());
                         }
 
                         // Clic sur l'overlay (backdrop)
-                        if (e.target.classList.contains('pdf-builder-modal-overlay')) {
+                        if (e.target.classList.contains('pdf-builder-modal-overlay') || e.target.classList.contains('pdf-builder-modal-backdrop')) {
                             closeModal();
                             return;
                         }
