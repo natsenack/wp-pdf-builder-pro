@@ -9,7 +9,7 @@
 require_once __DIR__ . '/settings-helpers.php';
 
 $settings = get_option('pdf_builder_settings', array());
-
+?>
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->
