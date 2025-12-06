@@ -587,7 +587,8 @@
                                         allData[sectionId][normalizedName].push(input.value);
                                     }
                                 } else {
-                                    allData[sectionId][normalizedName] = input.checked ? [allData[sectionId][normalizedName], input.value] : [allData[sectionId][normalizedName]];
+                                    const currentValue = allData[sectionId][normalizedName];
+                                    allData[sectionId][normalizedName] = input.checked ? [currentValue, input.value] : currentValue;
                                 }
                             } else {
                                 allData[sectionId][normalizedName] = input.checked ? [input.value] : [];

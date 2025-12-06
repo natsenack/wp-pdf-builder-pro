@@ -5,9 +5,6 @@ $settings = get_option('pdf_builder_settings', array());
 
 // Inclure les fonctions helper nécessaires pour tous les onglets
 require_once __DIR__ . '/settings-helpers.php';
-
-// DEBUG: Force visible output to verify file is loaded
-echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;padding:10px;z-index:999999;border:3px solid yellow;font-size:16px;font-weight:bold;'>DEBUG: settings-main.php LOADED! [" . date('H:i:s') . "]</div>";
 ?>
 <!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
