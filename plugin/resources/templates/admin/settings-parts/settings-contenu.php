@@ -9,6 +9,61 @@
 require_once __DIR__ . '/settings-helpers.php';
 
 $settings = get_option('pdf_builder_settings', array());
+
+// Traitement du formulaire Canvas
+if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']) && wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_canvas_nonce')) {
+    // Liste des paramètres canvas à sauvegarder
+    $canvas_params = [
+        'pdf_builder_canvas_width',
+        'pdf_builder_canvas_height',
+        'pdf_builder_canvas_dpi',
+        'pdf_builder_canvas_format',
+        'pdf_builder_canvas_bg_color',
+        'pdf_builder_canvas_border_color',
+        'pdf_builder_canvas_border_width',
+        'pdf_builder_canvas_shadow_enabled',
+        'pdf_builder_canvas_grid_enabled',
+        'pdf_builder_canvas_grid_size',
+        'pdf_builder_canvas_guides_enabled',
+        'pdf_builder_canvas_snap_to_grid',
+        'pdf_builder_canvas_zoom_min',
+        'pdf_builder_canvas_zoom_max',
+        'pdf_builder_canvas_zoom_default',
+        'pdf_builder_canvas_zoom_step',
+        'pdf_builder_canvas_export_quality',
+        'pdf_builder_canvas_export_format',
+        'pdf_builder_canvas_export_transparent',
+        'pdf_builder_canvas_drag_enabled',
+        'pdf_builder_canvas_resize_enabled',
+        'pdf_builder_canvas_rotate_enabled',
+        'pdf_builder_canvas_multi_select',
+        'pdf_builder_canvas_selection_mode',
+        'pdf_builder_canvas_keyboard_shortcuts',
+        'pdf_builder_canvas_fps_target',
+        'pdf_builder_canvas_memory_limit_js',
+        'pdf_builder_canvas_response_timeout',
+        'pdf_builder_canvas_lazy_loading_editor',
+        'pdf_builder_canvas_preload_critical',
+        'pdf_builder_canvas_lazy_loading_plugin',
+        'pdf_builder_canvas_debug_enabled',
+        'pdf_builder_canvas_performance_monitoring',
+        'pdf_builder_canvas_error_reporting',
+        'pdf_builder_canvas_memory_limit_php'
+    ];
+
+    // Sauvegarder chaque paramètre
+    foreach ($canvas_params as $param) {
+        if (isset($_POST[$param])) {
+            $settings[$param] = sanitize_text_field($_POST[$param]);
+        }
+    }
+
+    // Sauvegarder dans la base de données
+    update_option('pdf_builder_settings', $settings);
+
+    // Message de succès
+    echo '<div class="notice notice-success is-dismissible"><p>✅ Paramètres Canvas sauvegardés avec succès !</p></div>';
+}
 ?>
             <h2>🎨 Contenu & Design</h2>
 
@@ -25,6 +80,43 @@ $settings = get_option('pdf_builder_settings', array());
                 <form method="post" id="canvas-form">
                     <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
                     <input type="hidden" name="submit_canvas" value="1">
+
+                    <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
+                    <input type="hidden" name="pdf_builder_canvas_width" value="<?php echo esc_attr($settings['pdf_builder_canvas_width'] ?? '794'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_height" value="<?php echo esc_attr($settings['pdf_builder_canvas_height'] ?? '1123'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_dpi" value="<?php echo esc_attr($settings['pdf_builder_canvas_dpi'] ?? '96'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_format" value="<?php echo esc_attr($settings['pdf_builder_canvas_format'] ?? 'A4'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_bg_color" value="<?php echo esc_attr($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_border_color" value="<?php echo esc_attr($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_border_width" value="<?php echo esc_attr($settings['pdf_builder_canvas_border_width'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_shadow_enabled'] ?? '0'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_grid_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_grid_enabled'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_grid_size" value="<?php echo esc_attr($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_guides_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_guides_enabled'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_snap_to_grid" value="<?php echo esc_attr($settings['pdf_builder_canvas_snap_to_grid'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_zoom_min" value="<?php echo esc_attr($settings['pdf_builder_canvas_zoom_min'] ?? '25'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_zoom_max" value="<?php echo esc_attr($settings['pdf_builder_canvas_zoom_max'] ?? '500'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_zoom_default" value="<?php echo esc_attr($settings['pdf_builder_canvas_zoom_default'] ?? '100'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_zoom_step" value="<?php echo esc_attr($settings['pdf_builder_canvas_zoom_step'] ?? '25'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_export_quality" value="<?php echo esc_attr($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_export_format" value="<?php echo esc_attr($settings['pdf_builder_canvas_export_format'] ?? 'png'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_export_transparent" value="<?php echo esc_attr($settings['pdf_builder_canvas_export_transparent'] ?? '0'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_drag_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_drag_enabled'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_resize_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_resize_enabled'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_rotate_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_rotate_enabled'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_multi_select" value="<?php echo esc_attr($settings['pdf_builder_canvas_multi_select'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_selection_mode" value="<?php echo esc_attr($settings['pdf_builder_canvas_selection_mode'] ?? 'single'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_keyboard_shortcuts" value="<?php echo esc_attr($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_fps_target" value="<?php echo esc_attr($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_memory_limit_js" value="<?php echo esc_attr($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_response_timeout" value="<?php echo esc_attr($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_lazy_loading_editor" value="<?php echo esc_attr($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_preload_critical" value="<?php echo esc_attr($settings['pdf_builder_canvas_preload_critical'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_lazy_loading_plugin" value="<?php echo esc_attr($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_debug_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_debug_enabled'] ?? '0'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_performance_monitoring" value="<?php echo esc_attr($settings['pdf_builder_canvas_performance_monitoring'] ?? '0'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_error_reporting" value="<?php echo esc_attr($settings['pdf_builder_canvas_error_reporting'] ?? '0'); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_memory_limit_php" value="<?php echo esc_attr($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>">
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
@@ -349,6 +441,14 @@ $settings = get_option('pdf_builder_settings', array());
                                 </button>
                             </div>
                         </article>
+                    </div>
+
+                    <!-- Bouton de sauvegarde centralisée -->
+                    <div class="canvas-form-actions">
+                        <button type="submit" class="button button-primary" id="save-canvas-settings">
+                            💾 Sauvegarder tous les paramètres
+                        </button>
+                        <p class="description">Les modifications des modals sont automatiquement synchronisées. Cliquez ici pour sauvegarder définitivement.</p>
                     </div>
                 </form>
             </section>
@@ -880,11 +980,18 @@ $settings = get_option('pdf_builder_settings', array());
                             // Conversion des types
                             if (input.type === 'number') value = parseFloat(value) || 0;
                             if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
-                                value = value === true || value === '1' || value === 1;
+                                value = value ? '1' : '0';
                             }
 
                             // Mettre à jour la valeur dans le système de previews
                             previewSystem.values[key] = value;
+
+                            // Mettre à jour le champ caché correspondant dans le formulaire
+                            const hiddenField = document.querySelector(`input[name="pdf_builder_${key}"]`);
+                            if (hiddenField) {
+                                hiddenField.value = value;
+                                console.log(`Champ caché mis à jour: pdf_builder_${key} = ${value}`);
+                            }
                         });
 
                         // Rafraîchir toutes les previews avec les nouvelles valeurs

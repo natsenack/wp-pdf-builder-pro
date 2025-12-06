@@ -140,4 +140,41 @@ $settings = get_option('pdf_builder_settings', array());
                 </section>
             </form>
 
+            <script>
+                // Initialize all toggle switches in PDF settings
+                (function() {
+                    const toggles = document.querySelectorAll('#pdf-settings-form .toggle-switch');
+                    
+                    toggles.forEach(function(toggleLabel) {
+                        const input = toggleLabel.querySelector('input[type="checkbox"]');
+                        const slider = toggleLabel.querySelector('.toggle-slider');
+                        
+                        if (input && slider) {
+                            // Make slider clickable
+                            slider.style.pointerEvents = 'auto';
+                            slider.style.cursor = 'pointer';
+                            
+                            // Handle slider clicks
+                            slider.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                input.dataset.sliderClicked = 'true';
+                                input.checked = !input.checked;
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                            });
+                            
+                            // Handle label clicks (prevent double toggle)
+                            toggleLabel.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                if (input.dataset.sliderClicked) {
+                                    delete input.dataset.sliderClicked;
+                                    return;
+                                }
+                                input.checked = !input.checked;
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                            });
+                        }
+                    });
+                })();
+            </script>
+
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
