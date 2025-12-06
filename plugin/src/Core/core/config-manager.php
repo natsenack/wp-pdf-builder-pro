@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Option_Config_Manager {
+class PDF_Builder_Config_Manager {
 
     // ==========================================
     // CONFIGURATIONS D'OPTIONS CENTRALISÉES
@@ -204,5 +204,43 @@ class PDF_Builder_Option_Config_Manager {
             default:
                 return true;
         }
+    }
+
+    /**
+     * Singleton instance
+     */
+    private static $instance = null;
+
+    /**
+     * Get singleton instance
+     */
+    public static function get_instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Check health of configuration system
+     */
+    public function check_health() {
+        $health = [
+            'status' => 'ok',
+            'issues' => [],
+            'configs_loaded' => count(self::$option_configs),
+            'responses_loaded' => count(self::$response_configs)
+        ];
+
+        // Vérifier que les configurations essentielles sont présentes
+        $essential_configs = ['pdf_builder_cache_enabled', 'pdf_builder_debug_mode'];
+        foreach ($essential_configs as $config) {
+            if (!isset(self::$option_configs[$config])) {
+                $health['issues'][] = "Configuration manquante: {$config}";
+                $health['status'] = 'warning';
+            }
+        }
+
+        return $health;
     }
 }
