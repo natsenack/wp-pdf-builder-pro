@@ -142,21 +142,17 @@
     function initSaveButton() {
         // Vérifier si on est sur la page de paramètres
         if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
-            console.log('PDF Builder: Pas sur la page de paramètres, initSaveButton ignoré');
+            
             return;
         }
 
         if (saveButtonInitialized) {
-            console.log('PDF Builder: Bouton déjà initialisé');
+            
             return;
         }
 
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
-
-        console.log('PDF Builder: Recherche du bouton...');
-        console.log('PDF Builder: saveBtn trouvé:', saveBtn ? 'OUI' : 'NON');
-        console.log('PDF Builder: floatingContainer trouvé:', floatingContainer ? 'OUI' : 'NON');
 
         if (saveBtn && floatingContainer) {
             saveBtn.addEventListener('click', function(e) {
@@ -177,7 +173,7 @@
             saveButtonInitialized = true;
             
         } else {
-            console.log('PDF Builder: Bouton ou conteneur non trouvé, retry dans 1s');
+            
             setTimeout(initSaveButton, 1000);
         }
     }
