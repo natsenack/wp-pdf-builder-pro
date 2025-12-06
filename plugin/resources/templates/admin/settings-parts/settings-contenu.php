@@ -358,7 +358,7 @@ $settings = get_option('pdf_builder_settings', array());
                 <h3>
                     <span>
                         📋 Templates
-                        <span id="template-library-indicator" class="template-library-indicator" style="background: <?php echo ($settings['pdf_builder_template_library_enabled'] ?? true) ? '#28a745' : '#dc3545'; ?>;"><?php echo ($settings['pdf_builder_template_library_enabled'] ?? true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                        <span id="template-library-indicator" class="template-library-indicator" style="background: <?php echo (($settings['pdf_builder_template_library_enabled'] ?? '1') === '1') ? '#28a745' : '#dc3545'; ?>;"><?php echo (($settings['pdf_builder_template_library_enabled'] ?? '1') === '1') ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
 
@@ -378,7 +378,7 @@ $settings = get_option('pdf_builder_settings', array());
                         <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
                         <td>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="template_library_enabled" name="pdf_builder_template_library_enabled" value="1" <?php checked($settings['pdf_builder_template_library_enabled'] ?? true, '1'); ?>>
+                                <input type="checkbox" id="template_library_enabled" name="pdf_builder_template_library_enabled" value="1" <?php checked($settings['pdf_builder_template_library_enabled'] ?? '1', '1'); ?>>
                                 <span class="toggle-slider"></span>
                             </label>
                             <p class="description">Active la bibliothèque de templates prédéfinis</p>

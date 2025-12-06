@@ -54,7 +54,7 @@ $settings = get_option('pdf_builder_settings', array());
                             <th scope="row"><label for="pdf_builder_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked($settings['pdf_builder_cache_enabled'] ?? false, '1'); ?>>
+                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked($settings['pdf_builder_cache_enabled'] ?? '0', '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>
@@ -86,7 +86,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_builder_pdf_metadata_enabled" value="1" <?php checked($settings['pdf_builder_pdf_metadata_enabled'] ?? true, '1'); ?>>
+                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_builder_pdf_metadata_enabled" value="1" <?php checked($settings['pdf_builder_pdf_metadata_enabled'] ?? '1', '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
@@ -96,7 +96,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_builder_pdf_print_optimized" value="1" <?php checked($settings['pdf_builder_pdf_print_optimized'] ?? true, '1'); ?>>
+                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_builder_pdf_print_optimized" value="1" <?php checked($settings['pdf_builder_pdf_print_optimized'] ?? '1', '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Ajuster les couleurs et la résolution pour l'impression</p>
