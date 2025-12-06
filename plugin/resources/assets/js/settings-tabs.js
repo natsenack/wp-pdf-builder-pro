@@ -600,6 +600,7 @@
                             allData[sectionId][normalizedName] = input.value;
                         }
                     }
+                }
             }
         });
 
