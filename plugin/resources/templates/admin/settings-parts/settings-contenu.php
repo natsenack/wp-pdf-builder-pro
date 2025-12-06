@@ -635,7 +635,7 @@ $settings = get_option('pdf_builder_settings', array());
                         }
 
                         // Show overlay
-                        overlay.style.display = 'flex';
+                        overlay.classList.add('active');
 
                         // Prevent body scroll
                         document.body.classList.add('modal-open');
@@ -644,7 +644,7 @@ $settings = get_option('pdf_builder_settings', array());
 
                     function closeCanvasModal() {
                         const overlay = document.getElementById('canvas-modal-overlay');
-                        overlay.style.display = 'none';
+                        overlay.classList.remove('active');
 
                         // Restore body scroll
                         document.body.classList.remove('modal-open');
@@ -677,7 +677,7 @@ $settings = get_option('pdf_builder_settings', array());
                     document.addEventListener('keydown', function(e) {
                         if (e.key === 'Escape') {
                             const overlay = document.getElementById('canvas-modal-overlay');
-                            if (overlay.style.display === 'flex') {
+                            if (overlay.classList.contains('active')) {
                                 closeCanvasModal();
                             }
                         }
