@@ -337,9 +337,9 @@
 
                     // Programmer une sauvegarde automatique avec délai
                     autoSaveTimeout = setTimeout(() => {
-                        const allFormData = collectAllFormData();
-                        if (Object.keys(allFormData).length > 0) {
-                            saveAllSettings(allFormData, true); // true = sauvegarde automatique silencieuse
+                        const modifiedData = collectModifiedData();
+                        if (Object.keys(modifiedData).length > 0) {
+                            saveAllSettings(modifiedData, true); // true = sauvegarde automatique silencieuse
                         }
                     }, AUTO_SAVE_DELAY);
                 }
@@ -360,9 +360,9 @@
                     }
 
                     autoSaveTimeout = setTimeout(() => {
-                        const allFormData = collectAllFormData();
-                        if (Object.keys(allFormData).length > 0) {
-                            saveAllSettings(allFormData, true);
+                        const modifiedData = collectModifiedData();
+                        if (Object.keys(modifiedData).length > 0) {
+                            saveAllSettings(modifiedData, true);
                         }
                     }, 5000);
                 }
@@ -428,17 +428,7 @@
             'securite-settings-form',
             'pdf-settings-form',
             'templates-status-form',
-            'general-form',
-            'cache-status-form',
-            'canvas-dimensions-form',
-            'zoom-form',
-            'canvas-apparence-form',
-            'canvas-grille-form',
-            'canvas-interactions-form',
-            'canvas-export-form',
-            'canvas-performance-form',
-            'canvas-debug-form',
-            'acces-form'  // AJOUTÉ: Formulaire des rôles et permissions
+            'general-form'
         ];
 
         // Collecter les données de chaque formulaire
@@ -511,10 +501,163 @@
         return allData;
     }
 
+    // Indicateur visuel de statut de sauvegarde
+    let saveStatusIndicator = null;
+
+    /**
+     * Met à jour l'indicateur visuel de statut
+     */
+    function updateSaveStatus(status, message = '') {
+        if (!saveStatusIndicator) {
+            // Créer l'indicateur s'il n'existe pas
+            saveStatusIndicator = document.createElement('div');
+            saveStatusIndicator.id = 'pdf-builder-save-status';
+            saveStatusIndicator.style.cssText = `
+                position: fixed;
+                top: 50px;
+                right: 20px;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 10000;
+                display: none;
+                transition: all 0.3s ease;
+            `;
+            document.body.appendChild(saveStatusIndicator);
+        }
+
+        saveStatusIndicator.style.display = 'block';
+
+        switch (status) {
+            case 'saving':
+                saveStatusIndicator.textContent = '⏳ Sauvegarde en cours...';
+                saveStatusIndicator.style.backgroundColor = '#fff3cd';
+                saveStatusIndicator.style.color = '#856404';
+                saveStatusIndicator.style.border = '1px solid #ffeaa7';
+                break;
+            case 'success':
+                saveStatusIndicator.textContent = message || '✅ Sauvegardé';
+                saveStatusIndicator.style.backgroundColor = '#d4edda';
+                saveStatusIndicator.style.color = '#155724';
+                saveStatusIndicator.style.border = '1px solid #c3e6cb';
+                setTimeout(() => {
+                    if (saveStatusIndicator) saveStatusIndicator.style.display = 'none';
+                }, 3000);
+                break;
+            case 'error':
+                saveStatusIndicator.textContent = message || '❌ Erreur de sauvegarde';
+                saveStatusIndicator.style.backgroundColor = '#f8d7da';
+                saveStatusIndicator.style.color = '#721c24';
+                saveStatusIndicator.style.border = '1px solid #f5c6cb';
+                setTimeout(() => {
+                    if (saveStatusIndicator) saveStatusIndicator.style.display = 'none';
+                }, 5000);
+                break;
+            case 'modified':
+                saveStatusIndicator.textContent = '📝 Modifications non sauvegardées';
+                saveStatusIndicator.style.backgroundColor = '#fff3cd';
+                saveStatusIndicator.style.color = '#856404';
+                saveStatusIndicator.style.border = '1px solid #ffeaa7';
+                break;
+        }
+    }
+
+    /**
+     * Cache local pour récupération en cas d'erreur
+     */
+    const LocalCache = {
+        save: function(data) {
+            try {
+                const cacheData = {
+                    data: data,
+                    timestamp: Date.now(),
+                    version: '1.0'
+                };
+                localStorage.setItem('pdf_builder_settings_backup', JSON.stringify(cacheData));
+            } catch (e) {
+                console.warn('Impossible de sauvegarder dans le cache local:', e);
+            }
+        },
+
+        load: function() {
+            try {
+                const cacheStr = localStorage.getItem('pdf_builder_settings_backup');
+                if (!cacheStr) return null;
+
+                const cache = JSON.parse(cacheStr);
+
+                // Vérifier si le cache n'est pas trop vieux (24h)
+                if (Date.now() - cache.timestamp > 24 * 60 * 60 * 1000) {
+                    this.clear();
+                    return null;
+                }
+
+                return cache.data;
+            } catch (e) {
+                console.warn('Impossible de charger depuis le cache local:', e);
+                return null;
+            }
+        },
+
+        clear: function() {
+            try {
+                localStorage.removeItem('pdf_builder_settings_backup');
+            } catch (e) {
+                console.warn('Impossible de vider le cache local:', e);
+            }
+        }
+    };
+    function validateFormData(formData) {
+        const errors = [];
+
+        // Validation des champs requis
+        const requiredFields = [
+            'pdf_builder_license_key',
+            'pdf_builder_cache_max_size',
+            'pdf_builder_cache_ttl'
+        ];
+
+        for (const field of requiredFields) {
+            if (!formData[field] || formData[field] === '') {
+                errors.push(`Le champ ${field.replace('pdf_builder_', '').replace('_', ' ')} est requis`);
+            }
+        }
+
+        // Validation des types numériques
+        const numericFields = ['pdf_builder_cache_max_size', 'pdf_builder_cache_ttl'];
+        for (const field of numericFields) {
+            if (formData[field] && isNaN(parseInt(formData[field]))) {
+                errors.push(`Le champ ${field.replace('pdf_builder_', '').replace('_', ' ')} doit être un nombre`);
+            }
+        }
+
+        // Validation des URLs
+        const urlFields = ['pdf_builder_api_endpoint'];
+        for (const field of urlFields) {
+            if (formData[field] && formData[field] !== '') {
+                try {
+                    new URL(formData[field]);
+                } catch {
+                    errors.push(`Le champ ${field.replace('pdf_builder_', '').replace('_', ' ')} doit être une URL valide`);
+                }
+            }
+        }
+
+        return errors;
+    }
+
     /**
      * Sauvegarde toutes les données via AJAX
      */
     function saveAllSettings(formData, isAutoSave = false) {
+
+        // Validation des données avant sauvegarde
+        const validationErrors = validateFormData(formData);
+        if (validationErrors.length > 0 && !isAutoSave) {
+            showSaveMessage('Erreurs de validation: ' + validationErrors.join(', '), 'error');
+            return;
+        }
 
         // Préparer les références pour l'interface utilisateur
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
@@ -524,22 +667,11 @@
         if (!isAutoSave && saveBtn) {
             saveBtn.textContent = 'Sauvegarde...';
             saveBtn.disabled = true;
+            updateSaveStatus('saving');
         }
 
-        // Aplatir les données pour éviter les problèmes de taille JSON
-        const flattenedData = {};
-        for (const formId in formData) {
-            if (formData.hasOwnProperty(formId) && typeof formData[formId] === 'object') {
-                for (const key in formData[formId]) {
-                    if (formData[formId].hasOwnProperty(key)) {
-                        flattenedData[key] = formData[formId][key];
-                    }
-                }
-            }
-        }
-
-        // DEBUG: Log debug fields being sent
-        const debugFields = Object.keys(flattenedData).filter(key => key.includes('debug'));
+        // Sauvegarder dans le cache local avant envoi
+        LocalCache.save(flattenedData);
 
         // Préparer les données pour AJAX - convertir les arrays en JSON
         const ajaxData = {
@@ -578,8 +710,9 @@
 
                 // Afficher un message de succès (plus discret pour les sauvegardes automatiques)
                 if (isAutoSave) {
-                    showSaveMessage('Sauvegardé automatiquement', 'success', 2000);
+                    updateSaveStatus('success', 'Sauvegardé automatiquement');
                 } else {
+                    updateSaveStatus('success', 'Toutes les données ont été sauvegardées avec succès!');
                     showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
                 }
 
@@ -593,6 +726,11 @@
                     detail: { formData: formData, response: data, isAutoSave: isAutoSave }
                 }));
 
+                // Réinitialiser le suivi des modifications après sauvegarde réussie
+                if (!isAutoSave) {
+                    resetChangeTracking();
+                }
+
                 // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
 
                 reloadDebugSettings().then(updatedDebug => {
@@ -604,12 +742,25 @@
             } else {
 
                 // Afficher un message d'erreur
+                updateSaveStatus('error', 'Erreur lors de la sauvegarde');
                 showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || data.message || 'Erreur inconnue'), 'error');
             }
         })
         .catch(error => {
-            
-            showSaveMessage('Erreur de communication avec le serveur', 'error');
+            console.error('Erreur de sauvegarde:', error);
+
+            // Tenter une récupération depuis le cache local
+            const cachedData = LocalCache.load();
+            if (cachedData && !isAutoSave) {
+                updateSaveStatus('error', 'Erreur de connexion - Données récupérées du cache');
+                showSaveMessage('Erreur de connexion. Données récupérées depuis le cache local.', 'error');
+
+                // Restaurer les valeurs depuis le cache
+                updateFormFieldsWithSavedData(cachedData);
+            } else {
+                updateSaveStatus('error', 'Erreur de communication');
+                showSaveMessage('Erreur de communication avec le serveur. Réessayez plus tard.', 'error');
+            }
         })
         .finally(() => {
             // Restaurer le bouton seulement pour les sauvegardes manuelles
@@ -716,12 +867,71 @@
         });
     }
 
+    // Système de suivi des modifications pour sauvegarde sélective
+    let originalFormData = {};
+    let modifiedFields = new Set();
+
+    /**
+     * Initialise le suivi des modifications
+     */
+    function initChangeTracking() {
+        // Charger les données originales au chargement de la page
+        setTimeout(() => {
+            originalFormData = collectAllFormData();
+        }, 1000);
+
+        // Suivre les modifications sur tous les champs
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+            if (target.name && target.name.includes('pdf_builder')) {
+                modifiedFields.add(target.name);
+                updateSaveStatus('modified');
+            }
+        });
+
+        document.addEventListener('input', function(event) {
+            const target = event.target;
+            if (target.name && target.name.includes('pdf_builder')) {
+                modifiedFields.add(target.name);
+                updateSaveStatus('modified');
+            }
+        });
+    }
+
+    /**
+     * Collecte seulement les données modifiées
+     */
+    function collectModifiedData() {
+        const currentData = collectAllFormData();
+        const modifiedData = {};
+
+        for (const field of modifiedFields) {
+            // Chercher la valeur actuelle dans currentData
+            for (const formId in currentData) {
+                if (currentData[formId][field] !== undefined) {
+                    if (!modifiedData[formId]) modifiedData[formId] = {};
+                    modifiedData[formId][field] = currentData[formId][field];
+                    break;
+                }
+            }
+        }
+
+        return modifiedData;
+    }
+
+    /**
+     * Réinitialise le suivi des modifications après sauvegarde réussie
+     */
+    function resetChangeTracking() {
+        originalFormData = collectAllFormData();
+        modifiedFields.clear();
+    }
+
     // Initialiser les gestionnaires d'événements au chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
-        
         initTabs();
         initSaveButton();
-        
+        initChangeTracking();
     });
 })();
 
