@@ -610,8 +610,6 @@ $settings = get_option('pdf_builder_settings', array());
                                                 <span class="toggle-slider"></span>
                                             </label>
                                         </div>
-                                            </label>
-                                        </div>
                                     </div>
                                 `;
                             }
