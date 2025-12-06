@@ -531,6 +531,11 @@
                 const inputForm = input.closest('form');
                 // Ne collecter que si ce n'est pas déjà dans un formulaire traité
                 if (!inputForm || !formIds.includes(inputForm.id)) {
+                    // Skip modal inputs to avoid conflicts
+                    if (input.id && input.id.startsWith('modal_')) {
+                        return;
+                    }
+                    
                     // Collecter seulement les champs dans les sections de paramètres ou avec préfixe pdf_builder_
                     const section = input.closest('.tab-content');
                     const sectionId = section ? section.id : 'global';
