@@ -519,7 +519,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 </div>
                             `
                         },
-                        interaction: {
+                        interactions: {
                             title: '🖱️ Interaction',
                             content: `
                                 <div class="modal-form-grid">
