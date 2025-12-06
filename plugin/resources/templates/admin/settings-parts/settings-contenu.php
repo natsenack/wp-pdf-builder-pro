@@ -542,104 +542,95 @@ $settings = get_option('pdf_builder_settings', array());
                     const modalConfigs = {
                         dimensions: {
                             title: '📐 Dimensions & Format',
-                            content: "<?php 
-$content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_width\">Largeur (px)</label>
-                                        <input type=\"number\" id=\"modal_canvas_width\" name=\"modal_canvas_width\" value=\"' . addslashes($settings['pdf_builder_canvas_width'] ?? '794') . '\" min=\"100\" max=\"5000\">
+                            content: '<?php echo htmlspecialchars('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_width">Largeur (px)</label>
+                                        <input type="number" id="modal_canvas_width" name="modal_canvas_width" value="' . addslashes($settings['pdf_builder_canvas_width'] ?? '794') . '" min="100" max="5000">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_height\">Hauteur (px)</label>
-                                        <input type=\"number\" id=\"modal_canvas_height\" name=\"modal_canvas_height\" value=\"' . addslashes($settings['pdf_builder_canvas_height'] ?? '1123') . '\" min=\"100\" max=\"5000\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_height">Hauteur (px)</label>
+                                        <input type="number" id="modal_canvas_height" name="modal_canvas_height" value="' . addslashes($settings['pdf_builder_canvas_height'] ?? '1123') . '" min="100" max="5000">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_dpi\">DPI</label>
-                                        <select id=\"modal_canvas_dpi\" name=\"modal_canvas_dpi\">
-                                            <option value=\"72\" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '72' ? 'selected' : '') . '>72 (Web)</option>
-                                            <option value=\"96\" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '96' ? 'selected' : '') . '>96 (Écran)</option>
-                                            <option value=\"150\" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '150' ? 'selected' : '') . '>150 (Impression)</option>
-                                            <option value=\"300\" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '300' ? 'selected' : '') . '>300 (Haute qualité)</option>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_dpi">DPI</label>
+                                        <select id="modal_canvas_dpi" name="modal_canvas_dpi">
+                                            <option value="72" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '72' ? 'selected' : '') . '>72 (Web)</option>
+                                            <option value="96" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '96' ? 'selected' : '') . '>96 (Écran)</option>
+                                            <option value="150" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '150' ? 'selected' : '') . '>150 (Impression)</option>
+                                            <option value="300" ' . (($settings['pdf_builder_canvas_dpi'] ?? '96') === '300' ? 'selected' : '') . '>300 (Haute qualité)</option>
                                         </select>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_format\">Format prédéfini</label>
-                                        <select id=\"modal_canvas_format\" name=\"modal_canvas_format\">
-                                            <option value=\"custom\">Personnalisé</option>
-                                            <option value=\"A4\" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'A4' ? 'selected' : '') . '>A4 (210×297mm)</option>
-                                            <option value=\"A3\" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'A3' ? 'selected' : '') . '>A3 (297×420mm)</option>
-                                            <option value=\"Letter\" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'Letter' ? 'selected' : '') . '>Letter (8.5×11\")</option>
-                                            <option value=\"Legal\" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'Legal' ? 'selected' : '') . '>Legal (8.5×14\")</option>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_format">Format prédéfini</label>
+                                        <select id="modal_canvas_format" name="modal_canvas_format">
+                                            <option value="custom">Personnalisé</option>
+                                            <option value="A4" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'A4' ? 'selected' : '') . '>A4 (210×297mm)</option>
+                                            <option value="A3" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'A3' ? 'selected' : '') . '>A3 (297×420mm)</option>
+                                            <option value="Letter" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'Letter' ? 'selected' : '') . '>Letter (8.5×11")</option>
+                                            <option value="Legal" ' . (($settings['pdf_builder_canvas_format'] ?? 'A4') === 'Legal' ? 'selected' : '') . '>Legal (8.5×14")</option>
                                         </select>
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>"
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         apparence: {
                             title: '🎨 Apparence',
-                            content: "<?php 
-$content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_bg_color\">Couleur de fond</label>
-                                        <input type=\"color\" id=\"modal_canvas_bg_color\" name=\"modal_canvas_bg_color\" value=\"' . addslashes($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff') . '\">
+                            content: '<?php echo htmlspecialchars('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_bg_color">Couleur de fond</label>
+                                        <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="' . addslashes($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff') . '">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_border_color\">Couleur bordure</label>
-                                        <input type=\"color\" id=\"modal_canvas_border_color\" name=\"modal_canvas_border_color\" value=\"' . addslashes($settings['pdf_builder_canvas_border_color'] ?? '#cccccc') . '\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_border_color">Couleur bordure</label>
+                                        <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="' . addslashes($settings['pdf_builder_canvas_border_color'] ?? '#cccccc') . '">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_border_width\">Épaisseur bordure (px)</label>
-                                        <input type=\"number\" id=\"modal_canvas_border_width\" name=\"modal_canvas_border_width\" value=\"' . addslashes($settings['pdf_builder_canvas_border_width'] ?? '1') . '\" min=\"0\" max=\"10\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_border_width">Épaisseur bordure (px)</label>
+                                        <input type="number" id="modal_canvas_border_width" name="modal_canvas_border_width" value="' . addslashes($settings['pdf_builder_canvas_border_width'] ?? '1') . '" min="0" max="10">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_shadow_enabled\">Ombre activée</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_shadow_enabled\" name=\"modal_canvas_shadow_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_shadow_enabled">Ombre activée</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_shadow_enabled" name="modal_canvas_shadow_enabled" value="1" ' . (($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>"
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         grille: {
                             title: '📏 Grille & Guides',
-                            content: "<?php 
-$content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_grid_enabled\">Grille activée</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_grid_enabled\" name=\"modal_canvas_grid_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                            content: '<?php echo htmlspecialchars('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_grid_enabled">Grille activée</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_grid_enabled" name="modal_canvas_grid_enabled" value="1" ' . (($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_grid_size\">Taille grille (px)</label>
-                                        <input type=\"number\" id=\"modal_canvas_grid_size\" name=\"modal_canvas_grid_size\" value=\"' . addslashes($settings['pdf_builder_canvas_grid_size'] ?? '20') . '\" min=\"5\" max=\"100\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_grid_size">Taille grille (px)</label>
+                                        <input type="number" id="modal_canvas_grid_size" name="modal_canvas_grid_size" value="' . addslashes($settings['pdf_builder_canvas_grid_size'] ?? '20') . '" min="5" max="100">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_guides_enabled\">Guides activés</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_guides_enabled\" name=\"modal_canvas_guides_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_guides_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_guides_enabled">Guides activés</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_guides_enabled" name="modal_canvas_guides_enabled" value="1" ' . (($settings['pdf_builder_canvas_guides_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_snap_to_grid\">Accrochage à la grille</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_snap_to_grid\" name=\"modal_canvas_snap_to_grid\" value=\"1\" ' . (($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_snap_to_grid">Accrochage à la grille</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_snap_to_grid" name="modal_canvas_snap_to_grid" value="1" ' . (($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>"
+                            ', ENT_QUOTES | ENT_HTML5); ?>'
                         },
                         zoom: {
                             title: '🔍 Zoom & Navigation',
