@@ -643,186 +643,175 @@ echo addslashes($content);
                         },
                         zoom: {
                             title: '🔍 Zoom & Navigation',
-                            content: "<?php 
-$content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_zoom_min\">Zoom minimum (%)</label>
-                                        <input type=\"number\" id=\"modal_canvas_zoom_min\" name=\"modal_canvas_zoom_min\" value=\"' . addslashes($settings['pdf_builder_canvas_zoom_min'] ?? '25') . '\" min=\"10\" max=\"100\">
+                            content: <?php echo json_encode('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_min" name="modal_canvas_zoom_min" value="' . addslashes($settings['pdf_builder_canvas_zoom_min'] ?? '25') . '" min="10" max="100">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_zoom_max\">Zoom maximum (%)</label>
-                                        <input type=\"number\" id=\"modal_canvas_zoom_max\" name=\"modal_canvas_zoom_max\" value=\"' . addslashes($settings['pdf_builder_canvas_zoom_max'] ?? '500') . '\" min=\"100\" max=\"1000\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_max" name="modal_canvas_zoom_max" value="' . addslashes($settings['pdf_builder_canvas_zoom_max'] ?? '500') . '" min="100" max="1000">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_zoom_default\">Zoom par défaut (%)</label>
-                                        <input type=\"number\" id=\"modal_canvas_zoom_default\" name=\"modal_canvas_zoom_default\" value=\"' . addslashes($settings['pdf_builder_canvas_zoom_default'] ?? '100') . '\" min=\"25\" max=\"500\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_default" name="modal_canvas_zoom_default" value="' . addslashes($settings['pdf_builder_canvas_zoom_default'] ?? '100') . '" min="25" max="500">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_zoom_step\">Pas de zoom (%)</label>
-                                        <input type=\"number\" id=\"modal_canvas_zoom_step\" name=\"modal_canvas_zoom_step\" value=\"' . addslashes($settings['pdf_builder_canvas_zoom_step'] ?? '25') . '\" min=\"5\" max=\"50\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_step" name="modal_canvas_zoom_step" value="' . addslashes($settings['pdf_builder_canvas_zoom_step'] ?? '25') . '" min="5" max="50">
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>"
+                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
                         },
                         interactions: {
                             title: '🖱️ Interaction',
-                            content: <?php $content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_drag_enabled\">Glisser activé</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_drag_enabled\" name=\"modal_canvas_drag_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_drag_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                            content: <?php echo json_encode('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_drag_enabled">Glisser activé</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_drag_enabled" name="modal_canvas_drag_enabled" value="1" ' . (($settings['pdf_builder_canvas_drag_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_resize_enabled\">Redimensionnement activé</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_resize_enabled\" name=\"modal_canvas_resize_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_resize_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_resize_enabled">Redimensionnement activé</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_resize_enabled" name="modal_canvas_resize_enabled" value="1" ' . (($settings['pdf_builder_canvas_resize_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_rotate_enabled\">Rotation activée</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_rotate_enabled\" name=\"modal_canvas_rotate_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_rotate_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_rotate_enabled">Rotation activée</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_rotate_enabled" name="modal_canvas_rotate_enabled" value="1" ' . (($settings['pdf_builder_canvas_rotate_enabled'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_multi_select\">Sélection multiple</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_multi_select\" name=\"modal_canvas_multi_select\" value=\"1\" ' . (($settings['pdf_builder_canvas_multi_select'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_multi_select">Sélection multiple</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_multi_select" name="modal_canvas_multi_select" value="1" ' . (($settings['pdf_builder_canvas_multi_select'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_selection_mode\">Mode de sélection</label>
-                                        <select id=\"modal_canvas_selection_mode\" name=\"modal_canvas_selection_mode\">
-                                            <option value=\"single\" ' . (($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'single' ? 'selected' : '') . '>Simple</option>
-                                            <option value=\"multiple\" ' . (($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'multiple' ? 'selected' : '') . '>Multiple</option>
-                                            <option value=\"group\" ' . (($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'group' ? 'selected' : '') . '>Grouper</option>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_selection_mode">Mode de sélection</label>
+                                        <select id="modal_canvas_selection_mode" name="modal_canvas_selection_mode">
+                                            <option value="single" ' . (($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'single' ? 'selected' : '') . '>Simple</option>
+                                            <option value="multiple" ' . (($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'multiple' ? 'selected' : '') . '>Multiple</option>
+                                            <option value="group" ' . (($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'group' ? 'selected' : '') . '>Grouper</option>
                                         </select>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_keyboard_shortcuts\">Raccourcis clavier</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_keyboard_shortcuts\" name=\"modal_canvas_keyboard_shortcuts\" value=\"1\" ' . (($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="modal_canvas_keyboard_shortcuts" value="1" ' . (($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>
+                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
                         },
                         export: {
                             title: '💾 Export',
-                            content: <?php $content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_export_format\">Format d\'export</label>
-                                        <select id=\"modal_canvas_export_format\" name=\"modal_canvas_export_format\">
-                                            <option value=\"png\" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'png' ? 'selected' : '') . '>PNG</option>
-                                            <option value=\"jpg\" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'jpg' ? 'selected' : '') . '>JPEG</option>
-                                            <option value=\"svg\" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'svg' ? 'selected' : '') . '>SVG</option>
-                                            <option value=\"pdf\" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'pdf' ? 'selected' : '') . '>PDF</option>
+                            content: <?php echo json_encode('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_export_format">Format d\'export</label>
+                                        <select id="modal_canvas_export_format" name="modal_canvas_export_format">
+                                            <option value="png" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'png' ? 'selected' : '') . '>PNG</option>
+                                            <option value="jpg" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'jpg' ? 'selected' : '') . '>JPEG</option>
+                                            <option value="svg" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'svg' ? 'selected' : '') . '>SVG</option>
+                                            <option value="pdf" ' . (($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'pdf' ? 'selected' : '') . '>PDF</option>
                                         </select>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_export_quality\">Qualité (%)</label>
-                                        <input type=\"number\" id=\"modal_canvas_export_quality\" name=\"modal_canvas_export_quality\" value=\"' . addslashes($settings['pdf_builder_canvas_export_quality'] ?? '90') . '\" min=\"10\" max=\"100\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_export_quality">Qualité (%)</label>
+                                        <input type="number" id="modal_canvas_export_quality" name="modal_canvas_export_quality" value="' . addslashes($settings['pdf_builder_canvas_export_quality'] ?? '90') . '" min="10" max="100">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_export_transparent\">Fond transparent</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_export_transparent\" name=\"modal_canvas_export_transparent\" value=\"1\" ' . (($settings['pdf_builder_canvas_export_transparent'] ?? '0') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_export_transparent">Fond transparent</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_export_transparent" name="modal_canvas_export_transparent" value="1" ' . (($settings['pdf_builder_canvas_export_transparent'] ?? '0') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>
+                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
                         },
                         performance: {
                             title: '⚡ Performance',
-                            content: <?php $content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_fps_target\">FPS cible</label>
-                                        <input type=\"number\" id=\"modal_canvas_fps_target\" name=\"modal_canvas_fps_target\" value=\"' . addslashes($settings['pdf_builder_canvas_fps_target'] ?? '60') . '\" min=\"10\" max=\"120\">
+                            content: <?php echo json_encode('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_fps_target">FPS cible</label>
+                                        <input type="number" id="modal_canvas_fps_target" name="modal_canvas_fps_target" value="' . addslashes($settings['pdf_builder_canvas_fps_target'] ?? '60') . '" min="10" max="120">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_memory_limit_js\">Limite mémoire JS (MB)</label>
-                                        <input type=\"number\" id=\"modal_canvas_memory_limit_js\" name=\"modal_canvas_memory_limit_js\" value=\"' . addslashes($settings['pdf_builder_canvas_memory_limit_js'] ?? '50') . '\" min=\"10\" max=\"500\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_memory_limit_js">Limite mémoire JS (MB)</label>
+                                        <input type="number" id="modal_canvas_memory_limit_js" name="modal_canvas_memory_limit_js" value="' . addslashes($settings['pdf_builder_canvas_memory_limit_js'] ?? '50') . '" min="10" max="500">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_response_timeout\">Timeout réponse (ms)</label>
-                                        <input type=\"number\" id=\"modal_canvas_response_timeout\" name=\"modal_canvas_response_timeout\" value=\"' . addslashes($settings['pdf_builder_canvas_response_timeout'] ?? '5000') . '\" min=\"1000\" max=\"30000\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_response_timeout">Timeout réponse (ms)</label>
+                                        <input type="number" id="modal_canvas_response_timeout" name="modal_canvas_response_timeout" value="' . addslashes($settings['pdf_builder_canvas_response_timeout'] ?? '5000') . '" min="1000" max="30000">
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_lazy_loading_editor\">Chargement différé éditeur</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_lazy_loading_editor\" name=\"modal_canvas_lazy_loading_editor\" value=\"1\" ' . (($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_lazy_loading_editor">Chargement différé éditeur</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_lazy_loading_editor" name="modal_canvas_lazy_loading_editor" value="1" ' . (($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_preload_critical\">Préchargement critique</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_preload_critical\" name=\"modal_canvas_preload_critical\" value=\"1\" ' . (($settings['pdf_builder_canvas_preload_critical'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_preload_critical">Préchargement critique</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_preload_critical" name="modal_canvas_preload_critical" value="1" ' . (($settings['pdf_builder_canvas_preload_critical'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_lazy_loading_plugin\">Chargement différé plugin</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_lazy_loading_plugin\" name=\"modal_canvas_lazy_loading_plugin\" value=\"1\" ' . (($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_lazy_loading_plugin">Chargement différé plugin</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_lazy_loading_plugin" name="modal_canvas_lazy_loading_plugin" value="1" ' . (($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>
+                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
                         },
                         debug: {
                             title: '🐛 Debug & Maintenance',
-                            content: <?php $content = '
-                                <div class=\"modal-form-grid\">
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_debug_enabled\">Debug activé</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_debug_enabled\" name=\"modal_canvas_debug_enabled\" value=\"1\" ' . (($settings['pdf_builder_canvas_debug_enabled'] ?? '0') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                            content: <?php echo json_encode('
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_debug_enabled">Debug activé</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_debug_enabled" name="modal_canvas_debug_enabled" value="1" ' . (($settings['pdf_builder_canvas_debug_enabled'] ?? '0') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_performance_monitoring\">Monitoring performance</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_performance_monitoring\" name=\"modal_canvas_performance_monitoring\" value=\"1\" ' . (($settings['pdf_builder_canvas_performance_monitoring'] ?? '0') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_performance_monitoring">Monitoring performance</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_performance_monitoring" name="modal_canvas_performance_monitoring" value="1" ' . (($settings['pdf_builder_canvas_performance_monitoring'] ?? '0') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_error_reporting\">Rapport d\'erreurs</label>
-                                        <label class=\"toggle-switch\">
-                                            <input type=\"checkbox\" id=\"modal_canvas_error_reporting\" name=\"modal_canvas_error_reporting\" value=\"1\" ' . (($settings['pdf_builder_canvas_error_reporting'] ?? '0') === '1' ? 'checked' : '') . '>
-                                            <span class=\"toggle-slider\"></span>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_error_reporting">Rapport d\'erreurs</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="modal_canvas_error_reporting" name="modal_canvas_error_reporting" value="1" ' . (($settings['pdf_builder_canvas_error_reporting'] ?? '0') === '1' ? 'checked' : '') . '>
+                                            <span class="toggle-slider"></span>
                                         </label>
                                     </div>
-                                    <div class=\"form-group\">
-                                        <label for=\"modal_canvas_memory_limit_php\">Limite mémoire PHP (MB)</label>
-                                        <input type=\"number\" id=\"modal_canvas_memory_limit_php\" name=\"modal_canvas_memory_limit_php\" value=\"' . addslashes($settings['pdf_builder_canvas_memory_limit_php'] ?? '128') . '\" min=\"32\" max=\"1024\">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_memory_limit_php">Limite mémoire PHP (MB)</label>
+                                        <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="' . addslashes($settings['pdf_builder_canvas_memory_limit_php'] ?? '128') . '" min="32" max="1024">
                                     </div>
                                 </div>
-                            ';
-echo addslashes($content);
-?>
+                            ', JSON_HEX_QUOT | JSON_HEX_APOS); ?>
                         }
                     };
 
