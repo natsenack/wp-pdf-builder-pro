@@ -91,33 +91,31 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
 
 <!-- DEBUG: JavaScript pour vérifier le bouton flottant -->
 <script>
-// Test immédiat - créer un élément visible
-(function() {
-    // Créer un élément de test visible immédiatement
+try {
+    console.log('🚨 CONSOLE: Script de débogage CHARGÉ');
+    
+    // Test immédiat - créer un élément visible
     var testDiv = document.createElement('div');
     testDiv.id = 'js-test-indicator';
-    testDiv.style.position = 'fixed';
-    testDiv.style.top = '100px';
-    testDiv.style.left = '10px';
-    testDiv.style.background = 'purple';
-    testDiv.style.color = 'white';
-    testDiv.style.padding = '10px';
-    testDiv.style.border = '3px solid orange';
-    testDiv.style.fontSize = '14px';
-    testDiv.style.fontWeight = 'bold';
-    testDiv.style.zIndex = '1000000';
-    testDiv.innerHTML = '🚨 JS EXECUTED! Script chargé et exécuté.';
+    testDiv.style.cssText = 'position:fixed;top:100px;left:10px;background:purple;color:white;padding:10px;border:3px solid orange;font-size:14px;font-weight:bold;z-index:1000000;';
+    testDiv.textContent = '🚨 JS EXECUTED! Script chargé et exécuté.';
     document.body.appendChild(testDiv);
+    
+    console.log('🚨 CONSOLE: Élément de test créé');
     
     // Test après DOMContentLoaded
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚨 CONSOLE: DOMContentLoaded déclenché');
         testDiv.innerHTML += '<br>🚨 DOMContentLoaded fired!';
         
         setTimeout(function() {
+            console.log('🚨 CONSOLE: Timeout 1s écoulé');
             testDiv.innerHTML += '<br>🚨 Timeout 1s passed!';
             
             const floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
             const floatingContainer = document.getElementById('pdf-builder-save-floating');
+            
+            console.log('🚨 CONSOLE: Recherche éléments - Container:', floatingContainer, 'Button:', floatingBtn);
             
             if (floatingContainer) {
                 testDiv.innerHTML += '<br>✅ Container found!';
@@ -131,16 +129,7 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
                 testDiv.innerHTML += '<br>✅ Button found! Forcing visibility...';
                 
                 // Force visible
-                floatingBtn.style.background = 'red';
-                floatingBtn.style.color = 'white';
-                floatingBtn.style.border = '3px solid yellow';
-                floatingBtn.style.fontSize = '20px';
-                floatingBtn.style.padding = '15px';
-                floatingBtn.style.zIndex = '999999';
-                floatingBtn.style.position = 'fixed';
-                floatingBtn.style.bottom = '100px';
-                floatingBtn.style.right = '50px';
-                floatingBtn.style.borderRadius = '10px';
+                floatingBtn.style.cssText += 'background:red;color:white;border:3px solid yellow;font-size:20px;padding:15px;z-index:999999;position:fixed;bottom:100px;right:50px;border-radius:10px;';
                 
                 testDiv.innerHTML += '<br>✅ Styles forced on button!';
                 
@@ -149,7 +138,23 @@ echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;p
             }
         }, 1000);
     });
-})();
+    
+    // Test window.onload aussi
+    window.addEventListener('load', function() {
+        console.log('🚨 CONSOLE: Window load déclenché');
+        if (testDiv) {
+            testDiv.innerHTML += '<br>🚨 Window load fired!';
+        }
+    });
+    
+} catch (error) {
+    console.error('🚨 ERREUR JavaScript:', error);
+    // Créer un élément d'erreur visible même en cas d'erreur
+    var errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'position:fixed;top:200px;left:10px;background:red;color:white;padding:10px;border:3px solid black;font-size:14px;font-weight:bold;z-index:1000000;';
+    errorDiv.textContent = '🚨 ERREUR JS: ' + error.message;
+    document.body.appendChild(errorDiv);
+}
 </script>
 
 <!-- Styles pour le bouton flottant -->
