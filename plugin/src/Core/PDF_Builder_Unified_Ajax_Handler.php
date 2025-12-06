@@ -384,8 +384,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Define field type rules (same as in Ajax_Handlers.php)
         $field_rules = [
             'text_fields' => [
-                'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
-                'pdf_quality', 'default_format', 'default_orientation', 'default_template',
+                'pdf_builder_company_phone_manual', 'pdf_builder_company_siret', 'pdf_builder_company_vat', 'pdf_builder_company_rcs', 'pdf_builder_company_capital',
+                'pdf_builder_pdf_quality', 'pdf_builder_default_format', 'pdf_builder_default_orientation', 'pdf_builder_default_template',
                 'pdf_builder_developer_password',
                 // License text fields
                 'pdf_builder_license_status', 'pdf_builder_license_key', 'pdf_builder_license_expires',
@@ -394,19 +394,19 @@ class PDF_Builder_Unified_Ajax_Handler {
                 // System text fields
                 'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup', 'pdf_builder_cache_last_cleanup',
                 // Canvas text fields
-                'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_export_format',
-                'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
+                'pdf_builder_canvas_bg_color', 'pdf_builder_canvas_border_color', 'pdf_builder_canvas_container_bg_color', 'pdf_builder_canvas_selection_mode', 'pdf_builder_canvas_export_format',
+                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_default_canvas_unit'
             ],
             'int_fields' => [
-                'cache_max_size', 'cache_ttl',
+                'pdf_builder_cache_max_size', 'pdf_builder_cache_ttl',
                 // Canvas int fields
-                'zoom_min', 'zoom_max', 'zoom_default', 'zoom_step', 'canvas_grid_size', 'canvas_export_quality',
-                'canvas_fps_target', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_dpi',
-                'canvas_width', 'canvas_height', 'canvas_border_width'
+                'pdf_builder_zoom_min', 'pdf_builder_zoom_max', 'pdf_builder_zoom_default', 'pdf_builder_zoom_step', 'pdf_builder_canvas_grid_size', 'pdf_builder_canvas_export_quality',
+                'pdf_builder_canvas_fps_target', 'pdf_builder_canvas_memory_limit_js', 'pdf_builder_canvas_memory_limit_php', 'pdf_builder_canvas_dpi',
+                'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_border_width'
             ],
             'bool_fields' => [
-                'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
-                'systeme_auto_maintenance', 'template_library_enabled',
+                'pdf_builder_cache_enabled', 'pdf_builder_cache_compression', 'pdf_builder_cache_auto_cleanup', 'pdf_builder_performance_auto_optimization',
+                'pdf_builder_systeme_auto_maintenance', 'pdf_builder_template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
                 // License bool fields
                 'pdf_builder_license_email_reminders',
@@ -415,15 +415,15 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
                 'pdf_builder_debug_database', 'pdf_builder_debug_php_errors',
                 // Canvas bool fields
-                'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
-                'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
-                'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin',
-                'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled',
+                'pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_snap_to_grid', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_drag_enabled',
+                'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts',
+                'pdf_builder_canvas_export_transparent', 'pdf_builder_canvas_lazy_loading_editor', 'pdf_builder_canvas_preload_critical', 'pdf_builder_canvas_lazy_loading_plugin',
+                'pdf_builder_canvas_debug_enabled', 'pdf_builder_canvas_performance_monitoring', 'pdf_builder_canvas_error_reporting', 'pdf_builder_canvas_shadow_enabled',
                 // Additional toggles from templates
-                'license_test_mode', 'force_https', 'performance_monitoring',
-                'enable_logging', 'gdpr_enabled', 'gdpr_consent_required', 'gdpr_audit_enabled', 'gdpr_encryption_enabled',
-                'gdpr_consent_analytics', 'gdpr_consent_templates', 'gdpr_consent_marketing',
-                'pdf_metadata_enabled', 'pdf_print_optimized'
+                'pdf_builder_license_test_mode', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
+                'pdf_builder_enable_logging', 'pdf_builder_gdpr_enabled', 'pdf_builder_gdpr_consent_required', 'pdf_builder_gdpr_audit_enabled', 'pdf_builder_gdpr_encryption_enabled',
+                'pdf_builder_gdpr_consent_analytics', 'pdf_builder_gdpr_consent_templates', 'pdf_builder_gdpr_consent_marketing',
+                'pdf_builder_pdf_metadata_enabled', 'pdf_builder_pdf_print_optimized'
             ],
             'array_fields' => ['order_status_templates'],
             'license_bool_fields' => [
