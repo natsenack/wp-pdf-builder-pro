@@ -265,6 +265,114 @@
     // Initialiser les notifications de toggle
     document.addEventListener('DOMContentLoaded', initToggleNotifications);
 
+    // Système de sauvegarde centralisé - Empêcher les soumissions individuelles des formulaires
+    let centralizedSaveInitialized = false;
+
+    function initCentralizedSaveSystem() {
+        if (centralizedSaveInitialized) {
+            return;
+        }
+
+        // Liste des IDs de formulaires à centraliser
+        const formIds = [
+            'general-form',
+            'licence-form',
+            'systeme-form',
+            'securite-form',
+            'pdf-form',
+            'contenu-form',
+            'templates-status-form',
+            'developpeur-form'
+        ];
+
+        // Ajouter des écouteurs d'événements à tous les formulaires pour centraliser la sauvegarde
+        formIds.forEach(formId => {
+            const form = document.getElementById(formId);
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Empêcher la soumission par défaut
+
+                    // Collecter toutes les données de tous les formulaires
+                    const allFormData = collectAllFormData();
+
+                    if (Object.keys(allFormData).length > 0) {
+                        // Sauvegarder via le système centralisé AJAX
+                        saveAllSettings(allFormData);
+                    } else {
+                        showSaveMessage('Aucune donnée à sauvegarder.', 'info');
+                    }
+
+                    return false; // Sécurité supplémentaire
+                });
+            }
+        });
+
+        centralizedSaveInitialized = true;
+    }
+
+    // Initialiser le système de sauvegarde centralisé
+    document.addEventListener('DOMContentLoaded', initCentralizedSaveSystem);
+
+    // Système de sauvegarde automatique pour tous les contrôles interactifs
+    let autoSaveTimeout = null;
+    const AUTO_SAVE_DELAY = 2000; // 2 secondes de délai
+
+    function initAutoSaveSystem() {
+        // Écouter tous les changements sur les éléments de formulaire PDF Builder
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+
+            // Vérifier si c'est un élément dans un formulaire PDF Builder
+            if (target.closest('form') && target.name && target.name.includes('pdf_builder')) {
+
+                // Types d'éléments à surveiller pour la sauvegarde automatique
+                const autoSaveTypes = ['checkbox', 'radio', 'select-one', 'select-multiple', 'text', 'email', 'url', 'tel', 'number', 'textarea'];
+
+                if (autoSaveTypes.includes(target.type) || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+
+                    // Annuler le délai précédent
+                    if (autoSaveTimeout) {
+                        clearTimeout(autoSaveTimeout);
+                    }
+
+                    // Programmer une sauvegarde automatique avec délai
+                    autoSaveTimeout = setTimeout(() => {
+                        const allFormData = collectAllFormData();
+                        if (Object.keys(allFormData).length > 0) {
+                            saveAllSettings(allFormData, true); // true = sauvegarde automatique silencieuse
+                        }
+                    }, AUTO_SAVE_DELAY);
+                }
+            }
+        });
+
+        // Écouter aussi les événements input pour les champs textuels (sauvegarde en temps réel avec délai plus long)
+        document.addEventListener('input', function(event) {
+            const target = event.target;
+
+            if (target.closest('form') && target.name && target.name.includes('pdf_builder')) {
+                const textTypes = ['text', 'email', 'url', 'tel', 'number', 'textarea'];
+
+                if (textTypes.includes(target.type) || target.tagName === 'TEXTAREA') {
+                    // Délai plus long pour les champs textuels (5 secondes)
+                    if (autoSaveTimeout) {
+                        clearTimeout(autoSaveTimeout);
+                    }
+
+                    autoSaveTimeout = setTimeout(() => {
+                        const allFormData = collectAllFormData();
+                        if (Object.keys(allFormData).length > 0) {
+                            saveAllSettings(allFormData, true);
+                        }
+                    }, 5000);
+                }
+            }
+        });
+    }
+
+    // Initialiser le système de sauvegarde automatique
+    document.addEventListener('DOMContentLoaded', initAutoSaveSystem);
+
     // Exposer une API simple
     window.PDFBuilderTabsAPI = {
         switchToTab: function(tabId) {
@@ -406,13 +514,16 @@
     /**
      * Sauvegarde toutes les données via AJAX
      */
-    function saveAllSettings(formData) {
+    function saveAllSettings(formData, isAutoSave = false) {
 
-        // Afficher un indicateur de chargement
-        const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
-        const originalText = saveBtn.textContent;
-        saveBtn.textContent = 'Sauvegarde...';
-        saveBtn.disabled = true;
+        // Pour les sauvegardes automatiques, ne pas modifier l'interface utilisateur
+        if (!isAutoSave) {
+            // Afficher un indicateur de chargement
+            const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Sauvegarde...';
+            saveBtn.disabled = true;
+        }
 
         // Aplatir les données pour éviter les problèmes de taille JSON
         const flattenedData = {};
@@ -464,8 +575,12 @@
 
             if (data.success) {
 
-                // Afficher un message de succès
-                showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
+                // Afficher un message de succès (plus discret pour les sauvegardes automatiques)
+                if (isAutoSave) {
+                    showSaveMessage('Sauvegardé automatiquement', 'success', 2000);
+                } else {
+                    showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
+                }
 
                 // Mettre à jour les champs du formulaire avec les valeurs sauvegardées pour un comportement dynamique
                 if (data.data && data.data.saved_settings) {
@@ -474,7 +589,7 @@
 
                 // Déclencher un événement personnalisé pour que d'autres scripts puissent réagir
                 document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', {
-                    detail: { formData: formData, response: data }
+                    detail: { formData: formData, response: data, isAutoSave: isAutoSave }
                 }));
 
                 // Tenter de recharger les paramètres de debug pour mettre à jour l'interface
@@ -496,9 +611,12 @@
             showSaveMessage('Erreur de communication avec le serveur', 'error');
         })
         .finally(() => {
-            // Restaurer le bouton
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
+            // Restaurer le bouton seulement pour les sauvegardes manuelles
+            if (!isAutoSave) {
+                const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }
         });
     }
 
