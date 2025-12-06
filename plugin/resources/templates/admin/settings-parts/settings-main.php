@@ -99,7 +99,17 @@ var debugDiv = document.createElement('div');
 debugDiv.id = 'pdf-debug-indicator';
 debugDiv.innerHTML = '🚨 JS LOADED! Script exécuté avec succès.';
 debugDiv.style.cssText = 'position:fixed;top:150px;left:10px;background:lime;color:black;padding:10px;border:3px solid green;font-size:16px;font-weight:bold;z-index:1000000;border-radius:5px;';
-document.body.appendChild(debugDiv);
+
+// Attendre que le body existe avant d'ajouter
+function addDebugElement() {
+    if (document.body) {
+        document.body.appendChild(debugDiv);
+        console.log('🚨 PDF BUILDER DEBUG: Element added to body');
+    } else {
+        setTimeout(addDebugElement, 10);
+    }
+}
+addDebugElement();
 
 // Attendre que le DOM soit prêt
 document.addEventListener('DOMContentLoaded', function() {
