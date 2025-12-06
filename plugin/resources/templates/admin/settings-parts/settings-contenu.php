@@ -866,10 +866,31 @@ $settings = get_option('pdf_builder_settings', array());
                         console.log('Modal fermée');
                     }
 
-                    // Sauvegarder les paramètres (TODO: implémenter)
+                    // Sauvegarder les paramètres
                     function saveModalSettings() {
                         console.log('Sauvegarde des paramètres pour:', currentModalCategory);
-                        // TODO: Collecter et sauvegarder les données
+
+                        // Collecter toutes les valeurs des champs de la modal
+                        const modalInputs = document.querySelectorAll('#pdf-builder-modal-overlay input, #pdf-builder-modal-overlay select');
+
+                        modalInputs.forEach(input => {
+                            const key = input.name.replace('modal_canvas_', 'canvas_');
+                            let value = input.type === 'checkbox' ? input.checked : input.value;
+
+                            // Conversion des types
+                            if (input.type === 'number') value = parseFloat(value) || 0;
+                            if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
+                                value = value === true || value === '1' || value === 1;
+                            }
+
+                            // Mettre à jour la valeur dans le système de previews
+                            previewSystem.values[key] = value;
+                        });
+
+                        // Rafraîchir toutes les previews avec les nouvelles valeurs
+                        previewSystem.refreshPreviews();
+
+                        console.log('Paramètres sauvegardés et previews mises à jour');
                         closeModal();
                     }
 
