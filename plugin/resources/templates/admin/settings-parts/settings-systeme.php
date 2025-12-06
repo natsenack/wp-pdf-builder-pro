@@ -106,6 +106,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="cache_compression" name="pdf_builder_cache_compression" value="1" <?php checked($cache_compression, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
+                                    <span style="font-size: 10px; color: #666; margin-left: 10px;">[DEBUG: cache_compression = <?php echo $cache_compression; ?>]</span>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
                                 </td>
                             </tr>
@@ -116,6 +117,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                         <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_cache_auto_cleanup" value="1" <?php checked($cache_auto_cleanup, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
+                                    <span style="font-size: 10px; color: #666; margin-left: 10px;">[DEBUG: cache_auto_cleanup = <?php echo $cache_auto_cleanup; ?>]</span>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
                                 </td>
                             </tr>
