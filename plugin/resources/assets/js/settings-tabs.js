@@ -413,68 +413,13 @@
     document.addEventListener('DOMContentLoaded', initCentralizedSaveSystem);
 
     // Système de sauvegarde automatique DÉSACTIVÉ - L'utilisateur ne veut pas d'auto-save
-    // let autoSaveTimeout = null;
-    // const AUTO_SAVE_DELAY = 2000; // 2 secondes de délai
-
     function initAutoSaveSystem() {
         // Auto-save désactivé sur demande de l'utilisateur
         console.log('Auto-save system disabled by user request');
         return;
-
-        /*
-        // Écouter tous les changements sur les éléments de formulaire PDF Builder
-        document.addEventListener('change', function(event) {
-            const target = event.target;
-
-            // Vérifier si c'est un élément dans un formulaire PDF Builder
-            if (target.closest('form') && target.name && target.name.includes('pdf_builder')) {
-
-                // Types d'éléments à surveiller pour la sauvegarde automatique
-                const autoSaveTypes = ['checkbox', 'radio', 'select-one', 'select-multiple', 'text', 'email', 'url', 'tel', 'number', 'textarea'];
-
-                if (autoSaveTypes.includes(target.type) || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
-
-                    // Annuler le délai précédent
-                    if (autoSaveTimeout) {
-                        clearTimeout(autoSaveTimeout);
-                    }
-
-                    // Programmer une sauvegarde automatique avec délai
-                    autoSaveTimeout = setTimeout(() => {
-                        const modifiedData = collectModifiedData();
-                        if (Object.keys(modifiedData).length > 0) {
-                            saveAllSettings(modifiedData, true); // true = sauvegarde automatique silencieuse
-                        }
-                    }, AUTO_SAVE_DELAY);
-                }
-            }
-        });
-
-        // Écouter aussi les événements input pour les champs textuels (sauvegarde en temps réel avec délai plus long)
-        document.addEventListener('input', function(event) {
-            const target = event.target;
-
-            if (target.closest('form') && target.name && target.name.includes('pdf_builder')) {
-                const textTypes = ['text', 'email', 'url', 'tel', 'number', 'textarea'];
-
-                if (textTypes.includes(target.type) || target.tagName === 'TEXTAREA') {
-                    // Délai plus long pour les champs textuels (5 secondes)
-                    if (autoSaveTimeout) {
-                        clearTimeout(autoSaveTimeout);
-                    }
-
-                    autoSaveTimeout = setTimeout(() => {
-                        const modifiedData = collectModifiedData();
-                        if (Object.keys(modifiedData).length > 0) {
-                            saveAllSettings(modifiedData, true);
-                        }
-                    }, 5000);
-                }
-            }
-        });
     }
 
-    // Initialiser le système de sauvegarde automatique
+    // Initialiser le système de sauvegarde automatique (désactivé)
     document.addEventListener('DOMContentLoaded', initAutoSaveSystem);
 
     // Exposer une API simple
