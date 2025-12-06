@@ -2,6 +2,9 @@
 if (!defined('ABSPATH')) exit('Direct access forbidden');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 $settings = get_option('pdf_builder_settings', array());
+
+// DEBUG: Force visible output to verify file is loaded
+echo "<div style='position:fixed;top:10px;left:10px;background:red;color:white;padding:10px;z-index:999999;border:3px solid yellow;font-size:16px;font-weight:bold;'>DEBUG: settings-main.php LOADED!</div>";
 ?>
 <!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
