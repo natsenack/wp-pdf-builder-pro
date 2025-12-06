@@ -8,6 +8,18 @@ require_once __DIR__ . '/settings-helpers.php';
 ?>
 <!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
+    <!-- Bouton de sauvegarde flottant global -->
+    <div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="display: block !important; visibility: visible !important; background: red !important; padding: 20px !important; border: 2px solid yellow !important;">
+        <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
+            <span class="dashicons dashicons-yes"></span>
+            💾 Enregistrer (DEBUG VISIBLE)
+        </button>
+        <div id="save-status-indicator" class="save-status-indicator">
+            <span id="save-status-text">Prêt à enregistrer</span>
+        </div>
+    </div>
+    <script>console.log('PHP: Floating save button HTML added to DOM');</script>
+
     <header class="pdf-builder-header">
         <h1>Paramètres PDF Builder Pro</h1>
     </header>
