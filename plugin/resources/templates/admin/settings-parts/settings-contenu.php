@@ -392,293 +392,332 @@ $settings = get_option('pdf_builder_settings', array());
                 </form>
             </section>
 
-            <!-- Canvas Configuration Modal - Fullscreen Overlay - DÉPLACÉ APRÈS TOUTES LES SECTIONS -->
-            <div id="canvas-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-                <div class="canvas-modal-container canvas-modal">
-                    <div class="canvas-modal-header">
-                        <h3 id="canvas-modal-title">Configuration Canvas</h3>
-                        <button type="button" class="canvas-modal-close">&times;</button>
+            <!-- NOUVEAU SYSTÈME D'OVERLAY MODAL COMPLET -->
+            <div id="pdf-builder-modal-overlay" class="pdf-builder-modal-overlay" style="display: none;">
+                <div class="pdf-builder-modal-backdrop"></div>
+                <div class="pdf-builder-modal-container">
+                    <div class="pdf-builder-modal-header">
+                        <h2 id="pdf-builder-modal-title">Configuration</h2>
+                        <button type="button" class="pdf-builder-modal-close" aria-label="Fermer">&times;</button>
                     </div>
-                    <div class="canvas-modal-content">
-                        <!-- Dimensions & Format Modal -->
-                        <div id="modal-dimensions" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_width">Largeur (px)</label>
-                                    <input type="number" id="modal_canvas_width" name="modal_canvas_width" value="<?php echo $settings['pdf_builder_canvas_width'] ?? '794'; ?>" min="100" max="5000">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_height">Hauteur (px)</label>
-                                    <input type="number" id="modal_canvas_height" name="modal_canvas_height" value="<?php echo $settings['pdf_builder_canvas_height'] ?? '1123'; ?>" min="100" max="5000">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_dpi">DPI</label>
-                                    <select id="modal_canvas_dpi" name="modal_canvas_dpi">
-                                        <option value="72" <?php selected($settings['pdf_builder_canvas_dpi'] ?? '96', '72'); ?>>72 (Web)</option>
-                                        <option value="96" <?php selected($settings['pdf_builder_canvas_dpi'] ?? '96', '96'); ?>>96 (Écran)</option>
-                                        <option value="150" <?php selected($settings['pdf_builder_canvas_dpi'] ?? '96', '150'); ?>>150 (Impression)</option>
-                                        <option value="300" <?php selected($settings['pdf_builder_canvas_dpi'] ?? '96', '300'); ?>>300 (Haute qualité)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_format">Format prédéfini</label>
-                                    <select id="modal_canvas_format" name="modal_canvas_format">
-                                        <option value="custom">Personnalisé</option>
-                                        <option value="A4" <?php selected($settings['pdf_builder_canvas_format'] ?? 'A4', 'A4'); ?>>A4 (210×297mm)</option>
-                                        <option value="A3" <?php selected($settings['pdf_builder_canvas_format'] ?? 'A4', 'A3'); ?>>A3 (297×420mm)</option>
-                                        <option value="Letter" <?php selected($settings['pdf_builder_canvas_format'] ?? 'A4', 'Letter'); ?>>Letter (8.5×11")</option>
-                                        <option value="Legal" <?php selected($settings['pdf_builder_canvas_format'] ?? 'A4', 'Legal'); ?>>Legal (8.5×14")</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Apparence Modal -->
-                        <div id="modal-apparence" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_bg_color">Couleur de fond</label>
-                                    <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="<?php echo $settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_border_color">Couleur bordure</label>
-                                    <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="<?php echo $settings['pdf_builder_canvas_border_color'] ?? '#cccccc'; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_border_width">Épaisseur bordure (px)</label>
-                                    <input type="number" id="modal_canvas_border_width" name="modal_canvas_border_width" value="<?php echo $settings['pdf_builder_canvas_border_width'] ?? '1'; ?>" min="0" max="10">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_shadow_enabled">Ombre activée</label>
-                                    <input type="checkbox" id="modal_canvas_shadow_enabled" name="modal_canvas_shadow_enabled" value="1" <?php checked($settings['pdf_builder_canvas_shadow_enabled'] ?? '0', '1'); ?>>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Grille Modal -->
-                        <div id="modal-grille" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_grid_enabled">Grille activée</label>
-                                    <input type="checkbox" id="modal_canvas_grid_enabled" name="modal_canvas_grid_enabled" value="1" <?php checked($settings['pdf_builder_canvas_grid_enabled'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_grid_size">Taille grille (px)</label>
-                                    <input type="number" id="modal_canvas_grid_size" name="modal_canvas_grid_size" value="<?php echo $settings['pdf_builder_canvas_grid_size'] ?? '20'; ?>" min="5" max="100">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_guides_enabled">Guides activés</label>
-                                    <input type="checkbox" id="modal_canvas_guides_enabled" name="modal_canvas_guides_enabled" value="1" <?php checked($settings['pdf_builder_canvas_guides_enabled'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_snap_to_grid">Accrochage à la grille</label>
-                                    <input type="checkbox" id="modal_canvas_snap_to_grid" name="modal_canvas_snap_to_grid" value="1" <?php checked($settings['pdf_builder_canvas_snap_to_grid'] ?? '1', '1'); ?>>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Zoom Modal -->
-                        <div id="modal-zoom" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
-                                    <input type="number" id="modal_canvas_zoom_min" name="modal_canvas_zoom_min" value="<?php echo $settings['pdf_builder_canvas_zoom_min'] ?? '25'; ?>" min="10" max="100">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
-                                    <input type="number" id="modal_canvas_zoom_max" name="modal_canvas_zoom_max" value="<?php echo $settings['pdf_builder_canvas_zoom_max'] ?? '500'; ?>" min="100" max="1000">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
-                                    <input type="number" id="modal_canvas_zoom_default" name="modal_canvas_zoom_default" value="<?php echo $settings['pdf_builder_canvas_zoom_default'] ?? '100'; ?>" min="25" max="500">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
-                                    <input type="number" id="modal_canvas_zoom_step" name="modal_canvas_zoom_step" value="<?php echo $settings['pdf_builder_canvas_zoom_step'] ?? '25'; ?>" min="5" max="50">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Interaction Modal -->
-                        <div id="modal-interaction" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_drag_enabled">Glisser activé</label>
-                                    <input type="checkbox" id="modal_canvas_drag_enabled" name="modal_canvas_drag_enabled" value="1" <?php checked($settings['pdf_builder_canvas_drag_enabled'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_resize_enabled">Redimensionnement activé</label>
-                                    <input type="checkbox" id="modal_canvas_resize_enabled" name="modal_canvas_resize_enabled" value="1" <?php checked($settings['pdf_builder_canvas_resize_enabled'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_rotate_enabled">Rotation activée</label>
-                                    <input type="checkbox" id="modal_canvas_rotate_enabled" name="modal_canvas_rotate_enabled" value="1" <?php checked($settings['pdf_builder_canvas_rotate_enabled'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_multi_select">Sélection multiple</label>
-                                    <input type="checkbox" id="modal_canvas_multi_select" name="modal_canvas_multi_select" value="1" <?php checked($settings['pdf_builder_canvas_multi_select'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_selection_mode">Mode de sélection</label>
-                                    <select id="modal_canvas_selection_mode" name="modal_canvas_selection_mode">
-                                        <option value="single" <?php selected($settings['pdf_builder_canvas_selection_mode'] ?? 'single', 'single'); ?>>Simple</option>
-                                        <option value="multiple" <?php selected($settings['pdf_builder_canvas_selection_mode'] ?? 'single', 'multiple'); ?>>Multiple</option>
-                                        <option value="group" <?php selected($settings['pdf_builder_canvas_selection_mode'] ?? 'single', 'group'); ?>>Grouper</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier</label>
-                                    <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="modal_canvas_keyboard_shortcuts" value="1" <?php checked($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1', '1'); ?>>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Export Modal -->
-                        <div id="modal-export" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_export_format">Format d'export</label>
-                                    <select id="modal_canvas_export_format" name="modal_canvas_export_format">
-                                        <option value="png" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'png', 'png'); ?>>PNG</option>
-                                        <option value="jpg" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'png', 'jpg'); ?>>JPEG</option>
-                                        <option value="svg" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'png', 'svg'); ?>>SVG</option>
-                                        <option value="pdf" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'png', 'pdf'); ?>>PDF</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_export_quality">Qualité (%)</label>
-                                    <input type="number" id="modal_canvas_export_quality" name="modal_canvas_export_quality" value="<?php echo $settings['pdf_builder_canvas_export_quality'] ?? '90'; ?>" min="10" max="100">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_export_transparent">Fond transparent</label>
-                                    <input type="checkbox" id="modal_canvas_export_transparent" name="modal_canvas_export_transparent" value="1" <?php checked($settings['pdf_builder_canvas_export_transparent'] ?? '0', '1'); ?>>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Performance Modal -->
-                        <div id="modal-performance" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_fps_target">FPS cible</label>
-                                    <input type="number" id="modal_canvas_fps_target" name="modal_canvas_fps_target" value="<?php echo $settings['pdf_builder_canvas_fps_target'] ?? '60'; ?>" min="10" max="120">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_memory_limit_js">Limite mémoire JS (MB)</label>
-                                    <input type="number" id="modal_canvas_memory_limit_js" name="modal_canvas_memory_limit_js" value="<?php echo $settings['pdf_builder_canvas_memory_limit_js'] ?? '50'; ?>" min="10" max="500">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_response_timeout">Timeout réponse (ms)</label>
-                                    <input type="number" id="modal_canvas_response_timeout" name="modal_canvas_response_timeout" value="<?php echo $settings['pdf_builder_canvas_response_timeout'] ?? '5000'; ?>" min="1000" max="30000">
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_lazy_loading_editor">Chargement différé éditeur</label>
-                                    <input type="checkbox" id="modal_canvas_lazy_loading_editor" name="modal_canvas_lazy_loading_editor" value="1" <?php checked($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_preload_critical">Préchargement critique</label>
-                                    <input type="checkbox" id="modal_canvas_preload_critical" name="modal_canvas_preload_critical" value="1" <?php checked($settings['pdf_builder_canvas_preload_critical'] ?? '1', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_lazy_loading_plugin">Chargement différé plugin</label>
-                                    <input type="checkbox" id="modal_canvas_lazy_loading_plugin" name="modal_canvas_lazy_loading_plugin" value="1" <?php checked($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1', '1'); ?>>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Debug Modal -->
-                        <div id="modal-debug" class="modal-category" style="display: none;">
-                            <div class="modal-form-grid">
-                                <div class="form-group">
-                                    <label for="modal_canvas_debug_enabled">Debug activé</label>
-                                    <input type="checkbox" id="modal_canvas_debug_enabled" name="modal_canvas_debug_enabled" value="1" <?php checked($settings['pdf_builder_canvas_debug_enabled'] ?? '0', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_performance_monitoring">Monitoring performance</label>
-                                    <input type="checkbox" id="modal_canvas_performance_monitoring" name="modal_canvas_performance_monitoring" value="1" <?php checked($settings['pdf_builder_canvas_performance_monitoring'] ?? '0', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_error_reporting">Rapport d'erreurs</label>
-                                    <input type="checkbox" id="modal_canvas_error_reporting" name="modal_canvas_error_reporting" value="1" <?php checked($settings['pdf_builder_canvas_error_reporting'] ?? '0', '1'); ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label for="modal_canvas_memory_limit_php">Limite mémoire PHP (MB)</label>
-                                    <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="<?php echo $settings['pdf_builder_canvas_memory_limit_php'] ?? '128'; ?>" min="32" max="1024">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="pdf-builder-modal-body">
+                        <!-- Contenu dynamique des modales -->
                     </div>
-                    <div class="canvas-modal-footer">
-                        <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                        <button type="button" class="button button-primary canvas-modal-save">Enregistrer</button>
+                    <div class="pdf-builder-modal-footer">
+                        <button type="button" class="button button-secondary pdf-builder-modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary pdf-builder-modal-save">Enregistrer</button>
                     </div>
                 </div>
             </div>
 
             <script>
                 (function() {
-                    // Modal management functions
-                    function openCanvasModal(category) {
-                        const overlay = document.getElementById('canvas-modal-overlay');
-                        const title = document.getElementById('canvas-modal-title');
+                    'use strict';
 
-                        // Hide all categories first
-                        document.querySelectorAll('.modal-category').forEach(cat => cat.style.display = 'none');
+                    // Configuration des modales
+                    const modalConfigs = {
+                        dimensions: {
+                            title: '📐 Dimensions & Format',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_width">Largeur (px)</label>
+                                        <input type="number" id="modal_canvas_width" name="modal_canvas_width" value="${<?php echo json_encode($settings['pdf_builder_canvas_width'] ?? '794'); ?>}" min="100" max="5000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_height">Hauteur (px)</label>
+                                        <input type="number" id="modal_canvas_height" name="modal_canvas_height" value="${<?php echo json_encode($settings['pdf_builder_canvas_height'] ?? '1123'); ?>}" min="100" max="5000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_dpi">DPI</label>
+                                        <select id="modal_canvas_dpi" name="modal_canvas_dpi">
+                                            <option value="72" ${'<?php echo ($settings['pdf_builder_canvas_dpi'] ?? '96') === '72' ? 'selected' : ''; ?>'}>72 (Web)</option>
+                                            <option value="96" ${'<?php echo ($settings['pdf_builder_canvas_dpi'] ?? '96') === '96' ? 'selected' : ''; ?>'}>96 (Écran)</option>
+                                            <option value="150" ${'<?php echo ($settings['pdf_builder_canvas_dpi'] ?? '96') === '150' ? 'selected' : ''; ?>'}>150 (Impression)</option>
+                                            <option value="300" ${'<?php echo ($settings['pdf_builder_canvas_dpi'] ?? '96') === '300' ? 'selected' : ''; ?>'}>300 (Haute qualité)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_format">Format prédéfini</label>
+                                        <select id="modal_canvas_format" name="modal_canvas_format">
+                                            <option value="custom">Personnalisé</option>
+                                            <option value="A4" ${'<?php echo ($settings['pdf_builder_canvas_format'] ?? 'A4') === 'A4' ? 'selected' : ''; ?>'}>A4 (210×297mm)</option>
+                                            <option value="A3" ${'<?php echo ($settings['pdf_builder_canvas_format'] ?? 'A4') === 'A3' ? 'selected' : ''; ?>'}>A3 (297×420mm)</option>
+                                            <option value="Letter" ${'<?php echo ($settings['pdf_builder_canvas_format'] ?? 'A4') === 'Letter' ? 'selected' : ''; ?>'}>Letter (8.5×11")</option>
+                                            <option value="Legal" ${'<?php echo ($settings['pdf_builder_canvas_format'] ?? 'A4') === 'Legal' ? 'selected' : ''; ?>'}>Legal (8.5×14")</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        apparence: {
+                            title: '🎨 Apparence',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_bg_color">Couleur de fond</label>
+                                        <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="${<?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_border_color">Couleur bordure</label>
+                                        <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="${<?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_border_width">Épaisseur bordure (px)</label>
+                                        <input type="number" id="modal_canvas_border_width" name="modal_canvas_border_width" value="${<?php echo json_encode($settings['pdf_builder_canvas_border_width'] ?? '1'); ?>" min="0" max="10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_shadow_enabled">Ombre activée</label>
+                                        <input type="checkbox" id="modal_canvas_shadow_enabled" name="modal_canvas_shadow_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        grille: {
+                            title: '📏 Grille & Guides',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_grid_enabled">Grille activée</label>
+                                        <input type="checkbox" id="modal_canvas_grid_enabled" name="modal_canvas_grid_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_grid_size">Taille grille (px)</label>
+                                        <input type="number" id="modal_canvas_grid_size" name="modal_canvas_grid_size" value="${<?php echo json_encode($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?>" min="5" max="100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_guides_enabled">Guides activés</label>
+                                        <input type="checkbox" id="modal_canvas_guides_enabled" name="modal_canvas_guides_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_guides_enabled'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_snap_to_grid">Accrochage à la grille</label>
+                                        <input type="checkbox" id="modal_canvas_snap_to_grid" name="modal_canvas_snap_to_grid" value="1" ${'<?php echo ($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        zoom: {
+                            title: '🔍 Zoom & Navigation',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_min" name="modal_canvas_zoom_min" value="${<?php echo json_encode($settings['pdf_builder_canvas_zoom_min'] ?? '25'); ?>" min="10" max="100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_max" name="modal_canvas_zoom_max" value="${<?php echo json_encode($settings['pdf_builder_canvas_zoom_max'] ?? '500'); ?>" min="100" max="1000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_default" name="modal_canvas_zoom_default" value="${<?php echo json_encode($settings['pdf_builder_canvas_zoom_default'] ?? '100'); ?>" min="25" max="500">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
+                                        <input type="number" id="modal_canvas_zoom_step" name="modal_canvas_zoom_step" value="${<?php echo json_encode($settings['pdf_builder_canvas_zoom_step'] ?? '25'); ?>" min="5" max="50">
+                                    </div>
+                                </div>
+                            `
+                        },
+                        interaction: {
+                            title: '🖱️ Interaction',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_drag_enabled">Glisser activé</label>
+                                        <input type="checkbox" id="modal_canvas_drag_enabled" name="modal_canvas_drag_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_drag_enabled'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_resize_enabled">Redimensionnement activé</label>
+                                        <input type="checkbox" id="modal_canvas_resize_enabled" name="modal_canvas_resize_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_resize_enabled'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_rotate_enabled">Rotation activée</label>
+                                        <input type="checkbox" id="modal_canvas_rotate_enabled" name="modal_canvas_rotate_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_rotate_enabled'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_multi_select">Sélection multiple</label>
+                                        <input type="checkbox" id="modal_canvas_multi_select" name="modal_canvas_multi_select" value="1" ${'<?php echo ($settings['pdf_builder_canvas_multi_select'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_selection_mode">Mode de sélection</label>
+                                        <select id="modal_canvas_selection_mode" name="modal_canvas_selection_mode">
+                                            <option value="single" ${'<?php echo ($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'single' ? 'selected' : ''; ?>'}>Simple</option>
+                                            <option value="multiple" ${'<?php echo ($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'multiple' ? 'selected' : ''; ?>'}>Multiple</option>
+                                            <option value="group" ${'<?php echo ($settings['pdf_builder_canvas_selection_mode'] ?? 'single') === 'group' ? 'selected' : ''; ?>'}>Grouper</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier</label>
+                                        <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="modal_canvas_keyboard_shortcuts" value="1" ${'<?php echo ($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        export: {
+                            title: '💾 Export',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_export_format">Format d'export</label>
+                                        <select id="modal_canvas_export_format" name="modal_canvas_export_format">
+                                            <option value="png" ${'<?php echo ($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'png' ? 'selected' : ''; ?>'}>PNG</option>
+                                            <option value="jpg" ${'<?php echo ($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'jpg' ? 'selected' : ''; ?>'}>JPEG</option>
+                                            <option value="svg" ${'<?php echo ($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'svg' ? 'selected' : ''; ?>'}>SVG</option>
+                                            <option value="pdf" ${'<?php echo ($settings['pdf_builder_canvas_export_format'] ?? 'png') === 'pdf' ? 'selected' : ''; ?>'}>PDF</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_export_quality">Qualité (%)</label>
+                                        <input type="number" id="modal_canvas_export_quality" name="modal_canvas_export_quality" value="${<?php echo json_encode($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?>" min="10" max="100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_export_transparent">Fond transparent</label>
+                                        <input type="checkbox" id="modal_canvas_export_transparent" name="modal_canvas_export_transparent" value="1" ${'<?php echo ($settings['pdf_builder_canvas_export_transparent'] ?? '0') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        performance: {
+                            title: '⚡ Performance',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_fps_target">FPS cible</label>
+                                        <input type="number" id="modal_canvas_fps_target" name="modal_canvas_fps_target" value="${<?php echo json_encode($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?>" min="10" max="120">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_memory_limit_js">Limite mémoire JS (MB)</label>
+                                        <input type="number" id="modal_canvas_memory_limit_js" name="modal_canvas_memory_limit_js" value="${<?php echo json_encode($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>" min="10" max="500">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_response_timeout">Timeout réponse (ms)</label>
+                                        <input type="number" id="modal_canvas_response_timeout" name="modal_canvas_response_timeout" value="${<?php echo json_encode($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?>" min="1000" max="30000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_lazy_loading_editor">Chargement différé éditeur</label>
+                                        <input type="checkbox" id="modal_canvas_lazy_loading_editor" name="modal_canvas_lazy_loading_editor" value="1" ${'<?php echo ($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_preload_critical">Préchargement critique</label>
+                                        <input type="checkbox" id="modal_canvas_preload_critical" name="modal_canvas_preload_critical" value="1" ${'<?php echo ($settings['pdf_builder_canvas_preload_critical'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_lazy_loading_plugin">Chargement différé plugin</label>
+                                        <input type="checkbox" id="modal_canvas_lazy_loading_plugin" name="modal_canvas_lazy_loading_plugin" value="1" ${'<?php echo ($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        debug: {
+                            title: '🐛 Debug & Maintenance',
+                            content: `
+                                <div class="modal-form-grid">
+                                    <div class="form-group">
+                                        <label for="modal_canvas_debug_enabled">Debug activé</label>
+                                        <input type="checkbox" id="modal_canvas_debug_enabled" name="modal_canvas_debug_enabled" value="1" ${'<?php echo ($settings['pdf_builder_canvas_debug_enabled'] ?? '0') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_performance_monitoring">Monitoring performance</label>
+                                        <input type="checkbox" id="modal_canvas_performance_monitoring" name="modal_canvas_performance_monitoring" value="1" ${'<?php echo ($settings['pdf_builder_canvas_performance_monitoring'] ?? '0') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_error_reporting">Rapport d'erreurs</label>
+                                        <input type="checkbox" id="modal_canvas_error_reporting" name="modal_canvas_error_reporting" value="1" ${'<?php echo ($settings['pdf_builder_canvas_error_reporting'] ?? '0') === '1' ? 'checked' : ''; ?>'}>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modal_canvas_memory_limit_php">Limite mémoire PHP (MB)</label>
+                                        <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="${<?php echo json_encode($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>" min="32" max="1024">
+                                    </div>
+                                </div>
+                            `
+                        }
+                    };
 
-                        // Show selected category
-                        const selectedCategory = document.getElementById('modal-' + category);
-                        if (selectedCategory) {
-                            selectedCategory.style.display = 'block';
-                            title.textContent = 'Configuration ' + category.charAt(0).toUpperCase() + category.slice(1);
+                    // État de la modal
+                    let currentModalCategory = null;
+
+                    // Éléments DOM
+                    const overlay = document.getElementById('pdf-builder-modal-overlay');
+                    const modalTitle = document.getElementById('pdf-builder-modal-title');
+                    const modalBody = document.querySelector('.pdf-builder-modal-body');
+
+                    // Ouvrir une modal
+                    function openModal(category) {
+                        if (!modalConfigs[category]) {
+                            console.error('Configuration de modal introuvable pour:', category);
+                            return;
                         }
 
-                        // Show overlay
-                        overlay.classList.add('active');
+                        currentModalCategory = category;
+                        const config = modalConfigs[category];
 
-                        // Prevent body scroll
-                        document.body.classList.add('modal-open');
-                        document.documentElement.classList.add('modal-open');
+                        // Mettre à jour le titre
+                        modalTitle.textContent = config.title;
+
+                        // Mettre à jour le contenu
+                        modalBody.innerHTML = config.content;
+
+                        // Afficher l'overlay
+                        overlay.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+
+                        console.log('Modal ouverte:', category);
                     }
 
-                    function closeCanvasModal() {
-                        const overlay = document.getElementById('canvas-modal-overlay');
-                        overlay.classList.remove('active');
-
-                        // Restore body scroll
-                        document.body.classList.remove('modal-open');
-                        document.documentElement.classList.remove('modal-open');
+                    // Fermer la modal
+                    function closeModal() {
+                        overlay.style.display = 'none';
+                        document.body.style.overflow = '';
+                        currentModalCategory = null;
+                        console.log('Modal fermée');
                     }
 
-                    // Event listeners for modal buttons
+                    // Sauvegarder les paramètres (TODO: implémenter)
+                    function saveModalSettings() {
+                        console.log('Sauvegarde des paramètres pour:', currentModalCategory);
+                        // TODO: Collecter et sauvegarder les données
+                        closeModal();
+                    }
+
+                    // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
-                        if (e.target.classList.contains('canvas-configure-btn')) {
+                        // Bouton de configuration d'une carte
+                        if (e.target.closest('.canvas-configure-btn')) {
+                            e.preventDefault();
                             const card = e.target.closest('.canvas-card');
-                            const category = card.dataset.category;
-                            openCanvasModal(category);
-                        }
-
-                        if (e.target.classList.contains('canvas-modal-close') || e.target.classList.contains('canvas-modal-cancel')) {
-                            closeCanvasModal();
-                        }
-
-                        if (e.target.id === 'canvas-modal-overlay') {
-                            closeCanvasModal();
-                        }
-
-                        if (e.target.classList.contains('canvas-modal-save')) {
-                            // TODO: Implement save functionality
-                            closeCanvasModal();
-                        }
-                    });
-
-                    // Close modal on Escape key
-                    document.addEventListener('keydown', function(e) {
-                        if (e.key === 'Escape') {
-                            const overlay = document.getElementById('canvas-modal-overlay');
-                            if (overlay.classList.contains('active')) {
-                                closeCanvasModal();
+                            if (card && card.dataset.category) {
+                                openModal(card.dataset.category);
                             }
+                            return;
+                        }
+
+                        // Bouton de fermeture
+                        if (e.target.closest('.pdf-builder-modal-close') || e.target.closest('.pdf-builder-modal-cancel')) {
+                            closeModal();
+                            return;
+                        }
+
+                        // Clic sur l'overlay (backdrop)
+                        if (e.target.classList.contains('pdf-builder-modal-overlay')) {
+                            closeModal();
+                            return;
+                        }
+
+                        // Bouton de sauvegarde
+                        if (e.target.closest('.pdf-builder-modal-save')) {
+                            saveModalSettings();
+                            return;
                         }
                     });
+
+                    // Fermeture avec Échap
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape' && overlay.style.display === 'block') {
+                            closeModal();
+                        }
+                    });
+
+                    console.log('Système de modal PDF Builder initialisé');
                 })();
             </script>
