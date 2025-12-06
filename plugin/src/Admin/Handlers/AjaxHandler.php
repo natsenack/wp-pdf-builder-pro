@@ -1999,6 +1999,12 @@ class AjaxHandler
      */
     private function sanitizeFieldValue($key, $value)
     {
+        // Cas spéciaux d'abord
+        if ($key === 'pdf_builder_license_email_reminders') {
+            // C'est un toggle boolean, pas un email
+            return in_array(strtolower($value), ['true', '1', 'yes', 'on']) ? '1' : '0';
+        }
+
         // Déterminer le type de champ d'après le nom
         if (strpos($key, '_email') !== false) {
             return sanitize_email($value);
