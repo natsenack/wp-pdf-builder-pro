@@ -435,11 +435,21 @@ $settings = get_option('pdf_builder_settings', array());
                             canvas_zoom_default: <?php echo json_encode($settings['pdf_builder_canvas_zoom_default'] ?? '100'); ?>,
                             canvas_zoom_step: <?php echo json_encode($settings['pdf_builder_canvas_zoom_step'] ?? '25'); ?>,
                             canvas_export_quality: <?php echo json_encode($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?>,
+                            canvas_export_format: <?php echo json_encode($settings['pdf_builder_canvas_export_format'] ?? 'png'); ?>,
                             canvas_export_transparent: <?php echo json_encode(($settings['pdf_builder_canvas_export_transparent'] ?? '0') === '1'); ?>,
+                            canvas_drag_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_drag_enabled'] ?? '1') === '1'); ?>,
+                            canvas_resize_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_resize_enabled'] ?? '1') === '1'); ?>,
+                            canvas_rotate_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_rotate_enabled'] ?? '1') === '1'); ?>,
+                            canvas_multi_select: <?php echo json_encode(($settings['pdf_builder_canvas_multi_select'] ?? '1') === '1'); ?>,
+                            canvas_selection_mode: <?php echo json_encode($settings['pdf_builder_canvas_selection_mode'] ?? 'single'); ?>,
+                            canvas_keyboard_shortcuts: <?php echo json_encode(($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1') === '1'); ?>,
                             canvas_fps_target: <?php echo json_encode($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?>,
                             canvas_memory_limit_js: <?php echo json_encode($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>,
                             canvas_response_timeout: <?php echo json_encode($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?>,
                             canvas_lazy_loading_editor: <?php echo json_encode(($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1') === '1'); ?>,
+                            canvas_preload_critical: <?php echo json_encode(($settings['pdf_builder_canvas_preload_critical'] ?? '1') === '1'); ?>,
+                            canvas_lazy_loading_plugin: <?php echo json_encode(($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1') === '1'); ?>,
+                            canvas_debug_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_debug_enabled'] ?? '0') === '1'); ?>,
                             canvas_performance_monitoring: <?php echo json_encode(($settings['pdf_builder_canvas_performance_monitoring'] ?? '0') === '1'); ?>,
                             canvas_error_reporting: <?php echo json_encode(($settings['pdf_builder_canvas_error_reporting'] ?? '0') === '1'); ?>,
                             canvas_memory_limit_php: <?php echo json_encode($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>
@@ -598,6 +608,8 @@ $settings = get_option('pdf_builder_settings', array());
                                             <label class="toggle-switch">
                                                 <input type="checkbox" id="modal_canvas_shadow_enabled" name="modal_canvas_shadow_enabled" value="1" ${previewSystem.values.canvas_shadow_enabled === '1' ? 'checked' : ''}>
                                                 <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
                                             </label>
                                         </div>
                                     </div>
