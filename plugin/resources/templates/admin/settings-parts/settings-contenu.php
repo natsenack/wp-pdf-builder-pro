@@ -546,11 +546,11 @@ $settings = get_option('pdf_builder_settings', array());
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_width">Largeur (px)</label>
-                                        <input type="number" id="modal_canvas_width" name="modal_canvas_width" value="' + <?php echo json_encode($settings['pdf_builder_canvas_width'] ?? '794'); ?> + '" min="100" max="5000">
+                                        <input type="number" id="modal_canvas_width" name="modal_canvas_width" value="' + <?php echo addslashes($settings['pdf_builder_canvas_width'] ?? '794'); ?> + '" min="100" max="5000">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_height">Hauteur (px)</label>
-                                        <input type="number" id="modal_canvas_height" name="modal_canvas_height" value="' + <?php echo json_encode($settings['pdf_builder_canvas_height'] ?? '1123'); ?> + '" min="100" max="5000">
+                                        <input type="number" id="modal_canvas_height" name="modal_canvas_height" value="' + <?php echo addslashes($settings['pdf_builder_canvas_height'] ?? '1123'); ?> + '" min="100" max="5000">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_dpi">DPI</label>
@@ -580,15 +580,15 @@ $settings = get_option('pdf_builder_settings', array());
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_bg_color">Couleur de fond</label>
-                                        <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="' + <?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?> + '">
+                                        <input type="color" id="modal_canvas_bg_color" name="modal_canvas_bg_color" value="' + <?php echo addslashes($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?> + '">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_border_color">Couleur bordure</label>
-                                        <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="' + <?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?> + '">
+                                        <input type="color" id="modal_canvas_border_color" name="modal_canvas_border_color" value="' + <?php echo addslashes($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?> + '">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_border_width">Épaisseur bordure (px)</label>
-                                        <input type="number" id="modal_canvas_border_width" name="modal_canvas_border_width" value="' + <?php echo json_encode($settings['pdf_builder_canvas_border_width'] ?? '1'); ?> + '" min="0" max="10">
+                                        <input type="number" id="modal_canvas_border_width" name="modal_canvas_border_width" value="' + <?php echo addslashes($settings['pdf_builder_canvas_border_width'] ?? '1'); ?> + '" min="0" max="10">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_shadow_enabled">Ombre activée</label>
@@ -613,7 +613,7 @@ $settings = get_option('pdf_builder_settings', array());
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_grid_size">Taille grille (px)</label>
-                                        <input type="number" id="modal_canvas_grid_size" name="modal_canvas_grid_size" value="' + <?php echo json_encode($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?> + '" min="5" max="100">
+                                        <input type="number" id="modal_canvas_grid_size" name="modal_canvas_grid_size" value="' + <?php echo addslashes($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?> + '" min="5" max="100">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_guides_enabled">Guides activés</label>
@@ -638,19 +638,19 @@ $settings = get_option('pdf_builder_settings', array());
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
-                                        <input type="number" id="modal_canvas_zoom_min" name="modal_canvas_zoom_min" value="' + <?php echo json_encode($settings['pdf_builder_canvas_zoom_min'] ?? '25'); ?> + '" min="10" max="100">
+                                        <input type="number" id="modal_canvas_zoom_min" name="modal_canvas_zoom_min" value="' + <?php echo addslashes($settings['pdf_builder_canvas_zoom_min'] ?? '25'); ?> + '" min="10" max="100">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
-                                        <input type="number" id="modal_canvas_zoom_max" name="modal_canvas_zoom_max" value="' + <?php echo json_encode($settings['pdf_builder_canvas_zoom_max'] ?? '500'); ?> + '" min="100" max="1000">
+                                        <input type="number" id="modal_canvas_zoom_max" name="modal_canvas_zoom_max" value="' + <?php echo addslashes($settings['pdf_builder_canvas_zoom_max'] ?? '500'); ?> + '" min="100" max="1000">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
-                                        <input type="number" id="modal_canvas_zoom_default" name="modal_canvas_zoom_default" value="' + <?php echo json_encode($settings['pdf_builder_canvas_zoom_default'] ?? '100'); ?> + '" min="25" max="500">
+                                        <input type="number" id="modal_canvas_zoom_default" name="modal_canvas_zoom_default" value="' + <?php echo addslashes($settings['pdf_builder_canvas_zoom_default'] ?? '100'); ?> + '" min="25" max="500">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
-                                        <input type="number" id="modal_canvas_zoom_step" name="modal_canvas_zoom_step" value="' + <?php echo json_encode($settings['pdf_builder_canvas_zoom_step'] ?? '25'); ?> + '" min="5" max="50">
+                                        <input type="number" id="modal_canvas_zoom_step" name="modal_canvas_zoom_step" value="' + <?php echo addslashes($settings['pdf_builder_canvas_zoom_step'] ?? '25'); ?> + '" min="5" max="50">
                                     </div>
                                 </div>
                             '
@@ -720,7 +720,7 @@ $settings = get_option('pdf_builder_settings', array());
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_export_quality">Qualité (%)</label>
-                                        <input type="number" id="modal_canvas_export_quality" name="modal_canvas_export_quality" value="' + <?php echo json_encode($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?> + '" min="10" max="100">
+                                        <input type="number" id="modal_canvas_export_quality" name="modal_canvas_export_quality" value="' + <?php echo addslashes($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?> + '" min="10" max="100">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_export_transparent">Fond transparent</label>
@@ -738,15 +738,15 @@ $settings = get_option('pdf_builder_settings', array());
                                 <div class="modal-form-grid">
                                     <div class="form-group">
                                         <label for="modal_canvas_fps_target">FPS cible</label>
-                                        <input type="number" id="modal_canvas_fps_target" name="modal_canvas_fps_target" value="' + <?php echo json_encode($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?> + '" min="10" max="120">
+                                        <input type="number" id="modal_canvas_fps_target" name="modal_canvas_fps_target" value="' + <?php echo addslashes($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?> + '" min="10" max="120">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_memory_limit_js">Limite mémoire JS (MB)</label>
-                                        <input type="number" id="modal_canvas_memory_limit_js" name="modal_canvas_memory_limit_js" value="' + <?php echo json_encode($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?> + '" min="10" max="500">
+                                        <input type="number" id="modal_canvas_memory_limit_js" name="modal_canvas_memory_limit_js" value="' + <?php echo addslashes($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?> + '" min="10" max="500">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_response_timeout">Timeout réponse (ms)</label>
-                                        <input type="number" id="modal_canvas_response_timeout" name="modal_canvas_response_timeout" value="' + <?php echo json_encode($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?> + '" min="1000" max="30000">
+                                        <input type="number" id="modal_canvas_response_timeout" name="modal_canvas_response_timeout" value="' + <?php echo addslashes($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?> + '" min="1000" max="30000">
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_lazy_loading_editor">Chargement différé éditeur</label>
@@ -799,7 +799,7 @@ $settings = get_option('pdf_builder_settings', array());
                                     </div>
                                     <div class="form-group">
                                         <label for="modal_canvas_memory_limit_php">Limite mémoire PHP (MB)</label>
-                                        <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="' + <?php echo json_encode($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?> + '" min="32" max="1024">
+                                        <input type="number" id="modal_canvas_memory_limit_php" name="modal_canvas_memory_limit_php" value="' + <?php echo addslashes($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?> + '" min="32" max="1024">
                                     </div>
                                 </div>
                             '
