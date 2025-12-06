@@ -553,6 +553,19 @@
                     }
                 }
 
+                // Traiter explicitement toutes les checkboxes du formulaire (même non cochées)
+                const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    const normalizedName = normalizeFieldName(checkbox.name);
+                    if (!formObject.hasOwnProperty(normalizedName)) {
+                        // Checkbox non cochée, définir à '0'
+                        formObject[normalizedName] = '0';
+                    } else if (formObject[normalizedName] === 'on' || formObject[normalizedName] === '') {
+                        // Checkbox cochée sans valeur explicite, définir à '1'
+                        formObject[normalizedName] = '1';
+                    }
+                });
+
                 // Ajouter les données du formulaire à allData
                 allData[formId] = formObject;
             }
@@ -581,17 +594,8 @@
                         }
 
                         if (input.type === 'checkbox') {
-                            if (allData[sectionId][normalizedName]) {
-                                if (Array.isArray(allData[sectionId][normalizedName])) {
-                                    if (input.checked) {
-                                        allData[sectionId][normalizedName].push(input.value);
-                                    }
-                                } else if (input.checked) {
-                                    allData[sectionId][normalizedName] = [allData[sectionId][normalizedName], input.value];
-                                }
-                            } else {
-                                allData[sectionId][normalizedName] = input.checked ? [input.value] : [];
-                            }
+                            // Pour les toggles simples, utiliser true/false au lieu d'arrays
+                            allData[sectionId][normalizedName] = input.checked ? input.value : '0';
                         } else if (input.type === 'radio') {
                             if (input.checked) {
                                 allData[sectionId][normalizedName] = input.value;
