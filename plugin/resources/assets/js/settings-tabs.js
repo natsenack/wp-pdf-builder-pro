@@ -516,11 +516,12 @@
      */
     function saveAllSettings(formData, isAutoSave = false) {
 
+        // Préparer les références pour l'interface utilisateur
+        const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+        const originalText = saveBtn ? saveBtn.textContent : '';
+
         // Pour les sauvegardes automatiques, ne pas modifier l'interface utilisateur
-        if (!isAutoSave) {
-            // Afficher un indicateur de chargement
-            const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
-            const originalText = saveBtn.textContent;
+        if (!isAutoSave && saveBtn) {
             saveBtn.textContent = 'Sauvegarde...';
             saveBtn.disabled = true;
         }
@@ -612,8 +613,7 @@
         })
         .finally(() => {
             // Restaurer le bouton seulement pour les sauvegardes manuelles
-            if (!isAutoSave) {
-                const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+            if (!isAutoSave && saveBtn) {
                 saveBtn.textContent = originalText;
                 saveBtn.disabled = false;
             }
