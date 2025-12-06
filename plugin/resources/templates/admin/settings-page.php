@@ -15,6 +15,12 @@ require_once plugin_dir_path(__FILE__) . 'settings-loader.php';
 require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 
 // Add floating save button and JavaScript here for better execution context
+
+// DEBUG: Force load JavaScript directly if not loaded by WordPress
+if (!wp_script_is('pdf-builder-settings-tabs', 'enqueued')) {
+    echo '<script src="' . PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/settings-tabs.js?ver=' . time() . '"></script>';
+    echo '<!-- DEBUG: JavaScript loaded directly -->';
+}
 ?>
 <!-- Bouton de sauvegarde flottant global - ULTRA VISIBLE -->
 <div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 9999999 !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
