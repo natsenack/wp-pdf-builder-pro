@@ -455,7 +455,7 @@ foreach ($canvas_options as $option) {
 
             <!-- CSS pour les modales Canvas -->
             <?php
-            $css_url = plugins_url('assets/css/canvas-modals.css', dirname(__FILE__, 3) . '/pdf-builder-pro.php');
+            $css_url = plugins_url('assets/css/canvas-modals.css', PDF_BUILDER_PLUGIN_FILE);
             wp_enqueue_style('pdf-builder-canvas-modals', $css_url, array(), '1.0.0');
             ?>
 
@@ -1515,6 +1515,12 @@ foreach ($canvas_options as $option) {
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
                         console.log('Ouverture de la modal pour:', category);
+
+                        // Fermer toute modal existante avant d'en ouvrir une nouvelle
+                        if (currentModalCategory) {
+                            console.log('Fermeture de la modal existante:', currentModalCategory);
+                            closeModal();
+                        }
 
                         currentModalCategory = category;
 
