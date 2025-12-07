@@ -581,54 +581,67 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
     // Attendre que le DOM soit chargé
     document.addEventListener('DOMContentLoaded', function() {
-        var saveBtn = document.getElementById('save-templates-btn');
-        if (!saveBtn) return;
-
-        // Gestionnaire de sauvegarde
-        saveBtn.addEventListener('click', function() {
-            // Collecter toutes les données du formulaire
-            var formData = new FormData(document.getElementById('templates-status-form'));
-
-            // Ajouter l'action
-            formData.append('action', 'pdf_builder_ajax_handler');
-            formData.append('action_type', 'save_all_settings');
-
-            // Désactiver le bouton pendant la sauvegarde
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Sauvegarde en cours...';
-
-            // Envoyer la requête avec XMLHttpRequest (plus compatible)
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        if (data.success) {
-                            // Afficher un message de succès
-                            showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
-
-                            // Mise à jour simple des prévisualisations après sauvegarde
-                            updatePreviewsAfterSave();
-                        } else {
-                            var errorMsg = 'Erreur inconnue';
-                            if (data.data && data.data.message) {
-                                errorMsg = data.data.message;
-                            }
-                            showSaveMessage('Erreur lors de la sauvegarde: ' + errorMsg, 'error');
-                        }
-                    } catch (e) {
-                        console.error('Erreur parsing JSON:', e);
-                        showSaveMessage('Erreur de communication avec le serveur', 'error');
-                    }
-
-                    // Réactiver le bouton
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
+        // Écouter l'événement de sauvegarde globale au lieu du clic sur le bouton
+        document.addEventListener('pdfBuilderSettingsSaved', function(event) {
+            console.log('DEBUG: pdfBuilderSettingsSaved event received');
+            // Vérifier si les templates ont été sauvegardés
+            if (event.detail && event.detail.response && event.detail.response.data) {
+                var responseData = event.detail.response.data;
+                if (responseData.saved_templates || responseData.templates) {
+                    console.log('DEBUG: Templates were saved, updating previews');
+                    updatePreviewsAfterSave();
                 }
-            };
-            xhr.send(formData);
+            }
         });
+
+        // Garder aussi l'ancien système au cas où
+        var saveBtn = document.getElementById('save-templates-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                // Collecter toutes les données du formulaire
+                var formData = new FormData(document.getElementById('templates-status-form'));
+
+                // Ajouter l'action
+                formData.append('action', 'pdf_builder_ajax_handler');
+                formData.append('action_type', 'save_all_settings');
+
+                // Désactiver le bouton pendant la sauvegarde
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Sauvegarde en cours...';
+
+                // Envoyer la requête avec XMLHttpRequest (plus compatible)
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            if (data.success) {
+                                // Afficher un message de succès
+                                showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
+
+                                // Mise à jour simple des prévisualisations après sauvegarde
+                                updatePreviewsAfterSave();
+                            } else {
+                                var errorMsg = 'Erreur inconnue';
+                                if (data.data && data.data.message) {
+                                    errorMsg = data.data.message;
+                                }
+                                showSaveMessage('Erreur lors de la sauvegarde: ' + errorMsg, 'error');
+                            }
+                        } catch (e) {
+                            console.error('Erreur parsing JSON:', e);
+                            showSaveMessage('Erreur de communication avec le serveur', 'error');
+                        }
+
+                        // Réactiver le bouton
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
+                    }
+                };
+                xhr.send(formData);
+            });
+        }
 
         // Fonction simple pour mettre à jour les prévisualisations
         function updatePreviewsAfterSave() {
