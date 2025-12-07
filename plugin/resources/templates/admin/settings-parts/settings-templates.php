@@ -493,6 +493,15 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                                 </select>
                             </div>
 
+                            <!-- Aperçu du template assigné -->
+                            <div class="template-preview">
+                                <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
+                                    <p class="current-template"><?php echo esc_html($templates[$current_mappings[$status_key]]); ?></p>
+                                <?php else: ?>
+                                    <p class="no-template">Aucun template assigné</p>
+                                <?php endif; ?>
+                            </div>
+
                         </article>
                     <?php endforeach; ?>
                 </div>
@@ -539,6 +548,27 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
     border-color: #dc3545 !important;
     color: white !important;
 }
+
+/* Styles pour l'affichage des templates assignés */
+.template-preview .current-template {
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #e8f5e8;
+    border: 1px solid #c3e6c3;
+    border-radius: 4px;
+    color: #2d5a2d;
+    font-weight: 500;
+}
+
+.template-preview .no-template {
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #6c757d;
+    font-style: italic;
+}
 </style>
 
 
@@ -581,8 +611,8 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                     // Afficher un message de succès
                     showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
 
-                    // Mettre à jour les valeurs originales pour éviter les faux positifs de changement
-                    updateOriginalValues();
+                    // Mettre à jour les prévisualisations après sauvegarde
+                    updateTemplatePreviews();
                 } else {
                     showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
                 }
@@ -598,9 +628,43 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
             });
         });
 
-        function updateOriginalValues() {
-            // Cette fonction peut être utilisée pour d'autres logiques si nécessaire
-            // Pour l'instant, elle ne fait rien car nous n'avons plus de prévisualisations
+        // Fonction pour mettre à jour les prévisualisations après sauvegarde
+        function updateTemplatePreviews() {
+            // Récupérer les données sauvegardées depuis le serveur
+            fetch(pdfBuilderAjax.ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'action': 'pdf_builder_get_template_mappings',
+                    'nonce': pdfBuilderAjax.nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const mappings = data.data.mappings || {};
+                    const templates = data.data.templates || {};
+
+                    // Mettre à jour chaque prévisualisation
+                    document.querySelectorAll('.template-preview').forEach(preview => {
+                        const statusKey = preview.closest('article').querySelector('.template-select').id.replace('template_', '');
+                        const assignedTemplate = mappings[statusKey];
+
+                        if (assignedTemplate && templates[assignedTemplate]) {
+                            // Template assigné - afficher le nom
+                            preview.innerHTML = `<p class="current-template">${templates[assignedTemplate]}</p>`;
+                        } else {
+                            // Aucun template assigné
+                            preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la mise à jour des prévisualisations:', error);
+            });
         }
 
         function showSaveMessage(message, type) {

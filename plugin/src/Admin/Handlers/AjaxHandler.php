@@ -59,6 +59,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'ajaxSaveCanvasSettings']);
         add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
         add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
+        add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
     }
 
     /**
@@ -917,7 +918,7 @@ class AjaxHandler
     /**
      * Récupérer les mappings de templates et la liste des templates disponibles
      */
-    private function handleGetTemplateMappings()
+    public function handleGetTemplateMappings()
     {
         try {
             global $wpdb;
