@@ -402,6 +402,11 @@ $custom_status_plugins = $status_manager->get_custom_status_plugins();
 $status_plugins = $status_manager->get_status_plugins();
 $templates = $status_manager->get_templates();
 $current_mappings = $status_manager->get_current_mappings();
+
+// Debug temporaire
+error_log("DEBUG Template Load: current_mappings = " . json_encode($current_mappings));
+error_log("DEBUG Template Load: templates = " . json_encode($templates));
+
 // =============================================================================
 // AFFICHAGE HTML
 // =============================================================================
@@ -466,11 +471,16 @@ $current_mappings = $status_manager->get_current_mappings();
                                         id="template_<?php echo esc_attr($status_key); ?>"
                                         class="template-select">
                                     <option value="">-- Aucun template --</option>
-                                    <?php foreach ($templates as $template_id => $template_title): 
-                                        $is_selected = ($current_mappings[$status_key] ?? '') === $template_id;
+                                    <?php foreach ($templates as $template_id => $template_title):
+                                        $current_value = $current_mappings[$status_key] ?? '';
+                                        $is_selected = $current_value === $template_id;
+                                        // Debug temporaire
+                                        if ($status_key === 'wc-completed') {
+                                            error_log("DEBUG Select: status=$status_key, current_value='$current_value', template_id='$template_id', is_selected=" . ($is_selected ? 'YES' : 'NO'));
+                                        }
                                         ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
-                                                <?php pdf_builder_safe_selected($current_mappings[$status_key] ?? '', $template_id); ?>>        
+                                                <?php selected($current_value, $template_id); ?>>        
                                             <?php echo esc_html($template_title); ?>
                                         </option>
                                     <?php endforeach; ?>
