@@ -659,9 +659,12 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                 var preview = previews[i];
                 var select = preview.closest('article').querySelector('.template-select');
                 if (select) {
-                    var selectedValue = select.value;
-                    if (selectedValue && templates[selectedValue]) {
-                        preview.innerHTML = '<p class="current-template">' + templates[selectedValue] + '</p>';
+                    // Utiliser les mappings sauvegardés plutôt que la valeur actuelle du select
+                    var postType = select.name.replace('pdf_builder_order_status_templates[', '').replace(']', '');
+                    var assignedTemplateId = mappings[postType];
+
+                    if (assignedTemplateId && templates[assignedTemplateId]) {
+                        preview.innerHTML = '<p class="current-template">' + templates[assignedTemplateId] + '</p>';
                     } else {
                         preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
                     }
