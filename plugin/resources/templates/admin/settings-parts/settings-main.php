@@ -29,7 +29,7 @@ wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-set
 
 
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
-        <a id="tab-general" href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">
+        <a id="tab-general" href="#general" class="nav-tab" data-tab="general" role="tab" aria-selected="false" aria-controls="general">
             <span class="tab-icon">⚙️</span>
             <span class="tab-text">Général</span>
         </a>
@@ -64,7 +64,7 @@ wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-set
     </nav>
 
     <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
-        <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
+        <div id="general" class="tab-content" role="tabpanel" aria-labelledby="tab-general">
             <?php require_once 'settings-general.php'; ?>
         </div>
 
