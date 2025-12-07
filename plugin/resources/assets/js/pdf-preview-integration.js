@@ -569,23 +569,9 @@ window.updatePerformanceCardPreview = function() {
  * Fonction legacy - utilise maintenant le système générique
  */
 window.updateApparenceCardPreview = function() {
-    try {
-        window.CanvasPreviewManager.updateCardPreviewGeneric('apparence');
-    } catch (error) {
-        window.PDFBuilderLogger.warn('Generic apparence preview failed, using legacy implementation:', error.message);
-        const values = window.CanvasPreviewManager.getCardValues('apparence');
-        const { canvas_background_color: bgColor, border_color: borderColor, border_width: borderWidth } = values;
-
-        const bgPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.bg');
-        const borderPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.border');
-
-        // Pour l'aperçu du fond : couleur unie
-        window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundColor', bgColor);
-
-        // Pour l'aperçu de la bordure : changer la couleur de la bordure
-        window.CanvasPreviewManager.updateElement(borderPreview, 'style.borderColor', borderColor);
-        window.CanvasPreviewManager.updateElement(borderPreview, 'style.borderWidth', `${borderWidth}px`);
-    }
+    // Les aperçus sont maintenant gérés par CSS uniquement - pas de modification dynamique
+    // pour éviter les changements de couleur lors des rechargements
+    window.PDFBuilderLogger.info('Apparence preview managed by CSS only');
 };
 
 /**
