@@ -2377,7 +2377,54 @@ foreach ($canvas_options as $option) {
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
 
-                                    // Mettre à jour les previews avec les valeurs sauvegardées
+                                    // Mettre à jour previewSystem.values avec les vraies valeurs sauvegardées
+                                    if (data.saved_settings) {
+                                        // Mapping des clés courtes vers les clés longues utilisées par previewSystem
+                                        const keyMapping = {
+                                            'canvas_width': 'canvas_canvas_width',
+                                            'canvas_height': 'canvas_canvas_height',
+                                            'canvas_dpi': 'canvas_canvas_dpi',
+                                            'canvas_format': 'canvas_canvas_format',
+                                            'canvas_bg_color': 'canvas_canvas_bg_color',
+                                            'canvas_border_color': 'canvas_canvas_border_color',
+                                            'canvas_border_width': 'canvas_canvas_border_width',
+                                            'canvas_shadow_enabled': 'canvas_canvas_shadow_enabled',
+                                            'canvas_container_bg_color': 'canvas_canvas_container_bg_color',
+                                            'canvas_grid_enabled': 'canvas_canvas_grid_enabled',
+                                            'canvas_grid_size': 'canvas_canvas_grid_size',
+                                            'canvas_guides_enabled': 'canvas_canvas_guides_enabled',
+                                            'canvas_snap_to_grid': 'canvas_canvas_snap_to_grid',
+                                            'canvas_zoom_min': 'canvas_canvas_zoom_min',
+                                            'canvas_zoom_max': 'canvas_canvas_zoom_max',
+                                            'canvas_zoom_default': 'canvas_canvas_zoom_default',
+                                            'canvas_zoom_step': 'canvas_canvas_zoom_step',
+                                            'canvas_drag_enabled': 'canvas_canvas_drag_enabled',
+                                            'canvas_resize_enabled': 'canvas_canvas_resize_enabled',
+                                            'canvas_rotate_enabled': 'canvas_canvas_rotate_enabled',
+                                            'canvas_multi_select': 'canvas_canvas_multi_select',
+                                            'canvas_selection_mode': 'canvas_canvas_selection_mode',
+                                            'canvas_keyboard_shortcuts': 'canvas_canvas_keyboard_shortcuts',
+                                            'canvas_export_quality': 'canvas_canvas_export_quality',
+                                            'canvas_export_format': 'canvas_canvas_export_format',
+                                            'canvas_export_transparent': 'canvas_canvas_export_transparent',
+                                            'canvas_fps_target': 'canvas_canvas_fps_target',
+                                            'canvas_memory_limit_js': 'canvas_canvas_memory_limit_js',
+                                            'canvas_memory_limit_php': 'canvas_canvas_memory_limit_php',
+                                            'canvas_lazy_loading_editor': 'canvas_canvas_lazy_loading_editor',
+                                            'canvas_performance_monitoring': 'canvas_canvas_performance_monitoring',
+                                            'canvas_error_reporting': 'canvas_canvas_error_reporting'
+                                        };
+
+                                        // Mettre à jour previewSystem.values avec les valeurs du serveur
+                                        Object.entries(keyMapping).forEach(([shortKey, longKey]) => {
+                                            if (data.saved_settings[shortKey] !== undefined) {
+                                                previewSystem.values[longKey] = data.saved_settings[shortKey];
+                                                console.log(`🔄 Preview system mis à jour: ${longKey} = ${data.saved_settings[shortKey]}`);
+                                            }
+                                        });
+                                    }
+
+                                    // Rafraîchir les previews avec les vraies valeurs
                                     previewSystem.refreshPreviews();
 
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
