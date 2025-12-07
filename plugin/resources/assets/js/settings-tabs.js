@@ -511,6 +511,11 @@
                 const formData = new FormData(form);
                 const formObject = {};
 
+                // Debug: voir toutes les données du formulaire
+                console.log('JS: FormData entries for', formId + ':', Array.from(formData.entries()));
+
+                // Convertir FormData en objet
+
                 // Convertir FormData en objet
                 for (let [key, value] of formData.entries()) {
                     // Gérer les cases à cocher multiples et les arrays
@@ -556,6 +561,9 @@
                 allData[formId] = formObject;
             }
         });
+
+        // Debug: voir les données finales
+        console.log('JS: Final allData:', allData);
 
         // Collecter aussi tous les champs input, select, textarea qui ne sont pas dans des formulaires
         // mais seulement ceux qui sont dans les sections de paramètres ou qui ont déjà le préfixe pdf_builder_
