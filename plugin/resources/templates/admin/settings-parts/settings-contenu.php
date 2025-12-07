@@ -446,8 +446,12 @@ $settings = get_option('pdf_builder_settings', array());
                     position: fixed !important;
                     top: 0 !important;
                     left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
                     width: 100vw !important;
                     height: 100vh !important;
+                    max-width: none !important;
+                    max-height: none !important;
                     z-index: 999999 !important;
                     display: none;
                     overflow: visible !important;
@@ -456,6 +460,13 @@ $settings = get_option('pdf_builder_settings', array());
                     border: none !important;
                     outline: none !important;
                     box-sizing: border-box !important;
+                    transform: none !important;
+                    filter: none !important;
+                    backdrop-filter: none !important;
+                    -webkit-transform: none !important;
+                    -moz-transform: none !important;
+                    -ms-transform: none !important;
+                    -o-transform: none !important;
                 }
 
                 .modal-overlay.show {
@@ -1665,6 +1676,11 @@ $settings = get_option('pdf_builder_settings', array());
                         // Afficher la modal
                         const modal = document.getElementById(modalId);
                         if (modal) {
+                            // Déplacer la modal dans le body pour éviter les contraintes des conteneurs parents
+                            if (!document.body.contains(modal)) {
+                                document.body.appendChild(modal);
+                            }
+
                             modal.style.display = 'block';
                             modal.classList.add('show');
                         }
