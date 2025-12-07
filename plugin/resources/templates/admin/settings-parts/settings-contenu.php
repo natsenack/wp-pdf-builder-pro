@@ -11,10 +11,10 @@ require_once __DIR__ . '/settings-helpers.php';
 $settings = get_option('pdf_builder_settings', array());
 
 error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . ($settings['pdf_builder_canvas_shadow_enabled'] ?? 'NOT_SET'));
-error_log("[PDF Builder Debug] Page load: grid_enabled: " . get_option('pdf_builder_canvas_grid_enabled', 'DEFAULT'));
-error_log("[PDF Builder Debug] Page load: guides_enabled: " . get_option('pdf_builder_canvas_guides_enabled', 'DEFAULT'));
-error_log("[PDF Builder Debug] Page load: snap_to_grid: " . get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT'));
-error_log("[PDF Builder Debug] Page load: grid_size: " . get_option('pdf_builder_canvas_grid_size', 'DEFAULT'));
+error_log("[PDF Builder Debug] Page load: grid_enabled: " . get_option('pdf_builder_canvas_grid_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_grid_enabled', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: guides_enabled: " . get_option('pdf_builder_canvas_guides_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_guides_enabled', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: snap_to_grid: " . get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: grid_size: " . get_option('pdf_builder_canvas_grid_size', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_grid_size', 'DEFAULT')) . ")");
 
 ?>
             <h2>🎨 Contenu & Design</h2>
