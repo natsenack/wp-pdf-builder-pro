@@ -525,7 +525,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                             <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
@@ -535,7 +535,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                             <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
@@ -544,15 +544,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                         <tr>
                             <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
                             <td>
-                                <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?> />
+                                <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" <?php echo get_option('pdf_builder_canvas_grid_enabled') !== '1' ? 'disabled' : ''; ?> />
                                 <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                             <td>
-                                <label class="toggle-switch <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>>
+                                <label class="toggle-switch <?php echo get_option('pdf_builder_canvas_grid_enabled') !== '1' ? 'disabled' : ''; ?>">
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled') !== '1' ? 'disabled' : ''; ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
@@ -594,7 +594,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Permet de déplacer les éléments sur le canvas</p>
@@ -604,7 +604,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_resize_enabled">Redimensionnement activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Affiche les poignées pour redimensionner les éléments</p>
@@ -614,7 +614,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_rotate_enabled">Rotation activée</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Permet de faire pivoter les éléments avec la souris</p>
@@ -624,7 +624,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_multi_select" name="pdf_builder_canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_multi_select" name="pdf_builder_canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
@@ -653,7 +653,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
@@ -780,7 +780,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="pdf_builder_canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="pdf_builder_canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
@@ -790,7 +790,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_preload_critical" name="pdf_builder_canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_preload_critical" name="pdf_builder_canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
@@ -838,7 +838,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                                 <th scope="row"><label for="canvas_lazy_loading_plugin">Chargement paresseux (Plugin)</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_plugin" name="pdf_builder_canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
+                                        <input type="checkbox" id="canvas_lazy_loading_plugin" name="pdf_builder_canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Charge les données seulement quand nécessaire</p>
