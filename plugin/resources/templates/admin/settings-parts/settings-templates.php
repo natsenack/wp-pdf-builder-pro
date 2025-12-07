@@ -433,7 +433,7 @@ $current_mappings = $status_manager->get_current_mappings();
             </div>
         <?php else: ?>
             <!-- Formulaire de configuration -->
-            <form method="post" action="" id="templates-status-form">
+            <form method="post" action="" id="templates-status-form" data-custom-save="true">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
                 <!-- Grille des statuts -->
@@ -661,11 +661,20 @@ $current_mappings = $status_manager->get_current_mappings();
             saveBtn.disabled = true;
             saveBtn.textContent = 'Sauvegarde en cours...';
 
-            // Récupérer les données du formulaire
-            const formData = new FormData(document.getElementById('templates-status-form'));
-
-            // Ajouter l'action AJAX
+            // Collecter les données des selects manuellement
+            const formData = new FormData();
             formData.append('action', 'pdf_builder_save_order_status_templates');
+            formData.append('pdf_builder_settings_nonce', document.getElementById('pdf_builder_settings_nonce').value);
+
+            // Collecter toutes les valeurs des selects
+            const selects = document.querySelectorAll('#templates-status-form select[name^="pdf_builder_order_status_templates"]');
+            selects.forEach(select => {
+                if (select.value && select.value !== '') {
+                    formData.append(select.name, select.value);
+                }
+            });
+
+            console.log('Données collectées pour sauvegarde templates:', Array.from(formData.entries()));
 
             // Faire la requête AJAX
             fetch(ajaxurl, {
