@@ -1523,129 +1523,49 @@ foreach ($canvas_options as $option) {
 
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
-                        console.log('🚪 [OPEN MODAL] Début ouverture modal pour catégorie:', category);
-                        console.log('🔍 [OPEN MODAL] Timestamp:', new Date().toISOString());
-                        console.log('🔍 [OPEN MODAL] currentModalCategory avant:', currentModalCategory);
-                        console.log('🔍 [OPEN MODAL] URL actuelle:', window.location.href);
-                        console.log('🔍 [OPEN MODAL] UserAgent:', navigator.userAgent);
+                        console.log('🚪 Ouverture modal:', category);
 
-                        // Fermer toute modal existante avant d'en ouvrir une nouvelle
+                        // Fermer toute modal existante
                         if (currentModalCategory) {
-                            console.log('🔄 [OPEN MODAL] Fermeture de la modal existante:', currentModalCategory);
                             closeModal();
                         }
 
                         currentModalCategory = category;
-                        console.log('✅ [OPEN MODAL] currentModalCategory défini à:', currentModalCategory);
 
                         // Monitorer l'ouverture
-                        console.log('📊 [OPEN MODAL] Appel de modalMonitoring.trackModalOpen');
                         modalMonitoring.trackModalOpen(category);
 
                         // Générer le contenu de la modal
-                        console.log('🔧 [OPEN MODAL] Génération du contenu HTML pour la modal');
                         const modalContent = formGenerator.generateModalHTML(category);
-                        console.log('✅ [OPEN MODAL] Contenu généré, longueur:', modalContent.length, 'caractères');
 
                         // Insérer le contenu dans la modal
                         const modalId = `canvas-${category}-modal`;
-                        console.log('🔍 [OPEN MODAL] Recherche de la modal avec ID:', modalId);
                         const modalBody = document.querySelector(`#${modalId} .canvas-modal-body`);
-                        console.log('🔍 [OPEN MODAL] Modal body trouvé:', !!modalBody);
 
                         if (modalBody) {
                             modalBody.innerHTML = modalContent;
-                            console.log('✅ [OPEN MODAL] Contenu inséré dans le modal body');
                         } else {
-                            console.error('❌ [OPEN MODAL] Modal body NON trouvé pour:', modalId);
-                            console.log('🔍 [OPEN MODAL] Recherche de tous les éléments modal-body:', document.querySelectorAll('.canvas-modal-body'));
+                            console.error('❌ Modal body NON trouvé pour:', modalId);
                         }
 
-                        // Afficher la modal simplement en ajoutant la classe 'active' à l'overlay
+                        // Afficher la modal en ajoutant la classe 'active' à l'overlay
                         const modal = document.getElementById(modalId);
-                        console.log('🔍 [OPEN MODAL] Modal element trouvé:', !!modal);
-                        console.log('🔍 [OPEN MODAL] Modal element details:', modal ? {
-                            id: modal.id,
-                            className: modal.className,
-                            style: modal.style.cssText,
-                            offsetParent: modal.offsetParent
-                        } : 'null');
 
                         if (modal) {
-                            // Recherche de l'overlay séparé (plus dans la modal elle-même)
                             const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
-                            console.log('🔍 [OPEN MODAL] Overlay séparé trouvé:', !!overlay);
-                            console.log('🔍 [OPEN MODAL] Overlay details:', overlay ? {
-                                id: overlay.id,
-                                className: overlay.className,
-                                style: overlay.style.cssText,
-                                children: overlay.children.length
-                            } : 'null');
 
                             if (overlay) {
-                                console.log('🔍 [OPEN MODAL] Overlay déjà actif ?', overlay.classList.contains('active'));
-                                console.log('🔍 [OPEN MODAL] Styles calculés de l\'overlay:', window.getComputedStyle(overlay));
-
                                 if (!overlay.classList.contains('active')) {
-                                    console.log('🔍 [OPEN MODAL] Ajout de la classe active à l\'overlay');
                                     overlay.classList.add('active');
                                     document.body.classList.add('canvas-modal-open');
-                                    console.log('✅ [OPEN MODAL] Classe active ajoutée');
-                                } else {
-                                    console.log('🔍 [OPEN MODAL] Overlay déjà actif, pas besoin d\'ajouter');
                                 }
 
-                                console.log('🔍 [OPEN MODAL] Classes de l\'overlay après ajout:', overlay.className);
-                                console.log('🔍 [OPEN MODAL] Styles calculés après ajout:', window.getComputedStyle(overlay));
-                                console.log('🎉 [OPEN MODAL] Modal ouverte avec succès:', modalId);
-
-                                // Vérification finale de la visibilité
-                                setTimeout(() => {
-                                    console.log('🔍 [OPEN MODAL] Vérification 100ms après ouverture:');
-                                    console.log('   - Overlay visible:', overlay.offsetWidth > 0 && overlay.offsetHeight > 0);
-                                    console.log('   - Overlay classes:', overlay.className);
-                                    console.log('   - Body classes:', document.body.className);
-                                    console.log('   - Styles calculés:', window.getComputedStyle(overlay).display);
-                                    console.log('   - Overlay position:', overlay.getBoundingClientRect());
-                                    console.log('   - Overlay z-index:', window.getComputedStyle(overlay).zIndex);
-                                    console.log('   - Overlay parent:', overlay.parentElement ? overlay.parentElement.tagName + '.' + overlay.parentElement.className : 'null');
-                                    console.log('   - Overlay in DOM:', document.contains(overlay));
-                                    console.log('   - Overlay offsetParent:', overlay.offsetParent);
-                                    console.log('   - Overlay visibility:', window.getComputedStyle(overlay).visibility);
-                                    console.log('   - Overlay opacity:', window.getComputedStyle(overlay).opacity);
-
-                                    // Vérifier si l'overlay est masqué par un parent
-                                    let parent = overlay.parentElement;
-                                    let depth = 0;
-                                    while (parent && depth < 5) {
-                                        console.log(`   - Parent ${depth}: ${parent.tagName}.${parent.className} - display: ${window.getComputedStyle(parent).display}, visibility: ${window.getComputedStyle(parent).visibility}, overflow: ${window.getComputedStyle(parent).overflow}`);
-                                        parent = parent.parentElement;
-                                        depth++;
-                                    }
-
-                                    // Forcer l'affichage pour test
-                                    console.log('🔧 [DEBUG] Tentative de forçage de l\'affichage...');
-                                    overlay.style.display = 'flex !important';
-                                    overlay.style.visibility = 'visible !important';
-                                    overlay.style.opacity = '1 !important';
-                                    overlay.style.zIndex = '9999999 !important';
-
-                                    setTimeout(() => {
-                                        console.log('🔍 [DEBUG] Après forçage - visible:', overlay.offsetWidth > 0 && overlay.offsetHeight > 0);
-                                        console.log('🔍 [DEBUG] Après forçage - position:', overlay.getBoundingClientRect());
-                                    }, 50);
-
-                                }, 100);
-
+                                console.log('✅ Modal ouverte:', modalId);
                             } else {
-                                console.error('❌ [OPEN MODAL] Overlay non trouvé dans la modal:', modalId);
-                                console.log('🔍 [OPEN MODAL] Contenu de la modal:', modal.innerHTML.substring(0, 500) + '...');
-                                console.log('🔍 [OPEN MODAL] Tous les éléments avec canvas-modal-overlay:', document.querySelectorAll('.canvas-modal-overlay'));
+                                console.error('❌ Overlay séparé NON trouvé pour:', category);
                             }
                         } else {
-                            console.error('❌ [OPEN MODAL] Modal non trouvée:', modalId);
-                            console.log('🔍 [OPEN MODAL] Modales disponibles:', Array.from(document.querySelectorAll('[id*="canvas-"][id*="-modal"]')).map(el => el.id));
-                            console.log('🔍 [OPEN MODAL] Toutes les modales dans le DOM:', document.querySelectorAll('[id*="modal"]'));
+                            console.error('❌ Modal NON trouvée:', modalId);
                         }
                     }
 
@@ -1935,71 +1855,36 @@ foreach ($canvas_options as $option) {
 
                     // Fermer la modal
                     function closeModal() {
-                        console.log('🚪 [CLOSE MODAL] Début fermeture modal');
-                        console.log('🔍 [CLOSE MODAL] Timestamp:', new Date().toISOString());
-                        console.log('🔍 [CLOSE MODAL] currentModalCategory actuel:', currentModalCategory);
+                        console.log('🚪 Fermeture modal');
 
                         if (!currentModalCategory) {
-                            console.log('⚠️ [CLOSE MODAL] Aucune modal ouverte, rien à fermer');
                             return;
                         }
 
-                        console.log('📊 [CLOSE MODAL] Appel de modalMonitoring.trackModalClose pour:', currentModalCategory);
                         // Monitorer la fermeture
                         modalMonitoring.trackModalClose(currentModalCategory);
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
-                        console.log('🔍 [CLOSE MODAL] Recherche de la modal avec ID:', modalId);
                         const modal = document.getElementById(modalId);
-                        console.log('🔍 [CLOSE MODAL] Modal element trouvé:', !!modal);
 
-                        // Fermer la modal simplement en retirant la classe 'active' de l'overlay
+                        // Fermer la modal en retirant la classe 'active' de l'overlay
                         if (modal) {
-                            // Recherche de l'overlay séparé (plus dans la modal elle-même)
                             const overlay = document.getElementById(`canvas-${currentModalCategory}-modal-overlay`);
-                            console.log('🔍 [CLOSE MODAL] Overlay séparé trouvé:', !!overlay);
-                            console.log('🔍 [CLOSE MODAL] Overlay details:', overlay ? {
-                                id: overlay.id,
-                                className: overlay.className,
-                                style: overlay.style.cssText
-                            } : 'null');
 
                             if (overlay) {
-                                console.log('🔍 [CLOSE MODAL] Overlay actif avant fermeture ?', overlay.classList.contains('active'));
-                                console.log('🔍 [CLOSE MODAL] Styles calculés avant:', window.getComputedStyle(overlay).display);
-
                                 if (overlay.classList.contains('active')) {
-                                    console.log('🔍 [CLOSE MODAL] Retrait de la classe active de l\'overlay');
                                     overlay.classList.remove('active');
                                     document.body.classList.remove('canvas-modal-open');
-                                    console.log('✅ [CLOSE MODAL] Classe active retirée');
-                                } else {
-                                    console.log('🔍 [CLOSE MODAL] Overlay déjà inactif');
                                 }
 
-                                console.log('🔍 [CLOSE MODAL] Classes de l\'overlay après retrait:', overlay.className);
-                                console.log('🔍 [CLOSE MODAL] Styles calculés après:', window.getComputedStyle(overlay).display);
-
-                                // Vérification finale de la fermeture
-                                setTimeout(() => {
-                                    console.log('🔍 [CLOSE MODAL] Vérification 100ms après fermeture:');
-                                    console.log('   - Overlay visible:', overlay.offsetWidth > 0 && overlay.offsetHeight > 0);
-                                    console.log('   - Overlay classes:', overlay.className);
-                                    console.log('   - Body classes:', document.body.className);
-                                    console.log('   - Styles calculés:', window.getComputedStyle(overlay).display);
-                                    console.log('   - Overlay position:', overlay.getBoundingClientRect());
-                                }, 100);
-
                             } else {
-                                console.error('❌ [CLOSE MODAL] Overlay non trouvé dans la modal:', modalId);
+                                console.error('❌ Overlay séparé NON trouvé pour:', currentModalCategory);
                             }
                         } else {
-                            console.error('❌ [CLOSE MODAL] Modal non trouvée:', modalId);
+                            console.error('❌ Modal NON trouvée:', modalId);
                         }
 
-                        console.log('🔄 [CLOSE MODAL] Reset de currentModalCategory à null');
                         currentModalCategory = null;
-                        console.log('✅ [CLOSE MODAL] Modal fermée avec succès');
                     }
 
                     // Sauvegarder les paramètres
