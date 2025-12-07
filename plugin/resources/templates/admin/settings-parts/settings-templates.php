@@ -468,8 +468,6 @@ $current_mappings = $status_manager->get_current_mappings();
                                     <option value="">-- Aucun template --</option>
                                     <?php foreach ($templates as $template_id => $template_title): 
                                         $is_selected = ($current_mappings[$status_key] ?? '') === $template_id;
-                                        // Debug temporaire
-                                        error_log("DEBUG Template: status_key=$status_key, current_mapping=" . ($current_mappings[$status_key] ?? 'NULL') . ", template_id=$template_id, is_selected=$is_selected");
                                         ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
                                                 <?php pdf_builder_safe_selected($current_mappings[$status_key] ?? '', $template_id); ?>>        
