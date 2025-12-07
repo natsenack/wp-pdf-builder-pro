@@ -581,13 +581,13 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
     // Attendre que le DOM soit chargé
     document.addEventListener('DOMContentLoaded', function() {
-        const saveBtn = document.getElementById('save-templates-btn');
+        var saveBtn = document.getElementById('save-templates-btn');
         if (!saveBtn) return;
 
         // Gestionnaire de sauvegarde
         saveBtn.addEventListener('click', function() {
             // Collecter toutes les données du formulaire
-            const formData = new FormData(document.getElementById('templates-status-form'));
+            var formData = new FormData(document.getElementById('templates-status-form'));
 
             // Ajouter l'action
             formData.append('action', 'pdf_builder_ajax_handler');
@@ -597,136 +597,90 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
             saveBtn.disabled = true;
             saveBtn.textContent = 'Sauvegarde en cours...';
 
-            // Envoyer la requête
-            fetch(pdfBuilderAjax.ajaxurl, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Afficher un message de succès
-                    showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
+            // Envoyer la requête avec XMLHttpRequest (plus compatible)
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data.success) {
+                            // Afficher un message de succès
+                            showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
 
-                    // Mise à jour en temps réel des prévisualisations après sauvegarde
-                    updatePreviewsAfterSave();
-                } else {
-                    var errorMsg = 'Erreur inconnue';
-                    if (data.data && data.data.message) {
-                        errorMsg = data.data.message;
+                            // Mise à jour simple des prévisualisations après sauvegarde
+                            updatePreviewsAfterSave();
+                        } else {
+                            var errorMsg = 'Erreur inconnue';
+                            if (data.data && data.data.message) {
+                                errorMsg = data.data.message;
+                            }
+                            showSaveMessage('Erreur lors de la sauvegarde: ' + errorMsg, 'error');
+                        }
+                    } catch (e) {
+                        console.error('Erreur parsing JSON:', e);
+                        showSaveMessage('Erreur de communication avec le serveur', 'error');
                     }
-                    showSaveMessage('Erreur lors de la sauvegarde: ' + errorMsg, 'error');
+
+                    // Réactiver le bouton
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
                 }
-            })
-            .catch(error => {
-                console.error('Erreur AJAX:', error);
-                showSaveMessage('Erreur de communication avec le serveur', 'error');
-            })
-            .finally(() => {
-                // Réactiver le bouton
-                saveBtn.disabled = false;
-                saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
-            });
+            };
+            xhr.send(formData);
         });
 
-        // Fonction pour mettre à jour les prévisualisations après sauvegarde
-        function updateTemplatePreviews() {
-            // Récupérer les données sauvegardées depuis le serveur
-            fetch(pdfBuilderAjax.ajaxurl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'action': 'pdf_builder_get_template_mappings',
-                    'nonce': pdfBuilderAjax.nonce
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.data) {
-                    const mappings = data.data.mappings || {};
-                    const templates = data.data.templates || {};
-
-        }
-
-        // Stockage des templates disponibles
-        let availableTemplates = {};
-
-        // Fonction pour mettre à jour les prévisualisations immédiatement après sauvegarde
+        // Fonction simple pour mettre à jour les prévisualisations
         function updatePreviewsAfterSave() {
-            // Récupérer la liste des templates disponibles (une seule fois)
-            var templatesLoaded = false;
-            for (var key in availableTemplates) {
-                if (availableTemplates.hasOwnProperty(key)) {
-                    templatesLoaded = true;
-                    break;
-                }
-            }
-
-            if (!templatesLoaded) {
-                fetch(pdfBuilderAjax.ajaxurl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        'action': 'pdf_builder_get_template_mappings',
-                        'nonce': pdfBuilderAjax.nonce
-                    })
-                })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    if (data.success && data.data && data.data.templates) {
-                        availableTemplates = data.data.templates;
-                        // Maintenant mettre à jour les prévisualisations
-                        updatePreviewsWithCurrentValues();
+            // Faire un appel AJAX simple pour récupérer les données
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data.success && data.data && data.data.templates) {
+                            // Mettre à jour les prévisualisations avec les données reçues
+                            updatePreviewsWithData(data.data.mappings, data.data.templates);
+                        }
+                    } catch (e) {
+                        console.error('Erreur parsing JSON:', e);
                     }
-                })
-                .catch(function(error) {
-                    console.error('Erreur lors du chargement des templates:', error);
-                });
-            } else {
-                // Templates déjà chargés, mettre à jour immédiatement
-                updatePreviewsWithCurrentValues();
-            }
+                }
+            };
+            xhr.send('action=pdf_builder_get_template_mappings&nonce=' + pdfBuilderAjax.nonce);
         }
 
-        // Fonction pour mettre à jour les prévisualisations avec les valeurs actuelles des selects
-        function updatePreviewsWithCurrentValues() {
-            document.querySelectorAll('.template-preview').forEach(preview => {
-                const select = preview.closest('article').querySelector('.template-select');
+        // Fonction pour mettre à jour les prévisualisations avec les données
+        function updatePreviewsWithData(mappings, templates) {
+            var previews = document.querySelectorAll('.template-preview');
+            for (var i = 0; i < previews.length; i++) {
+                var preview = previews[i];
+                var select = preview.closest('article').querySelector('.template-select');
                 if (select) {
-                    const selectedTemplateId = select.value;
-
-                    if (selectedTemplateId && availableTemplates[selectedTemplateId]) {
-                        // Template assigné - afficher le nom
-                        preview.innerHTML = `<p class="current-template">${availableTemplates[selectedTemplateId]}</p>`;
+                    var selectedValue = select.value;
+                    if (selectedValue && templates[selectedValue]) {
+                        preview.innerHTML = '<p class="current-template">' + templates[selectedValue] + '</p>';
                     } else {
-                        // Aucun template assigné
                         preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
                     }
                 }
-            });
+            }
         }
 
         function showSaveMessage(message, type) {
             // Créer un élément de message temporaire
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
-            messageDiv.innerHTML = `<p>${message}</p>`;
+            var messageDiv = document.createElement('div');
+            messageDiv.className = 'notice notice-' + (type === 'success' ? 'success' : 'error') + ' is-dismissible';
+            messageDiv.innerHTML = '<p>' + message + '</p>';
 
             // L'insérer au début du formulaire
-            const form = document.getElementById('templates-status-form');
+            var form = document.getElementById('templates-status-form');
             form.parentNode.insertBefore(messageDiv, form);
 
             // Auto-suppression après 5 secondes
-            setTimeout(() => {
+            setTimeout(function() {
                 if (messageDiv.parentNode) {
                     messageDiv.parentNode.removeChild(messageDiv);
                 }
