@@ -2417,24 +2417,24 @@ body.canvas-modal-open {
 }
 
 .canvas-modal-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: rgba(0, 0, 0, 0.5) !important; /* Fond semi-transparent pour l'overlay */
-    z-index: 99999999 !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important; /* Supprimer la bordure de debug */
-    box-sizing: border-box !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
 }
 
 .canvas-modal-overlay.active {
-    display: flex !important;
+    display: flex;
 }
 
 .canvas-modal {
