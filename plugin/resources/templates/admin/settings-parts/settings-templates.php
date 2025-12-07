@@ -584,6 +584,65 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
         const saveBtn = document.getElementById('save-templates-btn');
         if (!saveBtn) return;
 
+        // Liste des templates disponibles (sera remplie lors de la première mise à jour)
+        let availableTemplates = {};
+
+        // Fonction pour mettre à jour les prévisualisations en temps réel
+        function updateTemplatePreview(selectElement) {
+            const statusKey = selectElement.id.replace('template_', '');
+            const selectedTemplateId = selectElement.value;
+            const previewDiv = selectElement.closest('article').querySelector('.template-preview');
+
+            if (!previewDiv) return;
+
+            if (selectedTemplateId && availableTemplates[selectedTemplateId]) {
+                // Template assigné - afficher le nom
+                previewDiv.innerHTML = `<p class="current-template">${availableTemplates[selectedTemplateId]}</p>`;
+            } else {
+                // Aucun template assigné
+                previewDiv.innerHTML = '<p class="no-template">Aucun template assigné</p>';
+            }
+        }
+
+        // Ajouter les event listeners pour la mise à jour en temps réel
+        document.querySelectorAll('.template-select').forEach(select => {
+            select.addEventListener('change', function() {
+                updateTemplatePreview(this);
+            });
+        });
+
+        // Fonction pour charger les templates disponibles
+        function loadAvailableTemplates() {
+            fetch(pdfBuilderAjax.ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'action': 'pdf_builder_get_template_mappings',
+                    'nonce': pdfBuilderAjax.nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data && data.data.templates) {
+                    availableTemplates = data.data.templates;
+                    console.log('Templates chargés:', availableTemplates);
+
+                    // Mettre à jour toutes les prévisualisations avec l'état actuel
+                    document.querySelectorAll('.template-select').forEach(select => {
+                        updateTemplatePreview(select);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des templates:', error);
+            });
+        }
+
+        // Charger les templates au démarrage
+        loadAvailableTemplates();
+
         // Gestionnaire de sauvegarde
         saveBtn.addEventListener('click', function() {
             // Collecter toutes les données du formulaire
@@ -611,8 +670,8 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                     // Afficher un message de succès
                     showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
 
-                    // Mettre à jour les prévisualisations après sauvegarde
-                    updateTemplatePreviews();
+                    // Recharger les templates et mettre à jour les prévisualisations
+                    loadAvailableTemplates();
                 } else {
                     showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
                 }
