@@ -2338,6 +2338,9 @@ $settings = get_option('pdf_builder_settings', array());
                             .then(data => {
                                 const saveTime = Date.now() - saveStartTime;
                                 console.log('Response data:', data);
+                                if (data.data && data.data.canvas_shadow_enabled !== undefined) {
+                                    console.log('🔍 DEBUG: Server returned shadow_enabled:', data.data.canvas_shadow_enabled, '(type:', typeof data.data.canvas_shadow_enabled, ')');
+                                }
                                 if (data.success) {
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
