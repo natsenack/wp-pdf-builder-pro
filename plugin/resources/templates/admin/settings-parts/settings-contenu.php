@@ -10,7 +10,7 @@ require_once __DIR__ . '/settings-helpers.php';
 
 $settings = get_option('pdf_builder_settings', array());
 
-error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . ($settings['pdf_builder_canvas_shadow_enabled'] ?? 'NOT_SET'));
+error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . ($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? 'NOT_SET'));
 error_log("[PDF Builder Debug] Page load: grid_enabled: " . get_option('pdf_builder_canvas_canvas_grid_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_grid_enabled', 'DEFAULT')) . ")");
 error_log("[PDF Builder Debug] Page load: guides_enabled: " . get_option('pdf_builder_canvas_canvas_guides_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_guides_enabled', 'DEFAULT')) . ")");
 error_log("[PDF Builder Debug] Page load: snap_to_grid: " . get_option('pdf_builder_canvas_canvas_snap_to_grid', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_snap_to_grid', 'DEFAULT')) . ")");
@@ -18,7 +18,7 @@ error_log("[PDF Builder Debug] Page load: grid_size: " . get_option('pdf_builder
 
 // Debug: check all canvas options
 global $wpdb;
-$canvas_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_canvas_%' LIMIT 20");
+$canvas_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_canvas_canvas_%' LIMIT 20");
 error_log("[PDF Builder Debug] All canvas options in DB:");
 foreach ($canvas_options as $option) {
     error_log("  {$option->option_name} = {$option->option_value} (type: " . gettype($option->option_value) . ")");
@@ -1752,7 +1752,7 @@ foreach ($canvas_options as $option) {
                             modalMonitoring.trackDependencyUpdate(masterField, dependentFields, isEnabled);
 
                             dependentFields.forEach(dependentField => {
-                                const fieldElement = document.querySelector(`[name="pdf_builder_canvas_${dependentField}"]`);
+                                const fieldElement = document.querySelector(`[name="pdf_builder_canvas_canvas_${dependentField}"]`);
                                 if (fieldElement) {
                                     const formGroup = fieldElement.closest('.form-group');
                                     if (formGroup) {
@@ -2362,7 +2362,7 @@ foreach ($canvas_options as $option) {
 
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
                                     Object.entries(values).forEach(([key, value]) => {
-                                        if (key.startsWith('pdf_builder_canvas_')) {
+                                        if (key.startsWith('pdf_builder_canvas_canvas_')) {
                                             const hiddenField = document.querySelector(`input[type="hidden"][name="${key}"]`);
                                             if (hiddenField) {
                                                 hiddenField.value = value;
@@ -2391,7 +2391,7 @@ foreach ($canvas_options as $option) {
 
                             // Écouter les changements sur les champs qui ont des dépendances
                             Object.keys(formGenerator.fieldDependencies).forEach(masterField => {
-                                const masterInput = currentModal.querySelector(`input[name="pdf_builder_canvas_${masterField}"], select[name="pdf_builder_canvas_${masterField}"]`);
+                                const masterInput = currentModal.querySelector(`input[name="pdf_builder_canvas_canvas_${masterField}"], select[name="pdf_builder_canvas_canvas_${masterField}"]`);
                                 if (masterInput) {
                                     masterInput.addEventListener('change', (e) => {
                                         const isEnabled = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -2514,7 +2514,7 @@ foreach ($canvas_options as $option) {
                             if (target.type === 'checkbox' || target.classList.contains('toggle-checkbox')) {
                                 const fieldName = target.name || target.getAttribute('data-field');
 
-                                if (fieldName && fieldName.startsWith('pdf_builder_canvas_')) {
+                                if (fieldName && fieldName.startsWith('pdf_builder_canvas_canvas_')) {
                                     // Trouver le champ caché correspondant
                                     const hiddenField = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
 
