@@ -215,7 +215,7 @@ foreach ($canvas_options as $option) {
                                         <button class="zoom-btn zoom-plus" disabled>+</button>
                                     </div>
                                     <div class="zoom-info">
-                                        <span>10% - 500%</span>
+                                        <span>25% - 500%</span>
                                         <span>Pas: 25%</span>
                                     </div>
                                 </div>
@@ -332,11 +332,11 @@ foreach ($canvas_options as $option) {
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM JS</span>
-                                            <span class="metric-value">256MB</span>
+                                            <span class="metric-value">50MB</span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM PHP</span>
-                                            <span class="metric-value">256MB</span>
+                                            <span class="metric-value">128MB</span>
                                         </div>
                                     </div>
                                     <div class="performance-status">
@@ -1404,29 +1404,29 @@ foreach ($canvas_options as $option) {
                             canvas_canvas_grid_size: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>,
                             canvas_canvas_guides_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_guides_enabled', '1') === '1'); ?>,
                             canvas_canvas_snap_to_grid: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1') === '1'); ?>,
-                            canvas_canvas_zoom_min: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_min', '25')); ?>,
-                            canvas_canvas_zoom_max: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_max', '500')); ?>,
-                            canvas_canvas_zoom_default: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_default', '100')); ?>,
-                            canvas_canvas_zoom_step: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_step', '25')); ?>,
-                            canvas_canvas_export_quality: <?php echo json_encode(get_option('pdf_builder_canvas_export_quality', '90')); ?>,
-                            canvas_canvas_export_format: <?php echo json_encode(get_option('pdf_builder_canvas_export_format', 'png')); ?>,
-                            canvas_canvas_export_transparent: <?php echo json_encode(get_option('pdf_builder_canvas_export_transparent', '0') === '1'); ?>,
-                            canvas_canvas_drag_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_drag_enabled', '1') === '1'); ?>,
-                            canvas_canvas_resize_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_resize_enabled', '1') === '1'); ?>,
-                            canvas_canvas_rotate_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_rotate_enabled', '1') === '1'); ?>,
-                            canvas_canvas_multi_select: <?php echo json_encode(get_option('pdf_builder_canvas_multi_select', '1') === '1'); ?>,
-                            canvas_canvas_selection_mode: <?php echo json_encode(get_option('pdf_builder_canvas_selection_mode', 'single')); ?>,
-                            canvas_canvas_keyboard_shortcuts: <?php echo json_encode(get_option('pdf_builder_canvas_keyboard_shortcuts', '1') === '1'); ?>,
-                            canvas_canvas_fps_target: <?php echo json_encode(get_option('pdf_builder_canvas_fps_target', '60')); ?>,
-                            canvas_canvas_memory_limit_js: <?php echo json_encode(get_option('pdf_builder_canvas_memory_limit_js', '50')); ?>,
-                            canvas_canvas_response_timeout: <?php echo json_encode(get_option('pdf_builder_canvas_response_timeout', '5000')); ?>,
-                            canvas_canvas_lazy_loading_editor: <?php echo json_encode(get_option('pdf_builder_canvas_lazy_loading_editor', '1') === '1'); ?>,
-                            canvas_canvas_preload_critical: <?php echo json_encode(get_option('pdf_builder_canvas_preload_critical', '1') === '1'); ?>,
-                            canvas_canvas_lazy_loading_plugin: <?php echo json_encode(get_option('pdf_builder_canvas_lazy_loading_plugin', '1') === '1'); ?>,
-                            canvas_canvas_debug_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_debug_enabled', '0') === '1'); ?>,
-                            canvas_canvas_performance_monitoring: <?php echo json_encode(get_option('pdf_builder_canvas_performance_monitoring', '0') === '1'); ?>,
-                            canvas_canvas_error_reporting: <?php echo json_encode(get_option('pdf_builder_canvas_error_reporting', '0') === '1'); ?>,
-                            canvas_canvas_memory_limit_php: <?php echo json_encode(get_option('pdf_builder_canvas_memory_limit_php', '128')); ?>
+                            canvas_canvas_zoom_min: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_min', '25')); ?>,
+                            canvas_canvas_zoom_max: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_max', '500')); ?>,
+                            canvas_canvas_zoom_default: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_default', '100')); ?>,
+                            canvas_canvas_zoom_step: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_step', '25')); ?>,
+                            canvas_canvas_export_quality: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_export_quality', '90')); ?>,
+                            canvas_canvas_export_format: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_export_format', 'png')); ?>,
+                            canvas_canvas_export_transparent: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_export_transparent', '0') === '1'); ?>,
+                            canvas_canvas_drag_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_drag_enabled', '1') === '1'); ?>,
+                            canvas_canvas_resize_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_resize_enabled', '1') === '1'); ?>,
+                            canvas_canvas_rotate_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_rotate_enabled', '1') === '1'); ?>,
+                            canvas_canvas_multi_select: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_multi_select', '1') === '1'); ?>,
+                            canvas_canvas_selection_mode: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_selection_mode', 'single')); ?>,
+                            canvas_canvas_keyboard_shortcuts: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_keyboard_shortcuts', '1') === '1'); ?>,
+                            canvas_canvas_fps_target: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_fps_target', '60')); ?>,
+                            canvas_canvas_memory_limit_js: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_memory_limit_js', '50')); ?>,
+                            canvas_canvas_response_timeout: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_response_timeout', '5000')); ?>,
+                            canvas_canvas_lazy_loading_editor: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1') === '1'); ?>,
+                            canvas_canvas_preload_critical: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_preload_critical', '1') === '1'); ?>,
+                            canvas_canvas_lazy_loading_plugin: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_lazy_loading_plugin', '1') === '1'); ?>,
+                            canvas_canvas_debug_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_debug_enabled', '0') === '1'); ?>,
+                            canvas_canvas_performance_monitoring: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_performance_monitoring', '0') === '1'); ?>,
+                            canvas_canvas_error_reporting: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_error_reporting', '0') === '1'); ?>,
+                            canvas_canvas_memory_limit_php: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_memory_limit_php', '128')); ?>
                         },
 
                         // Mettre à jour une valeur et rafraîchir les previews
