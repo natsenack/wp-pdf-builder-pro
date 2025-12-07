@@ -421,10 +421,10 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
     <!-- En-tête -->
     <header>
         <h2 style="display: flex; justify-content: space-between; align-items: center;">
-            <span>[TEMPLATES] Templates par Statut de Commande</span>
+            <span>📋 Templates par Statut de Commande</span>
             <?php if (!empty($custom_status_plugins)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #666;">
-                    [PLUGINS] Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
+                    🔌 Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
                 </span>
             <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #28a745;">
@@ -463,7 +463,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                                         ?>
                                         <span class="custom-status-indicator"
                                               data-tooltip="<?php echo esc_attr($tooltip_text); ?>"
-                                              style="font-family: Arial, sans-serif;">[SEARCH]</span>
+                                              style="font-family: Arial, sans-serif;">🔍</span>
                                     <?php endif; ?>
                                 </h4>
                             </header>
@@ -471,7 +471,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                             <!-- Sélecteur de template -->
                             <div class="template-selector">
                                 <label for="template_<?php echo esc_attr($status_key); ?>">
-                                    Template par défaut :
+                                    📄 Template par défaut :
                                 </label>
                                 <select name="pdf_builder_order_status_templates[<?php echo esc_attr($status_key); ?>]"
                                         id="template_<?php echo esc_attr($status_key); ?>"
@@ -509,10 +509,10 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                 <!-- Actions -->
                 <section class="templates-status-actions">
                     <button type="button" class="button button-primary" id="save-templates-btn">
-                        [SAVE] Sauvegarder les mappings
+                        💾 Sauvegarder les mappings
                     </button>
                     <button type="button" class="button button-secondary" onclick="PDFBuilderTabsAPI.resetTemplatesStatus()">
-                        [RESET] Réinitialiser
+                        🔄 Réinitialiser
                     </button>
                 </section>
             </form>
@@ -634,7 +634,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
                         // Réactiver le bouton
                         saveBtn.disabled = false;
-                        saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
+                        saveBtn.textContent = '💾 Sauvegarder les mappings';
                     }
                 };
                 xhr.send(formData);
