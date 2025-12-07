@@ -686,6 +686,4 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
         }
     });
 })();
-    });
-})();
 </script>
