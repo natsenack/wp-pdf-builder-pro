@@ -1469,7 +1469,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 320px; /* Hauteur fixe pour uniformiser */
 }
 
 .canvas-card::before {
