@@ -11,10 +11,10 @@ require_once __DIR__ . '/settings-helpers.php';
 $settings = get_option('pdf_builder_settings', array());
 
 error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . ($settings['pdf_builder_canvas_shadow_enabled'] ?? 'NOT_SET'));
-error_log("[PDF Builder Debug] Page load: grid_enabled: " . get_option('pdf_builder_canvas_grid_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_grid_enabled', 'DEFAULT')) . ")");
-error_log("[PDF Builder Debug] Page load: guides_enabled: " . get_option('pdf_builder_canvas_guides_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_guides_enabled', 'DEFAULT')) . ")");
-error_log("[PDF Builder Debug] Page load: snap_to_grid: " . get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT')) . ")");
-error_log("[PDF Builder Debug] Page load: grid_size: " . get_option('pdf_builder_canvas_grid_size', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_grid_size', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: grid_enabled: " . get_option('pdf_builder_canvas_canvas_grid_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_grid_enabled', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: guides_enabled: " . get_option('pdf_builder_canvas_canvas_guides_enabled', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_guides_enabled', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: snap_to_grid: " . get_option('pdf_builder_canvas_canvas_snap_to_grid', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_snap_to_grid', 'DEFAULT')) . ")");
+error_log("[PDF Builder Debug] Page load: grid_size: " . get_option('pdf_builder_canvas_canvas_grid_size', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_canvas_grid_size', 'DEFAULT')) . ")");
 
 // Debug: check all canvas options
 global $wpdb;
@@ -56,10 +56,10 @@ foreach ($canvas_options as $option) {
                     <input type="hidden" name="pdf_builder_canvas_border_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_width', '1')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_shadow_enabled', '0')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', '20')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_guides_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_guides_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_snap_to_grid" value="<?php echo esc_attr(get_option('pdf_builder_canvas_snap_to_grid', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_guides_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_guides_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_snap_to_grid" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_zoom_min" value="<?php echo esc_attr(get_option('pdf_builder_canvas_zoom_min', '25')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_zoom_max" value="<?php echo esc_attr(get_option('pdf_builder_canvas_zoom_max', '500')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_zoom_default" value="<?php echo esc_attr(get_option('pdf_builder_canvas_zoom_default', '100')); ?>">
@@ -1400,10 +1400,10 @@ foreach ($canvas_options as $option) {
                             canvas_border_color: <?php echo json_encode(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>,
                             canvas_border_width: <?php echo json_encode(get_option('pdf_builder_canvas_border_width', '1')); ?>,
                             canvas_shadow_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_shadow_enabled', '0') === '1'); ?>,
-                            canvas_grid_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_grid_enabled', '1') === '1'); ?>,
-                            canvas_grid_size: <?php echo json_encode(get_option('pdf_builder_canvas_grid_size', '20')); ?>,
-                            canvas_guides_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_guides_enabled', '1') === '1'); ?>,
-                            canvas_snap_to_grid: <?php echo json_encode(get_option('pdf_builder_canvas_snap_to_grid', '1') === '1'); ?>,
+                            canvas_grid_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_grid_enabled', '1') === '1'); ?>,
+                            canvas_grid_size: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>,
+                            canvas_guides_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_guides_enabled', '1') === '1'); ?>,
+                            canvas_snap_to_grid: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1') === '1'); ?>,
                             canvas_zoom_min: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_min', '25')); ?>,
                             canvas_zoom_max: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_max', '500')); ?>,
                             canvas_zoom_default: <?php echo json_encode(get_option('pdf_builder_canvas_zoom_default', '100')); ?>,
