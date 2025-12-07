@@ -673,15 +673,24 @@ $current_mappings = $status_manager->get_current_mappings();
             formData.append('action', 'pdf_builder_save_order_status_templates');
             formData.append('pdf_builder_settings_nonce', document.getElementById('pdf_builder_settings_nonce').value);
 
-            // Collecter toutes les valeurs des selects
+            // Collecter toutes les valeurs des selects dans un objet
+            const templatesData = {};
             const selects = document.querySelectorAll('#templates-status-form select[name^="pdf_builder_order_status_templates"]');
             selects.forEach(select => {
                 if (select.value && select.value !== '') {
-                    formData.append(select.name, select.value);
+                    // Extraire la clé du statut du name (pdf_builder_order_status_templates[wc-completed] -> wc-completed)
+                    const nameMatch = select.name.match(/pdf_builder_order_status_templates\[([^\]]+)\]/);
+                    if (nameMatch) {
+                        const statusKey = nameMatch[1];
+                        templatesData[statusKey] = select.value;
+                    }
                 }
             });
 
-            console.log('Données collectées pour sauvegarde templates:', Array.from(formData.entries()));
+            // Ajouter les données comme JSON
+            formData.append('templates_data', JSON.stringify(templatesData));
+
+            console.log('Données collectées pour sauvegarde templates:', templatesData);
 
             // Faire la requête AJAX
             fetch(ajaxurl, {

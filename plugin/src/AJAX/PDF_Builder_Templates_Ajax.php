@@ -24,7 +24,7 @@ class PdfBuilderTemplatesAjax
         add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'saveTemplateSettings'));
         add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'setDefaultTemplate'));
         add_action('wp_ajax_pdf_builder_delete_template', array($this, 'deleteTemplate'));
-        add_action('wp_ajax_pdf_builder_duplicate_template', array($this, 'duplicateTemplate'));
+        add_action('wp_ajax_pdf_builder_save_order_status_templates', array($this, 'saveOrderStatusTemplates'));
     }
 
     /**
@@ -494,6 +494,55 @@ class PdfBuilderTemplatesAjax
             ));
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la duplication: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Sauvegarde les mappings des templates par statut de commande
+     */
+    public function saveOrderStatusTemplates()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates_nonce')) {
+                wp_send_json_error('Nonce invalide');
+            }
+
+            // Récupérer les données JSON
+            $templates_data_json = $_POST['templates_data'] ?? '';
+            if (empty($templates_data_json)) {
+                wp_send_json_error('Données des templates manquantes');
+            }
+
+            // Décoder les données JSON
+            $templates_data = json_decode(stripslashes($templates_data_json), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                wp_send_json_error('Erreur lors du décodage des données JSON');
+            }
+
+            // Valider et nettoyer les données
+            $clean_data = array();
+            foreach ($templates_data as $status => $template_id) {
+                if (!empty($template_id) && is_numeric($template_id)) {
+                    $clean_data[$status] = intval($template_id);
+                }
+            }
+
+            // Sauvegarder dans les options WordPress
+            update_option('pdf_builder_order_status_templates', $clean_data);
+
+            wp_send_json_success(array(
+                'message' => 'Mappings des templates sauvegardés avec succès',
+                'saved_data' => $clean_data
+            ));
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 }
