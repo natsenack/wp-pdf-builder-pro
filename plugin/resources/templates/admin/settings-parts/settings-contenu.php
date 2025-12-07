@@ -1512,7 +1512,7 @@ foreach ($canvas_options as $option) {
 
                             modalInputs.forEach(input => {
                                 input.addEventListener('input', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
+                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
                                     console.log('Changement détecté (input):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
@@ -1529,7 +1529,7 @@ foreach ($canvas_options as $option) {
 
                                 // Pour les selects et autres contrôles qui utilisent 'change'
                                 input.addEventListener('change', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
+                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
                                     console.log('Changement détecté (change):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
@@ -2311,7 +2311,7 @@ foreach ($canvas_options as $option) {
                                 }
 
                                 // Mettre à jour la valeur dans le système de previews
-                                const previewKey = input.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
+                                const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                 previewSystem.values[previewKey] = value;
 
                                 // Debug log pour l'ombre
