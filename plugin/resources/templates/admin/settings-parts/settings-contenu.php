@@ -1544,61 +1544,6 @@ foreach ($canvas_options as $option) {
                         }
                     }
 
-                        // Attacher les événements de fermeture directement à la modal
-                        const modalElement = document.getElementById(modalId);
-                        if (modalElement) {
-                            // Fermeture avec le bouton X
-                            const closeBtn = modalElement.querySelector('.modal-close');
-                            if (closeBtn) {
-                                closeBtn.onclick = function(e) {
-                                    e.preventDefault();
-                                    console.log('Fermeture via bouton X');
-                                    closeModal();
-                                };
-                            }
-
-                            // Fermeture avec le bouton Annuler
-                            const cancelBtn = modalElement.querySelector('.modal-cancel');
-                            if (cancelBtn) {
-                                cancelBtn.onclick = function(e) {
-                                    e.preventDefault();
-                                    console.log('Fermeture via bouton Annuler');
-                                    closeModal();
-                                };
-                            }
-
-                            // Fermeture avec l'overlay
-                            const backdrop = modalElement.querySelector('.modal-backdrop');
-                            if (backdrop) {
-                                backdrop.onclick = function(e) {
-                                    console.log('Fermeture via backdrop');
-                                    closeModal();
-                                };
-                            }
-
-                            // Fermeture avec Échap
-                            const escapeHandler = function(e) {
-                                if (e.key === 'Escape') {
-                                    console.log('Fermeture via Échap');
-                                    closeModal();
-                                    document.removeEventListener('keydown', escapeHandler);
-                                }
-                            };
-                            document.addEventListener('keydown', escapeHandler);
-
-                            console.log('Événements de fermeture attachés à la modal');
-                        }
-                        }
-
-                        // Synchroniser les valeurs des champs
-                        modalSettingsManager.syncModalValues();
-
-                        // Configurer les gestionnaires d'événements pour les dépendances
-                        modalSettingsManager.setupDependencyHandlers();
-
-                        console.log('Modal ouverte avec succès pour:', category);
-                    }
-
                     // Gestionnaire centralisé des paramètres des modales
                     const modalSettingsManager = {
                         // Synchroniser les valeurs des champs cachés vers la modal actuelle
