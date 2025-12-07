@@ -956,9 +956,14 @@ $settings = get_option('pdf_builder_settings', array());
                         
                         // Remplacer le nonce par le bon
                         formData.delete('pdf_builder_canvas_nonce'); // Supprimer le mauvais nonce
-                        const settingsNonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
-                        if (settingsNonceField) {
-                            formData.append('nonce', settingsNonceField.value); // Ajouter le bon nonce
+                        if (pdfBuilderAjax && pdfBuilderAjax.nonce) {
+                            formData.append('nonce', pdfBuilderAjax.nonce); // Utiliser le nonce global
+                        } else {
+                            // Fallback : chercher le nonce dans la page
+                            const settingsNonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
+                            if (settingsNonceField) {
+                                formData.append('nonce', settingsNonceField.value);
+                            }
                         }
 
                         // Faire l'appel AJAX
