@@ -1523,49 +1523,60 @@ foreach ($canvas_options as $option) {
 
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
-                        console.log('🚪 Ouverture modal:', category);
+                        console.log('🚪 [OPEN MODAL] Ouverture modal:', category);
 
                         // Fermer toute modal existante
                         if (currentModalCategory) {
+                            console.log('🔄 [OPEN MODAL] Fermeture modal existante:', currentModalCategory);
                             closeModal();
                         }
 
                         currentModalCategory = category;
+                        console.log('✅ [OPEN MODAL] currentModalCategory défini:', currentModalCategory);
 
                         // Monitorer l'ouverture
                         modalMonitoring.trackModalOpen(category);
 
                         // Générer le contenu de la modal
                         const modalContent = formGenerator.generateModalHTML(category);
+                        console.log('📝 [OPEN MODAL] Contenu généré, longueur:', modalContent.length);
 
                         // Insérer le contenu dans la modal
                         const modalId = `canvas-${category}-modal`;
                         const modalBody = document.querySelector(`#${modalId} .canvas-modal-body`);
+                        console.log('🔍 [OPEN MODAL] Modal body trouvé:', !!modalBody, 'pour ID:', modalId);
 
                         if (modalBody) {
                             modalBody.innerHTML = modalContent;
+                            console.log('✅ [OPEN MODAL] Contenu inséré');
                         } else {
-                            console.error('❌ Modal body NON trouvé pour:', modalId);
+                            console.error('❌ [OPEN MODAL] Modal body NON trouvé pour:', modalId);
                         }
 
                         // Afficher la modal en ajoutant la classe 'active' à l'overlay
                         const modal = document.getElementById(modalId);
+                        console.log('🔍 [OPEN MODAL] Modal element trouvé:', !!modal);
 
                         if (modal) {
                             const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
+                            console.log('🔍 [OPEN MODAL] Overlay séparé trouvé:', !!overlay, 'ID:', `canvas-${category}-modal-overlay`);
 
                             if (overlay) {
-                                if (!overlay.classList.contains('active')) {
+                                const wasActive = overlay.classList.contains('active');
+                                console.log('🔍 [OPEN MODAL] Overlay était actif:', wasActive);
+
+                                if (!wasActive) {
                                     overlay.classList.add('active');
                                     document.body.classList.add('canvas-modal-open');
+                                    console.log('✅ [OPEN MODAL] Classe active ajoutée à overlay');
                                 }
 
-                                console.log('✅ Modal ouverte:', modalId);
+                                console.log('🎉 [OPEN MODAL] Modal ouverte:', modalId);
                             } else {
-                                console.error('❌ Overlay séparé NON trouvé pour:', category);
+                                console.error('❌ [OPEN MODAL] Overlay séparé NON trouvé pour:', category);
                             }
                         } else {
-                            console.error('❌ Modal NON trouvée:', modalId);
+                            console.error('❌ [OPEN MODAL] Modal NON trouvée:', modalId);
                         }
                     }
 
@@ -1855,9 +1866,10 @@ foreach ($canvas_options as $option) {
 
                     // Fermer la modal
                     function closeModal() {
-                        console.log('🚪 Fermeture modal');
+                        console.log('🚪 [CLOSE MODAL] Fermeture modal, currentModalCategory:', currentModalCategory);
 
                         if (!currentModalCategory) {
+                            console.log('⚠️ [CLOSE MODAL] Aucune modal ouverte');
                             return;
                         }
 
@@ -1866,24 +1878,33 @@ foreach ($canvas_options as $option) {
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
+                        console.log('🔍 [CLOSE MODAL] Modal trouvée:', !!modal, 'ID:', modalId);
 
                         // Fermer la modal en retirant la classe 'active' de l'overlay
                         if (modal) {
                             const overlay = document.getElementById(`canvas-${currentModalCategory}-modal-overlay`);
+                            console.log('🔍 [CLOSE MODAL] Overlay séparé trouvé:', !!overlay, 'ID:', `canvas-${currentModalCategory}-modal-overlay`);
 
                             if (overlay) {
-                                if (overlay.classList.contains('active')) {
+                                const wasActive = overlay.classList.contains('active');
+                                console.log('🔍 [CLOSE MODAL] Overlay était actif:', wasActive);
+
+                                if (wasActive) {
                                     overlay.classList.remove('active');
                                     document.body.classList.remove('canvas-modal-open');
+                                    console.log('✅ [CLOSE MODAL] Classe active retirée');
+                                } else {
+                                    console.log('⚠️ [CLOSE MODAL] Overlay déjà inactif');
                                 }
 
                             } else {
-                                console.error('❌ Overlay séparé NON trouvé pour:', currentModalCategory);
+                                console.error('❌ [CLOSE MODAL] Overlay séparé NON trouvé pour:', currentModalCategory);
                             }
                         } else {
-                            console.error('❌ Modal NON trouvée:', modalId);
+                            console.error('❌ [CLOSE MODAL] Modal NON trouvée:', modalId);
                         }
 
+                        console.log('🔄 [CLOSE MODAL] Reset currentModalCategory');
                         currentModalCategory = null;
                     }
 
