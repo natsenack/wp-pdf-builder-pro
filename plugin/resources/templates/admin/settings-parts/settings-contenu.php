@@ -1878,6 +1878,13 @@ foreach ($canvas_options as $option) {
                                     console.log('🔒 Closing modal after preview update...');
                                     closeModal();
 
+                                    // Afficher une notification de succès sans rechargement de page
+                                    if (window.pdfBuilderDeveloper && typeof window.pdfBuilderDeveloper.showSuccess === 'function') {
+                                        window.pdfBuilderDeveloper.showSuccess('Paramètres sauvegardés avec succès');
+                                    } else {
+                                        console.log('✅ Paramètres sauvegardés avec succès');
+                                    }
+
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
                                     Object.entries(values).forEach(([key, value]) => {
                                         if (key.startsWith('pdf_builder_canvas_canvas_')) {
@@ -1891,6 +1898,14 @@ foreach ($canvas_options as $option) {
                                 } else {
                                     modalMonitoring.trackSaveError(currentModalCategory, data.data?.message || data.message || 'Erreur inconnue', saveTime);
                                     console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
+
+                                    // Afficher une notification d'erreur
+                                    if (window.pdfBuilderDeveloper && typeof window.pdfBuilderDeveloper.showError === 'function') {
+                                        window.pdfBuilderDeveloper.showError(data.data?.message || data.message || 'Erreur inconnue');
+                                    } else {
+                                        console.error('❌ Erreur de sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
+                                    }
+
                                     // Fermer la modale même en cas d'erreur
                                     closeModal();
                                 }
@@ -1997,8 +2012,22 @@ foreach ($canvas_options as $option) {
                     console.log('Système de modal PDF Builder initialisé');
 
                     // ===========================================
-                    // FONCTIONS GLOBALES DE MONITORING
+                    // PRÉVENTION DU RECHARGEMENT DE PAGE
                     // ===========================================
+
+                    // Empêcher la soumission du formulaire principal (canvas-form)
+                    const canvasForm = document.getElementById('canvas-form');
+                    if (canvasForm) {
+                        canvasForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            console.log('🚫 Soumission du formulaire principal empêchée - toutes les sauvegardes passent par AJAX');
+                            return false;
+                        });
+                        console.log('✅ Prévention du rechargement de page activée');
+                    }
+
+                    // ===========================================
+                    // FONCTIONS GLOBALES DE MONITORING
 
                     // Fonction globale pour accéder au monitoring depuis la console
                     window.pdfBuilderMonitoring = {
