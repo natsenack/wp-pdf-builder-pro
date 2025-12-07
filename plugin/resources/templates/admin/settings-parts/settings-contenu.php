@@ -851,45 +851,23 @@ foreach ($canvas_options as $option) {
 
                         // Rafraîchir toutes les previews
                         refreshPreviews: function() {
-                            console.log('🔄 REFRESH PREVIEWS CALLED with values:', this.values);
-
-                            const changedFields = Object.keys(this.values);
-
-                            // Monitorer la mise à jour de preview
-                            modalMonitoring.trackPreviewUpdate(changedFields);
+                            console.log('🔄 REFRESH PREVIEWS CALLED');
 
                             const v = this.values;
 
-                            // Valeurs par défaut pour éviter les erreurs
-                            const defaults = {
-                                canvas_canvas_width: 794,
-                                canvas_canvas_height: 1123,
-                                canvas_canvas_dpi: 96,
-                                canvas_canvas_format: 'A4',
-                                canvas_canvas_bg_color: '#ffffff',
-                                canvas_canvas_border_color: '#cccccc',
-                                canvas_canvas_border_width: 1,
-                                canvas_canvas_shadow_enabled: false,
-                                canvas_canvas_grid_enabled: true,
-                                canvas_canvas_grid_size: 20,
-                                canvas_canvas_zoom_default: 100,
-                                canvas_canvas_fps_target: 60
-                            };
-
-                            // Appliquer les valeurs par défaut pour les clés manquantes
-                            Object.keys(defaults).forEach(key => {
-                                if (v[key] === undefined || v[key] === null) {
-                                    v[key] = defaults[key];
-                                    console.warn(`⚠️ Valeur manquante pour ${key}, utilisation de la valeur par défaut: ${defaults[key]}`);
-                                }
-                            });
+                            // Attendre que le DOM soit prêt
+                            if (document.readyState !== 'complete') {
+                                console.log('DOM not ready, retrying in 100ms...');
+                                setTimeout(() => this.refreshPreviews(), 100);
+                                return;
+                            }
 
                             // Preview Dimensions
                             const widthEl = document.getElementById('card-canvas-width');
                             const heightEl = document.getElementById('card-canvas-height');
                             const dpiEl = document.getElementById('card-canvas-dpi');
 
-                            console.log('🔍 Elements found:', { widthEl: !!widthEl, heightEl: !!heightEl, dpiEl: !!dpiEl });
+                            console.log('Elements found:', { widthEl: !!widthEl, heightEl: !!heightEl, dpiEl: !!dpiEl });
 
                             if (widthEl) {
                                 widthEl.textContent = v.canvas_canvas_width;
@@ -911,12 +889,17 @@ foreach ($canvas_options as $option) {
                             const bgPreview = document.getElementById('card-bg-preview');
                             const borderPreview = document.getElementById('card-border-preview');
 
-                            if (bgPreview) bgPreview.style.backgroundColor = v.canvas_canvas_bg_color;
+                            console.log('Appearance elements:', { bgPreview: !!bgPreview, borderPreview: !!borderPreview });
+
+                            if (bgPreview) {
+                                bgPreview.style.backgroundColor = v.canvas_canvas_bg_color;
+                                console.log('✅ BG color updated to:', v.canvas_canvas_bg_color);
+                            }
                             if (borderPreview) {
                                 borderPreview.style.borderColor = v.canvas_canvas_border_color;
                                 borderPreview.style.borderWidth = v.canvas_canvas_border_width + 'px';
                                 borderPreview.style.boxShadow = v.canvas_canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
-                                console.log('Mise à jour ombre preview:', v.canvas_canvas_shadow_enabled, borderPreview.style.boxShadow);
+                                console.log('✅ Border updated:', v.canvas_canvas_border_color, v.canvas_canvas_border_width + 'px');
                             }
 
                             // Preview Grille
@@ -925,6 +908,7 @@ foreach ($canvas_options as $option) {
                                 gridPreview.style.backgroundImage = v.canvas_canvas_grid_enabled ?
                                     `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)` : 'none';
                                 gridPreview.style.backgroundSize = v.canvas_canvas_grid_enabled ? `${v.canvas_canvas_grid_size}px ${v.canvas_canvas_grid_size}px` : 'auto';
+                                console.log('✅ Grid updated');
                             }
 
                             // Preview Zoom
@@ -932,6 +916,7 @@ foreach ($canvas_options as $option) {
                             if (zoomPreview) {
                                 zoomPreview.textContent = `${v.canvas_canvas_zoom_default}%`;
                                 zoomPreview.style.fontSize = Math.max(12, Math.min(24, v.canvas_canvas_zoom_default / 4)) + 'px';
+                                console.log('✅ Zoom updated to:', v.canvas_canvas_zoom_default + '%');
                             }
 
                             // Preview Performance
@@ -939,15 +924,28 @@ foreach ($canvas_options as $option) {
                             if (perfPreview) {
                                 perfPreview.textContent = `${v.canvas_canvas_fps_target} FPS`;
                                 perfPreview.style.color = v.canvas_canvas_fps_target >= 60 ? '#28a745' : v.canvas_canvas_fps_target >= 30 ? '#ffc107' : '#dc3545';
+                                console.log('✅ Performance updated to:', v.canvas_canvas_fps_target + ' FPS');
                             }
 
-                            console.log('Preview System: All previews refreshed');
+                            console.log('✅ All previews refreshed successfully');
                         },
 
                         // Initialiser le système
                         init: function() {
-                            this.refreshPreviews();
-                            this.setupEventListeners();
+                            console.log('🎬 Initializing preview system...');
+
+                            // Attendre que le DOM soit complètement chargé
+                            const initPreviews = () => {
+                                if (document.readyState === 'complete') {
+                                    this.refreshPreviews();
+                                    this.setupEventListeners();
+                                    console.log('✅ Preview system initialized');
+                                } else {
+                                    setTimeout(initPreviews, 50);
+                                }
+                            };
+
+                            initPreviews();
                         },
                         // Configurer les event listeners pour les inputs des modales
                         setupEventListeners: function() {
