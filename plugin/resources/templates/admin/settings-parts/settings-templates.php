@@ -463,7 +463,30 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
                 <!-- Grille des statuts -->
                 <div class="templates-status-grid">
-                    <?php foreach ($order_statuses as $status_key => $status_label):
+                    <?php
+                    // Trier les statuts pour les utilisateurs free : disponibles en premier
+                    $sorted_statuses = $order_statuses;
+                    if (!$is_premium) {
+                        $available_first = [];
+                        $available_later = [];
+
+                        foreach ($order_statuses as $status_key => $status_label) {
+                            $is_custom_status = $status_manager->is_custom_status($status_key);
+                            $is_default_completed = ($status_key === 'wc-completed');
+
+                            // Priorité : statuts personnalisés, puis "Terminée", puis autres
+                            if ($is_custom_status || $is_default_completed) {
+                                $available_first[$status_key] = $status_label;
+                            } else {
+                                $available_later[$status_key] = $status_label;
+                            }
+                        }
+
+                        $sorted_statuses = array_merge($available_first, $available_later);
+                    }
+                    ?>
+
+                    <?php foreach ($sorted_statuses as $status_key => $status_label):
                         $is_custom_status = $status_manager->is_custom_status($status_key);
                     ?>
                         <article class="template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?>">
