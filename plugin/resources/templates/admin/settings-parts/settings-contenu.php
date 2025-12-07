@@ -1385,7 +1385,11 @@ $settings = get_option('pdf_builder_settings', array());
                             canvas_bg_color: <?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>,
                             canvas_border_color: <?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>,
                             canvas_border_width: <?php echo json_encode($settings['pdf_builder_canvas_border_width'] ?? '1'); ?>,
-                            canvas_shadow_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1'); ?>,
+                            canvas_shadow_enabled: <?php
+                                $shadow_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+                                error_log("[PDF Builder Debug] Page load: shadow_enabled from get_option = " . $shadow_value);
+                                echo json_encode($shadow_value === '1');
+                            ?>,
                             canvas_grid_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1'); ?>,
                             canvas_grid_size: <?php echo json_encode($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?>,
                             canvas_guides_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_guides_enabled'] ?? '1') === '1'); ?>,
