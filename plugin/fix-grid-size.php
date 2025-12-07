@@ -6,7 +6,13 @@
 
 // Sécurité - vérifier que WordPress est chargé
 if (!defined('ABSPATH')) {
-    die('Accès direct interdit');
+    // Essayer de charger WordPress
+    $wp_load_path = '../../../wp-load.php';
+    if (file_exists($wp_load_path)) {
+        require_once($wp_load_path);
+    } else {
+        die('Impossible de charger WordPress');
+    }
 }
 
 // Vérifier la valeur actuelle
