@@ -476,11 +476,11 @@ $current_mappings = $status_manager->get_current_mappings();
                             </div>
 
                             <!-- Aperçu du template assigné -->
-                            <div class="template-preview">
+                            <div class="template-preview" data-original-value="<?php echo esc_attr($current_mappings[$status_key] ?? ''); ?>">
                                 <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>      
                                     <p class="current-template">
                                         <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
-                                        <span class="assigned-badge">✅</span>
+                                        <span class="assigned-badge assigned-badge-saved">✅</span>
                                     </p>
                                 <?php else: ?>
                                     <p class="no-template">Aucun template assigné</p>
@@ -532,6 +532,40 @@ $current_mappings = $status_manager->get_current_mappings();
     border-color: #dc3545 !important;
     color: white !important;
 }
+
+/* Styles pour l'affichage en temps réel */
+.template-preview .current-template {
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #e8f5e8;
+    border: 1px solid #c3e6c3;
+    border-radius: 4px;
+    color: #2d5a2d;
+}
+
+.template-preview .no-template {
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.assigned-badge {
+    float: right;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.assigned-badge-unsaved {
+    color: #ffc107;
+}
+
+.assigned-badge-saved {
+    color: #28a745;
+}
 </style>
 
 
@@ -546,6 +580,77 @@ $current_mappings = $status_manager->get_current_mappings();
     document.addEventListener('DOMContentLoaded', function() {
         const saveBtn = document.getElementById('save-templates-btn');
         if (!saveBtn) return;
+
+        // === AFFICHAGE EN TEMPS RÉEL DES ASSIGNATIONS ===
+        initRealTimePreview();
+
+        function initRealTimePreview() {
+            // Écouter les changements sur tous les selects de template
+            const templateSelects = document.querySelectorAll('.template-select');
+
+            templateSelects.forEach(function(select) {
+                select.addEventListener('change', function() {
+                    updateTemplatePreview(this);
+                });
+
+                // Stocker la valeur originale pour la comparaison
+                const previewDiv = select.closest('.template-status-card').querySelector('.template-preview');
+                if (previewDiv) {
+                    previewDiv.dataset.originalValue = select.value;
+                }
+            });
+        }
+
+        function updateTemplatePreview(select) {
+            const statusKey = select.id.replace('template_', '');
+            const selectedValue = select.value;
+            const selectedText = select.options[select.selectedIndex].text;
+
+            // Trouver la section preview correspondante
+            const card = select.closest('.template-status-card');
+            const previewDiv = card.querySelector('.template-preview');
+
+            if (!previewDiv) return;
+
+            // Vérifier si la valeur a changé par rapport à la valeur sauvegardée
+            const originalValue = previewDiv.dataset.originalValue || '';
+            const isChanged = selectedValue !== originalValue;
+
+            if (selectedValue && selectedValue !== '') {
+                // Template assigné
+                const badgeClass = isChanged ? 'assigned-badge-unsaved' : 'assigned-badge-saved';
+                const badgeIcon = isChanged ? '🔄' : '✅';
+
+                previewDiv.innerHTML = `
+                    <p class="current-template">
+                        <strong>Assigné :</strong> ${selectedText}
+                        <span class="assigned-badge ${badgeClass}">${badgeIcon}</span>
+                    </p>
+                `;
+            } else {
+                // Aucun template
+                const badgeClass = isChanged ? 'assigned-badge-unsaved' : '';
+                const badgeIcon = isChanged ? '🔄' : '';
+
+                previewDiv.innerHTML = `
+                    <p class="no-template">
+                        Aucun template assigné
+                        ${badgeIcon ? `<span class="assigned-badge ${badgeClass}">${badgeIcon}</span>` : ''}
+                    </p>
+                `;
+            }
+        function updateOriginalValues() {
+            // Mettre à jour les valeurs originales pour tous les selects après sauvegarde
+            const templateSelects = document.querySelectorAll('.template-select');
+            templateSelects.forEach(function(select) {
+                const previewDiv = select.closest('.template-status-card').querySelector('.template-preview');
+                if (previewDiv) {
+                    previewDiv.dataset.originalValue = select.value;
+                    // Remettre à jour l'aperçu pour changer le badge
+                    updateTemplatePreview(select);
+                }
+            });
+        }
 
         saveBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -572,6 +677,9 @@ $current_mappings = $status_manager->get_current_mappings();
                     // Succès
                     saveBtn.textContent = '✅ Sauvegardé !';
                     saveBtn.classList.add('button-success');
+
+                    // Mettre à jour les valeurs originales pour tous les selects
+                    updateOriginalValues();
 
                     // Réactiver après 2 secondes
                     setTimeout(() => {
