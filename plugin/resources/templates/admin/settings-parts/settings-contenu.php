@@ -448,6 +448,13 @@ $settings = get_option('pdf_builder_settings', array());
                         return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                     }
 
+                    // Fonction d'échappement pour le contenu HTML
+                    function escapeHtml(str) {
+                        const div = document.createElement('div');
+                        div.textContent = str;
+                        return div.innerHTML;
+                    }
+
                     // Nonce pour les appels AJAX de sauvegarde
                     const pdfBuilderSaveNonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
