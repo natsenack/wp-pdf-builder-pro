@@ -1407,13 +1407,20 @@ class AjaxHandler
         // Ombre activée
         if (isset($_POST['canvas_shadow_enabled'])) {
             $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
-            update_option('pdf_builder_canvas_shadow_enabled', '1');
+            $received_value = $_POST['canvas_shadow_enabled'];
+            error_log("DEBUG: canvas_shadow_enabled received: " . $received_value);
+            // Convertir en 1 ou 0
+            $new_value_bool = in_array(strtolower($received_value), ['1', 'on', 'true', 'yes']) ? '1' : '0';
+            update_option('pdf_builder_canvas_shadow_enabled', $new_value_bool);
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log("DEBUG: canvas_shadow_enabled updated to: " . $new_value);
             $updated++;
         } else {
             $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log("DEBUG: canvas_shadow_enabled not set in POST, setting to 0");
             update_option('pdf_builder_canvas_shadow_enabled', '0');
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log("DEBUG: canvas_shadow_enabled updated to: " . $new_value);
             $updated++;
         }
 
