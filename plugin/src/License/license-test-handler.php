@@ -271,16 +271,15 @@ class LicenseTestHandler
         }
     }
 
-    /**
-     * Handler AJAX pour basculer le mode test
-     */
     public function handleToggleTestMode()
     {
-        
+        // Log pour debug
+        error_log('[PDF Builder] handleToggleTestMode called');
 
         // Vérifier la nonce (accepte le nonce central 'pdf_builder_ajax' pour compatibilité)
         $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
         if (empty($nonce) || (!wp_verify_nonce($nonce, 'pdf_builder_toggle_test_mode') && !wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
+            error_log('[PDF Builder] handleToggleTestMode: nonce invalide');
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
@@ -289,7 +288,7 @@ class LicenseTestHandler
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
-            
+            error_log('[PDF Builder] handleToggleTestMode: permissions insuffisantes');
             wp_send_json_error([
                 'message' => 'Permissions insuffisantes'
             ], 403);
@@ -299,15 +298,22 @@ class LicenseTestHandler
         try {
             // Récupérer l'état actuel
             $current_state = $this->isTestModeEnabled();
+            error_log('[PDF Builder] handleToggleTestMode: état actuel = ' . ($current_state ? 'true' : 'false'));
             
 
             // Basculer l'état
             $new_state = !$current_state;
+            error_log('[PDF Builder] handleToggleTestMode: nouvel état = ' . ($new_state ? 'true' : 'false'));
             
 
             // Sauvegarder le nouvel état
-            $this->setTestModeEnabled($new_state);
+            $saved = $this->setTestModeEnabled($new_state);
+            error_log('[PDF Builder] handleToggleTestMode: sauvegarde = ' . ($saved ? 'success' : 'failed'));
             
+
+            // Vérifier que c'est bien sauvegardé
+            $verify_state = $this->isTestModeEnabled();
+            error_log('[PDF Builder] handleToggleTestMode: état vérifié = ' . ($verify_state ? 'true' : 'false'));
 
             // Retourner le nouvel état
             wp_send_json_success([
@@ -316,7 +322,7 @@ class LicenseTestHandler
             ]);
             
         } catch (\Exception $e) {
-            
+            error_log('[PDF Builder] handleToggleTestMode: exception = ' . $e->getMessage());
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
             ]);
