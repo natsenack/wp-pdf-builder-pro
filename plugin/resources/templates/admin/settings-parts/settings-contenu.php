@@ -451,6 +451,9 @@ $settings = get_option('pdf_builder_settings', array());
                     // Nonce pour les appels AJAX de sauvegarde
                     const pdfBuilderSaveNonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
+                    // État de la modal
+                    var currentModalCategory = null;
+
                     // SYSTÈME DE MONITORING UNIFIÉ
                     const modalMonitoring = {
                         // Métriques de performance
@@ -1407,9 +1410,6 @@ $settings = get_option('pdf_builder_settings', array());
                     formGenerator
                         .addDependency('grid_enabled', ['snap_to_grid', 'grid_size'])
                         .addDependency('guides_enabled', []);
-
-                    // État de la modal
-                    let currentModalCategory = null;
 
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
