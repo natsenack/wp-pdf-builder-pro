@@ -1462,14 +1462,14 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    
+
     cursor: pointer;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 280px;
+    height: 320px; /* Hauteur fixe pour uniformiser */
 }
 
 .canvas-card::before {
@@ -1501,6 +1501,8 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     margin-bottom: 16px;
     position: relative;
     z-index: 2;
+    height: 32px; /* Hauteur fixe pour le header */
+    flex-shrink: 0;
 }
 
 .canvas-card-header-left {
@@ -1557,6 +1559,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     position: relative;
     z-index: 2;
     flex-grow: 1;
+    min-height: 60px; /* Hauteur minimale pour uniformiser */
 }
 
 .canvas-card-content p {
@@ -1571,7 +1574,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     padding: 16px;
     background: #f6f7f7;
     border-radius: 6px;
-    min-height: 115px;
+    height: 120px; /* Hauteur fixe pour uniformiser */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1587,6 +1590,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     z-index: 2;
     margin-top: auto;
     flex-shrink: 0;
+    height: 40px; /* Hauteur fixe pour les actions */
 }
 
 .canvas-configure-btn {
