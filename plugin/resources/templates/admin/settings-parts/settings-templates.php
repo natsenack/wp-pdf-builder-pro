@@ -6,9 +6,6 @@
  * Updated: 2025-12-02 - Code réorganisé pour une meilleure lisibilité
  */
 
-// Inclure les fonctions helper nécessaires
-require_once __DIR__ . '/settings-helpers.php';
-
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 // Vérifier si l'utilisateur a une licence premium
