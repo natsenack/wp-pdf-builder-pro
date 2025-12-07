@@ -44,15 +44,15 @@ require_once __DIR__ . '/settings-helpers.php';
         </a>
         <a id="tab-pdf" href="#pdf" class="nav-tab" data-tab="pdf" role="tab" aria-selected="false" aria-controls="pdf">
             <span class="tab-icon">📄</span>
-            <span class="tab-text">PDF</span>
+            <span class="tab-text">Configuration PDF</span>
         </a>
         <a id="tab-contenu" href="#contenu" class="nav-tab" data-tab="contenu" role="tab" aria-selected="false" aria-controls="contenu">
-            <span class="tab-icon">📝</span>
-            <span class="tab-text">Contenu</span>
+            <span class="tab-icon">🎨</span>
+            <span class="tab-text">Canvas & Design</span>
         </a>
         <a id="tab-templates" href="#templates" class="nav-tab" data-tab="templates" role="tab" aria-selected="false" aria-controls="templates">
-            <span class="tab-icon">🎨</span>
-            <span class="tab-text">Modèles</span>
+            <span class="tab-icon">📋</span>
+            <span class="tab-text">Templates par Statut</span>
         </a>
         <a id="tab-developpeur" href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">
             <span class="tab-icon">👨‍💻</span>
