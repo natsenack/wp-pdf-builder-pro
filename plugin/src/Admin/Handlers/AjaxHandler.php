@@ -2080,38 +2080,38 @@ class AjaxHandler
 
         // Gestion spéciale pour pdf_builder_order_status_templates (array)
         if ($key === 'pdf_builder_order_status_templates') {
-            error_log('PHP: Raw templates value: ' . print_r($value, true));
-            error_log('PHP: Exact string: ' . $value);
-            error_log('PHP: Value type: ' . gettype($value));
-            error_log('PHP: Is string: ' . (is_string($value) ? 'yes' : 'no'));
             // Si c'est une chaîne JSON, la décoder
-            if (is_string($value) && $this->isJson($value)) {
-                error_log('PHP: Is valid JSON');
-                $value = json_decode($value, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('PHP: JSON decode error: ' . json_last_error_msg());
-                    return [];
-                }
-                error_log('PHP: Decoded templates value: ' . print_r($value, true));
-            } else {
-                error_log('PHP: Value is not a valid JSON string');
-                error_log('PHP: json_last_error: ' . json_last_error_msg());
-                // Try with stripslashes
-                $stripped = stripslashes($value);
-                error_log('PHP: Stripped string: ' . $stripped);
-                if ($this->isJson($stripped)) {
-                    error_log('PHP: Stripped is valid JSON');
-                    $value = json_decode($stripped, true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        error_log('PHP: JSON decode error after stripslashes: ' . json_last_error_msg());
-                        return [];
-                    }
-                    error_log('PHP: Decoded templates value after stripslashes: ' . print_r($value, true));
+            if (is_string($value)) {
+                // Essayer d'abord le décodage direct
+                $decoded = json_decode($value, true);
+                if ($decoded !== null && json_last_error() === JSON_ERROR_NONE) {
+                    $value = $decoded;
                 } else {
-                    error_log('PHP: Stripped is not valid JSON either');
-                    return [];
+                    // Essayer avec stripslashes si le décodage direct échoue
+                    $stripped = stripslashes($value);
+                    $decoded = json_decode($stripped, true);
+                    if ($decoded !== null && json_last_error() === JSON_ERROR_NONE) {
+                        $value = $decoded;
+                    } else {
+                        // Si toujours pas valide, retourner un array vide
+                        $value = [];
+                    }
                 }
             }
+
+            if (is_array($value)) {
+                $clean_array = [];
+                foreach ($value as $status_key => $template_id) {
+                    $clean_status = sanitize_text_field($status_key);
+                    $clean_template = sanitize_text_field($template_id);
+                    if (!empty($clean_template)) {
+                        $clean_array[$clean_status] = $clean_template;
+                    }
+                }
+                return $clean_array;
+            }
+            return [];
+        }
             if (is_array($value)) {
                 $clean_array = [];
                 foreach ($value as $status_key => $template_id) {
