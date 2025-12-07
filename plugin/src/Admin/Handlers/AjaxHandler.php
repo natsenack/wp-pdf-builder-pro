@@ -2112,19 +2112,6 @@ class AjaxHandler
             }
             return [];
         }
-            if (is_array($value)) {
-                $clean_array = [];
-                foreach ($value as $status_key => $template_id) {
-                    $clean_status = sanitize_text_field($status_key);
-                    $clean_template = sanitize_text_field($template_id);
-                    if (!empty($clean_template)) {
-                        $clean_array[$clean_status] = $clean_template;
-                    }
-                }
-                return $clean_array;
-            }
-            return [];
-        }
 
         // Déterminer le type de champ d'après le nom
         if (strpos($key, '_email') !== false) {
