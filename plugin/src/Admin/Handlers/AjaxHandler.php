@@ -1412,6 +1412,13 @@ class AjaxHandler
             // Convertir en 1 ou 0
             $new_value_bool = in_array(strtolower($received_value), ['1', 'on', 'true', 'yes']) ? '1' : '0';
             update_option('pdf_builder_canvas_shadow_enabled', $new_value_bool);
+
+            // Synchroniser avec le tableau groupé pdf_builder_canvas_settings
+            $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+            $canvas_settings['shadow_enabled'] = $new_value_bool;
+            update_option('pdf_builder_canvas_settings', $canvas_settings);
+            error_log("[PDF Builder Debug] Updated canvas_settings shadow_enabled to: " . $new_value_bool);
+
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             error_log("[PDF Builder Debug] Shadow enabled updated to: " . $new_value);
             $updated++;
