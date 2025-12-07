@@ -1493,6 +1493,15 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     transform: scaleX(1);
 }
 
+/* Bordure pointillée pour la carte Apparence */
+.canvas-card[data-category="apparence"] {
+    border: 2px dashed #ffc107 !important;
+}
+
+.canvas-card[data-category="apparence"]::before {
+    display: none; /* Masquer la barre bleue au hover */
+}
+
 .canvas-card-header {
     display: flex;
     align-items: center;
