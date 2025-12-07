@@ -459,7 +459,7 @@ $settings = get_option('pdf_builder_settings', array());
                     }
 
                     // Nonce pour les appels AJAX de sauvegarde
-                    const pdfBuilderSaveNonce = '<?php echo wp_create_nonce('save_all_settings'); ?>';
+                    const pdfBuilderSaveNonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
                     // SYSTÈME CENTRALISÉ DE PREVIEWS DYNAMIQUES
                     const previewSystem = {
