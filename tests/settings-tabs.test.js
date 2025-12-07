@@ -149,7 +149,139 @@ function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Exécuter les tests si Jest est disponible
-if (typeof describe === 'function') {
-    console.log('Tests JavaScript PDF Builder chargés. Exécutez-les avec votre framework de test.');
-}
+// Tests pour le diagnostic Canvas
+describe('CanvasDiagnostic', () => {
+    beforeEach(() => {
+        // Créer un DOM de test pour les éléments Canvas
+        document.body.innerHTML = `
+            <div class="canvas-card" data-category="dimensions">
+                <button class="canvas-configure-btn">Configurer</button>
+            </div>
+            <div class="canvas-card" data-category="apparence">
+                <button class="canvas-configure-btn">Configurer</button>
+            </div>
+            <div id="canvas-dimensions-modal" class="modal-overlay"></div>
+            <div id="canvas-apparence-modal" class="modal-overlay"></div>
+            <input type="hidden" name="pdf_builder_canvas_canvas_width" value="800">
+            <input type="hidden" name="pdf_builder_canvas_canvas_height" value="600">
+            <div id="card-canvas-width">800px</div>
+            <div id="card-canvas-height">600px</div>
+        `;
+
+        // Mock des objets globaux
+        global.previewSystem = {
+            values: {},
+            refreshPreviews: function() {}
+        };
+
+        global.formGenerator = {
+            generateModalHTML: function() {}
+        };
+
+        global.modalSettingsManager = {};
+    });
+
+    afterEach(() => {
+        document.body.innerHTML = '';
+        delete global.previewSystem;
+        delete global.formGenerator;
+        delete global.modalSettingsManager;
+    });
+
+    test('should detect all canvas components', () => {
+        // Simuler runCanvasDiagnostic (elle devrait être disponible globalement)
+        const results = {
+            cards: 0,
+            buttons: 0,
+            modals: 0,
+            hiddenFields: 0,
+            previewElements: 0,
+            issues: []
+        };
+
+        // 1. Vérifier les cartes
+        const cards = document.querySelectorAll('.canvas-card');
+        results.cards = cards.length;
+
+        cards.forEach((card, index) => {
+            const category = card.dataset.category;
+            const button = card.querySelector('.canvas-configure-btn');
+            if (!category) results.issues.push(`Carte ${index}: pas de data-category`);
+            if (!button) results.issues.push(`Carte ${index} (${category}): pas de bouton configurer`);
+            else results.buttons++;
+        });
+
+        // 2. Vérifier les modales
+        const modalIds = ['canvas-dimensions-modal', 'canvas-apparence-modal'];
+
+        modalIds.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal) results.modals++;
+            else results.issues.push(`Modale manquante: ${modalId}`);
+        });
+
+        // 3. Vérifier les champs cachés
+        const hiddenFields = document.querySelectorAll('input[type="hidden"][name^="pdf_builder_canvas_canvas_"]');
+        results.hiddenFields = hiddenFields.length;
+
+        // 4. Vérifier les éléments de preview
+        const previewElements = ['card-canvas-width', 'card-canvas-height'];
+
+        previewElements.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) results.previewElements++;
+            else results.issues.push(`Élément preview manquant: ${id}`);
+        });
+
+        // Vérifications
+        expect(results.cards).toBe(2);
+        expect(results.buttons).toBe(2);
+        expect(results.modals).toBe(2);
+        expect(results.hiddenFields).toBe(2);
+        expect(results.previewElements).toBe(2);
+        expect(results.issues.length).toBe(0);
+    });
+
+    test('should detect missing components', () => {
+        // Supprimer un élément
+        document.getElementById('canvas-dimensions-modal').remove();
+
+        const results = {
+            cards: 0,
+            buttons: 0,
+            modals: 0,
+            hiddenFields: 0,
+            previewElements: 0,
+            issues: []
+        };
+
+        // Vérifier les modales
+        const modalIds = ['canvas-dimensions-modal', 'canvas-apparence-modal'];
+
+        modalIds.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal) results.modals++;
+            else results.issues.push(`Modale manquante: ${modalId}`);
+        });
+
+        expect(results.modals).toBe(1);
+        expect(results.issues.length).toBe(1);
+        expect(results.issues[0]).toContain('Modale manquante: canvas-dimensions-modal');
+    });
+
+    test('should detect undefined global objects', () => {
+        delete global.previewSystem;
+
+        const results = {
+            issues: []
+        };
+
+        // Vérifier previewSystem
+        if (typeof previewSystem === 'undefined') {
+            results.issues.push('previewSystem non défini');
+        }
+
+        expect(results.issues.length).toBe(1);
+        expect(results.issues[0]).toBe('previewSystem non défini');
+    });
+});

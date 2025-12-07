@@ -56,10 +56,10 @@ foreach ($canvas_options as $option) {
                     <input type="hidden" name="pdf_builder_canvas_canvas_border_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_width', '1')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_shadow_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_shadow_enabled', '0')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_container_bg_color', '#f8f9fa')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_canvas_grid_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_canvas_grid_size', '20')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_canvas_guides_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_canvas_guides_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_canvas_snap_to_grid" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_canvas_snap_to_grid', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_guides_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_guides_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_canvas_snap_to_grid" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_zoom_min" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_min', '25')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_zoom_max" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_max', '500')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_zoom_default" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_default', '100')); ?>">
@@ -1442,6 +1442,8 @@ foreach ($canvas_options as $option) {
 
                         // Rafraîchir toutes les previews
                         refreshPreviews: function() {
+                            console.log('🔄 REFRESH PREVIEWS CALLED with values:', this.values);
+
                             const changedFields = Object.keys(this.values);
 
                             // Monitorer la mise à jour de preview
@@ -1449,18 +1451,51 @@ foreach ($canvas_options as $option) {
 
                             const v = this.values;
 
+                            // Valeurs par défaut pour éviter les erreurs
+                            const defaults = {
+                                canvas_canvas_width: 794,
+                                canvas_canvas_height: 1123,
+                                canvas_canvas_dpi: 96,
+                                canvas_canvas_format: 'A4',
+                                canvas_canvas_bg_color: '#ffffff',
+                                canvas_canvas_border_color: '#cccccc',
+                                canvas_canvas_border_width: 1,
+                                canvas_canvas_shadow_enabled: false,
+                                canvas_canvas_grid_enabled: true,
+                                canvas_canvas_grid_size: 20,
+                                canvas_canvas_zoom_default: 100,
+                                canvas_canvas_fps_target: 60
+                            };
+
+                            // Appliquer les valeurs par défaut pour les clés manquantes
+                            Object.keys(defaults).forEach(key => {
+                                if (v[key] === undefined || v[key] === null) {
+                                    v[key] = defaults[key];
+                                    console.warn(`⚠️ Valeur manquante pour ${key}, utilisation de la valeur par défaut: ${defaults[key]}`);
+                                }
+                            });
+
                             // Preview Dimensions
                             const widthEl = document.getElementById('card-canvas-width');
                             const heightEl = document.getElementById('card-canvas-height');
                             const dpiEl = document.getElementById('card-canvas-dpi');
 
-                            if (widthEl) widthEl.textContent = v.canvas_canvas_width;
-                            if (heightEl) heightEl.textContent = v.canvas_canvas_height;
+                            console.log('🔍 Elements found:', { widthEl: !!widthEl, heightEl: !!heightEl, dpiEl: !!dpiEl });
+
+                            if (widthEl) {
+                                widthEl.textContent = v.canvas_canvas_width;
+                                console.log('✅ Width updated to:', v.canvas_canvas_width);
+                            }
+                            if (heightEl) {
+                                heightEl.textContent = v.canvas_canvas_height;
+                                console.log('✅ Height updated to:', v.canvas_canvas_height);
+                            }
                             if (dpiEl) {
                                 const format = v.canvas_canvas_format || 'A4';
                                 const widthMM = this.calculateMM(v.canvas_canvas_width, v.canvas_canvas_dpi);
                                 const heightMM = this.calculateMM(v.canvas_canvas_height, v.canvas_canvas_dpi);
                                 dpiEl.textContent = `${v.canvas_canvas_dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
+                                console.log('✅ DPI updated to:', dpiEl.textContent);
                             }
 
                             // Preview Apparence
@@ -2333,8 +2368,8 @@ foreach ($canvas_options as $option) {
                             // Sauvegarder côté serveur via AJAX
                             this.saveToServer(updatedValues);
 
-                            console.log('Paramètres sauvegardés et previews mises à jour');
-                            closeModal();
+                            // La modale sera fermée dans le callback AJAX après mise à jour des previews
+                            // closeModal(); // Déplacé dans le callback AJAX
                         },
 
                         // Sauvegarder côté serveur
@@ -2374,11 +2409,16 @@ foreach ($canvas_options as $option) {
                                     console.log('🔍 DEBUG: Server returned shadow_enabled:', data.data.canvas_shadow_enabled, '(type:', typeof data.data.canvas_shadow_enabled, ')');
                                 }
                                 if (data.success) {
+                                    console.log('✅ AJAX SUCCESS - Raw response data:', data);
+                                    console.log('✅ saved_settings received:', data.saved_settings);
+
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
 
                                     // Mettre à jour previewSystem.values avec les vraies valeurs sauvegardées
-                                    if (data.saved_settings) {
+                                    if (data.saved_settings && typeof data.saved_settings === 'object') {
+                                        console.log('🔄 Updating previewSystem with server values...');
+
                                         // Mapping des clés courtes vers les clés longues utilisées par previewSystem
                                         const keyMapping = {
                                             'canvas_width': 'canvas_canvas_width',
@@ -2416,16 +2456,27 @@ foreach ($canvas_options as $option) {
                                         };
 
                                         // Mettre à jour previewSystem.values avec les valeurs du serveur
+                                        let updatedCount = 0;
                                         Object.entries(keyMapping).forEach(([shortKey, longKey]) => {
-                                            if (data.saved_settings[shortKey] !== undefined) {
+                                            if (data.saved_settings.hasOwnProperty(shortKey) && data.saved_settings[shortKey] !== undefined && data.saved_settings[shortKey] !== null) {
+                                                const oldValue = previewSystem.values[longKey];
                                                 previewSystem.values[longKey] = data.saved_settings[shortKey];
-                                                console.log(`🔄 Preview system mis à jour: ${longKey} = ${data.saved_settings[shortKey]}`);
+                                                console.log(`🔄 Preview system updated: ${longKey} = ${data.saved_settings[shortKey]} (was: ${oldValue})`);
+                                                updatedCount++;
                                             }
                                         });
+                                        console.log(`🔄 Total values updated from server: ${updatedCount}`);
+                                    } else {
+                                        console.warn('⚠️ No saved_settings received from server, using local values');
                                     }
 
                                     // Rafraîchir les previews avec les vraies valeurs
+                                    console.log('🔄 Calling refreshPreviews()...');
                                     previewSystem.refreshPreviews();
+
+                                    // Fermer la modale après avoir mis à jour les previews
+                                    console.log('🔒 Closing modal after preview update...');
+                                    closeModal();
 
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
                                     Object.entries(values).forEach(([key, value]) => {
@@ -2440,12 +2491,16 @@ foreach ($canvas_options as $option) {
                                 } else {
                                     modalMonitoring.trackSaveError(currentModalCategory, data.data?.message || data.message || 'Erreur inconnue', saveTime);
                                     console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
+                                    // Fermer la modale même en cas d'erreur
+                                    closeModal();
                                 }
                             })
                             .catch(error => {
                                 const saveTime = Date.now() - saveStartTime;
                                 modalMonitoring.trackSaveError(currentModalCategory, error.message || 'Erreur réseau', saveTime);
                                 console.error('Erreur AJAX lors de la sauvegarde:', error);
+                                // Fermer la modale même en cas d'erreur réseau
+                                closeModal();
                             });
                         },
 
@@ -2604,6 +2659,105 @@ foreach ($canvas_options as $option) {
 
                     // Initialiser le système de previews dynamiques
                     previewSystem.init();
+
+                    // === DIAGNOSTIC COMPLET DE L'ONGLET CANVAS ===
+                    function runCanvasDiagnostic() {
+                        console.log('🔍 === DIAGNOSTIC COMPLET CANVAS ===');
+
+                        const results = {
+                            cards: 0,
+                            buttons: 0,
+                            modals: 0,
+                            hiddenFields: 0,
+                            previewElements: 0,
+                            issues: []
+                        };
+
+                        // 1. Vérifier les cartes
+                        const cards = document.querySelectorAll('.canvas-card');
+                        results.cards = cards.length;
+                        console.log(`📋 Cartes trouvées: ${results.cards}`);
+
+                        cards.forEach((card, index) => {
+                            const category = card.dataset.category;
+                            const button = card.querySelector('.canvas-configure-btn');
+                            if (!category) results.issues.push(`Carte ${index}: pas de data-category`);
+                            if (!button) results.issues.push(`Carte ${index} (${category}): pas de bouton configurer`);
+                            else results.buttons++;
+                        });
+
+                        // 2. Vérifier les modales
+                        const modalIds = ['canvas-dimensions-modal', 'canvas-apparence-modal', 'canvas-grille-modal',
+                                        'canvas-zoom-modal', 'canvas-interactions-modal', 'canvas-export-modal',
+                                        'canvas-performance-modal', 'canvas-debug-modal'];
+
+                        modalIds.forEach(modalId => {
+                            const modal = document.getElementById(modalId);
+                            if (modal) results.modals++;
+                            else results.issues.push(`Modale manquante: ${modalId}`);
+                        });
+
+                        // 3. Vérifier les champs cachés
+                        const hiddenFields = document.querySelectorAll('input[type="hidden"][name^="pdf_builder_canvas_canvas_"]');
+                        results.hiddenFields = hiddenFields.length;
+                        console.log(`🔒 Champs cachés: ${results.hiddenFields}`);
+
+                        // 4. Vérifier les éléments de preview
+                        const previewElements = ['card-canvas-width', 'card-canvas-height', 'card-canvas-dpi',
+                                               'card-bg-preview', 'card-border-preview', 'card-grid-preview',
+                                               'card-zoom-preview', 'card-perf-preview'];
+
+                        previewElements.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) results.previewElements++;
+                            else results.issues.push(`Élément preview manquant: ${id}`);
+                        });
+
+                        // 5. Vérifier previewSystem
+                        if (typeof previewSystem === 'undefined') {
+                            results.issues.push('previewSystem non défini');
+                        } else {
+                            console.log('✅ previewSystem défini');
+                            if (!previewSystem.values) results.issues.push('previewSystem.values manquant');
+                            if (!previewSystem.refreshPreviews) results.issues.push('previewSystem.refreshPreviews manquant');
+                        }
+
+                        // 6. Vérifier formGenerator
+                        if (typeof formGenerator === 'undefined') {
+                            results.issues.push('formGenerator non défini');
+                        } else {
+                            console.log('✅ formGenerator défini');
+                            if (!formGenerator.generateModalHTML) results.issues.push('formGenerator.generateModalHTML manquant');
+                        }
+
+                        // 7. Vérifier modalSettingsManager
+                        if (typeof modalSettingsManager === 'undefined') {
+                            results.issues.push('modalSettingsManager non défini');
+                        } else {
+                            console.log('✅ modalSettingsManager défini');
+                        }
+
+                        // Résumé
+                        console.log('📊 RÉSULTATS DIAGNOSTIC:');
+                        console.log(`   Cartes: ${results.cards}/8`);
+                        console.log(`   Boutons: ${results.buttons}/8`);
+                        console.log(`   Modales: ${results.modals}/8`);
+                        console.log(`   Champs cachés: ${results.hiddenFields}`);
+                        console.log(`   Éléments preview: ${results.previewElements}/8`);
+
+                        if (results.issues.length === 0) {
+                            console.log('✅ AUCUN PROBLÈME DÉTECTÉ');
+                        } else {
+                            console.error('❌ PROBLÈMES DÉTECTÉS:');
+                            results.issues.forEach(issue => console.error(`   - ${issue}`));
+                        }
+
+                        return results;
+                    }
+
+                    // Lancer le diagnostic automatiquement
+                    setTimeout(runCanvasDiagnostic, 1000);
+
                 })();
             </script>
 
