@@ -2342,6 +2342,17 @@ error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_e
                                 if (data.success) {
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
+
+                                    // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
+                                    Object.entries(values).forEach(([key, value]) => {
+                                        if (key.startsWith('pdf_builder_canvas_')) {
+                                            const hiddenField = document.querySelector(`input[type="hidden"][name="${key}"]`);
+                                            if (hiddenField) {
+                                                hiddenField.value = value;
+                                                console.log(`🔄 Champ caché mis à jour après sauvegarde modale: ${key} = ${value}`);
+                                            }
+                                        }
+                                    });
                                 } else {
                                     modalMonitoring.trackSaveError(currentModalCategory, data.data?.message || data.message || 'Erreur inconnue', saveTime);
                                     console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
