@@ -58,6 +58,7 @@ class AjaxHandler
         // Hooks AJAX canvas
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'ajaxSaveCanvasSettings']);
         add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
+        add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
     }
 
     /**
@@ -1992,6 +1993,55 @@ class AjaxHandler
         }
 
         return $total_size <= $max_size;
+    }
+
+    /**
+     * Sauvegarder les mappings de templates par statut de commande
+     */
+    public function ajaxSaveOrderStatusTemplates()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Récupérer les données des templates
+            $templates_data = isset($_POST['pdf_builder_order_status_templates']) ? $_POST['pdf_builder_order_status_templates'] : [];
+
+            // Valider et nettoyer les données
+            $clean_templates = [];
+            if (is_array($templates_data)) {
+                foreach ($templates_data as $status_key => $template_id) {
+                    // Nettoyer les clés et valeurs
+                    $clean_status = sanitize_text_field($status_key);
+                    $clean_template = sanitize_text_field($template_id);
+
+                    // Ne sauvegarder que si un template est sélectionné
+                    if (!empty($clean_template)) {
+                        $clean_templates[$clean_status] = $clean_template;
+                    }
+                }
+            }
+
+            // Sauvegarder dans la base de données
+            update_option('pdf_builder_order_status_templates', $clean_templates);
+
+            wp_send_json_success([
+                'message' => 'Mappings de templates sauvegardés avec succès',
+                'saved_count' => count($clean_templates)
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
     }
 
     /**

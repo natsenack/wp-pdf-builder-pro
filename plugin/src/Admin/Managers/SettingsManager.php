@@ -131,6 +131,9 @@ class SettingsManager
         foreach ($canvas_settings as $setting) {
             register_setting('pdf_builder_settings', $setting);
         }
+
+        // Enregistrer le paramètre des templates par statut
+        register_setting('pdf_builder_settings', 'pdf_builder_order_status_templates');
     }
 
 

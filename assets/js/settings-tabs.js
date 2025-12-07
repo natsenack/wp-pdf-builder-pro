@@ -190,7 +190,7 @@
         resetTemplatesStatus: function() {
             if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les mappings de templates ? Cette action ne peut pas être annulée.')) {
                 // Réinitialiser tous les selects
-                const selects = document.querySelectorAll('#templates-status-form select[name^="order_status_templates"]');
+                const selects = document.querySelectorAll('#templates-status-form select[name^="pdf_builder_order_status_templates"]');
                 selects.forEach(select => {
                     select.value = '';
                 });

@@ -434,6 +434,8 @@ $current_mappings = $status_manager->get_current_mappings();
         <?php else: ?>
             <!-- Formulaire de configuration -->
             <form method="post" action="" id="templates-status-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+
                 <!-- Grille des statuts -->
                 <div class="templates-status-grid">
                     <?php foreach ($order_statuses as $status_key => $status_label):
@@ -490,6 +492,9 @@ $current_mappings = $status_manager->get_current_mappings();
 
                 <!-- Actions -->
                 <section class="templates-status-actions">
+                    <button type="button" class="button button-primary" id="save-templates-btn">
+                        [SAVE] Sauvegarder les mappings
+                    </button>
                     <button type="button" class="button button-secondary" onclick="PDFBuilderTabsAPI.resetTemplatesStatus()">
                         [RESET] Réinitialiser
                     </button>
@@ -502,4 +507,106 @@ $current_mappings = $status_manager->get_current_mappings();
 <!-- Styles CSS -->
 
 
+<style>
+.templates-status-actions {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.templates-status-actions .button {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.templates-status-actions .button-success {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.templates-status-actions .button-error {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+</style>
+
+
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+
+<!-- JavaScript pour la sauvegarde des templates -->
+<script>
+(function() {
+    'use strict';
+
+    // Attendre que le DOM soit chargé
+    document.addEventListener('DOMContentLoaded', function() {
+        const saveBtn = document.getElementById('save-templates-btn');
+        if (!saveBtn) return;
+
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Désactiver le bouton pendant la sauvegarde
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Sauvegarde en cours...';
+
+            // Récupérer les données du formulaire
+            const formData = new FormData(document.getElementById('templates-status-form'));
+
+            // Ajouter l'action AJAX
+            formData.append('action', 'pdf_builder_save_order_status_templates');
+
+            // Faire la requête AJAX
+            fetch(ajaxurl, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Succès
+                    saveBtn.textContent = '✅ Sauvegardé !';
+                    saveBtn.classList.add('button-success');
+
+                    // Réactiver après 2 secondes
+                    setTimeout(() => {
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
+                        saveBtn.classList.remove('button-success');
+                    }, 2000);
+                } else {
+                    // Erreur
+                    saveBtn.textContent = '❌ Erreur';
+                    saveBtn.classList.add('button-error');
+                    alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
+
+                    // Réactiver après 3 secondes
+                    setTimeout(() => {
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
+                        saveBtn.classList.remove('button-error');
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur AJAX:', error);
+                saveBtn.textContent = '❌ Erreur de connexion';
+                saveBtn.classList.add('button-error');
+                alert('Erreur de connexion lors de la sauvegarde');
+
+                // Réactiver après 3 secondes
+                setTimeout(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
+                    saveBtn.classList.remove('button-error');
+                }, 3000);
+            });
+        });
+    });
+})();
+</script>

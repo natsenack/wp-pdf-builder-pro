@@ -727,11 +727,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
             'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
             'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
-            'company_phone_manual' => sanitize_text_field($_POST['pdf_builder_company_phone_manual'] ?? ''),
-            'company_siret' => sanitize_text_field($_POST['pdf_builder_company_siret'] ?? ''),
-            'company_vat' => sanitize_text_field($_POST['pdf_builder_company_vat'] ?? ''),
-            'company_rcs' => sanitize_text_field($_POST['pdf_builder_company_rcs'] ?? ''),
-            'company_capital' => sanitize_text_field($_POST['pdf_builder_company_capital'] ?? ''),
+            'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
+            'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
+            'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
+            'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
+            'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
             'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
             'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
@@ -771,13 +771,13 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_system_settings() {
         $settings = [
-            'cache_enabled' => $_POST['pdf_builder_cache_enabled'] ?? '0',
-            'cache_compression' => $_POST['pdf_builder_cache_compression'] ?? '0',
-            'cache_auto_cleanup' => $_POST['pdf_builder_cache_auto_cleanup'] ?? '0',
-            'cache_max_size' => intval($_POST['pdf_builder_cache_max_size'] ?? 100),
-            'cache_ttl' => intval($_POST['pdf_builder_cache_ttl'] ?? 3600),
-            'performance_auto_optimization' => isset($_POST['pdf_builder_performance_auto_optimization']) ? '1' : '0',
-            'auto_maintenance' => $_POST['pdf_builder_systeme_auto_maintenance'] ?? '0',
+            'cache_enabled' => $_POST['cache_enabled'] ?? '0',
+            'cache_compression' => $_POST['cache_compression'] ?? '0',
+            'cache_auto_cleanup' => $_POST['cache_auto_cleanup'] ?? '0',
+            'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
+            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'performance_auto_optimization' => isset($_POST['performance_auto_optimization']) ? '1' : '0',
+            'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
         ];
 
         foreach ($settings as $key => $value) {
@@ -831,20 +831,20 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_security_settings() {
         $settings = [
-            'security_level' => sanitize_text_field($_POST['pdf_builder_security_level'] ?? 'medium'),
-            'enable_logging' => isset($_POST['pdf_builder_enable_logging']) ? '1' : '0',
+            'security_level' => sanitize_text_field($_POST['security_level'] ?? 'medium'),
+            'enable_logging' => isset($_POST['enable_logging']) ? '1' : '0',
             'ip_filtering' => isset($_POST['ip_filtering']) ? '1' : '0',
             'rate_limiting' => isset($_POST['rate_limiting']) ? '1' : '0',
             'encryption' => isset($_POST['encryption']) ? '1' : '0',
             'audit_log' => isset($_POST['audit_log']) ? '1' : '0',
-            'gdpr_enabled' => isset($_POST['pdf_builder_gdpr_enabled']) ? '1' : '0',
-            'gdpr_consent_required' => isset($_POST['pdf_builder_gdpr_consent_required']) ? '1' : '0',
-            'gdpr_data_retention' => intval($_POST['pdf_builder_gdpr_data_retention']),
-            'gdpr_audit_enabled' => isset($_POST['pdf_builder_gdpr_audit_enabled']) ? '1' : '0',
-            'gdpr_encryption_enabled' => isset($_POST['pdf_builder_gdpr_encryption_enabled']) ? '1' : '0',
-            'gdpr_consent_analytics' => isset($_POST['pdf_builder_gdpr_consent_analytics']) ? '1' : '0',
-            'gdpr_consent_templates' => isset($_POST['pdf_builder_gdpr_consent_templates']) ? '1' : '0',
-            'gdpr_consent_marketing' => isset($_POST['pdf_builder_gdpr_consent_marketing']) ? '1' : '0',
+            'gdpr_enabled' => isset($_POST['gdpr_enabled']) ? '1' : '0',
+            'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) ? '1' : '0',
+            'gdpr_data_retention' => intval($_POST['gdpr_data_retention']),
+            'gdpr_audit_enabled' => isset($_POST['gdpr_audit_enabled']) ? '1' : '0',
+            'gdpr_encryption_enabled' => isset($_POST['gdpr_encryption_enabled']) ? '1' : '0',
+            'gdpr_consent_analytics' => isset($_POST['gdpr_consent_analytics']) ? '1' : '0',
+            'gdpr_consent_templates' => isset($_POST['gdpr_consent_templates']) ? '1' : '0',
+            'gdpr_consent_marketing' => isset($_POST['gdpr_consent_marketing']) ? '1' : '0',
         ];
 
         foreach ($settings as $key => $value) {
@@ -859,13 +859,13 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_pdf_settings() {
         $settings = [
-            'pdf_quality' => sanitize_text_field($_POST['pdf_builder_pdf_quality'] ?? 'high'),
-            'pdf_page_size' => sanitize_text_field($_POST['pdf_builder_default_format'] ?? 'A4'),
-            'pdf_orientation' => sanitize_text_field($_POST['pdf_builder_default_orientation'] ?? 'portrait'),
-            'pdf_cache_enabled' => isset($_POST['pdf_builder_pdf_cache_enabled']) ? '1' : '0',
-            'pdf_compression' => sanitize_text_field($_POST['pdf_builder_pdf_compression'] ?? 'medium'),
-            'pdf_metadata_enabled' => isset($_POST['pdf_builder_pdf_metadata_enabled']) ? '1' : '0',
-            'pdf_print_optimized' => isset($_POST['pdf_builder_pdf_print_optimized']) ? '1' : '0',
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'pdf_page_size' => sanitize_text_field($_POST['pdf_page_size'] ?? 'A4'),
+            'pdf_orientation' => sanitize_text_field($_POST['pdf_orientation'] ?? 'portrait'),
+            'pdf_cache_enabled' => isset($_POST['pdf_cache_enabled']) ? '1' : '0',
+            'pdf_compression' => sanitize_text_field($_POST['pdf_compression'] ?? 'medium'),
+            'pdf_metadata_enabled' => isset($_POST['pdf_metadata_enabled']) ? '1' : '0',
+            'pdf_print_optimized' => isset($_POST['pdf_print_optimized']) ? '1' : '0',
         ];
 
         foreach ($settings as $key => $value) {
@@ -934,8 +934,8 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Paramètres de rappel par email
         $settings = [
-            'license_email_reminders' => !empty($_POST['pdf_builder_license_email_reminders']) ? '1' : '0',
-            'license_reminder_email' => sanitize_email($_POST['pdf_builder_license_reminder_email'] ?? ''),
+            'license_email_reminders' => !empty($_POST['license_email_reminders']) ? '1' : '0',
+            'license_reminder_email' => sanitize_email($_POST['license_reminder_email'] ?? ''),
         ];
 
         foreach ($settings as $key => $value) {
@@ -949,7 +949,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde des paramètres templates
      */
     private function save_templates_settings() {
-        $order_status_templates = isset($_POST['pdf_builder_order_status_templates']) ? $_POST['pdf_builder_order_status_templates'] : [];
+        $order_status_templates = isset($_POST['order_status_templates']) ? $_POST['order_status_templates'] : [];
         update_option('pdf_builder_order_status_templates', $order_status_templates);
         return 1;
     }
