@@ -558,6 +558,7 @@
                 });
 
                 // Ajouter les données du formulaire à allData
+                console.log('JS: FormData object for ' + formId + ':', formObject);
                 allData[formId] = formObject;
             }
         });

@@ -472,15 +472,15 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                                         class="template-select">
                                     <option value="">-- Aucun template --</option>
                                     <?php foreach ($templates as $template_id => $template_title):
-                                        $current_value = $current_mappings[$status_key] ?? '';
-                                        $is_selected = $current_value === $template_id;
+                                        $current_value = isset($current_mappings[$status_key]) ? trim((string)$current_mappings[$status_key]) : '';
+                                        $is_selected = $current_value === (string)$template_id;
                                         // Debug temporaire
                                         if ($status_key === 'wc-completed') {
                                             error_log("DEBUG Select: status=$status_key, current_value='$current_value', template_id='$template_id', is_selected=" . ($is_selected ? 'YES' : 'NO'));
                                         }
                                         ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
-                                                <?php selected($current_value, $template_id); ?>>        
+                                                <?php selected($current_value, (string)$template_id); ?>>        
                                             <?php echo esc_html($template_title); ?>
                                         </option>
                                     <?php endforeach; ?>
