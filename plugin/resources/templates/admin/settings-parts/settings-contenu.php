@@ -443,13 +443,19 @@ $settings = get_option('pdf_builder_settings', array());
             <style>
                 /* Styles pour les modales */
                 .modal-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 10000;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    z-index: 999999 !important;
                     display: none;
+                    overflow: visible !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: none !important;
+                    outline: none !important;
+                    box-sizing: border-box !important;
                 }
 
                 .modal-overlay.show {
@@ -1944,7 +1950,7 @@ $settings = get_option('pdf_builder_settings', array());
             </script>
 
             <!-- Modales individuelles pour chaque catégorie -->
-            <div id="canvas-dimensions-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-dimensions-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -1961,7 +1967,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-apparence-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-apparence-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -1978,7 +1984,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-grille-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-grille-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -1995,7 +2001,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-zoom-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-zoom-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -2012,7 +2018,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-interactions-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-interactions-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -2029,7 +2035,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-export-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-export-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -2046,7 +2052,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-performance-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-performance-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
@@ -2063,7 +2069,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-debug-modal" class="modal-overlay" style="display: none;">
+            <div id="canvas-debug-modal" class="modal-overlay">
                 <div class="modal-backdrop"></div>
                 <div class="modal-container">
                     <div class="modal-header">
