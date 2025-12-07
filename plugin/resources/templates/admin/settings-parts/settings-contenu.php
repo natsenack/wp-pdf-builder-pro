@@ -900,53 +900,183 @@ $settings = get_option('pdf_builder_settings', array());
                         console.log('PDF Builder Modal System: Modal computed style:', window.getComputedStyle(overlay).display);
 
                         // Synchroniser les valeurs de la modal avec les champs cachés
-                        syncModalValues();
+                        modalSettingsManager.syncModalValues();
+
+                        // Ajouter les gestionnaires d'événements pour les dépendances
+                        modalSettingsManager.setupDependencyHandlers();
                     }
 
-                    // Synchroniser les valeurs de la modal avec les champs cachés actuels
-                    function syncModalValues() {
-                        if (!currentModalCategory) return;
+                    // Gestionnaire centralisé des paramètres des modales
+                    const modalSettingsManager = {
+                        // Configuration des dépendances entre champs
+                        dependencies: {
+                            'pdf_builder_canvas_grid_enabled': ['pdf_builder_canvas_snap_to_grid', 'pdf_builder_canvas_grid_size'],
+                            'pdf_builder_canvas_guides_enabled': []
+                        },
 
-                        console.log('Synchronisation des valeurs de la modal pour:', currentModalCategory);
+                        // Synchroniser les valeurs des champs cachés vers la modal actuelle
+                        syncModalValues: function() {
+                            if (!currentModalCategory) return;
 
-                        // Trouver le modal actuellement ouvert
-                        const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
-                        if (!currentModal) {
-                            console.error('Modal non trouvé pour la catégorie:', currentModalCategory);
-                            return;
-                        }
+                            console.log('Synchronisation des valeurs de la modal pour:', currentModalCategory);
 
-                        // Parcourir tous les champs de la modal actuelle
-                        const modalInputs = currentModal.querySelectorAll('input, select');
+                            // Trouver le modal actuellement ouvert
+                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            if (!currentModal) {
+                                console.error('Modal non trouvé pour la catégorie:', currentModalCategory);
+                                return;
+                            }
 
-                        modalInputs.forEach(input => {
-                            if (!input.name) return;
+                            // Parcourir tous les champs de la modal actuelle
+                            const modalInputs = currentModal.querySelectorAll('input, select');
 
-                            // Trouver le champ caché correspondant
-                            const hiddenFieldName = input.name; // Les champs de la modal ont déjà le bon nom (pdf_builder_canvas_*)
-                            const hiddenField = document.querySelector(`input[name="${hiddenFieldName}"]`);
+                            modalInputs.forEach(input => {
+                                if (!input.name) return;
 
-                            if (hiddenField) {
-                                const currentValue = hiddenField.value;
-                                console.log(`Synchronisation ${input.name} <- ${hiddenFieldName} = ${currentValue}`);
+                                // Trouver le champ caché correspondant
+                                const hiddenField = document.querySelector(`input[name="${input.name}"]`);
 
-                                if (input.type === 'checkbox') {
-                                    input.checked = currentValue === '1' || currentValue === 'true';
-                                } else {
-                                    input.value = currentValue;
+                                if (hiddenField) {
+                                    const currentValue = hiddenField.value;
+                                    console.log(`Synchronisation ${input.name} = ${currentValue}`);
+
+                                    if (input.type === 'checkbox') {
+                                        input.checked = currentValue === '1' || currentValue === 'true';
+                                    } else {
+                                        input.value = currentValue;
+                                    }
+
+                                    // Gérer les dépendances
+                                    this.updateFieldDependencies(input.name, input.checked || input.value);
                                 }
+                            });
+                        },
 
-                                // Gérer les états disabled/enabled pour les champs dépendants
-                                if (input.name === 'pdf_builder_canvas_snap_to_grid' || input.name === 'pdf_builder_canvas_grid_size') {
-                                    const gridEnabled = document.querySelector('input[name="pdf_builder_canvas_grid_enabled"]')?.checked || false;
-                                    input.disabled = !gridEnabled;
-                                    if (input.parentElement && input.parentElement.classList.contains('toggle-switch')) {
-                                        input.parentElement.classList.toggle('disabled', !gridEnabled);
+                        // Mettre à jour les dépendances d'un champ
+                        updateFieldDependencies: function(fieldName, isEnabled) {
+                            const dependentFields = this.dependencies[fieldName];
+                            if (!dependentFields) return;
+
+                            dependentFields.forEach(depFieldName => {
+                                const depInput = document.querySelector(`input[name="${depFieldName}"], select[name="${depFieldName}"]`);
+                                if (depInput) {
+                                    depInput.disabled = !isEnabled;
+                                    if (depInput.parentElement && depInput.parentElement.classList.contains('toggle-switch')) {
+                                        depInput.parentElement.classList.toggle('disabled', !isEnabled);
                                     }
                                 }
+                            });
+                        },
+
+                        // Sauvegarder les paramètres de la modal actuelle
+                        saveModalSettings: function() {
+                            if (!currentModalCategory) return;
+
+                            console.log('Sauvegarde des paramètres pour:', currentModalCategory);
+
+                            // Trouver le modal actuel
+                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            if (!currentModal) {
+                                console.error('Modal non trouvé pour sauvegarde:', currentModalCategory);
+                                return;
                             }
-                        });
-                    }
+
+                            // Collecter toutes les valeurs des champs de la modal
+                            const modalInputs = currentModal.querySelectorAll('input, select');
+                            const updatedValues = {};
+
+                            modalInputs.forEach(input => {
+                                if (!input.name) return;
+
+                                let value;
+                                if (input.type === 'checkbox') {
+                                    value = input.checked ? '1' : '0';
+                                } else if (input.type === 'number') {
+                                    value = parseFloat(input.value) || 0;
+                                } else {
+                                    value = input.value;
+                                }
+
+                                updatedValues[input.name] = value;
+
+                                // Mettre à jour la valeur dans le système de previews
+                                const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_');
+                                previewSystem.values[previewKey] = value;
+
+                                // Mettre à jour le champ caché correspondant
+                                const hiddenField = document.querySelector(`input[name="${input.name}"]`);
+                                if (hiddenField) {
+                                    hiddenField.value = value;
+                                    console.log(`Champ caché mis à jour: ${input.name} = ${value}`);
+                                }
+                            });
+
+                            // Rafraîchir toutes les previews avec les nouvelles valeurs
+                            previewSystem.refreshPreviews();
+
+                            // Sauvegarder côté serveur via AJAX
+                            this.saveToServer(updatedValues);
+
+                            console.log('Paramètres sauvegardés et previews mises à jour');
+                            closeModal();
+                        },
+
+                        // Sauvegarder côté serveur
+                        saveToServer: function(values) {
+                            console.log('Sauvegarde côté serveur...');
+
+                            // Créer FormData avec les valeurs
+                            const formData = new FormData();
+                            formData.append('action', 'pdf_builder_save_all_settings');
+                            formData.append('current_tab', 'contenu');
+                            formData.append('nonce', pdfBuilderSaveNonce);
+
+                            // Ajouter toutes les valeurs
+                            Object.entries(values).forEach(([key, value]) => {
+                                formData.append(key, value);
+                            });
+
+                            // Faire l'appel AJAX
+                            fetch(pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => {
+                                console.log('Response status:', response.status);
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Response data:', data);
+                                if (data.success) {
+                                    console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
+                                } else {
+                                    console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erreur AJAX lors de la sauvegarde:', error);
+                            });
+                        },
+
+                        // Configurer les gestionnaires d'événements pour les dépendances
+                        setupDependencyHandlers: function() {
+                            if (!currentModalCategory) return;
+
+                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            if (!currentModal) return;
+
+                            // Écouter les changements sur les champs qui ont des dépendances
+                            Object.keys(this.dependencies).forEach(masterField => {
+                                const masterInput = currentModal.querySelector(`input[name="${masterField}"], select[name="${masterField}"]`);
+                                if (masterInput) {
+                                    masterInput.addEventListener('change', (e) => {
+                                        const isEnabled = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+                                        this.updateFieldDependencies(masterField, isEnabled);
+                                    });
+                                }
+                            });
+                        }
+                    };
 
                     // Fermer la modal
                     function closeModal() {
@@ -958,97 +1088,7 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Sauvegarder les paramètres
                     function saveModalSettings() {
-                        console.log('Sauvegarde des paramètres pour:', currentModalCategory);
-
-                        // Collecter toutes les valeurs des champs de la modal
-                        const modalInputs = document.querySelectorAll('#pdf-builder-modal-overlay input, #pdf-builder-modal-overlay select');
-
-                        modalInputs.forEach(input => {
-                            const key = input.name.replace('modal_canvas_', 'canvas_');
-                            let value = input.type === 'checkbox' ? input.checked : input.value;
-
-                            // Conversion des types
-                            if (input.type === 'number') value = parseFloat(value) || 0;
-                            if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
-                                value = value ? '1' : '0';
-                            }
-
-                            // Mettre à jour la valeur dans le système de previews
-                            previewSystem.values[key] = value;
-
-                            // Mettre à jour le champ caché correspondant dans le formulaire
-                            const hiddenField = document.querySelector(`input[name="pdf_builder_${key}"]`);
-                            if (hiddenField) {
-                                hiddenField.value = value;
-                                console.log(`Champ caché mis à jour: pdf_builder_${key} = ${value}`);
-                            }
-                        });
-
-                        // Rafraîchir toutes les previews avec les nouvelles valeurs
-                        previewSystem.refreshPreviews();
-
-                        // Sauvegarder côté serveur via AJAX
-                        saveCanvasSettingsToServer();
-
-                        console.log('Paramètres sauvegardés et previews mises à jour');
-                        closeModal();
-                    }
-
-                    // Sauvegarder les paramètres canvas côté serveur
-                    function saveCanvasSettingsToServer() {
-                        console.log('Sauvegarde côté serveur...');
-
-                        // Créer FormData avec seulement les champs nécessaires
-                        const formData = new FormData();
-                        
-                        // Ajouter l'action et le tab
-                        formData.append('action', 'pdf_builder_save_all_settings');
-                        formData.append('current_tab', 'contenu');
-                        formData.append('nonce', pdfBuilderSaveNonce);
-                        
-                        // Ajouter seulement les champs canvas pertinents depuis les champs cachés
-                        const canvasFields = [
-                            'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_dpi',
-                            'pdf_builder_canvas_format', 'pdf_builder_canvas_bg_color', 'pdf_builder_canvas_border_color',
-                            'pdf_builder_canvas_border_width', 'pdf_builder_canvas_shadow_enabled', 'pdf_builder_canvas_grid_enabled',
-                            'pdf_builder_canvas_grid_size', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid',
-                            'pdf_builder_canvas_zoom_min', 'pdf_builder_canvas_zoom_max', 'pdf_builder_canvas_zoom_default',
-                            'pdf_builder_canvas_zoom_step', 'pdf_builder_canvas_export_quality', 'pdf_builder_canvas_export_format',
-                            'pdf_builder_canvas_export_transparent', 'pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled',
-                            'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_selection_mode',
-                            'pdf_builder_canvas_keyboard_shortcuts', 'pdf_builder_canvas_fps_target', 'pdf_builder_canvas_memory_limit_js',
-                            'pdf_builder_canvas_response_timeout', 'pdf_builder_canvas_lazy_loading_editor', 'pdf_builder_canvas_preload_critical',
-                            'pdf_builder_canvas_lazy_loading_plugin', 'pdf_builder_canvas_debug_enabled', 'pdf_builder_canvas_performance_monitoring',
-                            'pdf_builder_canvas_error_reporting', 'pdf_builder_canvas_memory_limit_php'
-                        ];
-                        
-                        canvasFields.forEach(fieldName => {
-                            const field = document.querySelector(`input[name="${fieldName}"]`);
-                            if (field) {
-                                formData.append(fieldName, field.value);
-                            }
-                        });
-
-                        // Faire l'appel AJAX
-                        fetch(pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => {
-                            console.log('Response status:', response.status);
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Response data:', data);
-                            if (data.success) {
-                                console.log('Paramètres canvas sauvegardés avec succès:', data.saved_count, 'paramètres');
-                            } else {
-                                console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erreur AJAX lors de la sauvegarde:', error);
-                        });
+                        modalSettingsManager.saveModalSettings();
                     }
 
                     // Gestionnaire d'événements pour les boutons de configuration
