@@ -2081,6 +2081,7 @@ class AjaxHandler
         // Gestion spéciale pour pdf_builder_order_status_templates (array)
         if ($key === 'pdf_builder_order_status_templates') {
             error_log('PHP: Raw templates value: ' . print_r($value, true));
+            error_log('PHP: Exact string: ' . $value);
             error_log('PHP: Value type: ' . gettype($value));
             error_log('PHP: Is string: ' . (is_string($value) ? 'yes' : 'no'));
             // Si c'est une chaîne JSON, la décoder
