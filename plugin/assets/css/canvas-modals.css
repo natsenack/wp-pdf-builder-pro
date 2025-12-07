@@ -22,7 +22,7 @@
     box-sizing: border-box;
 }
 
-.canvas-modal-overlay.show {
+.canvas-modal-overlay.active {
     display: flex;
     align-items: center;
     justify-content: center;
