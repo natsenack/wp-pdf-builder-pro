@@ -2472,6 +2472,41 @@ error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_e
 
                     console.log('🔍 Monitoring accessible via: window.pdfBuilderMonitoring.showDashboard()');
 
+                    // ===========================================
+                    // SYNCHRONISATION DES TOGGLES AVEC CHAMPS CACHÉS
+                    // ===========================================
+
+                    // Fonction pour synchroniser les toggles avec les champs cachés
+                    function syncTogglesWithHiddenFields() {
+                        // Écouter tous les changements sur les checkboxes et toggles
+                        document.addEventListener('change', function(e) {
+                            const target = e.target;
+
+                            // Vérifier si c'est une checkbox ou un toggle
+                            if (target.type === 'checkbox' || target.classList.contains('toggle-checkbox')) {
+                                const fieldName = target.name || target.getAttribute('data-field');
+
+                                if (fieldName && fieldName.startsWith('pdf_builder_canvas_')) {
+                                    // Trouver le champ caché correspondant
+                                    const hiddenField = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
+
+                                    if (hiddenField) {
+                                        // Mettre à jour la valeur du champ caché
+                                        const newValue = target.checked ? '1' : '0';
+                                        hiddenField.value = newValue;
+
+                                        console.log(`🔄 Toggle synchronisé: ${fieldName} = ${newValue}`);
+                                    }
+                                }
+                            }
+                        });
+
+                        console.log('🔗 Synchronisation toggles ↔ champs cachés activée');
+                    }
+
+                    // Initialiser la synchronisation
+                    syncTogglesWithHiddenFields();
+
                     // Initialiser le système de previews dynamiques
                     previewSystem.init();
                 })();
