@@ -128,11 +128,17 @@ class PDF_Template_Status_Manager {
 
     // Chargement des mappings
     private function load_mappings() {
-        $this->current_mappings = pdf_builder_safe_get_option('pdf_builder_order_status_templates', []);
+        $raw_option = pdf_builder_safe_get_option('pdf_builder_order_status_templates', []);
+        error_log('DEBUG: Raw option value from DB: ' . print_r($raw_option, true));
+        
+        $this->current_mappings = $raw_option;
 
         // S'assurer que c'est un tableau
         if (!is_array($this->current_mappings)) {
             $this->current_mappings = [];
+            error_log('DEBUG: current_mappings was not array, set to empty');
+        } else {
+            error_log('DEBUG: current_mappings loaded: ' . print_r($this->current_mappings, true));
         }
 
         // Nettoyer les mappings obsolètes
