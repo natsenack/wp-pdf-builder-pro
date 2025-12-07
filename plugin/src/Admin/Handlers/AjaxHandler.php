@@ -634,6 +634,7 @@ class AjaxHandler
 
             // Déterminer l'action à effectuer
             $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : '';
+            error_log('PDF Builder: ajaxUnifiedHandler called with action_type: ' . $action);
 
             // Router vers la bonne méthode selon l'action
             switch ($action) {
@@ -919,9 +920,11 @@ class AjaxHandler
      */
     private function handleGetTemplateMappings()
     {
+        error_log('PDF Builder: handleGetTemplateMappings called');
         try {
             // Récupérer les mappings sauvegardés
             $mappings = get_option('pdf_builder_order_status_templates', []);
+            error_log('PDF Builder: Retrieved mappings: ' . json_encode($mappings));
 
             // Récupérer la liste des templates disponibles
             $templates = [];
@@ -930,10 +933,12 @@ class AjaxHandler
                 'posts_per_page' => -1,
                 'post_status' => 'publish'
             ]);
+            error_log('PDF Builder: Found ' . count($template_posts) . ' template posts');
 
             foreach ($template_posts as $post) {
                 $templates[$post->ID] = $post->post_title;
             }
+            error_log('PDF Builder: Template list: ' . json_encode($templates));
 
             wp_send_json_success([
                 'mappings' => $mappings,
@@ -942,6 +947,7 @@ class AjaxHandler
             ]);
 
         } catch (Exception $e) {
+            error_log('PDF Builder: Exception in handleGetTemplateMappings: ' . $e->getMessage());
             wp_send_json_error('Erreur lors de la récupération des mappings: ' . $e->getMessage());
         }
     }
