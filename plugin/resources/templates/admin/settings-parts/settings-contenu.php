@@ -1594,8 +1594,8 @@ foreach ($canvas_options as $option) {
                             const field = this.fieldDefinitions[fieldName];
                             if (!field) return '';
 
-                            const fieldId = `pdf_builder_canvas_${fieldName}`;
-                            const fieldNameAttr = `pdf_builder_canvas_${fieldName}`;
+                            const fieldId = `pdf_builder_canvas_canvas_${fieldName}`;
+                            const fieldNameAttr = `pdf_builder_canvas_canvas_${fieldName}`;
                             const value = currentValue !== undefined ? currentValue : field.defaultValue;
                             const escapedValue = typeof value === 'string' ? escapeHtmlAttr(value) : value;
 
@@ -1687,7 +1687,7 @@ foreach ($canvas_options as $option) {
                             let html = '<div class="modal-form-grid">';
 
                             fields.forEach(fieldName => {
-                                const currentValue = previewSystem.values[`canvas_${fieldName}`];
+                                const currentValue = previewSystem.values[`canvas_canvas_${fieldName}`];
                                 html += this.generateFieldHTML(fieldName, currentValue);
                             });
 
@@ -1706,7 +1706,7 @@ foreach ($canvas_options as $option) {
                             const fields = modal.querySelectorAll('input, select');
 
                             fields.forEach(field => {
-                                const fieldName = field.name.replace('pdf_builder_canvas_', '');
+                                const fieldName = field.name.replace('pdf_builder_canvas_canvas_', '');
                                 const fieldConfig = this.fieldDefinitions[fieldName];
 
                                 if (!fieldConfig) return;
@@ -2238,7 +2238,7 @@ foreach ($canvas_options as $option) {
                                     }
 
                                     // Gérer les dépendances avec le nouveau système
-                                    const fieldName = input.name.replace('pdf_builder_canvas_', '');
+                                    const fieldName = input.name.replace('pdf_builder_canvas_canvas_', '');
                                     formGenerator.updateFieldDependencies(fieldName, input.checked || input.value);
                                 }
                             });
@@ -2294,11 +2294,11 @@ foreach ($canvas_options as $option) {
                                 }
 
                                 // Mettre à jour la valeur dans le système de previews
-                                const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_');
+                                const previewKey = input.name.replace('pdf_builder_canvas_canvas_', 'canvas_');
                                 previewSystem.values[previewKey] = value;
 
                                 // Debug log pour l'ombre
-                                if (input.name === 'pdf_builder_canvas_shadow_enabled') {
+                                if (input.name === 'pdf_builder_canvas_canvas_shadow_enabled') {
                                     console.log('🔍 DEBUG: Shadow enabled value collected:', value, '(type:', typeof value, ')');
                                 }
 
@@ -2326,8 +2326,8 @@ foreach ($canvas_options as $option) {
                             console.log('Sauvegarde côté serveur...');
 
                             // Debug: vérifier la valeur de l'ombre
-                            if (values['pdf_builder_canvas_shadow_enabled'] !== undefined) {
-                                console.log('🔍 DEBUG: Sending shadow_enabled to server:', values['pdf_builder_canvas_shadow_enabled'], '(type:', typeof values['pdf_builder_canvas_shadow_enabled'], ')');
+                            if (values['pdf_builder_canvas_canvas_shadow_enabled'] !== undefined) {
+                                console.log('🔍 DEBUG: Sending shadow_enabled to server:', values['pdf_builder_canvas_canvas_shadow_enabled'], '(type:', typeof values['pdf_builder_canvas_canvas_shadow_enabled'], ')');
                             }
 
                             // Créer FormData avec les valeurs
