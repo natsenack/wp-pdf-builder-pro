@@ -103,38 +103,38 @@ $settings = get_option('pdf_builder_settings', array());
 
                         <!-- Carte Apparence -->
                         <article class="canvas-card" data-category="apparence">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🎨</span>
                                 </div>
                                 <h4>Apparence</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div id="card-bg-preview" class="color-preview bg" title="Fond"></div>
                                 <div id="card-border-preview" class="color-preview border" title="Bordure"></div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>🎨</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Grille & Guides -->
                         <article class="canvas-card" data-category="grille">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">📏</span>
                                 </div>
                                 <h4>Grille & Guides</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div id="card-grid-preview" class="grid-preview-container">
                                     <div class="grid-canvas">
                                         <!-- Quadrillage principal -->
@@ -174,26 +174,26 @@ $settings = get_option('pdf_builder_settings', array());
                                         <span class="legend-item">📦 Élément</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>📏</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Zoom -->
                         <article class="canvas-card" id="zoom-navigation-card" data-category="zoom">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🔍</span>
                                 </div>
                                 <h4>Zoom</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div class="zoom-preview-container">
                                     <div class="zoom-indicator">
                                         <button class="zoom-btn zoom-minus" disabled>−</button>
@@ -205,26 +205,26 @@ $settings = get_option('pdf_builder_settings', array());
                                         <span>Pas: 25%</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>🔍</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Interactions & Comportement -->
                         <article class="canvas-card" data-category="interactions">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🎯</span>
                                 </div>
                                 <h4>Interactions & Comportement</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Contrôlez les interactions canvas, la sélection et les raccourcis clavier.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div class="interactions-preview-container">
                                     <!-- Canvas miniature avec éléments -->
                                     <div class="mini-canvas">
@@ -269,47 +269,47 @@ $settings = get_option('pdf_builder_settings', array());
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>🎯</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Export & Qualité -->
                         <article class="canvas-card" data-category="export">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">📤</span>
                                 </div>
                                 <h4>Export & Qualité</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Configurez les formats et la qualité d'export des designs.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div class="export-preview" title="Export PNG/JPG/PDF activé"></div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>📤</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Performance -->
                         <article class="canvas-card" data-category="performance">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">⚡</span>
                                 </div>
                                 <h4>Performance</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Optimisez les FPS, mémoire et temps de réponse.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div class="performance-preview-container">
                                     <div class="performance-metrics">
                                         <div class="metric-item">
@@ -332,26 +332,26 @@ $settings = get_option('pdf_builder_settings', array());
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>⚡</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Debug -->
                         <article class="canvas-card" data-category="debug">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🐛</span>
                                 </div>
                                 <h4>Debug</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Outils de débogage et monitoring des performances.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div class="debug-preview-container">
                                     <div class="debug-console">
                                         <div class="console-line">
@@ -386,12 +386,12 @@ $settings = get_option('pdf_builder_settings', array());
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>🐛</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
                     </div>
 
