@@ -954,7 +954,7 @@ $settings = get_option('pdf_builder_settings', array());
                         const formData = new FormData();
                         
                         // Ajouter l'action et le tab
-                        formData.append('action', 'pdf_builder_save_settings');
+                        formData.append('action', 'pdf_builder_save_all_settings');
                         formData.append('current_tab', 'contenu');
                         formData.append('nonce', pdfBuilderSaveNonce);
                         
