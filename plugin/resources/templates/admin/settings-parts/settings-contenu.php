@@ -955,9 +955,10 @@ $settings = get_option('pdf_builder_settings', array());
                         formData.append('current_tab', 'contenu');
                         
                         // Remplacer le nonce par le bon
+                        formData.delete('pdf_builder_canvas_nonce'); // Supprimer le mauvais nonce
                         const settingsNonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
                         if (settingsNonceField) {
-                            formData.set('nonce', settingsNonceField.value);
+                            formData.append('nonce', settingsNonceField.value); // Ajouter le bon nonce
                         }
 
                         // Faire l'appel AJAX
