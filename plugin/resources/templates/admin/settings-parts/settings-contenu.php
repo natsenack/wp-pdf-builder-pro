@@ -946,6 +946,57 @@ $settings = get_option('pdf_builder_settings', array());
                         closeModal();
                     }
 
+                    // Sauvegarder les paramètres des modals canvas statiques
+                    function saveCanvasModalSettings(category) {
+                        console.log('Sauvegarde des paramètres canvas pour:', category);
+
+                        // Déterminer l'ID du formulaire selon la catégorie
+                        const formId = `canvas-${category}-form`;
+                        const form = document.getElementById(formId);
+
+                        if (!form) {
+                            console.error('Formulaire introuvable pour la catégorie:', category);
+                            return;
+                        }
+
+                        // Collecter toutes les valeurs des champs du formulaire
+                        const formInputs = form.querySelectorAll('input, select, textarea');
+
+                        formInputs.forEach(input => {
+                            if (!input.name) return; // Ignorer les inputs sans name
+
+                            const key = input.name.replace('pdf_builder_canvas_', 'canvas_');
+                            let value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+
+                            // Conversion des types pour les nombres
+                            if (input.type === 'number') value = parseFloat(value) || 0;
+
+                            // Mettre à jour la valeur dans le système de previews
+                            previewSystem.values[key] = value;
+
+                            // Mettre à jour le champ caché correspondant dans le formulaire principal
+                            const hiddenField = document.querySelector(`input[name="pdf_builder_${key}"]`);
+                            if (hiddenField) {
+                                hiddenField.value = value;
+                                console.log(`Champ caché mis à jour: pdf_builder_${key} = ${value}`);
+                            }
+                        });
+
+                        // Rafraîchir toutes les previews avec les nouvelles valeurs
+                        previewSystem.refreshPreviews();
+
+                        // Sauvegarder côté serveur via AJAX
+                        saveCanvasSettingsToServer();
+
+                        console.log('Paramètres canvas sauvegardés et previews mises à jour');
+
+                        // Fermer la modal
+                        const modal = document.getElementById(`canvas-${category}-modal`);
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
+                    }
+
                     // Sauvegarder les paramètres canvas côté serveur
                     function saveCanvasSettingsToServer() {
                         console.log('Sauvegarde côté serveur...');
@@ -1003,66 +1054,6 @@ $settings = get_option('pdf_builder_settings', array());
                         });
                     }
 
-                    // Sauvegarder les paramètres des modals canvas statiques
-                    function saveCanvasModalSettings(category) {
-                        console.log('Sauvegarde des paramètres pour modal statique:', category);
-
-                        // Trouver le modal statique
-                        const modal = document.getElementById(`canvas-${category}-modal`);
-                        if (!modal) {
-                            console.error('Modal statique introuvable pour:', category);
-                            return;
-                        }
-
-                        // Collecter toutes les valeurs des champs du modal
-                        const modalInputs = modal.querySelectorAll('input, select');
-
-                        modalInputs.forEach(input => {
-                            const key = input.name.replace('pdf_builder_canvas_', 'canvas_');
-                            let value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
-
-                            // Conversion des types pour les nombres
-                            if (input.type === 'number') value = parseFloat(value) || 0;
-
-                            // Mettre à jour la valeur dans le système de previews
-                            previewSystem.values[key] = value;
-
-                            // Mettre à jour le champ caché correspondant dans le formulaire
-                            const hiddenField = document.querySelector(`input[name="pdf_builder_${key}"]`);
-                            if (hiddenField) {
-                                hiddenField.value = value;
-                                console.log(`Champ caché mis à jour: pdf_builder_${key} = ${value}`);
-                            }
-                        });
-
-                        // Rafraîchir toutes les previews avec les nouvelles valeurs
-                        previewSystem.refreshPreviews();
-
-                        // Sauvegarder côté serveur via AJAX
-                        saveCanvasSettingsToServer();
-
-                        console.log('Paramètres sauvegardés et previews mises à jour');
-                        closeCanvasModal(modal);
-                    }
-
-                    // Fermer un modal canvas statique
-                    function closeCanvasModal(modal) {
-                        modal.style.display = 'none';
-                        document.body.style.overflow = '';
-                    }
-
-                    // Ouvrir un modal canvas statique
-                    function openCanvasModal(category) {
-                        const modal = document.getElementById(`canvas-${category}-modal`);
-                        if (modal) {
-                            modal.style.display = 'block';
-                            document.body.style.overflow = 'hidden';
-                            console.log('Modal statique ouvert pour:', category);
-                        } else {
-                            console.error('Modal statique introuvable pour:', category);
-                        }
-                    }
-
                     // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
                         // Bouton de configuration d'une carte
@@ -1070,7 +1061,14 @@ $settings = get_option('pdf_builder_settings', array());
                             e.preventDefault();
                             const card = e.target.closest('.canvas-card');
                             if (card && card.dataset.category) {
-                                openCanvasModal(card.dataset.category);
+                                // Ouvrir la modal statique correspondante
+                                const modalId = `canvas-${card.dataset.category}-modal`;
+                                const modal = document.getElementById(modalId);
+                                if (modal) {
+                                    modal.style.display = 'flex';
+                                } else {
+                                    console.error('Modal introuvable:', modalId);
+                                }
                             }
                             return;
                         }
@@ -1081,12 +1079,18 @@ $settings = get_option('pdf_builder_settings', array());
                             return;
                         }
 
-                        // Bouton de fermeture des modals canvas statiques
+                        // Boutons de fermeture pour les modals canvas statiques
                         if (e.target.closest('.canvas-modal-close') || e.target.closest('.canvas-modal-cancel')) {
                             const modal = e.target.closest('.canvas-modal');
                             if (modal) {
-                                closeCanvasModal(modal);
+                                modal.style.display = 'none';
                             }
+                            return;
+                        }
+
+                        // Clic sur l'overlay (backdrop) pour les modals canvas
+                        if (e.target.classList.contains('canvas-modal-overlay')) {
+                            e.target.closest('.canvas-modal').style.display = 'none';
                             return;
                         }
 
@@ -1096,27 +1100,18 @@ $settings = get_option('pdf_builder_settings', array());
                             return;
                         }
 
-                        // Clic sur l'overlay des modals canvas statiques
-                        if (e.target.classList.contains('canvas-modal-overlay')) {
-                            const modal = e.target.closest('.canvas-modal');
-                            if (modal) {
-                                closeCanvasModal(modal);
-                            }
-                            return;
-                        }
-
-                        // Bouton de sauvegarde (système dynamique)
+                        // Bouton de sauvegarde
                         if (e.target.closest('.pdf-builder-modal-save')) {
                             e.preventDefault();
                             saveModalSettings();
                             return;
                         }
 
-                        // Bouton de sauvegarde (système statique des canvas modals)
+                        // Bouton de sauvegarde pour les modals canvas statiques
                         if (e.target.closest('.canvas-modal-save')) {
                             e.preventDefault();
-                            const button = e.target.closest('.canvas-modal-save');
-                            const category = button.dataset.category;
+                            const saveBtn = e.target.closest('.canvas-modal-save');
+                            const category = saveBtn.dataset.category;
                             saveCanvasModalSettings(category);
                             return;
                         }
@@ -1125,17 +1120,15 @@ $settings = get_option('pdf_builder_settings', array());
                     // Fermeture avec Échap
                     document.addEventListener('keydown', function(e) {
                         if (e.key === 'Escape') {
-                            // Fermer les modals dynamiques
+                            // Fermer les modals pdf-builder
                             if (overlay.classList.contains('pdf-builder-modal-open')) {
                                 closeModal();
-                                return;
                             }
-                            // Fermer les modals statiques
-                            const openCanvasModals = document.querySelectorAll('.canvas-modal[style*="display: block"]');
-                            if (openCanvasModals.length > 0) {
-                                openCanvasModals.forEach(modal => closeCanvasModal(modal));
-                                return;
-                            }
+                            // Fermer les modals canvas statiques
+                            const openCanvasModals = document.querySelectorAll('.canvas-modal[style*="display: flex"]');
+                            openCanvasModals.forEach(modal => {
+                                modal.style.display = 'none';
+                            });
                         }
                     });
 
