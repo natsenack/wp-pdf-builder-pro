@@ -1848,16 +1848,50 @@ $settings = get_option('pdf_builder_settings', array());
                                 };
                             }
 
-                            // Écouter Échap
-                            const escapeHandler = (e) => {
+                        // Attacher les événements de fermeture directement à la modal
+                        const modalElement = document.getElementById(modalId);
+                        if (modalElement) {
+                            // Fermeture avec le bouton X
+                            const closeBtn = modalElement.querySelector('.modal-close');
+                            if (closeBtn) {
+                                closeBtn.onclick = function(e) {
+                                    e.preventDefault();
+                                    console.log('Fermeture via bouton X');
+                                    closeModal();
+                                };
+                            }
+
+                            // Fermeture avec le bouton Annuler
+                            const cancelBtn = modalElement.querySelector('.modal-cancel');
+                            if (cancelBtn) {
+                                cancelBtn.onclick = function(e) {
+                                    e.preventDefault();
+                                    console.log('Fermeture via bouton Annuler');
+                                    closeModal();
+                                };
+                            }
+
+                            // Fermeture avec l'overlay
+                            const backdrop = modalElement.querySelector('.modal-backdrop');
+                            if (backdrop) {
+                                backdrop.onclick = function(e) {
+                                    console.log('Fermeture via backdrop');
+                                    closeModal();
+                                };
+                            }
+
+                            // Fermeture avec Échap
+                            const escapeHandler = function(e) {
                                 if (e.key === 'Escape') {
+                                    console.log('Fermeture via Échap');
                                     closeModal();
                                     document.removeEventListener('keydown', escapeHandler);
                                 }
                             };
                             document.addEventListener('keydown', escapeHandler);
 
-                            console.log('🔍 DEBUG: Modal fullscreen affichée');
+                            console.log('Événements de fermeture attachés à la modal');
+                        }
                         }
 
                         // Synchroniser les valeurs des champs
@@ -2043,6 +2077,8 @@ $settings = get_option('pdf_builder_settings', array());
                     function closeModal() {
                         if (!currentModalCategory) return;
 
+                        console.log('Fermeture de la modal:', currentModalCategory);
+
                         // Monitorer la fermeture
                         modalMonitoring.trackModalClose(currentModalCategory);
 
@@ -2051,9 +2087,9 @@ $settings = get_option('pdf_builder_settings', array());
                         if (modal) {
                             modal.style.display = 'none';
                             modal.classList.remove('show');
+                            console.log('Modal masquée:', modalId);
                         }
                         currentModalCategory = null;
-                        console.log('Modal fermée');
                     }
 
                     // Sauvegarder les paramètres
@@ -2063,8 +2099,11 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
+                        console.log('Clic détecté sur:', e.target.className, e.target.tagName);
+
                         // Bouton de configuration d'une carte
                         if (e.target.closest('.canvas-configure-btn')) {
+                            console.log('Bouton config cliqué');
                             e.preventDefault();
                             const card = e.target.closest('.canvas-card');
                             if (card && card.dataset.category) {
@@ -2075,18 +2114,21 @@ $settings = get_option('pdf_builder_settings', array());
 
                         // Bouton de fermeture
                         if (e.target.closest('.modal-close') || e.target.closest('.modal-cancel')) {
+                            console.log('Bouton de fermeture cliqué');
                             closeModal();
                             return;
                         }
 
                         // Clic sur l'overlay (backdrop)
                         if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-backdrop')) {
+                            console.log('Clic sur overlay détecté:', e.target.className);
                             closeModal();
                             return;
                         }
 
                         // Bouton de sauvegarde
                         if (e.target.closest('.modal-save')) {
+                            console.log('Bouton sauvegarde cliqué');
                             e.preventDefault();
                             saveModalSettings();
                             return;
