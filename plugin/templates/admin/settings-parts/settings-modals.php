@@ -242,8 +242,8 @@
         </section>
     </div>
 </div>
-<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Dimensions Modal Overlay -->
+<div id="canvas-dimensions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-dimensions-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>📏 Dimensions & Format</h3>
@@ -356,9 +356,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Dimensions Modal (hidden container) -->
+<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Zoom & Navigation -->
-<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Zoom Modal Overlay -->
+<div id="canvas-zoom-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-zoom-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>🔍 Zoom</h3>
@@ -416,9 +422,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Zoom Modal (hidden container) -->
+<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Apparence -->
-<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Apparence Modal Overlay -->
+<div id="canvas-apparence-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-apparence-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🎨 Apparence</h3>
@@ -503,9 +515,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Apparence Modal (hidden container) -->
+<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Grille & Guides -->
-<div id="canvas-grille-modal" class="canvas-modal" data-category="grille">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Grille Modal Overlay -->
+<div id="canvas-grille-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-grille-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📐 Grille & Guides</h3>
@@ -569,9 +587,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Grille Modal (hidden container) -->
+<div id="canvas-grille-modal" class="canvas-modal" data-category="grille" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Interactions & Comportement-->
-<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Interactions Modal Overlay -->
+<div id="canvas-interactions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-interactions-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🖱️ Interactions & Comportement</h3>
@@ -670,9 +694,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Interactions Modal (hidden container) -->
+<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Export & Qualité -->
-<div id="canvas-export-modal" class="canvas-modal" data-category="export">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Export Modal Overlay -->
+<div id="canvas-export-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-export-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📤 Export & Qualité</h3>
@@ -724,9 +754,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Export Modal (hidden container) -->
+<div id="canvas-export-modal" class="canvas-modal" data-category="export" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Performance -->
-<div id="canvas-performance-modal" class="canvas-modal" data-category="performance">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Performance Modal Overlay -->
+<div id="canvas-performance-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-performance-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >⚡ Performance</h3>
@@ -855,9 +891,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas Performance Modal (hidden container) -->
+<div id="canvas-performance-modal" class="canvas-modal" data-category="performance" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- Canvas Configuration Modals Debug -->
-<div id="canvas-debug-modal" class="canvas-modal" data-category="debug">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Debug Modal Overlay -->
+<div id="canvas-debug-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-debug-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🐛 Debug</h3>
@@ -912,5 +954,11 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
     </div>
 </div>
 
+<!-- Canvas Debug Modal (hidden container) -->
+<div id="canvas-debug-modal" class="canvas-modal" data-category="debug" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <?php
+

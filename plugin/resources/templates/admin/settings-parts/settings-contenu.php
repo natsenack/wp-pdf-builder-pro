@@ -1572,9 +1572,11 @@ foreach ($canvas_options as $option) {
                         } : 'null');
 
                         if (modal) {
-                            const overlay = modal.querySelector('.canvas-modal-overlay');
-                            console.log('🔍 [OPEN MODAL] Overlay trouvé:', !!overlay);
+                            // Recherche de l'overlay séparé (plus dans la modal elle-même)
+                            const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
+                            console.log('🔍 [OPEN MODAL] Overlay séparé trouvé:', !!overlay);
                             console.log('🔍 [OPEN MODAL] Overlay details:', overlay ? {
+                                id: overlay.id,
                                 className: overlay.className,
                                 style: overlay.style.cssText,
                                 children: overlay.children.length
@@ -1953,9 +1955,11 @@ foreach ($canvas_options as $option) {
 
                         // Fermer la modal simplement en retirant la classe 'active' de l'overlay
                         if (modal) {
-                            const overlay = modal.querySelector('.canvas-modal-overlay');
-                            console.log('🔍 [CLOSE MODAL] Overlay trouvé:', !!overlay);
+                            // Recherche de l'overlay séparé (plus dans la modal elle-même)
+                            const overlay = document.getElementById(`canvas-${currentModalCategory}-modal-overlay`);
+                            console.log('🔍 [CLOSE MODAL] Overlay séparé trouvé:', !!overlay);
                             console.log('🔍 [CLOSE MODAL] Overlay details:', overlay ? {
+                                id: overlay.id,
                                 className: overlay.className,
                                 style: overlay.style.cssText
                             } : 'null');
