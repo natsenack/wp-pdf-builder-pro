@@ -490,7 +490,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 type: type,
                                 message: message,
                                 data: data,
-                                modalCategory: currentModalCategory
+                                modalCategory: typeof currentModalCategory !== 'undefined' ? currentModalCategory : null
                             };
 
                             this.history.push(entry);
@@ -1407,6 +1407,9 @@ $settings = get_option('pdf_builder_settings', array());
                     formGenerator
                         .addDependency('grid_enabled', ['snap_to_grid', 'grid_size'])
                         .addDependency('guides_enabled', []);
+
+                    // État de la modal
+                    let currentModalCategory = null;
 
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
