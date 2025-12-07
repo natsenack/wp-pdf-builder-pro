@@ -4309,16 +4309,20 @@ body.modal-open {
     border: 2px solid #ddd;
     display: inline-block;
     margin: 0 5px;
+    box-sizing: border-box;
+    background: none !important;
 }
 
 .color-preview.bg {
-    background-color: #ffffff;
-    border: 2px solid #ddd;
+    background-color: #ffffff !important;
+    border: 2px solid #ddd !important;
+    background-image: none !important;
 }
 
 .color-preview.border {
-    border: 3px solid #cccccc;
-    background: #ffffff;
+    border: 3px solid #cccccc !important;
+    background: #ffffff !important;
+    background-image: none !important;
     position: relative;
 }
 
