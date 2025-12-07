@@ -42,7 +42,7 @@ error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_e
                     <input type="hidden" name="pdf_builder_canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_border_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_width', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_shadow_enabled'] ?? get_option('pdf_builder_canvas_shadow_enabled', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_shadow_enabled', '0')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_enabled', '1')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', '20')); ?>">
@@ -1387,7 +1387,7 @@ error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_e
                             canvas_bg_color: <?php echo json_encode($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>,
                             canvas_border_color: <?php echo json_encode($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>,
                             canvas_border_width: <?php echo json_encode($settings['pdf_builder_canvas_border_width'] ?? '1'); ?>,
-                            canvas_shadow_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1'); ?>,
+                            canvas_shadow_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_shadow_enabled', '0') === '1'); ?>,
                             canvas_grid_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1'); ?>,
                             canvas_grid_size: <?php echo json_encode($settings['pdf_builder_canvas_grid_size'] ?? '20'); ?>,
                             canvas_guides_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_guides_enabled'] ?? '1') === '1'); ?>,
