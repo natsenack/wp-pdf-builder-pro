@@ -1419,6 +1419,12 @@ class AjaxHandler
             update_option('pdf_builder_canvas_settings', $canvas_settings);
             error_log("[PDF Builder Debug] Updated canvas_settings shadow_enabled to: " . $new_value_bool);
 
+            // Synchroniser avec le tableau principal pdf_builder_settings
+            $main_settings = get_option('pdf_builder_settings', []);
+            $main_settings['pdf_builder_canvas_shadow_enabled'] = $new_value_bool;
+            update_option('pdf_builder_settings', $main_settings);
+            error_log("[PDF Builder Debug] Updated main settings pdf_builder_canvas_shadow_enabled to: " . $new_value_bool);
+
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             error_log("[PDF Builder Debug] Shadow enabled updated to: " . $new_value);
             $updated++;
