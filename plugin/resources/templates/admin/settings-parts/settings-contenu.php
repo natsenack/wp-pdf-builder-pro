@@ -127,8 +127,8 @@ foreach ($canvas_options as $option) {
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
-                                <div id="card-bg-preview" class="color-preview bg" title="Fond"></div>
-                                <div id="card-border-preview" class="color-preview border" title="Bordure"></div>
+                                <div id="card-bg-preview" class="color-preview bg" title="Fond" style="background-color: #ffffff; border-color: #ffffff;"></div>
+                                <div id="card-border-preview" class="color-preview border" title="Bordure" style="border-color: #cccccc; background-color: #ffffff;"></div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -893,10 +893,12 @@ foreach ($canvas_options as $option) {
 
                             if (bgPreview) {
                                 bgPreview.style.backgroundColor = v.canvas_canvas_bg_color;
+                                bgPreview.style.borderColor = v.canvas_canvas_bg_color;
                                 console.log('✅ BG color updated to:', v.canvas_canvas_bg_color);
                             }
                             if (borderPreview) {
                                 borderPreview.style.borderColor = v.canvas_canvas_border_color;
+                                borderPreview.style.backgroundColor = v.canvas_canvas_bg_color;
                                 borderPreview.style.borderWidth = v.canvas_canvas_border_width + 'px';
                                 borderPreview.style.boxShadow = v.canvas_canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
                                 console.log('✅ Border updated:', v.canvas_canvas_border_color, v.canvas_canvas_border_width + 'px');
