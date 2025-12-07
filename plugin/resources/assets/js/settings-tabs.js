@@ -573,8 +573,8 @@
             if (input.name && input.name !== '') {
                 const normalizedName = normalizeFieldName(input.name);
                 const inputForm = input.closest('form');
-                // Ne collecter que si ce n'est pas déjà dans un formulaire traité
-                if (!inputForm || !formIds.includes(inputForm.id)) {
+                // Ne collecter que si ce n'est pas dans un formulaire traité
+                if (!inputForm) {
                     // Skip modal inputs to avoid conflicts
                     if (input.id && input.id.startsWith('modal_')) {
                         return;
