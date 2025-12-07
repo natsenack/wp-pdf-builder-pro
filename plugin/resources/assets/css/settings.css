@@ -4312,9 +4312,8 @@ body.modal-open {
 }
 
 .color-preview.bg {
-    background: linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 75%, #ffffff 75%),
-                linear-gradient(-45deg, #ffffff 25%, transparent 25%, transparent 75%, #ffffff 75%);
-    background-size: 8px 8px;
+    background-color: #ffffff;
+    border: 2px solid #ddd;
 }
 
 .color-preview.border {
