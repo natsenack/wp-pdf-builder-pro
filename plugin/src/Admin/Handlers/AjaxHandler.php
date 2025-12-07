@@ -2031,6 +2031,9 @@ class AjaxHandler
                 return;
             }
 
+            error_log('PHP: ajaxSaveOrderStatusTemplates called');
+            error_log('PHP: POST data: ' . print_r($_POST, true));
+
             // Récupérer les données des templates
             $templates_data = isset($_POST['pdf_builder_order_status_templates']) ? $_POST['pdf_builder_order_status_templates'] : [];
 
@@ -2051,6 +2054,8 @@ class AjaxHandler
 
             // Sauvegarder dans la base de données
             update_option('pdf_builder_order_status_templates', $clean_templates);
+            error_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true));
+            error_log('PHP: DB content after save: ' . print_r(get_option('pdf_builder_order_status_templates', []), true));
 
             wp_send_json_success([
                 'message' => 'Mappings de templates sauvegardés avec succès',
