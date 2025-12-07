@@ -1594,9 +1594,7 @@ foreach ($canvas_options as $option) {
                                     e.stopPropagation();
                                     console.log('🔍 DEBUG: Sauvegarde depuis modale fullscreen');
                                     saveModalSettings();
-                                    setTimeout(() => {
-                                        closeModal();
-                                    }, 500); // Délai pour permettre la sauvegarde AJAX
+                                    // La modale sera fermée automatiquement par saveModalSettings après la sauvegarde AJAX
                                 };
                             }
 
@@ -1948,10 +1946,19 @@ foreach ($canvas_options as $option) {
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
+                        const fullscreenModal = document.getElementById(modalId + '-fullscreen');
+
+                        // Fermer la modale fullscreen si elle existe
+                        if (fullscreenModal) {
+                            fullscreenModal.remove();
+                        }
+
+                        // Fermer la modale originale
                         if (modal) {
                             modal.style.display = 'none';
                             modal.classList.remove('show');
                         }
+
                         currentModalCategory = null;
                     }
 
@@ -1997,7 +2004,10 @@ foreach ($canvas_options as $option) {
                         if (e.key === 'Escape' && currentModalCategory) {
                             const modalId = `canvas-${currentModalCategory}-modal`;
                             const modal = document.getElementById(modalId);
-                            if (modal && modal.style.display !== 'none') {
+                            const fullscreenModal = document.getElementById(modalId + '-fullscreen');
+
+                            // Vérifier si une modale est ouverte (originale ou fullscreen)
+                            if ((modal && modal.style.display !== 'none') || fullscreenModal) {
                                 closeModal();
                             }
                         }
