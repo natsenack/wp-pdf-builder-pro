@@ -18,7 +18,8 @@
 
     // Fonctions de debug conditionnel
     function isDebugEnabled() {
-        return true; // Forcer debug pour tests
+        return window.location.search.includes('debug=force') ||
+               (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
     }
 
     function debugLog(...args) {
