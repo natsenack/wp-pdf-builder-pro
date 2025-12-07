@@ -958,13 +958,19 @@ $settings = get_option('pdf_builder_settings', array());
                             const dependentFields = this.dependencies[fieldName];
                             if (!dependentFields) return;
 
+                            // Trouver la modal actuelle pour chercher les éléments dedans
+                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            if (!currentModal) return;
+
                             dependentFields.forEach(depFieldName => {
-                                const depInput = document.querySelector(`input[name="${depFieldName}"], select[name="${depFieldName}"]`);
+                                const depInput = currentModal.querySelector(`input[name="${depFieldName}"], select[name="${depFieldName}"]`);
                                 if (depInput) {
-                                    depInput.disabled = !isEnabled;
+                                    const shouldDisable = !isEnabled;
+                                    depInput.disabled = shouldDisable;
                                     if (depInput.parentElement && depInput.parentElement.classList.contains('toggle-switch')) {
-                                        depInput.parentElement.classList.toggle('disabled', !isEnabled);
+                                        depInput.parentElement.classList.toggle('disabled', shouldDisable);
                                     }
+                                    console.log(`Dépendance mise à jour: ${depFieldName} disabled=${shouldDisable}`);
                                 }
                             });
                         },

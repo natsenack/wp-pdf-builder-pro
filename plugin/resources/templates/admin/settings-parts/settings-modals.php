@@ -525,7 +525,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                             <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
@@ -535,7 +535,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                             <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
@@ -544,15 +544,15 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                         <tr>
                             <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
                             <td>
-                                <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" <?php echo get_option('pdf_builder_canvas_grid_enabled') !== '1' ? 'disabled' : ''; ?> />
+                                <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_grid_size" value="20" min="5" max="100" />
                                 <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                             <td>
-                                <label class="toggle-switch <?php echo get_option('pdf_builder_canvas_grid_enabled') !== '1' ? 'disabled' : ''; ?>">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled') !== '1' ? 'disabled' : ''; ?>>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
