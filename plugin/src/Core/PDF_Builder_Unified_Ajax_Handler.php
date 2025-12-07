@@ -386,8 +386,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
 
         // Debug: check if shadow field is present
-        if (isset($_POST['pdf_builder_canvas_shadow_enabled'])) {
-            error_log('[PDF Builder AJAX] Shadow field received: ' . $_POST['pdf_builder_canvas_shadow_enabled']);
+        if (isset($_POST['pdf_builder_canvas_canvas_shadow_enabled'])) {
+            error_log('[PDF Builder AJAX] Shadow field received: ' . $_POST['pdf_builder_canvas_canvas_shadow_enabled']);
         } else {
             error_log('[PDF Builder AJAX] Shadow field NOT received in POST');
         }
@@ -413,7 +413,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 // Canvas int fields
                 'pdf_builder_zoom_min', 'pdf_builder_zoom_max', 'pdf_builder_zoom_default', 'pdf_builder_zoom_step', 'pdf_builder_canvas_canvas_grid_size', 'pdf_builder_canvas_canvas_export_quality',
                 'pdf_builder_canvas_canvas_fps_target', 'pdf_builder_canvas_canvas_memory_limit_js', 'pdf_builder_canvas_canvas_memory_limit_php', 'pdf_builder_canvas_canvas_dpi',
-                'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_border_width', 'pdf_builder_canvas_max_size', 'pdf_builder_canvas_quality'
+                'pdf_builder_canvas_canvas_width', 'pdf_builder_canvas_canvas_height', 'pdf_builder_canvas_canvas_border_width', 'pdf_builder_canvas_max_size', 'pdf_builder_canvas_quality'
             ],
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'pdf_builder_cache_compression', 'pdf_builder_cache_auto_cleanup', 'pdf_builder_performance_auto_optimization',
@@ -452,7 +452,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if (strpos($bool_field, 'pdf_builder_canvas_') === 0 || strpos($bool_field, 'pdf_builder_zoom_') === 0 || strpos($bool_field, 'pdf_builder_default_canvas_') === 0) {
                     $option_key = $bool_field;
                     update_option($option_key, $option_value);
-                    if ($bool_field === 'pdf_builder_canvas_shadow_enabled' || strpos($bool_field, 'pdf_builder_canvas_grid') === 0 || strpos($bool_field, 'pdf_builder_canvas_guide') === 0 || strpos($bool_field, 'pdf_builder_canvas_snap') === 0) {
+                    if ($bool_field === 'pdf_builder_canvas_canvas_shadow_enabled' || strpos($bool_field, 'pdf_builder_canvas_canvas_grid') === 0 || strpos($bool_field, 'pdf_builder_canvas_canvas_guide') === 0 || strpos($bool_field, 'pdf_builder_canvas_canvas_snap') === 0) {
                         error_log('[PDF Builder AJAX] Saved canvas field to option: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
                         // Vérifier immédiatement si l'option a été sauvegardée
                         $saved_value = get_option($option_key, 'NOT_FOUND');
