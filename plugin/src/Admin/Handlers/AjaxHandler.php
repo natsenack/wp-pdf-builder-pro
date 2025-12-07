@@ -2089,6 +2089,8 @@ class AjaxHandler
                     return [];
                 }
                 error_log('PHP: Decoded templates value: ' . print_r($value, true));
+            } else {
+                error_log('PHP: Value is not a valid JSON string');
             }
             if (is_array($value)) {
                 $clean_array = [];
