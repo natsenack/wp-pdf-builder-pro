@@ -1257,6 +1257,8 @@
 
     // Fonction pour mettre à jour la prévisualisation des templates
     function updateTemplatePreviews() {
+        console.log('PDF Builder: updateTemplatePreviews called');
+
         // Récupérer les données sauvegardées depuis le serveur
         fetch(PDF_BUILDER_CONFIG.ajaxurl, {
             method: 'POST',
@@ -1269,16 +1271,26 @@
                 'nonce': PDF_BUILDER_CONFIG.nonce
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('PDF Builder: AJAX response status:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('PDF Builder: AJAX response data:', data);
+
             if (data.success && data.data) {
                 const mappings = data.data.mappings || {};
                 const templates = data.data.templates || {};
+
+                console.log('PDF Builder: mappings:', mappings);
+                console.log('PDF Builder: templates:', templates);
 
                 // Mettre à jour chaque prévisualisation
                 document.querySelectorAll('.template-preview').forEach(preview => {
                     const statusKey = preview.closest('article').querySelector('.template-select').id.replace('template_', '');
                     const assignedTemplate = mappings[statusKey];
+
+                    console.log('PDF Builder: processing status', statusKey, 'assigned template:', assignedTemplate);
 
                     if (assignedTemplate && templates[assignedTemplate]) {
                         // Afficher la prévisualisation avec le template assigné
@@ -1289,11 +1301,15 @@
                             </p>
                         `;
                         preview.style.display = 'block';
+                        console.log('PDF Builder: showing preview for', statusKey);
                     } else {
                         // Masquer la prévisualisation si aucun template n'est assigné
                         preview.style.display = 'none';
+                        console.log('PDF Builder: hiding preview for', statusKey);
                     }
                 });
+            } else {
+                console.error('PDF Builder: Invalid response data:', data);
             }
         })
         .catch(error => {
