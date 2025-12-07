@@ -1515,7 +1515,24 @@ foreach ($canvas_options as $option) {
                                     const key = e.target.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
-                                    console.log('Changement détecté:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+                                    console.log('Changement détecté (input):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+
+                                    // Conversion des types
+                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
+                                    if (['canvas_canvas_shadow_enabled', 'canvas_canvas_grid_enabled', 'canvas_canvas_guides_enabled', 'canvas_canvas_snap_to_grid', 'canvas_canvas_export_transparent', 'canvas_canvas_lazy_loading_editor', 'canvas_canvas_performance_monitoring', 'canvas_canvas_error_reporting'].includes(key)) {
+                                        value = value === true || value === '1' || value === 1;
+                                        console.log('Conversion boolean pour', key, ':', value);
+                                    }
+
+                                    this.updateValue(key, value);
+                                });
+
+                                // Pour les selects et autres contrôles qui utilisent 'change'
+                                input.addEventListener('change', (e) => {
+                                    const key = e.target.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
+                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+
+                                    console.log('Changement détecté (change):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
 
                                     // Conversion des types
                                     if (e.target.type === 'number') value = parseFloat(value) || 0;
@@ -2294,7 +2311,7 @@ foreach ($canvas_options as $option) {
                                 }
 
                                 // Mettre à jour la valeur dans le système de previews
-                                const previewKey = input.name.replace('pdf_builder_canvas_canvas_', 'canvas_');
+                                const previewKey = input.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
                                 previewSystem.values[previewKey] = value;
 
                                 // Debug log pour l'ombre
