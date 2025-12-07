@@ -1765,6 +1765,7 @@ $settings = get_option('pdf_builder_settings', array());
                         console.log('Ouverture de la modal pour:', category);
 
                         currentModalCategory = category;
+                        console.log('currentModalCategory définie à:', currentModalCategory);
 
                         // Monitorer l'ouverture
                         modalMonitoring.trackModalOpen(category);
@@ -2075,7 +2076,13 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Fermer la modal
                     function closeModal() {
-                        if (!currentModalCategory) return;
+                        console.log('=== FONCTION closeModal appelée ===');
+                        console.log('currentModalCategory:', currentModalCategory);
+
+                        if (!currentModalCategory) {
+                            console.log('❌ Pas de modal ouverte (currentModalCategory est null)');
+                            return;
+                        }
 
                         console.log('Fermeture de la modal:', currentModalCategory);
 
@@ -2083,13 +2090,24 @@ $settings = get_option('pdf_builder_settings', array());
                         modalMonitoring.trackModalClose(currentModalCategory);
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
+                        console.log('ID de la modal à fermer:', modalId);
+
                         const modal = document.getElementById(modalId);
+                        console.log('Élément modal trouvé:', modal);
+
                         if (modal) {
+                            console.log('Style display actuel:', modal.style.display);
                             modal.style.display = 'none';
                             modal.classList.remove('show');
-                            console.log('Modal masquée:', modalId);
+                            console.log('✅ Modal masquée:', modalId);
+                            console.log('Nouveau style display:', modal.style.display);
+                        } else {
+                            console.log('❌ Modal non trouvée avec l\'ID:', modalId);
                         }
+
                         currentModalCategory = null;
+                        console.log('currentModalCategory remis à null');
+                        console.log('=== FIN closeModal ===');
                     }
 
                     // Sauvegarder les paramètres
@@ -2099,11 +2117,11 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
-                        console.log('Clic détecté sur:', e.target.className, e.target.tagName);
+                        console.log('🖱️ Clic détecté sur:', e.target.className, e.target.tagName, e.target);
 
                         // Bouton de configuration d'une carte
                         if (e.target.closest('.canvas-configure-btn')) {
-                            console.log('Bouton config cliqué');
+                            console.log('🎯 Bouton config cliqué');
                             e.preventDefault();
                             const card = e.target.closest('.canvas-card');
                             if (card && card.dataset.category) {
@@ -2113,26 +2131,30 @@ $settings = get_option('pdf_builder_settings', array());
                         }
 
                         // Bouton de fermeture
-                        if (e.target.closest('.modal-close') || e.target.closest('.modal-cancel')) {
-                            console.log('Bouton de fermeture cliqué');
+                        const closeBtn = e.target.closest('.modal-close');
+                        const cancelBtn = e.target.closest('.modal-cancel');
+                        if (closeBtn || cancelBtn) {
+                            console.log('❌ Bouton de fermeture cliqué:', closeBtn ? 'modal-close' : 'modal-cancel');
                             closeModal();
                             return;
                         }
 
                         // Clic sur l'overlay (backdrop)
                         if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-backdrop')) {
-                            console.log('Clic sur overlay détecté:', e.target.className);
+                            console.log('🎨 Clic sur overlay détecté:', e.target.className);
                             closeModal();
                             return;
                         }
 
                         // Bouton de sauvegarde
                         if (e.target.closest('.modal-save')) {
-                            console.log('Bouton sauvegarde cliqué');
+                            console.log('💾 Bouton sauvegarde cliqué');
                             e.preventDefault();
                             saveModalSettings();
                             return;
                         }
+
+                        console.log('ℹ️ Clic non traité');
                     });
 
                     // Fermeture avec Échap
