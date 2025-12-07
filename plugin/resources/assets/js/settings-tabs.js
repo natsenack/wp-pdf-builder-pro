@@ -559,6 +559,7 @@
 
                 // Ajouter les données du formulaire à allData
                 console.log('JS: FormData object for ' + formId + ':', formObject);
+                console.log('JS: pdf_builder_order_status_templates content:', formObject['pdf_builder_order_status_templates']);
                 allData[formId] = formObject;
             }
         });
