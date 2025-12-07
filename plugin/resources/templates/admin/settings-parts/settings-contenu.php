@@ -1541,10 +1541,25 @@ foreach ($canvas_options as $option) {
                         const modalContent = formGenerator.generateModalHTML(category);
                         console.log('📝 [OPEN MODAL] Contenu généré, longueur:', modalContent.length);
 
-                        // Insérer le contenu dans la modal
+                        // Insérer le contenu dans la modal (chercher d'abord dans l'overlay, puis dans la modal)
                         const modalId = `canvas-${category}-modal`;
-                        const modalBody = document.querySelector(`#${modalId} .canvas-modal-body`);
-                        console.log('🔍 [OPEN MODAL] Modal body trouvé:', !!modalBody, 'pour ID:', modalId);
+                        const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
+                        let modalBody = null;
+
+                        // Chercher d'abord dans l'overlay (pour les modales restructurées)
+                        if (overlay) {
+                            modalBody = overlay.querySelector('.canvas-modal-body');
+                        }
+
+                        // Si pas trouvé dans l'overlay, chercher dans la modal elle-même (compatibilité)
+                        if (!modalBody) {
+                            const modal = document.getElementById(modalId);
+                            if (modal) {
+                                modalBody = modal.querySelector('.canvas-modal-body');
+                            }
+                        }
+
+                        console.log('🔍 [OPEN MODAL] Modal body trouvé:', !!modalBody, 'pour ID:', modalId, '(overlay:', !!overlay, ')');
 
                         if (modalBody) {
                             modalBody.innerHTML = modalContent;
