@@ -439,7 +439,7 @@ $settings = get_option('pdf_builder_settings', array());
 
 
 
-            <!-- CSS pour les modales - DESIGN MODERNE -->
+            <!-- CSS pour les modales - DESIGN SIMPLE ET ÉLÉGANT -->
             <style>
                 /* Styles pour les modales - SPÉCIFICITÉ MAXIMALE */
                 body .modal-overlay,
@@ -494,69 +494,32 @@ $settings = get_option('pdf_builder_settings', array());
                     box-sizing: border-box !important;
                     transform: none !important;
                     filter: none !important;
-                    /* Fond avec dégradé animé */
-                    background: linear-gradient(135deg,
-                        rgba(59, 130, 246, 0.15) 0%,
-                        rgba(147, 51, 234, 0.15) 25%,
-                        rgba(236, 72, 153, 0.15) 50%,
-                        rgba(34, 197, 94, 0.15) 75%,
-                        rgba(59, 130, 246, 0.15) 100%);
-                    background-size: 400% 400%;
-                    animation: gradientShift 8s ease infinite;
-                    backdrop-filter: blur(8px) saturate(1.2);
-                }
-
-                @keyframes gradientShift {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-
-                .modal-backdrop {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.4);
-                    backdrop-filter: blur(4px);
-                    opacity: 0;
-                    animation: backdropFadeIn 0.3s ease-out forwards;
-                }
-
-                @keyframes backdropFadeIn {
-                    to { opacity: 1; }
+                    background-color: rgba(0, 0, 0, 0.6) !important;
+                    backdrop-filter: blur(4px) !important;
                 }
 
                 .modal-container {
                     position: relative;
-                    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-                    border-radius: 20px;
-                    box-shadow:
-                        0 25px 50px rgba(0, 0, 0, 0.15),
-                        0 15px 35px rgba(0, 0, 0, 0.1),
-                        0 5px 15px rgba(0, 0, 0, 0.08),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-                    max-width: 650px;
+                    background: #ffffff;
+                    border-radius: 16px;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+                    max-width: 600px;
                     width: 90vw;
-                    max-height: 85vh;
+                    max-height: 80vh;
                     overflow: hidden;
                     z-index: 10001;
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    transform-origin: center;
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    animation: modalFadeIn 0.3s ease-out;
                 }
 
-                @keyframes modalSlideIn {
+                @keyframes modalFadeIn {
                     from {
                         opacity: 0;
-                        transform: translateY(-30px) scale(0.9) rotateX(10deg);
-                        filter: blur(10px);
+                        transform: translateY(-20px) scale(0.95);
                     }
                     to {
                         opacity: 1;
-                        transform: translateY(0) scale(1) rotateX(0deg);
-                        filter: blur(0px);
+                        transform: translateY(0) scale(1);
                     }
                 }
 
@@ -564,236 +527,120 @@ $settings = get_option('pdf_builder_settings', array());
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 28px 32px 20px;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-                    background: linear-gradient(135deg,
-                        rgba(255, 255, 255, 0.9) 0%,
-                        rgba(248, 250, 252, 0.9) 100%);
-                    backdrop-filter: blur(10px);
-                    position: relative;
-                }
-
-                .modal-header::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 1px;
-                    background: linear-gradient(90deg,
-                        transparent 0%,
-                        rgba(59, 130, 246, 0.3) 20%,
-                        rgba(147, 51, 234, 0.3) 50%,
-                        rgba(236, 72, 153, 0.3) 80%,
-                        transparent 100%);
+                    padding: 24px 28px;
+                    border-bottom: 1px solid #e5e7eb;
+                    background: #f9fafb;
                 }
 
                 .modal-header h2 {
                     margin: 0;
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                    color: #1e293b;
-                    letter-spacing: -0.025em;
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-
-                .modal-header h2::before {
-                    content: '⚙️';
-                    font-size: 1.2em;
-                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-                }
-
-                .modal-close {
-                    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-                    border: none;
-                    font-size: 20px;
-                    color: #64748b;
-                    cursor: pointer;
-                    padding: 8px;
-                    border-radius: 12px;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .modal-close::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: linear-gradient(135deg,
-                        rgba(239, 68, 68, 0.1) 0%,
-                        rgba(220, 38, 38, 0.1) 100%);
-                    opacity: 0;
-                    transition: opacity 0.2s ease;
-                }
-
-                .modal-close:hover {
-                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-                    color: white;
-                    transform: scale(1.05) rotate(90deg);
-                    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-                }
-
-                .modal-close:hover::before {
-                    opacity: 1;
-                }
-
-                .modal-close:active {
-                    transform: scale(0.95) rotate(90deg);
-                }
-
-                .modal-body {
-                    padding: 32px;
-                    max-height: 60vh;
-                    overflow-y: auto;
-                    scrollbar-width: thin;
-                    scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
-                }
-
-                .modal-body::-webkit-scrollbar {
-                    width: 6px;
-                }
-
-                .modal-body::-webkit-scrollbar-track {
-                    background: rgba(241, 245, 249, 0.5);
-                    border-radius: 3px;
-                }
-
-                .modal-body::-webkit-scrollbar-thumb {
-                    background: linear-gradient(180deg,
-                        rgba(148, 163, 184, 0.5) 0%,
-                        rgba(100, 116, 139, 0.5) 100%);
-                    border-radius: 3px;
-                }
-
-                .modal-body::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(180deg,
-                        rgba(100, 116, 139, 0.7) 0%,
-                        rgba(71, 85, 105, 0.7) 100%);
-                }
-
-                .modal-footer {
-                    display: flex;
-                    justify-content: flex-end;
-                    gap: 16px;
-                    padding: 24px 32px 28px;
-                    border-top: 1px solid rgba(0, 0, 0, 0.08);
-                    background: linear-gradient(135deg,
-                        rgba(248, 250, 252, 0.9) 0%,
-                        rgba(241, 245, 249, 0.9) 100%);
-                    backdrop-filter: blur(10px);
-                }
-
-                .modal-form-grid {
-                    display: grid;
-                    gap: 24px;
-                }
-
-                .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    position: relative;
-                }
-
-                .form-group label {
+                    font-size: 1.375rem;
                     font-weight: 600;
-                    color: #374151;
-                    font-size: 14px;
-                    letter-spacing: -0.01em;
+                    color: #111827;
                     display: flex;
                     align-items: center;
                     gap: 8px;
                 }
 
+                .modal-header h2::before {
+                    content: '⚙️';
+                    font-size: 1.1em;
+                }
+
+                .modal-close {
+                    background: #f3f4f6;
+                    border: none;
+                    font-size: 18px;
+                    color: #6b7280;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                }
+
+                .modal-close:hover {
+                    background: #ef4444;
+                    color: white;
+                }
+
+                .modal-body {
+                    padding: 28px;
+                    max-height: 60vh;
+                    overflow-y: auto;
+                }
+
+                .modal-footer {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 12px;
+                    padding: 20px 28px 24px;
+                    border-top: 1px solid #e5e7eb;
+                    background: #f9fafb;
+                }
+
+                .modal-form-grid {
+                    display: grid;
+                    gap: 20px;
+                }
+
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .form-group label {
+                    font-weight: 500;
+                    color: #374151;
+                    font-size: 14px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+
                 .form-group label::before {
-                    content: '📝';
-                    font-size: 1em;
-                    opacity: 0.7;
+                    content: '•';
+                    color: #3b82f6;
+                    font-weight: bold;
                 }
 
                 .form-group input,
                 .form-group select {
-                    padding: 12px 16px;
-                    border: 2px solid rgba(0, 0, 0, 0.1);
-                    border-radius: 12px;
-                    font-size: 15px;
-                    font-weight: 500;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .form-group input::before,
-                .form-group select::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg,
-                        transparent 0%,
-                        rgba(59, 130, 246, 0.1) 50%,
-                        transparent 100%);
-                    transition: left 0.5s ease;
+                    padding: 10px 12px;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                    background: white;
                 }
 
                 .form-group input:focus,
                 .form-group select:focus {
                     outline: none;
                     border-color: #3b82f6;
-                    box-shadow:
-                        0 0 0 3px rgba(59, 130, 246, 0.1),
-                        0 4px 16px rgba(59, 130, 246, 0.15);
-                    transform: translateY(-1px);
-                }
-
-                .form-group input:focus::before,
-                .form-group select:focus::before {
-                    left: 100%;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
                 }
 
                 .form-group input:disabled,
                 .form-group select:disabled {
-                    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-                    opacity: 0.7;
+                    background: #f9fafb;
+                    opacity: 0.6;
                     cursor: not-allowed;
-                    transform: none;
                 }
 
                 .field-description {
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #6b7280;
                     margin: 0;
                     line-height: 1.4;
-                    padding-left: 24px;
-                    position: relative;
-                }
-
-                .field-description::before {
-                    content: '💡';
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    font-size: 0.9em;
-                    opacity: 0.6;
                 }
 
                 .toggle-switch {
                     position: relative;
                     display: inline-block;
-                    width: 52px;
-                    height: 28px;
-                    margin-left: 12px;
+                    width: 48px;
+                    height: 24px;
+                    margin-left: 8px;
                 }
 
                 .toggle-switch input {
@@ -809,33 +656,30 @@ $settings = get_option('pdf_builder_settings', array());
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    border-radius: 28px;
-                    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+                    background: #d1d5db;
+                    transition: background-color 0.3s ease;
+                    border-radius: 24px;
                 }
 
                 .toggle-slider:before {
                     position: absolute;
                     content: "";
-                    height: 22px;
-                    width: 22px;
+                    height: 18px;
+                    width: 18px;
                     left: 3px;
                     bottom: 3px;
-                    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    background: white;
+                    transition: transform 0.3s ease;
                     border-radius: 50%;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                 }
 
                 input:checked + .toggle-slider {
-                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+                    background: #10b981;
                 }
 
                 input:checked + .toggle-slider:before {
                     transform: translateX(24px);
-                    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
                 }
 
                 .toggle-switch.disabled {
@@ -849,119 +693,82 @@ $settings = get_option('pdf_builder_settings', array());
 
                 /* Boutons de la modale */
                 .modal-footer button {
-                    padding: 12px 24px;
+                    padding: 10px 20px;
                     border: none;
-                    border-radius: 12px;
+                    border-radius: 8px;
                     font-size: 14px;
-                    font-weight: 600;
+                    font-weight: 500;
                     cursor: pointer;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    transition: all 0.2s ease;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
                 }
 
-                .modal-footer button::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg,
-                        transparent 0%,
-                        rgba(255, 255, 255, 0.2) 50%,
-                        transparent 100%);
-                    transition: left 0.5s ease;
-                }
-
-                .modal-footer button:hover::before {
-                    left: 100%;
-                }
-
                 .modal-footer button:first-child {
-                    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-                    color: #475569;
-                    border: 2px solid rgba(0, 0, 0, 0.1);
+                    background: #f3f4f6;
+                    color: #374151;
+                    border: 1px solid #d1d5db;
                 }
 
                 .modal-footer button:first-child:hover {
-                    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                    background: #e5e7eb;
                 }
 
                 .modal-footer button:last-child {
-                    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                    background: #3b82f6;
                     color: white;
-                    border: 2px solid #3b82f6;
                 }
 
                 .modal-footer button:last-child:hover {
-                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+                    background: #2563eb;
                 }
 
-                .modal-footer button:active {
-                    transform: translateY(0);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                .form-group input[type="color"] {
+                    width: 60px;
+                    height: 40px;
+                    padding: 2px;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    background: white;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
                 }
 
-                /* Responsive */
-                @media (max-width: 768px) {
-                    .modal-container {
-                        width: 95vw;
-                        max-height: 90vh;
-                        margin: 10px;
-                    }
-
-                    .modal-header,
-                    .modal-body,
-                    .modal-footer {
-                        padding: 20px;
-                    }
-
-                    .modal-header h2 {
-                        font-size: 1.25rem;
-                    }
-
-                    .modal-form-grid {
-                        gap: 20px;
-                    }
-
-                    .modal-footer {
-                        flex-direction: column;
-                        gap: 12px;
-                    }
-
-                    .modal-footer button {
-                        width: 100%;
-                    }
+                .form-group input[type="color"]:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
                 }
 
-                /* Animation d'entrée pour les éléments de formulaire */
-                .form-group {
-                    animation: formSlideIn 0.4s ease-out both;
+                .form-group input[type="color"]:hover {
+                    border-color: #9ca3af;
                 }
 
-                .form-group:nth-child(1) { animation-delay: 0.1s; }
-                .form-group:nth-child(2) { animation-delay: 0.15s; }
-                .form-group:nth-child(3) { animation-delay: 0.2s; }
-                .form-group:nth-child(4) { animation-delay: 0.25s; }
-                .form-group:nth-child(5) { animation-delay: 0.3s; }
+                /* Prévisualisation des couleurs dans les cartes */
+                .color-preview {
+                    display: inline-block;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 4px;
+                    border: 2px solid #e5e7eb;
+                    margin: 2px;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
 
-                @keyframes formSlideIn {
-                    from {
-                        opacity: 0;
-                        transform: translateX(-20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
+                .color-preview:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                }
+
+                .color-preview.bg {
+                    background-color: #ffffff;
+                }
+
+                .color-preview.border {
+                    border-style: solid;
+                    border-width: 3px;
+                    background-color: transparent;
                 }
             </style>
 
