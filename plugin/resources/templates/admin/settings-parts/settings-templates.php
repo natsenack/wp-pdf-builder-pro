@@ -654,6 +654,8 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
         // Fonction pour mettre à jour les prévisualisations immédiatement après sauvegarde
         function updatePreviewsAfterSave() {
+            // Récupérer la liste des templates disponibles (une seule fois)
+            if (Object.keys(availableTemplates).length === 0) {
                 fetch(pdfBuilderAjax.ajaxurl, {
                     method: 'POST',
                     headers: {
@@ -679,24 +681,6 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                 // Templates déjà chargés, mettre à jour immédiatement
                 updatePreviewsWithCurrentValues();
             }
-        }
-
-        // Fonction pour mettre à jour les prévisualisations avec les valeurs actuelles des selects
-        function updatePreviewsWithCurrentValues() {
-            document.querySelectorAll('.template-preview').forEach(preview => {
-                const select = preview.closest('article').querySelector('.template-select');
-                if (select) {
-                    const selectedTemplateId = select.value;
-
-                    if (selectedTemplateId && availableTemplates[selectedTemplateId]) {
-                        // Template assigné - afficher le nom
-                        preview.innerHTML = `<p class="current-template">${availableTemplates[selectedTemplateId]}</p>`;
-                    } else {
-                        // Aucun template assigné
-                        preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
-                    }
-                }
-            });
         }
 
         // Fonction pour mettre à jour les prévisualisations avec les valeurs actuelles des selects
