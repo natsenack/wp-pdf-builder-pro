@@ -449,8 +449,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $option_key = '';
                 $option_value = ($_POST[$bool_field] === '1') ? 1 : 0;
 
-                if (strpos($bool_field, 'canvas_') === 0 || strpos($bool_field, 'zoom_') === 0 || strpos($bool_field, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $bool_field;
+                if (strpos($bool_field, 'pdf_builder_canvas_') === 0 || strpos($bool_field, 'pdf_builder_zoom_') === 0 || strpos($bool_field, 'pdf_builder_default_canvas_') === 0) {
+                    $option_key = $bool_field;
                     update_option($option_key, $option_value);
                 } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
                     $option_key = $bool_field;
@@ -467,8 +467,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $option_key = '';
                 $option_value = 0;
 
-                if (strpos($bool_field, 'canvas_') === 0 || strpos($bool_field, 'zoom_') === 0 || strpos($bool_field, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $bool_field;
+                if (strpos($bool_field, 'pdf_builder_canvas_') === 0 || strpos($bool_field, 'pdf_builder_zoom_') === 0 || strpos($bool_field, 'pdf_builder_default_canvas_') === 0) {
+                    $option_key = $bool_field;
                     update_option($option_key, $option_value);
                 } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
                     $option_key = $bool_field;
@@ -517,8 +517,8 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             if (in_array($key, $field_rules['text_fields'])) {
                 // Special handling for canvas fields
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $key;
+                if (strpos($key, 'pdf_builder_canvas_') === 0 || strpos($key, 'pdf_builder_zoom_') === 0 || strpos($key, 'pdf_builder_default_canvas_') === 0) {
+                    $option_key = $key;
                     $option_value = sanitize_text_field($value ?? '');
                     update_option($option_key, $option_value); // Canvas fields saved separately
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
@@ -539,8 +539,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $saved_count++;
             } elseif (in_array($key, $field_rules['int_fields'])) {
                 // Special handling for canvas fields
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $key;
+                if (strpos($key, 'pdf_builder_canvas_') === 0 || strpos($key, 'pdf_builder_zoom_') === 0 || strpos($key, 'pdf_builder_default_canvas_') === 0) {
+                    $option_key = $key;
                     $option_value = intval($value ?? 0);
                     update_option($option_key, $option_value); // Canvas fields saved separately
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
