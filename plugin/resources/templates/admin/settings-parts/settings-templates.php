@@ -583,12 +583,10 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
     document.addEventListener('DOMContentLoaded', function() {
         // Écouter l'événement de sauvegarde globale au lieu du clic sur le bouton
         document.addEventListener('pdfBuilderSettingsSaved', function(event) {
-            console.log('DEBUG: pdfBuilderSettingsSaved event received');
             // Vérifier si les templates ont été sauvegardés
             if (event.detail && event.detail.response && event.detail.response.data) {
                 var responseData = event.detail.response.data;
                 if (responseData.saved_templates || responseData.templates) {
-                    console.log('DEBUG: Templates were saved, updating previews');
                     updatePreviewsAfterSave();
                 }
             }
@@ -645,7 +643,6 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
         // Fonction simple pour mettre à jour les prévisualisations
         function updatePreviewsAfterSave() {
-            console.log('DEBUG: updatePreviewsAfterSave called');
             // Faire un appel AJAX simple pour récupérer les données
             var xhr = new XMLHttpRequest();
             xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
@@ -653,21 +650,14 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     try {
-                        console.log('DEBUG: Raw response:', xhr.responseText);
                         var data = JSON.parse(xhr.responseText);
-                        console.log('DEBUG: Parsed data:', data);
                         if (data.success && data.data && data.data.templates) {
-                            console.log('DEBUG: Calling updatePreviewsWithData');
                             // Mettre à jour les prévisualisations avec les données reçues
                             updatePreviewsWithData(data.data.mappings, data.data.templates);
-                        } else {
-                            console.log('DEBUG: Data not valid:', data);
                         }
                     } catch (e) {
                         console.error('Erreur parsing JSON:', e);
                     }
-                } else if (xhr.readyState === 4) {
-                    console.error('DEBUG: HTTP error:', xhr.status, xhr.responseText);
                 }
             };
             xhr.send('action=pdf_builder_get_template_mappings&nonce=' + pdfBuilderAjax.nonce);
@@ -675,12 +665,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
         // Fonction pour mettre à jour les prévisualisations avec les données
         function updatePreviewsWithData(mappings, templates) {
-            console.log('DEBUG: Mappings reçus:', mappings);
-            console.log('DEBUG: Templates reçus:', templates);
-
             var previews = document.querySelectorAll('.template-preview');
-            console.log('DEBUG: Nombre de prévisualisations trouvées:', previews.length);
-
             for (var i = 0; i < previews.length; i++) {
                 var preview = previews[i];
                 var select = preview.closest('article').querySelector('.template-select');
@@ -689,20 +674,11 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                     var postType = select.name.replace('pdf_builder_order_status_templates[', '').replace(']', '');
                     var assignedTemplateId = mappings[postType];
 
-                    console.log('DEBUG: Select name:', select.name);
-                    console.log('DEBUG: Extracted postType:', postType);
-                    console.log('DEBUG: Assigned template ID:', assignedTemplateId);
-                    console.log('DEBUG: Template exists:', templates[assignedTemplateId]);
-
                     if (assignedTemplateId && templates[assignedTemplateId]) {
                         preview.innerHTML = '<p class="current-template">' + templates[assignedTemplateId] + '</p>';
-                        console.log('DEBUG: Updated preview with template:', templates[assignedTemplateId]);
                     } else {
                         preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
-                        console.log('DEBUG: Updated preview with "Aucun template assigné"');
                     }
-                } else {
-                    console.log('DEBUG: Select not found for preview', i);
                 }
             }
         }
