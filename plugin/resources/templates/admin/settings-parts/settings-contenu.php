@@ -1532,7 +1532,7 @@ foreach ($canvas_options as $option) {
 
                         // Insérer le contenu dans la modal spécifique à la catégorie
                         const modalId = `canvas-${category}-modal`;
-                        const modalBody = document.querySelector(`#${modalId} .modal-body`);
+                        const modalBody = document.querySelector(`#${modalId} .canvas-modal-body`);
                         if (modalBody) {
                             modalBody.innerHTML = modalContent;
                         }
@@ -1566,14 +1566,14 @@ foreach ($canvas_options as $option) {
                             };
 
                             // Gérer la fermeture
-                            const closeBtn = fullscreenModal.querySelector('.modal-close');
+                            const closeBtn = fullscreenModal.querySelector('.canvas-modal-close');
                             const backdrop = fullscreenModal.querySelector('.modal-backdrop');
 
                             if (closeBtn) closeBtn.onclick = closeModal;
                             if (backdrop) backdrop.onclick = closeModal;
 
                             // Gérer la sauvegarde dans la modale fullscreen
-                            const saveBtn = fullscreenModal.querySelector('.modal-save');
+                            const saveBtn = fullscreenModal.querySelector('.canvas-modal-save');
                             if (saveBtn) {
                                 saveBtn.onclick = (e) => {
                                     e.preventDefault();

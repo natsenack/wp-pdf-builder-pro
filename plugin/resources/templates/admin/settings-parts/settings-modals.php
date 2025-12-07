@@ -244,7 +244,7 @@
 </div>
 <div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>📏 Dimensions & Format</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -359,7 +359,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Zoom & Navigation -->
 <div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>🔍 Zoom</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -419,7 +419,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Apparence -->
 <div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🎨 Apparence</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -506,7 +506,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Grille & Guides -->
 <div id="canvas-grille-modal" class="canvas-modal" data-category="grille">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📐 Grille & Guides</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -572,7 +572,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Interactions & Comportement-->
 <div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🖱️ Interactions & Comportement</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -673,7 +673,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Export & Qualité -->
 <div id="canvas-export-modal" class="canvas-modal" data-category="export">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📤 Export & Qualité</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -727,7 +727,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Performance -->
 <div id="canvas-performance-modal" class="canvas-modal" data-category="performance">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >⚡ Performance</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -858,7 +858,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Debug -->
 <div id="canvas-debug-modal" class="canvas-modal" data-category="debug">
     <div class="canvas-modal-overlay">
-        <section class="canvas-modal-content">
+        <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🐛 Debug</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
