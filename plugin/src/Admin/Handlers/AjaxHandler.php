@@ -690,56 +690,74 @@ class AjaxHandler
         try {
             // Collecter et sanitiser tous les paramètres PDF Builder depuis $_POST
             $settings_to_save = [];
+            $templates_data = [];
+
             foreach ($_POST as $key => $value) {
                 // Ne traiter que les clés qui commencent par pdf_builder_
                 if (strpos($key, 'pdf_builder_') === 0) {
-                    $sanitized_value = $this->sanitizeFieldValue($key, $value);
-                    if ($sanitized_value !== '') {
-                        $settings_to_save[$key] = $sanitized_value;
+                    // Traiter pdf_builder_order_status_templates séparément
+                    if ($key === 'pdf_builder_order_status_templates') {
+                        $templates_data = $this->sanitizeFieldValue($key, $value);
+                    } else {
+                        $sanitized_value = $this->sanitizeFieldValue($key, $value);
+                        if ($sanitized_value !== '') {
+                            $settings_to_save[$key] = $sanitized_value;
+                        }
                     }
                 }
             }
 
             error_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST)));
             error_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save)));
+            error_log('PHP: Templates data: ' . json_encode($templates_data));
 
-            if (empty($settings_to_save)) {
+            // Sauvegarder les templates séparément si des données existent
+            if (!empty($templates_data)) {
+                update_option('pdf_builder_order_status_templates', $templates_data);
+                error_log('PHP: Templates data saved to pdf_builder_order_status_templates');
+            }
+
+            if (empty($settings_to_save) && empty($templates_data)) {
                 wp_send_json_error(['message' => 'Aucune donnée valide à sauvegarder']);
                 return;
             }
 
-            // Fusionner avec les paramètres existants
-            $updated_settings = array_merge($existing_settings, $settings_to_save);
+            // Sauvegarder les paramètres généraux seulement s'il y en a
+            if (!empty($settings_to_save)) {
+                // Fusionner avec les paramètres existants
+                $updated_settings = array_merge($existing_settings, $settings_to_save);
 
-            // Sauvegarder dans la base de données
-            $saved = update_option('pdf_builder_settings', $updated_settings);
+                // Sauvegarder dans la base de données
+                $saved = update_option('pdf_builder_settings', $updated_settings);
 
-            // Vérifier s'il y a eu une vraie erreur DB
-            global $wpdb;
-            $db_error = $wpdb->last_error;
+                // Vérifier s'il y a eu une vraie erreur DB
+                global $wpdb;
+                $db_error = $wpdb->last_error;
 
-            if ($saved || empty($db_error)) {
-                // Succès : soit mis à jour, soit pas de changement (ce qui est normal)
-                // Supprimer le backup si succès
-                delete_option($backup_key);
+                if (!$saved && !empty($db_error)) {
+                    // Erreur DB réelle
+                    error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
+                    error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
+                    error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
+                    error_log('PDF Builder - New settings count: ' . count($settings_to_save));
 
-                wp_send_json_success([
-                    'message' => 'Paramètres sauvegardés avec succès',
-                    'saved_settings' => $settings_to_save,
-                    'action' => 'save_all_settings',
-                    'backup_cleaned' => true
-                ]);
-            } else {
-                // Erreur DB réelle
-                error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
-                error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
-                error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
-                error_log('PDF Builder - New settings count: ' . count($settings_to_save));
-
-                // Rollback en cas d'échec
-                $this->rollbackSettings($backup_key);
-                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+                    // Rollback en cas d'échec
+                    $this->rollbackSettings($backup_key);
+                    wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+                    return;
+                }
             }
+
+            // Supprimer le backup si succès
+            delete_option($backup_key);
+
+            wp_send_json_success([
+                'message' => 'Paramètres sauvegardés avec succès',
+                'saved_settings' => $settings_to_save,
+                'saved_templates' => $templates_data,
+                'action' => 'save_all_settings',
+                'backup_cleaned' => true
+            ]);
 
         } catch (Exception $e) {
             // Rollback en cas d'exception
@@ -2053,6 +2071,22 @@ class AjaxHandler
         if ($key === 'pdf_builder_license_email_reminders') {
             // C'est un toggle boolean, pas un email
             return in_array(strtolower($value), ['true', '1', 'yes', 'on']) ? '1' : '0';
+        }
+
+        // Gestion spéciale pour pdf_builder_order_status_templates (array)
+        if ($key === 'pdf_builder_order_status_templates') {
+            if (is_array($value)) {
+                $clean_array = [];
+                foreach ($value as $status_key => $template_id) {
+                    $clean_status = sanitize_text_field($status_key);
+                    $clean_template = sanitize_text_field($template_id);
+                    if (!empty($clean_template)) {
+                        $clean_array[$clean_status] = $clean_template;
+                    }
+                }
+                return $clean_array;
+            }
+            return [];
         }
 
         // Déterminer le type de champ d'après le nom
