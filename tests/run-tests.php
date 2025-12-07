@@ -58,4 +58,5 @@ if ($exit_code === 0) {
     echo "\n[FAILED] Some tests failed. Exit code: $exit_code\n";
 }
 
-exit($exit_code);
+exit($exit_code);</content>
+<parameter name="filePath">i:\wp-pdf-builder-pro\tests\run-tests.php

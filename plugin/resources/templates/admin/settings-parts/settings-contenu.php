@@ -1458,7 +1458,8 @@ $settings = get_option('pdf_builder_settings', array());
                         // Afficher la modal
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            modal.classList.add('pdf-builder-modal-open');
+                            modal.style.display = 'block';
+                            modal.classList.add('show');
                         }
 
                         // Synchroniser les valeurs des champs
@@ -1647,7 +1648,8 @@ $settings = get_option('pdf_builder_settings', array());
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            modal.classList.remove('pdf-builder-modal-open');
+                            modal.style.display = 'none';
+                            modal.classList.remove('show');
                         }
                         currentModalCategory = null;
                         console.log('Modal fermée');
@@ -1695,7 +1697,7 @@ $settings = get_option('pdf_builder_settings', array());
                         if (e.key === 'Escape' && currentModalCategory) {
                             const modalId = `canvas-${currentModalCategory}-modal`;
                             const modal = document.getElementById(modalId);
-                            if (modal && modal.classList.contains('pdf-builder-modal-open')) {
+                            if (modal && modal.style.display !== 'none') {
                                 closeModal();
                             }
                         }
@@ -1741,60 +1743,60 @@ $settings = get_option('pdf_builder_settings', array());
             </script>
 
             <!-- Modales individuelles pour chaque catégorie -->
-            <div id="canvas-dimensions-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
-                    <div class="pdf-builder-modal-header">
+            <div id="canvas-dimensions-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
                         <h2>📐 Dimensions & Format</h2>
-                        <button type="button" class="pdf-builder-modal-close" aria-label="Fermer">&times;</button>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
                     </div>
-                    <div class="pdf-builder-modal-body">
+                    <div class="modal-body">
                         <!-- Contenu généré dynamiquement -->
                     </div>
-                    <div class="pdf-builder-modal-footer">
-                        <button type="button" class="button button-secondary pdf-builder-modal-cancel">Annuler</button>
-                        <button type="button" class="button button-primary pdf-builder-modal-save">Enregistrer</button>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
                     </div>
                 </div>
             </div>
 
-            <div id="canvas-apparence-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
-                    <div class="pdf-builder-modal-header">
+            <div id="canvas-apparence-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
                         <h2>🎨 Apparence</h2>
-                        <button type="button" class="pdf-builder-modal-close" aria-label="Fermer">&times;</button>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
                     </div>
-                    <div class="pdf-builder-modal-body">
+                    <div class="modal-body">
                         <!-- Contenu généré dynamiquement -->
                     </div>
-                    <div class="pdf-builder-modal-footer">
-                        <button type="button" class="button button-secondary pdf-builder-modal-cancel">Annuler</button>
-                        <button type="button" class="button button-primary pdf-builder-modal-save">Enregistrer</button>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
                     </div>
                 </div>
             </div>
 
-            <div id="canvas-grille-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
-                    <div class="pdf-builder-modal-header">
+            <div id="canvas-grille-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
                         <h2>📏 Grille & Guides</h2>
-                        <button type="button" class="pdf-builder-modal-close" aria-label="Fermer">&times;</button>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
                     </div>
-                    <div class="pdf-builder-modal-body">
+                    <div class="modal-body">
                         <!-- Contenu généré dynamiquement -->
                     </div>
-                    <div class="pdf-builder-modal-footer">
-                        <button type="button" class="button button-secondary pdf-builder-modal-cancel">Annuler</button>
-                        <button type="button" class="button button-primary pdf-builder-modal-save">Enregistrer</button>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
                     </div>
                 </div>
             </div>
 
-            <div id="canvas-zoom-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
+            <div id="canvas-zoom-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
                     <div class="modal-header">
                         <h2>🔍 Zoom & Navigation</h2>
                         <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
@@ -1809,9 +1811,9 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-interactions-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
+            <div id="canvas-interactions-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
                     <div class="modal-header">
                         <h2>🖱️ Interaction</h2>
                         <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
@@ -1826,9 +1828,9 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-export-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
+            <div id="canvas-export-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
                     <div class="modal-header">
                         <h2>💾 Export</h2>
                         <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
@@ -1843,9 +1845,9 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-performance-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
+            <div id="canvas-performance-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
                     <div class="modal-header">
                         <h2>⚡ Performance</h2>
                         <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
@@ -1860,9 +1862,9 @@ $settings = get_option('pdf_builder_settings', array());
                 </div>
             </div>
 
-            <div id="canvas-debug-modal" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
+            <div id="canvas-debug-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
                     <div class="modal-header">
                         <h2>🐛 Debug & Maintenance</h2>
                         <button type="button" class="modal-close" aria-label="Fermer">&times;</button>

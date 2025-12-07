@@ -26,4 +26,5 @@ require_once dirname(__DIR__) . '/plugin/pdf-builder-pro.php';
 
 // Load test utilities
 require_once __DIR__ . '/TestCase.php';
-require_once __DIR__ . '/AjaxTestCase.php';
+require_once __DIR__ . '/AjaxTestCase.php';</content>
+<parameter name="filePath">i:\wp-pdf-builder-pro\tests\bootstrap.php
