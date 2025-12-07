@@ -1547,7 +1547,14 @@ foreach ($canvas_options as $option) {
                             const fullscreenModal = document.createElement('div');
                             fullscreenModal.id = modalId + '-fullscreen';
                             fullscreenModal.className = 'canvas-modal-overlay modal-fullscreen show';
-                            fullscreenModal.innerHTML = modal.innerHTML;
+                            
+                            // Copier seulement le contenu de l'overlay, pas l'overlay lui-même
+                            const originalOverlay = modal.querySelector('.canvas-modal-overlay');
+                            if (originalOverlay) {
+                                fullscreenModal.innerHTML = originalOverlay.innerHTML;
+                            } else {
+                                fullscreenModal.innerHTML = modal.innerHTML;
+                            }
 
                             // Ajouter au body
                             document.body.appendChild(fullscreenModal);

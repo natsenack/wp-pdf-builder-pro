@@ -2,7 +2,7 @@
 <!-- Cache Size Details Modal -->
 <div id="cache-size-modal" class="cache-modal" data-category="size">
     <div class="cache-modal-overlay">
-        <section class="cache-modal-content">
+        <section class="cache-modal-container">
             <header class="cache-modal-header">
                 <h3>[DETAILS CACHE] Détails de la taille du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
@@ -52,7 +52,7 @@
 <!-- Cache Transients Details Modal -->
 <div id="cache-transients-modal" class="cache-modal" data-category="transients">
     <div class="cache-modal-overlay">
-        <section class="cache-modal-content">
+        <section class="cache-modal-container">
             <header class="cache-modal-header">
                 <h3>📊 Détails des transients actifs</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
@@ -104,7 +104,7 @@
 <!-- Cache Status Configuration Modal -->
 <div id="cache-status-modal" class="cache-modal" data-category="status">
     <div class="cache-modal-overlay">
-        <section class="cache-modal-content">
+        <section class="cache-modal-container">
             <header class="cache-modal-header">
                 <h3>⚙️ Configuration du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
@@ -176,7 +176,7 @@
 <!-- Cache Cleanup Modal -->
 <div id="cache-cleanup-modal" class="cache-modal" data-category="cleanup">
     <div class="cache-modal-overlay">
-        <section class="cache-modal-content">
+        <section class="cache-modal-container">
             <header class="cache-modal-header">
                 <h3>🧹 Nettoyage du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
