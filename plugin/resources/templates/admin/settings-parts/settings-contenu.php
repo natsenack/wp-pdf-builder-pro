@@ -1843,8 +1843,11 @@ $settings = get_option('pdf_builder_settings', array());
                                 return;
                             }
 
-                            // Trouver le modal actuel
-                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            // Trouver le modal actuel (fullscreen d'abord, puis original)
+                            let currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal-fullscreen`);
+                            if (!currentModal) {
+                                currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            }
                             if (!currentModal) {
                                 console.error('Modal non trouvé pour sauvegarde:', currentModalCategory);
                                 return;
