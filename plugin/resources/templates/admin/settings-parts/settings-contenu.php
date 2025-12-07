@@ -936,6 +936,9 @@ $settings = get_option('pdf_builder_settings', array());
                         // Rafraîchir toutes les previews avec les nouvelles valeurs
                         previewSystem.refreshPreviews();
 
+                        // Sauvegarder côté serveur via AJAX
+                        saveCanvasSettingsToServer();
+
                         console.log('Paramètres sauvegardés et previews mises à jour');
                         closeModal();
                     }
