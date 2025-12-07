@@ -16,6 +16,14 @@ error_log("[PDF Builder Debug] Page load: guides_enabled: " . get_option('pdf_bu
 error_log("[PDF Builder Debug] Page load: snap_to_grid: " . get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_snap_to_grid', 'DEFAULT')) . ")");
 error_log("[PDF Builder Debug] Page load: grid_size: " . get_option('pdf_builder_canvas_grid_size', 'DEFAULT') . " (type: " . gettype(get_option('pdf_builder_canvas_grid_size', 'DEFAULT')) . ")");
 
+// Debug: check all canvas options
+global $wpdb;
+$canvas_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_canvas_%' LIMIT 20");
+error_log("[PDF Builder Debug] All canvas options in DB:");
+foreach ($canvas_options as $option) {
+    error_log("  {$option->option_name} = {$option->option_value} (type: " . gettype($option->option_value) . ")");
+}
+
 ?>
             <h2>🎨 Contenu & Design</h2>
 
