@@ -2276,6 +2276,11 @@ error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_e
 
                                 updatedValues[input.name] = value;
 
+                                // Debug log pour les paramètres de grille
+                                if (input.name.includes('grid') || input.name.includes('guide') || input.name.includes('snap')) {
+                                    console.log('🔍 DEBUG: Grid field collected:', input.name, '=', value, '(type:', input.type, 'checked:', input.checked, ')');
+                                }
+
                                 // Mettre à jour la valeur dans le système de previews
                                 const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_');
                                 previewSystem.values[previewKey] = value;
