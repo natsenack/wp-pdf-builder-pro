@@ -1458,8 +1458,7 @@ $settings = get_option('pdf_builder_settings', array());
                         // Afficher la modal
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            modal.style.display = 'block';
-                            modal.classList.add('show');
+                            modal.classList.add('pdf-builder-modal-open');
                         }
 
                         // Synchroniser les valeurs des champs
@@ -1648,8 +1647,7 @@ $settings = get_option('pdf_builder_settings', array());
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            modal.style.display = 'none';
-                            modal.classList.remove('show');
+                            modal.classList.remove('pdf-builder-modal-open');
                         }
                         currentModalCategory = null;
                         console.log('Modal fermée');
@@ -1697,7 +1695,7 @@ $settings = get_option('pdf_builder_settings', array());
                         if (e.key === 'Escape' && currentModalCategory) {
                             const modalId = `canvas-${currentModalCategory}-modal`;
                             const modal = document.getElementById(modalId);
-                            if (modal && modal.style.display !== 'none') {
+                            if (modal && modal.classList.contains('pdf-builder-modal-open')) {
                                 closeModal();
                             }
                         }
