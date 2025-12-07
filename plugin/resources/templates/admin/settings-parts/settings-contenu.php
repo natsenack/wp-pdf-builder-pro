@@ -1735,10 +1735,7 @@ $settings = get_option('pdf_builder_settings', array());
                             // Cacher l'originale
                             modal.style.display = 'none';
 
-                            // Gérer la fermeture
-                            const closeBtn = fullscreenModal.querySelector('.modal-close');
-                            const backdrop = fullscreenModal.querySelector('.modal-backdrop');
-
+                            // Fonction de fermeture
                             const closeModal = () => {
                                 console.log('🔍 DEBUG: Fermeture de la modal fullscreen');
                                 fullscreenModal.remove();
@@ -1747,8 +1744,26 @@ $settings = get_option('pdf_builder_settings', array());
                                 currentModalCategory = null;
                             };
 
+                            // Gérer la fermeture
+                            const closeBtn = fullscreenModal.querySelector('.modal-close');
+                            const backdrop = fullscreenModal.querySelector('.modal-backdrop');
+
                             if (closeBtn) closeBtn.onclick = closeModal;
                             if (backdrop) backdrop.onclick = closeModal;
+
+                            // Gérer la sauvegarde dans la modale fullscreen
+                            const saveBtn = fullscreenModal.querySelector('.modal-save');
+                            if (saveBtn) {
+                                saveBtn.onclick = (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    console.log('🔍 DEBUG: Sauvegarde depuis modale fullscreen');
+                                    saveModalSettings();
+                                    setTimeout(() => {
+                                        closeModal();
+                                    }, 500); // Délai pour permettre la sauvegarde AJAX
+                                };
+                            }
 
                             // Écouter Échap
                             const escapeHandler = (e) => {
