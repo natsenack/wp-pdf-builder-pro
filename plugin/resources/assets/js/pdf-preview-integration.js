@@ -579,8 +579,14 @@ window.updateApparenceCardPreview = function() {
         const bgPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.bg');
         const borderPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.border');
 
-        window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundColor', bgColor);
-        window.CanvasPreviewManager.updateElement(borderPreview, 'style.border', `${borderWidth}px solid ${borderColor}`);
+        // Pour l'aperçu du fond : créer un gradient avec la couleur sélectionnée
+        const bgGradient = `linear-gradient(45deg, ${bgColor} 25%, transparent 25%, transparent 75%, ${bgColor} 75%), linear-gradient(-45deg, ${bgColor} 25%, transparent 25%, transparent 75%, ${bgColor} 75%)`;
+        window.CanvasPreviewManager.updateElement(bgPreview, 'style.background', bgGradient);
+        window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundSize', '8px 8px');
+
+        // Pour l'aperçu de la bordure : changer la couleur de la bordure
+        window.CanvasPreviewManager.updateElement(borderPreview, 'style.borderColor', borderColor);
+        window.CanvasPreviewManager.updateElement(borderPreview, 'style.borderWidth', `${borderWidth}px`);
     }
 };
 

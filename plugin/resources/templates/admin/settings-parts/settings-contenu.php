@@ -127,8 +127,8 @@ foreach ($canvas_options as $option) {
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
-                                <div id="card-bg-preview" class="color-preview bg" title="Fond" style="background-color: #ffffff; border-color: #ffffff;"></div>
-                                <div id="card-border-preview" class="color-preview border" title="Bordure" style="border-color: #cccccc; background-color: #ffffff;"></div>
+                                <div id="card-bg-preview" class="color-preview bg" title="Fond" style="background: linear-gradient(45deg, <?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?> 25%, transparent 25%, transparent 75%, <?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?> 75%), linear-gradient(-45deg, <?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?> 25%, transparent 25%, transparent 75%, <?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?> 75%); background-size: 8px 8px;"></div>
+                                <div id="card-border-preview" class="color-preview border" title="Bordure" style="border-color: <?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_color', '#cccccc')); ?>; border-width: <?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_width', '1')); ?>px;"></div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
