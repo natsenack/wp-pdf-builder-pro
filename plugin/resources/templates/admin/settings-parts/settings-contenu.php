@@ -494,11 +494,40 @@ $settings = get_option('pdf_builder_settings', array());
                     box-sizing: border-box !important;
                     transform: none !important;
                     filter: none !important;
+                body > .modal-fullscreen {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    z-index: 999999 !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: none !important;
+                    outline: none !important;
+                    overflow: visible !important;
+                    box-sizing: border-box !important;
+                    transform: none !important;
+                    filter: none !important;
                     background-color: rgba(0, 0, 0, 0.6) !important;
                     backdrop-filter: blur(4px) !important;
                 }
 
-                .modal-container {
+                .modal-backdrop {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.6);
+                    backdrop-filter: blur(4px);
+                    z-index: 1;
+                }
                     position: relative;
                     background: #ffffff;
                     border-radius: 16px;
