@@ -60,10 +60,32 @@ class PdfBuilderLicenseManager
 
     /**
      * Vérifier si l'utilisateur a une licence premium active
+     * Inclut les licences réelles ET les clés de test
      */
     public function isPremium()
     {
-        return $this->license_status === 'active';
+        // Vérifier d'abord la licence réelle
+        if ($this->license_status === 'active') {
+            return true;
+        }
+        
+        // Vérifier les clés de test (mode développeur)
+        $test_key = get_option('pdf_builder_license_test_key', '');
+        if (!empty($test_key)) {
+            // Vérifier si la clé de test n'est pas expirée
+            $test_expires = get_option('pdf_builder_license_test_key_expires', '');
+            if (!empty($test_expires)) {
+                $expires_date = strtotime($test_expires);
+                if ($expires_date && $expires_date > time()) {
+                    return true;
+                }
+            } else {
+                // Si pas de date d'expiration, considérer comme valide
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
