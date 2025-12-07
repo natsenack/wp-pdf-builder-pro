@@ -4,18 +4,17 @@
 
 /* Styles pour les onglets WordPress */
 .nav-tab-wrapper {
-    border-bottom: none;
+    border-bottom: 1px solid #e1e5e9;
     margin-bottom: 30px;
-    padding: 6px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 4px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .nav-tab:focus {
-    box-shadow: 0 0 0 1px #2271b1;
-    outline: 2px solid transparent;
-    outline-offset: -2px;
+    box-shadow: 0 0 0 2px #3b82f6;
+    outline: none;
 }
 
 /* Styles pour le contenu des onglets */
