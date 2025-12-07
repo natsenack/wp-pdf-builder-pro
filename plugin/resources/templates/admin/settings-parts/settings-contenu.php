@@ -1966,7 +1966,7 @@ foreach ($canvas_options as $option) {
                         }
 
                         // Bouton de fermeture
-                        if (e.target.closest('.modal-close') || e.target.closest('.modal-cancel')) {
+                        if (e.target.closest('.canvas-modal-close') || e.target.closest('.canvas-modal-cancel')) {
                             closeModal();
                             return;
                         }
@@ -1978,7 +1978,7 @@ foreach ($canvas_options as $option) {
                         }
 
                         // Bouton de sauvegarde
-                        if (e.target.closest('.modal-save')) {
+                        if (e.target.closest('.canvas-modal-save')) {
                             e.preventDefault();
                             saveModalSettings();
                             return;
