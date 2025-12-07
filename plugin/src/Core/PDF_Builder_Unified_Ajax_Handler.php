@@ -546,6 +546,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $option_key = $key;
                     $option_value = intval($value ?? 0);
                     update_option($option_key, $option_value); // Canvas fields saved separately
+                    if ($key === 'pdf_builder_canvas_grid_size') {
+                        error_log('[PDF Builder AJAX] Saved canvas int field to option: ' . $option_key . ' = ' . $option_value);
+                    }
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
