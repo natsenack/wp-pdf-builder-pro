@@ -611,8 +611,8 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                     // Afficher un message de succès
                     showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
 
-                    // Mettre à jour les prévisualisations après sauvegarde
-                    updateTemplatePreviews();
+                    // Mise à jour en temps réel des prévisualisations après sauvegarde
+                    updatePreviewsAfterSave();
                 } else {
                     showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
                 }
@@ -667,42 +667,55 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
             });
         }
 
-        // Fonction pour mettre à jour les prévisualisations après sauvegarde
-        function updateTemplatePreviews() {
-            // Récupérer les données sauvegardées depuis le serveur
-            fetch(pdfBuilderAjax.ajaxurl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'action': 'pdf_builder_get_template_mappings',
-                    'nonce': pdfBuilderAjax.nonce
+        // Fonction pour mettre à jour les prévisualisations immédiatement après sauvegarde
+        function updatePreviewsAfterSave() {
+            // Récupérer la liste des templates disponibles (une seule fois)
+            if (Object.keys(availableTemplates).length === 0) {
+                fetch(pdfBuilderAjax.ajaxurl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'action': 'pdf_builder_get_template_mappings',
+                        'nonce': pdfBuilderAjax.nonce
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.data) {
-                    const mappings = data.data.mappings || {};
-                    const templates = data.data.templates || {};
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.templates) {
+                        availableTemplates = data.data.templates;
+                        // Maintenant mettre à jour les prévisualisations
+                        updatePreviewsWithCurrentValues();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement des templates:', error);
+                });
+            } else {
+                // Templates déjà chargés, mettre à jour immédiatement
+                updatePreviewsWithCurrentValues();
+            }
+        }
 
-                    // Mettre à jour chaque prévisualisation
-                    document.querySelectorAll('.template-preview').forEach(preview => {
-                        const statusKey = preview.closest('article').querySelector('.template-select').id.replace('template_', '');
-                        const assignedTemplate = mappings[statusKey];
+        // Stockage des templates disponibles
+        let availableTemplates = {};
 
-                        if (assignedTemplate && templates[assignedTemplate]) {
-                            // Template assigné - afficher le nom
-                            preview.innerHTML = `<p class="current-template">${templates[assignedTemplate]}</p>`;
-                        } else {
-                            // Aucun template assigné
-                            preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
-                        }
-                    });
+        // Fonction pour mettre à jour les prévisualisations avec les valeurs actuelles des selects
+        function updatePreviewsWithCurrentValues() {
+            document.querySelectorAll('.template-preview').forEach(preview => {
+                const select = preview.closest('article').querySelector('.template-select');
+                if (select) {
+                    const selectedTemplateId = select.value;
+
+                    if (selectedTemplateId && availableTemplates[selectedTemplateId]) {
+                        // Template assigné - afficher le nom
+                        preview.innerHTML = `<p class="current-template">${availableTemplates[selectedTemplateId]}</p>`;
+                    } else {
+                        // Aucun template assigné
+                        preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
+                    }
                 }
-            })
-            .catch(error => {
-                console.error('Erreur lors de la mise à jour des prévisualisations:', error);
             });
         }
 
