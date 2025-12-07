@@ -452,8 +452,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if (strpos($bool_field, 'pdf_builder_canvas_') === 0 || strpos($bool_field, 'pdf_builder_zoom_') === 0 || strpos($bool_field, 'pdf_builder_default_canvas_') === 0) {
                     $option_key = $bool_field;
                     update_option($option_key, $option_value);
-                    if ($bool_field === 'pdf_builder_canvas_shadow_enabled') {
-                        error_log('[PDF Builder AJAX] Saved shadow_enabled to option: ' . $option_key . ' = ' . $option_value);
+                    if ($bool_field === 'pdf_builder_canvas_shadow_enabled' || strpos($bool_field, 'pdf_builder_canvas_grid') === 0 || strpos($bool_field, 'pdf_builder_canvas_guide') === 0 || strpos($bool_field, 'pdf_builder_canvas_snap') === 0) {
+                        error_log('[PDF Builder AJAX] Saved canvas field to option: ' . $option_key . ' = ' . $option_value);
                     }
                 } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
                     $option_key = $bool_field;
