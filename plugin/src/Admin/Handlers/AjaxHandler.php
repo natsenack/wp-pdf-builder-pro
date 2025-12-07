@@ -1929,8 +1929,8 @@ class AjaxHandler
             return false;
         }
 
-        json_decode($string);
-        return json_last_error() === JSON_ERROR_NONE;
+        $decoded = json_decode($string, true);
+        return $decoded !== null && json_last_error() === JSON_ERROR_NONE;
     }
 
     /**
