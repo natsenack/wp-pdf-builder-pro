@@ -659,87 +659,8 @@ $current_mappings = $status_manager->get_current_mappings();
             });
         }
 
-        saveBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Désactiver le bouton pendant la sauvegarde
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Sauvegarde en cours...';
-
-            // Collecter les données des selects manuellement
-            const formData = new FormData();
-            formData.append('action', 'pdf_builder_save_order_status_templates');
-            formData.append('pdf_builder_settings_nonce', document.getElementById('pdf_builder_settings_nonce').value);
-
-            // Collecter toutes les valeurs des selects dans un objet
-            const templatesData = {};
-            const selects = document.querySelectorAll('#templates-status-form select[name^="pdf_builder_order_status_templates"]');
-            selects.forEach(select => {
-                if (select.value && select.value !== '') {
-                    // Extraire la clé du statut du name (pdf_builder_order_status_templates[wc-completed] -> wc-completed)
-                    const nameMatch = select.name.match(/pdf_builder_order_status_templates\[([^\]]+)\]/);
-                    if (nameMatch) {
-                        const statusKey = nameMatch[1];
-                        templatesData[statusKey] = select.value;
-                    }
-                }
-            });
-
-            // Ajouter les données comme JSON
-            formData.append('templates_data', JSON.stringify(templatesData));
-
-            console.log('Données collectées pour sauvegarde templates:', templatesData);
-
-            // Faire la requête AJAX
-            fetch(ajaxurl, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Succès
-                    saveBtn.textContent = '✅ Sauvegardé !';
-                    saveBtn.classList.add('button-success');
-
-                    // Mettre à jour les valeurs originales pour tous les selects
-                    updateOriginalValues();
-
-                    // Réactiver après 2 secondes
-                    setTimeout(() => {
-                        saveBtn.disabled = false;
-                        saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
-                        saveBtn.classList.remove('button-success');
-                    }, 2000);
-                } else {
-                    // Erreur
-                    saveBtn.textContent = '❌ Erreur';
-                    saveBtn.classList.add('button-error');
-                    alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
-
-                    // Réactiver après 3 secondes
-                    setTimeout(() => {
-                        saveBtn.disabled = false;
-                        saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
-                        saveBtn.classList.remove('button-error');
-                    }, 3000);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur AJAX:', error);
-                saveBtn.textContent = '❌ Erreur de connexion';
-                saveBtn.classList.add('button-error');
-                alert('Erreur de connexion lors de la sauvegarde');
-
-                // Réactiver après 3 secondes
-                setTimeout(() => {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
-                    saveBtn.classList.remove('button-error');
-                }, 3000);
-            });
-        });
+        // Initialiser les aperçus temps réel
+        initRealTimePreview();
     });
 })();
 </script>

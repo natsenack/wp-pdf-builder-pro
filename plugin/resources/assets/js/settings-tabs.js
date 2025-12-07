@@ -465,9 +465,31 @@
 
         const allData = {};
 
-        // Fonction pour normaliser les noms de champs (retirer [] à la fin)
+        // Fonction pour normaliser les noms de champs et gérer les arrays
         function normalizeFieldName(name) {
+            // Gérer les noms de champs avec des crochets comme pdf_builder_order_status_templates[wc-completed]
+            const arrayMatch = name.match(/^([^[]+)\[([^\]]+)\]$/);
+            if (arrayMatch) {
+                return {
+                    baseName: arrayMatch[1],
+                    key: arrayMatch[2],
+                    isArray: true
+                };
+            }
+            // Gérer les arrays simples comme field[]
             return name.replace(/\[\]$/, '');
+        }
+
+        // Fonction pour définir une valeur dans un objet avec support des arrays imbriqués
+        function setNestedValue(obj, key, value) {
+            if (typeof key === 'object' && key.isArray) {
+                if (!obj[key.baseName]) {
+                    obj[key.baseName] = {};
+                }
+                obj[key.baseName][key.key] = value;
+            } else {
+                obj[key] = value;
+            }
         }
 
         // Liste des IDs de formulaires à collecter
@@ -491,16 +513,22 @@
 
                 // Convertir FormData en objet
                 for (let [key, value] of formData.entries()) {
-                    // Gérer les cases à cocher multiples
+                    // Gérer les cases à cocher multiples et les arrays
                     const normalizedKey = normalizeFieldName(key);
-                    if (formObject[normalizedKey]) {
-                        if (Array.isArray(formObject[normalizedKey])) {
-                            formObject[normalizedKey].push(value);
-                        } else {
-                            formObject[normalizedKey] = [formObject[normalizedKey], value];
-                        }
+                    if (typeof normalizedKey === 'object' && normalizedKey.isArray) {
+                        // C'est un champ array comme pdf_builder_order_status_templates[wc-completed]
+                        setNestedValue(formObject, normalizedKey, value);
                     } else {
-                        formObject[normalizedKey] = value;
+                        // C'est un champ normal
+                        if (formObject[normalizedKey]) {
+                            if (Array.isArray(formObject[normalizedKey])) {
+                                formObject[normalizedKey].push(value);
+                            } else {
+                                formObject[normalizedKey] = [formObject[normalizedKey], value];
+                            }
+                        } else {
+                            formObject[normalizedKey] = value;
+                        }
                     }
                 }
 
@@ -508,12 +536,19 @@
                 const checkboxes = form.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
                     const normalizedName = normalizeFieldName(checkbox.name);
-                    if (!formObject.hasOwnProperty(normalizedName)) {
-                        // Checkbox non cochée, définir à '0'
-                        formObject[normalizedName] = '0';
-                    } else if (formObject[normalizedName] === 'on' || formObject[normalizedName] === '') {
-                        // Checkbox cochée sans valeur explicite, définir à '1'
-                        formObject[normalizedName] = '1';
+                    if (typeof normalizedName === 'object' && normalizedName.isArray) {
+                        // Pour les checkboxes dans des arrays, vérifier si la valeur existe
+                        if (!formObject[normalizedName.baseName] || !formObject[normalizedName.baseName][normalizedName.key]) {
+                            setNestedValue(formObject, normalizedName, '0');
+                        }
+                    } else {
+                        if (!formObject.hasOwnProperty(normalizedName)) {
+                            // Checkbox non cochée, définir à '0'
+                            formObject[normalizedName] = '0';
+                        } else if (formObject[normalizedName] === 'on' || formObject[normalizedName] === '') {
+                            // Checkbox cochée sans valeur explicite, définir à '1'
+                            formObject[normalizedName] = '1';
+                        }
                     }
                 });
 
@@ -540,26 +575,43 @@
                     const section = input.closest('.tab-content');
                     const sectionId = section ? section.id : 'global';
                     
-                    console.log('JS: Collecting non-form input:', normalizedName, 'from section:', sectionId);
+                    const displayName = typeof normalizedName === 'object' && normalizedName.isArray ? 
+                        `${normalizedName.baseName}[${normalizedName.key}]` : normalizedName;
+                    console.log('JS: Collecting non-form input:', displayName, 'from section:', sectionId);
                     
                     // Liste des sections de paramètres autorisées
                     const allowedSections = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
                     
                     // Ne collecter que si c'est dans une section autorisée ou si le champ a déjà le préfixe pdf_builder_
-                    if (allowedSections.includes(sectionId) || normalizedName.startsWith('pdf_builder_')) {
+                    const nameToCheck = typeof normalizedName === 'object' && normalizedName.isArray ? 
+                        normalizedName.baseName : normalizedName;
+                    if (allowedSections.includes(sectionId) || nameToCheck.startsWith('pdf_builder_')) {
                         if (!allData[sectionId]) {
                             allData[sectionId] = {};
                         }
 
                         if (input.type === 'checkbox') {
                             // Pour les toggles simples, utiliser true/false au lieu d'arrays
-                            allData[sectionId][normalizedName] = input.checked ? input.value : '0';
+                            const value = input.checked ? input.value : '0';
+                            if (typeof normalizedName === 'object' && normalizedName.isArray) {
+                                setNestedValue(allData[sectionId], normalizedName, value);
+                            } else {
+                                allData[sectionId][normalizedName] = value;
+                            }
                         } else if (input.type === 'radio') {
                             if (input.checked) {
-                                allData[sectionId][normalizedName] = input.value;
+                                if (typeof normalizedName === 'object' && normalizedName.isArray) {
+                                    setNestedValue(allData[sectionId], normalizedName, input.value);
+                                } else {
+                                    allData[sectionId][normalizedName] = input.value;
+                                }
                             }
                         } else {
-                            allData[sectionId][normalizedName] = input.value;
+                            if (typeof normalizedName === 'object' && normalizedName.isArray) {
+                                setNestedValue(allData[sectionId], normalizedName, input.value);
+                            } else {
+                                allData[sectionId][normalizedName] = input.value;
+                            }
                         }
                     }
                 }
