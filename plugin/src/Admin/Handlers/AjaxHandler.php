@@ -1073,31 +1073,48 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasSettings()
     {
-        
+        // LOGS PHP DÉTAILLÉS POUR DÉBOGAGE
+        error_log('🚀 [PHP AJAX] Début ajaxSaveCanvasSettings - ' . date('Y-m-d H:i:s'));
+        error_log('🔍 [PHP AJAX] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('🔍 [PHP AJAX] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
+        error_log('🔍 [PHP AJAX] User capabilities: ' . (current_user_can('manage_options') ? 'ADMIN' : 'LIMITED'));
+        error_log('🔍 [PHP AJAX] Current user ID: ' . get_current_user_id());
+        error_log('🔍 [PHP AJAX] $_POST data: ' . print_r($_POST, true));
+        error_log('🔍 [PHP AJAX] $_FILES data: ' . print_r($_FILES, true));
+
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
+                error_log('❌ [PHP AJAX] ERREUR: Utilisateur non connecté');
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
+            error_log('✅ [PHP AJAX] Utilisateur connecté');
 
             // Vérifier le nonce
             $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            error_log('🔍 [PHP AJAX] Nonce reçu: ' . $nonce);
+
             if (!wp_verify_nonce($nonce, 'pdf_builder_ajax') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+                error_log('❌ [PHP AJAX] ERREUR: Nonce invalide');
                 wp_send_json_error('Nonce invalide');
                 return;
             }
+            error_log('✅ [PHP AJAX] Nonce valide');
 
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-            
+            error_log('🔍 [PHP AJAX] Catégorie reçue: ' . $category);
+
             if (empty($category)) {
+                error_log('❌ [PHP AJAX] ERREUR: Catégorie manquante');
                 wp_send_json_error('Catégorie manquante');
                 return;
             }
+            error_log('✅ [PHP AJAX] Catégorie valide: ' . $category);
 
             // Sauvegarder selon la catégorie
             $saved = false;
@@ -1200,6 +1217,9 @@ class AjaxHandler
             }
 
             if ($saved) {
+                error_log('✅ [PHP AJAX] Sauvegarde réussie pour catégorie: ' . $category);
+                error_log('🔍 [PHP AJAX] Données sauvegardées: ' . print_r($savedData ?? [], true));
+
                 $response = [
                     'message' => 'Paramètres ' . $category . ' sauvegardés avec succès',
                     'debug' => [
@@ -1212,14 +1232,20 @@ class AjaxHandler
                 if (isset($savedData)) {
                     $response['saved'] = $savedData;
                 }
+                error_log('📤 [PHP AJAX] Réponse de succès envoyée: ' . print_r($response, true));
                 wp_send_json_success($response);
             } else {
+                error_log('❌ [PHP AJAX] ERREUR: Échec de la sauvegarde pour catégorie: ' . $category);
                 wp_send_json_error('Erreur lors de la sauvegarde des paramètres ' . $category);
             }
 
         } catch (Exception $e) {
+            error_log('💥 [PHP AJAX] EXCEPTION: ' . $e->getMessage());
+            error_log('🔍 [PHP AJAX] Trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
+
+        error_log('🏁 [PHP AJAX] Fin ajaxSaveCanvasSettings - ' . date('Y-m-d H:i:s'));
     }
 
     /**
@@ -1227,37 +1253,62 @@ class AjaxHandler
      */
     public function ajaxGetCanvasSettings()
     {
+        // LOGS PHP DÉTAILLÉS POUR DÉBOGAGE
+        error_log('🚀 [PHP AJAX GET] Début ajaxGetCanvasSettings - ' . date('Y-m-d H:i:s'));
+        error_log('🔍 [PHP AJAX GET] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('🔍 [PHP AJAX GET] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
+        error_log('🔍 [PHP AJAX GET] Current user ID: ' . get_current_user_id());
+        error_log('🔍 [PHP AJAX GET] $_POST data: ' . print_r($_POST, true));
+
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
+                error_log('❌ [PHP AJAX GET] ERREUR: Utilisateur non connecté');
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
+            error_log('✅ [PHP AJAX GET] Utilisateur connecté');
 
             // Vérifier le nonce
             $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            error_log('🔍 [PHP AJAX GET] Nonce reçu: ' . $nonce);
+
             if (!wp_verify_nonce($nonce, 'pdf_builder_ajax') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+                error_log('❌ [PHP AJAX GET] ERREUR: Nonce invalide');
                 wp_send_json_error('Nonce invalide');
                 return;
             }
+            error_log('✅ [PHP AJAX GET] Nonce valide');
 
             // Pour l'instant, retourner des paramètres par défaut
-            wp_send_json_success([
+            $response = [
                 'canvas_settings' => [
                     'width' => 1123,
                     'height' => 794,
                     'unit' => 'mm',
                     'orientation' => 'landscape'
                 ],
-                'message' => 'Paramètres canvas récupérés (simulation)'
-            ]);
+                'message' => 'Paramètres canvas récupérés (simulation)',
+                'debug' => [
+                    'timestamp' => time(),
+                    'user_id' => get_current_user_id(),
+                    'request_data' => $_POST
+                ]
+            ];
+
+            error_log('📤 [PHP AJAX GET] Réponse de succès envoyée: ' . print_r($response, true));
+            wp_send_json_success($response);
 
         } catch (Exception $e) {
+            error_log('💥 [PHP AJAX GET] EXCEPTION: ' . $e->getMessage());
+            error_log('🔍 [PHP AJAX GET] Trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur lors de la récupération: ' . $e->getMessage());
         }
+
+        error_log('🏁 [PHP AJAX GET] Fin ajaxGetCanvasSettings - ' . date('Y-m-d H:i:s'));
     }
 
     // Méthodes privées pour sauvegarder les paramètres canvas
