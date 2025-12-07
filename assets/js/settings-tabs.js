@@ -89,6 +89,7 @@
         });
 
         // Restaurer l'onglet sauvegardé
+        let tabRestored = false;
         try {
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab) {
@@ -96,17 +97,19 @@
                 const savedContent = document.getElementById('tab-content-' + savedTab);
                 if (savedTabElement && savedContent) {
                     savedTabElement.click();
-                    return;
+                    tabRestored = true;
                 }
             }
         } catch (e) {
             // Ignore les erreurs localStorage
         }
 
-        // Activer le premier onglet par défaut
-        const firstTab = tabsContainer.querySelector('.nav-tab');
-        if (firstTab) {
-            firstTab.click();
+        // Activer le premier onglet par défaut seulement si aucun onglet n'a été restauré
+        if (!tabRestored) {
+            const firstTab = tabsContainer.querySelector('.nav-tab');
+            if (firstTab) {
+                firstTab.click();
+            }
         }
     }
 

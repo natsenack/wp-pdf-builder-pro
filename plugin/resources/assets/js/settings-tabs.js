@@ -221,7 +221,19 @@
                 const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
                 const savedContent = contentContainer.querySelector('#' + savedTab);
                 if (savedTabElement && savedContent) {
-                    savedTabElement.click();
+                    // Forcer la désactivation de tous les onglets d'abord
+                    tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
+                        t.classList.remove('nav-tab-active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    contentContainer.querySelectorAll('.tab-content').forEach(c => {
+                        c.classList.remove('active');
+                    });
+
+                    // Activer l'onglet sauvegardé
+                    savedTabElement.classList.add('nav-tab-active');
+                    savedTabElement.setAttribute('aria-selected', 'true');
+                    savedContent.classList.add('active');
                     tabActivated = true;
                 }
             }
