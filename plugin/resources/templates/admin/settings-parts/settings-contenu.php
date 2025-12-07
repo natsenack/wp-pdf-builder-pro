@@ -10,60 +10,6 @@ require_once __DIR__ . '/settings-helpers.php';
 
 $settings = get_option('pdf_builder_settings', array());
 
-// Traitement du formulaire Canvas
-if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']) && wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_canvas_nonce')) {
-    // Liste des paramètres canvas à sauvegarder
-    $canvas_params = [
-        'pdf_builder_canvas_width',
-        'pdf_builder_canvas_height',
-        'pdf_builder_canvas_dpi',
-        'pdf_builder_canvas_format',
-        'pdf_builder_canvas_bg_color',
-        'pdf_builder_canvas_border_color',
-        'pdf_builder_canvas_border_width',
-        'pdf_builder_canvas_shadow_enabled',
-        'pdf_builder_canvas_grid_enabled',
-        'pdf_builder_canvas_grid_size',
-        'pdf_builder_canvas_guides_enabled',
-        'pdf_builder_canvas_snap_to_grid',
-        'pdf_builder_canvas_zoom_min',
-        'pdf_builder_canvas_zoom_max',
-        'pdf_builder_canvas_zoom_default',
-        'pdf_builder_canvas_zoom_step',
-        'pdf_builder_canvas_export_quality',
-        'pdf_builder_canvas_export_format',
-        'pdf_builder_canvas_export_transparent',
-        'pdf_builder_canvas_drag_enabled',
-        'pdf_builder_canvas_resize_enabled',
-        'pdf_builder_canvas_rotate_enabled',
-        'pdf_builder_canvas_multi_select',
-        'pdf_builder_canvas_selection_mode',
-        'pdf_builder_canvas_keyboard_shortcuts',
-        'pdf_builder_canvas_fps_target',
-        'pdf_builder_canvas_memory_limit_js',
-        'pdf_builder_canvas_response_timeout',
-        'pdf_builder_canvas_lazy_loading_editor',
-        'pdf_builder_canvas_preload_critical',
-        'pdf_builder_canvas_lazy_loading_plugin',
-        'pdf_builder_canvas_debug_enabled',
-        'pdf_builder_canvas_performance_monitoring',
-        'pdf_builder_canvas_error_reporting',
-        'pdf_builder_canvas_memory_limit_php'
-    ];
-
-    // Sauvegarder chaque paramètre
-    foreach ($canvas_params as $param) {
-        if (isset($_POST[$param])) {
-            $settings[$param] = sanitize_text_field($_POST[$param]);
-        }
-    }
-
-    // Sauvegarder dans la base de données
-    update_option('pdf_builder_settings', $settings);
-
-    // Message de succès
-    echo '<div class="notice notice-success is-dismissible"><p>✅ Paramètres Canvas sauvegardés avec succès !</p></div>';
-}
 ?>
             <h2>🎨 Contenu & Design</h2>
 
@@ -443,13 +389,6 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']) 
                         </article>
                     </div>
 
-                    <!-- Bouton de sauvegarde centralisée -->
-                    <div class="canvas-form-actions">
-                        <button type="submit" class="button button-primary" id="save-canvas-settings">
-                            💾 Sauvegarder tous les paramètres
-                        </button>
-                        <p class="description">Les modifications des modals sont automatiquement synchronisées. Cliquez ici pour sauvegarder définitivement.</p>
-                    </div>
                 </form>
             </section>
 
