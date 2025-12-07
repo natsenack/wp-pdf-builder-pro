@@ -920,20 +920,46 @@ class AjaxHandler
     private function handleGetTemplateMappings()
     {
         try {
+            global $wpdb;
+
             // Récupérer les mappings sauvegardés
             $mappings = get_option('pdf_builder_order_status_templates', []);
 
-            // Récupérer la liste des templates disponibles
-            $templates = [];
-            $template_posts = get_posts([
-                'post_type' => 'pdf_template',
-                'posts_per_page' => -1,
-                'post_status' => 'publish'
-            ]);
+            // Récupérer tous les types de templates disponibles (comme dans PDF_Template_Status_Manager)
 
-            foreach ($template_posts as $post) {
-                $templates[$post->ID] = $post->post_title;
+            // Templates WordPress
+            $templates_wp = $wpdb->get_results("
+                SELECT ID, post_title
+                FROM {$wpdb->posts}
+                WHERE post_type = 'pdf_template'
+                AND post_status = 'publish'
+                ORDER BY post_title ASC
+            ", ARRAY_A);
+
+            $wp_templates = [];
+            if ($templates_wp) {
+                foreach ($templates_wp as $template) {
+                    $wp_templates[$template['ID']] = $template['post_title'];
+                }
             }
+
+            // Templates personnalisés
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $templates_custom = $wpdb->get_results("
+                SELECT id, name
+                FROM {$table_templates}
+                ORDER BY name ASC
+            ", ARRAY_A);
+
+            $custom_templates = [];
+            if ($templates_custom) {
+                foreach ($templates_custom as $template) {
+                    $custom_templates['custom_' . $template['id']] = $template['name'];
+                }
+            }
+
+            // Fusionner tous les templates
+            $templates = array_merge($wp_templates, $custom_templates);
 
             wp_send_json_success([
                 'mappings' => $mappings,
