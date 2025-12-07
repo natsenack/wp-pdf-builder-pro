@@ -1544,9 +1544,14 @@ foreach ($canvas_options as $option) {
                             const overlay = modal.querySelector('.canvas-modal-overlay');
                             console.log('🔍 DEBUG: Overlay trouvé:', overlay);
                             if (overlay) {
-                                console.log('🔍 DEBUG: Ajout de la classe active à l\'overlay');
-                                overlay.classList.add('active');
-                                document.body.classList.add('canvas-modal-open');
+                                console.log('🔍 DEBUG: Overlay déjà actif ?', overlay.classList.contains('active'));
+                                if (!overlay.classList.contains('active')) {
+                                    console.log('🔍 DEBUG: Ajout de la classe active à l\'overlay');
+                                    overlay.classList.add('active');
+                                    document.body.classList.add('canvas-modal-open');
+                                } else {
+                                    console.log('🔍 DEBUG: Overlay déjà actif, pas besoin d\'ajouter');
+                                }
                                 console.log('🔍 DEBUG: Classes de l\'overlay après ajout:', overlay.className);
                                 console.log('Modal ouverte:', modalId);
                             } else {
@@ -1858,9 +1863,14 @@ foreach ($canvas_options as $option) {
                             const overlay = modal.querySelector('.canvas-modal-overlay');
                             console.log('🔍 DEBUG: Fermeture - Overlay trouvé:', overlay);
                             if (overlay) {
-                                console.log('🔍 DEBUG: Retrait de la classe active de l\'overlay');
-                                overlay.classList.remove('active');
-                                document.body.classList.remove('canvas-modal-open');
+                                console.log('🔍 DEBUG: Overlay actif avant fermeture ?', overlay.classList.contains('active'));
+                                if (overlay.classList.contains('active')) {
+                                    console.log('🔍 DEBUG: Retrait de la classe active de l\'overlay');
+                                    overlay.classList.remove('active');
+                                    document.body.classList.remove('canvas-modal-open');
+                                } else {
+                                    console.log('🔍 DEBUG: Overlay déjà inactif');
+                                }
                                 console.log('🔍 DEBUG: Classes de l\'overlay après retrait:', overlay.className);
                             }
                         }
@@ -1873,7 +1883,16 @@ foreach ($canvas_options as $option) {
                         modalSettingsManager.saveModalSettings();
                     }
 
-                    // Gestionnaire d'événements pour les boutons de configuration
+                    // Initialisation : fermer toutes les modales au départ
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('🔍 DEBUG: Fermeture de toutes les modales au démarrage');
+                        const allOverlays = document.querySelectorAll('.canvas-modal-overlay');
+                        allOverlays.forEach(overlay => {
+                            overlay.classList.remove('active');
+                        });
+                        document.body.classList.remove('canvas-modal-open');
+                        console.log('🔍 DEBUG: Toutes les modales fermées au démarrage');
+                    });
                     document.addEventListener('click', function(e) {
                         // Bouton de configuration d'une carte
                         if (e.target.closest('.canvas-configure-btn')) {
