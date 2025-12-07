@@ -659,7 +659,15 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
         // Fonction pour mettre à jour les prévisualisations immédiatement après sauvegarde
         function updatePreviewsAfterSave() {
             // Récupérer la liste des templates disponibles (une seule fois)
-            if (Object.keys(availableTemplates).length === 0) {
+            var templatesLoaded = false;
+            for (var key in availableTemplates) {
+                if (availableTemplates.hasOwnProperty(key)) {
+                    templatesLoaded = true;
+                    break;
+                }
+            }
+
+            if (!templatesLoaded) {
                 fetch(pdfBuilderAjax.ajaxurl, {
                     method: 'POST',
                     headers: {
@@ -670,15 +678,17 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                         'nonce': pdfBuilderAjax.nonce
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
                     if (data.success && data.data && data.data.templates) {
                         availableTemplates = data.data.templates;
                         // Maintenant mettre à jour les prévisualisations
                         updatePreviewsWithCurrentValues();
                     }
                 })
-                .catch(error => {
+                .catch(function(error) {
                     console.error('Erreur lors du chargement des templates:', error);
                 });
             } else {
