@@ -441,37 +441,23 @@ $settings = get_option('pdf_builder_settings', array());
 
             <!-- CSS pour les modales - DESIGN SIMPLE ET ÉLÉGANT -->
             <style>
-                /* Styles pour les modales - SPÉCIFICITÉ MAXIMALE */
-                body .modal-overlay,
-                body div.modal-overlay,
-                div.modal-overlay,
+                /* Styles pour les modales - DESIGN SIMPLE ET ÉLÉGANT */
                 .modal-overlay {
-                    position: fixed !important;
-                    top: 0 !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    bottom: 0 !important;
-                    width: 100vw !important;
-                    height: 100vh !important;
-                    max-width: none !important;
-                    max-height: none !important;
-                    z-index: 999999 !important;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    z-index: 999999;
                     display: none;
-                    overflow: visible !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    border: none !important;
-                    outline: none !important;
-                    box-sizing: border-box !important;
-                    transform: none !important;
-                    filter: none !important;
-                    backdrop-filter: none !important;
-                    -webkit-transform: none !important;
-                    -moz-transform: none !important;
-                    -ms-transform: none !important;
-                    -o-transform: none !important;
-                    clip: none !important;
-                    clip-path: none !important;
+                    overflow: visible;
+                    margin: 0;
+                    padding: 0;
+                    border: none;
+                    outline: none;
+                    box-sizing: border-box;
                 }
 
                 body > .modal-fullscreen {
@@ -492,30 +478,6 @@ $settings = get_option('pdf_builder_settings', array());
                     outline: none !important;
                     overflow: visible !important;
                     box-sizing: border-box !important;
-                    transform: none !important;
-                    filter: none !important;
-                body > .modal-fullscreen {
-                    position: fixed !important;
-                    top: 0 !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    bottom: 0 !important;
-                    width: 100vw !important;
-                    height: 100vh !important;
-                    z-index: 999999 !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    border: none !important;
-                    outline: none !important;
-                    overflow: visible !important;
-                    box-sizing: border-box !important;
-                    transform: none !important;
-                    filter: none !important;
-                    background-color: rgba(0, 0, 0, 0.6) !important;
-                    backdrop-filter: blur(4px) !important;
                 }
 
                 .modal-backdrop {
