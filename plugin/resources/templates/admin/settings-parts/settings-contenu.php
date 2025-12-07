@@ -954,10 +954,10 @@ $settings = get_option('pdf_builder_settings', array());
                         formData.append('action', 'pdf_builder_save_settings');
                         formData.append('current_tab', 'contenu');
                         
-                        // Ajouter le nonce
-                        const nonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
-                        if (nonceField) {
-                            formData.append('nonce', nonceField.value);
+                        // Remplacer le nonce par le bon
+                        const settingsNonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
+                        if (settingsNonceField) {
+                            formData.set('nonce', settingsNonceField.value);
                         }
 
                         // Faire l'appel AJAX
@@ -965,12 +965,16 @@ $settings = get_option('pdf_builder_settings', array());
                             method: 'POST',
                             body: formData
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            return response.json();
+                        })
                         .then(data => {
+                            console.log('Response data:', data);
                             if (data.success) {
                                 console.log('Paramètres canvas sauvegardés avec succès:', data.saved_count, 'paramètres');
                             } else {
-                                console.error('Erreur lors de la sauvegarde:', data.message);
+                                console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
                             }
                         })
                         .catch(error => {
