@@ -1518,7 +1518,6 @@ foreach ($canvas_options as $option) {
 
                         // Fermer toute modal existante avant d'en ouvrir une nouvelle
                         if (currentModalCategory) {
-                            console.log('Fermeture de la modal existante:', currentModalCategory);
                             closeModal();
                         }
 
@@ -1527,69 +1526,23 @@ foreach ($canvas_options as $option) {
                         // Monitorer l'ouverture
                         modalMonitoring.trackModalOpen(category);
 
-                        // Générer le contenu de la modal avec le nouveau système
+                        // Générer le contenu de la modal
                         const modalContent = formGenerator.generateModalHTML(category);
 
-                        // Insérer le contenu dans la modal spécifique à la catégorie
+                        // Insérer le contenu dans la modal
                         const modalId = `canvas-${category}-modal`;
                         const modalBody = document.querySelector(`#${modalId} .canvas-modal-body`);
                         if (modalBody) {
                             modalBody.innerHTML = modalContent;
                         }
 
-                        // Afficher la modal
+                        // Afficher la modal simplement en ajoutant la classe 'show'
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            console.log('🔍 DEBUG: Modal trouvée:', modalId);
-                            console.log('🔍 DEBUG: Position actuelle:', modal.parentElement ? modal.parentElement.tagName : 'null');
-
-                            // Créer une nouvelle modale directement dans le body
-                            const fullscreenModal = document.createElement('div');
-                            fullscreenModal.id = modalId + '-fullscreen';
-                            fullscreenModal.className = 'canvas-modal-overlay modal-fullscreen show';
-                            
-                            // Copier seulement le contenu de l'overlay, pas l'overlay lui-même
-                            const originalOverlay = modal.querySelector('.canvas-modal-overlay');
-                            if (originalOverlay) {
-                                fullscreenModal.innerHTML = originalOverlay.innerHTML;
-                            } else {
-                                fullscreenModal.innerHTML = modal.innerHTML;
-                            }
-
-                            // Ajouter au body
-                            document.body.appendChild(fullscreenModal);
-                            console.log('🔍 DEBUG: Modal ajoutée au body');
-
-                            // Cacher l'originale
-                            modal.style.display = 'none';
-
-                            // Fonction de fermeture
-                            const closeModal = () => {
-                                console.log('🔍 DEBUG: Fermeture de la modal fullscreen');
-                                fullscreenModal.remove();
-                                modal.style.display = 'none';
-                                modal.classList.remove('show');
-                                currentModalCategory = null;
-                            };
-
-                            // Gérer la fermeture
-                            const closeBtn = fullscreenModal.querySelector('.canvas-modal-close');
-                            const backdrop = fullscreenModal.querySelector('.modal-backdrop');
-
-                            if (closeBtn) closeBtn.onclick = closeModal;
-                            if (backdrop) backdrop.onclick = closeModal;
-
-                            // Gérer la sauvegarde dans la modale fullscreen
-                            const saveBtn = fullscreenModal.querySelector('.canvas-modal-save');
-                            if (saveBtn) {
-                                saveBtn.onclick = (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    console.log('🔍 DEBUG: Sauvegarde depuis modale fullscreen');
-                                    saveModalSettings();
-                                    // La modale sera fermée automatiquement par saveModalSettings après la sauvegarde AJAX
-                                };
-                            }
+                            modal.classList.add('show');
+                            console.log('Modal ouverte:', modalId);
+                        }
+                    }
 
                         // Attacher les événements de fermeture directement à la modal
                         const modalElement = document.getElementById(modalId);
@@ -1939,16 +1892,9 @@ foreach ($canvas_options as $option) {
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
-                        const fullscreenModal = document.getElementById(modalId + '-fullscreen');
 
-                        // Fermer la modale fullscreen si elle existe
-                        if (fullscreenModal) {
-                            fullscreenModal.remove();
-                        }
-
-                        // Fermer la modale originale
+                        // Fermer la modal simplement en retirant la classe 'show'
                         if (modal) {
-                            modal.style.display = 'none';
                             modal.classList.remove('show');
                         }
 
