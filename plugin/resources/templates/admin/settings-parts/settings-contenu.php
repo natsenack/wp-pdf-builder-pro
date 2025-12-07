@@ -458,6 +458,9 @@ $settings = get_option('pdf_builder_settings', array());
                         return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                     }
 
+                    // Nonce pour les appels AJAX de sauvegarde
+                    const pdfBuilderSaveNonce = '<?php echo wp_create_nonce('save_all_settings'); ?>';
+
                     // SYSTÈME CENTRALISÉ DE PREVIEWS DYNAMIQUES
                     const previewSystem = {
                         // Valeurs actuelles des paramètres
@@ -956,15 +959,7 @@ $settings = get_option('pdf_builder_settings', array());
                         
                         // Remplacer le nonce par le bon
                         formData.delete('pdf_builder_canvas_nonce'); // Supprimer le mauvais nonce
-                        if (pdfBuilderAjax && pdfBuilderAjax.nonce) {
-                            formData.append('nonce', pdfBuilderAjax.nonce); // Utiliser le nonce global
-                        } else {
-                            // Fallback : chercher le nonce dans la page
-                            const settingsNonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
-                            if (settingsNonceField) {
-                                formData.append('nonce', settingsNonceField.value);
-                            }
-                        }
+                        formData.append('nonce', pdfBuilderSaveNonce); // Utiliser le nonce généré pour save_all_settings
 
                         // Faire l'appel AJAX
                         fetch(pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
