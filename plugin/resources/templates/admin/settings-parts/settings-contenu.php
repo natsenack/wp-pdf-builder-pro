@@ -1003,6 +1003,66 @@ $settings = get_option('pdf_builder_settings', array());
                         });
                     }
 
+                    // Sauvegarder les paramètres des modals canvas statiques
+                    function saveCanvasModalSettings(category) {
+                        console.log('Sauvegarde des paramètres pour modal statique:', category);
+
+                        // Trouver le modal statique
+                        const modal = document.getElementById(`canvas-${category}-modal`);
+                        if (!modal) {
+                            console.error('Modal statique introuvable pour:', category);
+                            return;
+                        }
+
+                        // Collecter toutes les valeurs des champs du modal
+                        const modalInputs = modal.querySelectorAll('input, select');
+
+                        modalInputs.forEach(input => {
+                            const key = input.name.replace('pdf_builder_canvas_', 'canvas_');
+                            let value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+
+                            // Conversion des types pour les nombres
+                            if (input.type === 'number') value = parseFloat(value) || 0;
+
+                            // Mettre à jour la valeur dans le système de previews
+                            previewSystem.values[key] = value;
+
+                            // Mettre à jour le champ caché correspondant dans le formulaire
+                            const hiddenField = document.querySelector(`input[name="pdf_builder_${key}"]`);
+                            if (hiddenField) {
+                                hiddenField.value = value;
+                                console.log(`Champ caché mis à jour: pdf_builder_${key} = ${value}`);
+                            }
+                        });
+
+                        // Rafraîchir toutes les previews avec les nouvelles valeurs
+                        previewSystem.refreshPreviews();
+
+                        // Sauvegarder côté serveur via AJAX
+                        saveCanvasSettingsToServer();
+
+                        console.log('Paramètres sauvegardés et previews mises à jour');
+                        closeCanvasModal(modal);
+                    }
+
+                    // Fermer un modal canvas statique
+                    function closeCanvasModal(modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }
+
+                    // Ouvrir un modal canvas statique
+                    function openCanvasModal(category) {
+                        const modal = document.getElementById(`canvas-${category}-modal`);
+                        if (modal) {
+                            modal.style.display = 'block';
+                            document.body.style.overflow = 'hidden';
+                            console.log('Modal statique ouvert pour:', category);
+                        } else {
+                            console.error('Modal statique introuvable pour:', category);
+                        }
+                    }
+
                     // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
                         // Bouton de configuration d'une carte
@@ -1010,7 +1070,7 @@ $settings = get_option('pdf_builder_settings', array());
                             e.preventDefault();
                             const card = e.target.closest('.canvas-card');
                             if (card && card.dataset.category) {
-                                openModal(card.dataset.category);
+                                openCanvasModal(card.dataset.category);
                             }
                             return;
                         }
@@ -1021,24 +1081,61 @@ $settings = get_option('pdf_builder_settings', array());
                             return;
                         }
 
+                        // Bouton de fermeture des modals canvas statiques
+                        if (e.target.closest('.canvas-modal-close') || e.target.closest('.canvas-modal-cancel')) {
+                            const modal = e.target.closest('.canvas-modal');
+                            if (modal) {
+                                closeCanvasModal(modal);
+                            }
+                            return;
+                        }
+
                         // Clic sur l'overlay (backdrop)
                         if (e.target.classList.contains('pdf-builder-modal-overlay') || e.target.classList.contains('pdf-builder-modal-backdrop')) {
                             closeModal();
                             return;
                         }
 
-                        // Bouton de sauvegarde
+                        // Clic sur l'overlay des modals canvas statiques
+                        if (e.target.classList.contains('canvas-modal-overlay')) {
+                            const modal = e.target.closest('.canvas-modal');
+                            if (modal) {
+                                closeCanvasModal(modal);
+                            }
+                            return;
+                        }
+
+                        // Bouton de sauvegarde (système dynamique)
                         if (e.target.closest('.pdf-builder-modal-save')) {
                             e.preventDefault();
                             saveModalSettings();
+                            return;
+                        }
+
+                        // Bouton de sauvegarde (système statique des canvas modals)
+                        if (e.target.closest('.canvas-modal-save')) {
+                            e.preventDefault();
+                            const button = e.target.closest('.canvas-modal-save');
+                            const category = button.dataset.category;
+                            saveCanvasModalSettings(category);
                             return;
                         }
                     });
 
                     // Fermeture avec Échap
                     document.addEventListener('keydown', function(e) {
-                        if (e.key === 'Escape' && overlay.classList.contains('pdf-builder-modal-open')) {
-                            closeModal();
+                        if (e.key === 'Escape') {
+                            // Fermer les modals dynamiques
+                            if (overlay.classList.contains('pdf-builder-modal-open')) {
+                                closeModal();
+                                return;
+                            }
+                            // Fermer les modals statiques
+                            const openCanvasModals = document.querySelectorAll('.canvas-modal[style*="display: block"]');
+                            if (openCanvasModals.length > 0) {
+                                openCanvasModals.forEach(modal => closeCanvasModal(modal));
+                                return;
+                            }
                         }
                     });
 
