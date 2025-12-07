@@ -2080,12 +2080,15 @@ class AjaxHandler
 
         // Gestion spéciale pour pdf_builder_order_status_templates (array)
         if ($key === 'pdf_builder_order_status_templates') {
+            error_log('PHP: Raw templates value: ' . print_r($value, true));
             // Si c'est une chaîne JSON, la décoder
             if (is_string($value) && $this->isJson($value)) {
                 $value = json_decode($value, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('PHP: JSON decode error: ' . json_last_error_msg());
                     return [];
                 }
+                error_log('PHP: Decoded templates value: ' . print_r($value, true));
             }
             if (is_array($value)) {
                 $clean_array = [];
