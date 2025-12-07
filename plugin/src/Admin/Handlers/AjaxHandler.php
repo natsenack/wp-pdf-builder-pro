@@ -1073,48 +1073,51 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasSettings()
     {
-        // LOGS PHP DÉTAILLÉS POUR DÉBOGAGE
-        error_log('🚀 [PHP AJAX] Début ajaxSaveCanvasSettings - ' . date('Y-m-d H:i:s'));
-        error_log('🔍 [PHP AJAX] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-        error_log('🔍 [PHP AJAX] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
-        error_log('🔍 [PHP AJAX] User capabilities: ' . (current_user_can('manage_options') ? 'ADMIN' : 'LIMITED'));
-        error_log('🔍 [PHP AJAX] Current user ID: ' . get_current_user_id());
-        error_log('🔍 [PHP AJAX] $_POST data: ' . print_r($_POST, true));
-        error_log('🔍 [PHP AJAX] $_FILES data: ' . print_r($_FILES, true));
+        // LOGS PHP DÉTAILLÉS POUR DÉBOGAGE MAXIMAL
+        error_log('🚀 [PHP AJAX SAVE] === DÉBUT ajaxSaveCanvasSettings === ' . date('Y-m-d H:i:s'));
+        error_log('🔍 [PHP AJAX SAVE] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('🔍 [PHP AJAX SAVE] REQUEST_URI: ' . $_SERVER['REQUEST_URI']);
+        error_log('🔍 [PHP AJAX SAVE] HTTP_REFERER: ' . ($_SERVER['HTTP_REFERER'] ?? 'null'));
+        error_log('🔍 [PHP AJAX SAVE] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
+        error_log('🔍 [PHP AJAX SAVE] User capabilities: ' . (current_user_can('manage_options') ? 'ADMIN' : 'LIMITED'));
+        error_log('🔍 [PHP AJAX SAVE] Current user ID: ' . get_current_user_id());
+        error_log('🔍 [PHP AJAX SAVE] $_POST data: ' . print_r($_POST, true));
+        error_log('🔍 [PHP AJAX SAVE] $_FILES data: ' . print_r($_FILES, true));
+        error_log('🔍 [PHP AJAX SAVE] $_SERVER data: ' . print_r($_SERVER, true));
 
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
-                error_log('❌ [PHP AJAX] ERREUR: Utilisateur non connecté');
+                error_log('❌ [PHP AJAX SAVE] ERREUR: Utilisateur non connecté');
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
-            error_log('✅ [PHP AJAX] Utilisateur connecté');
+            error_log('✅ [PHP AJAX SAVE] Utilisateur connecté');
 
             // Vérifier le nonce
             $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
-            error_log('🔍 [PHP AJAX] Nonce reçu: ' . $nonce);
+            error_log('🔍 [PHP AJAX SAVE] Nonce reçu: ' . $nonce);
 
             if (!wp_verify_nonce($nonce, 'pdf_builder_ajax') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-                error_log('❌ [PHP AJAX] ERREUR: Nonce invalide');
+                error_log('❌ [PHP AJAX SAVE] ERREUR: Nonce invalide');
                 wp_send_json_error('Nonce invalide');
                 return;
             }
-            error_log('✅ [PHP AJAX] Nonce valide');
+            error_log('✅ [PHP AJAX SAVE] Nonce valide');
 
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-            error_log('🔍 [PHP AJAX] Catégorie reçue: ' . $category);
+            error_log('🔍 [PHP AJAX SAVE] Catégorie reçue: ' . $category);
 
             if (empty($category)) {
-                error_log('❌ [PHP AJAX] ERREUR: Catégorie manquante');
+                error_log('❌ [PHP AJAX SAVE] ERREUR: Catégorie manquante');
                 wp_send_json_error('Catégorie manquante');
                 return;
             }
-            error_log('✅ [PHP AJAX] Catégorie valide: ' . $category);
+            error_log('✅ [PHP AJAX SAVE] Catégorie valide: ' . $category);
 
             // Sauvegarder selon la catégorie
             $saved = false;

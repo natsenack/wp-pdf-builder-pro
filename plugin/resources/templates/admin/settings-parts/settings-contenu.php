@@ -1604,6 +1604,35 @@ foreach ($canvas_options as $option) {
                                     console.log('   - Overlay classes:', overlay.className);
                                     console.log('   - Body classes:', document.body.className);
                                     console.log('   - Styles calculés:', window.getComputedStyle(overlay).display);
+                                    console.log('   - Overlay position:', overlay.getBoundingClientRect());
+                                    console.log('   - Overlay z-index:', window.getComputedStyle(overlay).zIndex);
+                                    console.log('   - Overlay parent:', overlay.parentElement ? overlay.parentElement.tagName + '.' + overlay.parentElement.className : 'null');
+                                    console.log('   - Overlay in DOM:', document.contains(overlay));
+                                    console.log('   - Overlay offsetParent:', overlay.offsetParent);
+                                    console.log('   - Overlay visibility:', window.getComputedStyle(overlay).visibility);
+                                    console.log('   - Overlay opacity:', window.getComputedStyle(overlay).opacity);
+
+                                    // Vérifier si l'overlay est masqué par un parent
+                                    let parent = overlay.parentElement;
+                                    let depth = 0;
+                                    while (parent && depth < 5) {
+                                        console.log(`   - Parent ${depth}: ${parent.tagName}.${parent.className} - display: ${window.getComputedStyle(parent).display}, visibility: ${window.getComputedStyle(parent).visibility}, overflow: ${window.getComputedStyle(parent).overflow}`);
+                                        parent = parent.parentElement;
+                                        depth++;
+                                    }
+
+                                    // Forcer l'affichage pour test
+                                    console.log('🔧 [DEBUG] Tentative de forçage de l\'affichage...');
+                                    overlay.style.display = 'flex !important';
+                                    overlay.style.visibility = 'visible !important';
+                                    overlay.style.opacity = '1 !important';
+                                    overlay.style.zIndex = '9999999 !important';
+
+                                    setTimeout(() => {
+                                        console.log('🔍 [DEBUG] Après forçage - visible:', overlay.offsetWidth > 0 && overlay.offsetHeight > 0);
+                                        console.log('🔍 [DEBUG] Après forçage - position:', overlay.getBoundingClientRect());
+                                    }, 50);
+
                                 }, 100);
 
                             } else {
@@ -1953,6 +1982,8 @@ foreach ($canvas_options as $option) {
                                     console.log('   - Overlay visible:', overlay.offsetWidth > 0 && overlay.offsetHeight > 0);
                                     console.log('   - Overlay classes:', overlay.className);
                                     console.log('   - Body classes:', document.body.className);
+                                    console.log('   - Styles calculés:', window.getComputedStyle(overlay).display);
+                                    console.log('   - Overlay position:', overlay.getBoundingClientRect());
                                 }, 100);
 
                             } else {
