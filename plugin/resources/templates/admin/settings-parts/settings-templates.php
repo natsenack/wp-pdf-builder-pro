@@ -443,7 +443,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
         <?php if (!$is_premium): ?>
             <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 12px; margin: 15px 0; font-size: 14px;">
                 <strong>🔒 Version Gratuite :</strong> Vous pouvez uniquement assigner des templates au statut "Terminée".
-                Les statuts personnalisés restent disponibles. <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings#licence'); ?>" style="color: #856404;">Passer à la version Premium</a> pour débloquer toutes les fonctionnalités.
+                Les statuts personnalisés restent disponibles. <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo admin_url('admin.php?page=pdf-builder-settings#licence'); ?>'; return false; }" style="color: #856404;">Passer à la version Premium</a> pour débloquer toutes les fonctionnalités.
             </div>
         <?php endif; ?>
     </header>
