@@ -1458,6 +1458,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 borderPreview.style.borderColor = v.canvas_border_color;
                                 borderPreview.style.borderWidth = v.canvas_border_width + 'px';
                                 borderPreview.style.boxShadow = v.canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
+                                console.log('Mise à jour ombre preview:', v.canvas_shadow_enabled, borderPreview.style.boxShadow);
                             }
 
                             // Preview Grille
@@ -1500,10 +1501,13 @@ $settings = get_option('pdf_builder_settings', array());
                                     const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
+                                    console.log('Changement détecté:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+
                                     // Conversion des types
                                     if (e.target.type === 'number') value = parseFloat(value) || 0;
                                     if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
                                         value = value === true || value === '1' || value === 1;
+                                        console.log('Conversion boolean pour', key, ':', value);
                                     }
 
                                     this.updateValue(key, value);
