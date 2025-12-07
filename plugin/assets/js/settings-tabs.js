@@ -163,6 +163,282 @@
     // Initialiser le bouton flottant aussi
     document.addEventListener('DOMContentLoaded', initSaveButton);
 
+    // Section Test de Licence - Onglet Développeur
+    function initLicenseTestSection() {
+        // Vérifier si on est sur la page de paramètres
+        if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
+            return;
+        }
+
+        debugLog('PDF Builder - Initialisation de la section Test de Licence...');
+
+        // Bouton basculer mode test
+        const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                const nonce = document.getElementById('toggle_license_test_mode_nonce')?.value;
+                if (!nonce) {
+                    debugError('Nonce manquant pour toggle test mode');
+                    return;
+                }
+
+                toggleBtn.disabled = true;
+                toggleBtn.textContent = '⏳ Basculement...';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        toggleBtn.disabled = false;
+                        toggleBtn.textContent = '🎚️ Basculer Mode Test';
+
+                        if (xhr.status === 200) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    const statusSpan = document.getElementById('license_test_mode_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = response.data.enabled ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif';
+                                        statusSpan.style.background = response.data.enabled ? '#d4edda' : '#f8d7da';
+                                        statusSpan.style.color = response.data.enabled ? '#155724' : '#721c24';
+                                    }
+                                    debugLog('Mode test basculé:', response.data.enabled);
+                                } else {
+                                    debugError('Erreur toggle mode test:', response.data?.message || 'Erreur inconnue');
+                                }
+                            } catch (e) {
+                                debugError('Erreur parsing réponse toggle:', e);
+                            }
+                        } else {
+                            debugError('Erreur HTTP toggle mode test:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send('action=pdf_builder_toggle_test_mode&nonce=' + encodeURIComponent(nonce));
+            });
+        }
+
+        // Bouton générer clé
+        const generateBtn = document.getElementById('generate_license_key_btn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function() {
+                const nonce = document.getElementById('generate_license_key_nonce')?.value;
+                if (!nonce) {
+                    debugError('Nonce manquant pour générer clé');
+                    return;
+                }
+
+                generateBtn.disabled = true;
+                generateBtn.textContent = '⏳ Génération...';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        generateBtn.disabled = false;
+                        generateBtn.textContent = '🔑 Générer';
+
+                        if (xhr.status === 200) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    const keyInput = document.getElementById('license_test_key');
+                                    const statusSpan = document.getElementById('license_key_status');
+                                    const deleteBtn = document.getElementById('delete_license_key_btn');
+
+                                    if (keyInput) keyInput.value = response.data.key || '';
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '✅ Clé générée avec succès';
+                                        statusSpan.style.color = '#28a745';
+                                    }
+                                    if (deleteBtn) deleteBtn.style.display = response.data.key ? 'inline-block' : 'none';
+
+                                    debugLog('Clé générée:', response.data.key);
+                                } else {
+                                    const statusSpan = document.getElementById('license_key_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '❌ Erreur: ' + (response.data?.message || 'Erreur inconnue');
+                                        statusSpan.style.color = '#dc3545';
+                                    }
+                                    debugError('Erreur génération clé:', response.data?.message || 'Erreur inconnue');
+                                }
+                            } catch (e) {
+                                debugError('Erreur parsing réponse génération:', e);
+                            }
+                        } else {
+                            debugError('Erreur HTTP génération clé:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send('action=pdf_builder_generate_test_license_key&nonce=' + encodeURIComponent(nonce));
+            });
+        }
+
+        // Bouton copier clé
+        const copyBtn = document.getElementById('copy_license_key_btn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function() {
+                const keyInput = document.getElementById('license_test_key');
+                const statusSpan = document.getElementById('license_key_status');
+
+                if (keyInput && keyInput.value) {
+                    navigator.clipboard.writeText(keyInput.value).then(function() {
+                        if (statusSpan) {
+                            statusSpan.textContent = '📋 Clé copiée dans le presse-papiers';
+                            statusSpan.style.color = '#28a745';
+                        }
+                        debugLog('Clé copiée dans le presse-papiers');
+                    }).catch(function(err) {
+                        if (statusSpan) {
+                            statusSpan.textContent = '❌ Erreur lors de la copie';
+                            statusSpan.style.color = '#dc3545';
+                        }
+                        debugError('Erreur copie presse-papiers:', err);
+                    });
+                } else {
+                    if (statusSpan) {
+                        statusSpan.textContent = '❌ Aucune clé à copier';
+                        statusSpan.style.color = '#dc3545';
+                    }
+                }
+            });
+        }
+
+        // Bouton supprimer clé
+        const deleteBtn = document.getElementById('delete_license_key_btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer la clé de test ?')) {
+                    return;
+                }
+
+                const nonce = document.getElementById('delete_license_key_nonce')?.value;
+                if (!nonce) {
+                    debugError('Nonce manquant pour supprimer clé');
+                    return;
+                }
+
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = '⏳ Suppression...';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        deleteBtn.disabled = false;
+                        deleteBtn.textContent = '🗑️ Supprimer';
+
+                        if (xhr.status === 200) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    const keyInput = document.getElementById('license_test_key');
+                                    const statusSpan = document.getElementById('license_key_status');
+
+                                    if (keyInput) keyInput.value = '';
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '✅ Clé supprimée avec succès';
+                                        statusSpan.style.color = '#28a745';
+                                    }
+                                    deleteBtn.style.display = 'none';
+
+                                    debugLog('Clé supprimée');
+                                } else {
+                                    const statusSpan = document.getElementById('license_key_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '❌ Erreur: ' + (response.data?.message || 'Erreur inconnue');
+                                        statusSpan.style.color = '#dc3545';
+                                    }
+                                    debugError('Erreur suppression clé:', response.data?.message || 'Erreur inconnue');
+                                }
+                            } catch (e) {
+                                debugError('Erreur parsing réponse suppression:', e);
+                            }
+                        } else {
+                            debugError('Erreur HTTP suppression clé:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send('action=pdf_builder_delete_test_license_key&nonce=' + encodeURIComponent(nonce));
+            });
+        }
+
+        // Bouton nettoyage complet
+        const cleanupBtn = document.getElementById('cleanup_license_btn');
+        if (cleanupBtn) {
+            cleanupBtn.addEventListener('click', function() {
+                if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUS les paramètres de licence et réinitialiser à l\'état libre. Cette action ne peut pas être annulée. Continuer ?')) {
+                    return;
+                }
+
+                const nonce = document.getElementById('cleanup_license_nonce')?.value;
+                if (!nonce) {
+                    debugError('Nonce manquant pour nettoyage');
+                    return;
+                }
+
+                cleanupBtn.disabled = true;
+                cleanupBtn.textContent = '⏳ Nettoyage...';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        cleanupBtn.disabled = false;
+                        cleanupBtn.textContent = '🧹 Nettoyer complètement la licence';
+
+                        if (xhr.status === 200) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    const statusSpan = document.getElementById('cleanup_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '✅ Nettoyage complet effectué avec succès';
+                                        statusSpan.style.color = '#28a745';
+                                    }
+                                    // Recharger la page pour refléter les changements
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 2000);
+                                    debugLog('Nettoyage licence effectué');
+                                } else {
+                                    const statusSpan = document.getElementById('cleanup_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '❌ Erreur: ' + (response.data?.message || 'Erreur inconnue');
+                                        statusSpan.style.color = '#dc3545';
+                                    }
+                                    debugError('Erreur nettoyage:', response.data?.message || 'Erreur inconnue');
+                                }
+                            } catch (e) {
+                                debugError('Erreur parsing réponse nettoyage:', e);
+                            }
+                        } else {
+                            debugError('Erreur HTTP nettoyage:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send('action=pdf_builder_cleanup_license&nonce=' + encodeURIComponent(nonce));
+            });
+        }
+
+        debugLog('PDF Builder - Section Test de Licence initialisée');
+    }
+
+    // Initialiser la section licence aussi
+    document.addEventListener('DOMContentLoaded', initLicenseTestSection);
+
     // Exposer une API simple
     window.PDFBuilderTabsAPI = {
         switchToTab: function(tabId) {
