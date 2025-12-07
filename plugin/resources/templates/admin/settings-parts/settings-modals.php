@@ -242,61 +242,61 @@
         </section>
     </div>
 </div>
-<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions">
-    <div class="canvas-modal-overlay">
-        <section class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3>📏 Dimensions & Format</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p>
-                        <strong>ℹ️ Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
-                        Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
-                    </p>
-                </aside>
-                <form id="canvas-dimensions-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_format">Format du document</label></th>
-                            <td>
-                                <select id="canvas_format" name="pdf_builder_canvas_canvas_format">
-                                    <option value="A4" <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
-                                    <option value="A3" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'A3'); ?>>A3 (297×420mm) - soon</option>
-                                    <option value="A5" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'A5'); ?>>A5 (148×210mm) - soon</option>
-                                    <option value="Letter" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'Letter'); ?>>Letter (8.5×11") - soon</option>
-                                    <option value="Legal" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14") - soon</option>
-                                    <option value="Tabloid" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17") - soon</option>
-                                </select>
-                                <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label>Orientation</label></th>
-                            <td>
-                                <aside style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
-                                    <strong>📄 Portrait uniquement (v1.0)</strong><br>
-                                    <small style="color: #666;">
-                                        L'orientation paysage sera disponible dans la version 2.0 avec recalcul automatique des dimensions.
-                                        Actuellement, tous les documents sont générés en format portrait pour garantir la stabilité.
-                                    </small>
-                                </aside>
-                                <p class="canvas-modal-description">Orientation fixée en portrait pour la v1.0</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
-                            <td>
-                                <select id="canvas_dpi" name="pdf_builder_canvas_canvas_dpi">
-                                    <option value="72" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '72'); ?>>72 DPI (Web)</option>
-                                    <option value="96" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '96'); ?>>96 DPI (Écran)</option>
-                                    <option value="150" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '150'); ?>>150 DPI (Impression)</option>
-                                    <option value="300" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '300'); ?>>300 DPI (Haute qualité)</option>
-                                </select>
-                                <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
-                            </td>
-                        </tr>
+<!-- Canvas Dimensions Modal Overlay -->
+<div id="canvas-dimensions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-dimensions-modal">
+    <section class="canvas-modal-container">
+        <header class="canvas-modal-header">
+            <h3>📏 Dimensions & Format</h3>
+            <button type="button" class="canvas-modal-close">&times;</button>
+        </header>
+        <main class="canvas-modal-body">
+            <aside class="canvas-modal-info">
+                <p>
+                    <strong>ℹ️ Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré.
+                    Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
+                </p>
+            </aside>
+            <form id="canvas-dimensions-form">
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="canvas_format">Format du document</label></th>
+                        <td>
+                            <select id="canvas_format" name="pdf_builder_canvas_canvas_format">
+                                <option value="A4" <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
+                                <option value="A3" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'A3'); ?>>A3 (297×420mm) - soon</option>
+                                <option value="A5" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'A5'); ?>>A5 (148×210mm) - soon</option>
+                                <option value="Letter" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'Letter'); ?>>Letter (8.5×11") - soon</option>
+                                <option value="Legal" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14") - soon</option>
+                                <option value="Tabloid" disabled <?php selected(get_option('pdf_builder_canvas_canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17") - soon</option>
+                            </select>
+                            <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label>Orientation</label></th>
+                        <td>
+                            <aside style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
+                                <strong>📄 Portrait uniquement (v1.0)</strong><br>
+                                <small style="color: #666;">
+                                    L'orientation paysage sera disponible dans la version 2.0 avec recalcul automatique des dimensions.
+                                    Actuellement, tous les documents sont générés en format portrait pour garantir la stabilité.
+                                </small>
+                            </aside>
+                            <p class="canvas-modal-description">Orientation fixée en portrait pour la v1.0</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
+                        <td>
+                            <select id="canvas_dpi" name="pdf_builder_canvas_canvas_dpi">
+                                <option value="72" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '72'); ?>>72 DPI (Web)</option>
+                                <option value="96" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '96'); ?>>96 DPI (Écran)</option>
+                                <option value="150" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '150'); ?>>150 DPI (Impression)</option>
+                                <option value="300" <?php selected(get_option('pdf_builder_canvas_canvas_dpi', 96), '300'); ?>>300 DPI (Haute qualité)</option>
+                            </select>
+                            <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
+                        </td>
+                    </tr>
 <?php
 /**
  * Canvas Configuration Modals
@@ -315,50 +315,53 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
     ]);
 }
 ?>
-?>
-                        <tr>
-                            <th scope="row"><label>Dimensions calculées</label></th>
-                            <td>
-                                <aside id="canvas-dimensions-display" class="canvas-modal-display">
-                                    <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_canvas_width', 794)); ?></span> ×
-                                    <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_canvas_height', 1123)); ?></span> px
-                                    <br>
-                                    <small id="canvas-mm-display">
-                                        <?php
-                                        $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
-                                        $orientation = 'portrait'; // FORCÉ EN PORTRAIT - v2.0
-                                        
-                                        // Utiliser les dimensions standard centralisées
-                                        $formatDimensionsMM = PDF_BUILDER_PAPER_FORMATS;
-                                        
-                                        $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
-                                        
-                                        // Orientation temporairement désactivée - toujours portrait
-                                        // if ($orientation === 'landscape') {
-                                        //     $temp = $dimensions['width'];
-                                        //     $dimensions['width'] = $dimensions['height'];
-                                        //     $dimensions['height'] = $temp;
-                                        // }
-                                        
-                                        echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
-                                        ?>
-                                    </small>
-                                </aside>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions">Sauvegarder</button>
-            </footer>
-        </section>
-    </div>
+                    <tr>
+                        <th scope="row"><label>Dimensions calculées</label></th>
+                        <td>
+                            <aside id="canvas-dimensions-display" class="canvas-modal-display">
+                                <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_canvas_width', 794)); ?></span> ×
+                                <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_canvas_height', 1123)); ?></span> px
+                                <br>
+                                <small id="canvas-mm-display">
+                                    <?php
+                                    $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
+                                    $orientation = 'portrait'; // FORCÉ EN PORTRAIT - v2.0
+
+                                    // Utiliser les dimensions standard centralisées
+                                    $formatDimensionsMM = PDF_BUILDER_PAPER_FORMATS;
+
+                                    $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
+
+                                    // Orientation temporairement désactivée - toujours portrait
+                                    // if ($orientation === 'landscape') {
+                                    //     $temp = $dimensions['width'];
+                                    //     $dimensions['width'] = $dimensions['height'];
+                                    //     $dimensions['height'] = $temp;
+                                    // }
+
+                                    echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
+                                    ?>
+                                </small>
+                            </aside>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </main>
+        <footer class="canvas-modal-footer">
+            <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions">Sauvegarder</button>
+        </footer>
+    </section>
+</div>
+
+<!-- Canvas Dimensions Modal (hidden container) -->
+<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions" style="display: none;">
+    <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
-<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Zoom Modal Overlay -->
+<div id="canvas-zoom-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-zoom-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>🔍 Zoom</h3>
@@ -416,9 +419,14 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas zoom Modal (hidden container) -->
+<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
 <!-- Canvas Configuration Modals Apparence -->
-<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Apparence Modal Overlay -->
+<div id="canvas-apparence-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-apparence-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🎨 Apparence</h3>
@@ -503,9 +511,14 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas apparence Modal (hidden container) -->
+<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
 <!-- Canvas Configuration Modals Grille & Guides -->
-<div id="canvas-grille-modal" class="canvas-modal" data-category="grille">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Grille Modal Overlay -->
+<div id="canvas-grille-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-grille-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📐 Grille & Guides</h3>
@@ -569,9 +582,14 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas grille Modal (hidden container) -->
+<div id="canvas-grille-modal" class="canvas-modal" data-category="grille" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
-<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Interactions Modal Overlay -->
+<div id="canvas-interactions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-interactions-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🖱️ Interactions & Comportement</h3>
@@ -670,9 +688,14 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas interactions Modal (hidden container) -->
+<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
 <!-- Canvas Configuration Modals Export & Qualité -->
-<div id="canvas-export-modal" class="canvas-modal" data-category="export">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Export Modal Overlay -->
+<div id="canvas-export-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-export-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📤 Export & Qualité</h3>
@@ -724,9 +747,14 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas export Modal (hidden container) -->
+<div id="canvas-export-modal" class="canvas-modal" data-category="export" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
 <!-- Canvas Configuration Modals Performance -->
-<div id="canvas-performance-modal" class="canvas-modal" data-category="performance">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Performance Modal Overlay -->
+<div id="canvas-performance-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-performance-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >⚡ Performance</h3>
@@ -855,9 +883,14 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
         </section>
     </div>
 </div>
+
+<!-- Canvas performance Modal (hidden container) -->
+<div id="canvas-performance-modal" class="canvas-modal" data-category="performance" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
 <!-- Canvas Configuration Modals Debug -->
-<div id="canvas-debug-modal" class="canvas-modal" data-category="debug">
-    <div class="canvas-modal-overlay">
+<!-- Canvas Debug Modal Overlay -->
+<div id="canvas-debug-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-debug-modal">
         <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🐛 Debug</h3>
@@ -912,5 +945,12 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
     </div>
 </div>
 
+<!-- Canvas debug Modal (hidden container) -->
+<div id="canvas-debug-modal" class="canvas-modal" data-category="debug" style="display: none;">
+    <!-- Modal content moved to overlay above -->
+</div>
+
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <?php
+
+
