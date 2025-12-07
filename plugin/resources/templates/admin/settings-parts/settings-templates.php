@@ -496,7 +496,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                             <!-- Aperçu du template assigné -->
                             <div class="template-preview">
                                 <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
-                                    <p class="current-template"><?php echo esc_html($templates[$current_mappings[$status_key]]); ?></p>
+                                    <p class="current-template">Assigné : <?php echo esc_html($templates[$current_mappings[$status_key]]); ?></p>
                                 <?php else: ?>
                                     <p class="no-template">Aucun template assigné</p>
                                 <?php endif; ?>
@@ -675,7 +675,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                     var assignedTemplateId = mappings[postType];
 
                     if (assignedTemplateId && templates[assignedTemplateId]) {
-                        preview.innerHTML = '<p class="current-template">' + templates[assignedTemplateId] + '</p>';
+                        preview.innerHTML = '<p class="current-template">Assigné : ' + templates[assignedTemplateId] + '</p>';
                     } else {
                         preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
                     }
