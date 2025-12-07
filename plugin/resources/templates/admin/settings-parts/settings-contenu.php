@@ -1065,6 +1065,7 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']) 
 
                         // Bouton de sauvegarde
                         if (e.target.closest('.pdf-builder-modal-save')) {
+                            e.preventDefault();
                             saveModalSettings();
                             return;
                         }
