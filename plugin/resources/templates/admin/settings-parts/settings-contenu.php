@@ -10,6 +10,8 @@ require_once __DIR__ . '/settings-helpers.php';
 
 $settings = get_option('pdf_builder_settings', array());
 
+error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . ($settings['pdf_builder_canvas_shadow_enabled'] ?? 'NOT_SET'));
+
 ?>
             <h2>🎨 Contenu & Design</h2>
 
