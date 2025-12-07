@@ -441,7 +441,10 @@ $settings = get_option('pdf_builder_settings', array());
 
             <!-- CSS pour les modales -->
             <style>
-                /* Styles pour les modales */
+                /* Styles pour les modales - SPÉCIFICITÉ MAXIMALE */
+                body .modal-overlay,
+                body div.modal-overlay,
+                div.modal-overlay,
                 .modal-overlay {
                     position: fixed !important;
                     top: 0 !important;
@@ -467,12 +470,14 @@ $settings = get_option('pdf_builder_settings', array());
                     -moz-transform: none !important;
                     -ms-transform: none !important;
                     -o-transform: none !important;
+                    clip: none !important;
+                    clip-path: none !important;
                 }
 
-                .modal-overlay.show {
+                body > .modal-overlay.show {
                     display: flex !important;
-                    align-items: center;
-                    justify-content: center;
+                    align-items: center !important;
+                    justify-content: center !important;
                 }
 
                 .modal-backdrop {
@@ -1676,12 +1681,30 @@ $settings = get_option('pdf_builder_settings', array());
                         // Afficher la modal
                         const modal = document.getElementById(modalId);
                         if (modal) {
+                            // Forcer les styles pour couvrir toute la fenêtre
+                            modal.style.position = 'fixed';
+                            modal.style.top = '0';
+                            modal.style.left = '0';
+                            modal.style.width = '100vw';
+                            modal.style.height = '100vh';
+                            modal.style.zIndex = '999999';
+                            modal.style.margin = '0';
+                            modal.style.padding = '0';
+                            modal.style.border = 'none';
+                            modal.style.outline = 'none';
+                            modal.style.overflow = 'visible';
+                            modal.style.transform = 'none';
+                            modal.style.filter = 'none';
+                            modal.style.backdropFilter = 'none';
+
                             // Déplacer la modal dans le body pour éviter les contraintes des conteneurs parents
                             if (!document.body.contains(modal)) {
                                 document.body.appendChild(modal);
                             }
 
-                            modal.style.display = 'block';
+                            modal.style.display = 'flex';
+                            modal.style.alignItems = 'center';
+                            modal.style.justifyContent = 'center';
                             modal.classList.add('show');
                         }
 
