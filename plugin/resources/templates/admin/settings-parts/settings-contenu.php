@@ -909,8 +909,15 @@ $settings = get_option('pdf_builder_settings', array());
 
                         console.log('Synchronisation des valeurs de la modal pour:', currentModalCategory);
 
-                        // Parcourir tous les champs de la modal
-                        const modalInputs = document.querySelectorAll('#pdf-builder-modal-overlay input, #pdf-builder-modal-overlay select');
+                        // Trouver le modal actuellement ouvert
+                        const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                        if (!currentModal) {
+                            console.error('Modal non trouvé pour la catégorie:', currentModalCategory);
+                            return;
+                        }
+
+                        // Parcourir tous les champs de la modal actuelle
+                        const modalInputs = currentModal.querySelectorAll('input, select');
 
                         modalInputs.forEach(input => {
                             if (!input.name) return;
