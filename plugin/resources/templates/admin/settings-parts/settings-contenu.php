@@ -1034,7 +1034,25 @@ $settings = get_option('pdf_builder_settings', array());
                         /**
                          * Génère le HTML complet pour une modale
                          */
-                        generateModalHTML(category, fields, title) {
+                        generateModalHTML(category) {
+                            // Configuration des champs par catégorie
+                            const categoryFields = {
+                                dimensions: ['width', 'height', 'dpi', 'format'],
+                                apparence: ['bg_color', 'border_color', 'border_width', 'shadow_enabled'],
+                                grille: ['grid_enabled', 'grid_size', 'guides_enabled', 'snap_to_grid'],
+                                zoom: ['zoom_min', 'zoom_max', 'zoom_default', 'zoom_step'],
+                                interactions: ['drag_enabled', 'resize_enabled', 'rotate_enabled', 'multi_select', 'selection_mode', 'keyboard_shortcuts'],
+                                export: ['export_format', 'export_quality', 'export_transparent'],
+                                performance: ['fps_target', 'memory_limit_js', 'response_timeout', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin'],
+                                debug: ['debug_enabled', 'performance_monitoring', 'error_reporting', 'memory_limit_php']
+                            };
+
+                            const fields = categoryFields[category];
+                            if (!fields) {
+                                console.error('Catégorie de modal inconnue:', category);
+                                return '<p>Erreur: Catégorie de modal inconnue</p>';
+                            }
+
                             let html = '<div class="modal-form-grid">';
 
                             fields.forEach(fieldName => {
