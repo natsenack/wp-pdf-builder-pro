@@ -2377,6 +2377,9 @@ foreach ($canvas_options as $option) {
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
 
+                                    // Mettre à jour les previews avec les valeurs sauvegardées
+                                    previewSystem.refreshPreviews();
+
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
                                     Object.entries(values).forEach(([key, value]) => {
                                         if (key.startsWith('pdf_builder_canvas_canvas_')) {
