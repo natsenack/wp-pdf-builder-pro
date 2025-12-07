@@ -1540,28 +1540,8 @@ foreach ($canvas_options as $option) {
                             // Créer une nouvelle modale directement dans le body
                             const fullscreenModal = document.createElement('div');
                             fullscreenModal.id = modalId + '-fullscreen';
-                            fullscreenModal.className = 'modal-overlay modal-fullscreen';
+                            fullscreenModal.className = 'canvas-modal-overlay modal-fullscreen show';
                             fullscreenModal.innerHTML = modal.innerHTML;
-
-                            // Appliquer tous les styles nécessaires
-                            Object.assign(fullscreenModal.style, {
-                                position: 'fixed',
-                                top: '0',
-                                left: '0',
-                                width: '100vw',
-                                height: '100vh',
-                                zIndex: '999999',
-                                margin: '0',
-                                padding: '0',
-                                border: 'none',
-                                outline: 'none',
-                                overflow: 'visible',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                backdropFilter: 'blur(2px)'
-                            });
 
                             // Ajouter au body
                             document.body.appendChild(fullscreenModal);
@@ -1986,7 +1966,7 @@ foreach ($canvas_options as $option) {
                         }
 
                         // Clic sur l'overlay (backdrop)
-                        if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-backdrop')) {
+                        if (e.target.classList.contains('canvas-modal-overlay') || e.target.classList.contains('modal-backdrop')) {
                             closeModal();
                             return;
                         }

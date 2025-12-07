@@ -2422,14 +2422,14 @@ body.canvas-modal-open {
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(255, 0, 0, 0.9) !important; /* ROUGE POUR DEBUG */
+    background: rgba(0, 0, 0, 0.5) !important; /* Fond semi-transparent pour l'overlay */
     z-index: 99999999 !important;
     display: none !important;
     align-items: center !important;
     justify-content: center !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: 5px solid yellow !important; /* BORDE JAUNE POUR DEBUG */
+    border: none !important; /* Supprimer la bordure de debug */
     box-sizing: border-box !important;
 }
 
