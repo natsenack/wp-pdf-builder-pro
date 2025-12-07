@@ -40,7 +40,7 @@ $settings = get_option('pdf_builder_settings', array());
                     <input type="hidden" name="pdf_builder_canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_border_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_width', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_shadow_enabled', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="<?php echo esc_attr($settings['pdf_builder_canvas_shadow_enabled'] ?? get_option('pdf_builder_canvas_shadow_enabled', '0')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_enabled', '1')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', '20')); ?>">
