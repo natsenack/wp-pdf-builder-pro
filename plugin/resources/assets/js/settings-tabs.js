@@ -892,10 +892,10 @@
                 nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : '',
             };
 
-            // Traiter chaque champ en convertissant les arrays en JSON
+            // Traiter chaque champ en convertissant les arrays et objets en JSON
             for (const key in flattenedData) {
                 if (flattenedData.hasOwnProperty(key)) {
-                    if (Array.isArray(flattenedData[key])) {
+                    if (typeof flattenedData[key] === 'object' && flattenedData[key] !== null) {
                         ajaxData[key] = JSON.stringify(flattenedData[key]);
                     } else {
                         ajaxData[key] = flattenedData[key];
