@@ -2278,6 +2278,11 @@ $settings = get_option('pdf_builder_settings', array());
                                 const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_');
                                 previewSystem.values[previewKey] = value;
 
+                                // Debug log pour l'ombre
+                                if (input.name === 'pdf_builder_canvas_shadow_enabled') {
+                                    console.log('🔍 DEBUG: Shadow enabled value collected:', value, '(type:', typeof value, ')');
+                                }
+
                                 // Mettre à jour le champ caché correspondant
                                 const hiddenField = document.querySelector(`input[name="${input.name}"]`);
                                 if (hiddenField) {
@@ -2300,6 +2305,11 @@ $settings = get_option('pdf_builder_settings', array());
                         saveToServer: function(values) {
                             const saveStartTime = Date.now();
                             console.log('Sauvegarde côté serveur...');
+
+                            // Debug: vérifier la valeur de l'ombre
+                            if (values['pdf_builder_canvas_shadow_enabled'] !== undefined) {
+                                console.log('🔍 DEBUG: Sending shadow_enabled to server:', values['pdf_builder_canvas_shadow_enabled'], '(type:', typeof values['pdf_builder_canvas_shadow_enabled'], ')');
+                            }
 
                             // Créer FormData avec les valeurs
                             const formData = new FormData();
