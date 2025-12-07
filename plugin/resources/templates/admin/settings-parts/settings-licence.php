@@ -1,4 +1,4 @@
-<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 ?>
@@ -688,4 +688,5 @@
             </section>
 
                     <!-- JavaScript AJAX déplacé vers settings-main.php pour éviter les conflits -->
+
 

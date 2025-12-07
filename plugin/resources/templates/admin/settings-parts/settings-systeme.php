@@ -1,4 +1,4 @@
-<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
+﻿<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
@@ -388,7 +388,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 <td>
                                     <div class="main-backup-accordion" style="border: 1px solid #dee2e6; border-radius: 4px; margin-top: 10px;">
                                         <div class="main-backup-accordion-header" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" id="main-backup-accordion-header">
-                                            <div class="main-backup-header-info" style="display: flex; align-items: center; gap: 10px;">
+                                            <div class="main-backup-header-info" class="flex-center-gap">
                                                 <span style="font-size: 18px;">📦</span>
                                                 <div>
                                                     <strong style="color: #007cba;">Sauvegardes disponibles</strong>
@@ -1226,3 +1226,4 @@ if ($cache_last_cleanup !== 'Jamais') {
 
 })(jQuery);
 </script>
+

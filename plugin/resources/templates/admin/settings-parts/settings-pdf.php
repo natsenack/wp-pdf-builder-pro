@@ -1,4 +1,4 @@
-<?php // PDF tab content - Updated: 2025-11-19 01:40:00
+﻿<?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
 // Inclure les fonctions helper nécessaires pour tous les onglets
 require_once __DIR__ . '/settings-helpers.php';
@@ -102,7 +102,7 @@ $settings = get_option('pdf_builder_settings', array());
                         🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
                     </h3>
 
-                    <section id="advanced-section" style="display: none;">
+                    <section id="advanced-section" class="hidden-element">
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
@@ -141,3 +141,4 @@ $settings = get_option('pdf_builder_settings', array());
             </form>
 
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+

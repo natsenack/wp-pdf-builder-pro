@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Content Settings Tab
  * Canvas and design configuration settings
@@ -2176,4 +2176,5 @@ foreach ($canvas_options as $option) {
         </div>
     </div>
 </div>
+
 

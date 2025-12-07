@@ -5,6 +5,9 @@ $settings = get_option('pdf_builder_settings', array());
 
 // Inclure les fonctions helper nécessaires pour tous les onglets
 require_once __DIR__ . '/settings-helpers.php';
+
+// Charger les styles CSS pour les paramètres d'administration
+wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-settings.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.0.0');
 ?>
 <!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">

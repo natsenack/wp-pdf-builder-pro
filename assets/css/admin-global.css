@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PDF Builder Pro - Styles globaux pour l'administration WordPress
  */
 
@@ -73,7 +73,7 @@
 }
 
 .pdf-builder-collapsible-header .dashicons {
-    transition: transform 0.2s ease;
+    
 }
 
 .pdf-builder-collapsible-header.collapsed .dashicons {
@@ -134,7 +134,7 @@
     left: 50%;
     margin-left: -125px;
     opacity: 0;
-    transition: opacity 0.3s;
+    
     font-size: 12px;
     line-height: 1.4;
 }
@@ -288,7 +288,7 @@
     align-items: center;
     gap: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
 }
 
 .stat-card:hover {
@@ -338,7 +338,7 @@
     border-radius: 8px;
     padding: 25px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
 }
 
 .action-card:hover {
@@ -369,7 +369,7 @@
     border-radius: 4px;
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.2s ease;
+    
 }
 
 .action-card .button-primary {

@@ -1,4 +1,4 @@
-<!-- Cache Metrics Modals -->
+﻿<!-- Cache Metrics Modals -->
 <!-- Cache Size Details Modal -->
 <div id="cache-size-modal" class="cache-modal" data-category="size">
     <div class="cache-modal-overlay">
@@ -219,15 +219,15 @@
                             <h4 style="margin-top: 0; color: #0c5460;">[ACTIONS NETTOYAGE] Actions de nettoyage disponibles</h4>
                         </header>
                         <section style="margin-top: 15px; display: grid; gap: 10px;">
-                            <article style="display: flex; align-items: center; gap: 10px;">
+                            <article class="flex-center-gap">
                                 <input type="checkbox" id="cleanup_files" checked>
                                 <label for="cleanup_files">Supprimer les fichiers cache obsolètes</label>
                             </article>
-                            <article style="display: flex; align-items: center; gap: 10px;">
+                            <article class="flex-center-gap">
                                 <input type="checkbox" id="cleanup_transients" checked>
                                 <label for="cleanup_transients">Vider les transients expirés</label>
                             </article>
-                            <article style="display: flex; align-items: center; gap: 10px;">
+                            <article class="flex-center-gap">
                                 <input type="checkbox" id="cleanup_temp">
                                 <label for="cleanup_temp">Supprimer les fichiers temporaires (+24h)</label>
                             </article>
@@ -356,7 +356,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas Dimensions Modal (hidden container) -->
-<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions" style="display: none;">
+<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
@@ -421,7 +421,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas zoom Modal (hidden container) -->
-<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom" style="display: none;">
+<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Apparence -->
@@ -513,7 +513,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas apparence Modal (hidden container) -->
-<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence" style="display: none;">
+<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Grille & Guides -->
@@ -584,7 +584,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas grille Modal (hidden container) -->
-<div id="canvas-grille-modal" class="canvas-modal" data-category="grille" style="display: none;">
+<div id="canvas-grille-modal" class="canvas-modal" data-category="grille" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
@@ -690,7 +690,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas interactions Modal (hidden container) -->
-<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions" style="display: none;">
+<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Export & Qualité -->
@@ -749,7 +749,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas export Modal (hidden container) -->
-<div id="canvas-export-modal" class="canvas-modal" data-category="export" style="display: none;">
+<div id="canvas-export-modal" class="canvas-modal" data-category="export" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Performance -->
@@ -885,7 +885,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas performance Modal (hidden container) -->
-<div id="canvas-performance-modal" class="canvas-modal" data-category="performance" style="display: none;">
+<div id="canvas-performance-modal" class="canvas-modal" data-category="performance" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Debug -->
@@ -946,11 +946,12 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 </div>
 
 <!-- Canvas debug Modal (hidden container) -->
-<div id="canvas-debug-modal" class="canvas-modal" data-category="debug" style="display: none;">
+<div id="canvas-debug-modal" class="canvas-modal" data-category="debug" class="hidden-element">
     <!-- Modal content moved to overlay above -->
 </div>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <?php
+
 
 

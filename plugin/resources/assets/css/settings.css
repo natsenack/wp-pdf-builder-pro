@@ -1,4 +1,4 @@
-/* PDF Builder Pro Settings Styles */
+﻿/* PDF Builder Pro Settings Styles */
 
 /* === STYLES POUR L'EN-TÊTE === */
 .pdf-builder-header {
@@ -91,7 +91,7 @@
     padding: 25px;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    
 }
 
 .status-card:hover {
@@ -243,7 +243,7 @@
     font-size: 12px;
     margin-left: 8px;
     cursor: pointer;
-    transition: color 0.2s ease;
+    
 }
 
 .copy-link:hover {
@@ -920,7 +920,7 @@
     border: none;
     border-radius: 0 0 6px 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -953,7 +953,7 @@
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: 0.3s;
+    
     border-radius: 24px;
     /* pointer-events: none; */ /* Removed to allow slider clicks */
 }
@@ -966,7 +966,7 @@
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: 0.3s;
+    
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -1044,7 +1044,7 @@ input:checked + .toggle-slider:before {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    
     border-radius: 24px;
 }
 
@@ -1056,7 +1056,7 @@ input:checked + .toggle-slider:before {
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: .4s;
+    
     border-radius: 50%;
 }
 
@@ -1118,7 +1118,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
     position: relative;
     overflow: hidden;
     border: 1px solid transparent;
@@ -1132,7 +1132,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
+    
 }
 
 .nav-tab:hover::before {
@@ -1293,7 +1293,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         border: none;
         cursor: pointer;
         padding: 0;
-        transition: all 0.3s ease;
+        
     }
 
     .hamburger-line {
@@ -1302,7 +1302,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         height: 2px;
         background: white;
         border-radius: 1px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
         transform-origin: center;
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
@@ -1370,7 +1370,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         color: #495057;
         font-size: 14px;
         font-weight: 500;
-        transition: all 0.2s ease;
+        
     }
 
     .nav-tabs-container .nav-tab:last-child {
@@ -1480,7 +1480,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -1499,7 +1499,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     height: 4px;
     background: #007cba;
     transform: scaleX(0);
-    transition: transform 0.2s ease;
+    
 }
 
 .canvas-card:hover {
@@ -1616,7 +1616,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    transition: all 0.2s ease;
+    
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -1827,7 +1827,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     background: #e1e1e1;
     border: 1px solid #ccc;
     border-radius: 2px;
-    transition: all 0.2s;
+    
 }
 
 .behavior-element.selected {
@@ -1975,7 +1975,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     align-items: center;
     justify-content: center;
     font-size: 7px;
-    transition: all 0.2s;
+    
     color: #666;
 }
 
@@ -2038,7 +2038,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     height: 100%;
     background: linear-gradient(90deg, #28a745 0%, #ffc107 50%, #dc3545 100%);
     border-radius: 3px;
-    transition: width 0.3s;
+    
 }
 
 .quality-text {
@@ -2184,7 +2184,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     font-weight: 600;
     color: #6b7280;
     cursor: not-allowed;
-    transition: all 0.2s ease;
+    
 }
 
 .zoom-btn:hover {
@@ -2514,7 +2514,7 @@ body.canvas-modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    
     position: relative;
     z-index: 1;
     backdrop-filter: blur(10px);
@@ -2648,7 +2648,7 @@ body.canvas-modal-open {
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    
     position: relative;
     z-index: 1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -2670,7 +2670,7 @@ body.canvas-modal-open {
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    
     position: relative;
     z-index: 1;
 }
@@ -2864,7 +2864,7 @@ select option:disabled {
     opacity: 0;
     visibility: hidden;
     transform: translateX(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
     pointer-events: none;
     position: relative;
     z-index: 1;
@@ -2885,7 +2885,7 @@ select option:disabled {
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: all 0.25s ease-out;
+    
     pointer-events: none;
 }
 
@@ -2912,7 +2912,7 @@ select option:disabled {
     bottom: 0;
     background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(248,249,250,0.1) 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    
     pointer-events: none;
     border-radius: 8px;
 }
@@ -2957,7 +2957,7 @@ select option:disabled {
     width: 0;
     height: 3px;
     background: linear-gradient(90deg, #007cba, #005a87);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
     transform: translateX(-50%);
 }
 
@@ -3055,7 +3055,7 @@ select option:disabled {
     font-size: 13px;
     font-weight: 500;
     color: #495057;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
     position: relative;
     overflow: hidden;
 }
@@ -3080,7 +3080,7 @@ select option:disabled {
     opacity: 0;
     visibility: hidden;
     transform: translateY(15px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
     pointer-events: none;
     position: relative;
 }
@@ -3154,13 +3154,13 @@ select option:disabled {
 /* Feedback visuel pour les interactions */
 .nav-tab:active {
     transform: translateY(1px);
-    transition: transform 0.1s ease;
+    
 }
 
 /* Transition fluide pour les changements d'état */
 .tabs-transitioning .nav-tab,
 .tabs-transitioning .tab-content {
-    transition: none !important;
+    
 }
 
 /* Indicateur de chargement pour les onglets */
@@ -3201,7 +3201,7 @@ select option:disabled {
 .nav-tab,
 .tab-content,
 .nav-tab-wrapper {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
 }
 
 /* Animation d'apparition progressive pour les onglets actifs */
@@ -3235,7 +3235,7 @@ select option:disabled {
     width: 0;
     height: 3px;
     background: linear-gradient(90deg, #007cba, #005a87);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
     transform: translateX(-50%);
 }
 
@@ -3341,7 +3341,7 @@ select option:disabled {
     .nav-tab:hover,
     .nav-tab-active {
         animation: none !important;
-        transition: none !important;
+        
         transform: none !important;
     }
     
@@ -3382,7 +3382,7 @@ select option:disabled {
     
     .nav-tab:active {
         transform: scale(0.98);
-        transition: transform 0.1s ease;
+        
     }
 }
 
@@ -3507,7 +3507,7 @@ select option:disabled {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s ease;
+    
 }
 
 .template-status-card:hover {
@@ -3624,7 +3624,7 @@ select option:disabled {
     min-width: 20px;
     height: 20px;
     cursor: help;
-    transition: transform 0.2s ease;
+    
     position: relative;
 }
 
@@ -3708,7 +3708,7 @@ select option:disabled {
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    
 }
 
 .canvas-modal-form input[type="text"]:focus,
@@ -4201,7 +4201,7 @@ select option:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    
 }
 
 .pdf-builder-modal-close:hover {
@@ -4231,7 +4231,7 @@ select option:disabled {
     padding: 8px 16px;
     border-radius: 6px;
     font-weight: 500;
-    transition: all 0.2s ease;
+    
 }
 
 .pdf-builder-modal-footer .button-secondary:hover {
@@ -4269,7 +4269,7 @@ select option:disabled {
     border: 2px solid #e1e5e9;
     border-radius: 6px;
     font-size: 14px;
-    transition: all 0.2s ease;
+    
 }
 
 .pdf-builder-modal-body .form-group input:focus,
@@ -4418,4 +4418,5 @@ body.modal-open {
     font-weight: bold;
     font-size: 12px;
 }
+
 

@@ -1,4 +1,4 @@
-<?php // Developer tab content - Updated: 2025-11-18 20:20:00
+﻿<?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
@@ -7,7 +7,7 @@ $license_test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
 $license_test_key = get_option('pdf_builder_license_test_key', '');
 ?>
             <h2>Paramètres Développeur</h2>
-            <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
+            <p class="developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
          <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
@@ -26,7 +26,7 @@ $license_test_key = get_option('pdf_builder_license_test_key', '');
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le mode développeur</span>
-                            <span class="developer-status-indicator" style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'background: #28a745; color: white;' : 'background: #dc3545; color: white;'; ?>">
+                            <span class="developer-status-indicator <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'developer-status-active' : 'developer-status-inactive'; ?>">
                                 <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'ACTIF' : 'INACTIF'; ?>
                             </span>
                         </div>
@@ -37,60 +37,60 @@ $license_test_key = get_option('pdf_builder_license_test_key', '');
                     <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
                     <td>
                         <!-- Champ username caché pour l'accessibilité -->
-                        <input type="text" autocomplete="username" style="display: none;" />
-                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="text" autocomplete="username" class="hidden-element" />
+                        <div class="developer-field-group">
                             <input type="password" id="developer_password" name="pdf_builder_developer_password"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
-                                   style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+                                   class="developer-input"
                                    value="<?php echo esc_attr($settings['pdf_builder_developer_password'] ?? ''); ?>" />
-                            <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                            <button type="button" id="toggle_password" class="button button-secondary developer-button">
                                 👁️ Afficher
                             </button>
                         </div>
                         <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
                         <?php if (!empty($settings['developer_password'])) :
                             ?>
-                        <p class="description" style="color: #28a745;">✓ Mot de passe configuré et sauvegardé</p>
+                        <p class="description developer-password-set">✓ Mot de passe configuré et sauvegardé</p>
                             <?php
                         endif; ?>
                     </td>
                 </tr>
              </table>
 
-            <section id="dev-license-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-license-section" class="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'developer-section-hidden' : ''; ?>">
                 <h3 class="section-title">🔐 Test de Licence</h3>
 
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
                         <td>
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                            <div class="developer-field-group">
+                                <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary developer-button">
                                     🎚️ Basculer Mode Test
                                 </button>
-                                <span id="license_test_mode_status" style="font-weight: bold; padding: 8px 12px; border-radius: 4px; <?php echo $license_test_mode ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;'; ?>">
+                                <span id="license_test_mode_status" class="license-test-mode-status <?php echo $license_test_mode ? 'license-test-mode-active' : 'license-test-mode-inactive'; ?>">
                                     <?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?>
                                 </span>
                             </div>
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
-                            <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> style="display: none;" />
+                            <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> class="hidden-element" />
                             <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_toggle_test_mode'); ?>" />
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label>Clé de Test</label></th>
                         <td>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <input type="text" id="license_test_key" readonly style="width: 350px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;" placeholder="Générer une clé..." value="<?php echo esc_attr($license_test_key); ?>" />
-                                <button type="button" id="generate_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                            <div class="developer-field-group">
+                                <input type="text" id="license_test_key" readonly class="license-test-key-input" placeholder="Générer une clé..." value="<?php echo esc_attr($license_test_key); ?>" />
+                                <button type="button" id="generate_license_key_btn" class="button button-secondary developer-button">
                                     🔑 Générer
                                 </button>
-                                <button type="button" id="copy_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                <button type="button" id="copy_license_key_btn" class="button button-secondary developer-button">
                                     📋 Copier
                                 </button>
                                 <?php if ($license_test_key) :
                                     ?>
-                                <button type="button" id="delete_license_key_btn" class="button button-link-delete" style="padding: 8px 12px; height: auto;">
+                                <button type="button" id="delete_license_key_btn" class="button button-link-delete developer-button">
                                     🗑️ Supprimer
                                 </button>
                                     <?php
@@ -713,4 +713,5 @@ $license_test_key = get_option('pdf_builder_license_test_key', '');
          </form>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Settings Helper Functions
  * Common utility functions used across all settings tabs
@@ -292,3 +292,4 @@ global $nonce;
 if (!isset($nonce)) {
     $nonce = wp_create_nonce('pdf_builder_ajax');
 }
+

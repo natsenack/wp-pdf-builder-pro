@@ -1,4 +1,4 @@
-<?php // Securite tab content - Updated: 2025-11-18 20:20:00
+﻿<?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
@@ -205,3 +205,4 @@ $gdpr_consent_marketing = $settings['pdf_builder_gdpr_consent_marketing'] ?? '0'
             </form>
 
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+

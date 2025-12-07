@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('ABSPATH')) exit('No direct access');
 
 // Task Scheduler is already loaded in bootstrap.php
@@ -59,7 +59,7 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
         </button>
     </div>
 
-    <div class="cron-results-section" id="cron-results" style="display: none;">
+    <div class="cron-results-section" id="cron-results" class="hidden-element">
         <h3><?php _e('Results', 'pdf-builder-pro'); ?></h3>
         <div id="cron-results-content"></div>
     </div>
@@ -366,3 +366,4 @@ jQuery(document).ready(function($) {
 }
 </style>
 </script>
+

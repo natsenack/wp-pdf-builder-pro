@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PDF Builder Pro - Styles globaux pour l'administration WordPress
  */
 
@@ -73,7 +73,7 @@
 }
 
 .pdf-builder-collapsible-header .dashicons {
-    transition: transform 0.2s ease;
+    
 }
 
 .pdf-builder-collapsible-header.collapsed .dashicons {
@@ -134,7 +134,7 @@
     left: 50%;
     margin-left: -125px;
     opacity: 0;
-    transition: opacity 0.3s;
+    
     font-size: 12px;
     line-height: 1.4;
 }
