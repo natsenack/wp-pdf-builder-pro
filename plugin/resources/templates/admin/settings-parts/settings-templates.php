@@ -614,7 +614,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                     // Mise à jour en temps réel des prévisualisations après sauvegarde
                     updatePreviewsAfterSave();
                 } else {
-                    showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
+                    showSaveMessage('Erreur lors de la sauvegarde: ' + ((data.data && data.data.message) ? data.data.message : 'Erreur inconnue'), 'error');
                 }
             })
             .catch(error => {
