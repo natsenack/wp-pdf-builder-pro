@@ -71,7 +71,7 @@ export default [
   },
   // Configuration pour les fichiers JavaScript du navigateur
   {
-    files: ['plugin/assets/js/*.js', 'plugin/templates/admin/js/*.js'],
+    files: ['plugin/assets/js/*.js'],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'script',
