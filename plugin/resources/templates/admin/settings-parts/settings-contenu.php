@@ -1536,11 +1536,16 @@ foreach ($canvas_options as $option) {
                             modalBody.innerHTML = modalContent;
                         }
 
-                        // Afficher la modal simplement en ajoutant la classe 'show'
+                        // Afficher la modal simplement en ajoutant la classe 'show' à l'overlay
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            modal.classList.add('show');
-                            console.log('Modal ouverte:', modalId);
+                            const overlay = modal.querySelector('.canvas-modal-overlay');
+                            if (overlay) {
+                                overlay.classList.add('show');
+                                console.log('Modal ouverte:', modalId);
+                            } else {
+                                console.error('Overlay non trouvé dans la modal:', modalId);
+                            }
                         }
                     }
 
@@ -1838,9 +1843,12 @@ foreach ($canvas_options as $option) {
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
 
-                        // Fermer la modal simplement en retirant la classe 'show'
+                        // Fermer la modal simplement en retirant la classe 'show' de l'overlay
                         if (modal) {
-                            modal.classList.remove('show');
+                            const overlay = modal.querySelector('.canvas-modal-overlay');
+                            if (overlay) {
+                                overlay.classList.remove('show');
+                            }
                         }
 
                         currentModalCategory = null;
