@@ -955,7 +955,7 @@ $settings = get_option('pdf_builder_settings', array());
                         formData.append('current_tab', 'contenu');
                         
                         // Ajouter le nonce
-                        const nonceField = document.querySelector('input[name="pdf_builder_canvas_nonce"]');
+                        const nonceField = document.querySelector('input[name="pdf_builder_settings_nonce"]');
                         if (nonceField) {
                             formData.append('nonce', nonceField.value);
                         }
