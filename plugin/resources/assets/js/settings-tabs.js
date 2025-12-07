@@ -1233,6 +1233,58 @@
     // Initialiser le bouton flottant
     document.addEventListener('DOMContentLoaded', initFloatingSaveButton);
 
+    // Gestion de la prévisualisation des templates après sauvegarde
+    document.addEventListener('pdfBuilderSettingsSaved', function(event) {
+        updateTemplatePreviews();
+    });
+
+    // Fonction pour mettre à jour la prévisualisation des templates
+    function updateTemplatePreviews() {
+        // Récupérer les données sauvegardées depuis le serveur
+        fetch(PDF_BUILDER_CONFIG.ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_ajax_handler',
+                'action_type': 'get_template_mappings',
+                'nonce': PDF_BUILDER_CONFIG.nonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const mappings = data.data.mappings || {};
+                const templates = data.data.templates || {};
+
+                // Mettre à jour chaque prévisualisation
+                document.querySelectorAll('.template-preview').forEach(preview => {
+                    const statusKey = preview.closest('article').querySelector('.template-select').id.replace('template_', '');
+                    const assignedTemplate = mappings[statusKey];
+
+                    if (assignedTemplate && templates[assignedTemplate]) {
+                        // Afficher la prévisualisation avec le template assigné
+                        preview.innerHTML = `
+                            <p class="current-template">
+                                <strong>Assigné :</strong> ${templates[assignedTemplate]}
+                                <span class="assigned-badge assigned-badge-saved">✅</span>
+                            </p>
+                        `;
+                        preview.style.display = 'block';
+                    } else {
+                        // Afficher "Aucun template assigné"
+                        preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
+                        preview.style.display = 'block';
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la mise à jour des prévisualisations:', error);
+        });
+    }
+
 })();
 
 // FORCE CACHE BUST - Modified: 2025-12-06 - Added monitoring and security improvements

@@ -494,7 +494,7 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                             </div>
 
                             <!-- Aperçu du template assigné -->
-                            <div class="template-preview" data-original-value="<?php echo esc_attr($current_mappings[$status_key] ?? ''); ?>">
+                            <div class="template-preview" data-original-value="<?php echo esc_attr($current_mappings[$status_key] ?? ''); ?>" style="display: none;">
                                 <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>      
                                     <p class="current-template">
                                         <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>

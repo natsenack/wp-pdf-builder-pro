@@ -658,6 +658,10 @@ class AjaxHandler
                     $this->handleGetSettings();
                     break;
 
+                case 'get_template_mappings':
+                    $this->handleGetTemplateMappings();
+                    break;
+
                 case 'validate_settings':
                     $this->handleValidateSettings();
                     break;
@@ -907,6 +911,38 @@ class AjaxHandler
                 'warnings' => $warnings,
                 'action' => 'validate_settings'
             ]);
+        }
+    }
+
+    /**
+     * Récupérer les mappings de templates et la liste des templates disponibles
+     */
+    private function handleGetTemplateMappings()
+    {
+        try {
+            // Récupérer les mappings sauvegardés
+            $mappings = get_option('pdf_builder_order_status_templates', []);
+
+            // Récupérer la liste des templates disponibles
+            $templates = [];
+            $template_posts = get_posts([
+                'post_type' => 'pdf_template',
+                'posts_per_page' => -1,
+                'post_status' => 'publish'
+            ]);
+
+            foreach ($template_posts as $post) {
+                $templates[$post->ID] = $post->post_title;
+            }
+
+            wp_send_json_success([
+                'mappings' => $mappings,
+                'templates' => $templates,
+                'action' => 'get_template_mappings'
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la récupération des mappings: ' . $e->getMessage());
         }
     }
 
