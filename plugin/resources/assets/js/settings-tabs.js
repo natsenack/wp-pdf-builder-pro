@@ -1247,6 +1247,14 @@
         updateTemplatePreviews();
     });
 
+    // Charger les prévisualisations au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Petit délai pour s'assurer que le DOM est complètement chargé
+        setTimeout(function() {
+            updateTemplatePreviews();
+        }, 100);
+    });
+
     // Fonction pour mettre à jour la prévisualisation des templates
     function updateTemplatePreviews() {
         // Récupérer les données sauvegardées depuis le serveur
@@ -1282,9 +1290,8 @@
                         `;
                         preview.style.display = 'block';
                     } else {
-                        // Afficher "Aucun template assigné"
-                        preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
-                        preview.style.display = 'block';
+                        // Masquer la prévisualisation si aucun template n'est assigné
+                        preview.style.display = 'none';
                     }
                 });
             }
