@@ -853,26 +853,12 @@ foreach ($canvas_options as $option) {
                         refreshPreviews: function() {
                             console.log('🔄 REFRESH PREVIEWS CALLED with values:', this.values);
 
-                            // Vérifier que les valeurs sont du bon type
-                            const v = {};
-                            Object.keys(this.values).forEach(key => {
-                                let value = this.values[key];
+                            const changedFields = Object.keys(this.values);
 
-                                // Conversion des types selon le nom de la clé
-                                if (key.includes('width') || key.includes('height') || key.includes('dpi') ||
-                                    key.includes('size') || key.includes('zoom') || key.includes('fps') ||
-                                    key.includes('quality') || key.includes('timeout') || key.includes('limit')) {
-                                    value = parseFloat(value) || 0;
-                                } else if (key.includes('enabled') || key.includes('transparent') ||
-                                          key.includes('loading') || key.includes('monitoring') ||
-                                          key.includes('reporting') || key.includes('shortcuts')) {
-                                    value = value === true || value === '1' || value === 1;
-                                }
+                            // Monitorer la mise à jour de preview
+                            modalMonitoring.trackPreviewUpdate(changedFields);
 
-                                v[key] = value;
-                            });
-
-                            console.log('🔄 Values after type conversion:', v);
+                            const v = this.values;
 
                             // Valeurs par défaut pour éviter les erreurs
                             const defaults = {
@@ -2082,18 +2068,6 @@ foreach ($canvas_options as $option) {
 
                     // Initialiser le système de previews dynamiques
                     previewSystem.init();
-
-                    // Bouton de débogage pour tester les previews
-                    const debugButton = document.createElement('button');
-                    debugButton.textContent = '🔄 Test Previews';
-                    debugButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #007cba; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 12px;';
-                    debugButton.onclick = function() {
-                        console.log('🧪 TEST PREVIEWS - Forcing refresh...');
-                        console.log('Current values:', previewSystem.values);
-                        previewSystem.refreshPreviews();
-                        alert('Previews refreshed! Check console for details.');
-                    };
-                    document.body.appendChild(debugButton);
 
                     // === DIAGNOSTIC COMPLET DE L'ONGLET CANVAS ===
                     function runCanvasDiagnostic() {
