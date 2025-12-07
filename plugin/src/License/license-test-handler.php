@@ -306,6 +306,23 @@ class LicenseTestHandler
             error_log('[PDF Builder] handleToggleTestMode: nouvel état = ' . ($new_state ? 'true' : 'false'));
             
 
+            // Si on active le mode test, générer une clé de test automatiquement
+            if ($new_state && !$this->getTestKey()) {
+                $test_key = $this->generateTestKey();
+                $this->saveTestKey($test_key);
+                $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
+                update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
+                error_log('[PDF Builder] handleToggleTestMode: clé de test générée = ' . substr($test_key, 0, 10) . '...');
+            }
+            
+            // Si on désactive le mode test, supprimer la clé de test
+            if (!$new_state && $this->getTestKey()) {
+                delete_option('pdf_builder_license_test_key');
+                delete_option('pdf_builder_license_test_key_expires');
+                error_log('[PDF Builder] handleToggleTestMode: clé de test supprimée');
+            }
+            
+
             // Sauvegarder le nouvel état
             $saved = $this->setTestModeEnabled($new_state);
             error_log('[PDF Builder] handleToggleTestMode: sauvegarde = ' . ($saved ? 'success' : 'failed'));
@@ -318,7 +335,8 @@ class LicenseTestHandler
             // Retourner le nouvel état
             wp_send_json_success([
                 'enabled' => $new_state,
-                'message' => $new_state ? '✅ Mode test ACTIVÉ' : '❌ Mode test DÉSACTIVÉ'
+                'test_key' => $new_state ? $this->getTestKey() : '',
+                'message' => $new_state ? '✅ Mode test ACTIVÉ - Clé générée' : '❌ Mode test DÉSACTIVÉ - Clé supprimée'
             ]);
             
         } catch (\Exception $e) {

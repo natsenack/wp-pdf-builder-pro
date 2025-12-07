@@ -252,7 +252,18 @@
                                         statusSpan.style.background = response.data.enabled ? '#d4edda' : '#f8d7da';
                                         statusSpan.style.color = response.data.enabled ? '#155724' : '#721c24';
                                     }
-                                    debugLog('Mode test basculé:', response.data.enabled);
+                                    
+                                    // Mettre à jour le champ clé de test
+                                    const keyInput = document.getElementById('license_test_key');
+                                    const deleteBtn = document.getElementById('delete_license_key_btn');
+                                    if (keyInput) {
+                                        keyInput.value = response.data.test_key || '';
+                                    }
+                                    if (deleteBtn) {
+                                        deleteBtn.style.display = response.data.test_key ? 'inline-block' : 'none';
+                                    }
+                                    
+                                    debugLog('Mode test basculé:', response.data.enabled, 'clé:', response.data.test_key ? 'présente' : 'absente');
                                 } else {
                                     debugError('Erreur toggle mode test:', response.data?.message || 'Erreur inconnue');
                                 }
