@@ -639,6 +639,8 @@ $current_mappings = $status_manager->get_current_mappings();
                     </p>
                 `;
             }
+        }
+
         function updateOriginalValues() {
             // Mettre à jour les valeurs originales pour tous les selects après sauvegarde
             const templateSelects = document.querySelectorAll('.template-select');
