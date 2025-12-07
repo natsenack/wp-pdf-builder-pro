@@ -1537,15 +1537,16 @@ foreach ($canvas_options as $option) {
                             modalBody.innerHTML = modalContent;
                         }
 
-                        // Afficher la modal simplement en ajoutant la classe 'show' à l'overlay
+                        // Afficher la modal simplement en ajoutant la classe 'active' à l'overlay
                         const modal = document.getElementById(modalId);
                         console.log('🔍 DEBUG: Modal element trouvé:', modal);
                         if (modal) {
                             const overlay = modal.querySelector('.canvas-modal-overlay');
                             console.log('🔍 DEBUG: Overlay trouvé:', overlay);
                             if (overlay) {
-                                console.log('🔍 DEBUG: Ajout de la classe show à l\'overlay');
-                                overlay.classList.add('show');
+                                console.log('🔍 DEBUG: Ajout de la classe active à l\'overlay');
+                                overlay.classList.add('active');
+                                document.body.classList.add('canvas-modal-open');
                                 console.log('🔍 DEBUG: Classes de l\'overlay après ajout:', overlay.className);
                                 console.log('Modal ouverte:', modalId);
                             } else {
@@ -1852,13 +1853,14 @@ foreach ($canvas_options as $option) {
                         const modalId = `canvas-${currentModalCategory}-modal`;
                         const modal = document.getElementById(modalId);
 
-                        // Fermer la modal simplement en retirant la classe 'show' de l'overlay
+                        // Fermer la modal simplement en retirant la classe 'active' de l'overlay
                         if (modal) {
                             const overlay = modal.querySelector('.canvas-modal-overlay');
                             console.log('🔍 DEBUG: Fermeture - Overlay trouvé:', overlay);
                             if (overlay) {
-                                console.log('🔍 DEBUG: Retrait de la classe show de l\'overlay');
-                                overlay.classList.remove('show');
+                                console.log('🔍 DEBUG: Retrait de la classe active de l\'overlay');
+                                overlay.classList.remove('active');
+                                document.body.classList.remove('canvas-modal-open');
                                 console.log('🔍 DEBUG: Classes de l\'overlay après retrait:', overlay.className);
                             }
                         }
