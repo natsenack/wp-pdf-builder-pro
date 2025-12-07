@@ -18,8 +18,7 @@
 
     // Fonctions de debug conditionnel
     function isDebugEnabled() {
-        return window.location.search.includes('debug=force') ||
-               (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
+        return true; // Forcer debug pour tests
     }
 
     function debugLog(...args) {
@@ -167,10 +166,15 @@
     function initLicenseTestSection() {
         // Vérifier si on est sur la page de paramètres
         if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
+            debugLog('PDF Builder - Pas sur la page de paramètres, skip section licence');
             return;
         }
 
         debugLog('PDF Builder - Initialisation de la section Test de Licence...');
+        debugLog('PDF Builder - pdfBuilderAjax disponible:', typeof pdfBuilderAjax !== 'undefined');
+        if (typeof pdfBuilderAjax !== 'undefined') {
+            debugLog('PDF Builder - ajaxurl:', pdfBuilderAjax.ajaxurl);
+        }
 
         // Attendre que la section soit visible (peut être cachée initialement)
         const checkAndInit = function() {
@@ -205,6 +209,11 @@
         };
 
         const initButtons = function() {
+            debugLog('PDF Builder - Initialisation des boutons licence...');
+
+            // Bouton basculer mode test
+            const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
+            debugLog('PDF Builder - Bouton toggle trouvé:', !!toggleBtn);
         const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
         if (toggleBtn) {
             debugLog('PDF Builder - Bouton toggle mode test trouvé, ajout event listener');
