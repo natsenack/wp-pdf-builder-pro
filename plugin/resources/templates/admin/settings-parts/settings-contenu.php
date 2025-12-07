@@ -23,6 +23,11 @@ $settings = get_option('pdf_builder_settings', array());
 
                 <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
+                <!-- Indicateur de monitoring -->
+                <div class="monitoring-indicator" style="position: absolute; top: 10px; right: 10px; font-size: 12px; color: #666; opacity: 0.7;">
+                    <span id="monitoring-status">🔍 Monitoring actif</span>
+                </div>
+
                 <form method="post" id="canvas-form">
                     <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
                     <input type="hidden" name="submit_canvas" value="1">
@@ -432,23 +437,7 @@ $settings = get_option('pdf_builder_settings', array());
                 </form>
             </section>
 
-            <!-- NOUVEAU SYSTÈME D'OVERLAY MODAL COMPLET -->
-            <div id="pdf-builder-modal-overlay" class="pdf-builder-modal-overlay" style="display: none;">
-                <div class="pdf-builder-modal-backdrop"></div>
-                <div class="pdf-builder-modal-container">
-                    <div class="pdf-builder-modal-header">
-                        <h2 id="pdf-builder-modal-title">Configuration</h2>
-                        <button type="button" class="pdf-builder-modal-close" aria-label="Fermer">&times;</button>
-                    </div>
-                    <div class="pdf-builder-modal-body">
-                        <!-- Contenu dynamique des modales -->
-                    </div>
-                    <div class="pdf-builder-modal-footer">
-                        <button type="button" class="button button-secondary pdf-builder-modal-cancel">Annuler</button>
-                        <button type="button" class="button button-primary pdf-builder-modal-save">Enregistrer</button>
-                    </div>
-                </div>
-            </div>
+
 
             <script>
                 (function() {
@@ -462,7 +451,314 @@ $settings = get_option('pdf_builder_settings', array());
                     // Nonce pour les appels AJAX de sauvegarde
                     const pdfBuilderSaveNonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
-                    // SYSTÈME CENTRALISÉ DE PREVIEWS DYNAMIQUES
+                    // SYSTÈME DE MONITORING UNIFIÉ
+                    const modalMonitoring = {
+                        // Métriques de performance
+                        metrics: {
+                            modalOpens: 0,
+                            modalCloses: 0,
+                            savesSuccess: 0,
+                            savesFailed: 0,
+                            validationErrors: 0,
+                            dependencyUpdates: 0,
+                            previewUpdates: 0,
+                            avgSaveTime: 0,
+                            lastActivity: null
+                        },
+
+                        // Historique des actions
+                        history: [],
+
+                        // État actuel
+                        currentState: {
+                            activeModal: null,
+                            lastSaveTime: null,
+                            errors: [],
+                            warnings: []
+                        },
+
+                        // Initialiser le monitoring
+                        init: function() {
+                            console.log('🔍 Modal Monitoring System: Initialisé');
+                            this.log('system', 'Monitoring activé', { timestamp: Date.now() });
+                        },
+
+                        // Logger une action
+                        log: function(type, message, data = {}) {
+                            const entry = {
+                                timestamp: Date.now(),
+                                type: type,
+                                message: message,
+                                data: data,
+                                modalCategory: currentModalCategory
+                            };
+
+                            this.history.push(entry);
+
+                            // Garder seulement les 100 dernières entrées
+                            if (this.history.length > 100) {
+                                this.history.shift();
+                            }
+
+                            // Log console avec emoji selon le type
+                            const emoji = {
+                                'modal_open': '🚪',
+                                'modal_close': '🚪❌',
+                                'save_success': '💾✅',
+                                'save_error': '💾❌',
+                                'validation_error': '⚠️',
+                                'dependency': '🔗',
+                                'preview': '👁️',
+                                'system': '🔧',
+                                'performance': '⚡'
+                            };
+
+                            console.log(`${emoji[type] || '📝'} [${type.toUpperCase()}] ${message}`, data);
+                        },
+
+                        // Monitorer l'ouverture d'une modal
+                        trackModalOpen: function(category) {
+                            this.metrics.modalOpens++;
+                            this.currentState.activeModal = category;
+                            this.currentState.lastActivity = Date.now();
+                            this.log('modal_open', `Modal ouverte: ${category}`, {
+                                category: category,
+                                totalOpens: this.metrics.modalOpens
+                            });
+                            this.updateVisualIndicator();
+                        },
+
+                        // Monitorer la fermeture d'une modal
+                        trackModalClose: function(category) {
+                            this.metrics.modalCloses++;
+                            this.currentState.activeModal = null;
+                            this.log('modal_close', `Modal fermée: ${category}`, {
+                                category: category,
+                                totalCloses: this.metrics.modalCloses
+                            });
+                            this.updateVisualIndicator();
+                        },
+
+                        // Monitorer une sauvegarde réussie
+                        trackSaveSuccess: function(category, saveTime, fieldCount) {
+                            this.metrics.savesSuccess++;
+                            this.currentState.lastSaveTime = Date.now();
+
+                            // Calculer la moyenne des temps de sauvegarde
+                            const totalTime = this.metrics.avgSaveTime * (this.metrics.savesSuccess - 1) + saveTime;
+                            this.metrics.avgSaveTime = totalTime / this.metrics.savesSuccess;
+
+                            this.log('save_success', `Sauvegarde réussie: ${category}`, {
+                                category: category,
+                                saveTime: saveTime,
+                                fieldCount: fieldCount,
+                                avgSaveTime: this.metrics.avgSaveTime
+                            });
+                        },
+
+                        // Monitorer une erreur de sauvegarde
+                        trackSaveError: function(category, error, saveTime) {
+                            this.metrics.savesFailed++;
+                            this.currentState.errors.push({
+                                type: 'save_error',
+                                category: category,
+                                error: error,
+                                timestamp: Date.now()
+                            });
+
+                            this.log('save_error', `Erreur de sauvegarde: ${category}`, {
+                                category: category,
+                                error: error,
+                                saveTime: saveTime,
+                                totalErrors: this.metrics.savesFailed
+                            });
+                        },
+
+                        // Monitorer les erreurs de validation
+                        trackValidationError: function(category, errors) {
+                            this.metrics.validationErrors += errors.length;
+                            errors.forEach(error => {
+                                this.currentState.errors.push({
+                                    type: 'validation_error',
+                                    category: category,
+                                    field: error.field,
+                                    message: error.message,
+                                    timestamp: Date.now()
+                                });
+                            });
+
+                            this.log('validation_error', `Erreurs de validation: ${category}`, {
+                                category: category,
+                                errors: errors,
+                                totalValidationErrors: this.metrics.validationErrors
+                            });
+                        },
+
+                        // Monitorer les mises à jour de dépendances
+                        trackDependencyUpdate: function(masterField, dependentFields, isEnabled) {
+                            this.metrics.dependencyUpdates++;
+                            this.log('dependency', `Dépendance mise à jour: ${masterField}`, {
+                                masterField: masterField,
+                                dependentFields: dependentFields,
+                                isEnabled: isEnabled,
+                                totalUpdates: this.metrics.dependencyUpdates
+                            });
+                        },
+
+                        // Monitorer les mises à jour de preview
+                        trackPreviewUpdate: function(changedFields) {
+                            this.metrics.previewUpdates++;
+                            this.log('preview', `Preview mise à jour`, {
+                                changedFields: changedFields,
+                                totalUpdates: this.metrics.previewUpdates
+                            });
+                        },
+
+                        // Obtenir les métriques actuelles
+                        getMetrics: function() {
+                            return {
+                                ...this.metrics,
+                                historyLength: this.history.length,
+                                currentState: this.currentState,
+                                uptime: Date.now() - (this.history[0]?.timestamp || Date.now())
+                            };
+                        },
+
+                        // Générer un rapport de monitoring
+                        generateReport: function() {
+                            const metrics = this.getMetrics();
+                            const recentHistory = this.history.slice(-10);
+
+                            return {
+                                summary: {
+                                    totalOpens: metrics.modalOpens,
+                                    totalCloses: metrics.modalCloses,
+                                    successRate: metrics.savesSuccess / Math.max(metrics.savesSuccess + metrics.savesFailed, 1) * 100,
+                                    avgSaveTime: metrics.avgSaveTime,
+                                    totalErrors: metrics.validationErrors + metrics.savesFailed,
+                                    uptime: metrics.uptime
+                                },
+                                currentState: metrics.currentState,
+                                recentActivity: recentHistory,
+                                alerts: this.generateAlerts()
+                            };
+                        },
+
+                        // Générer des alertes basées sur les métriques
+                        generateAlerts: function() {
+                            const alerts = [];
+                            const metrics = this.metrics;
+
+                            // Alerte si taux de succès des sauvegardes < 80%
+                            const successRate = metrics.savesSuccess / Math.max(metrics.savesSuccess + metrics.savesFailed, 1);
+                            if (successRate < 0.8 && (metrics.savesSuccess + metrics.savesFailed) > 5) {
+                                alerts.push({
+                                    level: 'warning',
+                                    message: `Taux de succès des sauvegardes faible: ${(successRate * 100).toFixed(1)}%`,
+                                    suggestion: 'Vérifier la connectivité réseau et les permissions AJAX'
+                                });
+                            }
+
+                            // Alerte si temps moyen de sauvegarde > 2 secondes
+                            if (metrics.avgSaveTime > 2000 && metrics.savesSuccess > 3) {
+                                alerts.push({
+                                    level: 'warning',
+                                    message: `Temps de sauvegarde élevé: ${metrics.avgSaveTime.toFixed(0)}ms en moyenne`,
+                                    suggestion: 'Optimiser les requêtes AJAX ou vérifier la charge serveur'
+                                });
+                            }
+
+                            // Alerte si beaucoup d'erreurs de validation
+                            if (metrics.validationErrors > 10) {
+                                alerts.push({
+                                    level: 'info',
+                                    message: `${metrics.validationErrors} erreurs de validation détectées`,
+                                    suggestion: 'Vérifier la configuration des champs de formulaire'
+                                });
+                            }
+
+                            return alerts;
+                        },
+
+                        // Afficher le tableau de bord de monitoring (pour debug)
+                        showDashboard: function() {
+                            const report = this.generateReport();
+                            console.group('📊 Modal Monitoring Dashboard');
+                            console.table(report.summary);
+                            console.log('🔄 État actuel:', report.currentState);
+                            console.log('📝 Activité récente:', report.recentActivity);
+                            if (report.alerts.length > 0) {
+                                console.group('🚨 Alertes');
+                                report.alerts.forEach(alert => {
+                                    console.log(`[${alert.level.toUpperCase()}] ${alert.message}`);
+                                    console.log(`💡 Suggestion: ${alert.suggestion}`);
+                                });
+                                console.groupEnd();
+                            }
+                            console.groupEnd();
+
+                            // Mettre à jour l'indicateur visuel
+                            this.updateVisualIndicator();
+                        },
+
+                        // Mettre à jour l'indicateur visuel de monitoring
+                        updateVisualIndicator: function() {
+                            const indicator = document.getElementById('monitoring-status');
+                            if (!indicator) return;
+
+                            const metrics = this.getMetrics();
+                            const alerts = this.generateAlerts();
+
+                            let status = '🔍 Monitoring actif';
+                            let color = '#666';
+
+                            if (alerts.some(a => a.level === 'warning')) {
+                                status = '⚠️ Alertes détectées';
+                                color = '#ffc107';
+                            } else if (metrics.modalOpens > 0) {
+                                status = `✅ ${metrics.modalOpens} modales ouvertes`;
+                                color = '#28a745';
+                            }
+
+                            indicator.textContent = status;
+                            indicator.style.color = color;
+                            indicator.style.opacity = '1';
+
+                            // Faire clignoter brièvement pour attirer l'attention
+                            setTimeout(() => {
+                                indicator.style.opacity = '0.7';
+                            }, 2000);
+                        },
+
+                        // Démarrer l'auto-monitoring
+                        startAutoMonitoring: function() {
+                            // Vérifier l'état toutes les 30 secondes
+                            setInterval(() => {
+                                const alerts = this.generateAlerts();
+                                if (alerts.length > 0) {
+                                    console.group('🔍 Auto-Monitoring - Alertes détectées');
+                                    alerts.forEach(alert => {
+                                        console.warn(`[${alert.level.toUpperCase()}] ${alert.message}`);
+                                    });
+                                    console.groupEnd();
+                                    this.updateVisualIndicator();
+                                }
+                            }, 30000);
+
+                            // Mettre à jour l'indicateur visuel toutes les 5 secondes
+                            setInterval(() => {
+                                this.updateVisualIndicator();
+                            }, 5000);
+
+                            console.log('🔄 Auto-monitoring démarré (vérifications toutes les 30s)');
+                        }
+                    };
+
+                    // Initialiser le monitoring
+                    modalMonitoring.init();
+
+                    // Démarrer l'auto-monitoring
+                    modalMonitoring.startAutoMonitoring();
                     const previewSystem = {
                         // Valeurs actuelles des paramètres
                         values: {
@@ -516,6 +812,11 @@ $settings = get_option('pdf_builder_settings', array());
 
                         // Rafraîchir toutes les previews
                         refreshPreviews: function() {
+                            const changedFields = Object.keys(this.values);
+
+                            // Monitorer la mise à jour de preview
+                            modalMonitoring.trackPreviewUpdate(changedFields);
+
                             const v = this.values;
 
                             // Preview Dimensions
@@ -575,7 +876,8 @@ $settings = get_option('pdf_builder_settings', array());
                         },
                         // Configurer les event listeners pour les inputs des modales
                         setupEventListeners: function() {
-                            const modalInputs = document.querySelectorAll('#pdf-builder-modal-overlay input, #pdf-builder-modal-overlay select');
+                            // Écouter les changements dans toutes les modales canvas
+                            const modalInputs = document.querySelectorAll('[id^="canvas-"][id$="-modal"] input, [id^="canvas-"][id$="-modal"] select');
 
                             modalInputs.forEach(input => {
                                 input.addEventListener('input', (e) => {
@@ -596,325 +898,553 @@ $settings = get_option('pdf_builder_settings', array());
                         }
                     };
 
-                    // Configuration des modales
-                    const modalConfigs = {
-                        dimensions: {
-                            title: '📐 Dimensions & Format',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_width\">Largeur (px)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_width\" name=\"pdf_builder_canvas_width\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_width) + "\" min=\"100\" max=\"5000\" readonly>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_height\">Hauteur (px)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_height\" name=\"pdf_builder_canvas_height\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_height) + "\" min=\"100\" max=\"5000\" readonly>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_dpi\">DPI</label>" +
-                                        "<select id=\"pdf_builder_canvas_dpi\" name=\"pdf_builder_canvas_dpi\">" +
-                                            "<option value=\"72\"" + (previewSystem.values.canvas_dpi == 72 ? " selected" : "") + ">72 (Web)</option>" +
-                                            "<option value=\"96\"" + (previewSystem.values.canvas_dpi == 96 ? " selected" : "") + ">96 (Écran)</option>" +
-                                            "<option value=\"150\"" + (previewSystem.values.canvas_dpi == 150 ? " selected" : "") + ">150 (Impression)</option>" +
-                                            "<option value=\"300\"" + (previewSystem.values.canvas_dpi == 300 ? " selected" : "") + ">300 (Haute qualité)</option>" +
-                                        "</select>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_format\">Format prédéfini</label>" +
-                                        "<select id=\"pdf_builder_canvas_format\" name=\"pdf_builder_canvas_format\">" +
-                                            "<option value=\"A4\"" + (previewSystem.values.canvas_format === "A4" ? " selected" : "") + ">A4 (210×297mm)</option>" +
-                                            "<option value=\"A3\" disabled" + (previewSystem.values.canvas_format === "A3" ? " selected" : "") + ">A3 (297×420mm) - Bientôt</option>" +
-                                            "<option value=\"Letter\" disabled" + (previewSystem.values.canvas_format === "Letter" ? " selected" : "") + ">Letter (8.5×11\") - Bientôt</option>" +
-                                            "<option value=\"Legal\" disabled" + (previewSystem.values.canvas_format === "Legal" ? " selected" : "") + ">Legal (8.5×14\") - Bientôt</option>" +
-                                        "</select>" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        apparence: {
-                            title: '🎨 Apparence',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_bg_color\">Couleur de fond</label>" +
-                                        "<input type=\"color\" id=\"pdf_builder_canvas_bg_color\" name=\"pdf_builder_canvas_bg_color\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_bg_color || "#ffffff") + "\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_border_color\">Couleur bordure</label>" +
-                                        "<input type=\"color\" id=\"pdf_builder_canvas_border_color\" name=\"pdf_builder_canvas_border_color\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_border_color || "#cccccc") + "\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_border_width\">Épaisseur bordure (px)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_border_width\" name=\"pdf_builder_canvas_border_width\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_border_width || "1") + "\" min=\"0\" max=\"10\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_shadow_enabled\">Ombre activée</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_shadow_enabled\" name=\"pdf_builder_canvas_shadow_enabled\" value=\"1\"" + (previewSystem.values.canvas_shadow_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        grille: {
-                            title: '📏 Grille & Guides',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_grid_enabled\">Grille activée</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_grid_enabled\" name=\"pdf_builder_canvas_grid_enabled\" value=\"1\"" + (previewSystem.values.canvas_grid_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_grid_size\">Taille grille (px)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_grid_size\" name=\"pdf_builder_canvas_grid_size\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_grid_size || "20") + "\" min=\"5\" max=\"100\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_guides_enabled\">Guides activés</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_guides_enabled\" name=\"pdf_builder_canvas_guides_enabled\" value=\"1\"" + (previewSystem.values.canvas_guides_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_snap_to_grid\">Accrochage à la grille</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_snap_to_grid\" name=\"pdf_builder_canvas_snap_to_grid\" value=\"1\"" + (previewSystem.values.canvas_snap_to_grid == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        zoom: {
-                            title: '🔍 Zoom & Navigation',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_zoom_min\">Zoom minimum (%)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_zoom_min\" name=\"pdf_builder_canvas_zoom_min\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_zoom_min || "25") + "\" min=\"10\" max=\"100\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_zoom_max\">Zoom maximum (%)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_zoom_max\" name=\"pdf_builder_canvas_zoom_max\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_zoom_max || "500") + "\" min=\"100\" max=\"1000\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_zoom_default\">Zoom par défaut (%)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_zoom_default\" name=\"pdf_builder_canvas_zoom_default\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_zoom_default || "100") + "\" min=\"25\" max=\"500\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_zoom_step\">Pas de zoom (%)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_zoom_step\" name=\"pdf_builder_canvas_zoom_step\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_zoom_step || "25") + "\" min=\"5\" max=\"50\">" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        interactions: {
-                            title: '🖱️ Interaction',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_drag_enabled\">Glisser activé</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_drag_enabled\" name=\"pdf_builder_canvas_drag_enabled\" value=\"1\"" + (previewSystem.values.canvas_drag_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_resize_enabled\">Redimensionnement activé</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_resize_enabled\" name=\"pdf_builder_canvas_resize_enabled\" value=\"1\"" + (previewSystem.values.canvas_resize_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_rotate_enabled\">Rotation activée</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_rotate_enabled\" name=\"pdf_builder_canvas_rotate_enabled\" value=\"1\"" + (previewSystem.values.canvas_rotate_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_multi_select\">Sélection multiple</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_multi_select\" name=\"pdf_builder_canvas_multi_select\" value=\"1\"" + (previewSystem.values.canvas_multi_select == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_selection_mode\">Mode de sélection</label>" +
-                                        "<select id=\"pdf_builder_canvas_selection_mode\" name=\"pdf_builder_canvas_selection_mode\">" +
-                                            "<option value=\"single\"" + (previewSystem.values.canvas_selection_mode === "single" ? " selected" : "") + ">Simple</option>" +
-                                            "<option value=\"multiple\"" + (previewSystem.values.canvas_selection_mode === "multiple" ? " selected" : "") + ">Multiple</option>" +
-                                            "<option value=\"group\"" + (previewSystem.values.canvas_selection_mode === "group" ? " selected" : "") + ">Grouper</option>" +
-                                        "</select>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_keyboard_shortcuts\">Raccourcis clavier</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_keyboard_shortcuts\" name=\"pdf_builder_canvas_keyboard_shortcuts\" value=\"1\"" + (previewSystem.values.canvas_keyboard_shortcuts == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        export: {
-                            title: '💾 Export',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_export_format\">Format d'export</label>" +
-                                        "<select id=\"pdf_builder_canvas_export_format\" name=\"pdf_builder_canvas_export_format\">" +
-                                            "<option value=\"png\"" + (previewSystem.values.canvas_export_format === "png" ? " selected" : "") + ">PNG</option>" +
-                                            "<option value=\"jpg\"" + (previewSystem.values.canvas_export_format === "jpg" ? " selected" : "") + ">JPEG</option>" +
-                                            "<option value=\"svg\"" + (previewSystem.values.canvas_export_format === "svg" ? " selected" : "") + ">SVG</option>" +
-                                            "<option value=\"pdf\"" + (previewSystem.values.canvas_export_format === "pdf" ? " selected" : "") + ">PDF</option>" +
-                                        "</select>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_export_quality\">Qualité (%)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_export_quality\" name=\"pdf_builder_canvas_export_quality\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_export_quality || "90") + "\" min=\"10\" max=\"100\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_export_transparent\">Fond transparent</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_export_transparent\" name=\"pdf_builder_canvas_export_transparent\" value=\"1\"" + (previewSystem.values.canvas_export_transparent == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        performance: {
-                            title: '⚡ Performance',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_fps_target\">FPS cible</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_fps_target\" name=\"pdf_builder_canvas_fps_target\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_fps_target || "60") + "\" min=\"10\" max=\"120\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_memory_limit_js\">Limite mémoire JS (MB)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_memory_limit_js\" name=\"pdf_builder_canvas_memory_limit_js\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_memory_limit_js || "50") + "\" min=\"10\" max=\"500\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_response_timeout\">Timeout réponse (ms)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_response_timeout\" name=\"pdf_builder_canvas_response_timeout\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_response_timeout || "5000") + "\" min=\"1000\" max=\"30000\">" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_lazy_loading_editor\">Chargement différé éditeur</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_lazy_loading_editor\" name=\"pdf_builder_canvas_lazy_loading_editor\" value=\"1\"" + (previewSystem.values.canvas_lazy_loading_editor == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_preload_critical\">Préchargement critique</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_preload_critical\" name=\"pdf_builder_canvas_preload_critical\" value=\"1\"" + (previewSystem.values.canvas_preload_critical == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_lazy_loading_plugin\">Chargement différé plugin</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_lazy_loading_plugin\" name=\"pdf_builder_canvas_lazy_loading_plugin\" value=\"1\"" + (previewSystem.values.canvas_lazy_loading_plugin == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                "</div>";
-                            }
-                        },
-                        debug: {
-                            title: '🐛 Debug & Maintenance',
-                            content: function() {
-                                return "<div class=\"modal-form-grid\">" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_debug_enabled\">Debug activé</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_debug_enabled\" name=\"pdf_builder_canvas_debug_enabled\" value=\"1\"" + (previewSystem.values.canvas_debug_enabled == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_performance_monitoring\">Monitoring performance</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_performance_monitoring\" name=\"pdf_builder_canvas_performance_monitoring\" value=\"1\"" + (previewSystem.values.canvas_performance_monitoring == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_error_reporting\">Rapport d'erreurs</label>" +
-                                        "<label class=\"toggle-switch\">" +
-                                            "<input type=\"checkbox\" id=\"pdf_builder_canvas_error_reporting\" name=\"pdf_builder_canvas_error_reporting\" value=\"1\"" + (previewSystem.values.canvas_error_reporting == "1" ? " checked" : "") + ">" +
-                                            "<span class=\"toggle-slider\"></span>" +
-                                        "</label>" +
-                                    "</div>" +
-                                    "<div class=\"form-group\">" +
-                                        "<label for=\"pdf_builder_canvas_memory_limit_php\">Limite mémoire PHP (MB)</label>" +
-                                        "<input type=\"number\" id=\"pdf_builder_canvas_memory_limit_php\" name=\"pdf_builder_canvas_memory_limit_php\" value=\"" + escapeHtmlAttr(previewSystem.values.canvas_memory_limit_php || "128") + "\" min=\"32\" max=\"1024\">" +
-                                    "</div>" +
-                                "</div>";
-                            }
+                    // ===========================================
+                    // SYSTÈME UNIFIÉ DE FORMULAIRES DE MODALES
+                    // ===========================================
+
+                    /**
+                     * Générateur unifié de formulaires pour les modales
+                     * Centralise la création, validation et gestion des formulaires
+                     */
+                    class ModalFormGenerator {
+
+                        constructor() {
+                            this.fieldDefinitions = {};
+                            this.formValidators = {};
+                            this.fieldDependencies = {};
                         }
-                    };
 
-                    // État de la modal
-                    let currentModalCategory = null;
+                        /**
+                         * Définit un champ de formulaire
+                         */
+                        defineField(name, config) {
+                            this.fieldDefinitions[name] = {
+                                type: config.type || 'text',
+                                label: config.label || name,
+                                placeholder: config.placeholder || '',
+                                required: config.required || false,
+                                min: config.min,
+                                max: config.max,
+                                step: config.step || 1,
+                                options: config.options || [],
+                                defaultValue: config.defaultValue || '',
+                                description: config.description || '',
+                                validation: config.validation || null,
+                                dependencies: config.dependencies || [],
+                                group: config.group || 'default',
+                                ...config
+                            };
+                            return this;
+                        }
 
-                    // Éléments DOM
-                    const overlay = document.getElementById('pdf-builder-modal-overlay');
-                    const modalTitle = document.getElementById('pdf-builder-modal-title');
-                    const modalBody = document.querySelector('.pdf-builder-modal-body');
+                        /**
+                         * Définit une dépendance entre champs
+                         */
+                        addDependency(masterField, dependentFields) {
+                            this.fieldDependencies[masterField] = dependentFields;
+                            return this;
+                        }
 
-                    // Ouvrir une modal
+                        /**
+                         * Ajoute un validateur personnalisé
+                         */
+                        addValidator(fieldName, validator) {
+                            this.formValidators[fieldName] = validator;
+                            return this;
+                        }
+
+                        /**
+                         * Génère le HTML pour un champ
+                         */
+                        generateFieldHTML(fieldName, currentValue) {
+                            const field = this.fieldDefinitions[fieldName];
+                            if (!field) return '';
+
+                            const fieldId = `pdf_builder_canvas_${fieldName}`;
+                            const fieldNameAttr = `pdf_builder_canvas_${fieldName}`;
+                            const value = currentValue !== undefined ? currentValue : field.defaultValue;
+                            const escapedValue = typeof value === 'string' ? escapeHtmlAttr(value) : value;
+
+                            let html = `<div class="form-group" data-field-group="${field.group}">`;
+
+                            // Label
+                            html += `<label for="${fieldId}">${escapeHtml(field.label)}`;
+                            if (field.required) html += ' <span class="required">*</span>';
+                            html += '</label>';
+
+                            // Champ selon le type
+                            switch (field.type) {
+                                case 'color':
+                                    html += `<input type="color" id="${fieldId}" name="${fieldNameAttr}" value="${escapedValue}">`;
+                                    break;
+
+                                case 'number':
+                                    html += `<input type="number" id="${fieldId}" name="${fieldNameAttr}" value="${escapedValue}"`;
+                                    if (field.min !== undefined) html += ` min="${field.min}"`;
+                                    if (field.max !== undefined) html += ` max="${field.max}"`;
+                                    if (field.step !== undefined) html += ` step="${field.step}"`;
+                                    if (field.readonly) html += ` readonly`;
+                                    html += '>';
+                                    break;
+
+                                case 'select':
+                                    html += `<select id="${fieldId}" name="${fieldNameAttr}">`;
+                                    field.options.forEach(option => {
+                                        const selected = (option.value == value) ? ' selected' : '';
+                                        const disabled = option.disabled ? ' disabled' : '';
+                                        html += `<option value="${escapeHtmlAttr(option.value)}"${selected}${disabled}>${escapeHtml(option.label)}</option>`;
+                                    });
+                                    html += '</select>';
+                                    break;
+
+                                case 'checkbox':
+                                    const checked = (value == '1' || value === true || value === 'true') ? ' checked' : '';
+                                    html += `<label class="toggle-switch">`;
+                                    html += `<input type="checkbox" id="${fieldId}" name="${fieldNameAttr}" value="1"${checked}>`;
+                                    html += `<span class="toggle-slider"></span>`;
+                                    html += `</label>`;
+                                    break;
+
+                                case 'range':
+                                    html += `<input type="range" id="${fieldId}" name="${fieldNameAttr}" value="${escapedValue}"`;
+                                    if (field.min !== undefined) html += ` min="${field.min}"`;
+                                    if (field.max !== undefined) html += ` max="${field.max}"`;
+                                    if (field.step !== undefined) html += ` step="${field.step}"`;
+                                    html += '>';
+                                    break;
+
+                                default: // text
+                                    html += `<input type="text" id="${fieldId}" name="${fieldNameAttr}" value="${escapedValue}"`;
+                                    if (field.placeholder) html += ` placeholder="${escapeHtmlAttr(field.placeholder)}"`;
+                                    html += '>';
+                            }
+
+                            // Description
+                            if (field.description) {
+                                html += `<small class="field-description">${escapeHtml(field.description)}</small>`;
+                            }
+
+                            html += '</div>';
+                            return html;
+                        }
+
+                        /**
+                         * Génère le HTML complet pour une modale
+                         */
+                        generateModalHTML(category, fields, title) {
+                            let html = '<div class="modal-form-grid">';
+
+                            fields.forEach(fieldName => {
+                                const currentValue = previewSystem.values[`canvas_${fieldName}`];
+                                html += this.generateFieldHTML(fieldName, currentValue);
+                            });
+
+                            html += '</div>';
+                            return html;
+                        }
+
+                        /**
+                         * Valide un formulaire
+                         */
+                        validateForm(category) {
+                            const errors = [];
+                            const modal = document.querySelector(`#canvas-${category}-modal`);
+                            if (!modal) return errors;
+
+                            const fields = modal.querySelectorAll('input, select');
+
+                            fields.forEach(field => {
+                                const fieldName = field.name.replace('pdf_builder_canvas_', '');
+                                const fieldConfig = this.fieldDefinitions[fieldName];
+
+                                if (!fieldConfig) return;
+
+                                // Validation required
+                                if (fieldConfig.required && !field.value.trim()) {
+                                    errors.push(`${fieldConfig.label} est requis`);
+                                }
+
+                                // Validation personnalisée
+                                if (fieldConfig.validation && typeof fieldConfig.validation === 'function') {
+                                    const customError = fieldConfig.validation(field.value);
+                                    if (customError) errors.push(customError);
+                                }
+
+                                // Validation numérique
+                                if (fieldConfig.type === 'number') {
+                                    const numValue = parseFloat(field.value);
+                                    if (isNaN(numValue)) {
+                                        errors.push(`${fieldConfig.label} doit être un nombre`);
+                                    } else {
+                                        if (fieldConfig.min !== undefined && numValue < fieldConfig.min) {
+                                            errors.push(`${fieldConfig.label} doit être au moins ${fieldConfig.min}`);
+                                        }
+                                        if (fieldConfig.max !== undefined && numValue > fieldConfig.max) {
+                                            errors.push(`${fieldConfig.label} doit être au plus ${fieldConfig.max}`);
+                                        }
+                                    }
+                                }
+                            });
+
+                            return errors;
+                        }
+
+                        /**
+                         * Met à jour les dépendances des champs
+                         */
+                        updateFieldDependencies(masterField, isEnabled) {
+                            const dependentFields = this.fieldDependencies[masterField];
+                            if (!dependentFields) return;
+
+                            // Monitorer la mise à jour de dépendance
+                            modalMonitoring.trackDependencyUpdate(masterField, dependentFields, isEnabled);
+
+                            dependentFields.forEach(dependentField => {
+                                const fieldElement = document.querySelector(`[name="pdf_builder_canvas_${dependentField}"]`);
+                                if (fieldElement) {
+                                    const formGroup = fieldElement.closest('.form-group');
+                                    if (formGroup) {
+                                        if (isEnabled) {
+                                            formGroup.style.opacity = '1';
+                                            fieldElement.disabled = false;
+                                        } else {
+                                            formGroup.style.opacity = '0.5';
+                                            fieldElement.disabled = true;
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    // ===========================================
+                    // CONFIGURATION CENTRALISÉE DES MODALES
+                    // ===========================================
+
+                    // Initialiser le générateur de formulaires
+                    const formGenerator = new ModalFormGenerator();
+
+                    // Définir tous les champs disponibles
+                    formGenerator
+                        // Dimensions
+                        .defineField('width', {
+                            type: 'number',
+                            label: 'Largeur (px)',
+                            min: 100,
+                            max: 5000,
+                            defaultValue: '794',
+                            readonly: true,
+                            group: 'dimensions'
+                        })
+                        .defineField('height', {
+                            type: 'number',
+                            label: 'Hauteur (px)',
+                            min: 100,
+                            max: 5000,
+                            defaultValue: '1123',
+                            readonly: true,
+                            group: 'dimensions'
+                        })
+                        .defineField('dpi', {
+                            type: 'select',
+                            label: 'DPI',
+                            options: [
+                                { value: '72', label: '72 (Web)' },
+                                { value: '96', label: '96 (Écran)' },
+                                { value: '150', label: '150 (Impression)' },
+                                { value: '300', label: '300 (Haute qualité)' }
+                            ],
+                            defaultValue: '96',
+                            group: 'dimensions'
+                        })
+                        .defineField('format', {
+                            type: 'select',
+                            label: 'Format prédéfini',
+                            options: [
+                                { value: 'A4', label: 'A4 (210×297mm)' },
+                                { value: 'A3', label: 'A3 (297×420mm) - Bientôt', disabled: true },
+                                { value: 'Letter', label: 'Letter (8.5×11") - Bientôt', disabled: true },
+                                { value: 'Legal', label: 'Legal (8.5×14") - Bientôt', disabled: true }
+                            ],
+                            defaultValue: 'A4',
+                            group: 'dimensions'
+                        })
+
+                        // Apparence
+                        .defineField('bg_color', {
+                            type: 'color',
+                            label: 'Couleur de fond',
+                            defaultValue: '#ffffff',
+                            group: 'apparence'
+                        })
+                        .defineField('border_color', {
+                            type: 'color',
+                            label: 'Couleur bordure',
+                            defaultValue: '#cccccc',
+                            group: 'apparence'
+                        })
+                        .defineField('border_width', {
+                            type: 'number',
+                            label: 'Épaisseur bordure (px)',
+                            min: 0,
+                            max: 10,
+                            defaultValue: '1',
+                            group: 'apparence'
+                        })
+                        .defineField('shadow_enabled', {
+                            type: 'checkbox',
+                            label: 'Ombre activée',
+                            defaultValue: '0',
+                            group: 'apparence'
+                        })
+
+                        // Grille & Guides
+                        .defineField('grid_enabled', {
+                            type: 'checkbox',
+                            label: 'Grille activée',
+                            defaultValue: '1',
+                            group: 'grille'
+                        })
+                        .defineField('grid_size', {
+                            type: 'number',
+                            label: 'Taille grille (px)',
+                            min: 5,
+                            max: 100,
+                            defaultValue: '20',
+                            group: 'grille'
+                        })
+                        .defineField('guides_enabled', {
+                            type: 'checkbox',
+                            label: 'Guides activés',
+                            defaultValue: '1',
+                            group: 'grille'
+                        })
+                        .defineField('snap_to_grid', {
+                            type: 'checkbox',
+                            label: 'Accrochage à la grille',
+                            defaultValue: '1',
+                            group: 'grille'
+                        })
+
+                        // Zoom & Navigation
+                        .defineField('zoom_min', {
+                            type: 'number',
+                            label: 'Zoom minimum (%)',
+                            min: 10,
+                            max: 100,
+                            defaultValue: '25',
+                            group: 'zoom'
+                        })
+                        .defineField('zoom_max', {
+                            type: 'number',
+                            label: 'Zoom maximum (%)',
+                            min: 100,
+                            max: 1000,
+                            defaultValue: '500',
+                            group: 'zoom'
+                        })
+                        .defineField('zoom_default', {
+                            type: 'number',
+                            label: 'Zoom par défaut (%)',
+                            min: 25,
+                            max: 500,
+                            defaultValue: '100',
+                            group: 'zoom'
+                        })
+                        .defineField('zoom_step', {
+                            type: 'number',
+                            label: 'Pas de zoom (%)',
+                            min: 5,
+                            max: 50,
+                            defaultValue: '25',
+                            group: 'zoom'
+                        })
+
+                        // Interaction
+                        .defineField('drag_enabled', {
+                            type: 'checkbox',
+                            label: 'Glisser activé',
+                            defaultValue: '1',
+                            group: 'interactions'
+                        })
+                        .defineField('resize_enabled', {
+                            type: 'checkbox',
+                            label: 'Redimensionnement activé',
+                            defaultValue: '1',
+                            group: 'interactions'
+                        })
+                        .defineField('rotate_enabled', {
+                            type: 'checkbox',
+                            label: 'Rotation activée',
+                            defaultValue: '1',
+                            group: 'interactions'
+                        })
+                        .defineField('multi_select', {
+                            type: 'checkbox',
+                            label: 'Sélection multiple',
+                            defaultValue: '1',
+                            group: 'interactions'
+                        })
+                        .defineField('selection_mode', {
+                            type: 'select',
+                            label: 'Mode de sélection',
+                            options: [
+                                { value: 'single', label: 'Simple' },
+                                { value: 'multiple', label: 'Multiple' },
+                                { value: 'group', label: 'Grouper' }
+                            ],
+                            defaultValue: 'single',
+                            group: 'interactions'
+                        })
+                        .defineField('keyboard_shortcuts', {
+                            type: 'checkbox',
+                            label: 'Raccourcis clavier',
+                            defaultValue: '1',
+                            group: 'interactions'
+                        })
+
+                        // Export
+                        .defineField('export_format', {
+                            type: 'select',
+                            label: 'Format d\'export',
+                            options: [
+                                { value: 'png', label: 'PNG' },
+                                { value: 'jpg', label: 'JPEG' },
+                                { value: 'svg', label: 'SVG' },
+                                { value: 'pdf', label: 'PDF' }
+                            ],
+                            defaultValue: 'png',
+                            group: 'export'
+                        })
+                        .defineField('export_quality', {
+                            type: 'number',
+                            label: 'Qualité (%)',
+                            min: 10,
+                            max: 100,
+                            defaultValue: '90',
+                            group: 'export'
+                        })
+                        .defineField('export_transparent', {
+                            type: 'checkbox',
+                            label: 'Fond transparent',
+                            defaultValue: '0',
+                            group: 'export'
+                        })
+
+                        // Performance
+                        .defineField('fps_target', {
+                            type: 'number',
+                            label: 'FPS cible',
+                            min: 10,
+                            max: 120,
+                            defaultValue: '60',
+                            group: 'performance'
+                        })
+                        .defineField('memory_limit_js', {
+                            type: 'number',
+                            label: 'Limite mémoire JS (MB)',
+                            min: 10,
+                            max: 500,
+                            defaultValue: '50',
+                            group: 'performance'
+                        })
+                        .defineField('response_timeout', {
+                            type: 'number',
+                            label: 'Timeout réponse (ms)',
+                            min: 1000,
+                            max: 30000,
+                            defaultValue: '5000',
+                            group: 'performance'
+                        })
+                        .defineField('lazy_loading_editor', {
+                            type: 'checkbox',
+                            label: 'Chargement différé éditeur',
+                            defaultValue: '1',
+                            group: 'performance'
+                        })
+                        .defineField('preload_critical', {
+                            type: 'checkbox',
+                            label: 'Préchargement critique',
+                            defaultValue: '1',
+                            group: 'performance'
+                        })
+                        .defineField('lazy_loading_plugin', {
+                            type: 'checkbox',
+                            label: 'Chargement différé plugin',
+                            defaultValue: '1',
+                            group: 'performance'
+                        })
+
+                        // Debug & Maintenance
+                        .defineField('debug_enabled', {
+                            type: 'checkbox',
+                            label: 'Debug activé',
+                            defaultValue: '0',
+                            group: 'debug'
+                        })
+                        .defineField('performance_monitoring', {
+                            type: 'checkbox',
+                            label: 'Monitoring performance',
+                            defaultValue: '0',
+                            group: 'debug'
+                        })
+                        .defineField('error_reporting', {
+                            type: 'checkbox',
+                            label: 'Rapport d\'erreurs',
+                            defaultValue: '0',
+                            group: 'debug'
+                        })
+                        .defineField('memory_limit_php', {
+                            type: 'number',
+                            label: 'Limite mémoire PHP (MB)',
+                            min: 32,
+                            max: 1024,
+                            defaultValue: '128',
+                            group: 'debug'
+                        });
+
+                    // Définir les dépendances entre champs
+                    formGenerator
+                        .addDependency('grid_enabled', ['snap_to_grid', 'grid_size'])
+                        .addDependency('guides_enabled', []);
+
+                    // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
-                        if (!modalConfigs[category]) {
-                            console.error('Configuration de modal introuvable pour:', category);
-                            return;
-                        }
+                        console.log('Ouverture de la modal pour:', category);
 
                         currentModalCategory = category;
-                        const config = modalConfigs[category];
 
-                        // Mettre à jour le titre
-                        modalTitle.textContent = config.title;
+                        // Monitorer l'ouverture
+                        modalMonitoring.trackModalOpen(category);
 
-                        // Mettre à jour le contenu
-                        modalBody.innerHTML = typeof config.content === 'function' ? config.content() : config.content;
+                        // Générer le contenu de la modal avec le nouveau système
+                        const modalContent = formGenerator.generateModalHTML(category);
 
-                        // Afficher l'overlay
-                        overlay.classList.add('pdf-builder-modal-open');
-                        document.body.style.overflow = 'hidden';
-
-                        // Forcer le repositionnement au niveau document si nécessaire
-                        if (overlay.parentNode !== document.body) {
-                            document.body.appendChild(overlay);
-                            console.log('PDF Builder Modal System: Modal moved to document.body');
+                        // Insérer le contenu dans la modal spécifique à la catégorie
+                        const modalId = `canvas-${category}-modal`;
+                        const modalBody = document.querySelector(`#${modalId} .modal-body`);
+                        if (modalBody) {
+                            modalBody.innerHTML = modalContent;
                         }
 
-                        console.log('PDF Builder Modal System: Modal class added, current style:', overlay.style.display);
-                        console.log('PDF Builder Modal System: Modal computed style:', window.getComputedStyle(overlay).display);
+                        // Afficher la modal
+                        const modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'block';
+                            modal.classList.add('show');
+                        }
 
-                        // Synchroniser les valeurs de la modal avec les champs cachés
+                        // Synchroniser les valeurs des champs
                         modalSettingsManager.syncModalValues();
 
-                        // Ajouter les gestionnaires d'événements pour les dépendances
+                        // Configurer les gestionnaires d'événements pour les dépendances
                         modalSettingsManager.setupDependencyHandlers();
+
+                        console.log('Modal ouverte avec succès pour:', category);
                     }
 
                     // Gestionnaire centralisé des paramètres des modales
                     const modalSettingsManager = {
-                        // Configuration des dépendances entre champs
-                        dependencies: {
-                            'pdf_builder_canvas_grid_enabled': ['pdf_builder_canvas_snap_to_grid', 'pdf_builder_canvas_grid_size'],
-                            'pdf_builder_canvas_guides_enabled': []
-                        },
-
                         // Synchroniser les valeurs des champs cachés vers la modal actuelle
                         syncModalValues: function() {
                             if (!currentModalCategory) return;
@@ -947,30 +1477,9 @@ $settings = get_option('pdf_builder_settings', array());
                                         input.value = currentValue;
                                     }
 
-                                    // Gérer les dépendances
-                                    this.updateFieldDependencies(input.name, input.checked || input.value);
-                                }
-                            });
-                        },
-
-                        // Mettre à jour les dépendances d'un champ
-                        updateFieldDependencies: function(fieldName, isEnabled) {
-                            const dependentFields = this.dependencies[fieldName];
-                            if (!dependentFields) return;
-
-                            // Trouver la modal actuelle pour chercher les éléments dedans
-                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
-                            if (!currentModal) return;
-
-                            dependentFields.forEach(depFieldName => {
-                                const depInput = currentModal.querySelector(`input[name="${depFieldName}"], select[name="${depFieldName}"]`);
-                                if (depInput) {
-                                    const shouldDisable = !isEnabled;
-                                    depInput.disabled = shouldDisable;
-                                    if (depInput.parentElement && depInput.parentElement.classList.contains('toggle-switch')) {
-                                        depInput.parentElement.classList.toggle('disabled', shouldDisable);
-                                    }
-                                    console.log(`Dépendance mise à jour: ${depFieldName} disabled=${shouldDisable}`);
+                                    // Gérer les dépendances avec le nouveau système
+                                    const fieldName = input.name.replace('pdf_builder_canvas_', '');
+                                    formGenerator.updateFieldDependencies(fieldName, input.checked || input.value);
                                 }
                             });
                         },
@@ -979,7 +1488,17 @@ $settings = get_option('pdf_builder_settings', array());
                         saveModalSettings: function() {
                             if (!currentModalCategory) return;
 
+                            const startTime = Date.now();
                             console.log('Sauvegarde des paramètres pour:', currentModalCategory);
+
+                            // Validation du formulaire
+                            const errors = formGenerator.validateForm(currentModalCategory);
+                            if (errors.length > 0) {
+                                console.error('Erreurs de validation:', errors);
+                                modalMonitoring.trackValidationError(currentModalCategory, errors);
+                                alert('Erreurs de validation:\n' + errors.join('\n'));
+                                return;
+                            }
 
                             // Trouver le modal actuel
                             const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
@@ -1030,6 +1549,7 @@ $settings = get_option('pdf_builder_settings', array());
 
                         // Sauvegarder côté serveur
                         saveToServer: function(values) {
+                            const saveStartTime = Date.now();
                             console.log('Sauvegarde côté serveur...');
 
                             // Créer FormData avec les valeurs
@@ -1053,14 +1573,19 @@ $settings = get_option('pdf_builder_settings', array());
                                 return response.json();
                             })
                             .then(data => {
+                                const saveTime = Date.now() - saveStartTime;
                                 console.log('Response data:', data);
                                 if (data.success) {
+                                    modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
                                 } else {
+                                    modalMonitoring.trackSaveError(currentModalCategory, data.data?.message || data.message || 'Erreur inconnue', saveTime);
                                     console.error('Erreur lors de la sauvegarde:', data.data?.message || data.message || 'Erreur inconnue');
                                 }
                             })
                             .catch(error => {
+                                const saveTime = Date.now() - saveStartTime;
+                                modalMonitoring.trackSaveError(currentModalCategory, error.message || 'Erreur réseau', saveTime);
                                 console.error('Erreur AJAX lors de la sauvegarde:', error);
                             });
                         },
@@ -1073,12 +1598,12 @@ $settings = get_option('pdf_builder_settings', array());
                             if (!currentModal) return;
 
                             // Écouter les changements sur les champs qui ont des dépendances
-                            Object.keys(this.dependencies).forEach(masterField => {
-                                const masterInput = currentModal.querySelector(`input[name="${masterField}"], select[name="${masterField}"]`);
+                            Object.keys(formGenerator.fieldDependencies).forEach(masterField => {
+                                const masterInput = currentModal.querySelector(`input[name="pdf_builder_canvas_${masterField}"], select[name="pdf_builder_canvas_${masterField}"]`);
                                 if (masterInput) {
                                     masterInput.addEventListener('change', (e) => {
                                         const isEnabled = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-                                        this.updateFieldDependencies(masterField, isEnabled);
+                                        formGenerator.updateFieldDependencies(masterField, isEnabled);
                                     });
                                 }
                             });
@@ -1087,8 +1612,17 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Fermer la modal
                     function closeModal() {
-                        overlay.classList.remove('pdf-builder-modal-open');
-                        document.body.style.overflow = '';
+                        if (!currentModalCategory) return;
+
+                        // Monitorer la fermeture
+                        modalMonitoring.trackModalClose(currentModalCategory);
+
+                        const modalId = `canvas-${currentModalCategory}-modal`;
+                        const modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'none';
+                            modal.classList.remove('show');
+                        }
                         currentModalCategory = null;
                         console.log('Modal fermée');
                     }
@@ -1111,19 +1645,19 @@ $settings = get_option('pdf_builder_settings', array());
                         }
 
                         // Bouton de fermeture
-                        if (e.target.closest('.pdf-builder-modal-close') || e.target.closest('.pdf-builder-modal-cancel')) {
+                        if (e.target.closest('.modal-close') || e.target.closest('.modal-cancel')) {
                             closeModal();
                             return;
                         }
 
                         // Clic sur l'overlay (backdrop)
-                        if (e.target.classList.contains('pdf-builder-modal-overlay') || e.target.classList.contains('pdf-builder-modal-backdrop')) {
+                        if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-backdrop')) {
                             closeModal();
                             return;
                         }
 
                         // Bouton de sauvegarde
-                        if (e.target.closest('.pdf-builder-modal-save')) {
+                        if (e.target.closest('.modal-save')) {
                             e.preventDefault();
                             saveModalSettings();
                             return;
@@ -1132,14 +1666,187 @@ $settings = get_option('pdf_builder_settings', array());
 
                     // Fermeture avec Échap
                     document.addEventListener('keydown', function(e) {
-                        if (e.key === 'Escape' && overlay.classList.contains('pdf-builder-modal-open')) {
-                            closeModal();
+                        if (e.key === 'Escape' && currentModalCategory) {
+                            const modalId = `canvas-${currentModalCategory}-modal`;
+                            const modal = document.getElementById(modalId);
+                            if (modal && modal.style.display !== 'none') {
+                                closeModal();
+                            }
+                        }
+
+                        // Raccourci pour le monitoring (Ctrl+Shift+M)
+                        if (e.ctrlKey && e.shiftKey && e.key === 'M') {
+                            e.preventDefault();
+                            modalMonitoring.showDashboard();
                         }
                     });
 
                     console.log('Système de modal PDF Builder initialisé');
 
+                    // ===========================================
+                    // FONCTIONS GLOBALES DE MONITORING
+                    // ===========================================
+
+                    // Fonction globale pour accéder au monitoring depuis la console
+                    window.pdfBuilderMonitoring = {
+                        showDashboard: () => modalMonitoring.showDashboard(),
+                        getMetrics: () => modalMonitoring.getMetrics(),
+                        getReport: () => modalMonitoring.generateReport(),
+                        clearHistory: () => {
+                            modalMonitoring.history = [];
+                            console.log('📝 Historique de monitoring effacé');
+                        },
+                        exportData: () => {
+                            const data = {
+                                metrics: modalMonitoring.getMetrics(),
+                                report: modalMonitoring.generateReport(),
+                                timestamp: new Date().toISOString()
+                            };
+                            console.log('📊 Données de monitoring exportées:', data);
+                            return data;
+                        }
+                    };
+
+                    console.log('🔍 Monitoring accessible via: window.pdfBuilderMonitoring.showDashboard()');
+
                     // Initialiser le système de previews dynamiques
                     previewSystem.init();
                 })();
             </script>
+
+            <!-- Modales individuelles pour chaque catégorie -->
+            <div id="canvas-dimensions-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>📐 Dimensions & Format</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-apparence-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>🎨 Apparence</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-grille-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>📏 Grille & Guides</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-zoom-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>🔍 Zoom & Navigation</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-interactions-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>🖱️ Interaction</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-export-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>💾 Export</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-performance-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>⚡ Performance</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-debug-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>🐛 Debug & Maintenance</h2>
+                        <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Contenu généré dynamiquement -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-secondary modal-cancel">Annuler</button>
+                        <button type="button" class="button button-primary modal-save">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
