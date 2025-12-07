@@ -439,6 +439,207 @@ $settings = get_option('pdf_builder_settings', array());
 
 
 
+            <!-- CSS pour les modales -->
+            <style>
+                /* Styles pour les modales */
+                .modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 10000;
+                    display: none;
+                }
+
+                .modal-overlay.show {
+                    display: flex !important;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .modal-backdrop {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(2px);
+                }
+
+                .modal-container {
+                    position: relative;
+                    background: #fff;
+                    border-radius: 8px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    max-width: 600px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow: hidden;
+                    z-index: 10001;
+                    animation: modalSlideIn 0.3s ease-out;
+                }
+
+                @keyframes modalSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-20px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                .modal-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 20px 24px;
+                    border-bottom: 1px solid #e1e5e9;
+                    background: #f8f9fa;
+                }
+
+                .modal-header h2 {
+                    margin: 0;
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: #1a1a1a;
+                }
+
+                .modal-close {
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    color: #6c757d;
+                    cursor: pointer;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    transition: all 0.2s;
+                }
+
+                .modal-close:hover {
+                    background-color: #e9ecef;
+                    color: #495057;
+                }
+
+                .modal-body {
+                    padding: 24px;
+                    max-height: 60vh;
+                    overflow-y: auto;
+                }
+
+                .modal-footer {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 12px;
+                    padding: 16px 24px;
+                    border-top: 1px solid #e1e5e9;
+                    background: #f8f9fa;
+                }
+
+                .modal-form-grid {
+                    display: grid;
+                    gap: 20px;
+                }
+
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .form-group label {
+                    font-weight: 500;
+                    color: #374151;
+                    font-size: 14px;
+                }
+
+                .form-group input,
+                .form-group select {
+                    padding: 8px 12px;
+                    border: 1px solid #d1d5db;
+                    border-radius: 6px;
+                    font-size: 14px;
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                }
+
+                .form-group input:focus,
+                .form-group select:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                .form-group input:disabled,
+                .form-group select:disabled {
+                    background-color: #f9fafb;
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+
+                .field-description {
+                    font-size: 12px;
+                    color: #6b7280;
+                    margin: 0;
+                }
+
+                .toggle-switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 44px;
+                    height: 24px;
+                }
+
+                .toggle-switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+
+                .toggle-slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    transition: 0.3s;
+                    border-radius: 24px;
+                }
+
+                .toggle-slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 18px;
+                    width: 18px;
+                    left: 3px;
+                    bottom: 3px;
+                    background-color: white;
+                    transition: 0.3s;
+                    border-radius: 50%;
+                }
+
+                input:checked + .toggle-slider {
+                    background-color: #3b82f6;
+                }
+
+                input:checked + .toggle-slider:before {
+                    transform: translateX(20px);
+                }
+
+                .toggle-switch.disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+
+                .toggle-switch.disabled .toggle-slider {
+                    cursor: not-allowed;
+                }
+            </style>
+
             <script>
                 (function() {
                     'use strict';
