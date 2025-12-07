@@ -9,11 +9,20 @@
 
     // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
     if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
-        window.PDF_BUILDER_CONFIG = {
-            debug: false,
-            ajaxurl: '',
-            nonce: ''
-        };
+        // Essayer d'utiliser pdfBuilderAjax si PDF_BUILDER_CONFIG n'existe pas
+        if (typeof window.pdfBuilderAjax !== 'undefined') {
+            window.PDF_BUILDER_CONFIG = {
+                debug: false,
+                ajaxurl: window.pdfBuilderAjax.ajaxurl || '',
+                nonce: window.pdfBuilderAjax.nonce || ''
+            };
+        } else {
+            window.PDF_BUILDER_CONFIG = {
+                debug: false,
+                ajaxurl: '',
+                nonce: ''
+            };
+        }
     }
 
     // Métriques de performance
