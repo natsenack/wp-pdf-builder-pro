@@ -493,17 +493,6 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                                 </select>
                             </div>
 
-                            <!-- Aperçu du template assigné -->
-                            <div class="template-preview" data-original-value="<?php echo esc_attr($current_mappings[$status_key] ?? ''); ?>" style="display: none;">
-                                <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>      
-                                    <p class="current-template">
-                                        <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
-                                        <span class="assigned-badge assigned-badge-saved">✅</span>
-                                    </p>
-                                <?php else: ?>
-                                    <p class="no-template">Aucun template assigné</p>
-                                <?php endif; ?>
-                            </div>
                         </article>
                     <?php endforeach; ?>
                 </div>
@@ -550,40 +539,6 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
     border-color: #dc3545 !important;
     color: white !important;
 }
-
-/* Styles pour l'affichage en temps réel */
-.template-preview .current-template {
-    margin: 8px 0;
-    padding: 8px 12px;
-    background: #e8f5e8;
-    border: 1px solid #c3e6c3;
-    border-radius: 4px;
-    color: #2d5a2d;
-}
-
-.template-preview .no-template {
-    margin: 8px 0;
-    padding: 8px 12px;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    color: #6c757d;
-    font-style: italic;
-}
-
-.assigned-badge {
-    float: right;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.assigned-badge-unsaved {
-    color: #ffc107;
-}
-
-.assigned-badge-saved {
-    color: #28a745;
-}
 </style>
 
 
@@ -599,84 +554,74 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
         const saveBtn = document.getElementById('save-templates-btn');
         if (!saveBtn) return;
 
-        // === AFFICHAGE EN TEMPS RÉEL DES ASSIGNATIONS ===
-        initRealTimePreview();
+        // Gestionnaire de sauvegarde
+        saveBtn.addEventListener('click', function() {
+            // Collecter toutes les données du formulaire
+            const formData = new FormData(document.getElementById('templates-status-form'));
 
-        function initRealTimePreview() {
-            // Écouter les changements sur tous les selects de template
-            const templateSelects = document.querySelectorAll('.template-select');
+            // Ajouter l'action
+            formData.append('action', 'pdf_builder_ajax_handler');
+            formData.append('action_type', 'save_all_settings');
 
-            templateSelects.forEach(function(select) {
-                select.addEventListener('change', function() {
-                    updateTemplatePreview(this);
-                });
+            // Désactiver le bouton pendant la sauvegarde
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Sauvegarde en cours...';
 
-                // Stocker la valeur originale pour la comparaison (utiliser la valeur du HTML)
-                const previewDiv = select.closest('.template-status-card').querySelector('.template-preview');
-                if (previewDiv) {
-                    // Ne pas écraser la valeur originale définie dans le HTML
-                    // previewDiv.dataset.originalValue = select.value;
-                    // Initialiser l'affichage avec la valeur actuelle
-                    updateTemplatePreview(select);
+            // Envoyer la requête
+            fetch(pdfBuilderAjax.ajaxurl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Afficher un message de succès
+                    showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
+
+                    // Mettre à jour les valeurs originales pour éviter les faux positifs de changement
+                    updateOriginalValues();
+                } else {
+                    showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur AJAX:', error);
+                showSaveMessage('Erreur de communication avec le serveur', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                saveBtn.disabled = false;
+                saveBtn.textContent = '[SAVE] Sauvegarder les mappings';
             });
-        }
-
-        function updateTemplatePreview(select) {
-            const statusKey = select.id.replace('template_', '');
-            const selectedValue = select.value;
-            const selectedText = select.options[select.selectedIndex].text;
-
-            // Trouver la section preview correspondante
-            const card = select.closest('.template-status-card');
-            const previewDiv = card.querySelector('.template-preview');
-
-            if (!previewDiv) return;
-
-            // Vérifier si la valeur a changé par rapport à la valeur sauvegardée
-            const originalValue = previewDiv.dataset.originalValue || '';
-            const isChanged = selectedValue !== originalValue;
-
-            if (selectedValue && selectedValue !== '') {
-                // Template assigné
-                const badgeClass = isChanged ? 'assigned-badge-unsaved' : 'assigned-badge-saved';
-                const badgeIcon = isChanged ? '🔄' : '✅';
-
-                previewDiv.innerHTML = `
-                    <p class="current-template">
-                        <strong>Assigné :</strong> ${selectedText}
-                        <span class="assigned-badge ${badgeClass}">${badgeIcon}</span>
-                    </p>
-                `;
-            } else {
-                // Aucun template
-                const badgeClass = isChanged ? 'assigned-badge-unsaved' : '';
-                const badgeIcon = isChanged ? '🔄' : '';
-
-                previewDiv.innerHTML = `
-                    <p class="no-template">
-                        Aucun template assigné
-                        ${badgeIcon ? `<span class="assigned-badge ${badgeClass}">${badgeIcon}</span>` : ''}
-                    </p>
-                `;
-            }
-        }
+        });
 
         function updateOriginalValues() {
-            // Mettre à jour les valeurs originales pour tous les selects après sauvegarde
-            const templateSelects = document.querySelectorAll('.template-select');
-            templateSelects.forEach(function(select) {
-                const previewDiv = select.closest('.template-status-card').querySelector('.template-preview');
-                if (previewDiv) {
-                    previewDiv.dataset.originalValue = select.value;
-                    // Remettre à jour l'aperçu pour changer le badge
-                    updateTemplatePreview(select);
-                }
-            });
+            // Cette fonction peut être utilisée pour d'autres logiques si nécessaire
+            // Pour l'instant, elle ne fait rien car nous n'avons plus de prévisualisations
         }
 
-        // Initialiser les aperçus temps réel
-        initRealTimePreview();
+        function showSaveMessage(message, type) {
+            // Créer un élément de message temporaire
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
+            messageDiv.innerHTML = `<p>${message}</p>`;
+
+            // L'insérer au début du formulaire
+            const form = document.getElementById('templates-status-form');
+            form.parentNode.insertBefore(messageDiv, form);
+
+            // Auto-suppression après 5 secondes
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 5000);
+        }
+    });
+})();
     });
 })();
 </script>

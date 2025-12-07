@@ -1244,62 +1244,8 @@
 
     // Gestion de la prévisualisation des templates après sauvegarde
     document.addEventListener('pdfBuilderSettingsSaved', function(event) {
-        updateTemplatePreviews();
+        // Plus de prévisualisation - seulement la sauvegarde fonctionne
     });
-
-    // Charger les prévisualisations au chargement de la page
-    document.addEventListener('DOMContentLoaded', function() {
-        // Petit délai pour s'assurer que le DOM est complètement chargé
-        setTimeout(function() {
-            updateTemplatePreviews();
-        }, 100);
-    });
-
-    // Fonction pour mettre à jour la prévisualisation des templates
-    function updateTemplatePreviews() {
-        // Récupérer les données sauvegardées depuis le serveur
-        fetch(PDF_BUILDER_CONFIG.ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_ajax_handler',
-                'action_type': 'get_template_mappings',
-                'nonce': PDF_BUILDER_CONFIG.nonce
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.data) {
-                const mappings = data.data.mappings || {};
-                const templates = data.data.templates || {};
-
-                // Mettre à jour chaque prévisualisation
-                document.querySelectorAll('.template-preview').forEach(preview => {
-                    const statusKey = preview.closest('article').querySelector('.template-select').id.replace('template_', '');
-                    const assignedTemplate = mappings[statusKey];
-
-                    if (assignedTemplate && templates[assignedTemplate]) {
-                        // Afficher la prévisualisation avec le template assigné
-                        preview.innerHTML = `
-                            <p class="current-template">
-                                <strong>Assigné :</strong> ${templates[assignedTemplate]}
-                                <span class="assigned-badge assigned-badge-saved">✅</span>
-                            </p>
-                        `;
-                        preview.style.display = 'block';
-                    } else {
-                        // Masquer la prévisualisation si aucun template n'est assigné
-                        preview.style.display = 'none';
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Erreur lors de la mise à jour des prévisualisations:', error);
-        });
-    }
 
 })();
 
