@@ -300,6 +300,10 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             case 'contenu':
                 $saved_options = [
+                    'canvas_max_size' => get_option('pdf_builder_canvas_max_size', 10000),
+                    'canvas_dpi' => get_option('pdf_builder_canvas_dpi', 300),
+                    'canvas_format' => get_option('pdf_builder_canvas_format', 'png'),
+                    'canvas_quality' => get_option('pdf_builder_canvas_quality', 90),
                     'template_library_enabled' => get_option('pdf_builder_template_library_enabled', '1'),
                     'default_template' => get_option('pdf_builder_default_template', 'blank'),
                 ];
@@ -395,14 +399,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup', 'pdf_builder_cache_last_cleanup',
                 // Canvas text fields
                 'pdf_builder_canvas_bg_color', 'pdf_builder_canvas_border_color', 'pdf_builder_canvas_container_bg_color', 'pdf_builder_canvas_selection_mode', 'pdf_builder_canvas_export_format',
-                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_default_canvas_unit'
+                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_default_canvas_unit', 'pdf_builder_canvas_format'
             ],
             'int_fields' => [
                 'pdf_builder_cache_max_size', 'pdf_builder_cache_ttl',
                 // Canvas int fields
                 'pdf_builder_zoom_min', 'pdf_builder_zoom_max', 'pdf_builder_zoom_default', 'pdf_builder_zoom_step', 'pdf_builder_canvas_grid_size', 'pdf_builder_canvas_export_quality',
                 'pdf_builder_canvas_fps_target', 'pdf_builder_canvas_memory_limit_js', 'pdf_builder_canvas_memory_limit_php', 'pdf_builder_canvas_dpi',
-                'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_border_width'
+                'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_border_width', 'pdf_builder_canvas_max_size', 'pdf_builder_canvas_quality'
             ],
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'pdf_builder_cache_compression', 'pdf_builder_cache_auto_cleanup', 'pdf_builder_performance_auto_optimization',

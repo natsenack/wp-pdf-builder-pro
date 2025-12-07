@@ -997,8 +997,46 @@ if (isset($_POST['submit_canvas']) && isset($_POST['pdf_builder_canvas_nonce']) 
                         // Rafraîchir toutes les previews avec les nouvelles valeurs
                         previewSystem.refreshPreviews();
 
+                        // Sauvegarder côté serveur via AJAX
+                        saveCanvasSettingsToServer();
+
                         console.log('Paramètres sauvegardés et previews mises à jour');
                         closeModal();
+                    }
+
+                    // Sauvegarder les paramètres canvas côté serveur
+                    function saveCanvasSettingsToServer() {
+                        console.log('Sauvegarde côté serveur...');
+
+                        // Collecter toutes les données du formulaire canvas
+                        const formData = new FormData(document.getElementById('canvas-form'));
+                        
+                        // Ajouter l'action et le tab
+                        formData.append('action', 'pdf_builder_save_settings');
+                        formData.append('current_tab', 'contenu');
+                        
+                        // Ajouter le nonce
+                        const nonceField = document.querySelector('input[name="pdf_builder_canvas_nonce"]');
+                        if (nonceField) {
+                            formData.append('nonce', nonceField.value);
+                        }
+
+                        // Faire l'appel AJAX
+                        fetch(pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Paramètres canvas sauvegardés avec succès:', data.saved_count, 'paramètres');
+                            } else {
+                                console.error('Erreur lors de la sauvegarde:', data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur AJAX lors de la sauvegarde:', error);
+                        });
                     }
 
                     // Gestionnaire d'événements pour les boutons de configuration
