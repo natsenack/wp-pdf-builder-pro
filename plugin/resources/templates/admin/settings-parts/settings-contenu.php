@@ -1454,47 +1454,47 @@ foreach ($canvas_options as $option) {
                             const heightEl = document.getElementById('card-canvas-height');
                             const dpiEl = document.getElementById('card-canvas-dpi');
 
-                            if (widthEl) widthEl.textContent = v.canvas_width;
-                            if (heightEl) heightEl.textContent = v.canvas_height;
+                            if (widthEl) widthEl.textContent = v.canvas_canvas_width;
+                            if (heightEl) heightEl.textContent = v.canvas_canvas_height;
                             if (dpiEl) {
-                                const format = v.canvas_format || 'A4';
-                                const widthMM = this.calculateMM(v.canvas_width, v.canvas_dpi);
-                                const heightMM = this.calculateMM(v.canvas_height, v.canvas_dpi);
-                                dpiEl.textContent = `${v.canvas_dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
+                                const format = v.canvas_canvas_format || 'A4';
+                                const widthMM = this.calculateMM(v.canvas_canvas_width, v.canvas_canvas_dpi);
+                                const heightMM = this.calculateMM(v.canvas_canvas_height, v.canvas_canvas_dpi);
+                                dpiEl.textContent = `${v.canvas_canvas_dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
                             }
 
                             // Preview Apparence
                             const bgPreview = document.getElementById('card-bg-preview');
                             const borderPreview = document.getElementById('card-border-preview');
 
-                            if (bgPreview) bgPreview.style.backgroundColor = v.canvas_bg_color;
+                            if (bgPreview) bgPreview.style.backgroundColor = v.canvas_canvas_bg_color;
                             if (borderPreview) {
-                                borderPreview.style.borderColor = v.canvas_border_color;
-                                borderPreview.style.borderWidth = v.canvas_border_width + 'px';
-                                borderPreview.style.boxShadow = v.canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
-                                console.log('Mise à jour ombre preview:', v.canvas_shadow_enabled, borderPreview.style.boxShadow);
+                                borderPreview.style.borderColor = v.canvas_canvas_border_color;
+                                borderPreview.style.borderWidth = v.canvas_canvas_border_width + 'px';
+                                borderPreview.style.boxShadow = v.canvas_canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
+                                console.log('Mise à jour ombre preview:', v.canvas_canvas_shadow_enabled, borderPreview.style.boxShadow);
                             }
 
                             // Preview Grille
                             const gridPreview = document.getElementById('card-grid-preview');
                             if (gridPreview) {
-                                gridPreview.style.backgroundImage = v.canvas_grid_enabled ?
+                                gridPreview.style.backgroundImage = v.canvas_canvas_grid_enabled ?
                                     `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)` : 'none';
-                                gridPreview.style.backgroundSize = v.canvas_grid_enabled ? `${v.canvas_grid_size}px ${v.canvas_grid_size}px` : 'auto';
+                                gridPreview.style.backgroundSize = v.canvas_canvas_grid_enabled ? `${v.canvas_canvas_grid_size}px ${v.canvas_canvas_grid_size}px` : 'auto';
                             }
 
                             // Preview Zoom
                             const zoomPreview = document.getElementById('card-zoom-preview');
                             if (zoomPreview) {
-                                zoomPreview.textContent = `${v.canvas_zoom_default}%`;
-                                zoomPreview.style.fontSize = Math.max(12, Math.min(24, v.canvas_zoom_default / 4)) + 'px';
+                                zoomPreview.textContent = `${v.canvas_canvas_zoom_default}%`;
+                                zoomPreview.style.fontSize = Math.max(12, Math.min(24, v.canvas_canvas_zoom_default / 4)) + 'px';
                             }
 
                             // Preview Performance
                             const perfPreview = document.getElementById('card-perf-preview');
                             if (perfPreview) {
-                                perfPreview.textContent = `${v.canvas_fps_target} FPS`;
-                                perfPreview.style.color = v.canvas_fps_target >= 60 ? '#28a745' : v.canvas_fps_target >= 30 ? '#ffc107' : '#dc3545';
+                                perfPreview.textContent = `${v.canvas_canvas_fps_target} FPS`;
+                                perfPreview.style.color = v.canvas_canvas_fps_target >= 60 ? '#28a745' : v.canvas_canvas_fps_target >= 30 ? '#ffc107' : '#dc3545';
                             }
 
                             console.log('Preview System: All previews refreshed');
@@ -1512,14 +1512,14 @@ foreach ($canvas_options as $option) {
 
                             modalInputs.forEach(input => {
                                 input.addEventListener('input', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_');
+                                    const key = e.target.name.replace('pdf_builder_canvas_canvas_', 'canvas_canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
                                     console.log('Changement détecté:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
 
                                     // Conversion des types
                                     if (e.target.type === 'number') value = parseFloat(value) || 0;
-                                    if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
+                                    if (['canvas_canvas_shadow_enabled', 'canvas_canvas_grid_enabled', 'canvas_canvas_guides_enabled', 'canvas_canvas_snap_to_grid', 'canvas_canvas_export_transparent', 'canvas_canvas_lazy_loading_editor', 'canvas_canvas_performance_monitoring', 'canvas_canvas_error_reporting'].includes(key)) {
                                         value = value === true || value === '1' || value === 1;
                                         console.log('Conversion boolean pour', key, ':', value);
                                     }
