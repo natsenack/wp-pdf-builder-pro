@@ -383,7 +383,14 @@ class PDF_Builder_Unified_Ajax_Handler {
         $saved_count = 0;
         $settings = get_option('pdf_builder_settings', []);
 
-        // error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
+        error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
+
+        // Debug: check if shadow field is present
+        if (isset($_POST['pdf_builder_canvas_shadow_enabled'])) {
+            error_log('[PDF Builder AJAX] Shadow field received: ' . $_POST['pdf_builder_canvas_shadow_enabled']);
+        } else {
+            error_log('[PDF Builder AJAX] Shadow field NOT received in POST');
+        }
 
         // Define field type rules (same as in Ajax_Handlers.php)
         $field_rules = [

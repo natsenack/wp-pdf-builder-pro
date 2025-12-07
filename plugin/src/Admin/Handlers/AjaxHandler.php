@@ -1375,6 +1375,7 @@ class AjaxHandler
 
     private function saveApparenceSettings()
     {
+        error_log("[PDF Builder Debug] saveApparenceSettings called");
         $updated = 0;
 
         // Couleur de fond du canvas
