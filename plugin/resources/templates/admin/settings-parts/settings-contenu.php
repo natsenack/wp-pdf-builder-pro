@@ -474,10 +474,28 @@ $settings = get_option('pdf_builder_settings', array());
                     clip-path: none !important;
                 }
 
-                body > .modal-overlay.show {
+                body > .modal-fullscreen {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    z-index: 999999 !important;
                     display: flex !important;
                     align-items: center !important;
                     justify-content: center !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: none !important;
+                    outline: none !important;
+                    overflow: visible !important;
+                    box-sizing: border-box !important;
+                    transform: none !important;
+                    filter: none !important;
+                    backdrop-filter: blur(2px) !important;
+                    background-color: rgba(0, 0, 0, 0.5) !important;
                 }
 
                 .modal-backdrop {
@@ -1681,31 +1699,67 @@ $settings = get_option('pdf_builder_settings', array());
                         // Afficher la modal
                         const modal = document.getElementById(modalId);
                         if (modal) {
-                            // Forcer les styles pour couvrir toute la fenêtre
-                            modal.style.position = 'fixed';
-                            modal.style.top = '0';
-                            modal.style.left = '0';
-                            modal.style.width = '100vw';
-                            modal.style.height = '100vh';
-                            modal.style.zIndex = '999999';
-                            modal.style.margin = '0';
-                            modal.style.padding = '0';
-                            modal.style.border = 'none';
-                            modal.style.outline = 'none';
-                            modal.style.overflow = 'visible';
-                            modal.style.transform = 'none';
-                            modal.style.filter = 'none';
-                            modal.style.backdropFilter = 'none';
+                            console.log('🔍 DEBUG: Modal trouvée:', modalId);
+                            console.log('🔍 DEBUG: Position actuelle:', modal.parentElement ? modal.parentElement.tagName : 'null');
 
-                            // Déplacer la modal dans le body pour éviter les contraintes des conteneurs parents
-                            if (!document.body.contains(modal)) {
-                                document.body.appendChild(modal);
-                            }
+                            // Créer une nouvelle modale directement dans le body
+                            const fullscreenModal = document.createElement('div');
+                            fullscreenModal.id = modalId + '-fullscreen';
+                            fullscreenModal.className = 'modal-overlay modal-fullscreen';
+                            fullscreenModal.innerHTML = modal.innerHTML;
 
-                            modal.style.display = 'flex';
-                            modal.style.alignItems = 'center';
-                            modal.style.justifyContent = 'center';
-                            modal.classList.add('show');
+                            // Appliquer tous les styles nécessaires
+                            Object.assign(fullscreenModal.style, {
+                                position: 'fixed',
+                                top: '0',
+                                left: '0',
+                                width: '100vw',
+                                height: '100vh',
+                                zIndex: '999999',
+                                margin: '0',
+                                padding: '0',
+                                border: 'none',
+                                outline: 'none',
+                                overflow: 'visible',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                backdropFilter: 'blur(2px)'
+                            });
+
+                            // Ajouter au body
+                            document.body.appendChild(fullscreenModal);
+                            console.log('🔍 DEBUG: Modal ajoutée au body');
+
+                            // Cacher l'originale
+                            modal.style.display = 'none';
+
+                            // Gérer la fermeture
+                            const closeBtn = fullscreenModal.querySelector('.modal-close');
+                            const backdrop = fullscreenModal.querySelector('.modal-backdrop');
+
+                            const closeModal = () => {
+                                console.log('🔍 DEBUG: Fermeture de la modal fullscreen');
+                                fullscreenModal.remove();
+                                modal.style.display = 'none';
+                                modal.classList.remove('show');
+                                currentModalCategory = null;
+                            };
+
+                            if (closeBtn) closeBtn.onclick = closeModal;
+                            if (backdrop) backdrop.onclick = closeModal;
+
+                            // Écouter Échap
+                            const escapeHandler = (e) => {
+                                if (e.key === 'Escape') {
+                                    closeModal();
+                                    document.removeEventListener('keydown', escapeHandler);
+                                }
+                            };
+                            document.addEventListener('keydown', escapeHandler);
+
+                            console.log('🔍 DEBUG: Modal fullscreen affichée');
                         }
 
                         // Synchroniser les valeurs des champs
