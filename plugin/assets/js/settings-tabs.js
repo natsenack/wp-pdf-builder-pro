@@ -172,16 +172,51 @@
 
         debugLog('PDF Builder - Initialisation de la section Test de Licence...');
 
-        // Bouton basculer mode test
+        // Attendre que la section soit visible (peut être cachée initialement)
+        const checkAndInit = function() {
+            const section = document.getElementById('dev-license-section');
+            if (!section) {
+                debugLog('PDF Builder - Section licence pas encore trouvée, retry dans 500ms');
+                setTimeout(checkAndInit, 500);
+                return;
+            }
+
+            const isVisible = section.style.display !== 'none';
+            if (!isVisible) {
+                debugLog('PDF Builder - Section licence cachée, on attend qu\'elle soit visible');
+                // Attendre que la section devienne visible
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                            const currentDisplay = section.style.display;
+                            if (currentDisplay !== 'none') {
+                                debugLog('PDF Builder - Section licence maintenant visible, initialisation...');
+                                observer.disconnect();
+                                initButtons();
+                            }
+                        }
+                    });
+                });
+                observer.observe(section, { attributes: true, attributeFilter: ['style'] });
+                return;
+            }
+
+            initButtons();
+        };
+
+        const initButtons = function() {
         const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
         if (toggleBtn) {
+            debugLog('PDF Builder - Bouton toggle mode test trouvé, ajout event listener');
             toggleBtn.addEventListener('click', function() {
+                debugLog('PDF Builder - Clic sur bouton toggle mode test');
                 const nonce = document.getElementById('toggle_license_test_mode_nonce')?.value;
                 if (!nonce) {
                     debugError('Nonce manquant pour toggle test mode');
                     return;
                 }
 
+                debugLog('PDF Builder - Nonce trouvé:', nonce.substring(0, 10) + '...');
                 toggleBtn.disabled = true;
                 toggleBtn.textContent = '⏳ Basculement...';
 
@@ -191,12 +226,15 @@
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
+                        debugLog('PDF Builder - Réponse AJAX reçue, status:', xhr.status);
+                        debugLog('PDF Builder - Réponse:', xhr.responseText);
                         toggleBtn.disabled = false;
                         toggleBtn.textContent = '🎚️ Basculer Mode Test';
 
                         if (xhr.status === 200) {
                             try {
                                 const response = JSON.parse(xhr.responseText);
+                                debugLog('PDF Builder - Réponse parsée:', response);
                                 if (response.success) {
                                     const statusSpan = document.getElementById('license_test_mode_status');
                                     if (statusSpan) {
@@ -219,6 +257,8 @@
 
                 xhr.send('action=pdf_builder_toggle_test_mode&nonce=' + encodeURIComponent(nonce));
             });
+        } else {
+            debugError('PDF Builder - Bouton toggle mode test NON trouvé');
         }
 
         // Bouton générer clé
@@ -434,6 +474,9 @@
         }
 
         debugLog('PDF Builder - Section Test de Licence initialisée');
+        };
+
+        checkAndInit();
     }
 
     // Initialiser la section licence aussi
