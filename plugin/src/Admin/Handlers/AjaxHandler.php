@@ -2096,6 +2096,21 @@ class AjaxHandler
             } else {
                 error_log('PHP: Value is not a valid JSON string');
                 error_log('PHP: json_last_error: ' . json_last_error_msg());
+                // Try with stripslashes
+                $stripped = stripslashes($value);
+                error_log('PHP: Stripped string: ' . $stripped);
+                if ($this->isJson($stripped)) {
+                    error_log('PHP: Stripped is valid JSON');
+                    $value = json_decode($stripped, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        error_log('PHP: JSON decode error after stripslashes: ' . json_last_error_msg());
+                        return [];
+                    }
+                    error_log('PHP: Decoded templates value after stripslashes: ' . print_r($value, true));
+                } else {
+                    error_log('PHP: Stripped is not valid JSON either');
+                    return [];
+                }
             }
             if (is_array($value)) {
                 $clean_array = [];
