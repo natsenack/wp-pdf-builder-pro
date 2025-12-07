@@ -1514,7 +1514,8 @@ foreach ($canvas_options as $option) {
 
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
-                        console.log('Ouverture de la modal pour:', category);
+                        console.log('🚪 Ouverture de la modal pour:', category);
+                        console.log('🔍 DEBUG: currentModalCategory avant:', currentModalCategory);
 
                         // Fermer toute modal existante avant d'en ouvrir une nouvelle
                         if (currentModalCategory) {
@@ -1538,14 +1539,22 @@ foreach ($canvas_options as $option) {
 
                         // Afficher la modal simplement en ajoutant la classe 'show' à l'overlay
                         const modal = document.getElementById(modalId);
+                        console.log('🔍 DEBUG: Modal element trouvé:', modal);
                         if (modal) {
                             const overlay = modal.querySelector('.canvas-modal-overlay');
+                            console.log('🔍 DEBUG: Overlay trouvé:', overlay);
                             if (overlay) {
+                                console.log('🔍 DEBUG: Ajout de la classe show à l\'overlay');
                                 overlay.classList.add('show');
+                                console.log('🔍 DEBUG: Classes de l\'overlay après ajout:', overlay.className);
                                 console.log('Modal ouverte:', modalId);
                             } else {
-                                console.error('Overlay non trouvé dans la modal:', modalId);
+                                console.error('❌ Overlay non trouvé dans la modal:', modalId);
+                                console.log('🔍 DEBUG: Contenu de la modal:', modal.innerHTML.substring(0, 200) + '...');
                             }
+                        } else {
+                            console.error('❌ Modal non trouvée:', modalId);
+                            console.log('🔍 DEBUG: Modales disponibles:', document.querySelectorAll('[id*="canvas-"][id*="-modal"]'));
                         }
                     }
 
@@ -1846,8 +1855,11 @@ foreach ($canvas_options as $option) {
                         // Fermer la modal simplement en retirant la classe 'show' de l'overlay
                         if (modal) {
                             const overlay = modal.querySelector('.canvas-modal-overlay');
+                            console.log('🔍 DEBUG: Fermeture - Overlay trouvé:', overlay);
                             if (overlay) {
+                                console.log('🔍 DEBUG: Retrait de la classe show de l\'overlay');
                                 overlay.classList.remove('show');
+                                console.log('🔍 DEBUG: Classes de l\'overlay après retrait:', overlay.className);
                             }
                         }
 
