@@ -11,6 +11,13 @@ require_once __DIR__ . '/settings-helpers.php';
 
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
+// Vérifier si l'utilisateur a une licence premium
+$is_premium = false;
+if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+    $license_manager = PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+    $is_premium = $license_manager->is_premium();
+}
+
 // =============================================================================
 // CLASSE UTILITAIRE POUR LA GESTION DES STATUTS ET PLUGINS
 // =============================================================================
@@ -432,6 +439,13 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                 </span>
             <?php endif; ?>
         </h2>
+
+        <?php if (!$is_premium): ?>
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 12px; margin: 15px 0; font-size: 14px;">
+                <strong>🔒 Version Gratuite :</strong> Vous pouvez uniquement assigner des templates au statut "Terminée".
+                Les statuts personnalisés restent disponibles. <a href="#" style="color: #856404;">Passer à la version Premium</a> pour débloquer toutes les fonctionnalités.
+            </div>
+        <?php endif; ?>
     </header>
 
     <!-- Contenu principal -->
@@ -475,19 +489,51 @@ error_log("DEBUG Template Load: templates = " . json_encode($templates));
                                 </label>
                                 <select name="pdf_builder_order_status_templates[<?php echo esc_attr($status_key); ?>]"
                                         id="template_<?php echo esc_attr($status_key); ?>"
-                                        class="template-select">
+                                        class="template-select"
+                                        <?php
+                                        if (!$is_premium) {
+                                            $is_custom_status = $status_manager->is_custom_status($status_key);
+                                            $is_default_completed = ($status_key === 'wc-completed');
+
+                                            // En mode free, désactiver le select pour les statuts par défaut sauf "Terminée"
+                                            if (!$is_custom_status && !$is_default_completed) {
+                                                echo 'disabled title="Fonctionnalité réservée aux utilisateurs premium"';
+                                            }
+                                        }
+                                        ?>>
                                     <option value="">-- Aucun template --</option>
                                     <?php foreach ($templates as $template_id => $template_title):
                                         $current_value = isset($current_mappings[$status_key]) ? trim((string)$current_mappings[$status_key]) : '';
                                         $is_selected = $current_value === (string)$template_id;
+
+                                        // Logique de restriction pour les utilisateurs free
+                                        $is_disabled = false;
+                                        $disabled_reason = '';
+
+                                        if (!$is_premium) {
+                                            $is_custom_status = $status_manager->is_custom_status($status_key);
+                                            $is_default_completed = ($status_key === 'wc-completed');
+
+                                            // En mode free :
+                                            // - Les statuts personnalisés sont autorisés (pas de restriction)
+                                            // - Pour les statuts par défaut, seul "Terminée" peut avoir un template
+                                            if (!$is_custom_status && !$is_default_completed) {
+                                                $is_disabled = true;
+                                                $disabled_reason = 'Fonctionnalité réservée aux utilisateurs premium';
+                                            }
+                                        }
+
                                         // Debug temporaire
                                         if ($status_key === 'wc-completed') {
-                                            error_log("DEBUG Select: status=$status_key, current_value='$current_value', template_id='$template_id', is_selected=" . ($is_selected ? 'YES' : 'NO'));
+                                            error_log("DEBUG Select: status=$status_key, current_value='$current_value', template_id='$template_id', is_selected=" . ($is_selected ? 'YES' : 'NO') . ", is_disabled=" . ($is_disabled ? 'YES' : 'NO'));
                                         }
                                         ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
-                                                <?php selected($current_value, (string)$template_id); ?>>        
+                                                <?php selected($current_value, (string)$template_id); ?>
+                                                <?php if ($is_disabled): ?>disabled<?php endif; ?>
+                                                title="<?php echo $is_disabled ? esc_attr($disabled_reason) : ''; ?>">
                                             <?php echo esc_html($template_title); ?>
+                                            <?php if ($is_disabled): ?> 🔒<?php endif; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
