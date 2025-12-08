@@ -1,78 +1,78 @@
 ﻿<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
-// require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
+    // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
-// Récupération des paramètres depuis le tableau unifié
-$settings = get_option('pdf_builder_settings', []);
+    // Récupération des paramètres depuis le tableau unifié
+    $settings = get_option('pdf_builder_settings', []);
 
-// Préparer toutes les variables nécessaires
-$cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
-$cache_compression = $settings['pdf_builder_cache_compression'] ?? '1';
-$cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? '1';
-$cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
-$cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
-$performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
-$auto_maintenance = $settings['pdf_builder_systeme_auto_maintenance'] ?? '0';
-$last_maintenance = $settings['pdf_builder_last_maintenance'] ?? 'Jamais';
-$next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
-$last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
-$cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
+    // Préparer toutes les variables nécessaires
+    $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
+    $cache_compression = $settings['pdf_builder_cache_compression'] ?? '1';
+    $cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? '1';
+    $cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
+    $cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
+    $performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
+    $auto_maintenance = $settings['pdf_builder_systeme_auto_maintenance'] ?? '0';
+    $last_maintenance = $settings['pdf_builder_last_maintenance'] ?? 'Jamais';
+    $next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
+    $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
+    $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
-// Vérifier le statut premium de l'utilisateur
-$is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+    // Vérifier le statut premium de l'utilisateur
+    $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
-// Calculer les métriques de cache
-$cache_file_count = 0;
-$cache_dirs = [
-    (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/cache/wp-pdf-builder-previews/',
-    (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
-];
+    // Calculer les métriques de cache
+    $cache_file_count = 0;
+    $cache_dirs = [
+        (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/cache/wp-pdf-builder-previews/',
+        (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
+    ];
 
-foreach ($cache_dirs as $dir) {
-    if (is_dir($dir) && is_readable($dir)) {
-        try {
-            $files = glob($dir . '/*');
-            if ($files) {
-                $cache_file_count += count($files);
+    foreach ($cache_dirs as $dir) {
+        if (is_dir($dir) && is_readable($dir)) {
+            try {
+                $files = glob($dir . '/*');
+                if ($files) {
+                    $cache_file_count += count($files);
+                }
+            } catch (Exception $e) {
+                // Ignorer les erreurs
             }
-        } catch (Exception $e) {
-            // Ignorer les erreurs
         }
     }
-}
 
-// Calculer les transients
-$transient_count = 0;
-if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
-    global $wpdb;
-    try {
-        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-    } catch (Exception $e) {
-        $transient_count = 0;
+    // Calculer les transients
+    $transient_count = 0;
+    if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
+        global $wpdb;
+        try {
+            $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        } catch (Exception $e) {
+            $transient_count = 0;
+        }
     }
-}
 
-// Calculer le nombre de sauvegardes
-$backup_count = 0;
-$backup_dir = (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-backups';
-if (is_dir($backup_dir)) {
-    $files = glob($backup_dir . '/*.json');
-    $backup_count = count($files);
-}
+    // Calculer le nombre de sauvegardes
+    $backup_count = 0;
+    $backup_dir = (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-backups';
+    if (is_dir($backup_dir)) {
+        $files = glob($backup_dir . '/*.json');
+        $backup_count = count($files);
+    }
 
-// Formater les dates
-if ($last_maintenance !== 'Jamais') {
-    $last_maintenance = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_maintenance)) : $last_maintenance) . ' ago';
-}
-if ($next_maintenance !== 'Non planifiée') {
-    $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance)));
-}
-if ($last_backup !== 'Jamais') {
-    $last_backup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_backup)) : $last_backup) . ' ago';
-}
-if ($cache_last_cleanup !== 'Jamais') {
-    $cache_last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($cache_last_cleanup)) : $cache_last_cleanup) . ' ago';
-}
+    // Formater les dates
+    if ($last_maintenance !== 'Jamais') {
+        $last_maintenance = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_maintenance)) : $last_maintenance) . ' ago';
+    }
+    if ($next_maintenance !== 'Non planifiée') {
+        $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance)));
+    }
+    if ($last_backup !== 'Jamais') {
+        $last_backup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_backup)) : $last_backup) . ' ago';
+    }
+    if ($cache_last_cleanup !== 'Jamais') {
+        $cache_last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($cache_last_cleanup)) : $cache_last_cleanup) . ' ago';
+    }
 ?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 

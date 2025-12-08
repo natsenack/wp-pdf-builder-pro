@@ -297,24 +297,24 @@
                             <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
                         </td>
                     </tr>
-<?php
-/**
- * Canvas Configuration Modals
- * Updated: 2025-12-03 00:30:00
- */
+                        <?php
+                            /**
+                             * Canvas Configuration Modals
+                             * Updated: 2025-12-03 00:30:00
+                             */
 
-// Définir les formats de papier si pas déjà défini
-if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
-    define('PDF_BUILDER_PAPER_FORMATS', [
-        'A4' => ['width' => 210.0, 'height' => 297.0],
-        'A3' => ['width' => 297.0, 'height' => 420.0],
-        'A5' => ['width' => 148.0, 'height' => 210.0],
-        'Letter' => ['width' => 215.9, 'height' => 279.4],
-        'Legal' => ['width' => 215.9, 'height' => 355.6],
-        'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-    ]);
-}
-?>
+                            // Définir les formats de papier si pas déjà défini
+                            if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
+                                define('PDF_BUILDER_PAPER_FORMATS', [
+                                    'A4' => ['width' => 210.0, 'height' => 297.0],
+                                    'A3' => ['width' => 297.0, 'height' => 420.0],
+                                    'A5' => ['width' => 148.0, 'height' => 210.0],
+                                    'Letter' => ['width' => 215.9, 'height' => 279.4],
+                                    'Legal' => ['width' => 215.9, 'height' => 355.6],
+                                    'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+                                ]);
+                            }
+                        ?>
                     <tr>
                         <th scope="row"><label>Dimensions calculées</label></th>
                         <td>
@@ -362,7 +362,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
 <!-- Canvas Configuration Modals Zoom & Navigation -->
 <!-- Canvas Zoom Modal Overlay -->
 <div id="canvas-zoom-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-zoom-modal">
-        <section class="canvas-modal-container">
+    <section class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>🔍 Zoom</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -380,35 +380,35 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                             <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
                         </header>
                         <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
-                            <td>
-                                <input type="number" id="zoom_min" name="pdf_builder_canvas_canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_min', 10)); ?>" min="1" max="100" />
-                                <p class="canvas-modal-description">Niveau de zoom minimum autorisé</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="zoom_max">Zoom maximum (%)</label></th>
-                            <td>
-                                <input type="number" id="zoom_max" name="pdf_builder_canvas_canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
-                                <p class="canvas-modal-description">Niveau de zoom maximum autorisé</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="zoom_default">Zoom par défaut (%)</label></th>
-                            <td>
-                                <input type="number" id="zoom_default" name="pdf_builder_canvas_canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_default', 100)); ?>" min="10" max="500" />
-                                <p class="canvas-modal-description">Niveau de zoom au chargement du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="zoom_step">Pas de zoom (%)</label></th>
-                            <td>
-                                <input type="number" id="zoom_step" name="pdf_builder_canvas_canvas_zoom_step" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_step', 25)); ?>" min="5" max="50" />
-                                <p class="canvas-modal-description">Incrément de zoom par étape</p>
-                            </td>
-                        </tr>
-                    </table>
+                            <tr>
+                                <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
+                                <td>
+                                    <input type="number" id="zoom_min" name="pdf_builder_canvas_canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_min', 10)); ?>" min="1" max="100" />
+                                    <p class="canvas-modal-description">Niveau de zoom minimum autorisé</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="zoom_max">Zoom maximum (%)</label></th>
+                                <td>
+                                    <input type="number" id="zoom_max" name="pdf_builder_canvas_canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
+                                    <p class="canvas-modal-description">Niveau de zoom maximum autorisé</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="zoom_default">Zoom par défaut (%)</label></th>
+                                <td>
+                                    <input type="number" id="zoom_default" name="pdf_builder_canvas_canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_default', 100)); ?>" min="10" max="500" />
+                                    <p class="canvas-modal-description">Niveau de zoom au chargement du canvas</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="zoom_step">Pas de zoom (%)</label></th>
+                                <td>
+                                    <input type="number" id="zoom_step" name="pdf_builder_canvas_canvas_zoom_step" value="<?php echo intval(get_option('pdf_builder_canvas_canvas_zoom_step', 25)); ?>" min="5" max="50" />
+                                    <p class="canvas-modal-description">Incrément de zoom par étape</p>
+                                </td>
+                            </tr>
+                        </table>
                     </section>
                 </form>
             </main>
@@ -416,8 +416,7 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="zoom">Sauvegarder</button>
             </footer>
-        </section>
-    </div>
+    </section>
 </div>
 
 <!-- Canvas zoom Modal (hidden container) -->
@@ -534,44 +533,44 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <form id="canvas-grille-form">
                     <section>
                         <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_canvas_guides_enabled" value="1">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_canvas_grid_enabled" value="1">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_canvas_grid_size" value="20" min="5" max="100" />
-                                <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_canvas_snap_to_grid" value="1">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
-                            </td>
-                        </tr>
-                    </table>
+                            <tr>
+                                <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_canvas_guides_enabled" value="1">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_canvas_grid_enabled" value="1">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
+                                <td>
+                                    <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_canvas_grid_size" value="20" min="5" max="100" />
+                                    <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_canvas_snap_to_grid" value="1">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
+                                </td>
+                            </tr>
+                        </table>
                     </section>
                 </form>
             </main>
@@ -580,8 +579,8 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <button type="button" class="button button-primary canvas-modal-save" data-category="grille">Sauvegarder</button>
             </footer>
         </section>
-    </div>
 </div>
+
 
 <!-- Canvas grille Modal (hidden container) -->
 <div id="canvas-grille-modal" class="canvas-modal" data-category="grille" class="hidden-element">
@@ -686,8 +685,8 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <button type="button" class="button button-primary canvas-modal-save" data-category="interactions">Sauvegarder</button>
             </footer>
         </section>
-    </div>
 </div>
+
 
 <!-- Canvas interactions Modal (hidden container) -->
 <div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions" class="hidden-element">
@@ -745,8 +744,8 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <button type="button" class="button button-primary canvas-modal-save" data-category="export">Sauvegarder</button>
             </footer>
         </section>
-    </div>
 </div>
+
 
 <!-- Canvas export Modal (hidden container) -->
 <div id="canvas-export-modal" class="canvas-modal" data-category="export" class="hidden-element">
@@ -881,7 +880,6 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
             </footer>
         </section>
-    </div>
 </div>
 
 <!-- Canvas performance Modal (hidden container) -->
@@ -942,8 +940,8 @@ if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
                 <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
             </footer>
         </section>
-    </div>
 </div>
+
 
 <!-- Canvas debug Modal (hidden container) -->
 <div id="canvas-debug-modal" class="canvas-modal" data-category="debug" class="hidden-element">

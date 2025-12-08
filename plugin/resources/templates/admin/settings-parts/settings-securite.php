@@ -1,19 +1,19 @@
 ﻿<?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
-// require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
+    // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
-// Préparer les variables nécessaires
-$settings = get_option('pdf_builder_settings', []);
-$security_level = $settings['pdf_builder_security_level'] ?? 'medium';
-$enable_logging = $settings['pdf_builder_enable_logging'] ?? '1';
-$gdpr_enabled = $settings['pdf_builder_gdpr_enabled'] ?? '1';
-$gdpr_consent_required = $settings['pdf_builder_gdpr_consent_required'] ?? '1';
-$gdpr_data_retention = $settings['pdf_builder_gdpr_data_retention'] ?? 2555;
-$gdpr_audit_enabled = $settings['pdf_builder_gdpr_audit_enabled'] ?? '1';
-$gdpr_encryption_enabled = $settings['pdf_builder_gdpr_encryption_enabled'] ?? '1';
-$gdpr_consent_analytics = $settings['pdf_builder_gdpr_consent_analytics'] ?? '1';
-$gdpr_consent_templates = $settings['pdf_builder_gdpr_consent_templates'] ?? '1';
-$gdpr_consent_marketing = $settings['pdf_builder_gdpr_consent_marketing'] ?? '0';
+    // Préparer les variables nécessaires
+    $settings = get_option('pdf_builder_settings', []);
+    $security_level = $settings['pdf_builder_security_level'] ?? 'medium';
+    $enable_logging = $settings['pdf_builder_enable_logging'] ?? '1';
+    $gdpr_enabled = $settings['pdf_builder_gdpr_enabled'] ?? '1';
+    $gdpr_consent_required = $settings['pdf_builder_gdpr_consent_required'] ?? '1';
+    $gdpr_data_retention = $settings['pdf_builder_gdpr_data_retention'] ?? 2555;
+    $gdpr_audit_enabled = $settings['pdf_builder_gdpr_audit_enabled'] ?? '1';
+    $gdpr_encryption_enabled = $settings['pdf_builder_gdpr_encryption_enabled'] ?? '1';
+    $gdpr_consent_analytics = $settings['pdf_builder_gdpr_consent_analytics'] ?? '1';
+    $gdpr_consent_templates = $settings['pdf_builder_gdpr_consent_templates'] ?? '1';
+    $gdpr_consent_marketing = $settings['pdf_builder_gdpr_consent_marketing'] ?? '0';
 ?>
             <h2>🔒 Sécurité & Conformité</h2>
 
