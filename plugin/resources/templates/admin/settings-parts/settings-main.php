@@ -39,53 +39,45 @@
     <!-- Navigation par onglets moderne -->
     <nav class="tabs-navigation">
         <div class="tabs-container">
-            <input type="radio" id="tab-general" name="tabs" checked>
-            <label for="tab-general" class="tab-button">
+            <button type="button" data-tab="general" class="tab-button active">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-licence" name="tabs">
-            <label for="tab-licence" class="tab-button">
+            <button type="button" data-tab="licence" class="tab-button">
                 <span class="tab-icon">🔑</span>
                 <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-systeme" name="tabs">
-            <label for="tab-systeme" class="tab-button">
+            <button type="button" data-tab="systeme" class="tab-button">
                 <span class="tab-icon">🖥️</span>
                 <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-securite" name="tabs">
-            <label for="tab-securite" class="tab-button">
+            <button type="button" data-tab="securite" class="tab-button">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-pdf" name="tabs">
-            <label for="tab-pdf" class="tab-button">
+            <button type="button" data-tab="pdf" class="tab-button">
                 <span class="tab-icon">📄</span>
                 <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-contenu" name="tabs">
-            <label for="tab-contenu" class="tab-button">
+            <button type="button" data-tab="contenu" class="tab-button">
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-templates" name="tabs">
-            <label for="tab-templates" class="tab-button">
+            <button type="button" data-tab="templates" class="tab-button">
                 <span class="tab-icon">📋</span>
                 <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
 
-            <input type="radio" id="tab-developpeur" name="tabs">
-            <label for="tab-developpeur" class="tab-button">
+            <button type="button" data-tab="developpeur" class="tab-button">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
-            </label>
+            </button>
         </div>
     </nav>
 
@@ -232,6 +224,7 @@
             padding: 8px;
             border-radius: 8px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            justify-content: center;
         }
 
         .tab-button {
@@ -272,28 +265,14 @@
         }
 
         /* Style de l'onglet actif */
-        #tab-general:checked ~ .tab-button[for="tab-general"],
-        #tab-licence:checked ~ .tab-button[for="tab-licence"],
-        #tab-systeme:checked ~ .tab-button[for="tab-systeme"],
-        #tab-securite:checked ~ .tab-button[for="tab-securite"],
-        #tab-pdf:checked ~ .tab-button[for="tab-pdf"],
-        #tab-contenu:checked ~ .tab-button[for="tab-contenu"],
-        #tab-templates:checked ~ .tab-button[for="tab-templates"],
-        #tab-developpeur:checked ~ .tab-button[for="tab-developpeur"] {
+        .tab-button.active {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(0,123,255,0.3);
             transform: translateY(-2px);
         }
 
-        #tab-general:checked ~ .tab-button[for="tab-general"] .tab-icon,
-        #tab-licence:checked ~ .tab-button[for="tab-licence"] .tab-icon,
-        #tab-systeme:checked ~ .tab-button[for="tab-systeme"] .tab-icon,
-        #tab-securite:checked ~ .tab-button[for="tab-securite"] .tab-icon,
-        #tab-pdf:checked ~ .tab-button[for="tab-pdf"] .tab-icon,
-        #tab-contenu:checked ~ .tab-button[for="tab-contenu"] .tab-icon,
-        #tab-templates:checked ~ .tab-button[for="tab-templates"] .tab-icon,
-        #tab-developpeur:checked ~ .tab-button[for="tab-developpeur"] .tab-icon {
+        .tab-button.active .tab-icon {
             filter: brightness(1.2);
         }
 
@@ -353,9 +332,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des onglets avec JavaScript pour assurer la compatibilité
-            const radios = document.querySelectorAll('input[name="tabs"]');
+            // Gestion des onglets avec boutons JavaScript
+            const tabButtons = document.querySelectorAll('.tab-button[data-tab]');
             const contents = document.querySelectorAll('.tab-content');
+            let activeTab = 'general'; // Onglet actif par défaut
 
             function updateTabs() {
                 // Masquer tous les contenus
@@ -363,20 +343,30 @@
                     content.classList.remove('active');
                 });
 
+                // Désactiver tous les boutons
+                tabButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+
                 // Afficher le contenu actif
-                const activeRadio = document.querySelector('input[name="tabs"]:checked');
-                if (activeRadio) {
-                    const targetId = 'content-' + activeRadio.id.replace('tab-', '');
-                    const targetContent = document.getElementById(targetId);
-                    if (targetContent) {
-                        targetContent.classList.add('active');
-                    }
+                const targetContent = document.getElementById('content-' + activeTab);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+
+                // Activer le bouton actif
+                const activeButton = document.querySelector(`.tab-button[data-tab="${activeTab}"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
                 }
             }
 
-            // Écouter les changements sur les boutons radio
-            radios.forEach(radio => {
-                radio.addEventListener('change', updateTabs);
+            // Écouter les clics sur les boutons
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    activeTab = this.getAttribute('data-tab');
+                    updateTabs();
+                });
             });
 
             // Initialisation
