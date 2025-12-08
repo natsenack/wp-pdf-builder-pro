@@ -26,25 +26,24 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔍 [DEBUG] Nav tab ' + index + ': data-tab="' + tab.getAttribute('data-tab') + '"');
     });
     
-    // Check if templates tab exists and try to activate it
-    const templatesTab = document.querySelector('[data-tab="templates"]');
-    const templatesContent = document.querySelector('#templates');
-    console.log('🔍 [DEBUG] templates tab element:', templatesTab);
-    console.log('🔍 [DEBUG] templates content element:', templatesContent);
+    // Add click event listeners to monitor tab clicks
+    navTabs.forEach(function(tab) {
+        tab.addEventListener('click', function(e) {
+            console.log('🔍 [DEBUG] Tab clicked:', tab.getAttribute('data-tab'));
+            console.log('🔍 [DEBUG] Event target:', e.target);
+            console.log('🔍 [DEBUG] Closest .nav-tab:', e.target.closest('.nav-tab'));
+        });
+    });
     
-    if (templatesTab && templatesContent) {
-        console.log('🔍 [DEBUG] Activating templates tab manually...');
-        // Remove active from all
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
-        // Add active to templates
-        templatesTab.classList.add('nav-tab-active');
-        templatesContent.classList.add('active');
-        console.log('🔍 [DEBUG] templates tab activated manually');
-    } else {
-        console.log('🔍 [DEBUG] Could not find templates tab elements');
-    }
+    // Check if settings-tabs.js is loaded
+    setTimeout(function() {
+        console.log('🔍 [DEBUG] Checking if settings-tabs.js event listeners are attached...');
+        const tabsContainer = document.querySelector('#pdf-builder-settings-wrapper .nav-tab-wrapper');
+        console.log('🔍 [DEBUG] tabsContainer:', tabsContainer);
+        if (tabsContainer) {
+            console.log('🔍 [DEBUG] tabsContainer click listeners:', tabsContainer.onclick || 'none');
+        }
+    }, 1000);
 });
 </script>
 <!-- Settings page loaded -->
