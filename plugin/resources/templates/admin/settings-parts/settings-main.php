@@ -365,6 +365,14 @@
             contents.forEach(content => {
                 const isInWrap = wrapElement.contains(content);
                 console.log('Container trouvé:', content.id, content.classList.contains('active') ? '(actif)' : '(inactif)', isInWrap ? '(dans .wrap)' : '(HORS .wrap ⚠️)');
+
+                if (!isInWrap) {
+                    // Élément hors du .wrap - analyser sa position
+                    const rect = content.getBoundingClientRect();
+                    console.log('Position de', content.id, ':', rect);
+                    console.log('Parent de', content.id, ':', content.parentElement);
+                    console.log('HTML autour de', content.id, ':', content.outerHTML.substring(0, 100) + '...');
+                }
             });
 
             // Vérifier chaque bouton
