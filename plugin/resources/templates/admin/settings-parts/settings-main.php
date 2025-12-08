@@ -358,8 +358,14 @@
             // Vérifier si les éléments sont dans .wrap
             const tabButtonsInWrap = wrapElement ? wrapElement.querySelectorAll('.tab-button') : [];
             const tabContentsInWrap = wrapElement ? wrapElement.querySelectorAll('.tab-content') : [];
-            console.log('Boutons dans .wrap:', tabButtonsInWrap.length);
-            console.log('Contenus dans .wrap:', tabContentsInWrap.length);
+            console.log('Ordre des éléments dans le DOM:');
+            const allElements = document.querySelectorAll('.tab-content');
+            allElements.forEach((el, index) => {
+                console.log(`${index + 1}. ${el.id} - Parent: ${el.parentElement.id || el.parentElement.tagName}`);
+            });
+
+            console.log('Structure hiérarchique:');
+            console.log('document.body.children:', Array.from(document.body.children).map(el => el.id || el.tagName));
 
             // Vérifier chaque container de contenu
             contents.forEach(content => {
