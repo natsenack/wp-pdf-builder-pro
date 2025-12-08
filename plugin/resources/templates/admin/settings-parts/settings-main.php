@@ -106,6 +106,19 @@ ceci est un test
             ?>
         </div>
 
+        <!-- Section Licence -->
+        <div id="content-licence" class="tab-content">
+            <h3><?php _e('Licence', 'pdf-builder-pro'); ?></h3>
+            <?php
+            $licence_file = __DIR__ . '/settings-licence.php';
+            if (file_exists($licence_file)) {
+                require_once $licence_file;
+            } else {
+                echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
+            }
+            ?>
+        </div>
+
 
 
         <?php submit_button(); ?>
