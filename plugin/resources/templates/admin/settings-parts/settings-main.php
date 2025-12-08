@@ -36,47 +36,52 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
-    <!-- Boutons radio pour les onglets (invisibles) -->
-    <input type="radio" id="tab-general" name="tabs" checked>
-    <input type="radio" id="tab-licence" name="tabs">
-    <input type="radio" id="tab-systeme" name="tabs">
-    <input type="radio" id="tab-securite" name="tabs">
-    <input type="radio" id="tab-pdf" name="tabs">
-    <input type="radio" id="tab-contenu" name="tabs">
-    <input type="radio" id="tab-templates" name="tabs">
-    <input type="radio" id="tab-developpeur" name="tabs">
-
     <!-- Navigation par onglets moderne -->
     <nav class="tabs-navigation">
         <div class="tabs-container">
+            <input type="radio" id="tab-general" name="tabs" checked>
             <label for="tab-general" class="tab-button">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-licence" name="tabs">
             <label for="tab-licence" class="tab-button">
                 <span class="tab-icon">🔑</span>
                 <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-systeme" name="tabs">
             <label for="tab-systeme" class="tab-button">
                 <span class="tab-icon">🖥️</span>
                 <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-securite" name="tabs">
             <label for="tab-securite" class="tab-button">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-pdf" name="tabs">
             <label for="tab-pdf" class="tab-button">
                 <span class="tab-icon">📄</span>
                 <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-contenu" name="tabs">
             <label for="tab-contenu" class="tab-button">
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-templates" name="tabs">
             <label for="tab-templates" class="tab-button">
                 <span class="tab-icon">📋</span>
                 <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
             </label>
+
+            <input type="radio" id="tab-developpeur" name="tabs">
             <label for="tab-developpeur" class="tab-button">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
@@ -255,14 +260,14 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     }
 
     /* Style de l'onglet actif */
-    #tab-general:checked ~ .tabs-navigation .tab-button[for="tab-general"],
-    #tab-licence:checked ~ .tabs-navigation .tab-button[for="tab-licence"],
-    #tab-systeme:checked ~ .tabs-navigation .tab-button[for="tab-systeme"],
-    #tab-securite:checked ~ .tabs-navigation .tab-button[for="tab-securite"],
-    #tab-pdf:checked ~ .tabs-navigation .tab-button[for="tab-pdf"],
-    #tab-contenu:checked ~ .tabs-navigation .tab-button[for="tab-contenu"],
-    #tab-templates:checked ~ .tabs-navigation .tab-button[for="tab-templates"],
-    #tab-developpeur:checked ~ .tabs-navigation .tab-button[for="tab-developpeur"] {
+    #tab-general:checked ~ .tab-button[for="tab-general"],
+    #tab-licence:checked ~ .tab-button[for="tab-licence"],
+    #tab-systeme:checked ~ .tab-button[for="tab-systeme"],
+    #tab-securite:checked ~ .tab-button[for="tab-securite"],
+    #tab-pdf:checked ~ .tab-button[for="tab-pdf"],
+    #tab-contenu:checked ~ .tab-button[for="tab-contenu"],
+    #tab-templates:checked ~ .tab-button[for="tab-templates"],
+    #tab-developpeur:checked ~ .tab-button[for="tab-developpeur"] {
         background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         color: white;
         box-shadow: 0 4px 12px rgba(0,123,255,0.3);
@@ -342,5 +347,38 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         }
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des onglets avec JavaScript pour assurer la compatibilité
+    const radios = document.querySelectorAll('input[name="tabs"]');
+    const contents = document.querySelectorAll('.tab-content');
+
+    function updateTabs() {
+        // Masquer tous les contenus
+        contents.forEach(content => {
+            content.style.display = 'none';
+        });
+
+        // Afficher le contenu actif
+        const activeRadio = document.querySelector('input[name="tabs"]:checked');
+        if (activeRadio) {
+            const targetId = 'content-' + activeRadio.id.replace('tab-', '');
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+            }
+        }
+    }
+
+    // Écouter les changements sur les boutons radio
+    radios.forEach(radio => {
+        radio.addEventListener('change', updateTabs);
+    });
+
+    // Initialisation
+    updateTabs();
+});
+</script>
 
 </div>
