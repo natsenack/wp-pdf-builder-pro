@@ -36,54 +36,52 @@
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
-    <!-- Inputs radio pour les onglets (en dehors du nav pour les sélecteurs CSS) -->
-    <input type="radio" id="tab-general" name="tabs" checked>
-    <input type="radio" id="tab-licence" name="tabs">
-    <input type="radio" id="tab-systeme" name="tabs">
-    <input type="radio" id="tab-securite" name="tabs">
-    <input type="radio" id="tab-pdf" name="tabs">
-    <input type="radio" id="tab-contenu" name="tabs">
-    <input type="radio" id="tab-templates" name="tabs">
-    <input type="radio" id="tab-developpeur" name="tabs">
-
     <!-- Navigation par onglets moderne -->
     <nav class="tabs-navigation">
         <div class="tabs-container">
+            <input type="radio" id="tab-general" name="tabs" checked>
             <label for="tab-general" class="tab-button">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-licence" name="tabs">
             <label for="tab-licence" class="tab-button">
                 <span class="tab-icon">🔑</span>
                 <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-systeme" name="tabs">
             <label for="tab-systeme" class="tab-button">
                 <span class="tab-icon">🖥️</span>
                 <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-securite" name="tabs">
             <label for="tab-securite" class="tab-button">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-pdf" name="tabs">
             <label for="tab-pdf" class="tab-button">
                 <span class="tab-icon">📄</span>
                 <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-contenu" name="tabs">
             <label for="tab-contenu" class="tab-button">
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-templates" name="tabs">
             <label for="tab-templates" class="tab-button">
                 <span class="tab-icon">📋</span>
                 <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
             </label>
 
+            <input type="radio" id="tab-developpeur" name="tabs">
             <label for="tab-developpeur" class="tab-button">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
@@ -311,14 +309,14 @@
         }
 
         /* Afficher la section active basée sur le bouton radio coché */
-        #tab-general:checked ~ nav ~ form #content-general,
-        #tab-licence:checked ~ nav ~ form #content-licence,
-        #tab-systeme:checked ~ nav ~ form #content-systeme,
-        #tab-securite:checked ~ nav ~ form #content-securite,
-        #tab-pdf:checked ~ nav ~ form #content-pdf,
-        #tab-contenu:checked ~ nav ~ form #content-contenu,
-        #tab-templates:checked ~ nav ~ form #content-templates,
-        #tab-developpeur:checked ~ nav ~ form #content-developpeur {
+        .wrap:has(#tab-general:checked) form #content-general,
+        .wrap:has(#tab-licence:checked) form #content-licence,
+        .wrap:has(#tab-systeme:checked) form #content-systeme,
+        .wrap:has(#tab-securite:checked) form #content-securite,
+        .wrap:has(#tab-pdf:checked) form #content-pdf,
+        .wrap:has(#tab-contenu:checked) form #content-contenu,
+        .wrap:has(#tab-templates:checked) form #content-templates,
+        .wrap:has(#tab-developpeur:checked) form #content-developpeur {
             display: block !important;
             animation: fadeIn 0.3s ease-in-out;
         }
@@ -390,9 +388,7 @@
                 radio.addEventListener('change', updateTabs);
             });
 
-            // Initialisation
-            updateTabs();
-        });
-    </script>
-
-</div>
+        // Initialisation
+        updateTabs();
+    });
+</script>
