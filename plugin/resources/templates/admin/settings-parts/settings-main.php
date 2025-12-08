@@ -45,6 +45,13 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.log('🔍 [DEBUG] Could not find templates tab elements');
     }
+    
+    // Add click event listeners to log clicks
+    navTabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            console.log('🔍 [DEBUG] Tab clicked:', this.getAttribute('data-tab'), 'prevented:', e.defaultPrevented);
+        });
+    });
 });
 </script>
 <!-- Settings page loaded -->
