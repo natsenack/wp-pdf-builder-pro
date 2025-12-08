@@ -90,7 +90,26 @@ ceci est un test
         </div>
     </nav>
 
+    <form method="post" action="options.php">
+        <?php settings_fields('pdf_builder_settings_group'); ?>
 
+        <!-- Section Général -->
+        <div id="content-general" class="tab-content">
+            <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
+            <?php
+            $general_file = __DIR__ . '/settings-general.php';
+            if (file_exists($general_file)) {
+                require_once $general_file;
+            } else {
+                echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
+            }
+            ?>
+        </div>
+
+
+
+        <?php submit_button(); ?>
+    </form>
 
     <style>
         /* Masquer les boutons radio */
