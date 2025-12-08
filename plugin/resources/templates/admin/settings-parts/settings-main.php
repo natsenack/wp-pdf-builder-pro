@@ -345,8 +345,21 @@
             const contents = document.querySelectorAll('.tab-content');
             let activeTab = 'general'; // Onglet actif par défaut
 
-            console.log('Boutons trouvés:', tabButtons.length);
-            console.log('Contenus trouvés:', contents.length);
+            console.log('Vérification de la structure DOM:');
+            const wrapElement = document.querySelector('.wrap');
+            if (wrapElement) {
+                console.log('.wrap trouvé:', wrapElement);
+                console.log('Contenu de .wrap:', wrapElement.innerHTML.substring(0, 100) + '...');
+                console.log('Position de .wrap:', wrapElement.getBoundingClientRect());
+            } else {
+                console.error('.wrap NON trouvé !');
+            }
+
+            // Vérifier si les éléments sont dans .wrap
+            const tabButtonsInWrap = wrapElement ? wrapElement.querySelectorAll('.tab-button') : [];
+            const tabContentsInWrap = wrapElement ? wrapElement.querySelectorAll('.tab-content') : [];
+            console.log('Boutons dans .wrap:', tabButtonsInWrap.length);
+            console.log('Contenus dans .wrap:', tabContentsInWrap.length);
 
             // Vérifier chaque container de contenu
             contents.forEach(content => {
