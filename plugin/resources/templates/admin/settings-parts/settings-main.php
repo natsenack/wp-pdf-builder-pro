@@ -37,10 +37,70 @@
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
     <!-- Navigation par onglets moderne -->
+    <nav class="tabs-navigation">
+        <div class="tabs-container">
+            <button type="button" data-tab="general" class="tab-button active">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="licence" class="tab-button">
+                <span class="tab-icon">🔑</span>
+                <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="systeme" class="tab-button">
+                <span class="tab-icon">🖥️</span>
+                <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="securite" class="tab-button">
+                <span class="tab-icon">🔒</span>
+                <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="pdf" class="tab-button">
+                <span class="tab-icon">📄</span>
+                <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="contenu" class="tab-button">
+                <span class="tab-icon">🎨</span>
+                <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="templates" class="tab-button">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <button type="button" data-tab="developpeur" class="tab-button">
+                <span class="tab-icon">👨‍💻</span>
+                <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
+            </button>
+        </div>
+    </nav>
 
     <!-- contenu des onglets moderne -->
-    <form method="post" action="options.php">
+
+    <!-- Bouton flottant de sauvegarde -->
+    <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        💾 Enregistrer
+    </button>
+
+    <!-- Inclusion des modales -->
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
+    <!-- Containers fictifs pour éviter les erreurs JS -->
+    <div id="pdf-builder-tabs" style="display: none;"></div>
+    <div id="pdf-builder-tab-content" style="display: none;"></div>
+
+    <form method="post" action="options.php" id="pdf-builder-settings-form">
         <?php settings_fields('pdf_builder_settings_group'); ?>
+    </form>
+
+    <!-- contenu des onglets moderne - HORS du form pour éviter les problèmes de structure -->
+    <div class="tabs-content-wrapper">
 
         <!-- Section Général -->
         <div id="content-general" class="tab-content">
@@ -146,20 +206,12 @@
             ?>
         </div>
 
-        <?php submit_button(); ?>
-    </form>
+    </div>
 
     <!-- Bouton flottant de sauvegarde -->
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
         💾 Enregistrer
     </button>
-
-    <!-- Inclusion des modales -->
-    <?php require_once __DIR__ . '/settings-modals.php'; ?>
-
-    <!-- Containers fictifs pour éviter les erreurs JS -->
-    <div id="pdf-builder-tabs" style="display: none;"></div>
-    <div id="pdf-builder-tab-content" style="display: none;"></div>
 
     <style>
         /* Masquer les boutons radio */
@@ -231,6 +283,11 @@
 
         .tab-button.active .tab-icon {
             filter: brightness(1.2);
+        }
+
+        /* Wrapper pour les contenus d'onglets */
+        .tabs-content-wrapper {
+            margin-top: 20px;
         }
 
         /* Masquer toutes les sections par défaut */
