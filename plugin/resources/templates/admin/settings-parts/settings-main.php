@@ -337,44 +337,72 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('PDF Builder Pro - Initialisation des onglets');
+
             // Gestion des onglets avec boutons JavaScript
             const tabButtons = document.querySelectorAll('.tab-button[data-tab]');
             const contents = document.querySelectorAll('.tab-content');
             let activeTab = 'general'; // Onglet actif par défaut
 
+            console.log('Boutons trouvés:', tabButtons.length);
+            console.log('Contenus trouvés:', contents.length);
+
+            // Vérifier chaque container de contenu
+            contents.forEach(content => {
+                console.log('Container trouvé:', content.id, content.classList.contains('active') ? '(actif)' : '(inactif)');
+            });
+
+            // Vérifier chaque bouton
+            tabButtons.forEach(button => {
+                console.log('Bouton trouvé:', button.getAttribute('data-tab'), button.classList.contains('active') ? '(actif)' : '(inactif)');
+            });
+
             function updateTabs() {
+                console.log('Mise à jour des onglets - actif:', activeTab);
+
                 // Masquer tous les contenus
                 contents.forEach(content => {
                     content.classList.remove('active');
+                    console.log('Contenu masqué:', content.id);
                 });
 
                 // Désactiver tous les boutons
                 tabButtons.forEach(button => {
                     button.classList.remove('active');
+                    console.log('Bouton désactivé:', button.getAttribute('data-tab'));
                 });
 
                 // Afficher le contenu actif
                 const targetContent = document.getElementById('content-' + activeTab);
                 if (targetContent) {
                     targetContent.classList.add('active');
+                    console.log('Contenu affiché:', targetContent.id);
+                } else {
+                    console.error('Contenu non trouvé pour:', activeTab);
                 }
 
                 // Activer le bouton actif
                 const activeButton = document.querySelector(`.tab-button[data-tab="${activeTab}"]`);
                 if (activeButton) {
                     activeButton.classList.add('active');
+                    console.log('Bouton activé:', activeTab);
+                } else {
+                    console.error('Bouton non trouvé pour:', activeTab);
                 }
             }
 
             // Écouter les clics sur les boutons
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    activeTab = this.getAttribute('data-tab');
+                    const newTab = this.getAttribute('data-tab');
+                    console.log('Clic sur bouton:', newTab);
+                    activeTab = newTab;
                     updateTabs();
                 });
             });
 
             // Initialisation
+            console.log('Initialisation terminée');
             updateTabs();
         });
     </script>
