@@ -32,7 +32,7 @@
     ] : null;
 
 ?>
-<div class="wrap" style="height: 1200px; background: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+<div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
@@ -207,6 +207,10 @@
 
     <!-- Inclusion des modales -->
     <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
+    <!-- Containers fictifs pour éviter les erreurs JS -->
+    <div id="pdf-builder-tabs" style="display: none;"></div>
+    <div id="pdf-builder-tab-content" style="display: none;"></div>
 
     <style>
         /* Masquer les boutons radio */
