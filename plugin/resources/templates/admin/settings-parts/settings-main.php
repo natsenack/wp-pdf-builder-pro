@@ -345,95 +345,39 @@
             const contents = document.querySelectorAll('.tab-content');
             let activeTab = 'general'; // Onglet actif par défaut
 
-            console.log('Vérification de la structure DOM:');
-            const wrapElement = document.querySelector('.wrap');
-            if (wrapElement) {
-                console.log('.wrap trouvé:', wrapElement);
-                console.log('Contenu de .wrap:', wrapElement.innerHTML.substring(0, 100) + '...');
-                console.log('Position de .wrap:', wrapElement.getBoundingClientRect());
-            } else {
-                console.error('.wrap NON trouvé !');
-            }
-
-            // Vérifier si les éléments sont dans .wrap
-            const tabButtonsInWrap = wrapElement ? wrapElement.querySelectorAll('.tab-button') : [];
-            const tabContentsInWrap = wrapElement ? wrapElement.querySelectorAll('.tab-content') : [];
-            console.log('Ordre des éléments dans le DOM:');
-            const allElements = document.querySelectorAll('.tab-content');
-            allElements.forEach((el, index) => {
-                console.log(`${index + 1}. ${el.id} - Parent: ${el.parentElement.id || el.parentElement.tagName}`);
-            });
-
-            console.log('Structure hiérarchique:');
-            console.log('document.body.children:', Array.from(document.body.children).map(el => el.id || el.tagName));
-
-            // Vérifier chaque container de contenu
-            contents.forEach(content => {
-                const isInWrap = wrapElement.contains(content);
-                console.log('Container trouvé:', content.id, content.classList.contains('active') ? '(actif)' : '(inactif)', isInWrap ? '(dans .wrap)' : '(HORS .wrap ⚠️)');
-
-                if (!isInWrap) {
-                    // Élément hors du .wrap - analyser sa position
-                    const rect = content.getBoundingClientRect();
-                    console.log('Position de', content.id, ':', rect);
-                    console.log('Parent de', content.id, ':', content.parentElement);
-                    console.log('HTML autour de', content.id, ':', content.outerHTML.substring(0, 100) + '...');
-                }
-            });
-
-            // Vérifier chaque bouton
-            tabButtons.forEach(button => {
-                console.log('Bouton trouvé:', button.getAttribute('data-tab'), button.classList.contains('active') ? '(actif)' : '(inactif)');
-            });
-
             function updateTabs() {
-                console.log('Mise à jour des onglets - actif:', activeTab);
-
                 // Masquer tous les contenus
                 contents.forEach(content => {
                     content.classList.remove('active');
-                    console.log('Contenu masqué:', content.id);
                 });
 
                 // Désactiver tous les boutons
                 tabButtons.forEach(button => {
                     button.classList.remove('active');
-                    console.log('Bouton désactivé:', button.getAttribute('data-tab'));
                 });
 
                 // Afficher le contenu actif
                 const targetContent = document.getElementById('content-' + activeTab);
                 if (targetContent) {
                     targetContent.classList.add('active');
-                    console.log('Contenu affiché:', targetContent.id, '- Classes:', targetContent.className, '- Display:', getComputedStyle(targetContent).display);
-                    console.log('Contenu HTML:', targetContent.innerHTML.substring(0, 200) + '...');
-                    console.log('Contenu visible dans le DOM:', targetContent.offsetHeight > 0 ? 'OUI' : 'NON (offsetHeight=0)');
-                } else {
-                    console.error('Contenu non trouvé pour:', activeTab);
                 }
 
                 // Activer le bouton actif
                 const activeButton = document.querySelector(`.tab-button[data-tab="${activeTab}"]`);
                 if (activeButton) {
                     activeButton.classList.add('active');
-                    console.log('Bouton activé:', activeTab, '- Classes:', activeButton.className);
-                } else {
-                    console.error('Bouton non trouvé pour:', activeTab);
                 }
             }
 
             // Écouter les clics sur les boutons
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const newTab = this.getAttribute('data-tab');
-                    console.log('Clic sur bouton:', newTab);
-                    activeTab = newTab;
+                    activeTab = this.getAttribute('data-tab');
                     updateTabs();
                 });
             });
 
             // Initialisation
-            console.log('Initialisation terminée');
             updateTabs();
         });
     </script>
