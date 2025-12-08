@@ -188,7 +188,18 @@
     }
     ?>
 
-
+    <!-- Informations de débogage (uniquement en mode debug) -->
+    <?php //if ($debug_info): ?>
+   <!-- <details class="debug-panel" style="margin-top: 2rem;">
+        <summary class="debug-toggle">
+            <span class="dashicons dashicons-info"></span>
+            <?php //_e('Informations de débogage', 'pdf-builder-pro'); ?>
+        </summary>
+        <div class="debug-content">
+            <pre><?php //echo esc_html(json_encode($debug_info, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
+        </div>
+    </details>-->
+    <?php //endif; ?>
 </div>
 
 <style>
