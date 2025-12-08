@@ -88,7 +88,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         <?php settings_fields('pdf_builder_settings_group'); ?>
 
         <!-- Section Général -->
-        <div class="tab-content">
+        <div id="content-general" class="tab-content">
             <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
             <?php
             $general_file = __DIR__ . '/settings-general.php';
@@ -101,7 +101,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Licence -->
-        <div class="tab-content">
+        <div id="content-licence" class="tab-content">
             <h3><?php _e('Licence', 'pdf-builder-pro'); ?></h3>
             <?php
             $licence_file = __DIR__ . '/settings-licence.php';
@@ -114,7 +114,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Système -->
-        <div class="tab-content">
+        <div id="content-systeme" class="tab-content">
             <h3><?php _e('Système', 'pdf-builder-pro'); ?></h3>
             <?php
             $systeme_file = __DIR__ . '/settings-systeme.php';
@@ -127,7 +127,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Sécurité -->
-        <div class="tab-content">
+        <div id="content-securite" class="tab-content">
             <h3><?php _e('Sécurité', 'pdf-builder-pro'); ?></h3>
             <?php
             $securite_file = __DIR__ . '/settings-securite.php';
@@ -140,7 +140,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Configuration PDF -->
-        <div class="tab-content">
+        <div id="content-pdf" class="tab-content">
             <h3><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></h3>
             <?php
             $pdf_file = __DIR__ . '/settings-pdf.php';
@@ -153,7 +153,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Canvas & Design -->
-        <div class="tab-content">
+        <div id="content-contenu" class="tab-content">
             <h3><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></h3>
             <?php
             $contenu_file = __DIR__ . '/settings-contenu.php';
@@ -166,7 +166,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Templates -->
-        <div class="tab-content">
+        <div id="content-templates" class="tab-content">
             <h3><?php _e('Templates', 'pdf-builder-pro'); ?></h3>
             <?php
             $templates_file = __DIR__ . '/settings-templates.php';
@@ -179,7 +179,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         </div>
 
         <!-- Section Développeur -->
-        <div class="tab-content">
+        <div id="content-developpeur" class="tab-content">
             <h3><?php _e('Développeur', 'pdf-builder-pro'); ?></h3>
             <?php
             $developpeur_file = __DIR__ . '/settings-developpeur.php';
@@ -292,14 +292,14 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     }
 
     /* Afficher la section active basée sur le bouton radio coché */
-    #tab-general:checked ~ form .tab-content:nth-of-type(1),
-    #tab-licence:checked ~ form .tab-content:nth-of-type(2),
-    #tab-systeme:checked ~ form .tab-content:nth-of-type(3),
-    #tab-securite:checked ~ form .tab-content:nth-of-type(4),
-    #tab-pdf:checked ~ form .tab-content:nth-of-type(5),
-    #tab-contenu:checked ~ form .tab-content:nth-of-type(6),
-    #tab-templates:checked ~ form .tab-content:nth-of-type(7),
-    #tab-developpeur:checked ~ form .tab-content:nth-of-type(8) {
+    #tab-general:checked ~ form #content-general,
+    #tab-licence:checked ~ form #content-licence,
+    #tab-systeme:checked ~ form #content-systeme,
+    #tab-securite:checked ~ form #content-securite,
+    #tab-pdf:checked ~ form #content-pdf,
+    #tab-contenu:checked ~ form #content-contenu,
+    #tab-templates:checked ~ form #content-templates,
+    #tab-developpeur:checked ~ form #content-developpeur {
         display: block !important;
         animation: fadeIn 0.3s ease-in-out;
     }
