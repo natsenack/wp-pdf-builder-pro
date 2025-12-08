@@ -308,19 +308,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        /* Afficher la section active basée sur le bouton radio coché */
-        .wrap:has(#tab-general:checked) form #content-general,
-        .wrap:has(#tab-licence:checked) form #content-licence,
-        .wrap:has(#tab-systeme:checked) form #content-systeme,
-        .wrap:has(#tab-securite:checked) form #content-securite,
-        .wrap:has(#tab-pdf:checked) form #content-pdf,
-        .wrap:has(#tab-contenu:checked) form #content-contenu,
-        .wrap:has(#tab-templates:checked) form #content-templates,
-        .wrap:has(#tab-developpeur:checked) form #content-developpeur {
-            display: block !important;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
