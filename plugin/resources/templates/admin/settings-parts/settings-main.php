@@ -287,7 +287,7 @@ ceci est un test
         }
 
         /* Masquer toutes les sections par défaut */
-        .tab-content {
+        /*.tab-content {
             display: none;
             background: #fff;
             border: 1px solid #e1e1e1;
@@ -295,7 +295,7 @@ ceci est un test
             padding: 24px;
             margin-top: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+        }*/
 
         /* Afficher la section active basée sur le bouton radio coché */
         #tab-general:checked ~ form #content-general,
