@@ -46,17 +46,43 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     <input type="radio" id="tab-templates" name="tabs">
     <input type="radio" id="tab-developpeur" name="tabs">
 
-    <!-- Navigation par onglets -->
-    <div class="nav-tab-wrapper">
-        <label for="tab-general" class="nav-tab"><?php _e('Général', 'pdf-builder-pro'); ?></label>
-        <label for="tab-licence" class="nav-tab"><?php _e('Licence', 'pdf-builder-pro'); ?></label>
-        <label for="tab-systeme" class="nav-tab"><?php _e('Système', 'pdf-builder-pro'); ?></label>
-        <label for="tab-securite" class="nav-tab"><?php _e('Sécurité', 'pdf-builder-pro'); ?></label>
-        <label for="tab-pdf" class="nav-tab"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></label>
-        <label for="tab-contenu" class="nav-tab"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></label>
-        <label for="tab-templates" class="nav-tab"><?php _e('Templates', 'pdf-builder-pro'); ?></label>
-        <label for="tab-developpeur" class="nav-tab"><?php _e('Développeur', 'pdf-builder-pro'); ?></label>
-    </div>
+    <!-- Navigation par onglets moderne -->
+    <nav class="tabs-navigation">
+        <div class="tabs-container">
+            <label for="tab-general" class="tab-button">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-licence" class="tab-button">
+                <span class="tab-icon">🔑</span>
+                <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-systeme" class="tab-button">
+                <span class="tab-icon">🖥️</span>
+                <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-securite" class="tab-button">
+                <span class="tab-icon">🔒</span>
+                <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-pdf" class="tab-button">
+                <span class="tab-icon">📄</span>
+                <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-contenu" class="tab-button">
+                <span class="tab-icon">🎨</span>
+                <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-templates" class="tab-button">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
+            </label>
+            <label for="tab-developpeur" class="tab-button">
+                <span class="tab-icon">👨‍💻</span>
+                <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
+            </label>
+        </div>
+    </nav>
 
     <form method="post" action="options.php">
         <?php settings_fields('pdf_builder_settings_group'); ?>
@@ -169,84 +195,100 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     </form>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.nav-tab');
-    const contents = document.querySelectorAll('.tab-content');
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Retirer la classe active de tous les onglets
-            tabs.forEach(t => t.classList.remove('active'));
-            // Ajouter la classe active à l'onglet cliqué
-            this.classList.add('active');
-
-            // Masquer tous les contenus
-            contents.forEach(c => c.classList.remove('active'));
-            // Afficher le contenu correspondant
-            const targetId = this.getAttribute('href').substring(1);
-            document.getElementById(targetId).classList.add('active');
-        });
-    });
-});
-</script>
-
 <style>
     /* Masquer les boutons radio */
-    .nav-tab-wrapper input[type="radio"] {
+    input[type="radio"] {
         display: none;
     }
 
-    .nav-tab-wrapper {
-        border-bottom: 1px solid #ccc;
-        margin-bottom: 20px;
+    /* Navigation moderne des onglets */
+    .tabs-navigation {
+        margin: 20px 0 30px 0;
+        border-bottom: 2px solid #e1e1e1;
     }
 
-    .nav-tab {
-        display: inline-block;
-        padding: 8px 16px;
-        margin-right: 4px;
-        border: 1px solid #ccc;
-        border-bottom: none;
-        background: #f1f1f1;
-        color: #666;
-        text-decoration: none;
-        border-radius: 4px 4px 0 0;
+    .tabs-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 8px;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .tab-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 14px;
+        font-weight: 500;
+        color: #6c757d;
+        text-decoration: none;
+        position: relative;
+        min-height: 44px;
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
     }
 
-    .nav-tab:hover {
-        background: #e9e9e9;
-        color: #333;
+    .tab-button:hover {
+        background: rgba(0,123,255,0.1);
+        color: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,123,255,0.15);
     }
 
-    /* Style de l'onglet actif basé sur le bouton radio coché */
-    #tab-general:checked ~ .nav-tab-wrapper .nav-tab[for="tab-general"],
-    #tab-licence:checked ~ .nav-tab-wrapper .nav-tab[for="tab-licence"],
-    #tab-systeme:checked ~ .nav-tab-wrapper .nav-tab[for="tab-systeme"],
-    #tab-securite:checked ~ .nav-tab-wrapper .nav-tab[for="tab-securite"],
-    #tab-pdf:checked ~ .nav-tab-wrapper .nav-tab[for="tab-pdf"],
-    #tab-contenu:checked ~ .nav-tab-wrapper .nav-tab[for="tab-contenu"],
-    #tab-templates:checked ~ .nav-tab-wrapper .nav-tab[for="tab-templates"],
-    #tab-developpeur:checked ~ .nav-tab-wrapper .nav-tab[for="tab-developpeur"] {
-        background: #fff;
-        color: #000;
-        border-bottom: 1px solid #fff;
-        margin-bottom: -1px;
-        font-weight: 600;
+    .tab-icon {
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .tab-text {
+        font-weight: 500;
+    }
+
+    /* Style de l'onglet actif */
+    #tab-general:checked ~ .tabs-navigation .tab-button[for="tab-general"],
+    #tab-licence:checked ~ .tabs-navigation .tab-button[for="tab-licence"],
+    #tab-systeme:checked ~ .tabs-navigation .tab-button[for="tab-systeme"],
+    #tab-securite:checked ~ .tabs-navigation .tab-button[for="tab-securite"],
+    #tab-pdf:checked ~ .tabs-navigation .tab-button[for="tab-pdf"],
+    #tab-contenu:checked ~ .tabs-navigation .tab-button[for="tab-contenu"],
+    #tab-templates:checked ~ .tabs-navigation .tab-button[for="tab-templates"],
+    #tab-developpeur:checked ~ .tabs-navigation .tab-button[for="tab-developpeur"] {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        transform: translateY(-2px);
+    }
+
+    #tab-general:checked ~ .tabs-navigation .tab-button[for="tab-general"] .tab-icon,
+    #tab-licence:checked ~ .tabs-navigation .tab-button[for="tab-licence"] .tab-icon,
+    #tab-systeme:checked ~ .tabs-navigation .tab-button[for="tab-systeme"] .tab-icon,
+    #tab-securite:checked ~ .tabs-navigation .tab-button[for="tab-securite"] .tab-icon,
+    #tab-pdf:checked ~ .tabs-navigation .tab-button[for="tab-pdf"] .tab-icon,
+    #tab-contenu:checked ~ .tabs-navigation .tab-button[for="tab-contenu"] .tab-icon,
+    #tab-templates:checked ~ .tabs-navigation .tab-button[for="tab-templates"] .tab-icon,
+    #tab-developpeur:checked ~ .tabs-navigation .tab-button[for="tab-developpeur"] .tab-icon {
+        filter: brightness(1.2);
     }
 
     /* Masquer toutes les sections par défaut */
     .tab-content {
         display: none;
         background: #fff;
-        border: 1px solid #ddd;
-        border-top: none;
-        padding: 20px;
-        border-radius: 0 0 4px 4px;
+        border: 1px solid #e1e1e1;
+        border-radius: 8px;
+        padding: 24px;
+        margin-top: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     /* Afficher la section active basée sur le bouton radio coché */
@@ -259,13 +301,45 @@ document.addEventListener('DOMContentLoaded', function() {
     #tab-templates:checked ~ form .tab-content:nth-of-type(7),
     #tab-developpeur:checked ~ form .tab-content:nth-of-type(8) {
         display: block !important;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .tab-content h3 {
         margin-top: 0;
-        color: #23282d;
-        font-size: 18px;
+        color: #2c3e50;
+        font-size: 20px;
         font-weight: 600;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .tabs-container {
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tab-button {
+            justify-content: flex-start;
+            padding: 14px 16px;
+        }
+
+        .tab-content {
+            padding: 16px;
+        }
     }
 </style>
 
