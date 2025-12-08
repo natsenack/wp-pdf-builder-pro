@@ -349,36 +349,34 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Gestion des onglets avec JavaScript pour assurer la compatibilité
-    const radios = document.querySelectorAll('input[name="tabs"]');
-    const contents = document.querySelectorAll('.tab-content');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des onglets avec JavaScript pour assurer la compatibilité
+        const radios = document.querySelectorAll('input[name="tabs"]');
+        const contents = document.querySelectorAll('.tab-content');
 
-    function updateTabs() {
-        // Masquer tous les contenus
-        contents.forEach(content => {
-            content.style.display = 'none';
-        });
+        function updateTabs() {
+            // Masquer tous les contenus
+            contents.forEach(content => {
+                content.style.display = 'none';
+            });
 
-        // Afficher le contenu actif
-        const activeRadio = document.querySelector('input[name="tabs"]:checked');
-        if (activeRadio) {
-            const targetId = 'content-' + activeRadio.id.replace('tab-', '');
-            const targetContent = document.getElementById(targetId);
-            if (targetContent) {
-                targetContent.style.display = 'block';
+            // Afficher le contenu actif
+            const activeRadio = document.querySelector('input[name="tabs"]:checked');
+            if (activeRadio) {
+                const targetId = 'content-' + activeRadio.id.replace('tab-', '');
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.style.display = 'block';
+                }
             }
         }
-    }
 
-    // Écouter les changements sur les boutons radio
-    radios.forEach(radio => {
-        radio.addEventListener('change', updateTabs);
+        // Écouter les changements sur les boutons radio
+        radios.forEach(radio => {
+            radio.addEventListener('change', updateTabs);
+        });
+
+        // Initialisation
+        updateTabs();
     });
-
-    // Initialisation
-    updateTabs();
-});
 </script>
-
-</div>
