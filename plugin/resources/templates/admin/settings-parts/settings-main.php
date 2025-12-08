@@ -83,22 +83,6 @@
 
     <!-- contenu des onglets moderne -->
 
-    <!-- Bouton flottant de sauvegarde -->
-    <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-        💾 Enregistrer
-    </button>
-
-    <!-- Inclusion des modales -->
-    <?php require_once __DIR__ . '/settings-modals.php'; ?>
-
-    <!-- Containers fictifs pour éviter les erreurs JS -->
-    <div id="pdf-builder-tabs" style="display: none;"></div>
-    <div id="pdf-builder-tab-content" style="display: none;"></div>
-
-    <form method="post" action="options.php" id="pdf-builder-settings-form">
-        <?php settings_fields('pdf_builder_settings_group'); ?>
-    </form>
-
     <!-- contenu des onglets moderne - HORS du form pour éviter les problèmes de structure -->
     <div class="tabs-content-wrapper">
 
@@ -212,6 +196,13 @@
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
         💾 Enregistrer
     </button>
+
+    <!-- Inclusion des modales -->
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
+    <!-- Containers fictifs pour éviter les erreurs JS -->
+    <div id="pdf-builder-tabs" style="display: none;"></div>
+    <div id="pdf-builder-tab-content" style="display: none;"></div>
 
     <style>
         /* Masquer les boutons radio */
@@ -387,3 +378,4 @@
             updateTabs();
         });
     </script>
+</div> <!-- Fin du .wrap -->
