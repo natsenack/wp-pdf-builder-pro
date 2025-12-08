@@ -39,26 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔍 [DEBUG] Nav tab ' + index + ': data-tab="' + tab.getAttribute('data-tab') + '"');
     });
     
-    // Check if templates tab exists and try to activate it
-    const templatesTab = document.querySelector('[data-tab="templates"]');
-    const templatesContent = document.querySelector('#templates');
-    console.log('🔍 [DEBUG] templates tab element:', templatesTab);
-    console.log('🔍 [DEBUG] templates content element:', templatesContent);
-    
-    if (templatesTab && templatesContent) {
-        console.log('🔍 [DEBUG] Activating templates tab manually...');
-        // Remove active from all
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
-        // Add active to templates
-        templatesTab.classList.add('nav-tab-active');
-        templatesContent.classList.add('active');
-        console.log('🔍 [DEBUG] templates tab activated manually');
-    } else {
-        console.log('🔍 [DEBUG] Could not find templates tab elements');
-    }
-    
     // Add click event listeners to log clicks and handle tab switching
     navTabs.forEach(tab => {
         tab.addEventListener('click', function(e) {
