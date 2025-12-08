@@ -53,10 +53,27 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔍 [DEBUG] Could not find templates tab elements');
     }
     
-    // Add click event listeners to log clicks
+    // Add click event listeners to log clicks and handle tab switching
     navTabs.forEach(tab => {
         tab.addEventListener('click', function(e) {
+            e.preventDefault();
             console.log('🔍 [DEBUG] Tab clicked:', this.getAttribute('data-tab'), 'prevented:', e.defaultPrevented);
+            
+            // Manually switch tabs
+            const tabId = this.getAttribute('data-tab');
+            if (tabId) {
+                // Remove active from all
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active to clicked
+                this.classList.add('nav-tab-active');
+                const content = document.getElementById(tabId);
+                if (content) {
+                    content.classList.add('active');
+                }
+                console.log('🔍 [DEBUG] Manually switched to tab:', tabId);
+            }
         });
     });
 });
