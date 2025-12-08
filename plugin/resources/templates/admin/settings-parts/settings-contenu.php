@@ -5,8 +5,7 @@
  * Updated: 2025-12-03
  */
 
-// Inclure les fonctions helper nécessaires pour tous les onglets
-require_once __DIR__ . '/settings-helpers.php';
+// require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 $settings = get_option('pdf_builder_settings', array());
 
