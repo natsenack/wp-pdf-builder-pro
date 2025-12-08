@@ -93,6 +93,7 @@
             $general_file = __DIR__ . '/settings-general.php';
             if (file_exists($general_file)) {
                 require_once $general_file;
+                echo '<!-- Fichier settings-general.php chargé -->';
             } else {
                 echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
             }
@@ -376,7 +377,7 @@
                 const targetContent = document.getElementById('content-' + activeTab);
                 if (targetContent) {
                     targetContent.classList.add('active');
-                    console.log('Contenu affiché:', targetContent.id);
+                    console.log('Contenu affiché:', targetContent.id, '- Classes:', targetContent.className, '- Display:', getComputedStyle(targetContent).display);
                 } else {
                     console.error('Contenu non trouvé pour:', activeTab);
                 }
@@ -385,7 +386,7 @@
                 const activeButton = document.querySelector(`.tab-button[data-tab="${activeTab}"]`);
                 if (activeButton) {
                     activeButton.classList.add('active');
-                    console.log('Bouton activé:', activeTab);
+                    console.log('Bouton activé:', activeTab, '- Classes:', activeButton.className);
                 } else {
                     console.error('Bouton non trouvé pour:', activeTab);
                 }
