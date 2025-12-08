@@ -1,35 +1,35 @@
 ﻿<?php
-/**
- * Paramètres Généraux - PDF Builder Pro
- * Onglet principal des paramètres généraux avec informations entreprise
- *
- * @version 2.1.0
- * @since 2025-12-08
- */
+    /**
+     * Paramètres Généraux - PDF Builder Pro
+     * Onglet principal des paramètres généraux avec informations entreprise
+     *
+     * @version 2.1.0
+     * @since 2025-12-08
+     */
 
-// Récupération sécurisée des paramètres
-$settings = get_option('pdf_builder_settings', array());
+    // Récupération sécurisée des paramètres
+    $settings = get_option('pdf_builder_settings', array());
 
-// Fonction helper pour récupérer une valeur de setting avec fallback
-function get_pdf_setting($key, $default = '') {
-    static $settings = null;
-    if ($settings === null) {
-        $settings = get_option('pdf_builder_settings', array());
+    // Fonction helper pour récupérer une valeur de setting avec fallback
+    function get_pdf_setting($key, $default = '') {
+        static $settings = null;
+        if ($settings === null) {
+            $settings = get_option('pdf_builder_settings', array());
+        }
+        return $settings[$key] ?? $default;
     }
-    return $settings[$key] ?? $default;
-}
 
-// Récupération des informations WooCommerce
-$store_name = get_option('woocommerce_store_name', get_bloginfo('name'));
-$store_address = get_option('woocommerce_store_address', '');
-$store_city = get_option('woocommerce_store_city', '');
-$store_postcode = get_option('woocommerce_store_postcode', '');
-$store_country = get_option('woocommerce_default_country', '');
-$admin_email = get_option('admin_email', '');
+    // Récupération des informations WooCommerce
+    $store_name = get_option('woocommerce_store_name', get_bloginfo('name'));
+    $store_address = get_option('woocommerce_store_address', '');
+    $store_city = get_option('woocommerce_store_city', '');
+    $store_postcode = get_option('woocommerce_store_postcode', '');
+    $store_country = get_option('woocommerce_default_country', '');
+    $admin_email = get_option('admin_email', '');
 
-// Construction de l'adresse complète
-$address_parts = array_filter([$store_address, $store_city, $store_postcode, $store_country]);
-$full_address = implode(', ', $address_parts);
+    // Construction de l'adresse complète
+    $address_parts = array_filter([$store_address, $store_city, $store_postcode, $store_country]);
+    $full_address = implode(', ', $address_parts);
 ?>
 
 <section id="general" class="settings-section general-settings" role="tabpanel" aria-labelledby="tab-general">
@@ -241,251 +241,251 @@ $full_address = implode(', ', $address_parts);
 </section>
 
 <style>
-/* Styles pour les paramètres généraux */
-.general-settings {
-    max-width: none;
-}
+    /* Styles pour les paramètres généraux */
+    .general-settings {
+        max-width: none;
+    }
 
-.settings-content {
-    display: grid;
-    gap: 2rem;
-}
+    .settings-content {
+        display: grid;
+        gap: 2rem;
+    }
 
-.settings-card {
-    background: #fff;
-    border: 1px solid #dcdcde;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
+    .settings-card {
+        background: #fff;
+        border: 1px solid #dcdcde;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
 
-.card-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #f0f0f1;
-    background: #fafafa;
-}
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f0f0f1;
+        background: #fafafa;
+    }
 
-.card-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.2em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+    .card-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2em;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-.card-title .dashicons {
-    color: #2271b1;
-}
+    .card-title .dashicons {
+        color: #2271b1;
+    }
 
-.card-description {
-    margin: 0;
-    color: #646970;
-    font-size: 0.9em;
-}
+    .card-description {
+        margin: 0;
+        color: #646970;
+        font-size: 0.9em;
+    }
 
-.card-content {
-    padding: 1.5rem;
-}
+    .card-content {
+        padding: 1.5rem;
+    }
 
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.info-item {
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 4px;
-    border-left: 3px solid #2271b1;
-}
-
-.info-label {
-    display: block;
-    font-weight: 600;
-    color: #1d2327;
-    margin-bottom: 0.25rem;
-    font-size: 0.9em;
-}
-
-.info-value {
-    color: #2c3338;
-    word-break: break-word;
-}
-
-.text-muted {
-    color: #646970;
-    font-style: italic;
-}
-
-.info-notice {
-    margin: 0;
-    padding: 1rem;
-    background: #f0f6fc;
-    border-left: 4px solid #0a4b78;
-}
-
-.info-notice p {
-    margin: 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.field-label {
-    font-weight: 600;
-    color: #1d2327;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.field-label .dashicons {
-    color: #2271b1;
-    font-size: 1em;
-}
-
-.field-label.required::after {
-    content: '*';
-    color: #d63638;
-    font-weight: bold;
-}
-
-.field-input input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #8c8f94;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    transition: border-color 0.2s ease;
-}
-
-.field-input input:focus {
-    outline: none;
-    border-color: #2271b1;
-    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.2);
-}
-
-.field-description {
-    margin: 0.25rem 0 0 0;
-    color: #646970;
-    font-size: 0.85rem;
-    line-height: 1.4;
-}
-
-.preview-section {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border: 1px solid #dcdcde;
-    border-radius: 4px;
-}
-
-.preview-section h4 {
-    margin: 0 0 1rem 0;
-    color: #1d2327;
-}
-
-/* Responsive */
-@media (max-width: 782px) {
     .info-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 4px;
+        border-left: 3px solid #2271b1;
+    }
+
+    .info-label {
+        display: block;
+        font-weight: 600;
+        color: #1d2327;
+        margin-bottom: 0.25rem;
+        font-size: 0.9em;
+    }
+
+    .info-value {
+        color: #2c3338;
+        word-break: break-word;
+    }
+
+    .text-muted {
+        color: #646970;
+        font-style: italic;
+    }
+
+    .info-notice {
+        margin: 0;
+        padding: 1rem;
+        background: #f0f6fc;
+        border-left: 4px solid #0a4b78;
+    }
+
+    .info-notice p {
+        margin: 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 
     .form-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
     }
 
-    .card-header,
-    .card-content {
-        padding: 1rem;
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
-}
+
+    .field-label {
+        font-weight: 600;
+        color: #1d2327;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .field-label .dashicons {
+        color: #2271b1;
+        font-size: 1em;
+    }
+
+    .field-label.required::after {
+        content: '*';
+        color: #d63638;
+        font-weight: bold;
+    }
+
+    .field-input input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #8c8f94;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease;
+    }
+
+    .field-input input:focus {
+        outline: none;
+        border-color: #2271b1;
+        box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.2);
+    }
+
+    .field-description {
+        margin: 0.25rem 0 0 0;
+        color: #646970;
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .preview-section {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border: 1px solid #dcdcde;
+        border-radius: 4px;
+    }
+
+    .preview-section h4 {
+        margin: 0 0 1rem 0;
+        color: #1d2327;
+    }
+
+    /* Responsive */
+    @media (max-width: 782px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card-header,
+        .card-content {
+            padding: 1rem;
+        }
+    }
 </style>
 
 <script>
-// Validation côté client pour les paramètres généraux
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('general-form');
-    if (!form) return;
+    // Validation côté client pour les paramètres généraux
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('general-form');
+        if (!form) return;
 
-    // Validation du numéro de téléphone
-    const phoneInput = document.getElementById('company_phone_manual');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function() {
-            const isValid = /^[\+]?[0-9\s\-\(\)]+$/.test(this.value) || this.value === '';
-            this.setCustomValidity(isValid ? '' : 'Format de numéro de téléphone invalide');
-        });
-    }
+        // Validation du numéro de téléphone
+        const phoneInput = document.getElementById('company_phone_manual');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                const isValid = /^[\+]?[0-9\s\-\(\)]+$/.test(this.value) || this.value === '';
+                this.setCustomValidity(isValid ? '' : 'Format de numéro de téléphone invalide');
+            });
+        }
 
-    // Validation du SIRET
-    const siretInput = document.getElementById('company_siret');
-    if (siretInput) {
-        siretInput.addEventListener('input', function() {
-            const cleanValue = this.value.replace(/\s/g, '');
-            const isValid = /^[0-9]{14}$/.test(cleanValue) || cleanValue === '';
-            this.setCustomValidity(isValid ? '' : 'Le SIRET doit contenir exactement 14 chiffres');
-        });
-    }
+        // Validation du SIRET
+        const siretInput = document.getElementById('company_siret');
+        if (siretInput) {
+            siretInput.addEventListener('input', function() {
+                const cleanValue = this.value.replace(/\s/g, '');
+                const isValid = /^[0-9]{14}$/.test(cleanValue) || cleanValue === '';
+                this.setCustomValidity(isValid ? '' : 'Le SIRET doit contenir exactement 14 chiffres');
+            });
+        }
 
-    // Validation du numéro TVA
-    const vatInput = document.getElementById('company_vat');
-    if (vatInput) {
-        vatInput.addEventListener('input', function() {
-            const isValid = /^[A-Z]{2}[0-9A-Z]{8,12}$/.test(this.value) || this.value === '';
-            this.setCustomValidity(isValid ? '' : 'Format de numéro TVA invalide (2 lettres pays + 8-12 caractères)');
-        });
-    }
+        // Validation du numéro TVA
+        const vatInput = document.getElementById('company_vat');
+        if (vatInput) {
+            vatInput.addEventListener('input', function() {
+                const isValid = /^[A-Z]{2}[0-9A-Z]{8,12}$/.test(this.value) || this.value === '';
+                this.setCustomValidity(isValid ? '' : 'Format de numéro TVA invalide (2 lettres pays + 8-12 caractères)');
+            });
+        }
 
-    // Prévisualisation des données (optionnel)
-    function updatePreview() {
-        const preview = document.getElementById('company-preview');
-        if (!preview) return;
+        // Prévisualisation des données (optionnel)
+        function updatePreview() {
+            const preview = document.getElementById('company-preview');
+            if (!preview) return;
 
-        const data = {
-            phone: phoneInput?.value || '',
-            siret: siretInput?.value || '',
-            vat: vatInput?.value || '',
-            rcs: document.getElementById('company_rcs')?.value || '',
-            capital: document.getElementById('company_capital')?.value || ''
-        };
+            const data = {
+                phone: phoneInput?.value || '',
+                siret: siretInput?.value || '',
+                vat: vatInput?.value || '',
+                rcs: document.getElementById('company_rcs')?.value || '',
+                capital: document.getElementById('company_capital')?.value || ''
+            };
 
-        const hasData = Object.values(data).some(value => value.trim() !== '');
-        preview.style.display = hasData ? 'block' : 'none';
+            const hasData = Object.values(data).some(value => value.trim() !== '');
+            preview.style.display = hasData ? 'block' : 'none';
 
-        if (hasData) {
-            const previewContent = preview.querySelector('.preview-content');
-            if (previewContent) {
-                previewContent.innerHTML = `
-                    <dl>
-                        ${data.phone ? `<dt>Téléphone:</dt><dd>${data.phone}</dd>` : ''}
-                        ${data.siret ? `<dt>SIRET:</dt><dd>${data.siret}</dd>` : ''}
-                        ${data.vat ? `<dt>TVA:</dt><dd>${data.vat}</dd>` : ''}
-                        ${data.rcs ? `<dt>RCS:</dt><dd>${data.rcs}</dd>` : ''}
-                        ${data.capital ? `<dt>Capital:</dt><dd>${data.capital}</dd>` : ''}
-                    </dl>
-                `;
+            if (hasData) {
+                const previewContent = preview.querySelector('.preview-content');
+                if (previewContent) {
+                    previewContent.innerHTML = `
+                        <dl>
+                            ${data.phone ? `<dt>Téléphone:</dt><dd>${data.phone}</dd>` : ''}
+                            ${data.siret ? `<dt>SIRET:</dt><dd>${data.siret}</dd>` : ''}
+                            ${data.vat ? `<dt>TVA:</dt><dd>${data.vat}</dd>` : ''}
+                            ${data.rcs ? `<dt>RCS:</dt><dd>${data.rcs}</dd>` : ''}
+                            ${data.capital ? `<dt>Capital:</dt><dd>${data.capital}</dd>` : ''}
+                        </dl>
+                    `;
+                }
             }
         }
-    }
 
-    // Écouter les changements pour mettre à jour la prévisualisation
-    form.addEventListener('input', updatePreview);
-    updatePreview(); // Initial update
-});
+        // Écouter les changements pour mettre à jour la prévisualisation
+        form.addEventListener('input', updatePreview);
+        updatePreview(); // Initial update
+    });
 </script>
 

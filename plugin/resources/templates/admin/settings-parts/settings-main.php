@@ -1,35 +1,35 @@
 <?php
-/**
- * Page principale des paramètres PDF Builder Pro
- *
- * Interface d'administration principale avec système d'onglets
- * pour la configuration complète du générateur de PDF.
- *
- * @version 2.1.0
- * @since 2025-12-08
- */
+    /**
+     * Page principale des paramètres PDF Builder Pro
+     *
+     * Interface d'administration principale avec système d'onglets
+     * pour la configuration complète du générateur de PDF.
+     *
+     * @version 2.1.0
+     * @since 2025-12-08
+     */
 
-// Sécurité WordPress
-if (!defined('ABSPATH')) {
-    exit('Direct access forbidden');
-}
+    // Sécurité WordPress
+    if (!defined('ABSPATH')) {
+        exit('Direct access forbidden');
+    }
 
-if (!is_user_logged_in() || !current_user_can('manage_options')) {
-    wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
-}
+    if (!is_user_logged_in() || !current_user_can('manage_options')) {
+        wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
+    }
 
-// Récupération des paramètres généraux
-$settings = get_option('pdf_builder_settings', array());
-$current_user = wp_get_current_user();
+    // Récupération des paramètres généraux
+    $settings = get_option('pdf_builder_settings', array());
+    $current_user = wp_get_current_user();
 
-// Informations de diagnostic pour le débogage (uniquement en mode debug)
-$debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
-    'version' => PDF_BUILDER_PRO_VERSION ?? 'unknown',
-    'php' => PHP_VERSION,
-    'wordpress' => get_bloginfo('version'),
-    'user' => $current_user->display_name,
-    'time' => current_time('mysql')
-] : null;
+    // Informations de diagnostic pour le débogage (uniquement en mode debug)
+    $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
+        'version' => PDF_BUILDER_PRO_VERSION ?? 'unknown',
+        'php' => PHP_VERSION,
+        'wordpress' => get_bloginfo('version'),
+        'user' => $current_user->display_name,
+        'time' => current_time('mysql')
+    ] : null;
 
 ?>
 <div class="wrap pdf-builder-settings-page" id="pdf-builder-settings-wrapper">
@@ -43,55 +43,55 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     <nav class="settings-navigation" role="navigation" aria-label="<?php esc_attr_e('Navigation des paramètres', 'pdf-builder-pro'); ?>">
         <div class="nav-tab-wrapper" id="pdf-builder-tabs" role="tablist">
             <?php
-            // Définition des onglets disponibles
-            $tabs = [
-                'general' => [
-                    'title' => __('Général', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-admin-settings',
-                    'description' => __('Informations entreprise et configuration de base', 'pdf-builder-pro')
-                ],
-                'licence' => [
-                    'title' => __('Licence', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-admin-network',
-                    'description' => __('Gestion de la licence et activation', 'pdf-builder-pro')
-                ],
-                'systeme' => [
-                    'title' => __('Système', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-admin-tools',
-                    'description' => __('Configuration système et compatibilité', 'pdf-builder-pro')
-                ],
-                'securite' => [
-                    'title' => __('Sécurité', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-shield',
-                    'description' => __('Paramètres de sécurité et permissions', 'pdf-builder-pro')
-                ],
-                'pdf' => [
-                    'title' => __('Configuration PDF', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-media-document',
-                    'description' => __('Paramètres de génération PDF', 'pdf-builder-pro')
-                ],
-                'contenu' => [
-                    'title' => __('Canvas & Design', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-art',
-                    'description' => __('Configuration du canvas et design', 'pdf-builder-pro')
-                ],
-                'templates' => [
-                    'title' => __('Templates', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-layout',
-                    'description' => __('Gestion des templates par statut', 'pdf-builder-pro')
-                ],
-                'developpeur' => [
-                    'title' => __('Développeur', 'pdf-builder-pro'),
-                    'icon' => 'dashicons-editor-code',
-                    'description' => __('Outils et options développeur', 'pdf-builder-pro')
-                ]
-            ];
+                // Définition des onglets disponibles
+                $tabs = [
+                    'general' => [
+                        'title' => __('Général', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-admin-settings',
+                        'description' => __('Informations entreprise et configuration de base', 'pdf-builder-pro')
+                    ],
+                    'licence' => [
+                        'title' => __('Licence', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-admin-network',
+                        'description' => __('Gestion de la licence et activation', 'pdf-builder-pro')
+                    ],
+                    'systeme' => [
+                        'title' => __('Système', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-admin-tools',
+                        'description' => __('Configuration système et compatibilité', 'pdf-builder-pro')
+                    ],
+                    'securite' => [
+                        'title' => __('Sécurité', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-shield',
+                        'description' => __('Paramètres de sécurité et permissions', 'pdf-builder-pro')
+                    ],
+                    'pdf' => [
+                        'title' => __('Configuration PDF', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-media-document',
+                        'description' => __('Paramètres de génération PDF', 'pdf-builder-pro')
+                    ],
+                    'contenu' => [
+                        'title' => __('Canvas & Design', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-art',
+                        'description' => __('Configuration du canvas et design', 'pdf-builder-pro')
+                    ],
+                    'templates' => [
+                        'title' => __('Templates', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-layout',
+                        'description' => __('Gestion des templates par statut', 'pdf-builder-pro')
+                    ],
+                    'developpeur' => [
+                        'title' => __('Développeur', 'pdf-builder-pro'),
+                        'icon' => 'dashicons-editor-code',
+                        'description' => __('Outils et options développeur', 'pdf-builder-pro')
+                    ]
+                ];
 
-            // Génération des onglets
-            foreach ($tabs as $tab_id => $tab_config):
-                $tab_title = $tab_config['title'];
-                $tab_icon = $tab_config['icon'];
-                $tab_desc = $tab_config['description'];
+                // Génération des onglets
+                foreach ($tabs as $tab_id => $tab_config):
+                    $tab_title = $tab_config['title'];
+                    $tab_icon = $tab_config['icon'];
+                    $tab_desc = $tab_config['description'];
             ?>
             <button
                 id="tab-<?php echo esc_attr($tab_id); ?>"
@@ -101,8 +101,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
                 aria-selected="false"
                 aria-controls="<?php echo esc_attr($tab_id); ?>"
                 title="<?php echo esc_attr($tab_desc); ?>"
-                type="button"
-            >
+                type="button">
                 <span class="tab-icon <?php echo esc_attr($tab_icon); ?>" aria-hidden="true"></span>
                 <span class="tab-label"><?php echo esc_html($tab_title); ?></span>
             </button>
@@ -119,20 +118,20 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     <!-- Contenu des onglets -->
     <main class="settings-content" id="pdf-builder-tab-content" role="main" aria-live="polite">
         <?php
-        // Chargement des fichiers d'onglets avec gestion d'erreurs
-        $tab_files = [
-            'general' => 'settings-general.php',
-            'licence' => 'settings-licence.php',
-            'systeme' => 'settings-systeme.php',
-            'securite' => 'settings-securite.php',
-            'pdf' => 'settings-pdf.php',
-            'contenu' => 'settings-contenu.php',
-            'templates' => 'settings-templates.php',
-            'developpeur' => 'settings-developpeur.php'
-        ];
+            // Chargement des fichiers d'onglets avec gestion d'erreurs
+            $tab_files = [
+                'general' => 'settings-general.php',
+                'licence' => 'settings-licence.php',
+                'systeme' => 'settings-systeme.php',
+                'securite' => 'settings-securite.php',
+                'pdf' => 'settings-pdf.php',
+                'contenu' => 'settings-contenu.php',
+                'templates' => 'settings-templates.php',
+                'developpeur' => 'settings-developpeur.php'
+            ];
 
-        foreach ($tab_files as $tab_id => $file):
-            $file_path = __DIR__ . '/' . $file;
+            foreach ($tab_files as $tab_id => $file):
+                $file_path = __DIR__ . '/' . $file;
         ?>
         <section
             id="<?php echo esc_attr($tab_id); ?>"
@@ -167,8 +166,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
                 type="button"
                 id="pdf-builder-save-floating-btn"
                 class="button button-primary button-hero save-button"
-                aria-describedby="save-status-text"
-            >
+                aria-describedby="save-status-text">
                 <span class="dashicons dashicons-yes" aria-hidden="true"></span>
                 <span class="button-text"><?php _e('Enregistrer les modifications', 'pdf-builder-pro'); ?></span>
             </button>
