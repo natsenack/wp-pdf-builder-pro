@@ -2173,8 +2173,5 @@ foreach ($canvas_options as $option) {
 
                 })();
             </script>
-        </div>
-    </div>
-</div>
 
 
