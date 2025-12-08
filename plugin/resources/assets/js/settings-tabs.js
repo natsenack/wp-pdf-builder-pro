@@ -158,15 +158,43 @@
         }
     }
 
-    // Système de navigation des onglets
+    // Système de navigation des onglets - Version simplifiée et optimisée
     function initTabs() {
-        
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
         if (!tabsContainer || !contentContainer) {
-            
+            console.warn('[PDF Builder] Containers d\'onglets non trouvés');
             return;
+        }
+
+        // Fonction pour activer un onglet spécifique
+        function activateTab(tabId) {
+            if (!tabId) return false;
+
+            const tabElement = tabsContainer.querySelector(`[data-tab="${tabId}"]`);
+            const contentElement = contentContainer.querySelector(`#${tabId}`);
+
+            if (!tabElement || !contentElement) {
+                console.warn(`[PDF Builder] Onglet ou contenu non trouvé: ${tabId}`);
+                return false;
+            }
+
+            // Désactiver tous les onglets et contenus
+            tabsContainer.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('nav-tab-active');
+                tab.setAttribute('aria-selected', 'false');
+            });
+            contentContainer.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Activer l'onglet et le contenu sélectionnés
+            tabElement.classList.add('nav-tab-active');
+            tabElement.setAttribute('aria-selected', 'true');
+            contentElement.classList.add('active');
+
+            return true;
         }
 
         // Gestionnaire de clic pour les onglets
@@ -175,83 +203,38 @@
             if (!tab) return;
 
             e.preventDefault();
-
             const tabId = tab.getAttribute('data-tab');
-            if (!tabId) return;
 
-            // Désactiver tous les onglets
-            tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
-                t.classList.remove('nav-tab-active');
-                t.setAttribute('aria-selected', 'false');
-            });
-
-            // Désactiver tous les contenus
-            contentContainer.querySelectorAll('.tab-content').forEach(c => {
-                c.classList.remove('active');
-            });
-
-            // Activer l'onglet cliqué
-            tab.classList.add('nav-tab-active');
-            tab.setAttribute('aria-selected', 'true');
-
-            // Activer le contenu correspondant
-            const content = contentContainer.querySelector('#' + tabId);
-
-            if (content) {
-                content.classList.add('active');
-                
-            } else {
-                
-            }
-
-            // Sauvegarder dans localStorage
-            try {
-                localStorage.setItem('pdf_builder_active_tab', tabId);
-            } catch (e) {
-                // Ignore les erreurs localStorage
+            if (activateTab(tabId)) {
+                // Sauvegarder dans localStorage
+                try {
+                    localStorage.setItem('pdf_builder_active_tab', tabId);
+                } catch (e) {
+                    console.warn('[PDF Builder] Erreur localStorage:', e);
+                }
             }
         });
 
-        // Restaurer l'onglet sauvegardé ou activer le premier onglet par défaut
-        let tabActivated = false;
+        // Restaurer l'onglet sauvegardé ou activer le défaut
+        let activeTabRestored = false;
 
         try {
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
-            if (savedTab) {
-                const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = contentContainer.querySelector('#' + savedTab);
-                if (savedTabElement && savedContent) {
-                    // Forcer la désactivation de tous les onglets d'abord
-                    tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
-                        t.classList.remove('nav-tab-active');
-                        t.setAttribute('aria-selected', 'false');
-                    });
-                    contentContainer.querySelectorAll('.tab-content').forEach(c => {
-                        c.classList.remove('active');
-                    });
-
-                    // Activer l'onglet sauvegardé
-                    savedTabElement.classList.add('nav-tab-active');
-                    savedTabElement.setAttribute('aria-selected', 'true');
-                    savedContent.classList.add('active');
-                    tabActivated = true;
-                }
+            if (savedTab && activateTab(savedTab)) {
+                activeTabRestored = true;
             }
         } catch (e) {
-            // Ignore les erreurs localStorage
+            console.warn('[PDF Builder] Erreur lors de la restauration:', e);
         }
 
-        // Activer l'onglet développeur par défaut seulement si aucun onglet n'a été restauré
-        if (!tabActivated) {
-            const defaultTab = tabsContainer.querySelector('[data-tab="developpeur"]');
-
-            if (defaultTab) {
-                defaultTab.click();
-            } else {
-                // Fallback au premier onglet si développeur n'existe pas
+        // Activer l'onglet par défaut si aucun n'a été restauré
+        if (!activeTabRestored) {
+            // Essayer "developpeur" d'abord, sinon le premier onglet disponible
+            if (!activateTab('developpeur')) {
                 const firstTab = tabsContainer.querySelector('.nav-tab');
                 if (firstTab) {
-                    firstTab.click();
+                    const firstTabId = firstTab.getAttribute('data-tab');
+                    activateTab(firstTabId);
                 }
             }
         }

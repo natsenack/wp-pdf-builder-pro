@@ -2,21 +2,7 @@
 if (!defined('ABSPATH')) exit('Direct access forbidden');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 $settings = get_option('pdf_builder_settings', array());
-
-// require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
-
-// Charger les styles CSS pour les paramètres d'administration - REMOVED - file doesn't exist
-// $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__))))));
-// wp_enqueue_style('pdf-builder-admin-settings', plugins_url('resources/assets/css/admin-settings.css', $plugin_dir . '/pdf-builder-pro.php'), array(), '1.0.0');
 ?>
-<!-- Debug script to check if tabs are loaded -->
-<script>
-console.log('🔍 [DEBUG] Settings page loading...');
-document.addEventListener('DOMContentLoaded', function() {
-    // Tab initialization is handled by settings-tabs.js
-});
-</script>
-<!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <!-- Bouton de sauvegarde flottant global -->
     <div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 9999 !important; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
@@ -32,8 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <header class="pdf-builder-header">
         <h1>Paramètres PDF Builder Pro</h1>
     </header>
-
-
 
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
         <a id="tab-general" href="#general" class="nav-tab" data-tab="general" role="tab" aria-selected="false" aria-controls="general">
