@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 console.log('🔍 [DEBUG] Manually switched to tab:', tabId);
             }
-        });
+        }, true); // capture: true
     });
 });
 </script>
