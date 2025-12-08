@@ -6,7 +6,8 @@ $settings = get_option('pdf_builder_settings', array());
 // require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 // Charger les styles CSS pour les paramètres d'administration
-wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-settings.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.0.0');
+$plugin_dir = dirname(dirname(dirname(__FILE__)));
+wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-settings.css', $plugin_dir . '/pdf-builder-pro.php'), array(), '1.0.0');
 ?>
 <!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
