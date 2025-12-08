@@ -32,7 +32,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
 ] : null;
 
 ?>
-<div class="wrap" style="height: 1200px;">
+<div class="wrap" style="height: 1200px; background: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
 ceci est un test
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
