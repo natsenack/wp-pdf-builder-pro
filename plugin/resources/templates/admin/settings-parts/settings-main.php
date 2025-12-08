@@ -9,24 +9,6 @@ $settings = get_option('pdf_builder_settings', array());
 $plugin_dir = dirname(dirname(dirname(__FILE__)));
 wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-settings.css', $plugin_dir . '/pdf-builder-pro.php'), array(), '1.0.0');
 ?>
-<!-- Debug script to check if tabs are loaded -->
-<script>
-console.log('🔍 [DEBUG] Settings page loading...');
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 [DEBUG] DOM loaded, checking tabs...');
-    const tabs = document.querySelectorAll('.tab-content');
-    console.log('🔍 [DEBUG] Found ' + tabs.length + ' tab-content elements:');
-    tabs.forEach(function(tab, index) {
-        console.log('🔍 [DEBUG] Tab ' + index + ': id="' + tab.id + '"');
-    });
-    
-    const navTabs = document.querySelectorAll('.nav-tab');
-    console.log('🔍 [DEBUG] Found ' + navTabs.length + ' nav-tab elements:');
-    navTabs.forEach(function(tab, index) {
-        console.log('🔍 [DEBUG] Nav tab ' + index + ': data-tab="' + tab.getAttribute('data-tab') + '"');
-    });
-});
-</script>
 <!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <!-- Bouton de sauvegarde flottant global -->
