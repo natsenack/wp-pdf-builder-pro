@@ -14,6 +14,13 @@ $settings = get_option('pdf_builder_settings', array());
 console.log('🔍 [DEBUG] Settings page loading...');
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 [DEBUG] DOM loaded, checking tabs...');
+    
+    // Check containers
+    const tabsContainer = document.getElementById('pdf-builder-tabs');
+    const contentContainer = document.getElementById('pdf-builder-tab-content');
+    console.log('🔍 [DEBUG] tabsContainer:', tabsContainer);
+    console.log('🔍 [DEBUG] contentContainer:', contentContainer);
+    
     const tabs = document.querySelectorAll('.tab-content');
     console.log('🔍 [DEBUG] Found ' + tabs.length + ' tab-content elements:');
     tabs.forEach(function(tab, index) {
