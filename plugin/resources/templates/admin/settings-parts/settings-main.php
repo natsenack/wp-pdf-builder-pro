@@ -13,27 +13,7 @@ $settings = get_option('pdf_builder_settings', array());
 <script>
 console.log('🔍 [DEBUG] Settings page loading...');
 document.addEventListener('DOMContentLoaded', function() {
-    // Ensure tab content is shown for active tab
-    setTimeout(() => {
-        const activeTab = document.querySelector('.nav-tab.nav-tab-active');
-        if (activeTab) {
-            const tabId = activeTab.getAttribute('data-tab');
-            const content = document.getElementById(tabId);
-            if (content && !content.classList.contains('active')) {
-                content.classList.add('active');
-            }
-        }
-        
-        // If no tab is active, activate general
-        if (!document.querySelector('.nav-tab.nav-tab-active')) {
-            const generalTab = document.querySelector('[data-tab="general"]');
-            const generalContent = document.querySelector('#general');
-            if (generalTab && generalContent) {
-                generalTab.classList.add('nav-tab-active');
-                generalContent.classList.add('active');
-            }
-        }
-    }, 100);
+    // Tab initialization is handled by settings-tabs.js
 });
 </script>
 <!-- Settings page loaded -->
