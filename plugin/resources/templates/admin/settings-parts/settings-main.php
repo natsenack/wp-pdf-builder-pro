@@ -36,30 +36,25 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
+    <!-- Boutons radio pour les onglets (invisibles) -->
+    <input type="radio" id="tab-general" name="tabs" checked>
+    <input type="radio" id="tab-licence" name="tabs">
+    <input type="radio" id="tab-systeme" name="tabs">
+    <input type="radio" id="tab-securite" name="tabs">
+    <input type="radio" id="tab-pdf" name="tabs">
+    <input type="radio" id="tab-contenu" name="tabs">
+    <input type="radio" id="tab-templates" name="tabs">
+    <input type="radio" id="tab-developpeur" name="tabs">
+
     <!-- Navigation par onglets -->
     <div class="nav-tab-wrapper">
-        <input type="radio" id="tab-general" name="tabs" checked>
         <label for="tab-general" class="nav-tab"><?php _e('Général', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-licence" name="tabs">
         <label for="tab-licence" class="nav-tab"><?php _e('Licence', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-systeme" name="tabs">
         <label for="tab-systeme" class="nav-tab"><?php _e('Système', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-securite" name="tabs">
         <label for="tab-securite" class="nav-tab"><?php _e('Sécurité', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-pdf" name="tabs">
         <label for="tab-pdf" class="nav-tab"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-contenu" name="tabs">
         <label for="tab-contenu" class="nav-tab"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-templates" name="tabs">
         <label for="tab-templates" class="nav-tab"><?php _e('Templates', 'pdf-builder-pro'); ?></label>
-
-        <input type="radio" id="tab-developpeur" name="tabs">
         <label for="tab-developpeur" class="nav-tab"><?php _e('Développeur', 'pdf-builder-pro'); ?></label>
     </div>
 
@@ -263,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     #tab-contenu:checked ~ form .tab-content:nth-of-type(6),
     #tab-templates:checked ~ form .tab-content:nth-of-type(7),
     #tab-developpeur:checked ~ form .tab-content:nth-of-type(8) {
-        display: block;
+        display: block !important;
     }
 
     .tab-content h3 {
