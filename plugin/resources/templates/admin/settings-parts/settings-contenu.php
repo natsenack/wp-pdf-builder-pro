@@ -452,11 +452,11 @@ foreach ($canvas_options as $option) {
 
 
 
-            <!-- CSS pour les modales Canvas -->
+            <!-- CSS pour les modales Canvas - REMOVED - file doesn't exist -->
             <?php
-            $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-            $css_url = plugins_url('resources/assets/css/canvas-modals.css', $plugin_dir . '/pdf-builder-pro.php');
-            wp_enqueue_style('pdf-builder-canvas-modals', $css_url, array(), '1.0.0');
+            // $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+            // $css_url = plugins_url('resources/assets/css/canvas-modals.css', $plugin_dir . '/pdf-builder-pro.php');
+            // wp_enqueue_style('pdf-builder-canvas-modals', $css_url, array(), '1.0.0');
             ?>
 
             <script>
