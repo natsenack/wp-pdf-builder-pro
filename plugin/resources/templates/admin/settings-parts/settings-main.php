@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 [DEBUG] tabsContainer:', tabsContainer);
     console.log('🔍 [DEBUG] contentContainer:', contentContainer);
     
+    // Ensure tabs are clickable
+    if (tabsContainer) {
+        tabsContainer.style.pointerEvents = 'auto';
+        tabsContainer.style.zIndex = '10';
+    }
+    
     const tabs = document.querySelectorAll('.tab-content');
     console.log('🔍 [DEBUG] Found ' + tabs.length + ' tab-content elements:');
     tabs.forEach(function(tab, index) {
