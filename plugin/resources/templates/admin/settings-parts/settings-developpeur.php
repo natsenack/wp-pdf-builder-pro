@@ -12,7 +12,7 @@
             <h2>Paramètres Développeur</h2>
             <p class="developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-         <form method="post" id="developpeur-form">
+        <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
 
@@ -711,7 +711,7 @@
                 </button>
             </div>
 
-         </form>
+        </form>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
