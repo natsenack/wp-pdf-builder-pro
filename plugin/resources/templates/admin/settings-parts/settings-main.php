@@ -378,6 +378,8 @@
                 if (targetContent) {
                     targetContent.classList.add('active');
                     console.log('Contenu affiché:', targetContent.id, '- Classes:', targetContent.className, '- Display:', getComputedStyle(targetContent).display);
+                    console.log('Contenu HTML:', targetContent.innerHTML.substring(0, 200) + '...');
+                    console.log('Contenu visible dans le DOM:', targetContent.offsetHeight > 0 ? 'OUI' : 'NON (offsetHeight=0)');
                 } else {
                     console.error('Contenu non trouvé pour:', activeTab);
                 }
