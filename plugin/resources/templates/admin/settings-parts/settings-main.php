@@ -1,35 +1,35 @@
 <?php
-/**
- * Page principale des paramètres PDF Builder Pro
- *
- * Interface d'administration principale avec système d'onglets
- * pour la configuration complète du générateur de PDF.
- *
- * @version 2.1.0
- * @since 2025-12-08
- */
+    /**
+     * Page principale des paramètres PDF Builder Pro
+     *
+     * Interface d'administration principale avec système d'onglets
+     * pour la configuration complète du générateur de PDF.
+     *
+     * @version 2.1.0
+     * @since 2025-12-08
+     */
 
-// Sécurité WordPress
-if (!defined('ABSPATH')) {
-    exit('Direct access forbidden');
-}
+    // Sécurité WordPress
+    if (!defined('ABSPATH')) {
+        exit('Direct access forbidden');
+    }
 
-if (!is_user_logged_in() || !current_user_can('manage_options')) {
-    wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
-}
+    if (!is_user_logged_in() || !current_user_can('manage_options')) {
+        wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
+    }
 
-// Récupération des paramètres généraux
-$settings = get_option('pdf_builder_settings', array());
-$current_user = wp_get_current_user();
+    // Récupération des paramètres généraux
+    $settings = get_option('pdf_builder_settings', array());
+    $current_user = wp_get_current_user();
 
-// Informations de diagnostic pour le débogage (uniquement en mode debug)
-$debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
-    'version' => PDF_BUILDER_PRO_VERSION ?? 'unknown',
-    'php' => PHP_VERSION,
-    'wordpress' => get_bloginfo('version'),
-    'user' => $current_user->display_name,
-    'time' => current_time('mysql')
-] : null;
+    // Informations de diagnostic pour le débogage (uniquement en mode debug)
+    $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
+        'version' => PDF_BUILDER_PRO_VERSION ?? 'unknown',
+        'php' => PHP_VERSION,
+        'wordpress' => get_bloginfo('version'),
+        'user' => $current_user->display_name,
+        'time' => current_time('mysql')
+    ] : null;
 
 ?>
 <div class="wrap" style="height: 1200px; background: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
@@ -90,116 +90,6 @@ ceci est un test
         </div>
     </nav>
 
-    <form method="post" action="options.php">
-        <?php settings_fields('pdf_builder_settings_group'); ?>
-
-        <!-- Section Général -->
-        <div id="content-general" class="tab-content">
-            <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $general_file = __DIR__ . '/settings-general.php';
-            if (file_exists($general_file)) {
-                require_once $general_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-            <div style="height: 500px;"></div>
-        </div>
-
-        <!-- Section Licence -->
-        <div id="content-licence" class="tab-content">
-            <h3><?php _e('Licence', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $licence_file = __DIR__ . '/settings-licence.php';
-            if (file_exists($licence_file)) {
-                require_once $licence_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <!-- Section Système -->
-        <div id="content-systeme" class="tab-content">
-            <h3><?php _e('Système', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $systeme_file = __DIR__ . '/settings-systeme.php';
-            if (file_exists($systeme_file)) {
-                require_once $systeme_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <!-- Section Sécurité -->
-        <div id="content-securite" class="tab-content">
-            <h3><?php _e('Sécurité', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $securite_file = __DIR__ . '/settings-securite.php';
-            if (file_exists($securite_file)) {
-                require_once $securite_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <!-- Section Configuration PDF -->
-        <div id="content-pdf" class="tab-content">
-            <h3><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $pdf_file = __DIR__ . '/settings-pdf.php';
-            if (file_exists($pdf_file)) {
-                require_once $pdf_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <!-- Section Canvas & Design -->
-        <div id="content-contenu" class="tab-content">
-            <h3><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $contenu_file = __DIR__ . '/settings-contenu.php';
-            if (file_exists($contenu_file)) {
-                require_once $contenu_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <!-- Section Templates -->
-        <div id="content-templates" class="tab-content">
-            <h3><?php _e('Templates', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $templates_file = __DIR__ . '/settings-templates.php';
-            if (file_exists($templates_file)) {
-                require_once $templates_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <!-- Section Développeur -->
-        <div id="content-developpeur" class="tab-content">
-            <h3><?php _e('Développeur', 'pdf-builder-pro'); ?></h3>
-            <?php
-            $developpeur_file = __DIR__ . '/settings-developpeur.php';
-            if (file_exists($developpeur_file)) {
-                require_once $developpeur_file;
-            } else {
-                echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
-            }
-            ?>
-        </div>
-
-        <?php submit_button(); ?>
-    </form>
 
     <style>
         /* Masquer les boutons radio */
@@ -287,7 +177,7 @@ ceci est un test
         }
 
         /* Masquer toutes les sections par défaut */
-        /*.tab-content {
+        .tab-content {
             display: none;
             background: #fff;
             border: 1px solid #e1e1e1;
@@ -295,7 +185,7 @@ ceci est un test
             padding: 24px;
             margin-top: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }*/
+        }
 
         /* Afficher la section active basée sur le bouton radio coché */
         #tab-general:checked ~ form #content-general,
