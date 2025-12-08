@@ -1,13 +1,13 @@
 ﻿<?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
-// require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
+    // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
-// Récupération des paramètres depuis le tableau unifié
-$settings = get_option('pdf_builder_settings', []);
+    // Récupération des paramètres depuis le tableau unifié
+    $settings = get_option('pdf_builder_settings', []);
 
-// Variables nécessaires pour l'onglet développeur
-$license_test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
-$license_test_key = get_option('pdf_builder_license_test_key', '');
+    // Variables nécessaires pour l'onglet développeur
+    $license_test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
+    $license_test_key = get_option('pdf_builder_license_test_key', '');
 ?>
             <h2>Paramètres Développeur</h2>
             <p class="developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
@@ -209,7 +209,7 @@ $license_test_key = get_option('pdf_builder_license_test_key', '');
 
                 <table class="form-table">
                     <tr>
-                    <th scope="row"><label for="log_level">Niveau de Log</label></th>
+                     <th scope="row"><label for="log_level">Niveau de Log</label></th>
                         <td>
                             <select id="log_level" name="pdf_builder_log_level" style="width: 200px;">
                                 <option value="0" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
