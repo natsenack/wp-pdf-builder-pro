@@ -241,14 +241,18 @@
             // Ignore les erreurs localStorage
         }
 
-        // Activer le premier onglet par défaut seulement si aucun onglet n'a été restauré
+        // Activer l'onglet développeur par défaut seulement si aucun onglet n'a été restauré
         if (!tabActivated) {
-            const firstTab = tabsContainer.querySelector('.nav-tab');
+            const defaultTab = tabsContainer.querySelector('[data-tab="developpeur"]');
 
-            if (firstTab) {
-                firstTab.click();
+            if (defaultTab) {
+                defaultTab.click();
             } else {
-
+                // Fallback au premier onglet si développeur n'existe pas
+                const firstTab = tabsContainer.querySelector('.nav-tab');
+                if (firstTab) {
+                    firstTab.click();
+                }
             }
         }
     }
