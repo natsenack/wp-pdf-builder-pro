@@ -218,40 +218,60 @@
         try {
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab) {
-                const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = contentContainer.querySelector('#' + savedTab);
-                if (savedTabElement && savedContent) {
-                    // Forcer la désactivation de tous les onglets d'abord
-                    tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
-                        t.classList.remove('nav-tab-active');
-                        t.setAttribute('aria-selected', 'false');
-                    });
-                    contentContainer.querySelectorAll('.tab-content').forEach(c => {
-                        c.classList.remove('active');
-                    });
+                // Small delay to ensure DOM is fully ready
+                setTimeout(() => {
+                    const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
+                    const savedContent = contentContainer.querySelector('#' + savedTab);
+                    if (savedTabElement && savedContent) {
+                        // Forcer la désactivation de tous les onglets d'abord
+                        tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
+                            t.classList.remove('nav-tab-active');
+                            t.setAttribute('aria-selected', 'false');
+                        });
+                        contentContainer.querySelectorAll('.tab-content').forEach(c => {
+                            c.classList.remove('active');
+                        });
 
-                    // Activer l'onglet sauvegardé
-                    savedTabElement.classList.add('nav-tab-active');
-                    savedTabElement.setAttribute('aria-selected', 'true');
-                    savedContent.classList.add('active');
-                    tabActivated = true;
-                }
+                        // Activer l'onglet sauvegardé
+                        savedTabElement.classList.add('nav-tab-active');
+                        savedTabElement.setAttribute('aria-selected', 'true');
+                        savedContent.classList.add('active');
+                        tabActivated = true;
+                    } else {
+                        // If saved tab not found, activate default after delay
+                        setTimeout(() => {
+                            if (!tabActivated) {
+                                activateDefaultTab();
+                            }
+                        }, 100);
+                    }
+                }, 50);
+            } else {
+                // No saved tab, activate default after delay
+                setTimeout(() => {
+                    activateDefaultTab();
+                }, 100);
             }
         } catch (e) {
             // Ignore les erreurs localStorage
+            setTimeout(() => {
+                activateDefaultTab();
+            }, 100);
         }
 
-        // Activer l'onglet développeur par défaut seulement si aucun onglet n'a été restauré
-        if (!tabActivated) {
-            const defaultTab = tabsContainer.querySelector('[data-tab="developpeur"]');
+        // Function to activate default tab
+        function activateDefaultTab() {
+            if (!tabActivated) {
+                const defaultTab = tabsContainer.querySelector('[data-tab="developpeur"]');
 
-            if (defaultTab) {
-                defaultTab.click();
-            } else {
-                // Fallback au premier onglet si développeur n'existe pas
-                const firstTab = tabsContainer.querySelector('.nav-tab');
-                if (firstTab) {
-                    firstTab.click();
+                if (defaultTab) {
+                    defaultTab.click();
+                } else {
+                    // Fallback au premier onglet si développeur n'existe pas
+                    const firstTab = tabsContainer.querySelector('.nav-tab');
+                    if (firstTab) {
+                        firstTab.click();
+                    }
                 }
             }
         }

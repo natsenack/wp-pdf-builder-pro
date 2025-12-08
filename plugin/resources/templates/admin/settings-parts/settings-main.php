@@ -13,92 +13,27 @@ $settings = get_option('pdf_builder_settings', array());
 <script>
 console.log('🔍 [DEBUG] Settings page loading...');
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 [DEBUG] DOM loaded, checking tabs...');
-    
-    // Check containers
-    const tabsContainer = document.getElementById('pdf-builder-tabs');
-    const contentContainer = document.getElementById('pdf-builder-tab-content');
-    console.log('🔍 [DEBUG] tabsContainer:', tabsContainer);
-    console.log('🔍 [DEBUG] contentContainer:', contentContainer);
-    
-    // Ensure tabs are clickable
-    if (tabsContainer) {
-        tabsContainer.style.pointerEvents = 'auto';
-        tabsContainer.style.zIndex = '10';
-    }
-    
-    const tabs = document.querySelectorAll('.tab-content');
-    console.log('🔍 [DEBUG] Found ' + tabs.length + ' tab-content elements:');
-    tabs.forEach(function(tab, index) {
-        console.log('🔍 [DEBUG] Tab ' + index + ': id="' + tab.id + '"');
-    });
-    
-    const navTabs = document.querySelectorAll('.nav-tab');
-    console.log('🔍 [DEBUG] Found ' + navTabs.length + ' nav-tab elements:');
-    navTabs.forEach(function(tab, index) {
-        console.log('🔍 [DEBUG] Nav tab ' + index + ': data-tab="' + tab.getAttribute('data-tab') + '"');
-    });
-    
-    // Ensure at least one tab is active - check after a short delay to let settings-tabs.js run
+    // Ensure tab content is shown for active tab
     setTimeout(() => {
         const activeTab = document.querySelector('.nav-tab.nav-tab-active');
-        const activeContent = document.querySelector('.tab-content.active');
-        console.log('🔍 [DEBUG] After delay - Active tab element:', activeTab);
-        console.log('🔍 [DEBUG] After delay - Active content element:', activeContent);
-        if (activeTab) console.log('🔍 [DEBUG] After delay - Active tab data-tab:', activeTab.getAttribute('data-tab'));
-        if (activeContent) console.log('🔍 [DEBUG] After delay - Active content id:', activeContent.id);
-        if (!activeTab || !activeContent) {
-            console.log('🔍 [DEBUG] After delay - No active tab found, activating general tab...');
+        if (activeTab) {
+            const tabId = activeTab.getAttribute('data-tab');
+            const content = document.getElementById(tabId);
+            if (content && !content.classList.contains('active')) {
+                content.classList.add('active');
+            }
+        }
+        
+        // If no tab is active, activate general
+        if (!document.querySelector('.nav-tab.nav-tab-active')) {
             const generalTab = document.querySelector('[data-tab="general"]');
             const generalContent = document.querySelector('#general');
             if (generalTab && generalContent) {
-                // Remove any existing active classes
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Activate general
                 generalTab.classList.add('nav-tab-active');
                 generalContent.classList.add('active');
-                console.log('🔍 [DEBUG] General tab activated as default');
-            }
-        } else {
-            console.log('🔍 [DEBUG] After delay - Active tab found:', activeTab.getAttribute('data-tab'));
-        }
-        
-        // If tab is active but content not, activate the corresponding content
-        if (activeTab && !activeContent) {
-            const tabId = activeTab.getAttribute('data-tab');
-            const correspondingContent = document.getElementById(tabId);
-            if (correspondingContent) {
-                console.log('🔍 [DEBUG] Activating corresponding content for tab:', tabId);
-                correspondingContent.classList.add('active');
             }
         }
     }, 100);
-    
-    // Add click event listeners to log clicks and handle tab switching
-    navTabs.forEach(tab => {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🔍 [DEBUG] Tab clicked:', this.getAttribute('data-tab'), 'prevented:', e.defaultPrevented);
-            
-            // Manually switch tabs
-            const tabId = this.getAttribute('data-tab');
-            if (tabId) {
-                // Remove active from all
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Add active to clicked
-                this.classList.add('nav-tab-active');
-                const content = document.getElementById(tabId);
-                if (content) {
-                    content.classList.add('active');
-                }
-                console.log('🔍 [DEBUG] Manually switched to tab:', tabId);
-            }
-        }, true); // capture: true
-    });
 });
 </script>
 <!-- Settings page loaded -->
