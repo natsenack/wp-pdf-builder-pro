@@ -94,6 +94,7 @@
         <?php settings_fields('pdf_builder_settings_group'); ?>
 
         <!-- Section Général -->
+        <div id="content-general" class="tab-content">
             <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
             <?php
             $general_file = __DIR__ . '/settings-general.php';
@@ -103,6 +104,7 @@
                 echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
             }
             ?>
+        </div>
 
         <!-- Section Licence -->
         <div id="content-licence" class="tab-content">
@@ -284,14 +286,14 @@
             transform: translateY(-2px);
         }
 
-        #tab-general:checked ~ .tabs-navigation .tab-button[for="tab-general"] .tab-icon,
-        #tab-licence:checked ~ .tabs-navigation .tab-button[for="tab-licence"] .tab-icon,
-        #tab-systeme:checked ~ .tabs-navigation .tab-button[for="tab-systeme"] .tab-icon,
-        #tab-securite:checked ~ .tabs-navigation .tab-button[for="tab-securite"] .tab-icon,
-        #tab-pdf:checked ~ .tabs-navigation .tab-button[for="tab-pdf"] .tab-icon,
-        #tab-contenu:checked ~ .tabs-navigation .tab-button[for="tab-contenu"] .tab-icon,
-        #tab-templates:checked ~ .tabs-navigation .tab-button[for="tab-templates"] .tab-icon,
-        #tab-developpeur:checked ~ .tabs-navigation .tab-button[for="tab-developpeur"] .tab-icon {
+        #tab-general:checked ~ .tab-button[for="tab-general"] .tab-icon,
+        #tab-licence:checked ~ .tab-button[for="tab-licence"] .tab-icon,
+        #tab-systeme:checked ~ .tab-button[for="tab-systeme"] .tab-icon,
+        #tab-securite:checked ~ .tab-button[for="tab-securite"] .tab-icon,
+        #tab-pdf:checked ~ .tab-button[for="tab-pdf"] .tab-icon,
+        #tab-contenu:checked ~ .tab-button[for="tab-contenu"] .tab-icon,
+        #tab-templates:checked ~ .tab-button[for="tab-templates"] .tab-icon,
+        #tab-developpeur:checked ~ .tab-button[for="tab-developpeur"] .tab-icon {
             filter: brightness(1.2);
         }
 
@@ -304,6 +306,10 @@
             padding: 24px;
             margin-top: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         @keyframes fadeIn {
@@ -354,7 +360,7 @@
             function updateTabs() {
                 // Masquer tous les contenus
                 contents.forEach(content => {
-                    content.style.display = 'none';
+                    content.classList.remove('active');
                 });
 
                 // Afficher le contenu actif
@@ -363,7 +369,7 @@
                     const targetId = 'content-' + activeRadio.id.replace('tab-', '');
                     const targetContent = document.getElementById(targetId);
                     if (targetContent) {
-                        targetContent.style.display = 'block';
+                        targetContent.classList.add('active');
                     }
                 }
             }
@@ -373,7 +379,7 @@
                 radio.addEventListener('change', updateTabs);
             });
 
-        // Initialisation
-        updateTabs();
-    });
-</script>
+            // Initialisation
+            updateTabs();
+        });
+    </script>
