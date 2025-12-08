@@ -363,7 +363,8 @@
 
             // Vérifier chaque container de contenu
             contents.forEach(content => {
-                console.log('Container trouvé:', content.id, content.classList.contains('active') ? '(actif)' : '(inactif)');
+                const isInWrap = wrapElement.contains(content);
+                console.log('Container trouvé:', content.id, content.classList.contains('active') ? '(actif)' : '(inactif)', isInWrap ? '(dans .wrap)' : '(HORS .wrap ⚠️)');
             });
 
             // Vérifier chaque bouton
