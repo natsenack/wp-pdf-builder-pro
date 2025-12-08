@@ -200,6 +200,13 @@
         <?php submit_button(); ?>
     </form>
 
+    <!-- Bouton flottant de sauvegarde -->
+    <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        💾 Enregistrer
+    </button>
+
+    <!-- Inclusion des modales -->
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
     <style>
         /* Masquer les boutons radio */
