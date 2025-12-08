@@ -126,8 +126,7 @@
                                     placeholder="+33 1 23 45 67 89"
                                     class="regular-text"
                                     pattern="[\+]?[0-9\s\-\(\)]+"
-                                    autocomplete="tel"
-                                />
+                                    autocomplete="tel"/>
                                 <p class="field-description">
                                     Numéro de téléphone de l'entreprise (format international recommandé).
                                 </p>
@@ -150,8 +149,7 @@
                                     class="regular-text"
                                     pattern="[0-9\s]{14,17}"
                                     maxlength="17"
-                                    autocomplete="off"
-                                />
+                                    autocomplete="off"/>
                                 <p class="field-description">
                                     Numéro SIRET à 14 chiffres (espaces autorisés).
                                 </p>
@@ -173,8 +171,7 @@
                                     placeholder="FR12345678901"
                                     class="regular-text"
                                     pattern="[A-Z]{2}[0-9A-Z]{8,12}"
-                                    autocomplete="off"
-                                />
+                                    autocomplete="off"/>
                                 <p class="field-description">
                                     Numéro TVA européen (2 lettres pays + 8-12 caractères alphanumériques).
                                 </p>
@@ -195,8 +192,7 @@
                                     value="<?php echo esc_attr(get_pdf_setting('pdf_builder_company_rcs')); ?>"
                                     placeholder="Lyon B 123 456 789"
                                     class="regular-text"
-                                    autocomplete="off"
-                                />
+                                    autocomplete="off"/>
                                 <p class="field-description">
                                     Numéro RCS et ville d'immatriculation.
                                 </p>
@@ -218,8 +214,7 @@
                                     placeholder="10 000 €"
                                     class="regular-text"
                                     pattern="[0-9\s€,\.]+"
-                                    autocomplete="off"
-                                />
+                                    autocomplete="off"/>
                                 <p class="field-description">
                                     Montant du capital social (avec symbole €).
                                 </p>
