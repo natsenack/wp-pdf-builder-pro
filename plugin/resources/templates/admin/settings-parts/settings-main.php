@@ -34,5 +34,243 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
 ?>
 <div class="wrap" style="height: 1200px;">
 ceci est un test
+    <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+    <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
+
+    <!-- Navigation par onglets moderne -->
+    <nav class="tabs-navigation">
+        <div class="tabs-container">
+            <input type="radio" id="tab-general" name="tabs" checked>
+            <label for="tab-general" class="tab-button">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-licence" name="tabs">
+            <label for="tab-licence" class="tab-button">
+                <span class="tab-icon">🔑</span>
+                <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-systeme" name="tabs">
+            <label for="tab-systeme" class="tab-button">
+                <span class="tab-icon">🖥️</span>
+                <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-securite" name="tabs">
+            <label for="tab-securite" class="tab-button">
+                <span class="tab-icon">🔒</span>
+                <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-pdf" name="tabs">
+            <label for="tab-pdf" class="tab-button">
+                <span class="tab-icon">📄</span>
+                <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-contenu" name="tabs">
+            <label for="tab-contenu" class="tab-button">
+                <span class="tab-icon">🎨</span>
+                <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-templates" name="tabs">
+            <label for="tab-templates" class="tab-button">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
+            </label>
+
+            <input type="radio" id="tab-developpeur" name="tabs">
+            <label for="tab-developpeur" class="tab-button">
+                <span class="tab-icon">👨‍💻</span>
+                <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
+            </label>
+        </div>
+    </nav>
+
+
+
+    <style>
+        /* Masquer les boutons radio */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* Navigation moderne des onglets */
+        .tabs-navigation {
+            margin: 20px 0 30px 0;
+            border-bottom: 2px solid #e1e1e1;
+        }
+
+        .tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .tab-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            text-decoration: none;
+            position: relative;
+            min-height: 44px;
+            flex: 1;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            background: rgba(0,123,255,0.1);
+            color: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+        }
+
+        .tab-icon {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .tab-text {
+            font-weight: 500;
+        }
+
+        /* Style de l'onglet actif */
+        #tab-general:checked ~ .tab-button[for="tab-general"],
+        #tab-licence:checked ~ .tab-button[for="tab-licence"],
+        #tab-systeme:checked ~ .tab-button[for="tab-systeme"],
+        #tab-securite:checked ~ .tab-button[for="tab-securite"],
+        #tab-pdf:checked ~ .tab-button[for="tab-pdf"],
+        #tab-contenu:checked ~ .tab-button[for="tab-contenu"],
+        #tab-templates:checked ~ .tab-button[for="tab-templates"],
+        #tab-developpeur:checked ~ .tab-button[for="tab-developpeur"] {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        #tab-general:checked ~ .tabs-navigation .tab-button[for="tab-general"] .tab-icon,
+        #tab-licence:checked ~ .tabs-navigation .tab-button[for="tab-licence"] .tab-icon,
+        #tab-systeme:checked ~ .tabs-navigation .tab-button[for="tab-systeme"] .tab-icon,
+        #tab-securite:checked ~ .tabs-navigation .tab-button[for="tab-securite"] .tab-icon,
+        #tab-pdf:checked ~ .tabs-navigation .tab-button[for="tab-pdf"] .tab-icon,
+        #tab-contenu:checked ~ .tabs-navigation .tab-button[for="tab-contenu"] .tab-icon,
+        #tab-templates:checked ~ .tabs-navigation .tab-button[for="tab-templates"] .tab-icon,
+        #tab-developpeur:checked ~ .tabs-navigation .tab-button[for="tab-developpeur"] .tab-icon {
+            filter: brightness(1.2);
+        }
+
+        /* Masquer toutes les sections par défaut */
+        .tab-content {
+            display: none;
+            background: #fff;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Afficher la section active basée sur le bouton radio coché */
+        #tab-general:checked ~ form #content-general,
+        #tab-licence:checked ~ form #content-licence,
+        #tab-systeme:checked ~ form #content-systeme,
+        #tab-securite:checked ~ form #content-securite,
+        #tab-pdf:checked ~ form #content-pdf,
+        #tab-contenu:checked ~ form #content-contenu,
+        #tab-templates:checked ~ form #content-templates,
+        #tab-developpeur:checked ~ form #content-developpeur {
+            display: block !important;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-content h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs-container {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .tab-button {
+                justify-content: flex-start;
+                padding: 14px 16px;
+            }
+
+            .tab-content {
+                padding: 16px;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des onglets avec JavaScript pour assurer la compatibilité
+            const radios = document.querySelectorAll('input[name="tabs"]');
+            const contents = document.querySelectorAll('.tab-content');
+
+            function updateTabs() {
+                // Masquer tous les contenus
+                contents.forEach(content => {
+                    content.style.display = 'none';
+                });
+
+                // Afficher le contenu actif
+                const activeRadio = document.querySelector('input[name="tabs"]:checked');
+                if (activeRadio) {
+                    const targetId = 'content-' + activeRadio.id.replace('tab-', '');
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        targetContent.style.display = 'block';
+                    }
+                }
+            }
+
+            // Écouter les changements sur les boutons radio
+            radios.forEach(radio => {
+                radio.addEventListener('change', updateTabs);
+            });
+
+            // Initialisation
+            updateTabs();
+        });
+    </script>
 
 </div>
