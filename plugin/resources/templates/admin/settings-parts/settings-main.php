@@ -7,7 +7,7 @@ $settings = get_option('pdf_builder_settings', array());
 
 // Charger les styles CSS pour les paramètres d'administration
 $plugin_dir = dirname(dirname(dirname(__FILE__)));
-wp_enqueue_style('pdf-builder-admin-settings', plugins_url('assets/css/admin-settings.css', $plugin_dir . '/pdf-builder-pro.php'), array(), '1.0.0');
+wp_enqueue_style('pdf-builder-admin-settings', plugins_url('resources/assets/css/admin-settings.css', $plugin_dir . '/pdf-builder-pro.php'), array(), '1.0.0');
 ?>
 <!-- Debug script to check if tabs are loaded -->
 <script>
