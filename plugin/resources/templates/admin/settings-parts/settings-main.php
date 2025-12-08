@@ -1,111 +1,664 @@
 <?php
-if (!defined('ABSPATH')) exit('Direct access forbidden');
-if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
+/**
+ * Page principale des paramètres PDF Builder Pro
+ *
+ * Interface d'administration principale avec système d'onglets
+ * pour la configuration complète du générateur de PDF.
+ *
+ * @version 2.1.0
+ * @since 2025-12-08
+ */
+
+// Sécurité WordPress
+if (!defined('ABSPATH')) {
+    exit('Direct access forbidden');
+}
+
+if (!is_user_logged_in() || !current_user_can('manage_options')) {
+    wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
+}
+
+// Récupération des paramètres généraux
 $settings = get_option('pdf_builder_settings', array());
+$current_user = wp_get_current_user();
+
+// Informations de diagnostic pour le débogage (uniquement en mode debug)
+$debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
+    'version' => PDF_BUILDER_PRO_VERSION ?? 'unknown',
+    'php' => PHP_VERSION,
+    'wordpress' => get_bloginfo('version'),
+    'user' => $current_user->display_name,
+    'time' => current_time('mysql')
+] : null;
+
 ?>
-<main class="wrap" id="pdf-builder-settings-wrapper">
-    <!-- Bouton de sauvegarde flottant global -->
-    <div id="pdf-builder-save-floating" class="pdf-builder-save-floating" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 9999 !important; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
-        <button type="button" id="pdf-builder-save-floating-btn" class="button button-primary button-hero pdf-builder-save-btn">
-            <span class="dashicons dashicons-yes"></span>
-            Enregistrer
-        </button>
-        <div id="save-status-indicator" class="save-status-indicator">
-            <span id="save-status-text">Prêt à enregistrer</span>
+<div class="wrap pdf-builder-settings-page" id="pdf-builder-settings-wrapper">
+    <!-- En-tête de la page -->
+    <header class="settings-header">
+        <div class="header-content">
+            <div class="header-main">
+                <h1 class="settings-title">
+                    <span class="dashicons dashicons-pdf"></span>
+                    <?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?>
+                </h1>
+                <p class="settings-subtitle">
+                    <?php _e('Configuration complète du générateur de documents PDF', 'pdf-builder-pro'); ?>
+                </p>
+            </div>
+
+            <div class="header-meta">
+                <div class="version-info">
+                    <span class="version-badge">
+                        v<?php echo esc_html(PDF_BUILDER_PRO_VERSION ?? '2.1.0'); ?>
+                    </span>
+                </div>
+
+                <?php if ($debug_info): ?>
+                <div class="debug-indicator" title="<?php echo esc_attr(__('Mode debug activé', 'pdf-builder-pro')); ?>">
+                    <span class="dashicons dashicons-visibility"></span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Barre d'actions rapide -->
+        <div class="header-actions">
+            <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-test')); ?>"
+               class="button button-secondary">
+                <span class="dashicons dashicons-search"></span>
+                <?php _e('Tester PDF', 'pdf-builder-pro'); ?>
+            </a>
+
+            <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-logs')); ?>"
+               class="button button-secondary">
+                <span class="dashicons dashicons-list-view"></span>
+                <?php _e('Logs', 'pdf-builder-pro'); ?>
+            </a>
+
+            <a href="#"
+               class="button button-secondary"
+               onclick="window.print(); return false;">
+                <span class="dashicons dashicons-printer"></span>
+                <?php _e('Imprimer', 'pdf-builder-pro'); ?>
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation par onglets -->
+    <nav class="settings-navigation" role="navigation" aria-label="<?php esc_attr_e('Navigation des paramètres', 'pdf-builder-pro'); ?>">
+        <div class="nav-tab-wrapper" id="pdf-builder-tabs" role="tablist">
+            <?php
+            // Définition des onglets disponibles
+            $tabs = [
+                'general' => [
+                    'title' => __('Général', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-admin-settings',
+                    'description' => __('Informations entreprise et configuration de base', 'pdf-builder-pro')
+                ],
+                'licence' => [
+                    'title' => __('Licence', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-admin-network',
+                    'description' => __('Gestion de la licence et activation', 'pdf-builder-pro')
+                ],
+                'systeme' => [
+                    'title' => __('Système', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-admin-tools',
+                    'description' => __('Configuration système et compatibilité', 'pdf-builder-pro')
+                ],
+                'securite' => [
+                    'title' => __('Sécurité', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-shield',
+                    'description' => __('Paramètres de sécurité et permissions', 'pdf-builder-pro')
+                ],
+                'pdf' => [
+                    'title' => __('Configuration PDF', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-media-document',
+                    'description' => __('Paramètres de génération PDF', 'pdf-builder-pro')
+                ],
+                'contenu' => [
+                    'title' => __('Canvas & Design', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-art',
+                    'description' => __('Configuration du canvas et design', 'pdf-builder-pro')
+                ],
+                'templates' => [
+                    'title' => __('Templates', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-layout',
+                    'description' => __('Gestion des templates par statut', 'pdf-builder-pro')
+                ],
+                'developpeur' => [
+                    'title' => __('Développeur', 'pdf-builder-pro'),
+                    'icon' => 'dashicons-editor-code',
+                    'description' => __('Outils et options développeur', 'pdf-builder-pro')
+                ]
+            ];
+
+            // Génération des onglets
+            foreach ($tabs as $tab_id => $tab_config):
+                $tab_title = $tab_config['title'];
+                $tab_icon = $tab_config['icon'];
+                $tab_desc = $tab_config['description'];
+            ?>
+            <button
+                id="tab-<?php echo esc_attr($tab_id); ?>"
+                class="nav-tab"
+                data-tab="<?php echo esc_attr($tab_id); ?>"
+                role="tab"
+                aria-selected="false"
+                aria-controls="<?php echo esc_attr($tab_id); ?>"
+                title="<?php echo esc_attr($tab_desc); ?>"
+                type="button"
+            >
+                <span class="tab-icon <?php echo esc_attr($tab_icon); ?>" aria-hidden="true"></span>
+                <span class="tab-label"><?php echo esc_html($tab_title); ?></span>
+            </button>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Indicateur de chargement pour les onglets -->
+        <div class="tab-loading-indicator" id="tab-loading" style="display: none;">
+            <span class="spinner is-active"></span>
+            <span class="loading-text"><?php _e('Chargement...', 'pdf-builder-pro'); ?></span>
+        </div>
+    </nav>
+
+    <!-- Contenu des onglets -->
+    <main class="settings-content" id="pdf-builder-tab-content" role="main" aria-live="polite">
+        <?php
+        // Chargement des fichiers d'onglets avec gestion d'erreurs
+        $tab_files = [
+            'general' => 'settings-general.php',
+            'licence' => 'settings-licence.php',
+            'systeme' => 'settings-systeme.php',
+            'securite' => 'settings-securite.php',
+            'pdf' => 'settings-pdf.php',
+            'contenu' => 'settings-contenu.php',
+            'templates' => 'settings-templates.php',
+            'developpeur' => 'settings-developpeur.php'
+        ];
+
+        foreach ($tab_files as $tab_id => $file):
+            $file_path = __DIR__ . '/' . $file;
+        ?>
+        <section
+            id="<?php echo esc_attr($tab_id); ?>"
+            class="settings-section tab-content"
+            role="tabpanel"
+            aria-labelledby="tab-<?php echo esc_attr($tab_id); ?>"
+            style="display: none;"
+        >
+            <?php
+            if (file_exists($file_path)) {
+                try {
+                    require_once $file_path;
+                } catch (Exception $e) {
+                    echo '<div class="notice notice-error">';
+                    echo '<p>' . sprintf(__('Erreur lors du chargement de l\'onglet %s: %s', 'pdf-builder-pro'), esc_html($tabs[$tab_id]['title']), esc_html($e->getMessage())) . '</p>';
+                    echo '</div>';
+                }
+            } else {
+                echo '<div class="notice notice-warning">';
+                echo '<p>' . sprintf(__('Fichier manquant: %s', 'pdf-builder-pro'), esc_html($file)) . '</p>';
+                echo '</div>';
+            }
+            ?>
+        </section>
+        <?php endforeach; ?>
+    </main>
+
+    <!-- Bouton de sauvegarde flottant -->
+    <div class="floating-save-button" id="pdf-builder-save-floating" role="region" aria-label="<?php esc_attr_e('Actions de sauvegarde', 'pdf-builder-pro'); ?>">
+        <div class="save-button-container">
+            <button
+                type="button"
+                id="pdf-builder-save-floating-btn"
+                class="button button-primary button-hero save-button"
+                aria-describedby="save-status-text"
+            >
+                <span class="dashicons dashicons-yes" aria-hidden="true"></span>
+                <span class="button-text"><?php _e('Enregistrer les modifications', 'pdf-builder-pro'); ?></span>
+            </button>
+
+            <div class="save-status" id="save-status-indicator" role="status" aria-live="polite">
+                <span id="save-status-text" class="status-text">
+                    <?php _e('Prêt à enregistrer', 'pdf-builder-pro'); ?>
+                </span>
+                <div class="status-spinner spinner" style="display: none;"></div>
+            </div>
         </div>
     </div>
 
-    <header class="pdf-builder-header">
-        <h1>Paramètres PDF Builder Pro</h1>
-    </header>
+    <!-- Modales de configuration -->
+    <?php
+    $modals_file = __DIR__ . '/settings-modals.php';
+    if (file_exists($modals_file)) {
+        require_once $modals_file;
+    }
+    ?>
 
-    <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
-        <a id="tab-general" href="#general" class="nav-tab" data-tab="general" role="tab" aria-selected="false" aria-controls="general">
-            <span class="tab-icon">⚙️</span>
-            <span class="tab-text">Général</span>
-        </a>
-        <a id="tab-licence" href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">
-            <span class="tab-icon">🔑</span>
-            <span class="tab-text">Licence</span>
-        </a>
-        <a id="tab-systeme" href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">
-            <span class="tab-icon">🖥️</span>
-            <span class="tab-text">Système</span>
-        </a>
-        <a id="tab-securite" href="#securite" class="nav-tab" data-tab="securite" role="tab" aria-selected="false" aria-controls="securite">
-            <span class="tab-icon">🔒</span>
-            <span class="tab-text">Sécurité</span>
-        </a>
-        <a id="tab-pdf" href="#pdf" class="nav-tab" data-tab="pdf" role="tab" aria-selected="false" aria-controls="pdf">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Configuration PDF</span>
-        </a>
-        <a id="tab-contenu" href="#contenu" class="nav-tab" data-tab="contenu" role="tab" aria-selected="false" aria-controls="contenu">
-            <span class="tab-icon">🎨</span>
-            <span class="tab-text">Canvas & Design</span>
-        </a>
-        <a id="tab-templates" href="#templates" class="nav-tab" data-tab="templates" role="tab" aria-selected="false" aria-controls="templates">
-            <span class="tab-icon">📋</span>
-            <span class="tab-text">Templates par Statut</span>
-        </a>
-        <a id="tab-developpeur" href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">
-            <span class="tab-icon">👨‍💻</span>
-            <span class="tab-text">Développeur</span>
-        </a>
-    </nav>
-
-    <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
-        <div id="general" class="tab-content" role="tabpanel" aria-labelledby="tab-general">
-            <?php require_once 'settings-general.php'; ?>
+    <!-- Informations de débogage (uniquement en mode debug) -->
+    <?php if ($debug_info): ?>
+    <details class="debug-panel" style="margin-top: 2rem;">
+        <summary class="debug-toggle">
+            <span class="dashicons dashicons-info"></span>
+            <?php _e('Informations de débogage', 'pdf-builder-pro'); ?>
+        </summary>
+        <div class="debug-content">
+            <pre><?php echo esc_html(json_encode($debug_info, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
         </div>
+    </details>
+    <?php endif; ?>
+</div>
 
-        <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
-            <?php require_once 'settings-licence.php'; ?>
-        </div>
+<style>
+/* Styles principaux pour la page des paramètres */
+.pdf-builder-settings-page {
+    margin: 20px 0 0 0;
+    background: #fff;
+    min-height: calc(100vh - 100px);
+}
 
-        <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
-            <?php require_once 'settings-systeme.php'; ?>
-        </div>
+/* En-tête */
+.settings-header {
+    background: linear-gradient(135deg, #2271b1 0%, #135e96 100%);
+    color: white;
+    padding: 2rem;
+    margin: -20px -20px 2rem -20px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-        <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
-            <?php require_once 'settings-securite.php'; ?>
-        </div>
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
 
-        <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
-            <?php require_once 'settings-pdf.php'; ?>
-        </div>
+.header-main h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2em;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-        <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
-            <?php require_once 'settings-contenu.php'; ?>
-        </div>
+.header-main h1 .dashicons {
+    font-size: 1.2em;
+}
 
-        <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
-            <?php require_once 'settings-templates.php'; ?>
-        </div>
+.settings-subtitle {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1em;
+}
 
-        <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
-            <?php require_once 'settings-developpeur.php'; ?>
-        </div>
-    </section>
+.header-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
-    <!-- Modales de configuration - Chargées après tous les onglets pour éviter les conflits de structure -->
-    <?php require_once 'settings-modals.php'; ?>
+.version-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
 
-    <!-- Navigation JavaScript - Gérée par assets/js/settings-tabs.js -->
-    <!-- Le fichier settings-tabs.js fournit PDFBuilderTabsAPI avec switchToTab(), getActiveTab() -->
+.debug-indicator {
+    color: #ffd700;
+    cursor: help;
+}
 
-    <!-- Styles inline de secours (au cas où le CSS ne chargerait pas) -->
-    <style>
-    /* Styles pour la navigation par onglets */
-    #pdf-builder-tab-content .tab-content {
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Navigation par onglets */
+.settings-navigation {
+    margin-bottom: 2rem;
+}
+
+.nav-tab-wrapper {
+    background: #f8f9fa;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #646970;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-tab:hover {
+    background: #e9ecef;
+    color: #2271b1;
+}
+
+.nav-tab[aria-selected="true"] {
+    background: #2271b1;
+    color: white;
+    box-shadow: 0 2px 4px rgba(34, 113, 177, 0.3);
+}
+
+.nav-tab .tab-icon {
+    font-size: 1.1em;
+    width: 1.1em;
+    height: 1.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-tab[aria-selected="true"] .tab-icon {
+    color: #ffd700;
+}
+
+.tab-loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    color: #646970;
+    font-style: italic;
+}
+
+/* Contenu */
+.settings-content {
+    min-height: 400px;
+}
+
+.settings-section {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Bouton flottant */
+.floating-save-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}
+
+.save-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+    max-width: 300px;
+}
+
+.save-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.1em;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(34, 113, 177, 0.3);
+    transition: all 0.2s ease;
+}
+
+.save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(34, 113, 177, 0.4);
+}
+
+.save-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 0.9em;
+    backdrop-filter: blur(10px);
+}
+
+.status-spinner {
+    width: 16px;
+    height: 16px;
+}
+
+/* Panel de débogage */
+.debug-panel {
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    background: #fffef7;
+}
+
+.debug-toggle {
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.debug-content {
+    padding: 1rem;
+    border-top: 1px solid #ffeaa7;
+    background: #fefefe;
+}
+
+.debug-content pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 0.85em;
+    color: #495057;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .settings-header {
+        padding: 1.5rem;
+        margin: -10px -10px 1.5rem -10px;
+    }
+
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .header-main h1 {
+        font-size: 1.5em;
+    }
+
+    .nav-tab-wrapper {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .nav-tab {
+        justify-content: flex-start;
+        padding: 1rem;
+        border-radius: 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .nav-tab:last-child {
+        border-bottom: none;
+    }
+
+    .floating-save-button {
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .save-button-container {
+        max-width: 250px;
+    }
+
+    .save-button {
+        padding: 0.875rem 1.25rem;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-actions {
+        flex-direction: column;
+    }
+
+    .header-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .save-button .button-text {
         display: none;
-        padding: 20px 0;
     }
-    #pdf-builder-tab-content .tab-content.active {
-        display: block;
+
+    .save-button {
+        padding: 1rem;
+        min-width: auto;
     }
-    #pdf-builder-tabs .nav-tab {
-        cursor: pointer;
+}
+
+/* Accessibilité */
+@media (prefers-reduced-motion: reduce) {
+    .settings-section,
+    .save-button {
+        animation: none;
     }
-    </style>
-</main>
+
+    .nav-tab,
+    .save-button {
+        transition: none;
+    }
+}
+
+/* Focus visible */
+.nav-tab:focus-visible,
+.save-button:focus-visible {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .settings-header {
+        background: #000;
+        color: #fff;
+    }
+
+    .nav-tab[aria-selected="true"] {
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+    }
+}
+</style>
+
+<script>
+// Initialisation JavaScript pour la page des paramètres
+document.addEventListener('DOMContentLoaded', function() {
+    const settingsPage = document.getElementById('pdf-builder-settings-wrapper');
+
+    if (!settingsPage) {
+        console.warn('[PDF Builder] Page des paramètres non trouvée');
+        return;
+    }
+
+    // Gestion du bouton d'impression
+    const printButtons = settingsPage.querySelectorAll('a[onclick*="print"]');
+    printButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.print();
+        });
+    });
+
+    // Gestion du panel de débogage
+    const debugPanel = settingsPage.querySelector('.debug-panel');
+    if (debugPanel) {
+        const debugToggle = debugPanel.querySelector('.debug-toggle');
+        const debugContent = debugPanel.querySelector('.debug-content');
+
+        debugToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const isOpen = debugContent.style.display !== 'none';
+            debugContent.style.display = isOpen ? 'none' : 'block';
+            debugToggle.setAttribute('aria-expanded', !isOpen);
+        });
+
+        // Fermer par défaut
+        debugContent.style.display = 'none';
+        debugToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    // Gestion des raccourcis clavier
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + S pour sauvegarder
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            const saveButton = document.getElementById('pdf-builder-save-floating-btn');
+            if (saveButton) {
+                saveButton.click();
+            }
+        }
+
+        // Échap pour fermer les modales
+        if (e.key === 'Escape') {
+            const openModals = document.querySelectorAll('.modal[style*="display: block"], .modal.show');
+            openModals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+    });
+
+    // Message de confirmation avant quitter si des modifications sont en cours
+    let hasUnsavedChanges = false;
+
+    // Surveiller les changements dans les formulaires
+    const forms = settingsPage.querySelectorAll('form');
+    forms.forEach(form => {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                hasUnsavedChanges = true;
+            });
+        });
+    });
+
+    // Avertissement avant de quitter
+    window.addEventListener('beforeunload', function(e) {
+        if (hasUnsavedChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    console.log('[PDF Builder] Page des paramètres initialisée');
+});
+</script>
