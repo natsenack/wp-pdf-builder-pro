@@ -37,22 +37,22 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
     <!-- Navigation par onglets -->
-    <h2 class="nav-tab-wrapper" id="pdf-builder-tabs">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><?php _e('Général', 'pdf-builder-pro'); ?></a>
-        <a href="#licence" class="nav-tab" data-tab="licence"><?php _e('Licence', 'pdf-builder-pro'); ?></a>
-        <a href="#systeme" class="nav-tab" data-tab="systeme"><?php _e('Système', 'pdf-builder-pro'); ?></a>
-        <a href="#securite" class="nav-tab" data-tab="securite"><?php _e('Sécurité', 'pdf-builder-pro'); ?></a>
-        <a href="#pdf" class="nav-tab" data-tab="pdf"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></a>
-        <a href="#contenu" class="nav-tab" data-tab="contenu"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></a>
-        <a href="#templates" class="nav-tab" data-tab="templates"><?php _e('Templates', 'pdf-builder-pro'); ?></a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur"><?php _e('Développeur', 'pdf-builder-pro'); ?></a>
-    </h2>
+    <div class="nav-tab-wrapper">
+        <a href="#general" class="nav-tab"><?php _e('Général', 'pdf-builder-pro'); ?></a>
+        <a href="#licence" class="nav-tab"><?php _e('Licence', 'pdf-builder-pro'); ?></a>
+        <a href="#systeme" class="nav-tab"><?php _e('Système', 'pdf-builder-pro'); ?></a>
+        <a href="#securite" class="nav-tab"><?php _e('Sécurité', 'pdf-builder-pro'); ?></a>
+        <a href="#pdf" class="nav-tab"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></a>
+        <a href="#contenu" class="nav-tab"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></a>
+        <a href="#templates" class="nav-tab"><?php _e('Templates', 'pdf-builder-pro'); ?></a>
+        <a href="#developpeur" class="nav-tab"><?php _e('Développeur', 'pdf-builder-pro'); ?></a>
+    </div>
 
     <form method="post" action="options.php">
         <?php settings_fields('pdf_builder_settings_group'); ?>
 
         <!-- Section Général -->
-        <div id="general" class="tab-content tab-content-active">
+        <div id="general" class="tab-content">
             <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
             <?php
             $general_file = __DIR__ . '/settings-general.php';
@@ -160,59 +160,50 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
 </div>
 
 <style>
-.nav-tab-wrapper {
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
-}
+    .nav-tab-wrapper {
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
 
-.nav-tab {
-    display: inline-block;
-    padding: 8px 16px;
-    margin-right: 4px;
-    border: 1px solid #ccc;
-    border-bottom: none;
-    background: #f1f1f1;
-    color: #666;
-    text-decoration: none;
-    border-radius: 4px 4px 0 0;
-}
+    .nav-tab {
+        display: inline-block;
+        padding: 8px 16px;
+        margin-right: 4px;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        background: #f1f1f1;
+        color: #666;
+        text-decoration: none;
+        border-radius: 4px 4px 0 0;
+    }
 
-.nav-tab-active,
-.nav-tab:hover {
-    background: #fff;
-    color: #000;
-    border-bottom: 1px solid #fff;
-}
+    .nav-tab:hover {
+        background: #fff;
+        color: #000;
+        border-bottom: 1px solid #fff;
+    }
 
-.tab-content {
-    display: none;
-}
+    /* Affichage par défaut : première section visible */
+    #general:target,
+    #licence:target,
+    #systeme:target,
+    #securite:target,
+    #pdf:target,
+    #contenu:target,
+    #templates:target,
+    #developpeur:target {
+        display: block;
+    }
 
-.tab-content-active {
-    display: block;
-}
+    /* Masquer toutes les sections par défaut */
+    .tab-content {
+        display: none;
+    }
+
+    /* Afficher la première section par défaut */
+    #general {
+        display: block;
+    }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
-    const contents = document.querySelectorAll('.tab-content');
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Remove active class from all tabs
-            tabs.forEach(t => t.classList.remove('nav-tab-active'));
-            // Add active class to clicked tab
-            this.classList.add('nav-tab-active');
-
-            // Hide all content
-            contents.forEach(c => c.classList.remove('tab-content-active'));
-            // Show corresponding content
-            const target = this.getAttribute('data-tab');
-            document.getElementById(target).classList.add('tab-content-active');
-        });
-    });
-});
-</script>
+</div>
