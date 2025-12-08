@@ -37,49 +37,6 @@
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
     <!-- Navigation par onglets moderne -->
-    <nav class="tabs-navigation">
-        <div class="tabs-container">
-            <button type="button" data-tab="general" class="tab-button active">
-                <span class="tab-icon">⚙️</span>
-                <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="licence" class="tab-button">
-                <span class="tab-icon">🔑</span>
-                <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="systeme" class="tab-button">
-                <span class="tab-icon">🖥️</span>
-                <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="securite" class="tab-button">
-                <span class="tab-icon">🔒</span>
-                <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="pdf" class="tab-button">
-                <span class="tab-icon">📄</span>
-                <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="contenu" class="tab-button">
-                <span class="tab-icon">🎨</span>
-                <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="templates" class="tab-button">
-                <span class="tab-icon">📋</span>
-                <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
-            </button>
-
-            <button type="button" data-tab="developpeur" class="tab-button">
-                <span class="tab-icon">👨‍💻</span>
-                <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
-            </button>
-        </div>
-    </nav>
 
     <!-- contenu des onglets moderne -->
     <form method="post" action="options.php">
