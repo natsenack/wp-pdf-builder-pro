@@ -120,6 +120,16 @@ if ($cache_last_cleanup !== 'Jamais') {
                                 </td>
                             </tr>
                             <tr>
+                                <th scope="row"><label for="pdf_cache_enabled">Cache PDF activé</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="pdf_cache_enabled" name="pdf_builder_pdf_cache_enabled" value="1" <?php checked($settings['pdf_builder_pdf_cache_enabled'] ?? '0', '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">Améliorer les performances en mettant en cache les fichiers PDF générés</p>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
                                 <td>
                                     <input type="number" id="cache_max_size" name="pdf_builder_cache_max_size" value="<?php echo $cache_max_size; ?>" min="10" max="1000" step="10" />

@@ -95,6 +95,37 @@
                             </tr>
                         </table>
                     </article>
+
+                    <article class="general-defaults-box">
+                        <h4 class="general-defaults-title">⚙️ Paramètres par défaut</h4>
+                        <p class="general-defaults-description">
+                        Ces paramètres définissent les valeurs par défaut pour tous vos PDFs :
+                        </p>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="default_format">Format de page par défaut</label></th>
+                                <td>
+                                    <select id="default_format" name="pdf_builder_default_format">
+                                        <option value="A4" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'A4'); ?>>A4</option>
+                                        <option value="A3" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
+                                        <option value="Letter" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
+                                    </select>
+                                    <p class="description">Format de page par défaut pour les nouveaux PDFs</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="default_orientation">Orientation par défaut</label></th>
+                                <td>
+                                    <select id="default_orientation" name="pdf_builder_default_orientation">
+                                        <option value="portrait" <?php selected($settings['pdf_builder_default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
+                                        <option value="landscape" <?php selected($settings['pdf_builder_default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
+                                    </select>
+                                    <p class="description">Orientation par défaut pour les nouveaux PDFs</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </article>
                 </form>
             </section>
 

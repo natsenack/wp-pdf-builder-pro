@@ -29,69 +29,7 @@ $settings = get_option('pdf_builder_settings', array());
                                 </select>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row"><label for="default_format">Format de page</label></th>
-                            <td>
-                                <select id="default_format" name="pdf_builder_default_format">
-                                    <option value="A4" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'A4'); ?>>A4</option>
-                                    <option value="A3" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
-                                    <option value="Letter" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
-                                </select>
-                                <p class="description" style="margin-top:6px; color:#6c757d; font-size:12px;">Les formats A3 et Letter sont prévus; sélection désactivée pour l'instant.</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="default_orientation">Orientation</label></th>
-                            <td>
-                                <select id="default_orientation" name="pdf_builder_default_orientation">
-                                    <option value="portrait" <?php selected($settings['pdf_builder_default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
-                                    <option value="landscape" <?php selected($settings['pdf_builder_default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="pdf_builder_pdf_cache_enabled">Cache activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_builder_pdf_cache_enabled" name="pdf_builder_pdf_cache_enabled" value="1" <?php checked($settings['pdf_builder_pdf_cache_enabled'] ?? '0', '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Améliorer les performances en mettant en cache les PDF</p>
-                            </td>
-                        </tr>
                         <script>
-                            // PDF Cache toggle functionality
-                            (function() {
-                                const pdfCacheInput = document.getElementById('pdf_builder_pdf_cache_enabled');
-                                const pdfCacheLabel = pdfCacheInput ? pdfCacheInput.closest('label') : null;
-                                const pdfCacheSlider = pdfCacheLabel ? pdfCacheLabel.querySelector('.toggle-slider') : null;
-                                
-                                if (pdfCacheInput && pdfCacheLabel && pdfCacheSlider) {
-                                    // Make slider clickable
-                                    pdfCacheSlider.style.pointerEvents = 'auto';
-                                    pdfCacheSlider.style.cursor = 'pointer';
-                                    
-                                    // Handle slider clicks
-                                    pdfCacheSlider.addEventListener('click', function(e) {
-                                        e.stopPropagation();
-                                        pdfCacheInput.dataset.sliderClicked = 'true';
-                                        pdfCacheInput.checked = !pdfCacheInput.checked;
-                                        pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                    });
-                                    
-                                    // Handle label clicks (prevent double toggle)
-                                    pdfCacheLabel.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        if (pdfCacheInput.dataset.sliderClicked) {
-                                            delete pdfCacheInput.dataset.sliderClicked;
-                                            return;
-                                        }
-                                        pdfCacheInput.checked = !pdfCacheInput.checked;
-                                        pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                    });
-                                }
-                            })();
-                        </script>
                     </table>
                 </section>
 
