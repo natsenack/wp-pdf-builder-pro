@@ -64,6 +64,16 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             console.log('🔍 [DEBUG] After delay - Active tab found:', activeTab.getAttribute('data-tab'));
         }
+        
+        // If tab is active but content not, activate the corresponding content
+        if (activeTab && !activeContent) {
+            const tabId = activeTab.getAttribute('data-tab');
+            const correspondingContent = document.getElementById(tabId);
+            if (correspondingContent) {
+                console.log('🔍 [DEBUG] Activating corresponding content for tab:', tabId);
+                correspondingContent.classList.add('active');
+            }
+        }
     }, 100);
     
     // Add click event listeners to log clicks and handle tab switching
