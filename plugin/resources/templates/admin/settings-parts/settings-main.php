@@ -39,6 +39,33 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔍 [DEBUG] Nav tab ' + index + ': data-tab="' + tab.getAttribute('data-tab') + '"');
     });
     
+    // Ensure at least one tab is active - check after a short delay to let settings-tabs.js run
+    setTimeout(() => {
+        const activeTab = document.querySelector('.nav-tab.nav-tab-active');
+        const activeContent = document.querySelector('.tab-content.active');
+        console.log('🔍 [DEBUG] After delay - Active tab element:', activeTab);
+        console.log('🔍 [DEBUG] After delay - Active content element:', activeContent);
+        if (activeTab) console.log('🔍 [DEBUG] After delay - Active tab data-tab:', activeTab.getAttribute('data-tab'));
+        if (activeContent) console.log('🔍 [DEBUG] After delay - Active content id:', activeContent.id);
+        if (!activeTab || !activeContent) {
+            console.log('🔍 [DEBUG] After delay - No active tab found, activating general tab...');
+            const generalTab = document.querySelector('[data-tab="general"]');
+            const generalContent = document.querySelector('#general');
+            if (generalTab && generalContent) {
+                // Remove any existing active classes
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Activate general
+                generalTab.classList.add('nav-tab-active');
+                generalContent.classList.add('active');
+                console.log('🔍 [DEBUG] General tab activated as default');
+            }
+        } else {
+            console.log('🔍 [DEBUG] After delay - Active tab found:', activeTab.getAttribute('data-tab'));
+        }
+    }, 100);
+    
     // Add click event listeners to log clicks and handle tab switching
     navTabs.forEach(tab => {
         tab.addEventListener('click', function(e) {
