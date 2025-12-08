@@ -32,7 +32,7 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
 ] : null;
 
 ?>
-<div class="wrap">
+<div class="wrap" style="height: 1200px;">
 ceci est un test
 
 </div>
