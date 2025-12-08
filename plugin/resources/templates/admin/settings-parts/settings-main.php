@@ -94,7 +94,6 @@
         <?php settings_fields('pdf_builder_settings_group'); ?>
 
         <!-- Section Général -->
-        <div id="content-general" class="tab-content">
             <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
             <?php
             $general_file = __DIR__ . '/settings-general.php';
@@ -104,7 +103,6 @@
                 echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
             }
             ?>
-        </div>
 
         <!-- Section Licence -->
         <div id="content-licence" class="tab-content">
