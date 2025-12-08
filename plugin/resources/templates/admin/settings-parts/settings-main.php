@@ -33,56 +33,11 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
 
 ?>
 <div class="wrap pdf-builder-settings-page" id="pdf-builder-settings-wrapper">
-    <!-- En-tête de la page -->
-    <header class="settings-header">
-        <div class="header-content">
-            <div class="header-main">
-                <h1 class="settings-title">
-                    <span class="dashicons dashicons-pdf"></span>
-                    <?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?>
-                </h1>
-                <p class="settings-subtitle">
-                    <?php _e('Configuration complète du générateur de documents PDF', 'pdf-builder-pro'); ?>
-                </p>
-            </div>
-
-            <div class="header-meta">
-                <div class="version-info">
-                    <span class="version-badge">
-                        v<?php echo esc_html(PDF_BUILDER_PRO_VERSION ?? '2.1.0'); ?>
-                    </span>
-                </div>
-
-                <?php if ($debug_info): ?>
-                <div class="debug-indicator" title="<?php echo esc_attr(__('Mode debug activé', 'pdf-builder-pro')); ?>">
-                    <span class="dashicons dashicons-visibility"></span>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Barre d'actions rapide -->
-        <div class="header-actions">
-            <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-test')); ?>"
-               class="button button-secondary">
-                <span class="dashicons dashicons-search"></span>
-                <?php _e('Tester PDF', 'pdf-builder-pro'); ?>
-            </a>
-
-            <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-logs')); ?>"
-               class="button button-secondary">
-                <span class="dashicons dashicons-list-view"></span>
-                <?php _e('Logs', 'pdf-builder-pro'); ?>
-            </a>
-
-            <a href="#"
-               class="button button-secondary"
-               onclick="window.print(); return false;">
-                <span class="dashicons dashicons-printer"></span>
-                <?php _e('Imprimer', 'pdf-builder-pro'); ?>
-            </a>
-        </div>
-    </header>
+    <!-- En-tête simple -->
+    <div class="settings-header-simple">
+        <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+        <p class="description"><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
+    </div>
 
     <!-- Navigation par onglets -->
     <nav class="settings-navigation" role="navigation" aria-label="<?php esc_attr_e('Navigation des paramètres', 'pdf-builder-pro'); ?>">
@@ -257,65 +212,24 @@ $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
     min-height: calc(100vh - 100px);
 }
 
-/* En-tête */
-.settings-header {
-    background: linear-gradient(135deg, #2271b1 0%, #135e96 100%);
-    color: white;
-    padding: 2rem;
-    margin: -20px -20px 2rem -20px;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Header simple */
+.settings-header-simple {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dcdcde;
 }
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-}
-
-.header-main h1 {
+.settings-header-simple h1 {
     margin: 0 0 0.5rem 0;
     font-size: 2em;
-    font-weight: 300;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-weight: 400;
+    color: #1d2327;
 }
 
-.header-main h1 .dashicons {
-    font-size: 1.2em;
-}
-
-.settings-subtitle {
+.settings-header-simple .description {
     margin: 0;
-    opacity: 0.9;
+    color: #646970;
     font-size: 1.1em;
-}
-
-.header-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.version-badge {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.9em;
-    font-weight: 500;
-}
-
-.debug-indicator {
-    color: #ffd700;
-    cursor: help;
-}
-
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
 }
 
 /* Navigation par onglets */
@@ -589,15 +503,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('[PDF Builder] Page des paramètres non trouvée');
         return;
     }
-
-    // Gestion du bouton d'impression
-    const printButtons = settingsPage.querySelectorAll('a[onclick*="print"]');
-    printButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.print();
-        });
-    });
 
     // Gestion du panel de débogage
     const debugPanel = settingsPage.querySelector('.debug-panel');
