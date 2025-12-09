@@ -419,6 +419,30 @@ class SettingsManager
         // Commencer avec les valeurs existantes
         $sanitized = $existing;
 
+        // Gérer les checkboxes non cochées (elles ne sont pas envoyées si décochées)
+        $checkbox_fields = [
+            'pdf_builder_cache_enabled',
+            'pdf_builder_cache_compression', 
+            'pdf_builder_cache_auto_cleanup',
+            'pdf_builder_performance_auto_optimization',
+            'pdf_builder_systeme_auto_maintenance',
+            'pdf_builder_enable_logging',
+            'pdf_builder_gdpr_enabled',
+            'pdf_builder_gdpr_consent_required',
+            'pdf_builder_gdpr_audit_enabled',
+            'pdf_builder_gdpr_encryption_enabled',
+            'pdf_builder_gdpr_consent_analytics',
+            'pdf_builder_gdpr_consent_templates',
+            'pdf_builder_gdpr_consent_marketing'
+        ];
+
+        foreach ($checkbox_fields as $field) {
+            // Si la checkbox n'est pas dans l'input, elle était décochée
+            if (!isset($input[$field])) {
+                $sanitized[$field] = '0';
+            }
+        }
+
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
             $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);
@@ -446,20 +470,6 @@ class SettingsManager
         if (isset($input['pdf_builder_cache_auto_cleanup'])) {
             $sanitized['pdf_builder_cache_auto_cleanup'] = $input['pdf_builder_cache_auto_cleanup'] ? '1' : '0';
         }
-        if (isset($input['pdf_builder_cache_max_size'])) {
-            $sanitized['pdf_builder_cache_max_size'] = intval($input['pdf_builder_cache_max_size']);
-            $sanitized['pdf_builder_cache_max_size'] = max(10, min(1000, $sanitized['pdf_builder_cache_max_size']));
-        }
-        if (isset($input['pdf_builder_cache_ttl'])) {
-            $sanitized['pdf_builder_cache_ttl'] = intval($input['pdf_builder_cache_ttl']);
-            $sanitized['pdf_builder_cache_ttl'] = max(0, min(86400, $sanitized['pdf_builder_cache_ttl']));
-        }
-        if (isset($input['pdf_builder_performance_auto_optimization'])) {
-            $sanitized['pdf_builder_performance_auto_optimization'] = $input['pdf_builder_performance_auto_optimization'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_systeme_auto_maintenance'])) {
-            $sanitized['pdf_builder_systeme_auto_maintenance'] = $input['pdf_builder_systeme_auto_maintenance'] ? '1' : '0';
-        }
 
         // Sanitisation des paramètres de sécurité
         if (isset($input['pdf_builder_security_level'])) {
@@ -474,25 +484,6 @@ class SettingsManager
         }
         if (isset($input['pdf_builder_gdpr_consent_required'])) {
             $sanitized['pdf_builder_gdpr_consent_required'] = $input['pdf_builder_gdpr_consent_required'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_gdpr_data_retention'])) {
-            $sanitized['pdf_builder_gdpr_data_retention'] = intval($input['pdf_builder_gdpr_data_retention']);
-            $sanitized['pdf_builder_gdpr_data_retention'] = max(30, min(3650, $sanitized['pdf_builder_gdpr_data_retention']));
-        }
-        if (isset($input['pdf_builder_gdpr_audit_enabled'])) {
-            $sanitized['pdf_builder_gdpr_audit_enabled'] = $input['pdf_builder_gdpr_audit_enabled'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_gdpr_encryption_enabled'])) {
-            $sanitized['pdf_builder_gdpr_encryption_enabled'] = $input['pdf_builder_gdpr_encryption_enabled'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_gdpr_consent_analytics'])) {
-            $sanitized['pdf_builder_gdpr_consent_analytics'] = $input['pdf_builder_gdpr_consent_analytics'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_gdpr_consent_templates'])) {
-            $sanitized['pdf_builder_gdpr_consent_templates'] = $input['pdf_builder_gdpr_consent_templates'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_gdpr_consent_marketing'])) {
-            $sanitized['pdf_builder_gdpr_consent_marketing'] = $input['pdf_builder_gdpr_consent_marketing'] ? '1' : '0';
         }
 
         // Sanitisation des paramètres développeur

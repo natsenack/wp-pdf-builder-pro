@@ -19,7 +19,8 @@
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
     $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
-    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ', cache_ttl: ' . $cache_ttl);
+    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl);
+    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
 
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
