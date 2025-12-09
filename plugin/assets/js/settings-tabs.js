@@ -4,7 +4,7 @@
  * Date: 2025-12-03
  */
 
-console.log('PDF Builder - settings-tabs.js chargé');
+console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
 
 (function() {
     'use strict';
@@ -118,8 +118,79 @@ console.log('PDF Builder - settings-tabs.js chargé');
     // Bouton de sauvegarde flottant
     let saveButtonInitialized = false;
 
-    // Section Test de Licence - Onglet Développeur
-    function initLicenseTestSection() {
+    function initSaveButton() {
+        // Vérifier si on est sur la page de paramètres
+        if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
+            debugLog('PDF Builder - Bouton flottant: Pas sur la page de paramètres, skip');
+            return;
+        }
+
+        if (saveButtonInitialized) {
+            debugLog('PDF Builder - Bouton flottant: Déjà initialisé');
+            return;
+        }
+
+        console.log('PDF Builder - Initialisation du bouton flottant...');
+
+        const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+        const floatingContainer = document.getElementById('pdf-builder-save-floating');
+
+        debugLog('   - Bouton #pdf-builder-save-floating-btn:', saveBtn ? 'trouvé' : 'manquant');
+        debugLog('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
+
+        if (saveBtn && floatingContainer) {
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                debugLog('PDF Builder - Clic sur le bouton flottant');
+
+                // Trouver le formulaire principal avec action="options.php"
+                const mainForm = document.querySelector('form[action="options.php"]');
+                if (mainForm) {
+                    debugLog('PDF Builder - Formulaire trouvé, soumission en cours');
+                    
+                    // Log des données du formulaire avant soumission
+                    const formData = new FormData(mainForm);
+                    console.log('PDF Builder: Form data before submit:');
+                    for (let [key, value] of formData.entries()) {
+                        if (key.includes('template')) {
+                            console.log('  ', key, '=', value);
+                        }
+                    }
+                    
+                    // Changer le texte du bouton pendant la sauvegarde
+                    const originalText = saveBtn.textContent;
+                    saveBtn.textContent = 'Sauvegarde...';
+                    saveBtn.disabled = true;
+                    
+                    // Soumettre le formulaire directement
+                    mainForm.submit();
+                    
+                    // Remettre le texte original après un délai
+                    setTimeout(function() {
+                        saveBtn.textContent = originalText;
+                        saveBtn.disabled = false;
+                    }, 5000);
+                } else {
+                    debugError('PDF Builder - Formulaire principal non trouvé');
+                    // Log all forms on the page
+                    const allForms = document.querySelectorAll('form');
+                    console.log('PDF Builder: All forms on page:', allForms.length);
+                    allForms.forEach((form, index) => {
+                        console.log('  Form', index, ': action=', form.action, 'method=', form.method);
+                    });
+                }
+            });
+
+            saveButtonInitialized = true;
+            debugLog('PDF Builder - Bouton flottant initialisé avec succès');
+        } else {
+            debugLog('PDF Builder - Éléments du bouton flottant manquants, retry dans 1s...');
+            setTimeout(initSaveButton, 1000);
+        }
+    }
+
+    // Initialiser le bouton flottant aussi
+    document.addEventListener('DOMContentLoaded', initSaveButton);
         // Vérifier si on est sur la page de paramètres
         if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
             debugLog('PDF Builder - Pas sur la page de paramètres, skip section licence');
