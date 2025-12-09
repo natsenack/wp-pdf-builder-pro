@@ -582,8 +582,8 @@
 </div>
 
 
-<!-- Canvas grid Modal (hidden container) -->
-<div id="canvas-grid-modal" class="canvas-modal hidden-element" data-category="grid">
+<!-- Canvas grille Modal (hidden container) -->
+<div id="canvas-grille-modal" class="canvas-modal hidden-element" data-category="grille">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
