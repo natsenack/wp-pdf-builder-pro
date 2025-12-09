@@ -2168,4 +2168,6 @@
                 })();
             </script>
 
+            <!-- Inclusion des modales Canvas -->
+            <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
