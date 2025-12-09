@@ -38,6 +38,9 @@ class SettingsManager
 
         // Charger les styles pour les pages d'administration
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
+
+        // Hook pour vérifier la sauvegarde des paramètres
+        add_action('update_option_pdf_builder_settings', [$this, 'onSettingsUpdated'], 10, 3);
     }
 
     /**
@@ -596,6 +599,17 @@ class SettingsManager
         error_log('[PDF Builder] sanitizeSettings returning sanitized data: ' . print_r($sanitized, true));
         error_log('[PDF Builder] Final sanitized array count: ' . count($sanitized));
         return $sanitized;
+    }
+
+    /**
+     * Hook appelé quand les paramètres sont mis à jour
+     */
+    public function onSettingsUpdated($old_value, $new_value, $option)
+    {
+        error_log('[PDF Builder] onSettingsUpdated called for option: ' . $option);
+        error_log('[PDF Builder] Old value count: ' . (is_array($old_value) ? count($old_value) : 'not array'));
+        error_log('[PDF Builder] New value count: ' . (is_array($new_value) ? count($new_value) : 'not array'));
+        error_log('[PDF Builder] New value sample: ' . print_r(array_slice($new_value, 0, 5), true));
     }
 
     /**

@@ -9,6 +9,7 @@
 
     // Récupération sécurisée des paramètres
     $settings = get_option('pdf_builder_settings', array());
+    error_log('[PDF Builder] settings-general.php - Full settings from DB: ' . print_r($settings, true));
 
     // Récupération des informations WooCommerce
     $store_name = get_option('woocommerce_store_name', get_bloginfo('name'));

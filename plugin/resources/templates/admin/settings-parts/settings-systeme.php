@@ -4,6 +4,7 @@
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = get_option('pdf_builder_settings', []);
+    error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
 
     // Préparer toutes les variables nécessaires
     $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
