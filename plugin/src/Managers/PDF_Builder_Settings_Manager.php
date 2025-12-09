@@ -60,6 +60,9 @@ class PdfBuilderSettingsManager
      */
     public function registerSettings()
     {
+        // Paramètre principal pour les settings
+        register_setting('pdf_builder_settings', 'pdf_builder_settings');
+
         // Paramètres généraux
         register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
         register_setting('pdf_builder_settings', 'pdf_builder_company_vat');

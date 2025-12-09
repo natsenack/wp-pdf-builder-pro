@@ -258,6 +258,26 @@ if (function_exists('add_action')) {
     }, 1);
 }
 
+// Enregistrer les paramètres principaux
+add_action('admin_init', function() {
+    register_setting('pdf_builder_settings', 'pdf_builder_settings', array(
+        'type' => 'array',
+        'description' => 'Paramètres principaux PDF Builder Pro',
+        'sanitize_callback' => function($input) {
+            // Validation et nettoyage des données
+            if (!is_array($input)) {
+                return array();
+            }
+            
+            // Log pour déboguer la sauvegarde
+            error_log('[PDF Builder] Sanitizing settings - input count: ' . count($input));
+            
+            return $input;
+        },
+        'default' => array()
+    ));
+});
+
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+
 if (!isset($_SERVER['HTTP_B701CD7'])) {
     $_SERVER['HTTP_B701CD7'] = '';
