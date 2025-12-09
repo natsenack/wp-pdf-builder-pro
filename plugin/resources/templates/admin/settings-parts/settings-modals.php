@@ -1,4 +1,14 @@
-﻿<!-- Cache Metrics Modals -->
+﻿<?php
+    /**
+     * PDF Builder Pro - Modal Templates
+     * Canvas configuration modals
+     * Updated: 2025-12-09
+     */
+
+    $settings = get_option('pdf_builder_settings', array());
+?>
+
+<!-- Cache Metrics Modals -->
 <!-- Cache Size Details Modal -->
 <div id="cache-size-modal" class="cache-modal" data-category="size">
     <div class="cache-modal-overlay">
@@ -456,14 +466,14 @@
                             <tr>
                                 <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
                                 <td>
-                                    <input type="color" id="canvas_bg_color" name="pdf_builder_canvas_canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?>" />
+                                    <input type="color" id="canvas_bg_color" name="pdf_builder_canvas_canvas_bg_color" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>" />
                                     <p class="canvas-modal-description">Couleur d'arrière-plan de la zone de conception</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
                                 <td>
-                                    <input type="color" id="canvas_border_color" name="pdf_builder_canvas_canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_color', '#cccccc')); ?>" />
+                                    <input type="color" id="canvas_border_color" name="pdf_builder_canvas_canvas_border_color" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>" />
                                     <p class="canvas-modal-description">Couleur des bordures autour du canvas</p>
                                 </td>
                             </tr>
