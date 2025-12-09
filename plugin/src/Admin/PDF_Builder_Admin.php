@@ -696,6 +696,91 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Traite les soumissions de formulaires personnalisés des templates de paramètres
+     */
+    private function handle_settings_form_submission()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+        }
+
+        // Récupérer l'onglet actuel depuis le formulaire
+        $current_tab = $_POST['current_tab'] ?? '';
+
+        if (empty($current_tab)) {
+            return;
+        }
+
+        // Vérifier le nonce selon l'onglet
+        $nonce_name = 'pdf_builder_save_settings';
+        if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_name)) {
+            wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
+        }
+
+        // Récupérer les paramètres existants
+        $settings = get_option('pdf_builder_settings', array());
+
+        // Traiter selon l'onglet
+        switch ($current_tab) {
+            case 'general':
+                // Paramètres généraux
+                $settings['pdf_builder_company_name'] = sanitize_text_field($_POST['pdf_builder_company_name'] ?? '');
+                $settings['pdf_builder_company_address'] = sanitize_textarea_field($_POST['pdf_builder_company_address'] ?? '');
+                $settings['pdf_builder_company_phone'] = sanitize_text_field($_POST['pdf_builder_company_phone'] ?? '');
+                $settings['pdf_builder_company_email'] = sanitize_email($_POST['pdf_builder_company_email'] ?? '');
+                $settings['pdf_builder_company_phone_manual'] = sanitize_text_field($_POST['pdf_builder_company_phone_manual'] ?? '');
+                $settings['pdf_builder_company_siret'] = sanitize_text_field($_POST['pdf_builder_company_siret'] ?? '');
+                $settings['pdf_builder_company_vat'] = sanitize_text_field($_POST['pdf_builder_company_vat'] ?? '');
+                $settings['pdf_builder_company_rcs'] = sanitize_text_field($_POST['pdf_builder_company_rcs'] ?? '');
+                $settings['pdf_builder_company_capital'] = sanitize_text_field($_POST['pdf_builder_company_capital'] ?? '');
+                break;
+
+            case 'pdf':
+                // Paramètres PDF
+                $settings['pdf_builder_pdf_quality'] = sanitize_text_field($_POST['pdf_builder_pdf_quality'] ?? 'high');
+                $settings['pdf_builder_default_format'] = sanitize_text_field($_POST['pdf_builder_default_format'] ?? 'A4');
+                $settings['pdf_builder_default_orientation'] = sanitize_text_field($_POST['pdf_builder_default_orientation'] ?? 'portrait');
+                break;
+
+            case 'systeme':
+                // Paramètres système
+                $settings['pdf_builder_cache_enabled'] = isset($_POST['pdf_builder_cache_enabled']) ? '1' : '0';
+                $settings['pdf_builder_cache_compression'] = isset($_POST['pdf_builder_cache_compression']) ? '1' : '0';
+                $settings['pdf_builder_cache_auto_cleanup'] = isset($_POST['pdf_builder_cache_auto_cleanup']) ? '1' : '0';
+                $settings['pdf_builder_cache_max_size'] = intval($_POST['pdf_builder_cache_max_size'] ?? 100);
+                $settings['pdf_builder_cache_ttl'] = intval($_POST['pdf_builder_cache_ttl'] ?? 3600);
+                $settings['pdf_builder_performance_auto_optimization'] = isset($_POST['pdf_builder_performance_auto_optimization']) ? '1' : '0';
+                $settings['pdf_builder_systeme_auto_maintenance'] = isset($_POST['pdf_builder_systeme_auto_maintenance']) ? '1' : '0';
+                break;
+
+            // Ajouter d'autres onglets selon les besoins
+            default:
+                // Onglet non traité
+                break;
+        }
+
+        // Sauvegarder les paramètres
+        update_option('pdf_builder_settings', $settings);
+
+        // Message de succès
+        add_settings_error(
+            'pdf_builder_settings',
+            'settings_updated',
+            __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
+            'updated'
+        );
+
+        // Rediriger pour éviter la resoumission du formulaire
+        wp_redirect(add_query_arg(['page' => 'pdf-builder-settings', 'tab' => $current_tab, 'updated' => 'true']));
+        exit;
+    }
+
+    /**
      * Compte le nombre de templates créés par un utilisateur
      *
      * @param int $user_id
@@ -1159,6 +1244,9 @@ class PdfBuilderAdmin
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
+        // Traitement des formulaires personnalisés des templates
+        $this->handle_settings_form_submission();
+
         // Récupération des paramètres généraux
         $settings = get_option('pdf_builder_settings', array());
         $current_user = wp_get_current_user();
@@ -1228,35 +1316,75 @@ class PdfBuilderAdmin
                     <?php
                     switch ($current_tab) {
                         case 'general':
-                            do_settings_sections('pdf_builder_general');
+                            $general_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-general.php';
+                            if (file_exists($general_file)) {
+                                include $general_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'licence':
-                            do_settings_sections('pdf_builder_licence');
+                            $licence_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-licence.php';
+                            if (file_exists($licence_file)) {
+                                include $licence_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'systeme':
-                            do_settings_sections('pdf_builder_systeme');
+                            $systeme_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-systeme.php';
+                            if (file_exists($systeme_file)) {
+                                include $systeme_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'securite':
-                            do_settings_sections('pdf_builder_securite');
+                            $securite_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-securite.php';
+                            if (file_exists($securite_file)) {
+                                include $securite_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'pdf':
-                            do_settings_sections('pdf_builder_pdf');
+                            $pdf_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-pdf.php';
+                            if (file_exists($pdf_file)) {
+                                include $pdf_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'contenu':
-                            do_settings_sections('pdf_builder_contenu');
+                            $contenu_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-contenu.php';
+                            if (file_exists($contenu_file)) {
+                                include $contenu_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'templates':
-                            do_settings_sections('pdf_builder_templates');
+                            $templates_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-templates.php';
+                            if (file_exists($templates_file)) {
+                                include $templates_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         case 'developpeur':
-                            do_settings_sections('pdf_builder_developpeur');
+                            $developpeur_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-developpeur.php';
+                            if (file_exists($developpeur_file)) {
+                                include $developpeur_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
+                            }
                             break;
 
                         default:
