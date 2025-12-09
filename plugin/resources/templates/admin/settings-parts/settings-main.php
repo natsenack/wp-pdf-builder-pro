@@ -23,6 +23,7 @@
     $current_user = wp_get_current_user();
 
     // LOG pour déboguer la soumission du formulaire
+    error_log('[PDF Builder] === SETTINGS PAGE LOADED ===');
     error_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
     error_log('[PDF Builder] Current tab: ' . $current_tab);
     
