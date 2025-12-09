@@ -418,9 +418,6 @@
                     </span>
                 </h3>
 
-                <form method="post" action="options.php" class="templates-settings-form">
-                    <?php settings_fields('pdf_builder_settings'); ?>
-
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="default_template">Template par défaut</label></th>
@@ -445,9 +442,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <?php submit_button('Enregistrer les paramètres Templates', 'primary', 'submit-templates'); ?>
-                </form>
             </section>
 
 

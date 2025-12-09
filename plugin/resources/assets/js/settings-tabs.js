@@ -1189,20 +1189,18 @@
                 floatingSaveBtn.addEventListener('click', function() {
                     console.log('PDF Builder: Floating save button clicked!');
                     
-                    // Trouver tous les formulaires avec action="options.php" et les soumettre
-                    const forms = document.querySelectorAll('form[action="options.php"]');
-                    if (forms.length > 0) {
-                        console.log('PDF Builder: Submitting', forms.length, 'forms');
+                    // Trouver le formulaire principal et le soumettre
+                    const mainForm = document.querySelector('form[action="options.php"]');
+                    if (mainForm) {
+                        console.log('PDF Builder: Submitting main form');
                         
                         // Changer le texte du bouton pendant la sauvegarde
                         const originalText = floatingSaveBtn.textContent;
                         floatingSaveBtn.textContent = 'Sauvegarde...';
                         floatingSaveBtn.disabled = true;
                         
-                        // Soumettre tous les formulaires
-                        forms.forEach(form => {
-                            form.submit();
-                        });
+                        // Soumettre le formulaire
+                        mainForm.submit();
                         
                         // Remettre le texte original après un délai (au cas où la soumission échoue)
                         setTimeout(function() {
@@ -1210,7 +1208,7 @@
                             floatingSaveBtn.disabled = false;
                         }, 5000);
                     } else {
-                        console.error('PDF Builder: No forms with action="options.php" found for submission');
+                        console.error('PDF Builder: Main form not found for submission');
                     }
                 });
                 return true; // Bouton trouvé et initialisé
