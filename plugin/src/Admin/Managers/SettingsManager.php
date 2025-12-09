@@ -402,7 +402,9 @@ class SettingsManager
      */
     public function sanitizeSettings($input)
     {
-        error_log('[PDF Builder] sanitizeSettings called with input: ' . print_r($input, true));
+        error_log('[PDF Builder] === SANITIZE SETTINGS START ===');
+        error_log('[PDF Builder] sanitizeSettings called with input count: ' . (is_array($input) ? count($input) : 'not array'));
+        error_log('[PDF Builder] Raw input data: ' . print_r($input, true));
 
         // Vérifier si l'input est vide
         if (empty($input)) {
@@ -414,12 +416,39 @@ class SettingsManager
 
         // Récupérer les valeurs existantes pour les fusionner
         $existing = get_option('pdf_builder_settings', array());
-        error_log('[PDF Builder] Existing settings before merge: ' . print_r($existing, true));
+        error_log('[PDF Builder] Existing settings count: ' . count($existing));
+        error_log('[PDF Builder] Existing settings keys: ' . implode(', ', array_keys($existing)));
 
         // Commencer avec les valeurs existantes
         $sanitized = $existing;
 
         // CORRECTION: Suppression de la logique des checkboxes non présentes dans l'input
+
+        // LOGS SPECIFIQUES POUR LES TEMPLATES
+        error_log('[PDF Builder] === CHECKING TEMPLATE FIELDS ===');
+        $template_fields = ['pdf_builder_default_template', 'pdf_builder_template_library_enabled'];
+        foreach ($template_fields as $field) {
+            if (isset($input[$field])) {
+                error_log("[PDF Builder] Template field '$field' found with value: '" . $input[$field] . "'");
+            } else {
+                error_log("[PDF Builder] Template field '$field' NOT found in input");
+            }
+        }
+
+        // LOGS SPECIFIQUES POUR LES COULEURS CANVAS
+        error_log('[PDF Builder] === CHECKING CANVAS COLOR FIELDS ===');
+        $canvas_color_fields = [
+            'pdf_builder_canvas_canvas_bg_color',
+            'pdf_builder_canvas_canvas_border_color',
+            'pdf_builder_canvas_canvas_container_bg_color'
+        ];
+        foreach ($canvas_color_fields as $field) {
+            if (isset($input[$field])) {
+                error_log("[PDF Builder] Canvas color field '$field' found with value: '" . $input[$field] . "'");
+            } else {
+                error_log("[PDF Builder] Canvas color field '$field' NOT found in input");
+            }
+        }
 
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
@@ -606,6 +635,18 @@ class SettingsManager
             }
         }
 
+        error_log('[PDF Builder] === FINAL TEMPLATE VALUES ===');
+        foreach ($template_fields as $field) {
+            $final_value = isset($sanitized[$field]) ? $sanitized[$field] : 'NOT_SET';
+            error_log("[PDF Builder] Final '$field' = '$final_value'");
+        }
+
+        error_log('[PDF Builder] === FINAL CANVAS COLOR VALUES ===');
+        foreach ($canvas_color_fields as $field) {
+            $final_value = isset($sanitized[$field]) ? $sanitized[$field] : 'NOT_SET';
+            error_log("[PDF Builder] Final '$field' = '$final_value'");
+        }
+
         error_log('[PDF Builder] sanitizeSettings returning sanitized data: ' . print_r($sanitized, true));
         error_log('[PDF Builder] Final sanitized array count: ' . count($sanitized));
         return $sanitized;
@@ -619,6 +660,24 @@ class SettingsManager
         error_log('[PDF Builder] ✅ SUCCESS: onSettingsUpdated called for option: ' . $option);
         error_log('[PDF Builder] ✅ Old value count: ' . (is_array($old_value) ? count($old_value) : 'not array'));
         error_log('[PDF Builder] ✅ New value count: ' . (is_array($new_value) ? count($new_value) : 'not array'));
+
+        // Logs spécifiques pour les champs problématiques
+        $check_fields = [
+            'pdf_builder_default_template',
+            'pdf_builder_template_library_enabled',
+            'pdf_builder_canvas_canvas_bg_color',
+            'pdf_builder_canvas_canvas_border_color',
+            'pdf_builder_canvas_canvas_container_bg_color'
+        ];
+
+        error_log('[PDF Builder] === SETTINGS UPDATE DETAILS ===');
+        foreach ($check_fields as $field) {
+            $old_val = isset($old_value[$field]) ? $old_value[$field] : 'NOT_SET';
+            $new_val = isset($new_value[$field]) ? $new_value[$field] : 'NOT_SET';
+            $changed = ($old_val !== $new_val) ? 'CHANGED' : 'UNCHANGED';
+            error_log("[PDF Builder] $field: '$old_val' -> '$new_val' [$changed]");
+        }
+
         error_log('[PDF Builder] ✅ New value sample: ' . print_r(array_slice($new_value, 0, 5), true));
     }
 
