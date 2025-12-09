@@ -193,6 +193,3 @@
     <div id="pdf-builder-tab-content" style="display: none;"></div>
 
 </div> <!-- Fin du .wrap -->
-
-<!-- Inclusion des modales en dehors du .wrap -->
-<?php require_once __DIR__ . '/settings-modals.php'; ?>
