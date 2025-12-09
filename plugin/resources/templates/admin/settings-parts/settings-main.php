@@ -36,11 +36,8 @@
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
-    <form method="post" action="options.php">
-        <?php settings_fields('pdf_builder_settings'); ?>
-
-        <!-- Navigation par onglets moderne -->
-        <h2 class="nav-tab-wrapper">
+    <!-- Navigation par onglets moderne -->
+    <h2 class="nav-tab-wrapper">
         <div class="tabs-container">
             <button type="button" data-tab="general" class="nav-tab nav-tab-active">
                 <span class="tab-icon">⚙️</span>
@@ -186,8 +183,6 @@
         </div>
 
     </div>
-
-    </form>
 
     <!-- Bouton flottant de sauvegarde -->
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
