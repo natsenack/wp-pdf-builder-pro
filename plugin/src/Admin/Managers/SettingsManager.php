@@ -140,6 +140,13 @@ class SettingsManager
         register_setting('pdf_builder_settings', 'pdf_builder_force_https');
         register_setting('pdf_builder_settings', 'pdf_builder_performance_monitoring');
 
+        // Enregistrer les paramètres généraux
+        register_setting('pdf_builder_settings', 'pdf_builder_company_phone_manual');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_capital');
+
         add_settings_field(
             'cache_settings',
             __('Cache', 'pdf-builder-pro'),
@@ -166,24 +173,27 @@ class SettingsManager
 
         // Enregistrer tous les paramètres canvas
         $canvas_settings = [
-            'pdf_builder_canvas_format',
-            'pdf_builder_canvas_orientation',
-            'pdf_builder_canvas_dpi',
-            'pdf_builder_canvas_width',
-            'pdf_builder_canvas_height',
-            'pdf_builder_canvas_drag_enabled',
-            'pdf_builder_canvas_resize_enabled',
-            'pdf_builder_canvas_rotate_enabled',
-            'pdf_builder_canvas_multi_select',
-            'pdf_builder_canvas_selection_mode',
-            'pdf_builder_canvas_keyboard_shortcuts',
-            'pdf_builder_canvas_grid_enabled',
-            'pdf_builder_canvas_grid_size',
-            'pdf_builder_canvas_snap_to_grid',
-            'pdf_builder_canvas_navigation_enabled',
-            'pdf_builder_canvas_zoom_default',
-            'pdf_builder_canvas_export_format',
-            'pdf_builder_canvas_export_quality',
+            'pdf_builder_canvas_canvas_width',
+            'pdf_builder_canvas_canvas_height',
+            'pdf_builder_canvas_canvas_dpi',
+            'pdf_builder_canvas_canvas_format',
+            'pdf_builder_canvas_canvas_bg_color',
+            'pdf_builder_canvas_canvas_border_color',
+            'pdf_builder_canvas_canvas_border_width',
+            'pdf_builder_canvas_canvas_shadow_enabled',
+            'pdf_builder_canvas_canvas_container_bg_color',
+            'pdf_builder_canvas_canvas_grid_enabled',
+            'pdf_builder_canvas_canvas_grid_size',
+            'pdf_builder_canvas_canvas_guides_enabled',
+            'pdf_builder_canvas_canvas_snap_to_grid',
+            'pdf_builder_canvas_canvas_zoom_min',
+            'pdf_builder_canvas_canvas_zoom_max',
+            'pdf_builder_canvas_canvas_zoom_default',
+            'pdf_builder_canvas_canvas_zoom_step',
+            'pdf_builder_canvas_canvas_export_quality',
+            'pdf_builder_canvas_canvas_export_format',
+            'pdf_builder_canvas_canvas_export_transparent',
+            'pdf_builder_canvas_canvas_drag_enabled',
         ];
 
         foreach ($canvas_settings as $setting) {
@@ -483,32 +493,178 @@ class SettingsManager
     {
         $sanitized = array();
 
-        // Sanitisation des paramètres système
-        if (isset($input['system_memory_limit'])) {
-            $sanitized['system_memory_limit'] = sanitize_text_field($input['system_memory_limit']);
+        // Sanitisation des paramètres généraux
+        if (isset($input['pdf_builder_company_phone_manual'])) {
+            $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);
+        }
+        if (isset($input['pdf_builder_company_siret'])) {
+            $sanitized['pdf_builder_company_siret'] = sanitize_text_field($input['pdf_builder_company_siret']);
+        }
+        if (isset($input['pdf_builder_company_vat'])) {
+            $sanitized['pdf_builder_company_vat'] = sanitize_text_field($input['pdf_builder_company_vat']);
+        }
+        if (isset($input['pdf_builder_company_rcs'])) {
+            $sanitized['pdf_builder_company_rcs'] = sanitize_text_field($input['pdf_builder_company_rcs']);
+        }
+        if (isset($input['pdf_builder_company_capital'])) {
+            $sanitized['pdf_builder_company_capital'] = sanitize_text_field($input['pdf_builder_company_capital']);
         }
 
-        if (isset($input['system_max_execution_time'])) {
-            $sanitized['system_max_execution_time'] = intval($input['system_max_execution_time']);
-            $sanitized['system_max_execution_time'] = max(10, min(300, $sanitized['system_max_execution_time']));
+        // Sanitisation des paramètres système/cache
+        if (isset($input['pdf_builder_cache_enabled'])) {
+            $sanitized['pdf_builder_cache_enabled'] = $input['pdf_builder_cache_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_cache_compression'])) {
+            $sanitized['pdf_builder_cache_compression'] = $input['pdf_builder_cache_compression'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_cache_auto_cleanup'])) {
+            $sanitized['pdf_builder_cache_auto_cleanup'] = $input['pdf_builder_cache_auto_cleanup'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_cache_max_size'])) {
+            $sanitized['pdf_builder_cache_max_size'] = intval($input['pdf_builder_cache_max_size']);
+            $sanitized['pdf_builder_cache_max_size'] = max(10, min(1000, $sanitized['pdf_builder_cache_max_size']));
+        }
+        if (isset($input['pdf_builder_cache_ttl'])) {
+            $sanitized['pdf_builder_cache_ttl'] = intval($input['pdf_builder_cache_ttl']);
+            $sanitized['pdf_builder_cache_ttl'] = max(0, min(86400, $sanitized['pdf_builder_cache_ttl']));
+        }
+        if (isset($input['pdf_builder_performance_auto_optimization'])) {
+            $sanitized['pdf_builder_performance_auto_optimization'] = $input['pdf_builder_performance_auto_optimization'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_systeme_auto_maintenance'])) {
+            $sanitized['pdf_builder_systeme_auto_maintenance'] = $input['pdf_builder_systeme_auto_maintenance'] ? '1' : '0';
         }
 
         // Sanitisation des paramètres de sécurité
-        if (isset($input['security_file_validation'])) {
-            $sanitized['security_file_validation'] = $input['security_file_validation'] ? '1' : '0';
+        if (isset($input['pdf_builder_security_level'])) {
+            $allowed_levels = array('low', 'medium', 'high');
+            $sanitized['pdf_builder_security_level'] = in_array($input['pdf_builder_security_level'], $allowed_levels) ? $input['pdf_builder_security_level'] : 'medium';
+        }
+        if (isset($input['pdf_builder_enable_logging'])) {
+            $sanitized['pdf_builder_enable_logging'] = $input['pdf_builder_enable_logging'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_enabled'])) {
+            $sanitized['pdf_builder_gdpr_enabled'] = $input['pdf_builder_gdpr_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_consent_required'])) {
+            $sanitized['pdf_builder_gdpr_consent_required'] = $input['pdf_builder_gdpr_consent_required'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_data_retention'])) {
+            $sanitized['pdf_builder_gdpr_data_retention'] = intval($input['pdf_builder_gdpr_data_retention']);
+            $sanitized['pdf_builder_gdpr_data_retention'] = max(30, min(3650, $sanitized['pdf_builder_gdpr_data_retention']));
+        }
+        if (isset($input['pdf_builder_gdpr_audit_enabled'])) {
+            $sanitized['pdf_builder_gdpr_audit_enabled'] = $input['pdf_builder_gdpr_audit_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_encryption_enabled'])) {
+            $sanitized['pdf_builder_gdpr_encryption_enabled'] = $input['pdf_builder_gdpr_encryption_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_consent_analytics'])) {
+            $sanitized['pdf_builder_gdpr_consent_analytics'] = $input['pdf_builder_gdpr_consent_analytics'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_consent_templates'])) {
+            $sanitized['pdf_builder_gdpr_consent_templates'] = $input['pdf_builder_gdpr_consent_templates'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_gdpr_consent_marketing'])) {
+            $sanitized['pdf_builder_gdpr_consent_marketing'] = $input['pdf_builder_gdpr_consent_marketing'] ? '1' : '0';
         }
 
-        // Sanitisation des paramètres PDF
-        if (isset($input['pdf_quality'])) {
-            $allowed_qualities = array('low', 'medium', 'high');
-            $sanitized['pdf_quality'] = in_array($input['pdf_quality'], $allowed_qualities) ? $input['pdf_quality'] : 'high';
+        // Sanitisation des paramètres développeur
+        if (isset($input['pdf_builder_developer_enabled'])) {
+            $sanitized['pdf_builder_developer_enabled'] = $input['pdf_builder_developer_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_developer_password'])) {
+            $sanitized['pdf_builder_developer_password'] = sanitize_text_field($input['pdf_builder_developer_password']);
+        }
+        if (isset($input['pdf_builder_license_test_mode'])) {
+            $sanitized['pdf_builder_license_test_mode'] = $input['pdf_builder_license_test_mode'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_debug_php_errors'])) {
+            $sanitized['pdf_builder_debug_php_errors'] = $input['pdf_builder_debug_php_errors'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_debug_javascript'])) {
+            $sanitized['pdf_builder_debug_javascript'] = $input['pdf_builder_debug_javascript'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_debug_javascript_verbose'])) {
+            $sanitized['pdf_builder_debug_javascript_verbose'] = $input['pdf_builder_debug_javascript_verbose'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_debug_ajax'])) {
+            $sanitized['pdf_builder_debug_ajax'] = $input['pdf_builder_debug_ajax'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_debug_performance'])) {
+            $sanitized['pdf_builder_debug_performance'] = $input['pdf_builder_debug_performance'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_debug_database'])) {
+            $sanitized['pdf_builder_debug_database'] = $input['pdf_builder_debug_database'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_log_level'])) {
+            $allowed_levels = array('error', 'warning', 'info', 'debug');
+            $sanitized['pdf_builder_log_level'] = in_array($input['pdf_builder_log_level'], $allowed_levels) ? $input['pdf_builder_log_level'] : 'warning';
+        }
+        if (isset($input['pdf_builder_log_file_size'])) {
+            $sanitized['pdf_builder_log_file_size'] = intval($input['pdf_builder_log_file_size']);
+            $sanitized['pdf_builder_log_file_size'] = max(1, min(100, $sanitized['pdf_builder_log_file_size']));
+        }
+        if (isset($input['pdf_builder_log_retention'])) {
+            $sanitized['pdf_builder_log_retention'] = intval($input['pdf_builder_log_retention']);
+            $sanitized['pdf_builder_log_retention'] = max(1, min(365, $sanitized['pdf_builder_log_retention']));
+        }
+        if (isset($input['pdf_builder_force_https'])) {
+            $sanitized['pdf_builder_force_https'] = $input['pdf_builder_force_https'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_performance_monitoring'])) {
+            $sanitized['pdf_builder_performance_monitoring'] = $input['pdf_builder_performance_monitoring'] ? '1' : '0';
         }
 
-        if (isset($input['pdf_compression'])) {
-            $sanitized['pdf_compression'] = $input['pdf_compression'] ? '1' : '0';
+        // Sanitisation des paramètres canvas
+        $canvas_fields = [
+            'pdf_builder_canvas_canvas_width' => 'intval',
+            'pdf_builder_canvas_canvas_height' => 'intval',
+            'pdf_builder_canvas_canvas_dpi' => 'intval',
+            'pdf_builder_canvas_canvas_format' => 'sanitize_text_field',
+            'pdf_builder_canvas_canvas_bg_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_canvas_border_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_canvas_border_width' => 'intval',
+            'pdf_builder_canvas_canvas_shadow_enabled' => 'bool',
+            'pdf_builder_canvas_canvas_container_bg_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_canvas_grid_enabled' => 'bool',
+            'pdf_builder_canvas_canvas_grid_size' => 'intval',
+            'pdf_builder_canvas_canvas_guides_enabled' => 'bool',
+            'pdf_builder_canvas_canvas_snap_to_grid' => 'bool',
+            'pdf_builder_canvas_canvas_zoom_min' => 'intval',
+            'pdf_builder_canvas_canvas_zoom_max' => 'intval',
+            'pdf_builder_canvas_canvas_zoom_default' => 'intval',
+            'pdf_builder_canvas_canvas_zoom_step' => 'intval',
+            'pdf_builder_canvas_canvas_export_quality' => 'intval',
+            'pdf_builder_canvas_canvas_export_format' => 'sanitize_text_field',
+            'pdf_builder_canvas_canvas_export_transparent' => 'bool',
+            'pdf_builder_canvas_canvas_drag_enabled' => 'bool',
+        ];
+
+        foreach ($canvas_fields as $field => $type) {
+            if (isset($input[$field])) {
+                switch ($type) {
+                    case 'intval':
+                        $sanitized[$field] = intval($input[$field]);
+                        break;
+                    case 'bool':
+                        $sanitized[$field] = $input[$field] ? '1' : '0';
+                        break;
+                    case 'sanitize_hex_color':
+                        $sanitized[$field] = sanitize_hex_color($input[$field]) ?: $input[$field];
+                        break;
+                    default:
+                        $sanitized[$field] = sanitize_text_field($input[$field]);
+                        break;
+                }
+            }
         }
 
-        // Sanitisation des autres paramètres - ajouter au besoin
+        // Sanitisation du paramètre des templates par statut
+        if (isset($input['pdf_builder_order_status_templates']) && is_array($input['pdf_builder_order_status_templates'])) {
+            $sanitized['pdf_builder_order_status_templates'] = array_map('sanitize_text_field', $input['pdf_builder_order_status_templates']);
+        }
+
         // Pour l'instant, on accepte les autres valeurs telles quelles mais sanitizées
         foreach ($input as $key => $value) {
             if (!isset($sanitized[$key])) {
