@@ -275,45 +275,124 @@ class PdfBuilderAdmin
             'pdf_builder_general'
         );
 
-        // Ajouter des champs supplémentaires pour le test de volume
-        add_settings_field(
-            'company_phone',
-            __('Téléphone', 'pdf-builder-pro'),
-            array($this, 'company_phone_field_callback'),
-            'pdf_builder_general',
-            'pdf_builder_general'
-        );
-
-        add_settings_field(
-            'company_email',
-            __('Email', 'pdf-builder-pro'),
-            array($this, 'company_email_field_callback'),
-            'pdf_builder_general',
-            'pdf_builder_general'
-        );
-
-        add_settings_field(
-            'company_website',
-            __('Site web', 'pdf-builder-pro'),
-            array($this, 'company_website_field_callback'),
-            'pdf_builder_general',
-            'pdf_builder_general'
-        );
-
-        add_settings_field(
-            'company_description',
-            __('Description de l\'entreprise', 'pdf-builder-pro'),
-            array($this, 'company_description_field_callback'),
-            'pdf_builder_general',
-            'pdf_builder_general'
-        );
-
         // Section Licence
         add_settings_section(
             'pdf_builder_licence',
             __('Paramètres de Licence', 'pdf-builder-pro'),
             array($this, 'licence_section_callback'),
             'pdf_builder_licence'
+        );
+
+        // Section Système
+        add_settings_section(
+            'pdf_builder_systeme',
+            __('Paramètres Système', 'pdf-builder-pro'),
+            array($this, 'systeme_section_callback'),
+            'pdf_builder_systeme'
+        );
+
+        add_settings_field(
+            'system_memory_limit',
+            __('Limite mémoire PHP', 'pdf-builder-pro'),
+            array($this, 'system_memory_limit_field_callback'),
+            'pdf_builder_systeme',
+            'pdf_builder_systeme'
+        );
+
+        add_settings_field(
+            'system_max_execution_time',
+            __('Temps d\'exécution maximum', 'pdf-builder-pro'),
+            array($this, 'system_max_execution_time_field_callback'),
+            'pdf_builder_systeme',
+            'pdf_builder_systeme'
+        );
+
+        // Section Sécurité
+        add_settings_section(
+            'pdf_builder_securite',
+            __('Paramètres de Sécurité', 'pdf-builder-pro'),
+            array($this, 'securite_section_callback'),
+            'pdf_builder_securite'
+        );
+
+        add_settings_field(
+            'security_file_validation',
+            __('Validation des fichiers', 'pdf-builder-pro'),
+            array($this, 'security_file_validation_field_callback'),
+            'pdf_builder_securite',
+            'pdf_builder_securite'
+        );
+
+        // Section Configuration PDF
+        add_settings_section(
+            'pdf_builder_pdf',
+            __('Configuration PDF', 'pdf-builder-pro'),
+            array($this, 'pdf_section_callback'),
+            'pdf_builder_pdf'
+        );
+
+        add_settings_field(
+            'pdf_quality',
+            __('Qualité PDF', 'pdf-builder-pro'),
+            array($this, 'pdf_quality_field_callback'),
+            'pdf_builder_pdf',
+            'pdf_builder_pdf'
+        );
+
+        add_settings_field(
+            'pdf_compression',
+            __('Compression PDF', 'pdf-builder-pro'),
+            array($this, 'pdf_compression_field_callback'),
+            'pdf_builder_pdf',
+            'pdf_builder_pdf'
+        );
+
+        // Section Canvas & Design
+        add_settings_section(
+            'pdf_builder_contenu',
+            __('Canvas & Design', 'pdf-builder-pro'),
+            array($this, 'contenu_section_callback'),
+            'pdf_builder_contenu'
+        );
+
+        add_settings_field(
+            'canvas_default_width',
+            __('Largeur par défaut du canvas', 'pdf-builder-pro'),
+            array($this, 'canvas_default_width_field_callback'),
+            'pdf_builder_contenu',
+            'pdf_builder_contenu'
+        );
+
+        // Section Templates
+        add_settings_section(
+            'pdf_builder_templates',
+            __('Paramètres Templates', 'pdf-builder-pro'),
+            array($this, 'templates_section_callback'),
+            'pdf_builder_templates'
+        );
+
+        add_settings_field(
+            'template_cache_enabled',
+            __('Cache des templates activé', 'pdf-builder-pro'),
+            array($this, 'template_cache_enabled_field_callback'),
+            'pdf_builder_templates',
+            'pdf_builder_templates'
+        );
+
+        // Section Développeur
+        add_settings_section(
+            'pdf_builder_developpeur',
+            __('Paramètres Développeur', 'pdf-builder-pro'),
+            array($this, 'developpeur_section_callback'),
+            'pdf_builder_developpeur'
+        );
+
+        add_settings_field(
+            'developer_debug_mode',
+            __('Mode debug', 'pdf-builder-pro'),
+            array($this, 'developer_debug_mode_field_callback'),
+            'pdf_builder_developpeur',
+            'pdf_builder_developpeur'
         );
 
         // Ajouter d'autres sections et champs selon les besoins
@@ -326,6 +405,7 @@ class PdfBuilderAdmin
     {
         $sanitized = array();
 
+        // Champs généraux
         if (isset($input['company_name'])) {
             $sanitized['company_name'] = sanitize_text_field($input['company_name']);
         }
@@ -334,20 +414,44 @@ class PdfBuilderAdmin
             $sanitized['company_address'] = sanitize_textarea_field($input['company_address']);
         }
 
-        if (isset($input['company_phone'])) {
-            $sanitized['company_phone'] = sanitize_text_field($input['company_phone']);
+        // Champs système
+        if (isset($input['system_memory_limit'])) {
+            $sanitized['system_memory_limit'] = sanitize_text_field($input['system_memory_limit']);
         }
 
-        if (isset($input['company_email'])) {
-            $sanitized['company_email'] = sanitize_email($input['company_email']);
+        if (isset($input['system_max_execution_time'])) {
+            $sanitized['system_max_execution_time'] = absint($input['system_max_execution_time']);
         }
 
-        if (isset($input['company_website'])) {
-            $sanitized['company_website'] = esc_url_raw($input['company_website']);
+        // Champs sécurité
+        if (isset($input['security_file_validation'])) {
+            $sanitized['security_file_validation'] = $input['security_file_validation'] ? '1' : '0';
         }
 
-        if (isset($input['company_description'])) {
-            $sanitized['company_description'] = sanitize_textarea_field($input['company_description']);
+        // Champs PDF
+        if (isset($input['pdf_quality'])) {
+            $allowed_qualities = array('low', 'medium', 'high');
+            $sanitized['pdf_quality'] = in_array($input['pdf_quality'], $allowed_qualities) ? $input['pdf_quality'] : 'high';
+        }
+
+        if (isset($input['pdf_compression'])) {
+            $sanitized['pdf_compression'] = $input['pdf_compression'] ? '1' : '0';
+        }
+
+        // Champs contenu/canvas
+        if (isset($input['canvas_default_width'])) {
+            $width = absint($input['canvas_default_width']);
+            $sanitized['canvas_default_width'] = max(400, min(2000, $width)); // Entre 400 et 2000
+        }
+
+        // Champs templates
+        if (isset($input['template_cache_enabled'])) {
+            $sanitized['template_cache_enabled'] = $input['template_cache_enabled'] ? '1' : '0';
+        }
+
+        // Champs développeur
+        if (isset($input['developer_debug_mode'])) {
+            $sanitized['developer_debug_mode'] = $input['developer_debug_mode'] ? '1' : '0';
         }
 
         return $sanitized;
@@ -359,30 +463,6 @@ class PdfBuilderAdmin
     public function general_section_callback()
     {
         echo '<p>' . __('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
-
-        // Ajouter du contenu volumineux pour tester le chevauchement du footer
-        echo '<div style="background: #f8f9fa; padding: 20px; margin: 20px 0; border: 1px solid #dee2e6; border-radius: 8px;">';
-        echo '<h3 style="color: #495057; margin-top: 0;">🧪 TEST DE CHEVAUCHEMENT DU FOOTER</h3>';
-        echo '<p style="color: #6c757d;">Ce bloc volumineux permet de tester si le footer WordPress chevauche le contenu de la page de paramètres.</p>';
-
-        echo '<div style="background: #fff3cd; padding: 15px; margin: 15px 0; border: 1px solid #f39c12; border-radius: 4px;">';
-        echo '<h4 style="color: #8b4513; margin-top: 0;">📏 Test visuel du layout</h4>';
-        echo '<p>Si vous voyez ce texte en entier sans que le footer WordPress ne le cache, alors l\'intégration WordPress Settings API fonctionne correctement !</p>';
-        echo '<p>Le footer devrait apparaître EN DESSOUS de ce bloc, pas par-dessus.</p>';
-        echo '</div>';
-
-        // Ajouter plusieurs paragraphes pour créer du volume
-        for ($i = 1; $i <= 15; $i++) {
-            echo '<p style="margin: 10px 0; line-height: 1.6;">Paragraphe de test #' . $i . ': Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>';
-        }
-
-        echo '<div style="background: #d4edda; padding: 15px; margin: 15px 0; border: 1px solid #28a745; border-radius: 4px;">';
-        echo '<h4 style="color: #155724; margin-top: 0;">✅ Zone de test finale</h4>';
-        echo '<p>Si cette zone verte est entièrement visible et que le footer apparaît en dessous, le problème de chevauchement est résolu !</p>';
-        echo '<p><strong>Instructions :</strong> Faites défiler jusqu\'au bas de cette page. Le footer WordPress (avec les liens "WordPress.org", etc.) devrait apparaître APRÈS ce bloc vert, pas par-dessus.</p>';
-        echo '</div>';
-
-        echo '</div>';
     }
 
     /**
@@ -406,52 +486,155 @@ class PdfBuilderAdmin
     }
 
     /**
-     * Callback pour le champ téléphone
-     */
-    public function company_phone_field_callback()
-    {
-        $settings = get_option('pdf_builder_settings', array());
-        $value = isset($settings['company_phone']) ? $settings['company_phone'] : '';
-        echo '<input type="tel" name="pdf_builder_settings[company_phone]" value="' . esc_attr($value) . '" class="regular-text" placeholder="+33 1 23 45 67 89" />';
-    }
-
-    /**
-     * Callback pour le champ email
-     */
-    public function company_email_field_callback()
-    {
-        $settings = get_option('pdf_builder_settings', array());
-        $value = isset($settings['company_email']) ? $settings['company_email'] : '';
-        echo '<input type="email" name="pdf_builder_settings[company_email]" value="' . esc_attr($value) . '" class="regular-text" placeholder="contact@entreprise.com" />';
-    }
-
-    /**
-     * Callback pour le champ site web
-     */
-    public function company_website_field_callback()
-    {
-        $settings = get_option('pdf_builder_settings', array());
-        $value = isset($settings['company_website']) ? $settings['company_website'] : '';
-        echo '<input type="url" name="pdf_builder_settings[company_website]" value="' . esc_attr($value) . '" class="regular-text" placeholder="https://www.entreprise.com" />';
-    }
-
-    /**
-     * Callback pour le champ description
-     */
-    public function company_description_field_callback()
-    {
-        $settings = get_option('pdf_builder_settings', array());
-        $value = isset($settings['company_description']) ? $settings['company_description'] : '';
-        echo '<textarea name="pdf_builder_settings[company_description]" rows="5" class="large-text" placeholder="Décrivez votre entreprise...">' . esc_textarea($value) . '</textarea>';
-        echo '<p class="description">Une description détaillée de votre entreprise qui sera utilisée dans les documents PDF.</p>';
-    }
-
-    /**
      * Callback pour la section licence
      */
     public function licence_section_callback()
     {
         echo '<p>' . __('Configuration de la licence du plugin.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour la section système
+     */
+    public function systeme_section_callback()
+    {
+        echo '<p>' . __('Configuration des paramètres système pour optimiser les performances.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour la section sécurité
+     */
+    public function securite_section_callback()
+    {
+        echo '<p>' . __('Paramètres de sécurité pour protéger vos documents PDF.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour la section PDF
+     */
+    public function pdf_section_callback()
+    {
+        echo '<p>' . __('Configuration de la génération et de la qualité des fichiers PDF.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour la section contenu
+     */
+    public function contenu_section_callback()
+    {
+        echo '<p>' . __('Paramètres du canvas et options de design pour vos documents.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour la section templates
+     */
+    public function templates_section_callback()
+    {
+        echo '<p>' . __('Configuration des templates et options de mise en cache.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour la section développeur
+     */
+    public function developpeur_section_callback()
+    {
+        echo '<p>' . __('Outils et options pour les développeurs.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour le champ limite mémoire système
+     */
+    public function system_memory_limit_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['system_memory_limit']) ? $settings['system_memory_limit'] : '256M';
+        echo '<input type="text" name="pdf_builder_settings[system_memory_limit]" value="' . esc_attr($value) . '" class="regular-text" placeholder="256M" />';
+        echo '<p class="description">Limite mémoire PHP recommandée (ex: 256M, 512M).</p>';
+    }
+
+    /**
+     * Callback pour le champ temps d'exécution maximum
+     */
+    public function system_max_execution_time_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['system_max_execution_time']) ? $settings['system_max_execution_time'] : '30';
+        echo '<input type="number" name="pdf_builder_settings[system_max_execution_time]" value="' . esc_attr($value) . '" class="small-text" min="10" max="300" />';
+        echo '<p class="description">Temps maximum d\'exécution en secondes (10-300).</p>';
+    }
+
+    /**
+     * Callback pour le champ validation des fichiers
+     */
+    public function security_file_validation_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['security_file_validation']) ? $settings['security_file_validation'] : '1';
+        echo '<input type="checkbox" name="pdf_builder_settings[security_file_validation]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<label>Activer la validation des fichiers uploadés</label>';
+        echo '<p class="description">Vérifie les types et tailles des fichiers pour la sécurité.</p>';
+    }
+
+    /**
+     * Callback pour le champ qualité PDF
+     */
+    public function pdf_quality_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['pdf_quality']) ? $settings['pdf_quality'] : 'high';
+        echo '<select name="pdf_builder_settings[pdf_quality]">';
+        echo '<option value="low" ' . selected($value, 'low', false) . '>Faible (72 DPI)</option>';
+        echo '<option value="medium" ' . selected($value, 'medium', false) . '>Moyenne (150 DPI)</option>';
+        echo '<option value="high" ' . selected($value, 'high', false) . '>Haute (300 DPI)</option>';
+        echo '</select>';
+        echo '<p class="description">Qualité d\'export des images dans le PDF.</p>';
+    }
+
+    /**
+     * Callback pour le champ compression PDF
+     */
+    public function pdf_compression_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['pdf_compression']) ? $settings['pdf_compression'] : '1';
+        echo '<input type="checkbox" name="pdf_builder_settings[pdf_compression]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<label>Activer la compression des images</label>';
+        echo '<p class="description">Réduit la taille du fichier PDF en compressant les images.</p>';
+    }
+
+    /**
+     * Callback pour le champ largeur par défaut du canvas
+     */
+    public function canvas_default_width_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['canvas_default_width']) ? $settings['canvas_default_width'] : '800';
+        echo '<input type="number" name="pdf_builder_settings[canvas_default_width]" value="' . esc_attr($value) . '" class="small-text" min="400" max="2000" /> px';
+        echo '<p class="description">Largeur par défaut du canvas en pixels (400-2000).</p>';
+    }
+
+    /**
+     * Callback pour le champ cache des templates
+     */
+    public function template_cache_enabled_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['template_cache_enabled']) ? $settings['template_cache_enabled'] : '1';
+        echo '<input type="checkbox" name="pdf_builder_settings[template_cache_enabled]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<label>Activer le cache des templates</label>';
+        echo '<p class="description">Améliore les performances en mettant en cache les templates compilés.</p>';
+    }
+
+    /**
+     * Callback pour le champ mode debug développeur
+     */
+    public function developer_debug_mode_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['developer_debug_mode']) ? $settings['developer_debug_mode'] : '0';
+        echo '<input type="checkbox" name="pdf_builder_settings[developer_debug_mode]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<label>Activer le mode debug développeur</label>';
+        echo '<p class="description">Affiche des informations de debug pour le développement.</p>';
     }
 
     /**
@@ -1053,27 +1236,27 @@ class PdfBuilderAdmin
                             break;
 
                         case 'systeme':
-                            echo '<p>' . __('Section Système - À implémenter', 'pdf-builder-pro') . '</p>';
+                            do_settings_sections('pdf_builder_systeme');
                             break;
 
                         case 'securite':
-                            echo '<p>' . __('Section Sécurité - À implémenter', 'pdf-builder-pro') . '</p>';
+                            do_settings_sections('pdf_builder_securite');
                             break;
 
                         case 'pdf':
-                            echo '<p>' . __('Section Configuration PDF - À implémenter', 'pdf-builder-pro') . '</p>';
+                            do_settings_sections('pdf_builder_pdf');
                             break;
 
                         case 'contenu':
-                            echo '<p>' . __('Section Canvas & Design - À implémenter', 'pdf-builder-pro') . '</p>';
+                            do_settings_sections('pdf_builder_contenu');
                             break;
 
                         case 'templates':
-                            echo '<p>' . __('Section Templates - À implémenter', 'pdf-builder-pro') . '</p>';
+                            do_settings_sections('pdf_builder_templates');
                             break;
 
                         case 'developpeur':
-                            echo '<p>' . __('Section Développeur - À implémenter', 'pdf-builder-pro') . '</p>';
+                            do_settings_sections('pdf_builder_developpeur');
                             break;
 
                         default:
