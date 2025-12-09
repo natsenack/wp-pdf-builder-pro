@@ -518,8 +518,8 @@
                 <button type="button" class="button button-primary canvas-modal-save" data-category="apparence">Sauvegarder</button>
             </footer>
         </section>
-    </div>
 </div>
+
 
 <!-- Canvas apparence Modal (hidden container) -->
 <div id="canvas-apparence-modal" class="canvas-modal hidden-element" data-category="apparence">
