@@ -22,6 +22,12 @@
     $settings = get_option('pdf_builder_settings', array());
     $current_user = wp_get_current_user();
 
+    // LOG pour déboguer la soumission du formulaire
+    error_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        error_log('[PDF Builder] POST data received: ' . print_r($_POST, true));
+    }
+
     // Gestion des onglets via URL
     $current_tab = $_GET['tab'] ?? 'general';
     $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
@@ -44,7 +50,11 @@
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
     <form method="post" action="options.php">
-        <?php settings_fields('pdf_builder_settings'); ?>
+        <?php 
+        error_log('[PDF Builder] About to call settings_fields for pdf_builder_settings');
+        settings_fields('pdf_builder_settings'); 
+        error_log('[PDF Builder] settings_fields called');
+        ?>
 
         <!-- Navigation par onglets moderne -->
     <h2 class="nav-tab-wrapper">

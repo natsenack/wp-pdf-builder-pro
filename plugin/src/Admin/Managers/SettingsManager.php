@@ -404,6 +404,12 @@ class SettingsManager
     {
         error_log('[PDF Builder] sanitizeSettings called with input: ' . print_r($input, true));
 
+        // Vérifier si l'input est vide
+        if (empty($input)) {
+            error_log('[PDF Builder] ERROR: sanitizeSettings called with empty input!');
+            return array();
+        }
+
         $sanitized = array();
 
         // Récupérer les valeurs existantes pour les fusionner
