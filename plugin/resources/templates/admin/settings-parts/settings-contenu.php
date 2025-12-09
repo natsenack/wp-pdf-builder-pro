@@ -41,13 +41,9 @@
                     <span id="monitoring-status">🔍 Monitoring actif</span>
                 </div>
 
-                <form method="post" id="canvas-form">
-                    <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
-                    <input type="hidden" name="submit_canvas" value="1">
-
-                    <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
-                    <input type="hidden" name="pdf_builder_canvas_canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_width', '794')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_height', '1123')); ?>">
+                <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
+                <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_width]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_width', '794')); ?>">
+                <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_height]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_height', '1123')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_dpi" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_dpi', '96')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_format" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_format', 'A4')); ?>">
                     <input type="hidden" name="pdf_builder_canvas_canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?>">
