@@ -20,7 +20,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="developer_enabled" name="pdf_builder_settings[pdf_builder_settings[pdf_builder_developer_enabled]" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="developer_enabled" name="pdf_builder_settings[pdf_builder_developer_enabled]" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le mode développeur</span>
@@ -37,7 +37,7 @@
                         <!-- Champ username caché pour l'accessibilité -->
                         <input type="text" autocomplete="username" class="hidden-element" />
                         <div class="developer-field-group">
-                            <input type="password" id="developer_password" name="pdf_builder_settings[pdf_builder_settings[pdf_builder_developer_password]"
+                            <input type="password" id="developer_password" name="pdf_builder_settings[pdf_builder_developer_password]"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    class="developer-input"
                                    value="<?php echo esc_attr($settings['pdf_builder_developer_password'] ?? ''); ?>" />

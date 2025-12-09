@@ -63,6 +63,20 @@ class SettingsManager
         register_setting('pdf_builder_settings', 'pdf_builder_company_email');
         register_setting('pdf_builder_settings', 'pdf_builder_default_language');
 
+        // Enregistrer les paramètres généraux supplémentaires
+        register_setting('pdf_builder_settings', 'pdf_builder_company_phone_manual');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_capital');
+
+        // Enregistrer les paramètres PDF
+        register_setting('pdf_builder_settings', 'pdf_builder_pdf_quality');
+        register_setting('pdf_builder_settings', 'pdf_builder_default_format');
+        register_setting('pdf_builder_settings', 'pdf_builder_default_orientation');
+        register_setting('pdf_builder_settings', 'pdf_builder_pdf_cache_enabled');
+        register_setting('pdf_builder_settings', 'pdf_builder_pdf_print_optimized');
+
         add_settings_field(
             'company_info',
             __('Informations Entreprise', 'pdf-builder-pro'),
@@ -84,6 +98,47 @@ class SettingsManager
         register_setting('pdf_builder_settings', 'pdf_builder_compression_level');
         register_setting('pdf_builder_settings', 'pdf_builder_memory_limit');
         register_setting('pdf_builder_settings', 'pdf_builder_max_execution_time');
+
+        // Enregistrer les paramètres système/cache utilisés dans settings-systeme.php
+        register_setting('pdf_builder_settings', 'pdf_builder_cache_enabled');
+        register_setting('pdf_builder_settings', 'pdf_builder_cache_compression');
+        register_setting('pdf_builder_settings', 'pdf_builder_cache_auto_cleanup');
+        register_setting('pdf_builder_settings', 'pdf_builder_cache_max_size');
+        register_setting('pdf_builder_settings', 'pdf_builder_cache_ttl');
+        register_setting('pdf_builder_settings', 'pdf_builder_performance_auto_optimization');
+        register_setting('pdf_builder_settings', 'pdf_builder_systeme_auto_maintenance');
+        register_setting('pdf_builder_settings', 'pdf_builder_last_maintenance');
+        register_setting('pdf_builder_settings', 'pdf_builder_next_maintenance');
+        register_setting('pdf_builder_settings', 'pdf_builder_last_backup');
+        register_setting('pdf_builder_settings', 'pdf_builder_cache_last_cleanup');
+
+        // Enregistrer les paramètres de sécurité
+        register_setting('pdf_builder_settings', 'pdf_builder_security_level');
+        register_setting('pdf_builder_settings', 'pdf_builder_enable_logging');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_enabled');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_required');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_data_retention');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_audit_enabled');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_encryption_enabled');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_analytics');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_templates');
+        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_marketing');
+
+        // Enregistrer les paramètres développeur
+        register_setting('pdf_builder_settings', 'pdf_builder_developer_enabled');
+        register_setting('pdf_builder_settings', 'pdf_builder_developer_password');
+        register_setting('pdf_builder_settings', 'pdf_builder_license_test_mode');
+        register_setting('pdf_builder_settings', 'pdf_builder_debug_php_errors');
+        register_setting('pdf_builder_settings', 'pdf_builder_debug_javascript');
+        register_setting('pdf_builder_settings', 'pdf_builder_debug_javascript_verbose');
+        register_setting('pdf_builder_settings', 'pdf_builder_debug_ajax');
+        register_setting('pdf_builder_settings', 'pdf_builder_debug_performance');
+        register_setting('pdf_builder_settings', 'pdf_builder_debug_database');
+        register_setting('pdf_builder_settings', 'pdf_builder_log_level');
+        register_setting('pdf_builder_settings', 'pdf_builder_log_file_size');
+        register_setting('pdf_builder_settings', 'pdf_builder_log_retention');
+        register_setting('pdf_builder_settings', 'pdf_builder_force_https');
+        register_setting('pdf_builder_settings', 'pdf_builder_performance_monitoring');
 
         add_settings_field(
             'cache_settings',
