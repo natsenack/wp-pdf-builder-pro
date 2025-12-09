@@ -246,7 +246,8 @@ class PdfBuilderCore
      */
     public function registerSettings()
     {
-        \register_setting('pdf_builder_options', 'pdf_builder_settings');
+        // REMOVED: register_setting déplacé vers SettingsManager.php pour éviter les conflits
+        // \register_setting('pdf_builder_options', 'pdf_builder_settings');
 
         \add_settings_section(
             'pdf_builder_main',
