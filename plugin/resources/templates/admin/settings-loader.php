@@ -39,7 +39,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger le JavaScript pour la navigation par onglets
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
-        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/settings-tabs.js',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/settings-tabs-improved.js',
         array('jquery'),
         PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
         false // Chargé dans le header pour une exécution précoce

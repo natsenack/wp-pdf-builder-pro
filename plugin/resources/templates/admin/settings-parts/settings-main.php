@@ -324,51 +324,7 @@
         }
     </style>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('PDF Builder Pro - Initialisation des onglets');
 
-            // Gestion des onglets avec boutons JavaScript
-            const tabButtons = document.querySelectorAll('.nav-tab[data-tab]');
-            const contents = document.querySelectorAll('.tab-content');
-            let activeTab = 'general'; // Onglet actif par défaut
-
-            function updateTabs() {
-                // Masquer tous les contenus
-                contents.forEach(content => {
-                    content.classList.remove('active');
-                });
-
-                // Désactiver tous les boutons
-                tabButtons.forEach(button => {
-                    button.classList.remove('nav-tab-active');
-                });
-
-                // Afficher le contenu actif
-                const targetContent = document.getElementById('content-' + activeTab);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
-
-                // Activer le bouton actif
-                const activeButton = document.querySelector(`.nav-tab[data-tab="${activeTab}"]`);
-                if (activeButton) {
-                    activeButton.classList.add('nav-tab-active');
-                }
-            }
-
-            // Écouter les clics sur les boutons
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    activeTab = this.getAttribute('data-tab');
-                    updateTabs();
-                });
-            });
-
-            // Initialisation
-            updateTabs();
-        });
-    </script>
 </div> <!-- Fin du .wrap -->
 
 <!-- Inclusion des modales en dehors du .wrap -->
