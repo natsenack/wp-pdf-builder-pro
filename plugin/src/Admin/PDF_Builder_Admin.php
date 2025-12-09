@@ -244,6 +244,103 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Enregistrer les paramètres WordPress
+     */
+    public function register_settings()
+    {
+        // Enregistrer le groupe de paramètres principal
+        register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
+
+        // Section Général
+        add_settings_section(
+            'pdf_builder_general',
+            __('Paramètres Généraux', 'pdf-builder-pro'),
+            array($this, 'general_section_callback'),
+            'pdf_builder_general'
+        );
+
+        add_settings_field(
+            'company_name',
+            __('Nom de l\'entreprise', 'pdf-builder-pro'),
+            array($this, 'company_name_field_callback'),
+            'pdf_builder_general',
+            'pdf_builder_general'
+        );
+
+        add_settings_field(
+            'company_address',
+            __('Adresse', 'pdf-builder-pro'),
+            array($this, 'company_address_field_callback'),
+            'pdf_builder_general',
+            'pdf_builder_general'
+        );
+
+        // Section Licence
+        add_settings_section(
+            'pdf_builder_licence',
+            __('Paramètres de Licence', 'pdf-builder-pro'),
+            array($this, 'licence_section_callback'),
+            'pdf_builder_licence'
+        );
+
+        // Ajouter d'autres sections et champs selon les besoins
+    }
+
+    /**
+     * Fonction de nettoyage des paramètres
+     */
+    public function sanitize_settings($input)
+    {
+        $sanitized = array();
+
+        if (isset($input['company_name'])) {
+            $sanitized['company_name'] = sanitize_text_field($input['company_name']);
+        }
+
+        if (isset($input['company_address'])) {
+            $sanitized['company_address'] = sanitize_textarea_field($input['company_address']);
+        }
+
+        return $sanitized;
+    }
+
+    /**
+     * Callback pour la section général
+     */
+    public function general_section_callback()
+    {
+        echo '<p>' . __('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
+     * Callback pour le champ nom de l'entreprise
+     */
+    public function company_name_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['company_name']) ? $settings['company_name'] : '';
+        echo '<input type="text" name="pdf_builder_settings[company_name]" value="' . esc_attr($value) . '" class="regular-text" />';
+    }
+
+    /**
+     * Callback pour le champ adresse
+     */
+    public function company_address_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['company_address']) ? $settings['company_address'] : '';
+        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . esc_textarea($value) . '</textarea>';
+    }
+
+    /**
+     * Callback pour la section licence
+     */
+    public function licence_section_callback()
+    {
+        echo '<p>' . __('Configuration de la licence du plugin.', 'pdf-builder-pro') . '</p>';
+    }
+
+    /**
      * Récupère la version du plugin
      */
     public function getPluginVersion()
@@ -376,6 +473,9 @@ class PdfBuilderAdmin
      */
     private function initHooks()
     {
+        // Enregistrer les paramètres
+        add_action('admin_init', array($this, 'register_settings'));
+
         // 🔧 MIGRATION BASE DE DONNÉES - Gérée automatiquement par PDF_Builder_Migration_System
         // add_action('admin_init', [$this, 'run_database_migrations']);
 

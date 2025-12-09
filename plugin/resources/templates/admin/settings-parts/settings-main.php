@@ -43,7 +43,10 @@
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
-    <!-- Navigation par onglets moderne -->
+    <form method="post" action="options.php">
+        <?php settings_fields('pdf_builder_settings'); ?>
+
+        <!-- Navigation par onglets moderne -->
     <h2 class="nav-tab-wrapper">
         <div class="tabs-container">
             <a href="?page=pdf-builder-settings&tab=general" class="nav-tab<?php echo $current_tab === 'general' ? ' nav-tab-active' : ''; ?>">
@@ -93,75 +96,35 @@
         <?php
         switch ($current_tab) {
             case 'general':
-                $general_file = __DIR__ . '/settings-general.php';
-                if (file_exists($general_file)) {
-                    require_once $general_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                do_settings_sections('pdf_builder_general');
                 break;
 
             case 'licence':
-                $licence_file = __DIR__ . '/settings-licence.php';
-                if (file_exists($licence_file)) {
-                    require_once $licence_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                do_settings_sections('pdf_builder_licence');
                 break;
 
             case 'systeme':
-                $systeme_file = __DIR__ . '/settings-systeme.php';
-                if (file_exists($systeme_file)) {
-                    require_once $systeme_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                echo '<p>' . __('Section Système - À implémenter', 'pdf-builder-pro') . '</p>';
                 break;
 
             case 'securite':
-                $securite_file = __DIR__ . '/settings-securite.php';
-                if (file_exists($securite_file)) {
-                    require_once $securite_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                echo '<p>' . __('Section Sécurité - À implémenter', 'pdf-builder-pro') . '</p>';
                 break;
 
             case 'pdf':
-                $pdf_file = __DIR__ . '/settings-pdf.php';
-                if (file_exists($pdf_file)) {
-                    require_once $pdf_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                echo '<p>' . __('Section Configuration PDF - À implémenter', 'pdf-builder-pro') . '</p>';
                 break;
 
             case 'contenu':
-                $contenu_file = __DIR__ . '/settings-contenu.php';
-                if (file_exists($contenu_file)) {
-                    require_once $contenu_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                echo '<p>' . __('Section Canvas & Design - À implémenter', 'pdf-builder-pro') . '</p>';
                 break;
 
             case 'templates':
-                $templates_file = __DIR__ . '/settings-templates.php';
-                if (file_exists($templates_file)) {
-                    require_once $templates_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                echo '<p>' . __('Section Templates - À implémenter', 'pdf-builder-pro') . '</p>';
                 break;
 
             case 'developpeur':
-                $developpeur_file = __DIR__ . '/settings-developpeur.php';
-                if (file_exists($developpeur_file)) {
-                    require_once $developpeur_file;
-                } else {
-                    echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
-                }
+                echo '<p>' . __('Section Développeur - À implémenter', 'pdf-builder-pro') . '</p>';
                 break;
 
             default:
@@ -169,7 +132,10 @@
                 break;
         }
         ?>
+
+        <?php submit_button(); ?>
     </div>
+    </form>
 
     <!-- Bouton flottant de sauvegarde -->
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
