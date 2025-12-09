@@ -147,12 +147,10 @@
     </div>
     </form>
 
-    <!-- Bouton flottant de sauvegarde -->
-    <div id="pdf-builder-save-floating">
-        <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            💾 Enregistrer
-        </button>
-    </div>
+    <!-- Bouton flottant de sauvegarde simple -->
+    <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="floating-save-btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        💾 Enregistrer
+    </button>
 
     <!-- Containers fictifs pour éviter les erreurs JS -->
     <div id="pdf-builder-tabs" style="display: none;"></div>
