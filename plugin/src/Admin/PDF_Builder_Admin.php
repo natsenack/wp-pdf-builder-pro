@@ -248,8 +248,8 @@ class PdfBuilderAdmin
      */
     public function register_settings()
     {
-        // Enregistrer le groupe de paramètres principal
-        register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
+        // REMOVED: register_setting déplacé vers SettingsManager.php pour éviter les conflits
+        // register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
 
         // Section Général
         add_settings_section(
