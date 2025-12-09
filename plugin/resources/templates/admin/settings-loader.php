@@ -28,13 +28,13 @@ function pdf_builder_load_settings_assets($hook) {
     );
 
     // Charger les styles pour les onglets (nav-tab-wrapper)
-    wp_enqueue_style(
-        'pdf-builder-tabs',
-        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings-tabs.css',
-        array(),
-        PDF_BUILDER_VERSION . '-' . time(),
-        'all'
-    );
+    // wp_enqueue_style(
+    //     'pdf-builder-tabs',
+    //     PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings-tabs.css',
+    //     array(),
+    //     PDF_BUILDER_VERSION . '-' . time(),
+    //     'all'
+    // );
 
     // Charger le JavaScript pour la navigation par onglets
     // wp_enqueue_script(
