@@ -500,77 +500,70 @@
             }
         }
 
-        // Liste des IDs de formulaires à collecter
-        const formIds = [
-            'developpeur-form',
-            'canvas-form',
-            'securite-settings-form',
-            'pdf-settings-form',
-            'templates-status-form',
-            'general-form'
-        ];
+        // Collecter les données du formulaire principal
+        let mainForm = document.querySelector('form[action="options.php"]');
+        if (!mainForm) {
+            // Fallback: chercher par méthode POST
+            mainForm = document.querySelector('form[method="post"]');
+        }
 
-        // Collecter les données de chaque formulaire
-        formIds.forEach(formId => {
-            const form = document.getElementById(formId);
-            if (form) {
-                console.log('JS: Collecting from form:', formId);
-                
-                const formData = new FormData(form);
-                const formObject = {};
+        if (mainForm) {
+            console.log('JS: Collecting from main form');
+            
+            const formData = new FormData(mainForm);
+            const formObject = {};
 
-                // Debug: voir toutes les données du formulaire
-                console.log('JS: FormData entries for', formId + ':', Array.from(formData.entries()));
+            // Debug: voir toutes les données du formulaire
+            console.log('JS: FormData entries:', Array.from(formData.entries()));
 
-                // Convertir FormData en objet
-
-                // Convertir FormData en objet
-                for (let [key, value] of formData.entries()) {
-                    // Gérer les cases à cocher multiples et les arrays
-                    const normalizedKey = normalizeFieldName(key);
-                    if (typeof normalizedKey === 'object' && normalizedKey.isArray) {
-                        // C'est un champ array comme pdf_builder_order_status_templates[wc-completed]
-                        setNestedValue(formObject, normalizedKey, value);
-                    } else {
-                        // C'est un champ normal
-                        if (formObject[normalizedKey]) {
-                            if (Array.isArray(formObject[normalizedKey])) {
-                                formObject[normalizedKey].push(value);
-                            } else {
-                                formObject[normalizedKey] = [formObject[normalizedKey], value];
-                            }
+            // Convertir FormData en objet
+            for (let [key, value] of formData.entries()) {
+                // Gérer les cases à cocher multiples et les arrays
+                const normalizedKey = normalizeFieldName(key);
+                if (typeof normalizedKey === 'object' && normalizedKey.isArray) {
+                    // C'est un champ array comme pdf_builder_order_status_templates[wc-completed]
+                    setNestedValue(formObject, normalizedKey, value);
+                } else {
+                    // C'est un champ normal
+                    if (formObject[normalizedKey]) {
+                        if (Array.isArray(formObject[normalizedKey])) {
+                            formObject[normalizedKey].push(value);
                         } else {
-                            formObject[normalizedKey] = value;
+                            formObject[normalizedKey] = [formObject[normalizedKey], value];
                         }
+                    } else {
+                        formObject[normalizedKey] = value;
                     }
                 }
-
-                // Traiter explicitement toutes les checkboxes du formulaire (même non cochées)
-                const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    const normalizedName = normalizeFieldName(checkbox.name);
-                    if (typeof normalizedName === 'object' && normalizedName.isArray) {
-                        // Pour les checkboxes dans des arrays, vérifier si la valeur existe
-                        if (!formObject[normalizedName.baseName] || !formObject[normalizedName.baseName][normalizedName.key]) {
-                            setNestedValue(formObject, normalizedName, '0');
-                        }
-                    } else {
-                        if (!formObject.hasOwnProperty(normalizedName)) {
-                            // Checkbox non cochée, définir à '0'
-                            formObject[normalizedName] = '0';
-                        } else if (formObject[normalizedName] === 'on' || formObject[normalizedName] === '') {
-                            // Checkbox cochée sans valeur explicite, définir à '1'
-                            formObject[normalizedName] = '1';
-                        }
-                    }
-                });
-
-                // Ajouter les données du formulaire à allData
-                console.log('JS: FormData object for ' + formId + ':', formObject);
-                console.log('JS: pdf_builder_order_status_templates content:', formObject['pdf_builder_order_status_templates']);
-                allData[formId] = formObject;
             }
-        });
+
+            // Traiter explicitement toutes les checkboxes du formulaire (même non cochées)
+            const checkboxes = mainForm.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const normalizedName = normalizeFieldName(checkbox.name);
+                if (typeof normalizedName === 'object' && normalizedName.isArray) {
+                    // Pour les checkboxes dans des arrays, vérifier si la valeur existe
+                    if (!formObject[normalizedName.baseName] || !formObject[normalizedName.baseName][normalizedName.key]) {
+                        setNestedValue(formObject, normalizedName, '0');
+                    }
+                } else {
+                    if (!formObject.hasOwnProperty(normalizedName)) {
+                        // Checkbox non cochée, définir à '0'
+                        formObject[normalizedName] = '0';
+                    } else if (formObject[normalizedName] === 'on' || formObject[normalizedName] === '') {
+                        // Checkbox cochée sans valeur explicite, définir à '1'
+                        formObject[normalizedName] = '1';
+                    }
+                }
+            });
+
+            // Ajouter les données du formulaire à allData
+            console.log('JS: FormData object:', formObject);
+            console.log('JS: pdf_builder_order_status_templates content:', formObject['pdf_builder_order_status_templates']);
+            allData['main_form'] = formObject;
+        } else {
+            console.error('JS: Main form not found!');
+        }
 
         // Debug: voir les données finales
         console.log('JS: Final allData:', allData);
@@ -1195,9 +1188,27 @@
                 console.log('PDF Builder: Adding click event listener to floating save button');
                 floatingSaveBtn.addEventListener('click', function() {
                     console.log('PDF Builder: Floating save button clicked!');
-                    const allFormData = collectAllFormData();
-                    if (Object.keys(allFormData).length > 0) {
-                        saveAllSettings(allFormData);
+                    
+                    // Trouver le formulaire principal et le soumettre
+                    const mainForm = document.querySelector('form[action="options.php"]');
+                    if (mainForm) {
+                        console.log('PDF Builder: Submitting main form');
+                        
+                        // Changer le texte du bouton pendant la sauvegarde
+                        const originalText = floatingSaveBtn.textContent;
+                        floatingSaveBtn.textContent = 'Sauvegarde...';
+                        floatingSaveBtn.disabled = true;
+                        
+                        // Soumettre le formulaire
+                        mainForm.submit();
+                        
+                        // Remettre le texte original après un délai (au cas où la soumission échoue)
+                        setTimeout(function() {
+                            floatingSaveBtn.textContent = originalText;
+                            floatingSaveBtn.disabled = false;
+                        }, 5000);
+                    } else {
+                        console.error('PDF Builder: Main form not found for submission');
                     }
                 });
                 return true; // Bouton trouvé et initialisé

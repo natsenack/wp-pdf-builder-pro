@@ -96,7 +96,7 @@
         <?php
         switch ($current_tab) {
             case 'general':
-                do_settings_sections('pdf_builder_general');
+                include __DIR__ . '/settings-general.php';
                 break;
 
             case 'licence':
@@ -104,27 +104,27 @@
                 break;
 
             case 'systeme':
-                echo '<p>' . __('Section Système - À implémenter', 'pdf-builder-pro') . '</p>';
+                include __DIR__ . '/settings-systeme.php';
                 break;
 
             case 'securite':
-                echo '<p>' . __('Section Sécurité - À implémenter', 'pdf-builder-pro') . '</p>';
+                include __DIR__ . '/settings-securite.php';
                 break;
 
             case 'pdf':
-                echo '<p>' . __('Section Configuration PDF - À implémenter', 'pdf-builder-pro') . '</p>';
+                include __DIR__ . '/settings-pdf.php';
                 break;
 
             case 'contenu':
-                echo '<p>' . __('Section Canvas & Design - À implémenter', 'pdf-builder-pro') . '</p>';
+                include __DIR__ . '/settings-contenu.php';
                 break;
 
             case 'templates':
-                echo '<p>' . __('Section Templates - À implémenter', 'pdf-builder-pro') . '</p>';
+                include __DIR__ . '/settings-templates.php';
                 break;
 
             case 'developpeur':
-                echo '<p>' . __('Section Développeur - À implémenter', 'pdf-builder-pro') . '</p>';
+                include __DIR__ . '/settings-developpeur.php';
                 break;
 
             default:
