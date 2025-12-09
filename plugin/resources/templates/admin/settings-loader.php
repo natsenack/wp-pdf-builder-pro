@@ -54,6 +54,7 @@ function pdf_builder_load_settings_assets($hook) {
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_ajax')
     ));
+    */
 }
 
 // Enregistrer le hook pour charger les assets
