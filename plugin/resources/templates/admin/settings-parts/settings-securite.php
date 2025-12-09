@@ -49,6 +49,7 @@
                             <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_enable_logging]" value="0">
                                     <input type="checkbox" id="enable_logging" name="pdf_builder_settings[pdf_builder_enable_logging]" value="1" <?php checked($enable_logging, '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -74,6 +75,7 @@
                                 <th scope="row"><label for="gdpr_enabled">RGPD Activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_enabled]" value="0">
                                         <input type="checkbox" id="gdpr_enabled" name="pdf_builder_settings[pdf_builder_gdpr_enabled]" value="1" <?php checked($gdpr_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -84,6 +86,7 @@
                                 <th scope="row"><label for="gdpr_consent_required">Consentement RGPD requis</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_consent_required]" value="0">
                                         <input type="checkbox" id="gdpr_consent_required" name="pdf_builder_settings[pdf_builder_gdpr_consent_required]" value="1" <?php checked($gdpr_consent_required, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -104,6 +107,7 @@
                                 <th scope="row"><label for="gdpr_audit_enabled">Audit Logging</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_audit_enabled]" value="0">
                                         <input type="checkbox" id="gdpr_audit_enabled" name="pdf_builder_settings[pdf_builder_gdpr_audit_enabled]" value="1" <?php checked($gdpr_audit_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -114,6 +118,7 @@
                                 <th scope="row"><label for="gdpr_encryption_enabled">Chiffrement des données</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_encryption_enabled]" value="0">
                                         <input type="checkbox" id="gdpr_encryption_enabled" name="pdf_builder_settings[pdf_builder_gdpr_encryption_enabled]" value="1" <?php checked($gdpr_encryption_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -129,6 +134,7 @@
                                 <th scope="row"><label for="gdpr_consent_analytics">Consentement Analytics</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_consent_analytics]" value="0">
                                         <input type="checkbox" id="gdpr_consent_analytics" name="pdf_builder_settings[pdf_builder_gdpr_consent_analytics]" value="1" <?php checked($gdpr_consent_analytics, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -139,6 +145,7 @@
                                 <th scope="row"><label for="gdpr_consent_templates">Consentement Templates</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_consent_templates]" value="0">
                                         <input type="checkbox" id="gdpr_consent_templates" name="pdf_builder_settings[pdf_builder_gdpr_consent_templates]" value="1" <?php checked($gdpr_consent_templates, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -149,6 +156,7 @@
                                 <th scope="row"><label for="gdpr_consent_marketing">Consentement Marketing</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_gdpr_consent_marketing]" value="0">
                                         <input type="checkbox" id="gdpr_consent_marketing" name="pdf_builder_settings[pdf_builder_gdpr_consent_marketing]" value="1" <?php checked($gdpr_consent_marketing, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>

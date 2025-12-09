@@ -419,33 +419,6 @@ class SettingsManager
         // Commencer avec les valeurs existantes
         $sanitized = $existing;
 
-        // Gérer les checkboxes non cochées (elles ne sont pas envoyées si décochées)
-        $checkbox_fields = [
-            'pdf_builder_cache_enabled',
-            'pdf_builder_cache_compression', 
-            'pdf_builder_cache_auto_cleanup',
-            'pdf_builder_performance_auto_optimization',
-            'pdf_builder_systeme_auto_maintenance',
-            'pdf_builder_enable_logging',
-            'pdf_builder_gdpr_enabled',
-            'pdf_builder_gdpr_consent_required',
-            'pdf_builder_gdpr_audit_enabled',
-            'pdf_builder_gdpr_encryption_enabled',
-            'pdf_builder_gdpr_consent_analytics',
-            'pdf_builder_gdpr_consent_templates',
-            'pdf_builder_gdpr_consent_marketing'
-        ];
-
-        foreach ($checkbox_fields as $field) {
-            // Si la checkbox n'est pas dans l'input, elle était décochée
-            if (!isset($input[$field])) {
-                $sanitized[$field] = '0';
-                error_log('[PDF Builder] Checkbox ' . $field . ' not in input, setting to 0');
-            } else {
-                error_log('[PDF Builder] Checkbox ' . $field . ' in input with value: ' . $input[$field]);
-            }
-        }
-
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
             $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);

@@ -434,6 +434,7 @@
                             <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
                             <td>
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_template_library_enabled]" value="0">
                                     <input type="checkbox" id="template_library_enabled" name="pdf_builder_settings[pdf_builder_template_library_enabled]" value="1" <?php checked($settings['pdf_builder_template_library_enabled'] ?? '1', '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>

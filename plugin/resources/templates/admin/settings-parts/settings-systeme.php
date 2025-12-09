@@ -97,6 +97,7 @@
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_enabled]" value="0">
                                         <input type="checkbox" id="general_cache_enabled" name="pdf_builder_settings[pdf_builder_cache_enabled]" value="1" <?php checked($cache_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -107,6 +108,7 @@
                                 <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_compression]" value="0">
                                         <input type="checkbox" id="cache_compression" name="pdf_builder_settings[pdf_builder_cache_compression]" value="1" <?php checked($cache_compression, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -117,6 +119,7 @@
                                 <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_auto_cleanup]" value="0">
                                         <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_settings[pdf_builder_cache_auto_cleanup]" value="1" <?php checked($cache_auto_cleanup, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -141,6 +144,7 @@
                                 <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_performance_auto_optimization]" value="0">
                                         <input type="checkbox" id="performance_auto_optimization" name="pdf_builder_settings[pdf_builder_performance_auto_optimization]" value="1" <?php checked($performance_auto_optimization, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -231,6 +235,7 @@
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_systeme_auto_maintenance]" value="0">
                                         <input type="checkbox" id="systeme_auto_maintenance" name="pdf_builder_settings[pdf_builder_systeme_auto_maintenance]" value="1" <?php checked($auto_maintenance, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>

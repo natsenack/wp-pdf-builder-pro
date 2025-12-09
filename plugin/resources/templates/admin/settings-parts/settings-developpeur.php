@@ -21,6 +21,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
+                                <input type="hidden" name="pdf_builder_settings[pdf_builder_developer_enabled]" value="0">
                                 <input type="checkbox" id="developer_enabled" name="pdf_builder_settings[pdf_builder_developer_enabled]" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -72,6 +73,7 @@
                                 </span>
                             </div>
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
+                            <input type="hidden" name="pdf_builder_settings[pdf_builder_license_test_mode]" value="0">
                             <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode]" value="1" <?php checked($license_test_mode, '1'); ?> class="hidden-element" />
                             <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_toggle_test_mode'); ?>" />
                         </td>
@@ -125,6 +127,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_php_errors]" value="0">
                                     <input type="checkbox" id="debug_php_errors" name="pdf_builder_settings[pdf_builder_debug_php_errors]" value="1" <?php echo isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -138,6 +141,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_javascript]" value="0">
                                     <input type="checkbox" id="debug_javascript" name="pdf_builder_settings[pdf_builder_debug_javascript]" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -151,6 +155,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_javascript_verbose]" value="0">
                                     <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_settings[pdf_builder_debug_javascript_verbose]" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -164,6 +169,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_ajax]" value="0">
                                     <input type="checkbox" id="debug_ajax" name="pdf_builder_settings[pdf_builder_debug_ajax]" value="1" <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -177,6 +183,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_performance]" value="0">
                                     <input type="checkbox" id="debug_performance" name="pdf_builder_settings[pdf_builder_debug_performance]" value="1" <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -190,6 +197,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_database]" value="0">
                                     <input type="checkbox" id="debug_database" name="pdf_builder_settings[pdf_builder_debug_database]" value="1" <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -244,6 +252,7 @@
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_force_https]" value="0">
                                     <input type="checkbox" id="force_https" name="pdf_builder_settings[pdf_builder_force_https]" value="1" <?php echo isset($settings['pdf_builder_force_https']) && $settings['pdf_builder_force_https'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -626,6 +635,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
+                                <input type="hidden" name="pdf_builder_settings[pdf_builder_performance_monitoring]" value="0">
                                 <input type="checkbox" id="performance_monitoring" name="pdf_builder_settings[pdf_builder_performance_monitoring]" value="1" <?php echo isset($settings['pdf_builder_performance_monitoring']) && $settings['pdf_builder_performance_monitoring'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
