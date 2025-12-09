@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     /**
      * PDF Builder Pro - Content Settings Tab
      * Canvas and design configuration settings
@@ -44,40 +44,40 @@
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
                 <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_width]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_width', '794')); ?>">
                 <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_height]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_height', '1123')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_dpi" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_dpi', '96')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_format" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_format', 'A4')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_color', '#cccccc')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_border_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_width', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_shadow_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_shadow_enabled', '0')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_container_bg_color', '#f8f9fa')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_guides_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_guides_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_snap_to_grid" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_zoom_min" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_min', '25')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_zoom_max" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_max', '500')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_zoom_default" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_default', '100')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_zoom_step" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_step', '25')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_export_quality" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_export_quality', '90')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_export_format" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_export_format', 'png')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_export_transparent" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_export_transparent', '0')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_drag_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_drag_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_resize_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_resize_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_rotate_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_rotate_enabled', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_multi_select" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_multi_select', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_selection_mode" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_selection_mode', 'single')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_keyboard_shortcuts" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_keyboard_shortcuts', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_fps_target" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_fps_target', '60')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_memory_limit_js" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_memory_limit_js', '50')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_response_timeout" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_response_timeout', '5000')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_lazy_loading_editor" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_preload_critical" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_preload_critical', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_lazy_loading_plugin" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_lazy_loading_plugin', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_debug_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_debug_enabled', '0')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_performance_monitoring" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_performance_monitoring', '0')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_error_reporting" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_error_reporting', '0')); ?>">
-                    <input type="hidden" name="pdf_builder_canvas_canvas_memory_limit_php" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_memory_limit_php', '128')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_dpi]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_dpi', '96')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_format" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_format', 'A4')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_color', '#cccccc')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_border_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_border_width', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_shadow_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_shadow_enabled', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_container_bg_color', '#f8f9fa')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_grid_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_guides_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_guides_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_snap_to_grid" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_zoom_min" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_min', '25')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_zoom_max" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_max', '500')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_zoom_default" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_default', '100')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_zoom_step" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_zoom_step', '25')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_export_quality" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_export_quality', '90')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_export_format" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_export_format', 'png')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_export_transparent" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_export_transparent', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_drag_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_drag_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_resize_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_resize_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_rotate_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_rotate_enabled', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_multi_select" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_multi_select', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_selection_mode" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_selection_mode', 'single')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_keyboard_shortcuts" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_keyboard_shortcuts', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_fps_target" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_fps_target', '60')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_memory_limit_js" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_memory_limit_js', '50')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_response_timeout" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_response_timeout', '5000')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_lazy_loading_editor" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_preload_critical" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_preload_critical', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_lazy_loading_plugin" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_lazy_loading_plugin', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_debug_enabled" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_debug_enabled', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_performance_monitoring" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_performance_monitoring', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_error_reporting" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_error_reporting', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_memory_limit_php" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_memory_limit_php', '128')); ?>">
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
@@ -424,7 +424,7 @@
                         <tr>
                             <th scope="row"><label for="default_template">Template par défaut</label></th>
                             <td>
-                                <select id="default_template" name="pdf_builder_default_template">
+                                <select id="default_template" name="pdf_builder_settings[pdf_builder_default_template]">
                                     <option value="blank" <?php selected($settings['pdf_builder_default_template'] ?? 'blank', 'blank'); ?>>Page blanche</option>
                                     <option value="invoice" <?php selected($settings['pdf_builder_default_template'] ?? 'blank', 'invoice'); ?>>Facture</option>
                                     <option value="quote" <?php selected($settings['pdf_builder_default_template'] ?? 'blank', 'quote'); ?>>Devis</option>
@@ -436,7 +436,7 @@
                             <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="template_library_enabled" name="pdf_builder_template_library_enabled" value="1" <?php checked($settings['pdf_builder_template_library_enabled'] ?? '1', '1'); ?>>
+                                    <input type="checkbox" id="template_library_enabled" name="pdf_builder_settings[pdf_builder_template_library_enabled]" value="1" <?php checked($settings['pdf_builder_template_library_enabled'] ?? '1', '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la bibliothèque de templates prédéfinis</p>
@@ -1209,7 +1209,7 @@
                             modalMonitoring.trackDependencyUpdate(masterField, dependentFields, isEnabled);
 
                             dependentFields.forEach(dependentField => {
-                                const fieldElement = document.querySelector(`[name="pdf_builder_canvas_canvas_${dependentField}"]`);
+                                const fieldElement = document.querySelector(`[name="pdf_builder_settings[pdf_builder_canvas_canvas_${dependentField}"]`);
                                 if (fieldElement) {
                                     const formGroup = fieldElement.closest('.form-group');
                                     if (formGroup) {
@@ -1864,7 +1864,7 @@
 
                             // Écouter les changements sur les champs qui ont des dépendances
                             Object.keys(formGenerator.fieldDependencies).forEach(masterField => {
-                                const masterInput = currentModal.querySelector(`input[name="pdf_builder_canvas_canvas_${masterField}"], select[name="pdf_builder_canvas_canvas_${masterField}"]`);
+                                const masterInput = currentModal.querySelector(`input[name="pdf_builder_settings[pdf_builder_canvas_canvas_${masterField}"], select[name="pdf_builder_settings[pdf_builder_canvas_canvas_${masterField}"]`);
                                 if (masterInput) {
                                     masterInput.addEventListener('change', (e) => {
                                         const isEnabled = e.target.type === 'checkbox' ? e.target.checked : e.target.value;

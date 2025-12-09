@@ -227,7 +227,7 @@
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_maintenance" name="pdf_builder_systeme_auto_maintenance" value="1" <?php checked($auto_maintenance, '1'); ?>>
+                                        <input type="checkbox" id="systeme_auto_maintenance" name="pdf_builder_settings[pdf_builder_systeme_auto_maintenance]" value="1" <?php checked($auto_maintenance, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Active la maintenance automatique hebdomadaire</p>

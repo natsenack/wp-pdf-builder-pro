@@ -83,7 +83,7 @@
                                 <th scope="row"><label for="gdpr_consent_required">Consentement RGPD requis</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_required" name="pdf_builder_gdpr_consent_required" value="1" <?php checked($gdpr_consent_required, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_consent_required" name="pdf_builder_settings[pdf_builder_gdpr_consent_required]" value="1" <?php checked($gdpr_consent_required, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Exiger le consentement RGPD avant génération de PDF</p>
@@ -92,7 +92,7 @@
                             <tr>
                                 <th scope="row"><label for="gdpr_data_retention">Rétention des données (jours)</label></th>
                                 <td>
-                                    <input type="number" id="gdpr_data_retention" name="pdf_builder_gdpr_data_retention" value="<?php echo esc_attr($gdpr_data_retention); ?>" min="30" max="3650">
+                                    <input type="number" id="gdpr_data_retention" name="pdf_builder_settings[pdf_builder_gdpr_data_retention]" value="<?php echo esc_attr($gdpr_data_retention); ?>" min="30" max="3650">
                                     <p class="description">Nombre de jours avant suppression automatique des données utilisateur (RGPD: 7 ans recommandé)</p>
                                     <?php
                                     echo "<!-- DEBUG: Current gdpr_data_retention value: $gdpr_data_retention -->";
@@ -103,7 +103,7 @@
                                 <th scope="row"><label for="gdpr_audit_enabled">Audit Logging</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_audit_enabled" name="pdf_builder_gdpr_audit_enabled" value="1" <?php checked($gdpr_audit_enabled, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_audit_enabled" name="pdf_builder_settings[pdf_builder_gdpr_audit_enabled]" value="1" <?php checked($gdpr_audit_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Activer la journalisation des actions pour audit RGPD</p>
@@ -113,7 +113,7 @@
                                 <th scope="row"><label for="gdpr_encryption_enabled">Chiffrement des données</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_encryption_enabled" name="pdf_builder_gdpr_encryption_enabled" value="1" <?php checked($gdpr_encryption_enabled, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_encryption_enabled" name="pdf_builder_settings[pdf_builder_gdpr_encryption_enabled]" value="1" <?php checked($gdpr_encryption_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Chiffrer les données sensibles des utilisateurs</p>
@@ -128,7 +128,7 @@
                                 <th scope="row"><label for="gdpr_consent_analytics">Consentement Analytics</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_analytics" name="pdf_builder_gdpr_consent_analytics" value="1" <?php checked($gdpr_consent_analytics, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_consent_analytics" name="pdf_builder_settings[pdf_builder_gdpr_consent_analytics]" value="1" <?php checked($gdpr_consent_analytics, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Collecte de données d'utilisation anonymes pour améliorer le service</p>
@@ -138,7 +138,7 @@
                                 <th scope="row"><label for="gdpr_consent_templates">Consentement Templates</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_templates" name="pdf_builder_gdpr_consent_templates" value="1" <?php checked($gdpr_consent_templates, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_consent_templates" name="pdf_builder_settings[pdf_builder_gdpr_consent_templates]" value="1" <?php checked($gdpr_consent_templates, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Sauvegarde des templates personnalisés sur le serveur</p>
@@ -148,7 +148,7 @@
                                 <th scope="row"><label for="gdpr_consent_marketing">Consentement Marketing</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_consent_marketing" name="pdf_builder_gdpr_consent_marketing" value="1" <?php checked($gdpr_consent_marketing, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_consent_marketing" name="pdf_builder_settings[pdf_builder_gdpr_consent_marketing]" value="1" <?php checked($gdpr_consent_marketing, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Réception d'informations sur les nouvelles fonctionnalités et mises à jour</p>
