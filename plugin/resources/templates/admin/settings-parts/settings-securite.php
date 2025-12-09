@@ -4,6 +4,7 @@
 
     // Préparer les variables nécessaires
     $settings = get_option('pdf_builder_settings', []);
+    error_log('[PDF Builder] settings-securite.php loaded - security_level: ' . ($settings['pdf_builder_security_level'] ?? 'not set') . ', enable_logging: ' . ($settings['pdf_builder_enable_logging'] ?? 'not set'));
     $security_level = $settings['pdf_builder_security_level'] ?? 'medium';
     $enable_logging = $settings['pdf_builder_enable_logging'] ?? '1';
     $gdpr_enabled = $settings['pdf_builder_gdpr_enabled'] ?? '1';

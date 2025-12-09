@@ -3,6 +3,7 @@
 // require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
 $settings = get_option('pdf_builder_settings', array());
+error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 ?>
 
             <h2>📄 Configuration PDF</h2>

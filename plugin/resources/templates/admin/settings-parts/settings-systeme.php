@@ -18,6 +18,8 @@
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
     $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
+    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ', cache_ttl: ' . $cache_ttl);
+
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 

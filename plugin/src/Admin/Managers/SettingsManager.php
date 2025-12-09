@@ -395,6 +395,8 @@ class SettingsManager
      */
     public function sanitizeSettings($input)
     {
+        error_log('[PDF Builder] sanitizeSettings called with input: ' . print_r($input, true));
+
         $sanitized = array();
 
         // Sanitisation des paramètres généraux
@@ -580,6 +582,7 @@ class SettingsManager
             }
         }
 
+        error_log('[PDF Builder] sanitizeSettings returning sanitized data: ' . print_r($sanitized, true));
         return $sanitized;
     }
 

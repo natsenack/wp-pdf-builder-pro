@@ -21,6 +21,8 @@
     // Construction de l'adresse complète
     $address_parts = array_filter([$store_address, $store_city, $store_postcode, $store_country]);
     $full_address = implode(', ', $address_parts);
+
+    error_log('[PDF Builder] settings-general.php loaded - settings count: ' . count($settings) . ', store_name: ' . $store_name);
 ?>
 
 <section id="general" class="settings-section general-settings" role="tabpanel" aria-labelledby="tab-general">

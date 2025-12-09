@@ -11,6 +11,7 @@
                 <?php
                     // Récupération des paramètres depuis le tableau unifié
                     $settings = get_option('pdf_builder_settings', []);
+                    error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
                     $license_key = $settings['pdf_builder_license_key'] ?? '';

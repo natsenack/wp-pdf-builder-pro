@@ -133,6 +133,7 @@
         // Chargement des mappings
         private function load_mappings() {
             $settings = get_option('pdf_builder_settings', []);
+            error_log('[PDF Builder] settings-templates.php load_mappings - settings count: ' . count($settings));
             $raw_option = $settings['pdf_builder_order_status_templates'] ?? [];
             error_log('DEBUG: Raw option value from DB: ' . print_r($raw_option, true));
             
