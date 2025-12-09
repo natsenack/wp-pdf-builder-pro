@@ -612,10 +612,10 @@ class SettingsManager
      */
     public function onSettingsUpdated($old_value, $new_value, $option)
     {
-        error_log('[PDF Builder] onSettingsUpdated called for option: ' . $option);
-        error_log('[PDF Builder] Old value count: ' . (is_array($old_value) ? count($old_value) : 'not array'));
-        error_log('[PDF Builder] New value count: ' . (is_array($new_value) ? count($new_value) : 'not array'));
-        error_log('[PDF Builder] New value sample: ' . print_r(array_slice($new_value, 0, 5), true));
+        error_log('[PDF Builder] ✅ SUCCESS: onSettingsUpdated called for option: ' . $option);
+        error_log('[PDF Builder] ✅ Old value count: ' . (is_array($old_value) ? count($old_value) : 'not array'));
+        error_log('[PDF Builder] ✅ New value count: ' . (is_array($new_value) ? count($new_value) : 'not array'));
+        error_log('[PDF Builder] ✅ New value sample: ' . print_r(array_slice($new_value, 0, 5), true));
     }
 
     /**
