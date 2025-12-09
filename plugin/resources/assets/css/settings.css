@@ -4411,9 +4411,9 @@ body.modal-open {
 /* === STYLES POUR LE BOUTON FLOTTANT DE SAUVEGARDE === */
 .pdf-builder-floating-save {
     position: fixed;
-    bottom: 20px;
+    bottom: 40px; /* Plus haut pour éviter le footer WordPress */
     right: 20px;
-    z-index: 1000;
+    z-index: 99999; /* Z-index très élevé pour être au-dessus du footer WordPress */
     background: #007cba;
     color: white;
     border: none;
@@ -4469,8 +4469,9 @@ body.modal-open {
 /* === STYLES POUR LE WRAPPER DE CONTENU === */
 /* Ajouter une marge en bas pour éviter le chevauchement avec le bouton flottant */
 .settings-content-wrapper {
-    margin-bottom: 100px; /* Espace pour le bouton flottant + footer */
-    min-height: calc(100vh - 200px); /* Hauteur minimale pour éviter les problèmes de layout */
+    margin-bottom: 150px; /* Espace pour le bouton flottant + footer WordPress */
+    min-height: calc(100vh - 250px); /* Hauteur minimale pour éviter les problèmes de layout */
+    padding-bottom: 50px; /* Padding supplémentaire */
 }
 
 /* Masquer le bouton original de WordPress */
@@ -4482,7 +4483,8 @@ body.modal-open {
 /* S'assurer que le contenu ne dépasse pas la zone visible */
 .wrap {
     position: relative;
-    padding-bottom: 120px; /* Espace supplémentaire pour le footer WordPress */
+    padding-bottom: 200px; /* Espace supplémentaire pour le footer WordPress */
+    margin-bottom: 50px; /* Marge supplémentaire */
 }
 
 /* Ajustements pour les écrans mobiles */
