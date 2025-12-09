@@ -4466,26 +4466,13 @@ body.modal-open {
     100% { transform: rotate(360deg); }
 }
 
-/* === STYLES POUR LE WRAPPER DE CONTENU === */
-/* Ajouter une marge en bas pour éviter le chevauchement avec le bouton flottant */
-.settings-content-wrapper {
-    margin-bottom: 150px; /* Espace pour le bouton flottant + footer WordPress */
-    min-height: calc(100vh - 250px); /* Hauteur minimale pour éviter les problèmes de layout */
-    padding-bottom: 50px; /* Padding supplémentaire */
-}
 
 /* Masquer le bouton original de WordPress */
 .form-table + p.submit {
     display: none !important;
 }
 
-/* === STYLES POUR ÉVITER LES CHEVAUCHEMENTS AVEC LE FOOTER WORDPRESS === */
-/* S'assurer que le contenu ne dépasse pas la zone visible */
-.wrap {
-    position: relative;
-    padding-bottom: 200px; /* Espace supplémentaire pour le footer WordPress */
-    margin-bottom: 50px; /* Marge supplémentaire */
-}
+
 
 /* Ajustements pour les écrans mobiles */
 @media (max-width: 768px) {
