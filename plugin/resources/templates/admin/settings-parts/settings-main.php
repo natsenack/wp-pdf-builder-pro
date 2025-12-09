@@ -40,6 +40,16 @@
 
 ?>
 <div class="wrap" style="padding-bottom: 100px;">
+    <!-- BLOC DE TEST VISUEL - SUPPRIMER APRES VERIFICATION -->
+    <div style="background: linear-gradient(45deg, #007cba, #00a0d2); color: white; padding: 30px; margin: 20px 0; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <h2 style="margin: 0 0 15px 0; color: white;">🎯 TEST DE VISIBILITÉ - API WORDPRESS SETTINGS ACTIVE</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.5;">
+            <strong>✅ Déploiement réussi !</strong> Cette section confirme que l'API WordPress Settings est maintenant active.<br>
+            Si vous voyez ce bloc bleu au-dessus du footer, les modifications sont appliquées correctement.<br>
+            <em>Date de déploiement: 9 décembre 2025 - 14h36</em>
+        </p>
+    </div>
+
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
