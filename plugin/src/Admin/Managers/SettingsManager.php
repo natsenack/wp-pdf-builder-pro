@@ -440,6 +440,9 @@ class SettingsManager
             // Si la checkbox n'est pas dans l'input, elle était décochée
             if (!isset($input[$field])) {
                 $sanitized[$field] = '0';
+                error_log('[PDF Builder] Checkbox ' . $field . ' not in input, setting to 0');
+            } else {
+                error_log('[PDF Builder] Checkbox ' . $field . ' in input with value: ' . $input[$field]);
             }
         }
 
