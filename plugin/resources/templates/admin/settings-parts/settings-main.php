@@ -42,6 +42,21 @@
                 error_log('[PDF Builder] Bibliothèque templates POST: ' . $posted_settings['pdf_builder_template_library_enabled']);
             }
         }
+
+        // Message visible de debug
+        echo '<div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; margin: 10px 0; border-radius: 4px; color: #155724;">';
+        echo '<strong>✅ FORMULAIRE SOUMIS:</strong> ' . current_time('H:i:s') . '<br>';
+        echo 'Méthode: ' . $_SERVER['REQUEST_METHOD'] . '<br>';
+        if (isset($_POST['pdf_builder_settings'])) {
+            echo 'Paramètres reçus: ' . count($_POST['pdf_builder_settings']) . '<br>';
+            if (isset($_POST['pdf_builder_settings']['pdf_builder_default_template'])) {
+                echo 'Template: ' . $_POST['pdf_builder_settings']['pdf_builder_default_template'] . '<br>';
+            }
+            if (isset($_POST['pdf_builder_settings']['pdf_builder_template_library_enabled'])) {
+                echo 'Bibliothèque: ' . $_POST['pdf_builder_settings']['pdf_builder_template_library_enabled'] . '<br>';
+            }
+        }
+        echo '</div>';
     }
 
     // Gestion des onglets via URL
@@ -64,6 +79,11 @@
 <div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
+
+    <!-- DEBUG MESSAGE -->
+    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 10px 0; border-radius: 4px;">
+        <strong>🔍 DEBUG:</strong> Page chargée à <?php echo current_time('H:i:s'); ?> - Tab: <?php echo $current_tab; ?> - Settings count: <?php echo count($settings); ?>
+    </div>
 
     <form method="post" action="options.php">
         <?php 
