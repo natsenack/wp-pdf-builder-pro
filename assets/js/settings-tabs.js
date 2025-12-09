@@ -144,14 +144,41 @@
                 e.preventDefault();
                 debugLog('PDF Builder - Clic sur le bouton flottant');
 
-                // Trouver le formulaire de sauvegarde principal
-                const mainForm = document.getElementById('pdf-builder-settings-form') || document.querySelector('form');
+                // Trouver le formulaire principal avec action="options.php"
+                const mainForm = document.querySelector('form[action="options.php"]');
                 if (mainForm) {
-                    // Simuler la soumission du formulaire principal
-                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                    mainForm.dispatchEvent(submitEvent);
+                    debugLog('PDF Builder - Formulaire trouvé, soumission en cours');
+                    
+                    // Log des données du formulaire avant soumission
+                    const formData = new FormData(mainForm);
+                    console.log('PDF Builder: Form data before submit:');
+                    for (let [key, value] of formData.entries()) {
+                        if (key.includes('template')) {
+                            console.log('  ', key, '=', value);
+                        }
+                    }
+                    
+                    // Changer le texte du bouton pendant la sauvegarde
+                    const originalText = saveBtn.textContent;
+                    saveBtn.textContent = 'Sauvegarde...';
+                    saveBtn.disabled = true;
+                    
+                    // Soumettre le formulaire directement
+                    mainForm.submit();
+                    
+                    // Remettre le texte original après un délai
+                    setTimeout(function() {
+                        saveBtn.textContent = originalText;
+                        saveBtn.disabled = false;
+                    }, 5000);
                 } else {
                     debugError('PDF Builder - Formulaire principal non trouvé');
+                    // Log all forms on the page
+                    const allForms = document.querySelectorAll('form');
+                    console.log('PDF Builder: All forms on page:', allForms.length);
+                    allForms.forEach((form, index) => {
+                        console.log('  Form', index, ': action=', form.action, 'method=', form.method);
+                    });
                 }
             });
 
