@@ -505,7 +505,7 @@
                             <tr>
                                 <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
                                 <td>
-                                    <input type="color" id="canvas_container_bg_color" name="pdf_builder_canvas_canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_container_bg_color', '#f8f9fa')); ?>" />
+                                    <input type="color" id="canvas_container_bg_color" name="pdf_builder_canvas_canvas_container_bg_color" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_container_bg_color'] ?? '#f8f9fa'); ?>" />
                                     <p class="canvas-modal-description">Couleur de fond de l'interface d'édition</p>
                                 </td>
                             </tr>

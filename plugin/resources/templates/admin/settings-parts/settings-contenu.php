@@ -834,6 +834,7 @@
                             canvas_canvas_bg_color: <?php echo json_encode($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>,
                             canvas_canvas_border_color: <?php echo json_encode($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>,
                             canvas_canvas_border_width: <?php echo json_encode($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>,
+                            canvas_canvas_container_bg_color: <?php echo json_encode($settings['pdf_builder_canvas_canvas_container_bg_color'] ?? '#f8f9fa'); ?>,
                             canvas_canvas_shadow_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1'); ?>,
                             canvas_canvas_grid_enabled: <?php echo json_encode(($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? '1') === '1'); ?>,
                             canvas_canvas_grid_size: <?php echo json_encode($settings['pdf_builder_canvas_canvas_grid_size'] ?? '20'); ?>,
