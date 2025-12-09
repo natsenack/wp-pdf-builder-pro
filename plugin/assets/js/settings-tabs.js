@@ -276,8 +276,7 @@ console.log('PDF Builder - settings-tabs.js chargé');
             // Bouton basculer mode test
             const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
             debugLog('PDF Builder - Bouton toggle trouvé:', !!toggleBtn);
-        const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
-        if (toggleBtn) {
+            if (toggleBtn) {
             debugLog('PDF Builder - Bouton toggle mode test trouvé, ajout event listener');
             toggleBtn.addEventListener('click', function() {
                 debugLog('PDF Builder - Clic sur bouton toggle mode test');

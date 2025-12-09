@@ -47,6 +47,9 @@ function pdf_builder_load_settings_assets($hook) {
     // );
     */
 
+    // DEBUG: Avant enqueue du script
+    error_log('PDF Builder - Avant wp_enqueue_script');
+
     // Charger le JavaScript pour la navigation par onglets
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
@@ -56,11 +59,17 @@ function pdf_builder_load_settings_assets($hook) {
         false // Chargé dans le header pour une exécution précoce
     );
 
+    // DEBUG: Après enqueue du script
+    error_log('PDF Builder - Après wp_enqueue_script');
+
     // Localiser le script avec les données AJAX
     wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_ajax')
     ));
+
+    // DEBUG: Après localization
+    error_log('PDF Builder - Après wp_localize_script');
 }
 
 // Enregistrer le hook pour charger les assets
