@@ -45,8 +45,12 @@ class SettingsManager
      */
     public function registerSettings()
     {
+        error_log('[PDF Builder] registerSettings called');
+
         // Enregistrer le tableau principal des paramètres
         register_setting('pdf_builder_settings', 'pdf_builder_settings', [$this, 'sanitizeSettings']);
+
+        error_log('[PDF Builder] register_setting completed for pdf_builder_settings');
 
         // Section principale
         add_settings_section(
@@ -399,6 +403,13 @@ class SettingsManager
 
         $sanitized = array();
 
+        // Récupérer les valeurs existantes pour les fusionner
+        $existing = get_option('pdf_builder_settings', array());
+        error_log('[PDF Builder] Existing settings before merge: ' . print_r($existing, true));
+
+        // Commencer avec les valeurs existantes
+        $sanitized = $existing;
+
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
             $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);
@@ -583,6 +594,7 @@ class SettingsManager
         }
 
         error_log('[PDF Builder] sanitizeSettings returning sanitized data: ' . print_r($sanitized, true));
+        error_log('[PDF Builder] Final sanitized array count: ' . count($sanitized));
         return $sanitized;
     }
 
