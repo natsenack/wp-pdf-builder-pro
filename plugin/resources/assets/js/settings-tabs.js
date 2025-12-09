@@ -1191,8 +1191,19 @@
                     
                     // Trouver le formulaire principal et le soumettre
                     const mainForm = document.querySelector('form[action="options.php"]');
+                    console.log('PDF Builder: Main form found:', mainForm);
+                    
                     if (mainForm) {
                         console.log('PDF Builder: Submitting main form');
+                        
+                        // Log des données du formulaire avant soumission
+                        const formData = new FormData(mainForm);
+                        console.log('PDF Builder: Form data before submit:');
+                        for (let [key, value] of formData.entries()) {
+                            if (key.includes('template')) {
+                                console.log('  ', key, '=', value);
+                            }
+                        }
                         
                         // Changer le texte du bouton pendant la sauvegarde
                         const originalText = floatingSaveBtn.textContent;
@@ -1209,6 +1220,12 @@
                         }, 5000);
                     } else {
                         console.error('PDF Builder: Main form not found for submission');
+                        // Log all forms on the page
+                        const allForms = document.querySelectorAll('form');
+                        console.log('PDF Builder: All forms on page:', allForms.length);
+                        allForms.forEach((form, index) => {
+                            console.log('  Form', index, ': action=', form.action, 'method=', form.method);
+                        });
                     }
                 });
                 return true; // Bouton trouvé et initialisé
