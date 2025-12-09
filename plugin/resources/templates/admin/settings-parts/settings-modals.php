@@ -356,7 +356,7 @@
 </div>
 
 <!-- Canvas Dimensions Modal (hidden container) -->
-<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions" class="hidden-element">
+<div id="canvas-dimensions-modal" class="canvas-modal hidden-element" data-category="dimensions">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
@@ -420,7 +420,7 @@
 </div>
 
 <!-- Canvas zoom Modal (hidden container) -->
-<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom" class="hidden-element">
+<div id="canvas-zoom-modal" class="canvas-modal hidden-element" data-category="zoom">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Apparence -->
@@ -512,7 +512,7 @@
 </div>
 
 <!-- Canvas apparence Modal (hidden container) -->
-<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence" class="hidden-element">
+<div id="canvas-apparence-modal" class="canvas-modal hidden-element" data-category="apparence">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Grille & Guides -->
@@ -582,8 +582,8 @@
 </div>
 
 
-<!-- Canvas grille Modal (hidden container) -->
-<div id="canvas-grille-modal" class="canvas-modal" data-category="grille" class="hidden-element">
+<!-- Canvas grid Modal (hidden container) -->
+<div id="canvas-grid-modal" class="canvas-modal hidden-element" data-category="grid">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
@@ -689,7 +689,7 @@
 
 
 <!-- Canvas interactions Modal (hidden container) -->
-<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions" class="hidden-element">
+<div id="canvas-interactions-modal" class="canvas-modal hidden-element" data-category="interactions">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Export & Qualité -->
@@ -748,7 +748,7 @@
 
 
 <!-- Canvas export Modal (hidden container) -->
-<div id="canvas-export-modal" class="canvas-modal" data-category="export" class="hidden-element">
+<div id="canvas-export-modal" class="canvas-modal hidden-element" data-category="export">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Performance -->
@@ -883,7 +883,7 @@
 </div>
 
 <!-- Canvas performance Modal (hidden container) -->
-<div id="canvas-performance-modal" class="canvas-modal" data-category="performance" class="hidden-element">
+<div id="canvas-performance-modal" class="canvas-modal hidden-element" data-category="performance">
     <!-- Modal content moved to overlay above -->
 </div>
 <!-- Canvas Configuration Modals Debug -->
@@ -944,7 +944,7 @@
 
 
 <!-- Canvas debug Modal (hidden container) -->
-<div id="canvas-debug-modal" class="canvas-modal" data-category="debug" class="hidden-element">
+<div id="canvas-debug-modal" class="canvas-modal hidden-element" data-category="debug">
     <!-- Modal content moved to overlay above -->
 </div>
 
