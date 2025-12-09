@@ -12,10 +12,6 @@
             <h2>Paramètres Développeur</h2>
             <p class="developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-        <form method="post" id="developpeur-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
-                <input type="hidden" name="submit_developpeur" value="1">
-
                 <h3 class="section-title">🔐 Contrôle d'Accès</h3>
 
              <table class="form-table">
@@ -24,7 +20,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="developer_enabled" name="pdf_builder_developer_enabled" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="developer_enabled" name="pdf_builder_settings[pdf_builder_developer_enabled]" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le mode développeur</span>
@@ -41,7 +37,7 @@
                         <!-- Champ username caché pour l'accessibilité -->
                         <input type="text" autocomplete="username" class="hidden-element" />
                         <div class="developer-field-group">
-                            <input type="password" id="developer_password" name="pdf_builder_developer_password"
+                            <input type="password" id="developer_password" name="pdf_builder_settings[pdf_builder_developer_password]"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    class="developer-input"
                                    value="<?php echo esc_attr($settings['pdf_builder_developer_password'] ?? ''); ?>" />
@@ -711,7 +707,6 @@
                 </button>
             </div>
 
-        </form>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
