@@ -191,6 +191,185 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
 
     // Initialiser le bouton flottant aussi
     document.addEventListener('DOMContentLoaded', initSaveButton);
+
+    // Section Test de Licence - Onglet Développeur
+    function initLicenseTestSection() {
+        // Vérifier si on est sur la page de paramètres
+        if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
+            debugLog('PDF Builder - Pas sur la page de paramètres, skip section licence');
+            return;
+        }
+
+        debugLog('PDF Builder - Initialisation de la section Test de Licence...');
+        debugLog('PDF Builder - pdfBuilderAjax disponible:', typeof pdfBuilderAjax !== 'undefined');
+        if (typeof pdfBuilderAjax !== 'undefined') {
+            debugLog('PDF Builder - ajaxurl:', pdfBuilderAjax.ajaxurl);
+        }
+
+        // Attendre que la section soit visible (peut être cachée initialement)
+        const checkAndInit = function() {
+            const section = document.getElementById('dev-license-section');
+            if (!section) {
+                debugLog('PDF Builder - Section licence pas encore trouvée, retry dans 500ms');
+                setTimeout(checkAndInit, 500);
+                return;
+            }
+
+            const isVisible = section.style.display !== 'none';
+            if (!isVisible) {
+                debugLog('PDF Builder - Section licence cachée, on attend qu\'elle soit visible');
+                // Attendre que la section devienne visible
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                            const currentDisplay = section.style.display;
+                            if (currentDisplay !== 'none') {
+                                debugLog('PDF Builder - Section licence maintenant visible, initialisation...');
+                                observer.disconnect();
+                                initButtons();
+                            }
+                        }
+                    });
+                });
+                observer.observe(section, { attributes: true, attributeFilter: ['style'] });
+                return;
+            }
+
+            initButtons();
+        };
+
+        const initButtons = function() {
+            debugLog('PDF Builder - Initialisation des boutons licence...');
+
+            // Bouton basculer mode test
+            const toggleBtn = document.getElementById('toggle_license_test_mode_btn');
+            debugLog('PDF Builder - Bouton toggle trouvé:', !!toggleBtn);
+            if (toggleBtn) {
+            debugLog('PDF Builder - Bouton toggle mode test trouvé, ajout event listener');
+            toggleBtn.addEventListener('click', function() {
+                debugLog('PDF Builder - Clic sur bouton toggle mode test');
+                const nonce = document.getElementById('toggle_license_test_mode_nonce')?.value;
+                if (!nonce) {
+                    debugError('Nonce manquant pour toggle test mode');
+                    return;
+                }
+
+                debugLog('PDF Builder - Nonce trouvé:', nonce.substring(0, 10) + '...');
+                toggleBtn.disabled = true;
+                toggleBtn.textContent = '⏳ Basculement...';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        debugLog('PDF Builder - Réponse AJAX reçue, status:', xhr.status);
+                        debugLog('PDF Builder - Réponse:', xhr.responseText);
+                        toggleBtn.disabled = false;
+                        toggleBtn.textContent = '🎚️ Basculer Mode Test';
+
+                        if (xhr.status === 200) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    const statusSpan = document.getElementById('toggle_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '✅ Mode test ' + (response.data?.test_mode ? 'activé' : 'désactivé');
+                                        statusSpan.style.color = '#28a745';
+                                    }
+                                    debugLog('Mode test toggled successfully');
+                                } else {
+                                    const statusSpan = document.getElementById('toggle_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '❌ Erreur: ' + (response.data?.message || 'Erreur inconnue');
+                                        statusSpan.style.color = '#dc3545';
+                                    }
+                                    debugError('Erreur toggle:', response.data?.message || 'Erreur inconnue');
+                                }
+                            } catch (e) {
+                                debugError('Erreur parsing réponse toggle:', e);
+                            }
+                        } else {
+                            debugError('Erreur HTTP toggle:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send('action=pdf_builder_toggle_test_mode&nonce=' + encodeURIComponent(nonce));
+            });
+        }
+
+        // Bouton nettoyer complètement la licence
+        const cleanupBtn = document.getElementById('cleanup_license_btn');
+        debugLog('PDF Builder - Bouton cleanup trouvé:', !!cleanupBtn);
+        if (cleanupBtn) {
+            debugLog('PDF Builder - Bouton cleanup trouvé, ajout event listener');
+            cleanupBtn.addEventListener('click', function() {
+                debugLog('PDF Builder - Clic sur bouton cleanup');
+                const nonce = document.getElementById('cleanup_license_nonce')?.value;
+                if (!nonce) {
+                    debugError('Nonce manquant pour cleanup license');
+                    return;
+                }
+
+                if (!confirm('⚠️ ATTENTION: Cette action va complètement supprimer TOUTES les données de licence.\n\nCette action est IRRÉVERSIBLE.\n\nÊtes-vous sûr de vouloir continuer ?')) {
+                    return;
+                }
+
+                debugLog('PDF Builder - Confirmation reçue, nonce trouvé:', nonce.substring(0, 10) + '...');
+                cleanupBtn.disabled = true;
+                cleanupBtn.textContent = '⏳ Nettoyage...';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', pdfBuilderAjax?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        cleanupBtn.disabled = false;
+                        cleanupBtn.textContent = '🧹 Nettoyer complètement la licence';
+
+                        if (xhr.status === 200) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.success) {
+                                    const statusSpan = document.getElementById('cleanup_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '✅ Nettoyage complet effectué avec succès';
+                                        statusSpan.style.color = '#28a745';
+                                    }
+                                    // Recharger la page pour refléter les changements
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 2000);
+                                    debugLog('Nettoyage licence effectué');
+                                } else {
+                                    const statusSpan = document.getElementById('cleanup_status');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = '❌ Erreur: ' + (response.data?.message || 'Erreur inconnue');
+                                        statusSpan.style.color = '#dc3545';
+                                    }
+                                    debugError('Erreur nettoyage:', response.data?.message || 'Erreur inconnue');
+                                }
+                            } catch (e) {
+                                debugError('Erreur parsing réponse nettoyage:', e);
+                            }
+                        } else {
+                            debugError('Erreur HTTP nettoyage:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send('action=pdf_builder_cleanup_license&nonce=' + encodeURIComponent(nonce));
+            });
+        }
+
+        debugLog('PDF Builder - Section Test de Licence initialisée');
+        };
+
+        checkAndInit();
+    }
         // Vérifier si on est sur la page de paramètres
         if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
             debugLog('PDF Builder - Pas sur la page de paramètres, skip section licence');
