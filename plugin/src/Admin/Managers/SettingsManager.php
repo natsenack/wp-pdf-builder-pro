@@ -419,6 +419,8 @@ class SettingsManager
         // Commencer avec les valeurs existantes
         $sanitized = $existing;
 
+        // CORRECTION: Suppression de la logique des checkboxes non présentes dans l'input
+
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
             $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);
