@@ -45,6 +45,9 @@ class SettingsManager
      */
     public function registerSettings()
     {
+        // Enregistrer le tableau principal des paramètres
+        register_setting('pdf_builder_settings', 'pdf_builder_settings', [$this, 'sanitizeSettings']);
+
         // Section principale
         add_settings_section(
             'pdf_builder_general',
@@ -416,6 +419,53 @@ class SettingsManager
             'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
             'export_quality' => intval(get_option('pdf_builder_canvas_export_quality', 90)),
         ];
+    }
+
+    /**
+     * Fonction de sanitisation pour les paramètres
+     */
+    public function sanitizeSettings($input)
+    {
+        $sanitized = array();
+
+        // Sanitisation des paramètres système
+        if (isset($input['system_memory_limit'])) {
+            $sanitized['system_memory_limit'] = sanitize_text_field($input['system_memory_limit']);
+        }
+
+        if (isset($input['system_max_execution_time'])) {
+            $sanitized['system_max_execution_time'] = intval($input['system_max_execution_time']);
+            $sanitized['system_max_execution_time'] = max(10, min(300, $sanitized['system_max_execution_time']));
+        }
+
+        // Sanitisation des paramètres de sécurité
+        if (isset($input['security_file_validation'])) {
+            $sanitized['security_file_validation'] = $input['security_file_validation'] ? '1' : '0';
+        }
+
+        // Sanitisation des paramètres PDF
+        if (isset($input['pdf_quality'])) {
+            $allowed_qualities = array('low', 'medium', 'high');
+            $sanitized['pdf_quality'] = in_array($input['pdf_quality'], $allowed_qualities) ? $input['pdf_quality'] : 'high';
+        }
+
+        if (isset($input['pdf_compression'])) {
+            $sanitized['pdf_compression'] = $input['pdf_compression'] ? '1' : '0';
+        }
+
+        // Sanitisation des autres paramètres - ajouter au besoin
+        // Pour l'instant, on accepte les autres valeurs telles quelles mais sanitizées
+        foreach ($input as $key => $value) {
+            if (!isset($sanitized[$key])) {
+                if (is_array($value)) {
+                    $sanitized[$key] = array_map('sanitize_text_field', $value);
+                } else {
+                    $sanitized[$key] = sanitize_text_field($value);
+                }
+            }
+        }
+
+        return $sanitized;
     }
 
     /**

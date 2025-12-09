@@ -55,15 +55,6 @@ class AdminScriptLoader
                     $version_param,
                     true
                 );
-
-                // Charger le système de sauvegarde global pour la page de paramètres
-                wp_enqueue_script(
-                    'pdf-builder-settings-global-save',
-                    PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-global-save.js',
-                    ['jquery'],
-                    PDF_BUILDER_PRO_VERSION,
-                    true
-                );
             } else {
                 wp_enqueue_script(
                     'pdf-builder-settings-tabs',

@@ -1409,50 +1409,13 @@ class PdfBuilderAdmin
                     }
                     ?>
 
+                    <?php submit_button(); ?>
                 </div>
             </form>
 
             <!-- Containers fictifs pour éviter les erreurs JS -->
             <div id="pdf-builder-tabs" style="display: none;"></div>
             <div id="pdf-builder-tab-content" style="display: none;"></div>
-
-            <!-- Bouton de sauvegarde global flottant -->
-            <div id="pdf-builder-global-save-container" style="
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 1000;
-                background: #fff;
-                border: 2px solid #2271b1;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                padding: 12px 20px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            ">
-                <button
-                    id="pdf-builder-global-save-btn"
-                    type="button"
-                    class="button button-primary button-large"
-                    style="
-                        background: #2271b1;
-                        border-color: #2271b1;
-                        color: #fff;
-                        font-weight: 600;
-                        padding: 8px 16px;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                    "
-                    onmouseover="this.style.background='#135e96'"
-                    onmouseout="this.style.background='#2271b1'"
-                >
-                    <span class="dashicons dashicons-saved" style="margin-right: 8px;"></span>
-                    Sauvegarder Tout
-                </button>
-                <div id="global-save-status" style="font-size: 12px; color: #666;"></div>
-            </div>
 
         </div> <!-- Fin du .wrap -->
         <?php
