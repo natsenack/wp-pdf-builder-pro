@@ -416,10 +416,6 @@
                     </span>
                 </h3>
 
-                <form method="post" id="templates-form">
-                    <?php wp_nonce_field('pdf_builder_templates_nonce', 'pdf_builder_templates_nonce'); ?>
-                    <input type="hidden" name="submit_templates" value="1">
-
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="default_template">Template par défaut</label></th>
@@ -443,7 +439,6 @@
                             </td>
                         </tr>
                     </table>
-                </form>
             </section>
 
 

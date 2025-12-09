@@ -454,8 +454,7 @@
                 <p>Cette fonctionnalité nécessite WooCommerce pour fonctionner. Veuillez installer et activer WooCommerce.</p>
             </div>
         <?php else: ?>
-            <!-- Formulaire de configuration -->
-            <form method="post" action="" id="templates-status-form" data-custom-save="true">
+            <!-- Configuration des templates par statut -->
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
                 <!-- Grille des statuts -->
@@ -507,7 +506,7 @@
                                 <label for="template_<?php echo esc_attr($status_key); ?>">
                                     📄 Template par défaut :
                                 </label>
-                                <select name="pdf_builder_order_status_templates[<?php echo esc_attr($status_key); ?>]"
+                                <select name="pdf_builder_settings[pdf_builder_order_status_templates][<?php echo esc_attr($status_key); ?>]"
                                         id="template_<?php echo esc_attr($status_key); ?>"
                                         class="template-select"
                                         <?php
@@ -581,7 +580,6 @@
                         🔄 Réinitialiser
                     </button>
                 </section>
-            </form>
         <?php endif; ?>
     </main>
 </section>
