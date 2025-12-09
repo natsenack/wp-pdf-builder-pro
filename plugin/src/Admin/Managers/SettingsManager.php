@@ -419,7 +419,7 @@ class SettingsManager
         // Commencer avec les valeurs existantes
         $sanitized = $existing;
 
-        // CORRECTION: Suppression complète de la logique des checkboxes non présentes dans l'input
+        // CORRECTION: Suppression de la logique des checkboxes non présentes dans l'input
 
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
@@ -509,6 +509,14 @@ class SettingsManager
         }
         if (isset($input['pdf_builder_performance_monitoring'])) {
             $sanitized['pdf_builder_performance_monitoring'] = $input['pdf_builder_performance_monitoring'] ? '1' : '0';
+        }
+
+        // Sanitisation des paramètres de licence
+        if (isset($input['pdf_builder_license_email_reminders'])) {
+            $sanitized['pdf_builder_license_email_reminders'] = $input['pdf_builder_license_email_reminders'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_license_reminder_email'])) {
+            $sanitized['pdf_builder_license_reminder_email'] = sanitize_email($input['pdf_builder_license_reminder_email']);
         }
 
         // Sanitisation des paramètres canvas

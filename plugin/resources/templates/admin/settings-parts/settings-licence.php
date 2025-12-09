@@ -654,6 +654,7 @@
                                 <th scope="row"><label for="license_email_reminders">Activer les rappels</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_license_email_reminders" value="0">
                                         <input type="checkbox" id="license_email_reminders" name="pdf_builder_license_email_reminders"
                                             value="1" <?php checked($license_email_reminders, '1'); ?> />
                                         <span class="toggle-slider"></span>
