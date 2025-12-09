@@ -86,7 +86,7 @@
                         <h3>
                             <span>
                                 📋 Cache & Performance - ⚠️ En attente d'implémentation
-                                <span class="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="cache-performance-status" id="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
                     </header>
@@ -1232,6 +1232,31 @@
             }
         });
     });
+
+    // Mise à jour dynamique des indicateurs de statut
+    function updateStatusIndicators() {
+        // Mettre à jour le statut du cache
+        const cacheEnabled = document.getElementById('general_cache_enabled').checked;
+        const statusElement = document.getElementById('cache-performance-status');
+        const cacheIndicator = document.querySelector('.cache-enabled-indicator');
+
+        if (statusElement) {
+            statusElement.textContent = cacheEnabled ? 'ACTIF' : 'INACTIF';
+            statusElement.style.backgroundColor = cacheEnabled ? '#28a745' : '#dc3545';
+        }
+
+        if (cacheIndicator) {
+            cacheIndicator.textContent = cacheEnabled ? 'Cache activé' : 'Cache désactivé';
+        }
+    }
+
+    // Écouter les changements sur les toggles du cache
+    document.getElementById('general_cache_enabled').addEventListener('change', updateStatusIndicators);
+    document.getElementById('cache_compression').addEventListener('change', updateStatusIndicators);
+    document.getElementById('cache_auto_cleanup').addEventListener('change', updateStatusIndicators);
+
+    // Initialiser les indicateurs au chargement
+    updateStatusIndicators();
 
 })(jQuery);
 </script>

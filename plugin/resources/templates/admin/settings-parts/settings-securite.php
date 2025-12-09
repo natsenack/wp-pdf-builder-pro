@@ -215,3 +215,48 @@
 
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
+<script type="text/javascript">
+(function($) {
+    'use strict';
+
+    // Mise à jour dynamique des indicateurs de statut
+    function updateSecurityStatusIndicators() {
+        // Mettre à jour le statut de sécurité (logging)
+        const loggingEnabled = document.getElementById('enable_logging').checked;
+        const securityStatusElement = document.getElementById('security-status-indicator');
+
+        if (securityStatusElement) {
+            securityStatusElement.textContent = loggingEnabled ? 'ACTIF' : 'INACTIF';
+            securityStatusElement.style.backgroundColor = loggingEnabled ? '#28a745' : '#dc3545';
+        }
+
+        // Mettre à jour le statut RGPD
+        const gdprEnabled = document.getElementById('gdpr_enabled').checked;
+        const rgpdStatusElement = document.getElementById('rgpd-status-indicator');
+
+        if (rgpdStatusElement) {
+            rgpdStatusElement.textContent = gdprEnabled ? 'ACTIF' : 'INACTIF';
+            rgpdStatusElement.style.backgroundColor = gdprEnabled ? '#28a745' : '#dc3545';
+        }
+    }
+
+    // Écouter les changements sur les toggles principaux
+    document.addEventListener('DOMContentLoaded', function() {
+        const enableLoggingCheckbox = document.getElementById('enable_logging');
+        const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+
+        if (enableLoggingCheckbox) {
+            enableLoggingCheckbox.addEventListener('change', updateSecurityStatusIndicators);
+        }
+
+        if (gdprEnabledCheckbox) {
+            gdprEnabledCheckbox.addEventListener('change', updateSecurityStatusIndicators);
+        }
+
+        // Initialiser les indicateurs au chargement
+        updateSecurityStatusIndicators();
+    });
+
+})(jQuery);
+</script>
+
