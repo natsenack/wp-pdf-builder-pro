@@ -976,16 +976,121 @@ class PdfBuilderAdmin
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
-        // Inclure le fichier des paramètres avec les onglets
-        $settings_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-page.php';
-        if (file_exists($settings_file)) {
-            include $settings_file;
-        } else {
-            // Fallback si le fichier n'existe pas
-            echo '<div class="wrap">';
-            echo '<h1>Paramètres PDF Builder Pro</h1>';
-            echo '<p>Erreur: Fichier de paramètres introuvable.</p>';
-            echo '</div>';
+        // Récupération des paramètres généraux
+        $settings = get_option('pdf_builder_settings', array());
+        $current_user = wp_get_current_user();
+
+        // Gestion des onglets via URL
+        $current_tab = $_GET['tab'] ?? 'general';
+        $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+        if (!in_array($current_tab, $valid_tabs)) {
+            $current_tab = 'general';
         }
+
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+            <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
+
+            <form method="post" action="options.php">
+                <?php settings_fields('pdf_builder_settings'); ?>
+
+                <!-- Navigation par onglets moderne -->
+                <h2 class="nav-tab-wrapper">
+                    <div class="tabs-container">
+                        <a href="?page=pdf-builder-settings&tab=general" class="nav-tab<?php echo $current_tab === 'general' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">⚙️</span>
+                            <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=licence" class="nav-tab<?php echo $current_tab === 'licence' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">🔑</span>
+                            <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=systeme" class="nav-tab<?php echo $current_tab === 'systeme' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">🖥️</span>
+                            <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab<?php echo $current_tab === 'securite' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">🔒</span>
+                            <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=pdf" class="nav-tab<?php echo $current_tab === 'pdf' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">📄</span>
+                            <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=contenu" class="nav-tab<?php echo $current_tab === 'contenu' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">🎨</span>
+                            <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=templates" class="nav-tab<?php echo $current_tab === 'templates' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">📋</span>
+                            <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
+                        </a>
+
+                        <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab<?php echo $current_tab === 'developpeur' ? ' nav-tab-active' : ''; ?>">
+                            <span class="tab-icon">👨‍💻</span>
+                            <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
+                        </a>
+                    </div>
+                </h2>
+
+                <!-- contenu des onglets moderne -->
+                <div class="settings-content-wrapper">
+                    <?php
+                    switch ($current_tab) {
+                        case 'general':
+                            do_settings_sections('pdf_builder_general');
+                            break;
+
+                        case 'licence':
+                            do_settings_sections('pdf_builder_licence');
+                            break;
+
+                        case 'systeme':
+                            echo '<p>' . __('Section Système - À implémenter', 'pdf-builder-pro') . '</p>';
+                            break;
+
+                        case 'securite':
+                            echo '<p>' . __('Section Sécurité - À implémenter', 'pdf-builder-pro') . '</p>';
+                            break;
+
+                        case 'pdf':
+                            echo '<p>' . __('Section Configuration PDF - À implémenter', 'pdf-builder-pro') . '</p>';
+                            break;
+
+                        case 'contenu':
+                            echo '<p>' . __('Section Canvas & Design - À implémenter', 'pdf-builder-pro') . '</p>';
+                            break;
+
+                        case 'templates':
+                            echo '<p>' . __('Section Templates - À implémenter', 'pdf-builder-pro') . '</p>';
+                            break;
+
+                        case 'developpeur':
+                            echo '<p>' . __('Section Développeur - À implémenter', 'pdf-builder-pro') . '</p>';
+                            break;
+
+                        default:
+                            echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
+                            break;
+                    }
+                    ?>
+
+                    <?php submit_button(); ?>
+                </div>
+            </form>
+
+            <!-- Containers fictifs pour éviter les erreurs JS -->
+            <div id="pdf-builder-tabs" style="display: none;"></div>
+            <div id="pdf-builder-tab-content" style="display: none;"></div>
+
+        </div> <!-- Fin du .wrap -->
+        <?php
     }
 }
