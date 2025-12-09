@@ -466,6 +466,37 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
 
+        // FIRST: Handle the main pdf_builder_settings array if it exists
+        if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
+            error_log('[PDF Builder AJAX] Found pdf_builder_settings array with keys: ' . implode(', ', array_keys($_POST['pdf_builder_settings'])));
+
+            foreach ($_POST['pdf_builder_settings'] as $setting_key => $setting_value) {
+                if (is_array($setting_value)) {
+                    // Handle nested arrays like pdf_builder_order_status_templates
+                    if ($setting_key === 'pdf_builder_order_status_templates') {
+                        $settings[$setting_key] = array_map('sanitize_text_field', $setting_value);
+                        error_log('[PDF Builder AJAX] Saved nested array ' . $setting_key . ' with ' . count($setting_value) . ' items');
+                    } else {
+                        // Handle other nested arrays if needed
+                        $settings[$setting_key] = $setting_value; // Keep as-is for now, sanitize later if needed
+                    }
+                } else {
+                    // Handle simple values
+                    if (is_numeric($setting_value)) {
+                        $settings[$setting_key] = intval($setting_value);
+                    } elseif ($setting_value === '1' || $setting_value === '0') {
+                        $settings[$setting_key] = $setting_value;
+                    } else {
+                        $settings[$setting_key] = sanitize_text_field($setting_value);
+                    }
+                }
+                $saved_count++;
+            }
+
+            // Remove pdf_builder_settings from $_POST to avoid double processing
+            unset($_POST['pdf_builder_settings']);
+        }
+
         // Debug: check if shadow field is present
         if (isset($_POST['pdf_builder_canvas_canvas_shadow_enabled'])) {
             error_log('[PDF Builder AJAX] Shadow field received: ' . $_POST['pdf_builder_canvas_canvas_shadow_enabled']);
