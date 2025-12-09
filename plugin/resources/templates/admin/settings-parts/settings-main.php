@@ -22,6 +22,13 @@
     $settings = get_option('pdf_builder_settings', array());
     $current_user = wp_get_current_user();
 
+    // Gestion des onglets via URL
+    $current_tab = $_GET['tab'] ?? 'general';
+    $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+    if (!in_array($current_tab, $valid_tabs)) {
+        $current_tab = 'general';
+    }
+
     // Informations de diagnostic pour le débogage (uniquement en mode debug)
     $debug_info = defined('WP_DEBUG') && WP_DEBUG ? [
         'version' => PDF_BUILDER_PRO_VERSION ?? 'unknown',
@@ -39,150 +46,128 @@
     <!-- Navigation par onglets moderne -->
     <h2 class="nav-tab-wrapper">
         <div class="tabs-container">
-            <button type="button" data-tab="general" class="nav-tab nav-tab-active">
+            <a href="?page=pdf-builder-settings&tab=general" class="nav-tab<?php echo $current_tab === 'general' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="licence" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=licence" class="nav-tab<?php echo $current_tab === 'licence' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">🔑</span>
                 <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="systeme" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=systeme" class="nav-tab<?php echo $current_tab === 'systeme' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">🖥️</span>
                 <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="securite" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab<?php echo $current_tab === 'securite' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="pdf" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=pdf" class="nav-tab<?php echo $current_tab === 'pdf' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">📄</span>
                 <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="contenu" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=contenu" class="nav-tab<?php echo $current_tab === 'contenu' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="templates" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=templates" class="nav-tab<?php echo $current_tab === 'templates' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">📋</span>
                 <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
 
-            <button type="button" data-tab="developpeur" class="nav-tab">
+            <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab<?php echo $current_tab === 'developpeur' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
-            </button>
+            </a>
         </div>
     </h2>
 
     <!-- contenu des onglets moderne -->
-
-    <!-- contenu des onglets moderne -->
-    <div class="tabs-content-wrapper">
-
-        <!-- Section Général -->
-        <div id="content-general" class="tab-content active">
-            <?php
+    <?php
+    switch ($current_tab) {
+        case 'general':
             $general_file = __DIR__ . '/settings-general.php';
             if (file_exists($general_file)) {
                 require_once $general_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Licence -->
-        <div id="content-licence" class="tab-content">
-            <?php
+        case 'licence':
             $licence_file = __DIR__ . '/settings-licence.php';
             if (file_exists($licence_file)) {
                 require_once $licence_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Système -->
-        <div id="content-systeme" class="tab-content">
-            <?php
+        case 'systeme':
             $systeme_file = __DIR__ . '/settings-systeme.php';
             if (file_exists($systeme_file)) {
                 require_once $systeme_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Sécurité -->
-        <div id="content-securite" class="tab-content">
-            <?php
+        case 'securite':
             $securite_file = __DIR__ . '/settings-securite.php';
             if (file_exists($securite_file)) {
                 require_once $securite_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Configuration PDF -->
-        <div id="content-pdf" class="tab-content">
-            <?php
+        case 'pdf':
             $pdf_file = __DIR__ . '/settings-pdf.php';
             if (file_exists($pdf_file)) {
                 require_once $pdf_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Canvas & Design -->
-        <div id="content-contenu" class="tab-content">
-            <?php
+        case 'contenu':
             $contenu_file = __DIR__ . '/settings-contenu.php';
             if (file_exists($contenu_file)) {
                 require_once $contenu_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Templates -->
-        <div id="content-templates" class="tab-content">
-            <?php
+        case 'templates':
             $templates_file = __DIR__ . '/settings-templates.php';
             if (file_exists($templates_file)) {
                 require_once $templates_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-        <!-- Section Développeur -->
-        <div id="content-developpeur" class="tab-content">
-            <?php
+        case 'developpeur':
             $developpeur_file = __DIR__ . '/settings-developpeur.php';
             if (file_exists($developpeur_file)) {
                 require_once $developpeur_file;
             } else {
                 echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
             }
-            ?>
-        </div>
+            break;
 
-    </div>
+        default:
+            echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
+            break;
+    }
+    ?>
 
     <!-- Bouton flottant de sauvegarde -->
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
@@ -192,52 +177,6 @@
     <!-- Containers fictifs pour éviter les erreurs JS -->
     <div id="pdf-builder-tabs" style="display: none;"></div>
     <div id="pdf-builder-tab-content" style="display: none;"></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('PDF Builder Pro - Initialisation des onglets');
-
-            // Gestion des onglets avec boutons JavaScript
-            const tabButtons = document.querySelectorAll('.nav-tab[data-tab]');
-            const contents = document.querySelectorAll('.tab-content');
-            let activeTab = 'general'; // Onglet actif par défaut
-
-            function updateTabs() {
-                // Masquer tous les contenus
-                contents.forEach(content => {
-                    content.classList.remove('active');
-                });
-
-                // Désactiver tous les boutons
-                tabButtons.forEach(button => {
-                    button.classList.remove('nav-tab-active');
-                });
-
-                // Afficher le contenu actif
-                const targetContent = document.getElementById('content-' + activeTab);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
-
-                // Activer le bouton actif
-                const activeButton = document.querySelector(`.nav-tab[data-tab="${activeTab}"]`);
-                if (activeButton) {
-                    activeButton.classList.add('nav-tab-active');
-                }
-            }
-
-            // Écouter les clics sur les boutons
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    activeTab = this.getAttribute('data-tab');
-                    updateTabs();
-                });
-            });
-
-            // Initialisation
-            updateTabs();
-        });
-    </script>
 
 </div> <!-- Fin du .wrap -->
 
