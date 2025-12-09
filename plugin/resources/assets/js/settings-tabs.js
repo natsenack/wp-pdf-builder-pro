@@ -146,19 +146,42 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
                 e.preventDefault();
                 debugLog('PDF Builder - Clic sur le bouton flottant');
 
-                // Trouver le formulaire principal avec action="options.php"
-                const mainForm = document.querySelector('form[action="options.php"]');
+                // Trouver le formulaire principal (plusieurs stratégies)
+                let mainForm = document.querySelector('form[action="options.php"]');
+                
+                // Si pas trouvé, essayer de trouver un formulaire contenant les champs de template
+                if (!mainForm) {
+                    const forms = document.querySelectorAll('form');
+                    for (const form of forms) {
+                        if (form.querySelector('[name*="pdf_builder_settings"]')) {
+                            mainForm = form;
+                            debugLog('PDF Builder - Formulaire trouvé via champs pdf_builder_settings');
+                            break;
+                        }
+                    }
+                }
+                
+                // Dernière tentative: prendre le premier formulaire trouvé
+                if (!mainForm) {
+                    mainForm = document.querySelector('form');
+                    debugLog('PDF Builder - Utilisation du premier formulaire trouvé');
+                }
                 if (mainForm) {
                     debugLog('PDF Builder - Formulaire trouvé, soumission en cours');
+                    debugLog('PDF Builder - Formulaire action:', mainForm.action);
+                    debugLog('PDF Builder - Formulaire method:', mainForm.method);
                     
                     // Log des données du formulaire avant soumission
                     const formData = new FormData(mainForm);
                     console.log('PDF Builder: Form data before submit:');
+                    let templateFieldsFound = 0;
                     for (let [key, value] of formData.entries()) {
-                        if (key.includes('template')) {
+                        if (key.includes('template') || key.includes('pdf_builder_settings')) {
                             console.log('  ', key, '=', value);
+                            templateFieldsFound++;
                         }
                     }
+                    debugLog('PDF Builder - Champs template trouvés:', templateFieldsFound);
                     
                     // Changer le texte du bouton pendant la sauvegarde
                     const originalText = saveBtn.textContent;
@@ -180,6 +203,8 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
                     console.log('PDF Builder: All forms on page:', allForms.length);
                     allForms.forEach((form, index) => {
                         console.log('  Form', index, ': action=', form.action, 'method=', form.method);
+                        const templateFields = form.querySelectorAll('[name*="template"], [name*="pdf_builder_settings"]');
+                        console.log('    Template fields in form:', templateFields.length);
                     });
                 }
             });
