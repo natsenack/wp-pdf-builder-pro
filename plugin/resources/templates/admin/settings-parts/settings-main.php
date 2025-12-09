@@ -24,8 +24,23 @@
 
     // LOG pour déboguer la soumission du formulaire
     error_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+    error_log('[PDF Builder] Current tab: ' . $current_tab);
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('[PDF Builder] POST data received: ' . print_r($_POST, true));
+        
+        // Vérifier spécifiquement les données templates
+        if (isset($_POST['pdf_builder_settings'])) {
+            $posted_settings = $_POST['pdf_builder_settings'];
+            error_log('[PDF Builder] pdf_builder_settings received: ' . print_r($posted_settings, true));
+            
+            if (isset($posted_settings['pdf_builder_default_template'])) {
+                error_log('[PDF Builder] Template par défaut POST: ' . $posted_settings['pdf_builder_default_template']);
+            }
+            if (isset($posted_settings['pdf_builder_template_library_enabled'])) {
+                error_log('[PDF Builder] Bibliothèque templates POST: ' . $posted_settings['pdf_builder_template_library_enabled']);
+            }
+        }
     }
 
     // Gestion des onglets via URL

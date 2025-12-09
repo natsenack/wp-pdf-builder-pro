@@ -264,13 +264,27 @@ add_action('admin_init', function() {
         'type' => 'array',
         'description' => 'Paramètres principaux PDF Builder Pro',
         'sanitize_callback' => function($input) {
+            // Log détaillé pour déboguer la sauvegarde
+            error_log('[PDF Builder] SANITIZE CALLBACK - Input type: ' . gettype($input));
+            if (is_array($input)) {
+                error_log('[PDF Builder] SANITIZE CALLBACK - Input count: ' . count($input));
+                error_log('[PDF Builder] SANITIZE CALLBACK - Input keys: ' . implode(', ', array_keys($input)));
+                
+                // Log spécifique pour les paramètres templates
+                if (isset($input['pdf_builder_default_template'])) {
+                    error_log('[PDF Builder] Template par défaut: ' . $input['pdf_builder_default_template']);
+                }
+                if (isset($input['pdf_builder_template_library_enabled'])) {
+                    error_log('[PDF Builder] Bibliothèque templates: ' . $input['pdf_builder_template_library_enabled']);
+                }
+            } else {
+                error_log('[PDF Builder] SANITIZE CALLBACK - Input is not array: ' . print_r($input, true));
+            }
+            
             // Validation et nettoyage des données
             if (!is_array($input)) {
                 return array();
             }
-            
-            // Log pour déboguer la sauvegarde
-            error_log('[PDF Builder] Sanitizing settings - input count: ' . count($input));
             
             return $input;
         },
