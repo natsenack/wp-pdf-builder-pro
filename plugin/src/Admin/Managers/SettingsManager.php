@@ -56,27 +56,6 @@ class SettingsManager
             'pdf_builder_settings'
         );
 
-        // Paramètres généraux
-        register_setting('pdf_builder_settings', 'pdf_builder_company_name');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_address');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_phone');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_email');
-        register_setting('pdf_builder_settings', 'pdf_builder_default_language');
-
-        // Enregistrer les paramètres généraux supplémentaires
-        register_setting('pdf_builder_settings', 'pdf_builder_company_phone_manual');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_capital');
-
-        // Enregistrer les paramètres PDF
-        register_setting('pdf_builder_settings', 'pdf_builder_pdf_quality');
-        register_setting('pdf_builder_settings', 'pdf_builder_default_format');
-        register_setting('pdf_builder_settings', 'pdf_builder_default_orientation');
-        register_setting('pdf_builder_settings', 'pdf_builder_pdf_cache_enabled');
-        register_setting('pdf_builder_settings', 'pdf_builder_pdf_print_optimized');
-
         add_settings_field(
             'company_info',
             __('Informations Entreprise', 'pdf-builder-pro'),
@@ -92,60 +71,6 @@ class SettingsManager
             [$this, 'renderPerformanceSection'],
             'pdf_builder_settings'
         );
-
-        register_setting('pdf_builder_settings', 'pdf_builder_enable_cache');
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_timeout');
-        register_setting('pdf_builder_settings', 'pdf_builder_compression_level');
-        register_setting('pdf_builder_settings', 'pdf_builder_memory_limit');
-        register_setting('pdf_builder_settings', 'pdf_builder_max_execution_time');
-
-        // Enregistrer les paramètres système/cache utilisés dans settings-systeme.php
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_enabled');
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_compression');
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_auto_cleanup');
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_max_size');
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_ttl');
-        register_setting('pdf_builder_settings', 'pdf_builder_performance_auto_optimization');
-        register_setting('pdf_builder_settings', 'pdf_builder_systeme_auto_maintenance');
-        register_setting('pdf_builder_settings', 'pdf_builder_last_maintenance');
-        register_setting('pdf_builder_settings', 'pdf_builder_next_maintenance');
-        register_setting('pdf_builder_settings', 'pdf_builder_last_backup');
-        register_setting('pdf_builder_settings', 'pdf_builder_cache_last_cleanup');
-
-        // Enregistrer les paramètres de sécurité
-        register_setting('pdf_builder_settings', 'pdf_builder_security_level');
-        register_setting('pdf_builder_settings', 'pdf_builder_enable_logging');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_enabled');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_required');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_data_retention');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_audit_enabled');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_encryption_enabled');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_analytics');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_templates');
-        register_setting('pdf_builder_settings', 'pdf_builder_gdpr_consent_marketing');
-
-        // Enregistrer les paramètres développeur
-        register_setting('pdf_builder_settings', 'pdf_builder_developer_enabled');
-        register_setting('pdf_builder_settings', 'pdf_builder_developer_password');
-        register_setting('pdf_builder_settings', 'pdf_builder_license_test_mode');
-        register_setting('pdf_builder_settings', 'pdf_builder_debug_php_errors');
-        register_setting('pdf_builder_settings', 'pdf_builder_debug_javascript');
-        register_setting('pdf_builder_settings', 'pdf_builder_debug_javascript_verbose');
-        register_setting('pdf_builder_settings', 'pdf_builder_debug_ajax');
-        register_setting('pdf_builder_settings', 'pdf_builder_debug_performance');
-        register_setting('pdf_builder_settings', 'pdf_builder_debug_database');
-        register_setting('pdf_builder_settings', 'pdf_builder_log_level');
-        register_setting('pdf_builder_settings', 'pdf_builder_log_file_size');
-        register_setting('pdf_builder_settings', 'pdf_builder_log_retention');
-        register_setting('pdf_builder_settings', 'pdf_builder_force_https');
-        register_setting('pdf_builder_settings', 'pdf_builder_performance_monitoring');
-
-        // Enregistrer les paramètres généraux
-        register_setting('pdf_builder_settings', 'pdf_builder_company_phone_manual');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_capital');
 
         add_settings_field(
             'cache_settings',
@@ -170,38 +95,6 @@ class SettingsManager
             [$this, 'renderCanvasSection'],
             'pdf_builder_settings'
         );
-
-        // Enregistrer tous les paramètres canvas
-        $canvas_settings = [
-            'pdf_builder_canvas_canvas_width',
-            'pdf_builder_canvas_canvas_height',
-            'pdf_builder_canvas_canvas_dpi',
-            'pdf_builder_canvas_canvas_format',
-            'pdf_builder_canvas_canvas_bg_color',
-            'pdf_builder_canvas_canvas_border_color',
-            'pdf_builder_canvas_canvas_border_width',
-            'pdf_builder_canvas_canvas_shadow_enabled',
-            'pdf_builder_canvas_canvas_container_bg_color',
-            'pdf_builder_canvas_canvas_grid_enabled',
-            'pdf_builder_canvas_canvas_grid_size',
-            'pdf_builder_canvas_canvas_guides_enabled',
-            'pdf_builder_canvas_canvas_snap_to_grid',
-            'pdf_builder_canvas_canvas_zoom_min',
-            'pdf_builder_canvas_canvas_zoom_max',
-            'pdf_builder_canvas_canvas_zoom_default',
-            'pdf_builder_canvas_canvas_zoom_step',
-            'pdf_builder_canvas_canvas_export_quality',
-            'pdf_builder_canvas_canvas_export_format',
-            'pdf_builder_canvas_canvas_export_transparent',
-            'pdf_builder_canvas_canvas_drag_enabled',
-        ];
-
-        foreach ($canvas_settings as $setting) {
-            register_setting('pdf_builder_settings', $setting);
-        }
-
-        // Enregistrer le paramètre des templates par statut
-        register_setting('pdf_builder_settings', 'pdf_builder_order_status_templates');
     }
 
 
@@ -235,11 +128,12 @@ class SettingsManager
      */
     public function renderCompanyInfoField()
     {
-        $company_name = get_option('pdf_builder_company_name', '');
-        $company_address = get_option('pdf_builder_company_address', '');
-        $company_phone = get_option('pdf_builder_company_phone', '');
-        $company_email = get_option('pdf_builder_company_email', '');
-        $default_language = get_option('pdf_builder_default_language', 'fr');
+        $settings = get_option('pdf_builder_settings', []);
+        $company_name = $settings['pdf_builder_company_name'] ?? '';
+        $company_address = $settings['pdf_builder_company_address'] ?? '';
+        $company_phone = $settings['pdf_builder_company_phone'] ?? '';
+        $company_email = $settings['pdf_builder_company_email'] ?? '';
+        $default_language = $settings['pdf_builder_default_language'] ?? 'fr';
 
         echo '<table class="form-table">';
         echo '<tr>';
@@ -281,8 +175,9 @@ class SettingsManager
      */
     public function renderCacheField()
     {
-        $enable_cache = get_option('pdf_builder_enable_cache', '1');
-        $cache_timeout = get_option('pdf_builder_cache_timeout', 3600);
+        $settings = get_option('pdf_builder_settings', []);
+        $enable_cache = $settings['pdf_builder_cache_enabled'] ?? '1';
+        $cache_timeout = $settings['pdf_builder_cache_ttl'] ?? 3600;
 
         echo '<table class="form-table">';
         echo '<tr>';
@@ -308,9 +203,10 @@ class SettingsManager
      */
     public function renderPerformanceLimitsField()
     {
-        $compression_level = get_option('pdf_builder_compression_level', 6);
-        $memory_limit = get_option('pdf_builder_memory_limit', 256);
-        $max_execution_time = get_option('pdf_builder_max_execution_time', 30);
+        $settings = get_option('pdf_builder_settings', []);
+        $compression_level = $settings['pdf_builder_compression_level'] ?? 6;
+        $memory_limit = $settings['pdf_builder_memory_limit'] ?? 256;
+        $max_execution_time = $settings['pdf_builder_max_execution_time'] ?? 30;
 
         echo '<table class="form-table">';
         echo '<tr>';
@@ -436,12 +332,18 @@ class SettingsManager
      */
     private function getGeneralSettings()
     {
+        $settings = get_option('pdf_builder_settings', []);
         return [
-            'company_name' => get_option('pdf_builder_company_name', ''),
-            'company_address' => get_option('pdf_builder_company_address', ''),
-            'company_phone' => get_option('pdf_builder_company_phone', ''),
-            'company_email' => get_option('pdf_builder_company_email', ''),
-            'default_language' => get_option('pdf_builder_default_language', 'fr'),
+            'company_name' => $settings['pdf_builder_company_name'] ?? '',
+            'company_address' => $settings['pdf_builder_company_address'] ?? '',
+            'company_phone' => $settings['pdf_builder_company_phone'] ?? '',
+            'company_email' => $settings['pdf_builder_company_email'] ?? '',
+            'company_phone_manual' => $settings['pdf_builder_company_phone_manual'] ?? '',
+            'company_siret' => $settings['pdf_builder_company_siret'] ?? '',
+            'company_vat' => $settings['pdf_builder_company_vat'] ?? '',
+            'company_rcs' => $settings['pdf_builder_company_rcs'] ?? '',
+            'company_capital' => $settings['pdf_builder_company_capital'] ?? '',
+            'default_language' => $settings['pdf_builder_default_language'] ?? 'fr',
         ];
     }
 
@@ -450,12 +352,13 @@ class SettingsManager
      */
     private function getPerformanceSettings()
     {
+        $settings = get_option('pdf_builder_settings', []);
         return [
-            'enable_cache' => get_option('pdf_builder_enable_cache', '1') === '1',
-            'cache_timeout' => intval(get_option('pdf_builder_cache_timeout', 3600)),
-            'compression_level' => intval(get_option('pdf_builder_compression_level', 6)),
-            'memory_limit' => intval(get_option('pdf_builder_memory_limit', 256)),
-            'max_execution_time' => intval(get_option('pdf_builder_max_execution_time', 30)),
+            'enable_cache' => ($settings['pdf_builder_cache_enabled'] ?? '0') === '1',
+            'cache_timeout' => intval($settings['pdf_builder_cache_ttl'] ?? 3600),
+            'compression_level' => intval($settings['pdf_builder_compression_level'] ?? 6),
+            'memory_limit' => intval($settings['pdf_builder_memory_limit'] ?? 256),
+            'max_execution_time' => intval($settings['pdf_builder_max_execution_time'] ?? 30),
         ];
     }
 
@@ -464,25 +367,26 @@ class SettingsManager
      */
     private function getCanvasSettings()
     {
+        $settings = get_option('pdf_builder_settings', []);
         return [
-            'format' => get_option('pdf_builder_canvas_format', 'A4'),
-            'orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
-            'dpi' => intval(get_option('pdf_builder_canvas_dpi', 96)),
-            'width' => intval(get_option('pdf_builder_canvas_width', 794)),
-            'height' => intval(get_option('pdf_builder_canvas_height', 1123)),
-            'drag_enabled' => get_option('pdf_builder_canvas_drag_enabled', '1') === '1',
-            'resize_enabled' => get_option('pdf_builder_canvas_resize_enabled', '1') === '1',
-            'rotate_enabled' => get_option('pdf_builder_canvas_rotate_enabled', '1') === '1',
-            'multi_select' => get_option('pdf_builder_canvas_multi_select', '1') === '1',
-            'selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
-            'keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') === '1',
-            'grid_enabled' => get_option('pdf_builder_canvas_grid_enabled', '1') === '1',
-            'grid_size' => intval(get_option('pdf_builder_canvas_grid_size', 20)),
-            'snap_to_grid' => get_option('pdf_builder_canvas_snap_to_grid', '1') === '1',
-            'navigation_enabled' => get_option('pdf_builder_canvas_navigation_enabled', '1') === '1',
-            'zoom_default' => intval(get_option('pdf_builder_canvas_zoom_default', 100)),
-            'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
-            'export_quality' => intval(get_option('pdf_builder_canvas_export_quality', 90)),
+            'format' => $settings['pdf_builder_canvas_canvas_format'] ?? 'A4',
+            'orientation' => $settings['pdf_builder_canvas_canvas_orientation'] ?? 'portrait',
+            'dpi' => intval($settings['pdf_builder_canvas_canvas_dpi'] ?? 96),
+            'width' => intval($settings['pdf_builder_canvas_canvas_width'] ?? 794),
+            'height' => intval($settings['pdf_builder_canvas_canvas_height'] ?? 1123),
+            'drag_enabled' => ($settings['pdf_builder_canvas_canvas_drag_enabled'] ?? '1') === '1',
+            'resize_enabled' => ($settings['pdf_builder_canvas_canvas_resize_enabled'] ?? '1') === '1',
+            'rotate_enabled' => ($settings['pdf_builder_canvas_canvas_rotate_enabled'] ?? '1') === '1',
+            'multi_select' => ($settings['pdf_builder_canvas_canvas_multi_select'] ?? '1') === '1',
+            'selection_mode' => $settings['pdf_builder_canvas_canvas_selection_mode'] ?? 'click',
+            'keyboard_shortcuts' => ($settings['pdf_builder_canvas_canvas_keyboard_shortcuts'] ?? '1') === '1',
+            'grid_enabled' => ($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? '1') === '1',
+            'grid_size' => intval($settings['pdf_builder_canvas_canvas_grid_size'] ?? 20),
+            'snap_to_grid' => ($settings['pdf_builder_canvas_canvas_snap_to_grid'] ?? '1') === '1',
+            'navigation_enabled' => ($settings['pdf_builder_canvas_canvas_navigation_enabled'] ?? '1') === '1',
+            'zoom_default' => intval($settings['pdf_builder_canvas_canvas_zoom_default'] ?? 100),
+            'export_format' => $settings['pdf_builder_canvas_canvas_export_format'] ?? 'png',
+            'export_quality' => intval($settings['pdf_builder_canvas_canvas_export_quality'] ?? 90),
         ];
     }
 
