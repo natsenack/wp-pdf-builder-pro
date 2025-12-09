@@ -13,13 +13,16 @@ if (!defined('ABSPATH')) {
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
+    // DEBUG: Fonction appelée
+    error_log('PDF Builder - pdf_builder_load_settings_assets appelée pour hook: ' . $hook);
+
     // DEBUG: Log du hook actuel
     error_log('PDF Builder - Hook actuel: ' . $hook);
 
-    // Charger seulement sur la page de paramètres PDF Builder
-    if ($hook !== 'pdf-builder-pro_page_pdf-builder-settings') {
-        return;
-    }
+    // TEMPORAIREMENT : Charger sur TOUTES les pages admin pour debug
+    // if ($hook !== 'pdf-builder-pro_page_pdf-builder-settings') {
+    //     return;
+    // }
 
     // TEMPORAIREMENT DÉSACTIVÉ : Assets personnalisés causent des conflits avec WordPress
     // Ces styles personnalisés interfèrent avec la structure WordPress et causent le chevauchement du footer
