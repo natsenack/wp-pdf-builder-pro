@@ -4,6 +4,8 @@
  * Date: 2025-12-03
  */
 
+console.log('PDF Builder - settings-tabs.js chargé');
+
 (function() {
     'use strict';
 
@@ -128,13 +130,13 @@
             return;
         }
 
-        debugLog('PDF Builder - Initialisation du bouton flottant...');
+        console.log('PDF Builder - Initialisation du bouton flottant...');
 
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
-        debugLog('   - Bouton #pdf-builder-save-floating-btn:', saveBtn ? 'trouvé' : 'manquant');
-        debugLog('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
+        console.log('PDF Builder - Bouton trouvé:', saveBtn ? 'OUI' : 'NON');
+        console.log('PDF Builder - Container trouvé:', floatingContainer ? 'OUI' : 'NON');
 
         if (saveBtn && floatingContainer) {
             // Afficher le bouton flottant
@@ -217,7 +219,10 @@
     }
 
     // Initialiser le bouton flottant aussi
-    document.addEventListener('DOMContentLoaded', initSaveButton);
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('PDF Builder - DOMContentLoaded déclenché');
+        initSaveButton();
+    });
 
     // Section Test de Licence - Onglet Développeur
     function initLicenseTestSection() {

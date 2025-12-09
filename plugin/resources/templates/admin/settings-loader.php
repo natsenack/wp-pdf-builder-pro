@@ -13,8 +13,11 @@ if (!defined('ABSPATH')) {
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
+    // DEBUG: Log du hook actuel
+    error_log('PDF Builder - Hook actuel: ' . $hook);
+
     // Charger seulement sur la page de paramètres PDF Builder
-    if ($hook !== 'pdf-builder_page_pdf-builder-settings') {
+    if ($hook !== 'pdf-builder-pro_page_pdf-builder-settings') {
         return;
     }
 
