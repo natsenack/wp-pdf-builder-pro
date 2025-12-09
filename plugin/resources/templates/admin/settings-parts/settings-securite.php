@@ -18,9 +18,9 @@
             <h2>🔒 Sécurité & Conformité</h2>
 
             <!-- Formulaire pour les paramètres de sécurité -->
-            <form id="securite-settings-form" method="post" action="">
+            <!-- <form id="securite-settings-form" method="post" action="">
                 <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_securite_nonce'); ?>
-                <input type="hidden" name="current_tab" value="securite">
+                <input type="hidden" name="current_tab" value="securite"> -->
 
                 <!-- Section Sécurité -->
                 <div id="securite" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
@@ -36,7 +36,7 @@
                         <tr>
                             <th scope="row"><label for="security_level">Niveau de sécurité</label></th>
                             <td>
-                                <select id="security_level" name="pdf_builder_security_level">
+                                <select id="security_level" name="pdf_builder_settings[pdf_builder_security_level]">
                                     <option value="low" <?php selected($security_level, 'low'); ?>>Faible</option>
                                     <option value="medium" <?php selected($security_level, 'medium'); ?>>Moyen</option>
                                     <option value="high" <?php selected($security_level, 'high'); ?>>Élevé</option>
@@ -48,7 +48,7 @@
                             <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="enable_logging" name="pdf_builder_enable_logging" value="1" <?php checked($enable_logging, '1'); ?>>
+                                    <input type="checkbox" id="enable_logging" name="pdf_builder_settings[pdf_builder_enable_logging]" value="1" <?php checked($enable_logging, '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la journalisation des actions pour audit</p>
@@ -73,7 +73,7 @@
                                 <th scope="row"><label for="gdpr_enabled">RGPD Activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="gdpr_enabled" name="pdf_builder_gdpr_enabled" value="1" <?php checked($gdpr_enabled, '1'); ?>>
+                                        <input type="checkbox" id="gdpr_enabled" name="pdf_builder_settings[pdf_builder_gdpr_enabled]" value="1" <?php checked($gdpr_enabled, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Activer la conformité RGPD pour le plugin</p>
