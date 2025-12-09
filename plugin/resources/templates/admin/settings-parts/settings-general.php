@@ -35,9 +35,9 @@
     </header>
 
     <div class="settings-content">
-        <form method="post" action="" id="general-form" class="settings-form" novalidate>
-            <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_company_nonce'); ?>
-            <input type="hidden" name="current_tab" value="general">
+        <!-- Formulaire supprimé - les champs sont maintenant dans le formulaire principal -->
+        <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_company_nonce'); ?>
+        <input type="hidden" name="current_tab" value="general">
 
             <!-- Informations WooCommerce (compact) -->
             <div class="settings-card">
