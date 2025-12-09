@@ -4407,4 +4407,67 @@ body.modal-open {
     font-size: 12px;
 }
 
+/* === BOUTON FLOTTANT === */
+.pdf-builder-floating-save {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: #007cba;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-builder-floating-save:hover {
+    background: #005a87;
+    box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
+    transform: translateY(-2px);
+}
+
+.pdf-builder-floating-save:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
+}
+
+.pdf-builder-floating-save::before {
+    content: "💾";
+    font-size: 16px;
+}
+
+.pdf-builder-floating-save.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.pdf-builder-floating-save.loading::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Masquer le bouton original de WordPress */
+.form-table + p.submit {
+    display: none !important;
+}
+
 

@@ -1251,4 +1251,69 @@
 // FORCE CACHE BUST - Modified: 2025-12-06 - Added monitoring and security improvements
 // Cache bust timestamp: 1733440875
 
+    // Gestion du bouton flottant de sauvegarde
+    const FloatingSaveButton = {
+        button: null,
+        form: null,
+
+        init() {
+            this.button = document.getElementById('pdf-builder-floating-save');
+            this.form = document.querySelector('form[action="options.php"]');
+
+            if (!this.button || !this.form) {
+                if (PDF_BUILDER_CONFIG.debug) {
+                    console.log('[PDF Builder] Bouton flottant ou formulaire non trouvé');
+                }
+                return;
+            }
+
+            this.bindEvents();
+            if (PDF_BUILDER_CONFIG.debug) {
+                console.log('[PDF Builder] Bouton flottant initialisé');
+            }
+        },
+
+        bindEvents() {
+            // Gérer la soumission du formulaire
+            this.form.addEventListener('submit', (e) => {
+                this.setLoadingState(true);
+            });
+
+            // Gérer le clic sur le bouton flottant
+            this.button.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.form.submit();
+            });
+
+            // Réinitialiser l'état lors du chargement de la page
+            window.addEventListener('load', () => {
+                this.setLoadingState(false);
+            });
+
+            // Gérer les erreurs de soumission
+            window.addEventListener('error', () => {
+                this.setLoadingState(false);
+            });
+        },
+
+        setLoadingState(loading) {
+            if (!this.button) return;
+
+            if (loading) {
+                this.button.classList.add('loading');
+                this.button.disabled = true;
+            } else {
+                this.button.classList.remove('loading');
+                this.button.disabled = false;
+            }
+        }
+    };
+
+    // Initialiser le bouton flottant quand le DOM est prêt
+    document.addEventListener('DOMContentLoaded', function() {
+        FloatingSaveButton.init();
+    });
+
+})();
+
 

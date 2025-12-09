@@ -1410,6 +1410,11 @@ class PdfBuilderAdmin
                     ?>
 
                     <?php submit_button(); ?>
+
+                    <!-- Bouton flottant personnalisé -->
+                    <button type="submit" name="submit" id="pdf-builder-floating-save" class="pdf-builder-floating-save">
+                        <?php _e('Enregistrer', 'pdf-builder-pro'); ?>
+                    </button>
                 </div>
             </form>
 
