@@ -161,7 +161,7 @@
                         <tr>
                             <th scope="row"><label for="modal_cache_max_size">Taille max du cache (MB)</label></th>
                             <td>
-                                <input type="number" id="modal_cache_max_size" name="pdf_builder_cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
+                                <input type="number" id="modal_cache_max_size" name="pdf_builder_cache_max_size" value="<?php echo max(10, intval(get_option('pdf_builder_cache_max_size', 100))); ?>" min="10" max="1000" step="10" />
                                 <p class="description">Taille maximale du dossier cache en mégaoctets</p>
                             </td>
                         </tr>
