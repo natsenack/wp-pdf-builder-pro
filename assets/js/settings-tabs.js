@@ -131,7 +131,7 @@
             return;
         }
 
-        debugLog('PDF Builder - Initialisation du bouton flottant...');
+        console.log('PDF Builder - Initialisation du bouton flottant...');
 
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
