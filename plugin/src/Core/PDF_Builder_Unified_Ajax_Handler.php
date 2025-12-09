@@ -532,12 +532,9 @@ class PDF_Builder_Unified_Ajax_Handler {
 
                 if (strpos($bool_field, 'pdf_builder_canvas_') === 0 || strpos($bool_field, 'pdf_builder_zoom_') === 0 || strpos($bool_field, 'pdf_builder_default_canvas_') === 0) {
                     $option_key = $bool_field;
-                    update_option($option_key, $option_value);
+                    $settings[$option_key] = $option_value; // Save to unified settings array instead of individual option
                     if ($bool_field === 'pdf_builder_canvas_canvas_shadow_enabled' || strpos($bool_field, 'pdf_builder_canvas_canvas_grid') === 0 || strpos($bool_field, 'pdf_builder_canvas_canvas_guide') === 0 || strpos($bool_field, 'pdf_builder_canvas_canvas_snap') === 0) {
-                        error_log('[PDF Builder AJAX] Saved canvas field to option: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
-                        // Vérifier immédiatement si l'option a été sauvegardée
-                        $saved_value = get_option($option_key, 'NOT_FOUND');
-                        error_log('[PDF Builder AJAX] Verification - get_option(' . $option_key . ') returned: ' . $saved_value . ' (type: ' . gettype($saved_value) . ')');
+                        error_log('[PDF Builder AJAX] Saved canvas field to settings: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
                     }
                 } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
                     $option_key = $bool_field;
@@ -556,7 +553,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
                 if (strpos($bool_field, 'pdf_builder_canvas_') === 0 || strpos($bool_field, 'pdf_builder_zoom_') === 0 || strpos($bool_field, 'pdf_builder_default_canvas_') === 0) {
                     $option_key = $bool_field;
-                    update_option($option_key, $option_value);
+                    $settings[$option_key] = $option_value; // Save to unified settings array instead of individual option
                 } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
                     $option_key = $bool_field;
                     $settings[$option_key] = $option_value;
@@ -607,7 +604,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if (strpos($key, 'pdf_builder_canvas_') === 0 || strpos($key, 'pdf_builder_zoom_') === 0 || strpos($key, 'pdf_builder_default_canvas_') === 0) {
                     $option_key = $key;
                     $option_value = sanitize_text_field($value ?? '');
-                    update_option($option_key, $option_value); // Canvas fields saved separately
+                    $settings[$option_key] = $option_value; // Save to unified settings array instead of individual option
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
@@ -629,12 +626,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if (strpos($key, 'pdf_builder_canvas_') === 0 || strpos($key, 'pdf_builder_zoom_') === 0 || strpos($key, 'pdf_builder_default_canvas_') === 0) {
                     $option_key = $key;
                     $option_value = intval($value ?? 0);
-                    update_option($option_key, $option_value); // Canvas fields saved separately
+                    $settings[$option_key] = $option_value; // Save to unified settings array instead of individual option
                     if ($key === 'pdf_builder_canvas_grid_size') {
-                        error_log('[PDF Builder AJAX] Saved canvas int field to option: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
-                        // Vérifier immédiatement si l'option a été sauvegardée
-                        $saved_value = get_option($option_key, 'NOT_FOUND');
-                        error_log('[PDF Builder AJAX] Verification - get_option(' . $option_key . ') returned: ' . $saved_value . ' (type: ' . gettype($saved_value) . ')');
+                        error_log('[PDF Builder AJAX] Saved canvas int field to settings: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
                     }
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
