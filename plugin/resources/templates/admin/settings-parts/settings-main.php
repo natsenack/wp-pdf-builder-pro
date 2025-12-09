@@ -88,12 +88,10 @@
 
         <!-- Section Général -->
         <div id="content-general" class="tab-content">
-            <h3><?php _e('Général', 'pdf-builder-pro'); ?></h3>
             <?php
             $general_file = __DIR__ . '/settings-general.php';
             if (file_exists($general_file)) {
                 require_once $general_file;
-                echo '<!-- Fichier settings-general.php chargé -->';
             } else {
                 echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
             }
@@ -102,7 +100,6 @@
 
         <!-- Section Licence -->
         <div id="content-licence" class="tab-content">
-            <h3><?php _e('Licence', 'pdf-builder-pro'); ?></h3>
             <?php
             $licence_file = __DIR__ . '/settings-licence.php';
             if (file_exists($licence_file)) {
@@ -115,7 +112,6 @@
 
         <!-- Section Système -->
         <div id="content-systeme" class="tab-content">
-            <h3><?php _e('Système', 'pdf-builder-pro'); ?></h3>
             <?php
             $systeme_file = __DIR__ . '/settings-systeme.php';
             if (file_exists($systeme_file)) {
@@ -128,7 +124,6 @@
 
         <!-- Section Sécurité -->
         <div id="content-securite" class="tab-content">
-            <h3><?php _e('Sécurité', 'pdf-builder-pro'); ?></h3>
             <?php
             $securite_file = __DIR__ . '/settings-securite.php';
             if (file_exists($securite_file)) {
@@ -141,7 +136,6 @@
 
         <!-- Section Configuration PDF -->
         <div id="content-pdf" class="tab-content">
-            <h3><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></h3>
             <?php
             $pdf_file = __DIR__ . '/settings-pdf.php';
             if (file_exists($pdf_file)) {
@@ -154,7 +148,6 @@
 
         <!-- Section Canvas & Design -->
         <div id="content-contenu" class="tab-content">
-            <h3><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></h3>
             <?php
             $contenu_file = __DIR__ . '/settings-contenu.php';
             if (file_exists($contenu_file)) {
@@ -167,7 +160,6 @@
 
         <!-- Section Templates -->
         <div id="content-templates" class="tab-content">
-            <h3><?php _e('Templates', 'pdf-builder-pro'); ?></h3>
             <?php
             $templates_file = __DIR__ . '/settings-templates.php';
             if (file_exists($templates_file)) {
@@ -180,7 +172,6 @@
 
         <!-- Section Développeur -->
         <div id="content-developpeur" class="tab-content">
-            <h3><?php _e('Développeur', 'pdf-builder-pro'); ?></h3>
             <?php
             $developpeur_file = __DIR__ . '/settings-developpeur.php';
             if (file_exists($developpeur_file)) {
@@ -197,9 +188,6 @@
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
         💾 Enregistrer
     </button>
-
-    <!-- Inclusion des modales -->
-    <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
     <!-- Containers fictifs pour éviter les erreurs JS -->
     <div id="pdf-builder-tabs" style="display: none;"></div>
@@ -382,3 +370,6 @@
         });
     </script>
 </div> <!-- Fin du .wrap -->
+
+<!-- Inclusion des modales en dehors du .wrap -->
+<?php require_once __DIR__ . '/settings-modals.php'; ?>
