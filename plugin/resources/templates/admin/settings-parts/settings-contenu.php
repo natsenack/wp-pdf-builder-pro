@@ -27,15 +27,6 @@
 
 ?>
 <section id="contenu" class="settings-section contenu-settings" role="tabpanel" aria-labelledby="tab-contenu">
-    <header class="section-header">
-        <h2 class="section-title">
-            <span class="dashicons dashicons-admin-appearance"></span>
-            Contenu & Design
-        </h2>
-        <p class="section-description">
-            Configuration du canvas et des paramètres de design PDF.
-        </p>
-    </header>
 
     <div class="settings-content">
 <?php
