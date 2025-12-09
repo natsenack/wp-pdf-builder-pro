@@ -2499,7 +2499,7 @@ body.canvas-modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     position: relative;
     z-index: 1;
     backdrop-filter: blur(10px);
@@ -4408,6 +4408,7 @@ body.modal-open {
 }
 
 /* === BOUTON FLOTTANT === */
+/* === STYLES POUR LE BOUTON FLOTTANT DE SAUVEGARDE === */
 .pdf-builder-floating-save {
     position: fixed;
     bottom: 20px;
@@ -4465,9 +4466,41 @@ body.modal-open {
     100% { transform: rotate(360deg); }
 }
 
+/* === STYLES POUR LE WRAPPER DE CONTENU === */
+/* Ajouter une marge en bas pour éviter le chevauchement avec le bouton flottant */
+.settings-content-wrapper {
+    margin-bottom: 100px; /* Espace pour le bouton flottant + footer */
+    min-height: calc(100vh - 200px); /* Hauteur minimale pour éviter les problèmes de layout */
+}
+
 /* Masquer le bouton original de WordPress */
 .form-table + p.submit {
     display: none !important;
+}
+
+/* === STYLES POUR ÉVITER LES CHEVAUCHEMENTS AVEC LE FOOTER WORDPRESS === */
+/* S'assurer que le contenu ne dépasse pas la zone visible */
+.wrap {
+    position: relative;
+    padding-bottom: 120px; /* Espace supplémentaire pour le footer WordPress */
+}
+
+/* Ajustements pour les écrans mobiles */
+@media (max-width: 768px) {
+    .settings-content-wrapper {
+        margin-bottom: 120px; /* Plus d'espace sur mobile */
+    }
+
+    .wrap {
+        padding-bottom: 140px;
+    }
+
+    .pdf-builder-floating-save {
+        bottom: 25px;
+        right: 15px;
+        padding: 10px 20px;
+        font-size: 13px;
+    }
 }
 
 
