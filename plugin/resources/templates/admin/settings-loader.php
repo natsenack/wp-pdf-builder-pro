@@ -45,6 +45,7 @@ function pdf_builder_load_settings_assets($hook) {
     //     PDF_BUILDER_VERSION . '-' . time(),
     //     'all'
     // );
+    */
 
     // Charger le JavaScript pour la navigation par onglets
     wp_enqueue_script(
@@ -60,7 +61,6 @@ function pdf_builder_load_settings_assets($hook) {
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_ajax')
     ));
-    */
 }
 
 // Enregistrer le hook pour charger les assets
