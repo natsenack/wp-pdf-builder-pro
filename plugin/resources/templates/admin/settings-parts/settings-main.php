@@ -39,7 +39,7 @@
     ] : null;
 
 ?>
-<div class="wrap" style="padding-bottom: 100px;">
+<div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
