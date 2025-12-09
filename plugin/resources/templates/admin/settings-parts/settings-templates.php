@@ -577,12 +577,12 @@
 
                 <!-- Actions -->
                 <section class="templates-status-actions">
-                    <button type="button" class="button button-primary" id="save-templates-btn">
-                        💾 Sauvegarder les mappings
-                    </button>
                     <button type="button" class="button button-secondary" onclick="PDFBuilderTabsAPI.resetTemplatesStatus()">
                         🔄 Réinitialiser
                     </button>
+                    <p class="description" style="margin-top: 10px; color: #666;">
+                        💡 Utilisez le bouton "Enregistrer" flottant en bas de page pour sauvegarder vos modifications.
+                    </p>
                 </section>
         <?php endif; ?>
     </main>
@@ -642,93 +642,44 @@
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
-<!-- JavaScript pour la sauvegarde des templates -->
+<!-- JavaScript pour la gestion des templates -->
 <script>
     (function() {
         'use strict';
 
         // Attendre que le DOM soit chargé
         document.addEventListener('DOMContentLoaded', function() {
-            // Écouter l'événement de sauvegarde globale au lieu du clic sur le bouton
+            // Écouter l'événement de sauvegarde globale
             document.addEventListener('pdfBuilderSettingsSaved', function(event) {
-                // Vérifier si les templates ont été sauvegardés
-                if (event.detail && event.detail.response && event.detail.response.data) {
-                    var responseData = event.detail.response.data;
-                    if (responseData.saved_templates || responseData.templates) {
-                        updatePreviewsAfterSave();
-                    }
-                }
+                console.log('📋 Templates: Sauvegarde globale détectée, mise à jour des prévisualisations');
+                // Mettre à jour les prévisualisations après sauvegarde globale
+                updatePreviewsAfterSave();
             });
 
-            // Garder aussi l'ancien système au cas où
-            var saveBtn = document.getElementById('save-templates-btn');
-            if (saveBtn) {
-                saveBtn.addEventListener('click', function() {
-                    // Collecter toutes les données du formulaire
-                    var formData = new FormData(document.getElementById('templates-status-form'));
+            // Initialiser les prévisualisations au chargement
+            updatePreviewsAfterSave();
 
-                    // Ajouter l'action
-                    formData.append('action', 'pdf_builder_ajax_handler');
-                    formData.append('action_type', 'save_all_settings');
-
-                    // Désactiver le bouton pendant la sauvegarde
-                    saveBtn.disabled = true;
-                    saveBtn.textContent = 'Sauvegarde en cours...';
-
-                    // Envoyer la requête avec XMLHttpRequest (plus compatible)
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4) {
-                            try {
-                                var data = JSON.parse(xhr.responseText);
-                                if (data.success) {
-                                    // Afficher un message de succès
-                                    showSaveMessage('Mappings des templates sauvegardés avec succès!', 'success');
-
-                                    // Mise à jour simple des prévisualisations après sauvegarde
-                                    updatePreviewsAfterSave();
-                                } else {
-                                    var errorMsg = 'Erreur inconnue';
-                                    if (data.data && data.data.message) {
-                                        errorMsg = data.data.message;
-                                    }
-                                    showSaveMessage('Erreur lors de la sauvegarde: ' + errorMsg, 'error');
-                                }
-                            } catch (e) {
-                                console.error('Erreur parsing JSON:', e);
-                                showSaveMessage('Erreur de communication avec le serveur', 'error');
-                            }
-
-                            // Réactiver le bouton
-                            saveBtn.disabled = false;
-                            saveBtn.textContent = '💾 Sauvegarder les mappings';
-                        }
-                    };
-                    xhr.send(formData);
-                });
-            }
-
-            // Fonction simple pour mettre à jour les prévisualisations
+            // Fonction pour mettre à jour les prévisualisations
             function updatePreviewsAfterSave() {
-                // Faire un appel AJAX simple pour récupérer les données
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', pdfBuilderAjax.ajaxurl, true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            if (data.success && data.data && data.data.templates) {
-                                // Mettre à jour les prévisualisations avec les données reçues
-                                updatePreviewsWithData(data.data.mappings, data.data.templates);
-                            }
-                        } catch (e) {
-                            console.error('Erreur parsing JSON:', e);
-                        }
+                // Récupérer les mappings actuels depuis les selects
+                var selects = document.querySelectorAll('.template-select');
+                var mappings = {};
+                var templates = {};
+
+                // Collecter les données depuis les selects actuels
+                selects.forEach(function(select) {
+                    var statusKey = select.name.replace('pdf_builder_settings[pdf_builder_order_status_templates][', '').replace(']', '');
+                    var templateId = select.value;
+                    var templateTitle = select.options[select.selectedIndex]?.text || 'Aucun template';
+
+                    mappings[statusKey] = templateId;
+                    if (templateId) {
+                        templates[templateId] = templateTitle.replace('-- ', '').replace(' --', '');
                     }
-                };
-                xhr.send('action=pdf_builder_get_template_mappings&nonce=' + pdfBuilderAjax.nonce);
+                });
+
+                // Mettre à jour les prévisualisations
+                updatePreviewsWithData(mappings, templates);
             }
 
             // Fonction pour mettre à jour les prévisualisations avec les données
@@ -738,36 +689,24 @@
                     var preview = previews[i];
                     var select = preview.closest('article').querySelector('.template-select');
                     if (select) {
-                        // Utiliser les mappings sauvegardés plutôt que la valeur actuelle du select
-                        var postType = select.name.replace('pdf_builder_order_status_templates[', '').replace(']', '');
-                        var assignedTemplateId = mappings[postType];
+                        var statusKey = select.name.replace('pdf_builder_settings[pdf_builder_order_status_templates][', '').replace(']', '');
+                        var assignedTemplateId = mappings[statusKey];
 
                         if (assignedTemplateId && templates[assignedTemplateId]) {
-                            preview.innerHTML = '<p class="current-template">Assigné : ' + templates[assignedTemplateId] + '</p>';
+                            preview.innerHTML = '<p class="current-template">📄 ' + templates[assignedTemplateId] + '</p>';
                         } else {
-                            preview.innerHTML = '<p class="no-template">Aucun template assigné</p>';
+                            preview.innerHTML = '<p class="no-template">❌ Aucun template</p>';
                         }
                     }
                 }
             }
 
-            function showSaveMessage(message, type) {
-                // Créer un élément de message temporaire
-                var messageDiv = document.createElement('div');
-                messageDiv.className = 'notice notice-' + (type === 'success' ? 'success' : 'error') + ' is-dismissible';
-                messageDiv.innerHTML = '<p>' + message + '</p>';
-
-                // L'insérer au début du formulaire
-                var form = document.getElementById('templates-status-form');
-                form.parentNode.insertBefore(messageDiv, form);
-
-                // Auto-suppression après 5 secondes
-                setTimeout(function() {
-                    if (messageDiv.parentNode) {
-                        messageDiv.parentNode.removeChild(messageDiv);
-                    }
-                }, 5000);
-            }
+            // Écouter les changements sur les selects pour mettre à jour les prévisualisations en temps réel
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('template-select')) {
+                    updatePreviewsAfterSave();
+                }
+            });
         });
     })();
 </script>
