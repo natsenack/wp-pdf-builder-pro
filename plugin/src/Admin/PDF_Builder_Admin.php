@@ -1316,75 +1316,91 @@ class PdfBuilderAdmin
                     <?php
                     switch ($current_tab) {
                         case 'general':
+                            echo '<div id="pdf-builder-tab-general">';
                             $general_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-general.php';
                             if (file_exists($general_file)) {
                                 include $general_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'licence':
+                            echo '<div id="pdf-builder-tab-licence">';
                             $licence_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-licence.php';
                             if (file_exists($licence_file)) {
                                 include $licence_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'systeme':
+                            echo '<div id="pdf-builder-tab-systeme">';
                             $systeme_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-systeme.php';
                             if (file_exists($systeme_file)) {
                                 include $systeme_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'securite':
+                            echo '<div id="pdf-builder-tab-securite">';
                             $securite_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-securite.php';
                             if (file_exists($securite_file)) {
                                 include $securite_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'pdf':
+                            echo '<div id="pdf-builder-tab-pdf">';
                             $pdf_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-pdf.php';
                             if (file_exists($pdf_file)) {
                                 include $pdf_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'contenu':
+                            echo '<div id="pdf-builder-tab-contenu">';
                             $contenu_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-contenu.php';
                             if (file_exists($contenu_file)) {
                                 include $contenu_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'templates':
+                            echo '<div id="pdf-builder-tab-templates">';
                             $templates_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-templates.php';
                             if (file_exists($templates_file)) {
                                 include $templates_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         case 'developpeur':
+                            echo '<div id="pdf-builder-tab-developpeur">';
                             $developpeur_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-parts/settings-developpeur.php';
                             if (file_exists($developpeur_file)) {
                                 include $developpeur_file;
                             } else {
                                 echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
                             }
+                            echo '</div>';
                             break;
 
                         default:
@@ -1393,13 +1409,50 @@ class PdfBuilderAdmin
                     }
                     ?>
 
-                    <?php submit_button(); ?>
                 </div>
             </form>
 
             <!-- Containers fictifs pour éviter les erreurs JS -->
             <div id="pdf-builder-tabs" style="display: none;"></div>
             <div id="pdf-builder-tab-content" style="display: none;"></div>
+
+            <!-- Bouton de sauvegarde global flottant -->
+            <div id="pdf-builder-global-save-container" style="
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1000;
+                background: #fff;
+                border: 2px solid #2271b1;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            ">
+                <button
+                    id="pdf-builder-global-save-btn"
+                    type="button"
+                    class="button button-primary button-large"
+                    style="
+                        background: #2271b1;
+                        border-color: #2271b1;
+                        color: #fff;
+                        font-weight: 600;
+                        padding: 8px 16px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                    "
+                    onmouseover="this.style.background='#135e96'"
+                    onmouseout="this.style.background='#2271b1'"
+                >
+                    <span class="dashicons dashicons-saved" style="margin-right: 8px;"></span>
+                    Sauvegarder Tout
+                </button>
+                <div id="global-save-status" style="font-size: 12px; color: #666;"></div>
+            </div>
 
         </div> <!-- Fin du .wrap -->
         <?php

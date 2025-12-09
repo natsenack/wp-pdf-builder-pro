@@ -116,7 +116,7 @@
          */
         saveAllSettingsGlobally: function() {
             const self = this;
-            const tabs = ['general', 'appearance', 'security', 'advanced'];
+            const tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
             const promises = [];
 
             // Show loading state
@@ -236,7 +236,7 @@
             }
 
             // Bind individual tab save buttons (if they exist)
-            const tabs = ['general', 'appearance', 'security', 'advanced'];
+            const tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
             tabs.forEach(function(tabId) {
                 const tabSaveBtn = document.getElementById('pdf-builder-save-' + tabId + '-btn');
                 if (tabSaveBtn) {

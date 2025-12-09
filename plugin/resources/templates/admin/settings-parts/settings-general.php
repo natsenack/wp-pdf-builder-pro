@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * Paramètres Généraux - PDF Builder Pro (Version compressée)
      * Onglet principal des paramètres généraux avec informations entreprise
@@ -105,14 +105,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Bouton sauvegarder -->
-            <div class="form-actions">
-                <button type="submit" class="button button-primary">
-                    <span class="dashicons dashicons-saved"></span>
-                    Sauvegarder
-                </button>
             </div>
         </form>
     </div>
