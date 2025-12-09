@@ -1932,6 +1932,22 @@
                         document.body.classList.remove('canvas-modal-open');
                         console.log('🔍 DEBUG: Toutes les modales fermées au démarrage');
                     });
+
+                    // Écouter l'événement de sauvegarde globale pour mettre à jour les indicateurs
+                    document.addEventListener('pdfBuilderSettingsSaved', function(event) {
+                        console.log('🎨 Contenu: Sauvegarde globale détectée, mise à jour des indicateurs');
+                        
+                        // Mettre à jour l'indicateur de la bibliothèque de templates
+                        const templateLibraryCheckbox = document.getElementById('template_library_enabled');
+                        const templateLibraryIndicator = document.getElementById('template-library-indicator');
+                        
+                        if (templateLibraryCheckbox && templateLibraryIndicator) {
+                            const isEnabled = templateLibraryCheckbox.checked;
+                            templateLibraryIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
+                            templateLibraryIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+                            console.log('📋 Indicateur bibliothèque templates mis à jour:', isEnabled ? 'ACTIF' : 'INACTIF');
+                        }
+                    });
                     document.addEventListener('click', function(e) {
                         // Bouton de configuration d'une carte
                         if (e.target.closest('.canvas-configure-btn')) {

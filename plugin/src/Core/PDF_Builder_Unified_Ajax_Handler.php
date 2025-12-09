@@ -227,7 +227,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'default_orientation' => $settings['pdf_builder_default_orientation'] ?? 'portrait',
 
                     // Contenu
-                    'template_library_enabled' => $settings['pdf_builder_template_library_enabled'] ?? '1',
+                    'template_library_enabled' => get_option('pdf_builder_template_library_enabled', '1'),
                     'default_template' => $settings['pdf_builder_default_template'] ?? 'blank',
 
                     // Canvas settings (stored individually)
@@ -385,14 +385,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Other content settings
                     'canvas_max_size' => get_option('pdf_builder_canvas_max_size', 10000),
                     'canvas_quality' => get_option('pdf_builder_canvas_quality', 90),
-                    'template_library_enabled' => get_option('pdf_builder_template_library_enabled', '1'),
-                    'default_template' => get_option('pdf_builder_default_template', 'blank'),
+                    'template_library_enabled' => $settings['pdf_builder_template_library_enabled'] ?? '1',
+                    'default_template' => $settings['pdf_builder_default_template'] ?? 'blank',
                 ];
                 break;
 
             case 'templates':
                 $saved_options = [
-                    'order_status_templates' => get_option('pdf_builder_order_status_templates', []),
+                    'order_status_templates' => $settings['pdf_builder_order_status_templates'] ?? [],
                 ];
                 break;
 
@@ -465,6 +465,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $settings = get_option('pdf_builder_settings', []);
 
         error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
+        error_log('[PDF Builder AJAX] Full POST data: ' . json_encode($_POST));
 
         // FIRST: Handle the main pdf_builder_settings array if it exists
         if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
@@ -475,7 +476,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Handle nested arrays like pdf_builder_order_status_templates
                     if ($setting_key === 'pdf_builder_order_status_templates') {
                         $settings[$setting_key] = array_map('sanitize_text_field', $setting_value);
-                        error_log('[PDF Builder AJAX] Saved nested array ' . $setting_key . ' with ' . count($setting_value) . ' items');
+                        error_log('[PDF Builder AJAX] Saved nested array ' . $setting_key . ' with ' . count($setting_value) . ' items: ' . json_encode($setting_value));
                     } else {
                         // Handle other nested arrays if needed
                         $settings[$setting_key] = $setting_value; // Keep as-is for now, sanitize later if needed

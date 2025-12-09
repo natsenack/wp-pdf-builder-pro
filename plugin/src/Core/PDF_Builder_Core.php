@@ -746,7 +746,7 @@ class PdfBuilderCore
                     $template_mappings[sanitize_text_field($status)] = $template_id;
                 }
             }
-            update_option('pdf_builder_order_status_templates', $template_mappings);
+            update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', []), ['pdf_builder_order_status_templates' => $template_mappings]));
         }
 
         // Retourner le succès

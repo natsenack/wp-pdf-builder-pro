@@ -141,12 +141,68 @@
                 e.preventDefault();
                 debugLog('PDF Builder - Clic sur le bouton flottant');
 
-                // Trouver le formulaire de sauvegarde principal
+                // Utiliser AJAX pour sauvegarder tous les paramètres
                 const mainForm = document.getElementById('pdf-builder-settings-form') || document.querySelector('form');
                 if (mainForm) {
-                    // Simuler la soumission du formulaire principal
-                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                    mainForm.dispatchEvent(submitEvent);
+                    // Collecter toutes les données du formulaire
+                    const formData = new FormData(mainForm);
+                    formData.append('action', 'pdf_builder_save_all_settings');
+                    formData.append('current_tab', 'all');
+                    
+                    // Ajouter le nonce
+                    const nonceField = mainForm.querySelector('input[name="pdf_builder_settings_nonce"]');
+                    if (nonceField) {
+                        formData.append('nonce', nonceField.value);
+                    }
+
+                    debugLog('PDF Builder - Envoi AJAX avec FormData');
+
+                    // Désactiver le bouton pendant la sauvegarde
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = '💾 Sauvegarde...';
+
+                    // Faire l'appel AJAX
+                    fetch(pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        debugLog('PDF Builder - Réponse AJAX:', data);
+                        
+                        if (data.success) {
+                            // Afficher un message de succès
+                            if (window.simpleNotificationSystem) {
+                                window.simpleNotificationSystem.show('✅ ' + (data.message || 'Paramètres sauvegardés avec succès'), 'success');
+                            } else {
+                                alert('✅ ' + (data.message || 'Paramètres sauvegardés avec succès'));
+                            }
+                            
+                            // Déclencher un événement personnalisé pour que les onglets puissent réagir
+                            document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', { 
+                                detail: { savedCount: data.saved_count, savedSettings: data.saved_settings }
+                            }));
+                        } else {
+                            if (window.simpleNotificationSystem) {
+                                window.simpleNotificationSystem.show('❌ Erreur: ' + (data.data?.message || 'Erreur inconnue'), 'error');
+                            } else {
+                                alert('❌ Erreur: ' + (data.data?.message || 'Erreur inconnue'));
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        debugLog('PDF Builder - Erreur AJAX:', error);
+                        if (window.simpleNotificationSystem) {
+                            window.simpleNotificationSystem.show('❌ Erreur de réseau lors de la sauvegarde', 'error');
+                        } else {
+                            alert('❌ Erreur de réseau lors de la sauvegarde');
+                        }
+                    })
+                    .finally(() => {
+                        // Réactiver le bouton
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '💾 Enregistrer';
+                    });
                 } else {
                     debugError('PDF Builder - Formulaire principal non trouvé');
                 }

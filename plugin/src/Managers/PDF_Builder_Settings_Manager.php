@@ -107,7 +107,9 @@ class PdfBuilderSettingsManager
                 $status_templates[$status] = intval($template_id);
             }
         }
-        update_option('pdf_builder_order_status_templates', $status_templates);
+        $settings = get_option('pdf_builder_settings', []);
+        $settings['pdf_builder_order_status_templates'] = $status_templates;
+        update_option('pdf_builder_settings', $settings);
     }
 
 
