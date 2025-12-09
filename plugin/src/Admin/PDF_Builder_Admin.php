@@ -275,6 +275,39 @@ class PdfBuilderAdmin
             'pdf_builder_general'
         );
 
+        // Ajouter des champs supplémentaires pour le test de volume
+        add_settings_field(
+            'company_phone',
+            __('Téléphone', 'pdf-builder-pro'),
+            array($this, 'company_phone_field_callback'),
+            'pdf_builder_general',
+            'pdf_builder_general'
+        );
+
+        add_settings_field(
+            'company_email',
+            __('Email', 'pdf-builder-pro'),
+            array($this, 'company_email_field_callback'),
+            'pdf_builder_general',
+            'pdf_builder_general'
+        );
+
+        add_settings_field(
+            'company_website',
+            __('Site web', 'pdf-builder-pro'),
+            array($this, 'company_website_field_callback'),
+            'pdf_builder_general',
+            'pdf_builder_general'
+        );
+
+        add_settings_field(
+            'company_description',
+            __('Description de l\'entreprise', 'pdf-builder-pro'),
+            array($this, 'company_description_field_callback'),
+            'pdf_builder_general',
+            'pdf_builder_general'
+        );
+
         // Section Licence
         add_settings_section(
             'pdf_builder_licence',
@@ -301,6 +334,22 @@ class PdfBuilderAdmin
             $sanitized['company_address'] = sanitize_textarea_field($input['company_address']);
         }
 
+        if (isset($input['company_phone'])) {
+            $sanitized['company_phone'] = sanitize_text_field($input['company_phone']);
+        }
+
+        if (isset($input['company_email'])) {
+            $sanitized['company_email'] = sanitize_email($input['company_email']);
+        }
+
+        if (isset($input['company_website'])) {
+            $sanitized['company_website'] = esc_url_raw($input['company_website']);
+        }
+
+        if (isset($input['company_description'])) {
+            $sanitized['company_description'] = sanitize_textarea_field($input['company_description']);
+        }
+
         return $sanitized;
     }
 
@@ -310,6 +359,30 @@ class PdfBuilderAdmin
     public function general_section_callback()
     {
         echo '<p>' . __('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
+
+        // Ajouter du contenu volumineux pour tester le chevauchement du footer
+        echo '<div style="background: #f8f9fa; padding: 20px; margin: 20px 0; border: 1px solid #dee2e6; border-radius: 8px;">';
+        echo '<h3 style="color: #495057; margin-top: 0;">🧪 TEST DE CHEVAUCHEMENT DU FOOTER</h3>';
+        echo '<p style="color: #6c757d;">Ce bloc volumineux permet de tester si le footer WordPress chevauche le contenu de la page de paramètres.</p>';
+
+        echo '<div style="background: #fff3cd; padding: 15px; margin: 15px 0; border: 1px solid #f39c12; border-radius: 4px;">';
+        echo '<h4 style="color: #8b4513; margin-top: 0;">📏 Test visuel du layout</h4>';
+        echo '<p>Si vous voyez ce texte en entier sans que le footer WordPress ne le cache, alors l\'intégration WordPress Settings API fonctionne correctement !</p>';
+        echo '<p>Le footer devrait apparaître EN DESSOUS de ce bloc, pas par-dessus.</p>';
+        echo '</div>';
+
+        // Ajouter plusieurs paragraphes pour créer du volume
+        for ($i = 1; $i <= 15; $i++) {
+            echo '<p style="margin: 10px 0; line-height: 1.6;">Paragraphe de test #' . $i . ': Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>';
+        }
+
+        echo '<div style="background: #d4edda; padding: 15px; margin: 15px 0; border: 1px solid #28a745; border-radius: 4px;">';
+        echo '<h4 style="color: #155724; margin-top: 0;">✅ Zone de test finale</h4>';
+        echo '<p>Si cette zone verte est entièrement visible et que le footer apparaît en dessous, le problème de chevauchement est résolu !</p>';
+        echo '<p><strong>Instructions :</strong> Faites défiler jusqu\'au bas de cette page. Le footer WordPress (avec les liens "WordPress.org", etc.) devrait apparaître APRÈS ce bloc vert, pas par-dessus.</p>';
+        echo '</div>';
+
+        echo '</div>';
     }
 
     /**
@@ -330,6 +403,47 @@ class PdfBuilderAdmin
         $settings = get_option('pdf_builder_settings', array());
         $value = isset($settings['company_address']) ? $settings['company_address'] : '';
         echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . esc_textarea($value) . '</textarea>';
+    }
+
+    /**
+     * Callback pour le champ téléphone
+     */
+    public function company_phone_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['company_phone']) ? $settings['company_phone'] : '';
+        echo '<input type="tel" name="pdf_builder_settings[company_phone]" value="' . esc_attr($value) . '" class="regular-text" placeholder="+33 1 23 45 67 89" />';
+    }
+
+    /**
+     * Callback pour le champ email
+     */
+    public function company_email_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['company_email']) ? $settings['company_email'] : '';
+        echo '<input type="email" name="pdf_builder_settings[company_email]" value="' . esc_attr($value) . '" class="regular-text" placeholder="contact@entreprise.com" />';
+    }
+
+    /**
+     * Callback pour le champ site web
+     */
+    public function company_website_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['company_website']) ? $settings['company_website'] : '';
+        echo '<input type="url" name="pdf_builder_settings[company_website]" value="' . esc_attr($value) . '" class="regular-text" placeholder="https://www.entreprise.com" />';
+    }
+
+    /**
+     * Callback pour le champ description
+     */
+    public function company_description_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['company_description']) ? $settings['company_description'] : '';
+        echo '<textarea name="pdf_builder_settings[company_description]" rows="5" class="large-text" placeholder="Décrivez votre entreprise...">' . esc_textarea($value) . '</textarea>';
+        echo '<p class="description">Une description détaillée de votre entreprise qui sera utilisée dans les documents PDF.</p>';
     }
 
     /**
