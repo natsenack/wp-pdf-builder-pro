@@ -39,7 +39,7 @@
     ] : null;
 
 ?>
-<div class="wrap">
+<div class="wrap" style="padding-bottom: 100px;">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
@@ -89,88 +89,86 @@
     </h2>
 
     <!-- contenu des onglets moderne -->
-    <div class="postbox">
-        <div class="inside">
-            <?php
-            switch ($current_tab) {
-                case 'general':
-                    $general_file = __DIR__ . '/settings-general.php';
-                    if (file_exists($general_file)) {
-                        require_once $general_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+    <div class="settings-content-wrapper">
+        <?php
+        switch ($current_tab) {
+            case 'general':
+                $general_file = __DIR__ . '/settings-general.php';
+                if (file_exists($general_file)) {
+                    require_once $general_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'licence':
-                    $licence_file = __DIR__ . '/settings-licence.php';
-                    if (file_exists($licence_file)) {
-                        require_once $licence_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'licence':
+                $licence_file = __DIR__ . '/settings-licence.php';
+                if (file_exists($licence_file)) {
+                    require_once $licence_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'systeme':
-                    $systeme_file = __DIR__ . '/settings-systeme.php';
-                    if (file_exists($systeme_file)) {
-                        require_once $systeme_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'systeme':
+                $systeme_file = __DIR__ . '/settings-systeme.php';
+                if (file_exists($systeme_file)) {
+                    require_once $systeme_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'securite':
-                    $securite_file = __DIR__ . '/settings-securite.php';
-                    if (file_exists($securite_file)) {
-                        require_once $securite_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'securite':
+                $securite_file = __DIR__ . '/settings-securite.php';
+                if (file_exists($securite_file)) {
+                    require_once $securite_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'pdf':
-                    $pdf_file = __DIR__ . '/settings-pdf.php';
-                    if (file_exists($pdf_file)) {
-                        require_once $pdf_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'pdf':
+                $pdf_file = __DIR__ . '/settings-pdf.php';
+                if (file_exists($pdf_file)) {
+                    require_once $pdf_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'contenu':
-                    $contenu_file = __DIR__ . '/settings-contenu.php';
-                    if (file_exists($contenu_file)) {
-                        require_once $contenu_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'contenu':
+                $contenu_file = __DIR__ . '/settings-contenu.php';
+                if (file_exists($contenu_file)) {
+                    require_once $contenu_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'templates':
-                    $templates_file = __DIR__ . '/settings-templates.php';
-                    if (file_exists($templates_file)) {
-                        require_once $templates_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'templates':
+                $templates_file = __DIR__ . '/settings-templates.php';
+                if (file_exists($templates_file)) {
+                    require_once $templates_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                case 'developpeur':
-                    $developpeur_file = __DIR__ . '/settings-developpeur.php';
-                    if (file_exists($developpeur_file)) {
-                        require_once $developpeur_file;
-                    } else {
-                        echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
-                    }
-                    break;
+            case 'developpeur':
+                $developpeur_file = __DIR__ . '/settings-developpeur.php';
+                if (file_exists($developpeur_file)) {
+                    require_once $developpeur_file;
+                } else {
+                    echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
+                }
+                break;
 
-                default:
-                    echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
-                    break;
-            }
-            ?>
-        </div>
+            default:
+                echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
+                break;
+        }
+        ?>
     </div>
 
     <!-- Bouton flottant de sauvegarde -->
