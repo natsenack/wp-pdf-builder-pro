@@ -89,7 +89,7 @@
             <div class="tabs-content-wrapper">
 
         <!-- Section Général -->
-        <div id="content-general" class="tab-content">
+        <div id="content-general" class="tab-content active">
             <?php
             $general_file = __DIR__ . '/settings-general.php';
             if (file_exists($general_file)) {
