@@ -44,8 +44,8 @@
                 </div>
 
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
-                <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_width]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_width'] ?? '794'); ?>">
-                <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_height]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_height'] ?? '1123'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_width]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_width'] ?? '794'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_height]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_height'] ?? '1123'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_dpi]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_dpi'] ?? '96'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_format]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_format'] ?? 'A4'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_bg_color]" value="<?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>">
@@ -406,7 +406,7 @@
                         </article>
                     </div>
 
-                </form>
+
             </section>
 
                 <!-- Section Templates -->
@@ -417,6 +417,9 @@
                         <span id="template-library-indicator" class="template-library-indicator" style="background: <?php echo (($settings['pdf_builder_template_library_enabled'] ?? '1') === '1') ? '#28a745' : '#dc3545'; ?>;"><?php echo (($settings['pdf_builder_template_library_enabled'] ?? '1') === '1') ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
+
+                <form method="post" action="options.php" class="templates-settings-form">
+                    <?php settings_fields('pdf_builder_settings'); ?>
 
                     <table class="form-table">
                         <tr>
@@ -442,6 +445,9 @@
                             </td>
                         </tr>
                     </table>
+
+                    <?php submit_button('Enregistrer les paramètres Templates', 'primary', 'submit-templates'); ?>
+                </form>
             </section>
 
 
