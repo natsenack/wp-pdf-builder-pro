@@ -450,6 +450,15 @@ class SettingsManager
             }
         }
 
+        // TRAITEMENT SPECIFIQUE DES CHAMPS TEMPLATE
+        if (isset($input['pdf_builder_default_template'])) {
+            $allowed_templates = ['blank', 'invoice', 'quote'];
+            $sanitized['pdf_builder_default_template'] = in_array($input['pdf_builder_default_template'], $allowed_templates) ? $input['pdf_builder_default_template'] : 'blank';
+        }
+        if (isset($input['pdf_builder_template_library_enabled'])) {
+            $sanitized['pdf_builder_template_library_enabled'] = $input['pdf_builder_template_library_enabled'] ? '1' : '0';
+        }
+
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
             $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);
