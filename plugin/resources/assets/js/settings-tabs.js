@@ -4,6 +4,8 @@
  * Date: 2025-12-03
  */
 
+console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
+
 (function() {
     'use strict';
 
