@@ -519,6 +519,33 @@ class SettingsManager
             $sanitized['pdf_builder_license_reminder_email'] = sanitize_email($input['pdf_builder_license_reminder_email']);
         }
 
+        // Sanitisation des paramètres PDF
+        if (isset($input['pdf_builder_pdf_quality'])) {
+            $allowed_qualities = ['low', 'medium', 'high'];
+            $sanitized['pdf_builder_pdf_quality'] = in_array($input['pdf_builder_pdf_quality'], $allowed_qualities) ? $input['pdf_builder_pdf_quality'] : 'high';
+        }
+        if (isset($input['pdf_builder_default_format'])) {
+            $allowed_formats = ['A4', 'A3', 'Letter'];
+            $sanitized['pdf_builder_default_format'] = in_array($input['pdf_builder_default_format'], $allowed_formats) ? $input['pdf_builder_default_format'] : 'A4';
+        }
+        if (isset($input['pdf_builder_default_orientation'])) {
+            $allowed_orientations = ['portrait', 'landscape'];
+            $sanitized['pdf_builder_default_orientation'] = in_array($input['pdf_builder_default_orientation'], $allowed_orientations) ? $input['pdf_builder_default_orientation'] : 'portrait';
+        }
+        if (isset($input['pdf_builder_pdf_cache_enabled'])) {
+            $sanitized['pdf_builder_pdf_cache_enabled'] = $input['pdf_builder_pdf_cache_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_pdf_compression'])) {
+            $allowed_compressions = ['none', 'medium', 'high'];
+            $sanitized['pdf_builder_pdf_compression'] = in_array($input['pdf_builder_pdf_compression'], $allowed_compressions) ? $input['pdf_builder_pdf_compression'] : 'medium';
+        }
+        if (isset($input['pdf_builder_pdf_metadata_enabled'])) {
+            $sanitized['pdf_builder_pdf_metadata_enabled'] = $input['pdf_builder_pdf_metadata_enabled'] ? '1' : '0';
+        }
+        if (isset($input['pdf_builder_pdf_print_optimized'])) {
+            $sanitized['pdf_builder_pdf_print_optimized'] = $input['pdf_builder_pdf_print_optimized'] ? '1' : '0';
+        }
+
         // Sanitisation des paramètres canvas
         $canvas_fields = [
             'pdf_builder_canvas_canvas_width' => 'intval',

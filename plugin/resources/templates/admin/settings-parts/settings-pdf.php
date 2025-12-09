@@ -49,6 +49,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                             <th scope="row"><label for="pdf_builder_pdf_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_pdf_cache_enabled]" value="0">
                                     <input type="checkbox" id="pdf_builder_pdf_cache_enabled" name="pdf_builder_settings[pdf_builder_pdf_cache_enabled]" value="1" <?php checked($settings['pdf_builder_pdf_cache_enabled'] ?? '0', '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -102,7 +103,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                             <tr>
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
                                 <td>
-                                    <select id="pdf_compression" name="pdf_builder_pdf_compression">
+                                    <select id="pdf_compression" name="pdf_builder_settings[pdf_builder_pdf_compression]">
                                         <option value="none" <?php selected($settings['pdf_builder_pdf_compression'] ?? 'medium', 'none'); ?>>Aucune</option>
                                         <option value="medium" <?php selected($settings['pdf_builder_pdf_compression'] ?? 'medium', 'medium'); ?>>Moyenne</option>
                                         <option value="high" <?php selected($settings['pdf_builder_pdf_compression'] ?? 'medium', 'high'); ?>>Élevée</option>
@@ -114,7 +115,8 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                 <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_builder_pdf_metadata_enabled" value="1" <?php checked($settings['pdf_builder_pdf_metadata_enabled'] ?? '1', '1'); ?>>
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_pdf_metadata_enabled]" value="0">
+                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_builder_settings[pdf_builder_pdf_metadata_enabled]" value="1" <?php checked($settings['pdf_builder_pdf_metadata_enabled'] ?? '1', '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
@@ -124,6 +126,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                 <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
                                 <td>
                                     <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_pdf_print_optimized]" value="0">
                                         <input type="checkbox" id="pdf_print_optimized" name="pdf_builder_settings[pdf_builder_pdf_print_optimized]" value="1" <?php checked($settings['pdf_builder_pdf_print_optimized'] ?? '1', '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
