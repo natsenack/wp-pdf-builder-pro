@@ -36,50 +36,53 @@
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
     <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
 
-    <!-- Navigation par onglets moderne -->
-    <nav class="tabs-navigation">
+    <form method="post" action="options.php">
+        <?php settings_fields('pdf_builder_settings'); ?>
+
+        <!-- Navigation par onglets moderne -->
+        <h2 class="nav-tab-wrapper">
         <div class="tabs-container">
-            <button type="button" data-tab="general" class="tab-button active">
+            <button type="button" data-tab="general" class="nav-tab nav-tab-active">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="licence" class="tab-button">
+            <button type="button" data-tab="licence" class="nav-tab">
                 <span class="tab-icon">🔑</span>
                 <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="systeme" class="tab-button">
+            <button type="button" data-tab="systeme" class="nav-tab">
                 <span class="tab-icon">🖥️</span>
                 <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="securite" class="tab-button">
+            <button type="button" data-tab="securite" class="nav-tab">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="pdf" class="tab-button">
+            <button type="button" data-tab="pdf" class="nav-tab">
                 <span class="tab-icon">📄</span>
                 <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="contenu" class="tab-button">
+            <button type="button" data-tab="contenu" class="nav-tab">
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="templates" class="tab-button">
+            <button type="button" data-tab="templates" class="nav-tab">
                 <span class="tab-icon">📋</span>
                 <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
             </button>
 
-            <button type="button" data-tab="developpeur" class="tab-button">
+            <button type="button" data-tab="developpeur" class="nav-tab">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
             </button>
         </div>
-    </nav>
+    </h2>
 
     <!-- contenu des onglets moderne -->
 
@@ -184,6 +187,8 @@
 
     </div>
 
+    </form>
+
     <!-- Bouton flottant de sauvegarde -->
     <button id="pdf-builder-save-floating-btn" class="floating-save-btn" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #007cba; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
         💾 Enregistrer
@@ -254,14 +259,14 @@
         }
 
         /* Style de l'onglet actif */
-        .tab-button.active {
+        .nav-tab.nav-tab-active {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(0,123,255,0.3);
             transform: translateY(-2px);
         }
 
-        .tab-button.active .tab-icon {
+        .nav-tab.nav-tab-active .tab-icon {
             filter: brightness(1.2);
         }
 
@@ -329,7 +334,7 @@
             console.log('PDF Builder Pro - Initialisation des onglets');
 
             // Gestion des onglets avec boutons JavaScript
-            const tabButtons = document.querySelectorAll('.tab-button[data-tab]');
+            const tabButtons = document.querySelectorAll('.nav-tab[data-tab]');
             const contents = document.querySelectorAll('.tab-content');
             let activeTab = 'general'; // Onglet actif par défaut
 
@@ -341,7 +346,7 @@
 
                 // Désactiver tous les boutons
                 tabButtons.forEach(button => {
-                    button.classList.remove('active');
+                    button.classList.remove('nav-tab-active');
                 });
 
                 // Afficher le contenu actif
@@ -351,9 +356,9 @@
                 }
 
                 // Activer le bouton actif
-                const activeButton = document.querySelector(`.tab-button[data-tab="${activeTab}"]`);
+                const activeButton = document.querySelector(`.nav-tab[data-tab="${activeTab}"]`);
                 if (activeButton) {
-                    activeButton.classList.add('active');
+                    activeButton.classList.add('nav-tab-active');
                 }
             }
 
