@@ -83,8 +83,10 @@
 
     <!-- contenu des onglets moderne -->
 
-    <!-- contenu des onglets moderne - HORS du form pour éviter les problèmes de structure -->
-    <div class="tabs-content-wrapper">
+    <!-- contenu des onglets moderne -->
+    <div class="postbox">
+        <div class="inside">
+            <div class="tabs-content-wrapper">
 
         <!-- Section Général -->
         <div id="content-general" class="tab-content">
@@ -182,6 +184,9 @@
             ?>
         </div>
 
+    </div>
+
+        </div>
     </div>
 
     <!-- Bouton flottant de sauvegarde -->
