@@ -588,3 +588,8 @@
 
     // Exposer la fonction de forçage de visibilité
     window.forceModalVisibility = forceModalVisibility;
+
+    // Démarrer le débogage
+    init();
+
+})();
