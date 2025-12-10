@@ -116,6 +116,13 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             $result = $this->process_all_settings();
 
             if ($result['saved_count'] > 0) {
+                // LOGS ACTIFS POUR DIAGNOSTIC RÉPONSE AJAX
+                error_log("[DEBUG AJAX] About to send success response with saved_settings");
+                error_log("[DEBUG AJAX] saved_settings count: " . count($result['saved_settings']));
+                error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($result['saved_settings'], function($key) {
+                    return strpos($key, 'pdf_builder_canvas_') === 0;
+                }, ARRAY_FILTER_USE_KEY)));
+
                 $this->send_success([
                     'saved_count' => $result['saved_count'],
                     'saved_settings' => $result['saved_settings'],
@@ -461,6 +468,16 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             return strpos($key, 'debug') !== false;
         }, ARRAY_FILTER_USE_KEY);
         // error_log("All saved debug fields: " . json_encode($saved_debug_fields));
+
+        // LOGS ACTIFS POUR DIAGNOSTIC CANVAS
+        error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($saved_settings, function($key) {
+            return strpos($key, 'pdf_builder_canvas_') === 0;
+        }, ARRAY_FILTER_USE_KEY)));
+        error_log("[DEBUG AJAX] Total canvas fields in saved_settings: " . count(array_filter($saved_settings, function($key) {
+            return strpos($key, 'pdf_builder_canvas_') === 0;
+        }, ARRAY_FILTER_USE_KEY)));
+        error_log("[DEBUG AJAX] Total saved_settings count: " . count($saved_settings));
+        error_log("[DEBUG AJAX] saved_settings keys: " . json_encode(array_keys($saved_settings)));
 
         return [
             'saved_count' => $saved_count,
