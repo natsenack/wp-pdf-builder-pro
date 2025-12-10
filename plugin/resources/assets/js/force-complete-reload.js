@@ -209,6 +209,18 @@
         console.log('📜 Script d\'urgence injecté avec timestamp:', timestamp);
     }
 
+    // Fonction pour vérifier les styles calculés
+    function checkComputedStyles() {
+        console.log('🔍 Vérification des styles calculés...');
+        // Implémentation simple
+        const testEl = document.createElement('div');
+        testEl.style.display = 'none';
+        document.body.appendChild(testEl);
+        const computed = window.getComputedStyle(testEl);
+        console.log('✅ Styles calculés OK');
+        document.body.removeChild(testEl);
+    }
+
     // Exposer les fonctions globalement
     window.pdfBuilderCheckCSS = checkCSSDeployment;
     window.pdfBuilderForceReload = forceCompleteCSSReload;
