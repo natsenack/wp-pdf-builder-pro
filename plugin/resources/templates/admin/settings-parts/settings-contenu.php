@@ -1589,7 +1589,6 @@
                         // Afficher la modal en ajoutant la classe 'active' à l'overlay
                         console.log('🔍 [OPEN MODAL] Modal element ignoré (removed)');
 
-                        const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
                         console.log('🔍 [OPEN MODAL] Overlay trouvé:', !!overlay, 'ID:', `canvas-${category}-modal-overlay`);
 
                         if (overlay) {
