@@ -677,6 +677,26 @@ window.CanvasPreviewManager = {
     },
 
     /**
+     * Met à jour la prévisualisation de la carte export
+     */
+    updateExportCardPreview: function() {
+        try {
+            const values = this.getCardValues('export');
+            const { export_quality: exportQuality } = values;
+
+            const qualityFill = this.getCardElement('export', '.quality-fill');
+            const qualityText = this.getCardElement('export', '.quality-text');
+
+            this.updateElement(qualityFill, 'style.width', `${exportQuality}%`);
+            this.updateElement(qualityText, 'textContent', `${exportQuality}%`);
+
+            debugLog('✅ Export preview updated:', exportQuality);
+        } catch (error) {
+            debugError('❌ Error updating export preview:', error);
+        }
+    },
+
+    /**
      * Initialise les mises à jour en temps réel pour une catégorie
      */
     initializeRealTimeUpdates: function(modal) {
