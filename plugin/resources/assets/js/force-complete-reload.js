@@ -38,7 +38,6 @@
             })
             .then(function(response) {
                 console.log('🔗 Tentative de fetch:', baseUrl + filename + '?_t=' + Date.now());
-            .then(function(response) {
                 if (response.ok) {
                     console.log('✅ ' + filename + ' - déployé et accessible');
                 } else {
