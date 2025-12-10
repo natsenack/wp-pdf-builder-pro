@@ -536,3 +536,8 @@
 
     // Exposer la fonction d'analyse profonde
     window.deepDOMAnalysis = deepDOMAnalysis;
+
+    // Démarrer le débogage
+    init();
+
+})();
