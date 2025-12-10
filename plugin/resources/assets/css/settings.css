@@ -1554,7 +1554,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 }
 
 .canvas-card-content {
-    margin-bottom: 20px;
     position: relative;
     z-index: 2;
     flex-grow: 1;
@@ -1573,7 +1572,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     padding: 16px;
     background: #f6f7f7;
     border-radius: 6px;
-    height: 120px; /* Hauteur fixe pour uniformiser */
+    height: 150px; /* Hauteur fixe pour uniformiser */
     display: flex;
     align-items: center;
     justify-content: center;

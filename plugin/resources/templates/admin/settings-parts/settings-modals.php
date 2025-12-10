@@ -60,7 +60,17 @@
 </div>
 
 <!-- Cache Transients Details Modal -->
-<div id="cache-transients-modal" class="cache-modal" data-category="transients">
+<div id="cache-transients-modal" class="cache-modal" data-category="transients">debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style incorrect - padding: attendu "20px", obtenu "24px"
+warn @ debug-css-modals.js?ver=1.1.0-1765365773:21
+(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:154
+checkElementStyles @ debug-css-modals.js?ver=1.1.0-1765365773:151
+(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:226
+(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:225
+debugCacheModals @ debug-css-modals.js?ver=1.1.0-1765365773:170
+(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:341
+setTimeout
+(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:339
+debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style incorrect - border-radius: attendu "10px", obtenu "12px"
     <div class="cache-modal-overlay">
         <section class="cache-modal-container">
             <header class="cache-modal-header">
