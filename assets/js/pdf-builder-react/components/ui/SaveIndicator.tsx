@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, FC } from 'react';
 import './SaveIndicator.css';
 
 /**
@@ -21,7 +21,7 @@ export interface SaveIndicatorProps {
   showProgressBar?: boolean;
 }
 
-export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
+export const SaveIndicator: FC<SaveIndicatorProps> = ({
   state,
   lastSavedAt,
   error,

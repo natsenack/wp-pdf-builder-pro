@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useReducer, ReactNode, useEffect, Dispatch } from 'react';
 import { useCanvasSettings } from '../CanvasSettingsContext';
 import {
   BuilderState,
@@ -554,7 +554,7 @@ function calculateSelectionBounds(selectedIds: string[], elements: Element[]) {
 // Contexte
 interface BuilderContextType {
   state: BuilderState;
-  dispatch: React.Dispatch<BuilderAction>;
+  dispatch: Dispatch<BuilderAction>;
   // Actions helpers
   addElement: (element: Element) => void;
   updateElement: (id: string, updates: Partial<Element>) => void;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { DocumentTypeElement } from '../../types/elements';
 
 // Composant Toggle personnalisé

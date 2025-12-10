@@ -1,4 +1,3 @@
-import React from 'react';
 import { MentionsElement } from '../../types/elements';
 
 // Composant Toggle personnalisé

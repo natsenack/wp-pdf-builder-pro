@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, useMemo, useState, useLayoutEffect, FC } from 'react';
 import { createPortal } from 'react-dom';
 import './ContextMenu.css';
 
@@ -21,7 +21,7 @@ interface ContextMenuProps {
   isVisible: boolean;
 }
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({
+export const ContextMenu: FC<ContextMenuProps> = ({
   items,
   position,
   onClose,

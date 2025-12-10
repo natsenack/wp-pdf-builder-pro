@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { ProductTableElement } from '../../types/elements';
 
 // Composant Accordion personnalisé
 const Accordion = ({ title, children, defaultOpen = false }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   defaultOpen?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);

@@ -1,12 +1,12 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { useBreakpoint, useIsMobile, useIsTablet, useIsDesktop } from '../../hooks/useResponsive';
 
 interface ResponsiveProps {
-  children: React.ReactNode;
+  children: ReactNode;
   breakpoint?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  mobile?: React.ReactNode;
-  tablet?: React.ReactNode;
-  desktop?: React.ReactNode;
+  mobile?: ReactNode;
+  tablet?: ReactNode;
+  desktop?: ReactNode;
   className?: string;
 }
 
@@ -49,7 +49,7 @@ export function Responsive({
 }
 
 interface ResponsiveContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   mobileClass?: string;
   tabletClass?: string;
@@ -88,7 +88,7 @@ export function ResponsiveContainer({
 }
 
 interface HiddenProps {
-  children: React.ReactNode;
+  children: ReactNode;
   on?: ('xs' | 'sm' | 'md' | 'lg' | 'xl')[];
   className?: string;
 }
@@ -107,7 +107,7 @@ export function Hidden({ children, on = [], className = '' }: HiddenProps) {
 }
 
 interface VisibleProps {
-  children: React.ReactNode;
+  children: ReactNode;
   on?: ('xs' | 'sm' | 'md' | 'lg' | 'xl')[];
   className?: string;
 }

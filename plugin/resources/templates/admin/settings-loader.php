@@ -149,9 +149,14 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-force-complete-reload',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/force-complete-reload.js',
         array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . rand(100000, 999999),
         true
     );
+
+    // Localiser le script force-complete-reload avec l'URL du plugin
+    wp_localize_script('pdf-builder-force-complete-reload', 'pdfBuilderForceReload', array(
+        'pluginUrl' => PDF_BUILDER_PLUGIN_URL
+    ));
 
     // Charger les styles pour l'onglet principal
     wp_enqueue_style(

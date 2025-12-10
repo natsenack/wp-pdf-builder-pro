@@ -1,4 +1,3 @@
-import React from 'react';
 import { Element } from '../../types/elements';
 
 interface ExtendedElement extends Element {

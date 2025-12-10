@@ -9,25 +9,24 @@ import '../fallbacks/browser-compatibility.js';
 
 // Imports synchrones légers
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT, getCanvasDimensions } from './constants/canvas.ts';
-import { debugLog, debugError } from './utils/debug';
+import { debugLog, debugError } from './utils/debug.ts';
 
 // Import React pour les composants
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createElement, Component, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
 console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
-console.log('🔧 [WEBPACK BUNDLE] React available:', typeof React);
-console.log('🔧 [WEBPACK BUNDLE] React.useRef available:', typeof React?.useRef);
-console.log('🔧 [WEBPACK BUNDLE] React.useState available:', typeof React?.useState);
-console.log('🔧 [WEBPACK BUNDLE] React keys:', Object.keys(React || {}).slice(0, 10));
-console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof ReactDOM?.createRoot);
+console.log('🔧 [WEBPACK BUNDLE] React available:', typeof createElement);
+console.log('🔧 [WEBPACK BUNDLE] React.useRef available:', typeof useRef);
+console.log('🔧 [WEBPACK BUNDLE] React.useState available:', typeof useState);
+console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof createRoot);
 
 // ✅ Exports React from window for fallback access
 if (typeof window !== 'undefined' && !window.React) {
-  window.React = React;
+  window.React = { createElement, Component, useRef, useState };
 }
 if (typeof window !== 'undefined' && !window.ReactDOM) {
-  window.ReactDOM = ReactDOM;
+  window.ReactDOM = { createRoot };
 }
 
 // Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
@@ -42,10 +41,10 @@ import {
   saveTemplate,
   resetAPI,
   updateCanvasDimensions
-} from './api/global-api';
+} from './api/global-api.ts';
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
@@ -66,7 +65,7 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return React.createElement('div', {
+      return createElement('div', {
         style: {
           padding: '20px',
           border: '1px solid #ff6b6b',
@@ -76,12 +75,12 @@ class ErrorBoundary extends React.Component {
           fontFamily: 'Arial, sans-serif'
         }
       }, 
-        React.createElement('h2', null, 'Erreur dans l\'éditeur PDF'),
-        React.createElement('p', null, 'Une erreur s\'est produite lors du rendu de l\'éditeur. Veuillez rafraîchir la page.'),
-        React.createElement('details', { style: { whiteSpace: 'pre-wrap' } },
-          React.createElement('summary', null, 'Détails de l\'erreur'),
+        createElement('h2', null, 'Erreur dans l\'éditeur PDF'),
+        createElement('p', null, 'Une erreur s\'est produite lors du rendu de l\'éditeur. Veuillez rafraîchir la page.'),
+        createElement('details', { style: { whiteSpace: 'pre-wrap' } },
+          createElement('summary', null, 'Détails de l\'erreur'),
           this.state.error && this.state.error.toString(),
-          React.createElement('br'),
+          createElement('br'),
           this.state.errorInfo && this.state.errorInfo.componentStack
         )
       );
@@ -120,7 +119,7 @@ async function initPDFBuilderReact() {
     if (DEBUG_VERBOSE) debugLog('✅ Container found, checking dependencies...');
 
     // Vérifier les dépendances
-    if (typeof React === 'undefined') {
+    if (typeof createElement === 'undefined') {
       debugError('❌ React is not available');
       return false;
     }
@@ -141,9 +140,9 @@ async function initPDFBuilderReact() {
     // Créer et rendre l'application React
     // Essayer createRoot d'abord (React 18), sinon utiliser render (compatibilité)
     let root;
-    console.log('🔧 [initPDFBuilderReact] Checking ReactDOM.createRoot:', typeof ReactDOM.createRoot);
-    if (ReactDOM.createRoot) {
-      root = ReactDOM.createRoot(container);
+    console.log('🔧 [initPDFBuilderReact] Checking ReactDOM.createRoot:', typeof createRoot);
+    if (createRoot) {
+      root = createRoot(container);
       console.log('✅ [initPDFBuilderReact] Using React 18 createRoot API');
       if (DEBUG_VERBOSE) debugLog('🎨 Using React 18 createRoot API');
     } else {
@@ -161,8 +160,8 @@ async function initPDFBuilderReact() {
 
     console.log('📐 [initPDFBuilderReact] Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
 
-    const element = React.createElement(ErrorBoundary, null,
-      React.createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
+    const element = createElement(ErrorBoundary, null,
+      createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
     );
 
     if (root) {
@@ -173,7 +172,9 @@ async function initPDFBuilderReact() {
     } else {
       // Fallback API
       console.log('🎯 [initPDFBuilderReact] Calling ReactDOM.render()...');
-      ReactDOM.render(element, container);
+      // For fallback, we need to import render from react-dom
+      const { render } = await import('react-dom');
+      render(element, container);
       console.log('✅ [initPDFBuilderReact] ReactDOM.render() completed');
     }
     console.log('✅ [initPDFBuilderReact] React rendering completed successfully');

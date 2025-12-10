@@ -1,5 +1,4 @@
-import React from 'react';
-import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
+import { useIsMobile, useIsTablet, DragEvent } from 'react';
 import { ResponsiveContainer } from '../ui/Responsive';
 
 // Définition des éléments WooCommerce (migration depuis l'ancien éditeur)
@@ -390,7 +389,7 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, element: Record<string, unknown>) => {
+  const handleDragStart = (e: DragEvent, element: Record<string, unknown>) => {
     // Stocker les données de l'élément dans le transfert
     e.dataTransfer.setData('application/json', JSON.stringify({
       type: element.type,
@@ -400,7 +399,7 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
     e.dataTransfer.effectAllowed = 'copy';
   };
 
-  const handleDragEnd = (_e: React.DragEvent) => {
+  const handleDragEnd = (_e: DragEvent) => {
     // Drag terminé
   };
 

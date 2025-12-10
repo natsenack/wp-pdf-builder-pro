@@ -6,7 +6,6 @@
 // DEBUG: Log when script starts loading
 debugLog('🔧 DEBUG: pdf-builder-react.js script started loading');
 
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
 import { debugError, debugWarn, debugLog } from './utils/debug';

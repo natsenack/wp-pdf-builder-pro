@@ -9,6 +9,7 @@
     // Fonction pour vérifier si les fichiers CSS sont bien déployés
     function checkCSSDeployment() {
         console.log('🔍 PDF Builder: Vérification du déploiement CSS...');
+        console.log('📋 pdfBuilderForceReload:', typeof pdfBuilderForceReload !== 'undefined' ? pdfBuilderForceReload : 'NON DÉFINI');
 
         // Vérifier les fichiers CSS attendus
         const cssFiles = [
@@ -17,10 +18,26 @@
         ];
 
         cssFiles.forEach(function(filename) {
-            fetch(window.location.origin + '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/css/' + filename + '?_t=' + Date.now(), {
+            // TEMPORAIREMENT DÉSACTIVÉ - Problème de chemin URL
+            console.log('🔍 Vérification CSS temporairement désactivée pour:', filename);
+            return;
+
+            // Utiliser l'URL localisée si disponible, sinon construire manuellement
+            let baseUrl;
+            if (typeof pdfBuilderForceReload !== 'undefined' && pdfBuilderForceReload.pluginUrl) {
+                baseUrl = pdfBuilderForceReload.pluginUrl + 'resources/assets/css/';
+                console.log('✅ Utilisation URL localisée pour', filename);
+            } else {
+                baseUrl = window.location.origin + '/wp-content/plugins/wp-pdf-builder-pro/plugin/resources/assets/css/';
+                console.log('⚠️ Fallback URL manuelle pour', filename);
+            }
+
+            fetch(baseUrl + filename + '?_t=' + Date.now(), {
                 method: 'HEAD',
                 cache: 'no-cache'
             })
+            .then(function(response) {
+                console.log('🔗 Tentative de fetch:', baseUrl + filename + '?_t=' + Date.now());
             .then(function(response) {
                 if (response.ok) {
                     console.log('✅ ' + filename + ' - déployé et accessible');

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 
 export interface SaveIndicatorProps {
   state: 'idle' | 'saving' | 'saved' | 'error';
@@ -13,7 +13,7 @@ export interface SaveIndicatorProps {
  * SaveIndicator Simple et Robuste
  * Affiche UNE notification simple en haut à droite
  */
-export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
+export const SaveIndicator: FC<SaveIndicatorProps> = ({
   state,
   lastSavedAt: _lastSavedAt,
   error,

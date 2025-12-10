@@ -1,5 +1,4 @@
-import React from 'react';
-import { Element } from '../../types/elements';
+import { ImageElement } from '../../types/elements';
 
 interface ExtendedElement extends Element {
   src?: string;

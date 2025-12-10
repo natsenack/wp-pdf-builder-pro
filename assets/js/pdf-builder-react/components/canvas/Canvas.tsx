@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
+import { useRef, useEffect, useCallback, useState, useMemo, MutableRefObject, MouseEvent } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 import { useCanvasSetting } from '../../hooks/useCanvasSettings';
@@ -26,7 +26,7 @@ const estimateImageMemorySize = (img: HTMLImageElement): number => {
   return img.naturalWidth * img.naturalHeight * bytesPerPixel;
 };
 
-const cleanupImageCache = (imageCache: React.MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>) => {
+const cleanupImageCache = (imageCache: MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>) => {
   const cache = imageCache.current;
   if (cache.size <= 100) return; // Max 100 images
 
@@ -136,7 +136,7 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 // Fonction pour dessiner une image
-const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: React.MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number; }>>) => {
+const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number; }>>) => {
   const props = element as Element & { src?: string; objectFit?: string };
   const imageUrl = props.src || '';
 
@@ -1201,7 +1201,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // }, [canvasSettings.canvasBackgroundColor, canvasSettings.borderColor, canvasSettings.borderWidth, canvasSettings.shadowEnabled, canvasSettings.containerBackgroundColor]);
 
   // État pour le menu contextuel
-  const [contextMenu, setContextMenu] = React.useState<{
+  const [contextMenu, setContextMenu] = useState<{
     isVisible: boolean;
     position: { x: number; y: number };
     elementId?: string;
@@ -1211,7 +1211,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   });
 
   // ✅ STATE for image loading - force redraw when images load
-  const [imageLoadCount, setImageLoadCount] = React.useState(0);
+  const [imageLoadCount, setImageLoadCount] = useState(0);
 
   // Récupérer la limite mémoire JavaScript depuis les paramètres
   const memoryLimitJs = useCanvasSetting('memory_limit_js', 256) as number; // En MB, défaut 256MB
@@ -2625,7 +2625,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   }, []);
 
   // Gestionnaire de clic droit pour le canvas
-  const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleCanvasContextMenu = useCallback((event: MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
     debugLog(`👆 Canvas: Context menu triggered at (${event.clientX}, ${event.clientY})`);
     debugLog(`[Canvas] Context menu triggered at (${event.clientX}, ${event.clientY})`);

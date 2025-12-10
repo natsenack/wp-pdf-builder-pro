@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react';
 import { debugError } from '../utils/debug';
 
 declare global {
@@ -293,8 +293,8 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   });
 
   // ✅ CORRECTION: Flag pour éviter les boucles infinies lors des mises à jour d'événements
-  const isUpdatingFromEventRef = React.useRef(false);
-  const hasInitializedRef = React.useRef(false);
+  const isUpdatingFromEventRef = useRef(false);
+  const hasInitializedRef = useRef(false);
 
   // Function to refresh settings from window object
   const handleRefresh = () => {
