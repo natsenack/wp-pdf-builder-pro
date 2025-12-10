@@ -2422,25 +2422,7 @@ body.canvas-modal-open {
     display: flex;
 }
 
-.canvas-modal {
-    background: white;
-    border-radius: 12px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    position: relative;
-    z-index: 10001;
-}
-
 /* Modal Interactions & Comportement - hauteur spécifique pour afficher le footer */
-#canvas-interactions-modal .canvas-modal-content {
-    max-height: 90vh;
-}
-
 .canvas-modal-header {
     display: flex;
     justify-content: space-between;

@@ -366,9 +366,7 @@
 </div>
 
 <!-- Canvas Dimensions Modal (hidden container) -->
-<div id="canvas-dimensions-modal" class="canvas-modal hidden-element" data-category="dimensions">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Zoom & Navigation -->
 <!-- Canvas Zoom Modal Overlay -->
 <div id="canvas-zoom-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-zoom-modal">
@@ -430,9 +428,7 @@
 </div>
 
 <!-- Canvas zoom Modal (hidden container) -->
-<div id="canvas-zoom-modal" class="canvas-modal hidden-element" data-category="zoom">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Apparence -->
 <!-- Canvas Apparence Modal Overlay -->
 <div id="canvas-apparence-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-apparence-modal">
@@ -522,9 +518,7 @@
 
 
 <!-- Canvas apparence Modal (hidden container) -->
-<div id="canvas-apparence-modal" class="canvas-modal hidden-element" data-category="apparence">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Grille & Guides -->
 <!-- Canvas Grille Modal Overlay -->
 <div id="canvas-grille-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-grille-modal">
@@ -593,9 +587,7 @@
 
 
 <!-- Canvas grille Modal (hidden container) -->
-<div id="canvas-grille-modal" class="canvas-modal hidden-element" data-category="grille">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Interactions & Comportement-->
 <!-- Canvas Interactions Modal Overlay -->
 <div id="canvas-interactions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-interactions-modal">
@@ -699,9 +691,7 @@
 
 
 <!-- Canvas interactions Modal (hidden container) -->
-<div id="canvas-interactions-modal" class="canvas-modal hidden-element" data-category="interactions">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Export & Qualité -->
 <!-- Canvas Export Modal Overlay -->
 <div id="canvas-export-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-export-modal">
@@ -758,9 +748,7 @@
 
 
 <!-- Canvas export Modal (hidden container) -->
-<div id="canvas-export-modal" class="canvas-modal hidden-element" data-category="export">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Performance -->
 <!-- Canvas Performance Modal Overlay -->
 <div id="canvas-performance-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-performance-modal">
@@ -893,9 +881,7 @@
 </div>
 
 <!-- Canvas performance Modal (hidden container) -->
-<div id="canvas-performance-modal" class="canvas-modal hidden-element" data-category="performance">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Debug -->
 <!-- Canvas Debug Modal Overlay -->
 <div id="canvas-debug-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-debug-modal">
@@ -954,9 +940,7 @@
 
 
 <!-- Canvas debug Modal (hidden container) -->
-<div id="canvas-debug-modal" class="canvas-modal hidden-element" data-category="debug">
-    <!-- Modal content moved to overlay above -->
-</div>
+<!-- REMOVED: Empty container, content moved to overlay -->
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <?php

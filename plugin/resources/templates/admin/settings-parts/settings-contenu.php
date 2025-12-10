@@ -1587,31 +1587,25 @@
                         }
 
                         // Afficher la modal en ajoutant la classe 'active' à l'overlay
-                        const modal = document.getElementById(modalId);
-                        console.log('🔍 [OPEN MODAL] Modal element trouvé:', !!modal);
+                        console.log('🔍 [OPEN MODAL] Modal element ignoré (removed)');
 
-                        if (modal) {
-                            const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
-                            console.log('🔍 [OPEN MODAL] Overlay séparé trouvé:', !!overlay, 'ID:', `canvas-${category}-modal-overlay`);
+                        const overlay = document.getElementById(`canvas-${category}-modal-overlay`);
+                        console.log('🔍 [OPEN MODAL] Overlay trouvé:', !!overlay, 'ID:', `canvas-${category}-modal-overlay`);
 
-                            if (overlay) {
-                                const wasActive = overlay.classList.contains('active');
-                                console.log('🔍 [OPEN MODAL] Overlay était actif:', wasActive);
+                        if (overlay) {
+                            const wasActive = overlay.classList.contains('active');
+                            console.log('🔍 [OPEN MODAL] Overlay était actif:', wasActive);
 
-                                if (!wasActive) {
-                                    // Add active class to modal to show it (uses !important rules from settings.css)
-                                    modal.classList.add('active');
-                                    overlay.classList.add('active');
-                                    document.body.classList.add('canvas-modal-open');
-                                    console.log('✅ [OPEN MODAL] Classe active ajoutée à modal et overlay');
-                                }
-
-                                console.log('🎉 [OPEN MODAL] Modal ouverte:', modalId);
-                            } else {
-                                console.error('❌ [OPEN MODAL] Overlay séparé NON trouvé pour:', category);
+                            if (!wasActive) {
+                                // Add active class to overlay only (canvas-modal elements removed)
+                                overlay.classList.add('active');
+                                document.body.classList.add('canvas-modal-open');
+                                console.log('✅ [OPEN MODAL] Classe active ajoutée à overlay seulement');
                             }
+
+                            console.log('🎉 [OPEN MODAL] Modal ouverte:', modalId);
                         } else {
-                            console.error('❌ [OPEN MODAL] Modal NON trouvée:', modalId);
+                            console.error('❌ [OPEN MODAL] Overlay NON trouvé pour:', category);
                         }
                     }
 
@@ -2133,15 +2127,15 @@
                             else results.buttons++;
                         });
 
-                        // 2. Vérifier les modales
-                        const modalIds = ['canvas-dimensions-modal', 'canvas-apparence-modal', 'canvas-grille-modal',
-                                        'canvas-zoom-modal', 'canvas-interactions-modal', 'canvas-export-modal',
-                                        'canvas-performance-modal', 'canvas-debug-modal'];
+                        // 2. Vérifier les overlays (modals canvas)
+                        const overlayIds = ['canvas-dimensions-modal-overlay', 'canvas-apparence-modal-overlay', 'canvas-grille-modal-overlay',
+                                          'canvas-zoom-modal-overlay', 'canvas-interactions-modal-overlay', 'canvas-export-modal-overlay',
+                                          'canvas-performance-modal-overlay', 'canvas-debug-modal-overlay'];
 
-                        modalIds.forEach(modalId => {
-                            const modal = document.getElementById(modalId);
-                            if (modal) results.modals++;
-                            else results.issues.push(`Modale manquante: ${modalId}`);
+                        overlayIds.forEach(overlayId => {
+                            const overlay = document.getElementById(overlayId);
+                            if (overlay) results.modals++;
+                            else results.issues.push(`Overlay manquant: ${overlayId}`);
                         });
 
                         // 3. Vérifier les champs cachés
