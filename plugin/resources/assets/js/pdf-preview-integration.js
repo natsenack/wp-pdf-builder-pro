@@ -935,22 +935,74 @@ window.CanvasPreviewManager = {
             ]
         },
         apparence: {
-            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width'],
-            settings: ['canvas_background_color', 'border_color', 'border_width'],
-            defaults: ['#ffffff', '#cccccc', 1],
+            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled'],
+            settings: ['canvas_background_color', 'border_color', 'border_width', 'shadow_enabled'],
+            defaults: ['#ffffff', '#cccccc', 1, false],
             updateFunction: 'updateApparenceCardPreview',
             previewRules: [
                 {
                     type: 'style',
-                    target: '.color-preview.bg',
+                    target: '#mini-canvas-apparence',
                     property: 'style.backgroundColor',
                     value: '{{canvas_background_color}}'
                 },
                 {
                     type: 'style',
-                    target: '.color-preview.border',
+                    target: '#mini-canvas-apparence',
                     property: 'style.border',
                     value: '{{border_width}}px solid {{border_color}}'
+                },
+                {
+                    type: 'style',
+                    target: '#mini-canvas-apparence',
+                    property: 'style.boxShadow',
+                    value: '{{shadow_enabled ? "0 4px 8px rgba(0,0,0,0.15)" : "none"}}'
+                },
+                {
+                    type: 'style',
+                    target: '.color-swatch[style*="background-color"]',
+                    property: 'style.backgroundColor',
+                    value: '{{canvas_background_color}}'
+                },
+                {
+                    type: 'style',
+                    target: '.color-swatch.border-swatch',
+                    property: 'style.borderColor',
+                    value: '{{border_color}}'
+                },
+                {
+                    type: 'style',
+                    target: '.color-swatch.border-swatch',
+                    property: 'style.borderWidth',
+                    value: '{{border_width}}px'
+                },
+                {
+                    type: 'element_update',
+                    target: '.color-value',
+                    property: 'textContent',
+                    value: function(values) {
+                        const bgColor = values.canvas_background_color || '#ffffff';
+                        const borderColor = values.border_color || '#cccccc';
+                        // Mettre à jour les deux valeurs de couleur
+                        const colorValues = document.querySelectorAll('.color-value');
+                        if (colorValues.length >= 2) {
+                            colorValues[0].textContent = bgColor;
+                            colorValues[1].textContent = borderColor;
+                        }
+                        return bgColor; // Retourner une valeur pour éviter les erreurs
+                    }
+                },
+                {
+                    type: 'element_update',
+                    target: '.effect-status',
+                    property: 'textContent',
+                    value: '{{shadow_enabled ? "ON" : "OFF"}}'
+                },
+                {
+                    type: 'element_update',
+                    target: '.effect-icon',
+                    property: 'textContent',
+                    value: '{{shadow_enabled ? "🌑" : "☀️"}}'
                 }
             ]
         },
