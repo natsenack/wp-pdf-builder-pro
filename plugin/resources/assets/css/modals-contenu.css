@@ -480,6 +480,330 @@
     border-bottom: 1px solid #e1e5e9;
 }
 
+/* Enhanced Form Groups in Modals */
+.cache-modal-container .form-group,
+.canvas-modal-container .form-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.cache-modal-container .form-group:last-child,
+.canvas-modal-container .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.cache-modal-container .form-group label,
+.canvas-modal-container .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--modal-text-primary);
+    margin-bottom: 8px;
+    line-height: 1.4;
+    transition: color var(--modal-transition);
+    position: relative;
+}
+
+.cache-modal-container .form-group label::after,
+.canvas-modal-container .form-group label::after {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: var(--modal-info-color);
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity var(--modal-transition);
+}
+
+.cache-modal-container .form-group.required label::after,
+.canvas-modal-container .form-group.required label::after {
+    opacity: 1;
+}
+
+.cache-modal-container .form-group label .tooltip,
+.canvas-modal-container .form-group label .tooltip {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: var(--modal-text-muted);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 16px;
+    margin-left: 6px;
+    cursor: help;
+    transition: background var(--modal-transition);
+}
+
+.cache-modal-container .form-group label .tooltip:hover,
+.canvas-modal-container .form-group label .tooltip:hover {
+    background: var(--modal-info-color);
+}
+
+.cache-modal-container .form-group input[type="text"],
+.cache-modal-container .form-group input[type="number"],
+.cache-modal-container .form-group input[type="email"],
+.cache-modal-container .form-group input[type="password"],
+.cache-modal-container .form-group input[type="url"],
+.cache-modal-container .form-group select,
+.cache-modal-container .form-group textarea,
+.canvas-modal-container .form-group input[type="text"],
+.canvas-modal-container .form-group input[type="number"],
+.canvas-modal-container .form-group input[type="email"],
+.canvas-modal-container .form-group input[type="password"],
+.canvas-modal-container .form-group input[type="url"],
+.canvas-modal-container .form-group select,
+.canvas-modal-container .form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--modal-text-primary);
+    background-color: #ffffff;
+    transition: all var(--modal-transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.cache-modal-container .form-group input:focus,
+.cache-modal-container .form-group select:focus,
+.cache-modal-container .form-group textarea:focus,
+.canvas-modal-container .form-group input:focus,
+.canvas-modal-container .form-group select:focus,
+.canvas-modal-container .form-group textarea:focus {
+    outline: none;
+    border-color: var(--modal-info-color);
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1), 0 2px 8px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.cache-modal-container .form-group input:hover,
+.cache-modal-container .form-group select:hover,
+.cache-modal-container .form-group textarea:hover,
+.canvas-modal-container .form-group input:hover,
+.canvas-modal-container .form-group select:hover,
+.canvas-modal-container .form-group textarea:hover {
+    border-color: #b8c2cc;
+}
+
+.cache-modal-container .form-group input::placeholder,
+.cache-modal-container .form-group select::placeholder,
+.cache-modal-container .form-group textarea::placeholder,
+.canvas-modal-container .form-group input::placeholder,
+.canvas-modal-container .form-group select::placeholder,
+.canvas-modal-container .form-group textarea::placeholder {
+    color: var(--modal-text-muted);
+    opacity: 0.7;
+}
+
+.cache-modal-container .form-group textarea,
+.canvas-modal-container .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.cache-modal-container .form-group select,
+.canvas-modal-container .form-group select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+}
+
+/* Form Group States */
+.cache-modal-container .form-group.has-error input,
+.cache-modal-container .form-group.has-error select,
+.cache-modal-container .form-group.has-error textarea,
+.canvas-modal-container .form-group.has-error input,
+.canvas-modal-container .form-group.has-error select,
+.canvas-modal-container .form-group.has-error textarea {
+    border-color: var(--modal-danger-color);
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.cache-modal-container .form-group.has-success input,
+.cache-modal-container .form-group.has-success select,
+.cache-modal-container .form-group.has-success textarea,
+.canvas-modal-container .form-group.has-success input,
+.canvas-modal-container .form-group has-success select,
+.canvas-modal-container .form-group.has-success textarea {
+    border-color: var(--modal-success-color);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+/* Form Help Text */
+.cache-modal-container .form-group .form-help,
+.canvas-modal-container .form-group .form-help {
+    font-size: 12px;
+    color: var(--modal-text-secondary);
+    margin-top: 6px;
+    line-height: 1.4;
+    display: block;
+}
+
+.cache-modal-container .form-group .form-error,
+.canvas-modal-container .form-group .form-error {
+    font-size: 12px;
+    color: var(--modal-danger-color);
+    margin-top: 6px;
+    line-height: 1.4;
+    display: block;
+    font-weight: 500;
+}
+
+/* Enhanced Form Layouts */
+.cache-modal-container .form-row,
+.canvas-modal-container .form-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.cache-modal-container .form-row .form-group,
+.canvas-modal-container .form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.cache-modal-container .form-row .form-group:last-child,
+.canvas-modal-container .form-row .form-group:last-child {
+    margin-bottom: 24px;
+}
+
+/* Form Field Icons */
+.cache-modal-container .form-group.has-icon input,
+.cache-modal-container .form-group.has-icon select,
+.canvas-modal-container .form-group.has-icon input,
+.canvas-modal-container .form-group.has-icon select {
+    padding-left: 44px;
+}
+
+.cache-modal-container .form-group .field-icon,
+.canvas-modal-container .form-group .field-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--modal-text-muted);
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Number Input Enhancements */
+.cache-modal-container .form-group input[type="number"],
+.canvas-modal-container .form-group input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.cache-modal-container .form-group input[type="number"]::-webkit-outer-spin-button,
+.cache-modal-container .form-group input[type="number"]::-webkit-inner-spin-button,
+.canvas-modal-container .form-group input[type="number"]::-webkit-outer-spin-button,
+.canvas-modal-container .form-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Range Input Styling */
+.cache-modal-container .form-group input[type="range"],
+.canvas-modal-container .form-group input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: #e1e5e9;
+    border-radius: 3px;
+    outline: none;
+}
+
+.cache-modal-container .form-group input[type="range"]::-webkit-slider-thumb,
+.canvas-modal-container .form-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--modal-info-color);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.cache-modal-container .form-group input[type="range"]::-moz-range-thumb,
+.canvas-modal-container .form-group input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--modal-info-color);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Checkbox and Radio Enhancements */
+.cache-modal-container .form-group input[type="checkbox"],
+.cache-modal-container .form-group input[type="radio"],
+.canvas-modal-container .form-group input[type="checkbox"],
+.canvas-modal-container .form-group input[type="radio"] {
+    width: auto;
+    margin-right: 8px;
+    accent-color: var(--modal-info-color);
+}
+
+/* Fieldset Styling */
+.cache-modal-container fieldset,
+.canvas-modal-container fieldset {
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%);
+}
+
+.cache-modal-container fieldset legend,
+.canvas-modal-container fieldset legend {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--modal-text-primary);
+    padding: 0 12px;
+    background: #ffffff;
+    border-radius: 4px;
+    border: 2px solid #e1e5e9;
+}
+
+/* Data Attribute Styling for Form Groups */
+.cache-modal-container .form-group[data-field-group],
+.canvas-modal-container .form-group[data-field-group] {
+    position: relative;
+}
+
+.cache-modal-container .form-group[data-field-group]::before,
+.canvas-modal-container .form-group[data-field-group]::before {
+    content: attr(data-field-group);
+    position: absolute;
+    top: -8px;
+    right: 0;
+    font-size: 10px;
+    color: var(--modal-text-muted);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    border: 1px solid #e1e5e9;
+}
+
 .contenu-settings input[type="text"],
 .contenu-settings input[type="number"],
 .contenu-settings select,
