@@ -4368,32 +4368,6 @@ body.modal-open {
     padding: 0 1px;
 }
 
-.mini-canvas-info {
-    position: absolute;
-    bottom: 2px;
-    left: 2px;
-    right: 2px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 1px 3px;
-    border-radius: 2px;
-    font-size: 5px;
-    text-align: center;
-    line-height: 1.2;
-}
-
-.canvas-size {
-    display: block;
-    font-weight: bold;
-    color: #fff;
-}
-
-.canvas-dims {
-    display: block;
-    color: #ccc;
-    font-size: 5px;
-}
-
 .apparence-indicators {
     display: flex;
     flex-direction: column;

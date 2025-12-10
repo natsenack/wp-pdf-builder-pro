@@ -935,9 +935,9 @@ window.CanvasPreviewManager = {
             ]
         },
         apparence: {
-            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled', 'canvas_format', 'canvas_width', 'canvas_height'],
-            settings: ['canvas_background_color', 'border_color', 'border_width', 'shadow_enabled', 'format', 'width', 'height'],
-            defaults: ['#ffffff', '#cccccc', 1, false, 'A4', 794, 1123],
+            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled'],
+            settings: ['canvas_background_color', 'border_color', 'border_width', 'shadow_enabled'],
+            defaults: ['#ffffff', '#cccccc', 1, false],
             updateFunction: 'updateApparenceCardPreview',
             previewRules: [
                 {
@@ -991,18 +991,6 @@ window.CanvasPreviewManager = {
                         }
                         return bgColor; // Retourner une valeur pour éviter les erreurs
                     }
-                },
-                {
-                    type: 'element_update',
-                    target: '.canvas-size',
-                    property: 'textContent',
-                    value: '{{format}}'
-                },
-                {
-                    type: 'element_update',
-                    target: '.canvas-dims',
-                    property: 'textContent',
-                    value: '{{width}}×{{height}}px'
                 },
                 {
                     type: 'element_update',

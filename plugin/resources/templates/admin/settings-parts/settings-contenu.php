@@ -158,10 +158,6 @@
                                             <div class="mini-element shape-circle"></div>
                                             <div class="mini-element shape-text">PDF</div>
                                         </div>
-                                        <div class="mini-canvas-info">
-                                            <span class="canvas-size"><?php echo esc_html($settings['pdf_builder_canvas_canvas_format'] ?? 'A4'); ?></span>
-                                            <span class="canvas-dims"><?php echo esc_html($settings['pdf_builder_canvas_canvas_width'] ?? '794'); ?>×<?php echo esc_html($settings['pdf_builder_canvas_canvas_height'] ?? '1123'); ?>px</span>
-                                        </div>
                                     </div>
                                     <div class="apparence-indicators">
                                         <div class="color-indicator">
