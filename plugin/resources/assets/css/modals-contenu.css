@@ -1567,3 +1567,170 @@
         display: none !important;
     }
 }
+
+/* ============================================
+   INTERACTIONS PREVIEW
+   ============================================ */
+
+.canvas-card-preview .interactions-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.canvas-card-preview .mini-canvas {
+    position: relative;
+    width: 120px;
+    height: 80px;
+    background: #ffffff;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.canvas-card-preview .mini-canvas-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+    background-size: 8px 8px;
+}
+
+.canvas-card-preview .mini-element {
+    position: absolute;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #333;
+    background: #f8f9fa;
+}
+
+.canvas-card-preview .mini-element.selected {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px rgba(0, 124, 186, 0.3);
+}
+
+.canvas-card-preview .mini-element.text-element {
+    background: #fff;
+    border-color: #007cba;
+}
+
+.canvas-card-preview .mini-element.shape-element {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.canvas-card-preview .mini-element.image-element {
+    background: #f3e5f5;
+    border-color: #9c27b0;
+}
+
+.canvas-card-preview .mini-element-content {
+    font-size: 8px;
+    font-weight: bold;
+}
+
+.canvas-card-preview .mini-handle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #007cba;
+    border-radius: 50%;
+    border: 1px solid #fff;
+}
+
+.canvas-card-preview .mini-handle.nw { top: -2px; left: -2px; }
+.canvas-card-preview .mini-handle.ne { top: -2px; right: -2px; }
+.canvas-card-preview .mini-handle.sw { bottom: -2px; left: -2px; }
+.canvas-card-preview .mini-handle.se { bottom: -2px; right: -2px; }
+.canvas-card-preview .mini-handle.rotation {
+    width: 6px;
+    height: 6px;
+    background: #007cba;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.canvas-card-preview .selection-rectangle {
+    position: absolute;
+    border: 1px dashed #007cba;
+    background: rgba(0, 124, 186, 0.1);
+    pointer-events: none;
+}
+
+.canvas-card-preview .mouse-cursor {
+    position: absolute;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.canvas-card-preview .cursor-icon {
+    font-size: 12px;
+    animation: cursor-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cursor-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.canvas-card-preview .interactions-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.canvas-card-preview .selection-mode-indicator {
+    display: flex;
+    gap: 2px;
+}
+
+.canvas-card-preview .mode-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #e1e1e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    color: #666;
+}
+
+.canvas-card-preview .mode-icon.active {
+    background: #007cba;
+    color: white;
+    transform: scale(1.1);
+}
+
+.canvas-card-preview .interaction-status {
+    font-size: 8px;
+    color: #007cba;
+    font-weight: bold;
+}
+
+.canvas-card-preview .status-indicator.selecting {
+    animation: status-blink 1s ease-in-out infinite;
+}
+
+.canvas-card-preview .status-indicator.enabled {
+    color: #28a745;
+}
+
+.canvas-card-preview .status-indicator.disabled {
+    color: #dc3545;
+}
+
+@keyframes status-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
