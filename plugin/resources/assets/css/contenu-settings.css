@@ -526,6 +526,10 @@
 
 /* Cache Modal Styles (used in settings-modals.php) */
 
+.contenu-settings .cache-modal {
+    display: none;
+}
+
 .contenu-settings .cache-modal-overlay {
     position: fixed;
     top: 0;
