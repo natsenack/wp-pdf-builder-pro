@@ -68,10 +68,14 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    transform: scale(0.95);
-    opacity: 0;
-    animation: modalScaleIn var(--modal-animation-duration) ease-out forwards;
+    transform: scale(1);
+    opacity: 1;
+    animation: none;
     border: 1px solid var(--modal-border-color);
+}
+
+.contenu-settings .cache-modal-overlay.active .cache-modal-container {
+    animation: modalScaleIn var(--modal-animation-duration) ease-out forwards;
 }
 
 .contenu-settings .cache-modal-header {
@@ -528,10 +532,14 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    transform: scale(0.95);
-    opacity: 0;
-    animation: modalScaleIn var(--modal-animation-duration) ease-out forwards;
+    transform: scale(1);
+    opacity: 1;
+    animation: none;
     border: 1px solid var(--modal-border-color);
+}
+
+.canvas-modal-overlay.active .canvas-modal-container {
+    animation: modalScaleIn var(--modal-animation-duration) ease-out forwards;
 }
 
 .canvas-modal-header {
@@ -750,9 +758,11 @@
 @keyframes modalFadeIn {
     from {
         opacity: 0;
+        backdrop-filter: blur(0px);
     }
     to {
         opacity: 1;
+        backdrop-filter: blur(2px);
     }
 }
 
