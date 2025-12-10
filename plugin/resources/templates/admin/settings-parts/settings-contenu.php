@@ -267,24 +267,24 @@
                                         <div class="mini-canvas-grid"></div>
 
                                         <!-- Éléments sur le canvas -->
-                                        <div class="mini-element text-element" style="top: 12px; left: 15px; width: 30px; height: 15px;" title="Élément texte">
+                                        <div class="mini-element text-element" style="top: 12px; left: 15px; width: 30px; height: 15px;" title="Élément texte - Double-clic pour éditer">
                                             <div class="mini-element-content">T</div>
                                         </div>
-                                        <div class="mini-element shape-element selected" style="top: 35px; left: 12px; width: 28px; height: 20px;" title="Élément sélectionné">
+                                        <div class="mini-element shape-element selected" style="top: 35px; left: 12px; width: 28px; height: 20px;" title="Élément sélectionné - Glisser pour déplacer">
                                             <div class="mini-element-content">□</div>
                                             <!-- Poignées de sélection -->
-                                            <div class="mini-handle nw" title="Redimensionner NW"></div>
-                                            <div class="mini-handle ne" title="Redimensionner NE"></div>
-                                            <div class="mini-handle sw" title="Redimensionner SW"></div>
-                                            <div class="mini-handle se" title="Redimensionner SE"></div>
-                                            <div class="mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation"></div>
+                                            <div class="mini-handle nw" title="Redimensionner (coin supérieur gauche)"></div>
+                                            <div class="mini-handle ne" title="Redimensionner (coin supérieur droit)"></div>
+                                            <div class="mini-handle sw" title="Redimensionner (coin inférieur gauche)"></div>
+                                            <div class="mini-handle se" title="Redimensionner (coin inférieur droit)"></div>
+                                            <div class="mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation - Maintenir Maj pour angles précis"></div>
                                         </div>
-                                        <div class="mini-element image-element" style="top: 15px; left: 55px; width: 25px; height: 25px;" title="Élément image">
+                                        <div class="mini-element image-element" style="top: 15px; left: 55px; width: 25px; height: 25px;" title="Élément image - Clic droit pour options">
                                             <div class="mini-element-content">🖼</div>
                                         </div>
 
                                         <!-- Sélection rectangle en cours -->
-                                        <div class="selection-rectangle" style="top: 8px; left: 8px; width: 45px; height: 30px;" title="Zone de sélection"></div>
+                                        <div class="selection-rectangle" style="top: 8px; left: 8px; width: 45px; height: 30px;" title="Sélection multiple - Relâcher pour sélectionner"></div>
 
                                         <!-- Curseur de souris -->
                                         <div class="mouse-cursor" style="top: 45px; left: 70px;">
@@ -292,21 +292,41 @@
                                         </div>
 
                                         <!-- Indicateur de zoom -->
-                                        <div class="zoom-indicator" title="Niveau de zoom actuel">
+                                        <div class="zoom-indicator" title="Niveau de zoom actuel - Ctrl+molette pour zoomer">
                                             <span class="zoom-level">100%</span>
+                                        </div>
+
+                                        <!-- Indicateur de performance -->
+                                        <div class="performance-indicator" title="Performance canvas - 60 FPS">
+                                            <div class="performance-bar">
+                                                <div class="performance-fill" style="width: 85%"></div>
+                                            </div>
+                                            <span class="performance-text">85%</span>
                                         </div>
                                     </div>
 
                                     <!-- Contrôles en bas -->
                                     <div class="interactions-controls">
                                         <div class="selection-mode-indicator">
-                                            <span class="mode-icon active" title="Sélection rectangle (R)" data-mode="rectangle">▭</span>
-                                            <span class="mode-icon" title="Sélection lasso (L)" data-mode="lasso">🪢</span>
-                                            <span class="mode-icon" title="Sélection par clic (C)" data-mode="click">👆</span>
+                                            <span class="mode-icon active" title="Sélection rectangle (R) - Pour sélectionner plusieurs éléments" data-mode="rectangle">▭</span>
+                                            <span class="mode-icon" title="Sélection lasso (L) - Pour sélection libre" data-mode="lasso">🪢</span>
+                                            <span class="mode-icon" title="Sélection par clic (C) - Pour sélection simple" data-mode="click">👆</span>
                                         </div>
                                         <div class="interaction-status">
                                             <span class="status-indicator selecting">Sélection active</span>
+                                            <div class="keyboard-status" title="Raccourcis clavier activés">
+                                                <span class="keyboard-icon">⌨️</span>
+                                            </div>
                                         </div>
+                                    </div>
+
+                                    <!-- Barre de progression des interactions -->
+                                    <div class="interaction-progress">
+                                        <div class="progress-label">Fluidité</div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 92%"></div>
+                                        </div>
+                                        <div class="progress-value">92%</div>
                                     </div>
                                 </div>
                             </aside>

@@ -616,6 +616,11 @@ window.updateInteractionsCardPreview = function() {
     const modeIcons = document.querySelectorAll('.canvas-card[data-category="interactions"] .mode-icon');
     const statusIndicator = window.CanvasPreviewManager.getCardElement('interactions', '.status-indicator');
     const zoomLevel = window.CanvasPreviewManager.getCardElement('interactions', '.zoom-level');
+    const performanceFill = window.CanvasPreviewManager.getCardElement('interactions', '.performance-fill');
+    const performanceText = window.CanvasPreviewManager.getCardElement('interactions', '.performance-text');
+    const keyboardStatus = window.CanvasPreviewManager.getCardElement('interactions', '.keyboard-status');
+    const progressFill = window.CanvasPreviewManager.getCardElement('interactions', '.progress-fill');
+    const progressValue = window.CanvasPreviewManager.getCardElement('interactions', '.progress-value');
 
     // Mettre à jour les icônes de mode
     modeIcons.forEach(icon => {
@@ -638,6 +643,27 @@ window.updateInteractionsCardPreview = function() {
         const zoomValues = ['75%', '100%', '125%', '150%'];
         const randomZoom = zoomValues[Math.floor(Math.random() * zoomValues.length)];
         zoomLevel.textContent = randomZoom;
+    }
+
+    // Mettre à jour l'indicateur de performance
+    if (performanceFill && performanceText) {
+        const performanceValues = [65, 78, 85, 92, 96];
+        const randomPerf = performanceValues[Math.floor(Math.random() * performanceValues.length)];
+        performanceFill.style.width = `${randomPerf}%`;
+        performanceText.textContent = `${randomPerf}%`;
+    }
+
+    // Mettre à jour le statut du clavier
+    if (keyboardStatus) {
+        keyboardStatus.className = `keyboard-status ${keyboardShortcuts ? '' : 'inactive'}`;
+    }
+
+    // Mettre à jour la barre de progression (fluidité)
+    if (progressFill && progressValue) {
+        const fluidityValues = [78, 85, 92, 96, 98];
+        const randomFluidity = fluidityValues[Math.floor(Math.random() * fluidityValues.length)];
+        progressFill.style.width = `${randomFluidity}%`;
+        progressValue.textContent = `${randomFluidity}%`;
     }
 };
 

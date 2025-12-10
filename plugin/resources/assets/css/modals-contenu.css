@@ -1763,6 +1763,39 @@
     color: #4ade80;
 }
 
+.canvas-card-preview .performance-indicator {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+
+.canvas-card-preview .performance-bar {
+    width: 20px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 1px;
+    overflow: hidden;
+}
+
+.canvas-card-preview .performance-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b 0%, #ffd93d 50%, #4ade80 100%);
+    border-radius: 1px;
+    transition: width 0.3s ease;
+}
+
+.canvas-card-preview .performance-text {
+    font-size: 6px;
+    color: #4ade80;
+    font-weight: bold;
+}
+
 .canvas-card-preview .interactions-controls {
     display: flex;
     align-items: center;
@@ -1811,10 +1844,34 @@
 }
 
 .canvas-card-preview .interaction-status {
+    display: flex;
+    align-items: center;
+    gap: 3px;
     font-size: 7px;
     color: #007cba;
     font-weight: bold;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.canvas-card-preview .keyboard-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-card-preview .keyboard-status.inactive {
+    background: #dc3545;
+}
+
+.canvas-card-preview .keyboard-icon {
+    font-size: 6px;
+    line-height: 1;
 }
 
 .canvas-card-preview .status-indicator.selecting {
@@ -1833,4 +1890,61 @@
 @keyframes status-blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
+}
+
+.canvas-card-preview .interaction-progress {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    width: 100%;
+    margin-top: 3px;
+    padding: 0 2px;
+}
+
+.canvas-card-preview .progress-label {
+    font-size: 6px;
+    color: #666;
+    font-weight: bold;
+    min-width: 35px;
+}
+
+.canvas-card-preview .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: #e1e5e9;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.canvas-card-preview .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007cba 0%, #28a745 100%);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.canvas-card-preview .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+    animation: progress-shine 2s ease-in-out infinite;
+}
+
+@keyframes progress-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.canvas-card-preview .progress-value {
+    font-size: 6px;
+    color: #007cba;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: right;
 }
