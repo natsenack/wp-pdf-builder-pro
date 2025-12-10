@@ -2494,6 +2494,45 @@
                     console.log('🔍 [JS INIT] Variables globales: currentModalCategory =', currentModalCategory);
 
                 })();
+
+                // ==========================================
+                // CHARGEMENT DU SYSTÈME DE MONITORING
+                // ==========================================
+                console.log('🔍 [MONITORING] Chargement du système de monitoring des cartes...');
+
+                // Fonction pour charger le script de monitoring
+                function loadCanvasCardMonitor() {
+                    return new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = '<?php echo plugin_dir_url(dirname(dirname(__FILE__))) . "assets/js/canvas-card-monitor.js?v=" . time(); ?>';
+                        script.onload = () => {
+                            console.log('✅ [MONITORING] Système de monitoring chargé');
+                            resolve();
+                        };
+                        script.onerror = (error) => {
+                            console.error('❌ [MONITORING] Erreur de chargement du système de monitoring:', error);
+                            reject(error);
+                        };
+                        document.head.appendChild(script);
+                    });
+                }
+
+                // Charger le monitoring après un court délai
+                setTimeout(() => {
+                    loadCanvasCardMonitor().then(() => {
+                        console.log('🎯 [MONITORING] Système de monitoring initialisé avec succès');
+                        console.log('🔧 [MONITORING] Commandes de débogage disponibles:');
+                        console.log('   - CanvasCardMonitorDebug.getStatus()');
+                        console.log('   - CanvasCardMonitorDebug.getErrors()');
+                        console.log('   - CanvasCardMonitorDebug.getWarnings()');
+                        console.log('   - CanvasCardMonitorDebug.forceResync()');
+                        console.log('   - CanvasCardMonitorDebug.setLogLevel("DEBUG")');
+                        console.log('   - CanvasCardMonitorDebug.toggleAutoSync()');
+                    }).catch(error => {
+                        console.error('❌ [MONITORING] Échec de l\'initialisation du système de monitoring:', error);
+                    });
+                }, 1500);
+
             </script>
 
     </div> <!-- Fermeture de settings-content -->
