@@ -1,86 +1,72 @@
 /* Content Settings Tab Styles */
-/* Styles spécifiques à l'onglet Contenu du plugin WP PDF Builder Pro */
+/* Styles simplifiés pour l'onglet Contenu */
 
 .contenu-settings {
     position: relative;
 }
 
 .contenu-settings .settings-content {
-    padding: 20px 0;
+    padding: 16px 0;
 }
 
 /* Canvas Section */
 .contenu-canvas-section {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
     background: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
 }
 
 .contenu-canvas-section h3 {
     margin: 0;
-    padding: 20px;
+    padding: 16px;
     background: #f8f9fa;
-    border-bottom: 1px solid #e1e1e1;
-    font-size: 18px;
+    border-bottom: 1px solid #e1e5e9;
+    font-size: 16px;
     font-weight: 600;
-    color: #23282d;
+    color: #1e1e1e;
 }
 
 .contenu-canvas-section h3:before {
     content: "🖼️ ";
-    margin-right: 8px;
+    margin-right: 6px;
 }
 
 /* Monitoring Indicator */
 .monitoring-indicator {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 12px;
-    color: #666;
-    opacity: 0.7;
+    top: 8px;
+    right: 8px;
+    font-size: 11px;
+    color: #646970;
     background: rgba(255, 255, 255, 0.9);
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #e1e5e9;
     z-index: 10;
 }
 
 .monitoring-indicator.active {
-    color: #28a745;
-    opacity: 1;
+    color: #00a32a;
 }
 
 .monitoring-indicator.inactive {
-    color: #dc3545;
-    opacity: 1;
+    color: #d63638;
 }
 
 /* Canvas Settings Grid */
 .canvas-settings-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    padding: 16px;
 }
 
 /* Canvas Cards */
 .canvas-card {
     background: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-    overflow: hidden;
-}
-
-.canvas-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-color: #007cba;
-    transform: translateY(-2px);
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
 }
 
 .canvas-card[data-category="dimensions"] {
@@ -88,30 +74,30 @@
 }
 
 .canvas-card[data-category="dimensions"] .canvas-card-header {
-    background: linear-gradient(135deg, #007cba, #005a87);
+    background: #007cba;
 }
 
 .canvas-card[data-category="apparence"] {
-    border-color: #28a745;
+    border-color: #00a32a;
 }
 
 .canvas-card[data-category="apparence"] .canvas-card-header {
-    background: linear-gradient(135deg, #28a745, #1e7e34);
+    background: #00a32a;
 }
 
 .canvas-card[data-category="contenu"] {
-    border-color: #ffc107;
+    border-color: #dba617;
 }
 
 .canvas-card[data-category="contenu"] .canvas-card-header {
-    background: linear-gradient(135deg, #ffc107, #e0a800);
+    background: #dba617;
 }
 
 /* Canvas Card Header */
 .canvas-card-header {
-    background: #23282d;
+    background: #1e1e1e;
     color: white;
-    padding: 15px 20px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -124,32 +110,32 @@
 }
 
 .canvas-card-icon {
-    font-size: 24px;
-    margin-right: 12px;
+    font-size: 20px;
+    margin-right: 10px;
     display: flex;
     align-items: center;
 }
 
 .canvas-card-header h4 {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: white;
 }
 
 .canvas-card-header .status-badge {
-    padding: 4px 8px;
+    padding: 3px 6px;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 /* Canvas Card Content */
 .canvas-card-content {
-    padding: 20px;
+    padding: 16px;
 }
 
 .canvas-card-content .form-table {
@@ -157,16 +143,16 @@
 }
 
 .canvas-card-content .form-table th {
-    padding: 10px 10px 10px 0;
-    font-weight: 600;
-    color: #23282d;
+    padding: 8px 8px 8px 0;
+    font-weight: 500;
+    color: #1e1e1e;
     vertical-align: top;
-    width: 120px;
+    width: 100px;
     font-size: 14px;
 }
 
 .canvas-card-content .form-table td {
-    padding: 10px;
+    padding: 8px;
     vertical-align: top;
 }
 
@@ -174,175 +160,153 @@
 .canvas-card-content input[type="text"],
 .canvas-card-content select {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
+    padding: 6px 10px;
+    border: 1px solid #c7c7cc;
     border-radius: 4px;
     font-size: 14px;
-    color: #23282d;
-    transition: border-color 0.2s ease;
+    color: #1e1e1e;
 }
 
 .canvas-card-content input:focus,
 .canvas-card-content select:focus {
     border-color: #007cba;
     outline: none;
-    box-shadow: 0 0 0 1px #007cba;
 }
 
 .canvas-card-content .description {
-    color: #6c757d;
-    font-size: 13px;
-    font-style: italic;
-    margin-top: 5px;
+    color: #646970;
+    font-size: 12px;
+    margin-top: 4px;
     line-height: 1.4;
 }
 
 /* Canvas Card Preview */
 .canvas-card-preview {
     background: #f8f9fa;
-    padding: 15px 20px;
-    border-top: 1px solid #e1e1e1;
+    padding: 12px 16px;
+    border-top: 1px solid #e1e5e9;
 }
 
 .preview-format {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .preview-format:before {
     content: "📄";
-    font-size: 20px;
-    margin-right: 8px;
-    color: #6c757d;
+    font-size: 18px;
+    margin-right: 6px;
+    color: #646970;
 }
 
 .preview-size {
-    font-size: 12px;
-    color: #6c757d;
+    font-size: 11px;
+    color: #646970;
     font-weight: 500;
     text-align: center;
     display: block;
 }
 
 .preview-size strong {
-    color: #23282d;
+    color: #1e1e1e;
 }
 
 /* Canvas Card Actions */
 .canvas-card-actions {
-    padding: 15px 20px;
+    padding: 12px 16px;
     background: #f8f9fa;
-    border-top: 1px solid #e1e1e1;
+    border-top: 1px solid #e1e5e9;
     display: flex;
     justify-content: flex-end;
 }
 
 .canvas-configure-btn {
-    padding: 8px 16px;
+    padding: 6px 12px;
     background: #007cba;
     color: white;
     border: 1px solid #007cba;
     border-radius: 4px;
     font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
     text-decoration: none;
     display: inline-block;
 }
 
 .canvas-configure-btn:hover {
     background: #005a87;
-    border-color: #005a87;
-    transform: translateY(-1px);
-}
-
-.canvas-configure-btn:active {
-    transform: translateY(0);
-}
-
-/* Loading States */
-.canvas-card.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-.canvas-card.loading .canvas-configure-btn {
-    background: #6c757d;
-    cursor: not-allowed;
 }
 
 /* Error States */
 .canvas-card.error {
-    border-color: #dc3545;
+    border-color: #d63638;
 }
 
 .canvas-card.error .canvas-card-header {
-    background: linear-gradient(135deg, #dc3545, #a71e2a);
+    background: #d63638;
 }
 
 /* Success States */
 .canvas-card.success {
-    border-color: #28a745;
+    border-color: #00a32a;
 }
 
 .canvas-card.success .canvas-card-header {
-    background: linear-gradient(135deg, #28a745, #1e7e34);
+    background: #00a32a;
 }
 
 /* Responsive Design */
 @media screen and (max-width: 782px) {
     .canvas-settings-grid {
         grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 15px;
+        gap: 12px;
+        padding: 12px;
     }
 
     .canvas-card-header {
-        padding: 12px 15px;
+        padding: 10px 12px;
         flex-direction: column;
         align-items: flex-start;
     }
 
     .canvas-card-header-left {
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
 
     .canvas-card-content {
-        padding: 15px;
+        padding: 12px;
     }
 
     .canvas-card-preview {
-        padding: 12px 15px;
+        padding: 10px 12px;
     }
 
     .canvas-card-actions {
-        padding: 12px 15px;
+        padding: 10px 12px;
         justify-content: center;
     }
 }
 
 @media screen and (max-width: 600px) {
     .contenu-canvas-section h3 {
-        padding: 15px;
-        font-size: 16px;
+        padding: 12px;
+        font-size: 15px;
     }
 
     .canvas-card-content .form-table th,
     .canvas-card-content .form-table td {
         display: block;
         width: 100%;
-        padding: 8px 0;
+        padding: 6px 0;
     }
 
     .canvas-card-content .form-table th {
-        padding-bottom: 4px;
+        padding-bottom: 3px;
     }
 
     .canvas-card-content .form-table td {
-        padding-top: 4px;
+        padding-top: 3px;
     }
 
     .canvas-configure-btn {

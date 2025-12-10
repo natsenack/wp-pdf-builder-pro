@@ -1,36 +1,36 @@
 /* PDF Settings Tab Styles */
-/* Styles spécifiques à l'onglet PDF du plugin WP PDF Builder Pro */
+/* Styles simplifiés pour l'onglet PDF */
 
 .pdf-section {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .pdf-section .form-table {
     background: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 4px;
-    padding: 20px;
-    margin-top: 10px;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 8px;
 }
 
 .pdf-section .form-table th {
-    padding: 15px 10px 15px 0;
-    font-weight: 600;
-    color: #23282d;
+    padding: 12px 8px 12px 0;
+    font-weight: 500;
+    color: #1e1e1e;
     vertical-align: top;
-    width: 200px;
+    width: 180px;
+    font-size: 14px;
 }
 
 .pdf-section .form-table td {
-    padding: 15px 10px;
+    padding: 12px 8px;
     vertical-align: top;
 }
 
 .pdf-section .description {
-    color: #6c757d;
-    font-size: 13px;
-    font-style: italic;
-    margin-top: 5px;
+    color: #646970;
+    font-size: 12px;
+    margin-top: 4px;
     line-height: 1.4;
 }
 
@@ -38,9 +38,9 @@
 .toggle-switch {
     position: relative;
     display: inline-block;
-    width: 50px;
+    width: 44px;
     height: 24px;
-    margin-right: 10px;
+    margin-right: 8px;
     vertical-align: middle;
 }
 
@@ -57,9 +57,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
+    background-color: #dcdcde;
     border-radius: 24px;
+    border: 1px solid #c7c7cc;
 }
 
 .toggle-slider:before {
@@ -67,30 +67,26 @@
     content: "";
     height: 18px;
     width: 18px;
-    left: 3px;
-    bottom: 3px;
+    left: 2px;
+    bottom: 2px;
     background-color: white;
-    transition: .4s;
     border-radius: 50%;
 }
 
 input:checked + .toggle-slider {
     background-color: #007cba;
+    border-color: #007cba;
 }
 
 input:checked + .toggle-slider:before {
-    transform: translateX(26px);
-}
-
-.toggle-switch:hover .toggle-slider {
-    box-shadow: 0 0 1px #007cba;
+    transform: translateX(20px);
 }
 
 /* PDF Format Selection */
 .pdf-section select {
     min-width: 120px;
-    padding: 6px 12px;
-    border: 1px solid #ddd;
+    padding: 6px 10px;
+    border: 1px solid #c7c7cc;
     border-radius: 4px;
     background: #fff;
     font-size: 14px;
@@ -99,7 +95,6 @@ input:checked + .toggle-slider:before {
 .pdf-section select:focus {
     border-color: #007cba;
     outline: none;
-    box-shadow: 0 0 0 1px #007cba;
 }
 
 /* Advanced Section */
@@ -108,27 +103,23 @@ input:checked + .toggle-slider:before {
 }
 
 .pdf-section .advanced-toggle {
-    margin: 15px 0;
-    padding: 10px 15px;
+    margin: 12px 0;
+    padding: 8px 12px;
     background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #e1e5e9;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    color: #23282d;
-    transition: all 0.2s ease;
+    color: #1e1e1e;
 }
 
 .pdf-section .advanced-toggle:hover {
     background: #e9ecef;
-    border-color: #adb5bd;
 }
 
 .pdf-section .advanced-toggle:before {
     content: "▶";
-    margin-right: 8px;
-    transition: transform 0.2s ease;
+    margin-right: 6px;
 }
 
 .pdf-section .advanced-toggle.expanded:before {
@@ -137,10 +128,10 @@ input:checked + .toggle-slider:before {
 
 /* PDF Quality Settings */
 .pdf-section .quality-settings {
-    margin-top: 15px;
-    padding: 15px;
+    margin-top: 12px;
+    padding: 12px;
     background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #e1e5e9;
     border-radius: 4px;
 }
 
@@ -153,20 +144,20 @@ input:checked + .toggle-slider:before {
 
 /* Compression Settings */
 .pdf-section .compression-info {
-    margin-top: 10px;
-    padding: 10px;
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
+    margin-top: 8px;
+    padding: 8px;
+    background: #fef9e6;
+    border: 1px solid #f5e6ab;
     border-radius: 4px;
-    color: #856404;
+    color: #dba617;
     font-size: 12px;
 }
 
 /* Print Optimization */
 .pdf-section .print-optimization {
-    margin-top: 15px;
-    padding: 15px;
-    background: #e7f3ff;
+    margin-top: 12px;
+    padding: 12px;
+    background: #f0f8ff;
     border: 1px solid #b3d9ff;
     border-radius: 4px;
 }
@@ -182,30 +173,29 @@ input:checked + .toggle-slider:before {
     .pdf-section .form-table td {
         display: block;
         width: 100%;
-        padding: 10px 0;
+        padding: 8px 0;
     }
 
     .pdf-section .form-table th {
-        padding-bottom: 5px;
-        font-size: 14px;
+        padding-bottom: 4px;
     }
 
     .pdf-section .form-table td {
-        padding-top: 5px;
+        padding-top: 4px;
     }
 
     .toggle-switch {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 }
 
 @media screen and (max-width: 600px) {
     .pdf-section .form-table {
-        padding: 15px;
+        padding: 12px;
     }
 
     .pdf-section select {
         width: 100%;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 }
