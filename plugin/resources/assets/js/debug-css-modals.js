@@ -48,6 +48,37 @@
 
         // 1. Vérifier si les fichiers CSS sont chargés
         log('📄 Vérification des fichiers CSS chargés...');
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            try {
+                const sheet = document.styleSheets[i];
+                if (sheet.href && (sheet.href.includes('contenu-settings.css') || sheet.href.includes('modals-contenu.css'))) {
+                    log(`✅ Feuille de style accessible: ${sheet.href.includes('contenu-settings.css') ? 'contenu-settings.css' : 'modals-contenu.css'}`);
+                }
+            } catch (e) {
+                log('⚠️ Impossible d\'accéder à une feuille de style (CORS ou autre):', e.message);
+            }
+        }
+
+        // 2. Vérifier les modales trouvées
+        log('🔍 Vérification des éléments des modales...');
+        const cacheModals = document.querySelectorAll('.cache-modal');
+        cacheModals.forEach(modal => {
+            const modalId = modal.id;
+            log(`✅ Modale ${modalId} trouvée`);
+            
+            const overlay = modal.querySelector('.cache-modal-overlay');
+            if (overlay) {
+                log(`✅ Overlay trouvé avec classes: ${overlay.className}`);
+            }
+            
+            const container = modal.querySelector('.cache-modal-container');
+            if (container) {
+                log(`✅ Container trouvé`);
+            }
+        });
+
+        log('🔍 === FIN DIAGNOSTIC CSS ===');
+    }
         const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
         let contenuCssLoaded = false;
         cssLinks.forEach(link => {
