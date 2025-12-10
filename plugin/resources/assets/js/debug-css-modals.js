@@ -534,10 +534,57 @@
         log('🔬 === FIN ANALYSE PROFONDE ===');
     }
 
-    // Exposer la fonction d'analyse profonde
-    window.deepDOMAnalysis = deepDOMAnalysis;
+    // Fonction pour forcer la visibilité des modales pour debug
+    function forceModalVisibility(modalId) {
+        log(`🔧 Forçage de la visibilité pour: ${modalId}`);
 
-    // Démarrer le débogage
-    init();
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            error(`❌ Modale ${modalId} non trouvée`);
+            return;
+        }
 
-})();
+        const overlay = modal.querySelector('.cache-modal-overlay');
+        const container = modal.querySelector('.cache-modal-container');
+
+        if (overlay) {
+            // Forcer les styles inline pour debug
+            overlay.style.display = 'flex !important';
+            overlay.style.position = 'fixed !important';
+            overlay.style.top = '0 !important';
+            overlay.style.left = '0 !important';
+            overlay.style.right = '0 !important';
+            overlay.style.bottom = '0 !important';
+            overlay.style.width = '100vw !important';
+            overlay.style.height = '100vh !important';
+            overlay.style.background = 'rgba(0, 0, 0, 0.8) !important';
+            overlay.style.zIndex = '99999 !important';
+            overlay.style.alignItems = 'center !important';
+            overlay.style.justifyContent = 'center !important';
+            log(`✅ Styles forcés sur overlay de ${modalId}`);
+        }
+
+        if (container) {
+            container.style.background = 'red !important';
+            container.style.border = '5px solid yellow !important';
+            container.style.width = '600px !important';
+            container.style.height = '400px !important';
+            container.style.position = 'relative !important';
+            log(`✅ Styles de debug appliqués sur container de ${modalId}`);
+        }
+
+        // Vérifier les dimensions après forçage
+        setTimeout(() => {
+            if (overlay) {
+                const rect = overlay.getBoundingClientRect();
+                log(`📏 Dimensions overlay après forçage: ${rect.width}x${rect.height}, visible: ${rect.width > 0 && rect.height > 0}`);
+            }
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                log(`📏 Dimensions container après forçage: ${rect.width}x${rect.height}, visible: ${rect.width > 0 && rect.height > 0}`);
+            }
+        }, 100);
+    }
+
+    // Exposer la fonction de forçage de visibilité
+    window.forceModalVisibility = forceModalVisibility;
