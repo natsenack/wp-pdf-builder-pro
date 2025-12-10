@@ -267,27 +267,27 @@
                                         <div class="mini-canvas-grid"></div>
 
                                         <!-- Éléments sur le canvas -->
-                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 40px; height: 20px;" title="Élément texte">
+                                        <div class="mini-element text-element" style="top: 12px; left: 15px; width: 30px; height: 15px;" title="Élément texte">
                                             <div class="mini-element-content">T</div>
                                         </div>
-                                        <div class="mini-element shape-element selected" style="top: 45px; left: 15px; width: 35px; height: 25px;" title="Élément sélectionné">
+                                        <div class="mini-element shape-element selected" style="top: 35px; left: 12px; width: 28px; height: 20px;" title="Élément sélectionné">
                                             <div class="mini-element-content">□</div>
                                             <!-- Poignées de sélection -->
                                             <div class="mini-handle nw" title="Redimensionner NW"></div>
                                             <div class="mini-handle ne" title="Redimensionner NE"></div>
                                             <div class="mini-handle sw" title="Redimensionner SW"></div>
                                             <div class="mini-handle se" title="Redimensionner SE"></div>
-                                            <div class="mini-handle rotation" style="top: -8px; left: 50%; transform: translateX(-50%);" title="Rotation"></div>
+                                            <div class="mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation"></div>
                                         </div>
-                                        <div class="mini-element image-element" style="top: 20px; left: 70px; width: 30px; height: 30px;" title="Élément image">
+                                        <div class="mini-element image-element" style="top: 15px; left: 55px; width: 25px; height: 25px;" title="Élément image">
                                             <div class="mini-element-content">🖼</div>
                                         </div>
 
                                         <!-- Sélection rectangle en cours -->
-                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 60px; height: 40px;" title="Zone de sélection"></div>
+                                        <div class="selection-rectangle" style="top: 8px; left: 8px; width: 45px; height: 30px;" title="Zone de sélection"></div>
 
                                         <!-- Curseur de souris -->
-                                        <div class="mouse-cursor" style="top: 55px; left: 85px;">
+                                        <div class="mouse-cursor" style="top: 45px; left: 70px;">
                                             <div class="cursor-icon">👆</div>
                                         </div>
 
@@ -306,22 +306,6 @@
                                         </div>
                                         <div class="interaction-status">
                                             <span class="status-indicator selecting">Sélection active</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Raccourcis clavier -->
-                                    <div class="keyboard-shortcuts">
-                                        <div class="shortcut-group">
-                                            <span class="shortcut-key">Ctrl+Z</span>
-                                            <span class="shortcut-desc">Annuler</span>
-                                        </div>
-                                        <div class="shortcut-group">
-                                            <span class="shortcut-key">Ctrl+Y</span>
-                                            <span class="shortcut-desc">Rétablir</span>
-                                        </div>
-                                        <div class="shortcut-group">
-                                            <span class="shortcut-key">Del</span>
-                                            <span class="shortcut-desc">Supprimer</span>
                                         </div>
                                     </div>
                                 </div>
