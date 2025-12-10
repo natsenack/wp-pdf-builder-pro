@@ -424,3 +424,8 @@
 
     // Exposer la fonction de test
     window.forceOpenModal = forceOpenModal;
+
+    // Démarrer le débogage
+    init();
+
+})();
