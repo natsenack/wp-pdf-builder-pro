@@ -2504,7 +2504,7 @@
                 function loadCanvasCardMonitor() {
                     return new Promise((resolve, reject) => {
                         const script = document.createElement('script');
-                        script.src = '<?php echo plugin_dir_url(dirname(dirname(__FILE__))) . "assets/js/canvas-card-monitor.js?v=" . time(); ?>';
+                        script.src = '<?php echo plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . "assets/js/canvas-card-monitor.js?v=" . time(); ?>';
                         script.onload = () => {
                             console.log('✅ [MONITORING] Système de monitoring chargé');
                             resolve();
