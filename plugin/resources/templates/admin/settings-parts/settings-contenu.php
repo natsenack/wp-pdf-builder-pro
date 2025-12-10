@@ -2503,8 +2503,10 @@
                 // Fonction pour charger le script de monitoring
                 function loadCanvasCardMonitor() {
                     return new Promise((resolve, reject) => {
+                        const scriptUrl = '<?php echo plugins_url('wp-pdf-builder-pro/resources/assets/js/canvas-card-monitor.js') . "?v=" . time(); ?>';
+                        console.log('🔍 [MONITORING] URL du script:', scriptUrl);
                         const script = document.createElement('script');
-                        script.src = '<?php echo plugins_url('wp-pdf-builder-pro/resources/assets/js/canvas-card-monitor.js') . "?v=" . time(); ?>';
+                        script.src = scriptUrl;
                         script.onload = () => {
                             console.log('✅ [MONITORING] Système de monitoring chargé');
                             resolve();
