@@ -2102,7 +2102,7 @@
                                                 previewSystem.values[longKey] = data.data.saved_settings[shortKey];
                                                 console.log(`🔄 Server update: ${longKey} = ${data.data.saved_settings[shortKey]} (was: ${oldValue})`);
                                                 updatedCount++;
-                                            }
+                                            } // Removed else branch that was setting values to empty strings
                                         });
                                         console.log(`🔄 Total values updated from server: ${updatedCount}`);
                                     } else {
