@@ -2584,6 +2584,7 @@ body.canvas-modal-open {
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0; /* Important pour que flex fonctionne avec overflow */
+    background-color: #fff;
 }
 
 /* Modal Interactions & Comportement - ajustement du body pour le footer */

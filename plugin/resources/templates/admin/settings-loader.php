@@ -126,6 +126,15 @@ function pdf_builder_load_settings_assets($hook) {
         'all'
     );
 
+    // Charger les styles des modals de l'onglet contenu
+    wp_enqueue_style(
+        'pdf-builder-modals-contenu',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/modals-contenu.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
     // Charger les styles pour l'onglet principal
     wp_enqueue_style(
         'pdf-builder-main-settings',
