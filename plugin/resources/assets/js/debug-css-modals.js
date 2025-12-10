@@ -224,9 +224,9 @@
             const folderCards = modal.querySelectorAll('.cache-folder-card');
             folderCards.forEach((card, index) => {
                 checkElementStyles(card, `#${modalId} .cache-folder-card:nth-child(${index + 1})`, {
-                    'background-color': 'rgba(0, 0, 0, 0)', // Mis à jour pour les nouvelles améliorations (dégradé subtil)
-                    'padding': '20px', // Mis à jour pour les nouvelles améliorations
-                    'border-radius': '10px' // Mis à jour pour les nouvelles améliorations
+                    'background-color': 'rgba(0, 0, 0, 0)',
+                    'padding': '24px', // Mis à jour pour les améliorations modernes (24px au lieu de 20px)
+                    'border-radius': '12px' // Mis à jour pour les améliorations modernes (12px au lieu de 10px)
                 });
             });
 
