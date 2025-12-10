@@ -47,6 +47,9 @@ window.CanvasCardMonitor = {
             // Valider la cohérence initiale
             this.validateConsistency();
 
+            // Vérifier la persistance des données au chargement
+            this.validateDataPersistence();
+
             // Configurer les écouteurs d'événements
             this.setupEventListeners();
 
@@ -214,6 +217,135 @@ window.CanvasCardMonitor = {
 
         this.log('INFO', `Validation terminée: ${inconsistencies} incohérences détectées`);
         return inconsistencies === 0;
+    },
+
+    // Vérifier la persistance des données au chargement de la page
+    validateDataPersistence: function() {
+        this.log('INFO', 'Vérification de la persistance des données au chargement');
+
+        let persistenceIssues = 0;
+
+        // 1. Vérifier que tous les inputs hidden ont des valeurs
+        const requiredSettings = [
+            'pdf_builder_canvas_width',
+            'pdf_builder_canvas_height',
+            'pdf_builder_canvas_dpi',
+            'pdf_builder_canvas_bg_color',
+            'pdf_builder_canvas_border_color',
+            'pdf_builder_canvas_border_width',
+            'pdf_builder_canvas_shadow_enabled',
+            'pdf_builder_canvas_grid_enabled',
+            'pdf_builder_canvas_grid_size',
+            'pdf_builder_canvas_guides_enabled',
+            'pdf_builder_canvas_snap_to_grid',
+            'pdf_builder_canvas_zoom_min',
+            'pdf_builder_canvas_zoom_max',
+            'pdf_builder_canvas_zoom_default',
+            'pdf_builder_canvas_zoom_step'
+        ];
+
+        requiredSettings.forEach(settingKey => {
+            const value = this.state.settings[settingKey];
+            if (value === undefined || value === null || value === '') {
+                persistenceIssues++;
+                this.log('ERROR', `Paramètre manquant ou vide: ${settingKey}`);
+                this.state.errors.push({
+                    type: 'MISSING_SETTING',
+                    key: settingKey,
+                    message: `Le paramètre ${settingKey} n'a pas de valeur au chargement`,
+                    timestamp: new Date()
+                });
+            } else {
+                this.log('DEBUG', `Paramètre OK: ${settingKey} = ${value}`);
+            }
+        });
+
+        // 2. Vérifier que les aperçus correspondent aux valeurs des inputs hidden
+        Object.keys(this.state.cards).forEach(category => {
+            const card = this.state.cards[category];
+            const displayedValues = this.getCardDisplayedValues(card);
+            const expectedValues = this.getExpectedValuesForCard(category);
+
+            Object.keys(expectedValues).forEach(key => {
+                const expected = expectedValues[key];
+                const displayed = displayedValues[key];
+
+                if (expected !== undefined && displayed !== undefined) {
+                    if (expected != displayed) {
+                        persistenceIssues++;
+                        this.log('ERROR', `Persistance défaillante pour ${category}.${key}: input=${expected}, affiché=${displayed}`);
+                        this.state.errors.push({
+                            type: 'PERSISTENCE_MISMATCH',
+                            category: category,
+                            key: key,
+                            expected: expected,
+                            displayed: displayed,
+                            message: `L'aperçu ne correspond pas à la valeur sauvegardée pour ${category}.${key}`,
+                            timestamp: new Date()
+                        });
+                    } else {
+                        this.log('DEBUG', `Persistance OK pour ${category}.${key}: ${displayed}`);
+                    }
+                }
+            });
+        });
+
+        // 3. Vérifier la cohérence avec la base de données via AJAX (optionnel)
+        this.verifyDatabaseConsistency();
+
+        this.log('INFO', `Vérification de persistance terminée: ${persistenceIssues} problèmes détectés`);
+        return persistenceIssues === 0;
+    },
+
+    // Vérifier la cohérence avec la base de données
+    verifyDatabaseConsistency: function() {
+        if (!window.jQuery || !window.ajaxurl) {
+            this.log('DEBUG', 'AJAX non disponible pour vérification base de données');
+            return;
+        }
+
+        this.log('DEBUG', 'Vérification de cohérence avec la base de données');
+
+        window.jQuery.ajax({
+            url: window.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'verify_canvas_settings_consistency',
+                nonce: window.pdfBuilderSettings?.nonce || ''
+            },
+            success: (response) => {
+                if (response.success) {
+                    const dbValues = response.data;
+                    let dbInconsistencies = 0;
+
+                    // Comparer les valeurs DOM avec celles de la DB
+                    Object.keys(this.state.settings).forEach(key => {
+                        const domValue = this.state.settings[key];
+                        const dbValue = dbValues[key];
+
+                        if (dbValue !== undefined && domValue != dbValue) {
+                            dbInconsistencies++;
+                            this.log('WARN', `Incohérence DB-DOM: ${key} (DOM: ${domValue}, DB: ${dbValue})`);
+                            this.state.warnings.push({
+                                type: 'DB_DOM_INCONSISTENCY',
+                                key: key,
+                                domValue: domValue,
+                                dbValue: dbValue,
+                                message: `Valeur DOM différente de la base de données pour ${key}`,
+                                timestamp: new Date()
+                            });
+                        }
+                    });
+
+                    this.log('INFO', `Vérification DB terminée: ${dbInconsistencies} incohérences détectées`);
+                } else {
+                    this.log('WARN', 'Échec de la vérification de cohérence DB:', response.data);
+                }
+            },
+            error: (xhr, status, error) => {
+                this.log('WARN', 'Erreur AJAX lors de la vérification DB:', error);
+            }
+        });
     },
 
     // Obtenir les valeurs affichées dans une carte

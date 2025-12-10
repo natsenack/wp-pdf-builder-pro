@@ -858,6 +858,39 @@ function pdf_builder_get_debug_settings_handler() {
     wp_send_json_success($debug_settings);
 }
 
+/**
+ * Handler AJAX pour vérifier la cohérence des paramètres canvas avec la base de données
+ */
+function pdf_builder_verify_canvas_settings_consistency_handler() {
+    try {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Récupérer tous les paramètres canvas depuis la base de données
+        $settings = get_option('pdf_builder_settings', array());
+
+        // Extraire seulement les paramètres canvas
+        $canvas_settings = array();
+        foreach ($settings as $key => $value) {
+            if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                $canvas_settings[$key] = $value;
+            }
+        }
+
+        // Log pour debug
+        error_log('PDF Builder: [VERIFY CONSISTENCY] Canvas settings from DB: ' . count($canvas_settings));
+
+        wp_send_json_success($canvas_settings);
+
+    } catch (Exception $e) {
+        error_log('PDF Builder: [VERIFY CONSISTENCY] Error: ' . $e->getMessage());
+        wp_send_json_error('Erreur lors de la vérification: ' . $e->getMessage());
+    }
+}
+
 // error_log('PDF Builder: [AJAX REGISTRATION] Registering pdf_builder_test_roles action');
 add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
 
@@ -865,3 +898,4 @@ add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
 add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_settings_handler');
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
+add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
