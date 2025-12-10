@@ -1,0 +1,302 @@
+/* Security Settings Tab Styles */
+/* Styles spécifiques à l'onglet Sécurité du plugin WP PDF Builder Pro */
+
+.security-section,
+.rgpd-section {
+    margin-bottom: 30px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.security-section h3,
+.rgpd-section h3 {
+    margin: 0;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e1e1;
+    font-size: 16px;
+    font-weight: 600;
+    color: #23282d;
+}
+
+.security-section h3:before {
+    content: "🔒 ";
+    margin-right: 5px;
+}
+
+.rgpd-section h3:before {
+    content: "🛡️ ";
+    margin-right: 5px;
+}
+
+/* Status Indicators */
+.security-status,
+.rgpd-status {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.security-status {
+    background: #dc3545; /* Default to inactive */
+}
+
+.security-status.active {
+    background: #28a745;
+}
+
+.rgpd-status {
+    background: #dc3545; /* Default to inactive */
+}
+
+.rgpd-status.active {
+    background: #28a745;
+}
+
+/* Form Tables */
+.security-section .form-table,
+.rgpd-section .form-table {
+    margin: 0;
+    padding: 20px;
+    background: #fff;
+}
+
+.security-section .form-table th,
+.rgpd-section .form-table th {
+    padding: 15px 10px 15px 0;
+    font-weight: 600;
+    color: #23282d;
+    vertical-align: top;
+    width: 250px;
+    font-size: 14px;
+}
+
+.security-section .form-table td,
+.rgpd-section .form-table td {
+    padding: 15px 10px;
+    vertical-align: top;
+}
+
+/* Security Level Selector */
+.security-section select[name="pdf_security_level"] {
+    min-width: 150px;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    color: #23282d;
+}
+
+.security-section select[name="pdf_security_level"]:focus {
+    border-color: #007cba;
+    outline: none;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.security-section select[name="pdf_security_level"] option[value="high"] {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.security-section select[name="pdf_security_level"] option[value="medium"] {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.security-section select[name="pdf_security_level"] option[value="low"] {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Toggle Switches */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #007cba;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-switch:hover .toggle-slider {
+    box-shadow: 0 0 1px #007cba;
+}
+
+/* Descriptions */
+.security-section .description,
+.rgpd-section .description {
+    color: #6c757d;
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 5px;
+    line-height: 1.4;
+    max-width: 400px;
+}
+
+/* GDPR Specific Styles */
+.rgpd-section input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.rgpd-section input[type="number"]:focus {
+    border-color: #007cba;
+    outline: none;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.rgpd-section .gdpr-consent-settings {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+}
+
+.rgpd-section .gdpr-consent-settings .description {
+    color: #004085;
+    margin: 0 0 10px 0;
+    font-style: normal;
+}
+
+/* Security Warnings */
+.security-section .security-warning {
+    margin-top: 15px;
+    padding: 12px 16px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 13px;
+}
+
+.security-section .security-warning:before {
+    content: "⚠️ ";
+    margin-right: 5px;
+}
+
+/* Encryption Status */
+.rgpd-section .encryption-status {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    color: #155724;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.rgpd-section .encryption-status:before {
+    content: "🔐 ";
+    margin-right: 5px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    .security-section .form-table th,
+    .security-section .form-table td,
+    .rgpd-section .form-table th,
+    .rgpd-section .form-table td {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    .security-section .form-table th,
+    .rgpd-section .form-table th {
+        padding-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .security-section .form-table td,
+    .rgpd-section .form-table td {
+        padding-top: 5px;
+    }
+
+    .security-section h3,
+    .rgpd-section h3 {
+        padding: 12px 15px;
+        font-size: 15px;
+    }
+
+    .toggle-switch {
+        margin-bottom: 10px;
+    }
+
+    .security-status,
+    .rgpd-status {
+        display: block;
+        margin: 10px 0;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .security-section .form-table,
+    .rgpd-section .form-table {
+        padding: 15px;
+    }
+
+    .security-section select[name="pdf_security_level"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .rgpd-section input[type="number"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

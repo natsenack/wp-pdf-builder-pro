@@ -28,7 +28,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Ces styles personnalisés interfèrent avec la structure WordPress et causent le chevauchement du footer
 
     /*
-    // Charger les styles CSS
+    // Charger les styles CSS généraux*/
     wp_enqueue_style(
         'pdf-builder-settings',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings.css',
@@ -59,6 +59,78 @@ function pdf_builder_load_settings_assets($hook) {
     wp_enqueue_style(
         'pdf-builder-system-settings',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/system-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet général
+    wp_enqueue_style(
+        'pdf-builder-general-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/general-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet licence
+    wp_enqueue_style(
+        'pdf-builder-licence-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/licence-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet PDF
+    wp_enqueue_style(
+        'pdf-builder-pdf-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/pdf-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet templates
+    wp_enqueue_style(
+        'pdf-builder-templates-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/templates-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet sécurité
+    wp_enqueue_style(
+        'pdf-builder-securite-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/securite-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet cron
+    wp_enqueue_style(
+        'pdf-builder-cron-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/cron-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet contenu
+    wp_enqueue_style(
+        'pdf-builder-contenu-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/contenu-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet principal
+    wp_enqueue_style(
+        'pdf-builder-main-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/main-settings.css',
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'

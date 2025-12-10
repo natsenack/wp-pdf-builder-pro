@@ -50,8 +50,9 @@ L'organisation actuelle est **fonctionnelle et logique**. Les fichiers sont bien
 1. **Styles globaux** → `admin-global.css`
 2. **Navigation/onglets** → `settings-tabs.css`
 3. **Paramètres développeur** → `developer-settings.css`
-4. **Notifications** → `notifications.css`
-5. **Fonctionnalités spécifiques** → Fichiers dédiés
+4. **Paramètres système** → `system-settings.css`
+5. **Notifications** → `notifications.css`
+6. **Fonctionnalités spécifiques** → Fichiers dédiés
 
 ## Nettoyage effectué
 
