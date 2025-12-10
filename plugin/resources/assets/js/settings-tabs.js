@@ -264,5 +264,3 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
             }
         }
     };
-
-})();

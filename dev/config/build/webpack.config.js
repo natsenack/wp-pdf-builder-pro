@@ -2,11 +2,17 @@ const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+  context: path.resolve(__dirname, '../../../'),
   mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-react': './assets/js/pdf-builder-react-wrapper.js'
+    'pdf-builder-react': './assets/js/pdf-builder-react-wrapper.js',
+    'pdf-builder-admin': './plugin/resources/assets/js/settings-tabs.js',
+    'pdf-builder-admin-debug': './plugin/resources/assets/js/settings-tabs.js',
+    'pdf-builder-admin-css': './plugin/assets/css/admin-settings.css',
+    'pdf-builder-react-css': './plugin/assets/css/canvas-modals.css'
   },
   target: ['web', 'es6'], // Cibler ES6 pour de meilleures performances
   output: {
@@ -26,7 +32,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
       // Override react to use our shim wrapper instead of external
-      // Path from dev/config/build/ -> ../../../assets/js/pdf-builder-react/react-shim-wrapper.js
+      // Path from project root -> assets/js/pdf-builder-react/react-shim-wrapper.js
       'react': path.resolve(__dirname, '../../../assets/js/pdf-builder-react/react-shim-wrapper.js')
     }
   },
@@ -49,18 +55,16 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          {
-            loader: 'style-loader',
-            options: {
-              injectType: 'singletonStyleTag'
-            }
-          }, 
+          MiniCssExtractPlugin.loader,
           'css-loader'
         ]
       }
     ]
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css'
+    }),
     new CompressionPlugin({
       algorithm: 'gzip',
       test: /\.(js|css)$/,
