@@ -1599,6 +1599,8 @@
                                 console.log('🔍 [OPEN MODAL] Overlay était actif:', wasActive);
 
                                 if (!wasActive) {
+                                    // Set modal display to block to make it visible
+                                    modal.style.display = 'block';
                                     overlay.classList.add('active');
                                     document.body.classList.add('canvas-modal-open');
                                     console.log('✅ [OPEN MODAL] Classe active ajoutée à overlay');
@@ -1925,6 +1927,8 @@
                                 if (wasActive) {
                                     overlay.classList.remove('active');
                                     document.body.classList.remove('canvas-modal-open');
+                                    // Set modal display back to none
+                                    modal.style.display = 'none';
                                     console.log('✅ [CLOSE MODAL] Classe active retirée');
                                 } else {
                                     console.log('⚠️ [CLOSE MODAL] Overlay déjà inactif');
