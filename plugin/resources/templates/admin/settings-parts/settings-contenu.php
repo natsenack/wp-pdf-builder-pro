@@ -147,6 +147,10 @@
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
+                                <!-- Éléments factices pour compatibilité avec l'ancien JavaScript -->
+                                <div id="card-bg-preview" class="color-preview bg" style="display: none;"></div>
+                                <div id="card-border-preview" class="color-preview border" style="display: none;"></div>
+                                
                                 <div class="apparence-preview-container">
                                     <div class="mini-canvas-apparence" id="mini-canvas-apparence" style="background-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>; border: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>px solid <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>; <?php if (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') echo 'box-shadow: 0 4px 8px rgba(0,0,0,0.15);'; ?>">
                                         <div class="mini-canvas-content">
