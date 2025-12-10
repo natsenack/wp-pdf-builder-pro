@@ -39,6 +39,15 @@ class AdminScriptLoader
         if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false) {
             // error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook);
 
+            // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.)
+            wp_enqueue_script(
+                'pdf-builder-utils',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-utils.js',
+                [],
+                PDF_BUILDER_PRO_VERSION,
+                true
+            );
+
             wp_enqueue_style(
                 'pdf-builder-settings-tabs',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/settings-tabs.css',

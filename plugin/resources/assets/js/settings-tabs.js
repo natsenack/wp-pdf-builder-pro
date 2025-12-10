@@ -20,10 +20,18 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
 
     // Système de navigation des onglets (debug supprimé)
     function initTabs() {
+        // Démarrer le tracking de performance pour l'initialisation des onglets
+        if (window.PerformanceMetrics) {
+            window.PerformanceMetrics.start('tabs_initialization');
+        }
+
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
         if (!tabsContainer || !contentContainer) {
+            if (window.PerformanceMetrics) {
+                window.PerformanceMetrics.error('tabs_initialization', 'Containers not found');
+            }
             return;
         }
 
@@ -58,7 +66,15 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
                 content.classList.add('active');
             }
 
-            // Sauvegarder dans localStorage
+            // Sauvegarder l'état des onglets avec LocalCache
+            if (window.LocalCache) {
+                window.LocalCache.save({
+                    activeTab: tabId,
+                    timestamp: Date.now()
+                });
+            }
+
+            // Fallback vers localStorage si LocalCache n'est pas disponible
             try {
                 localStorage.setItem('pdf_builder_active_tab', tabId);
             } catch (e) {
@@ -68,18 +84,35 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
 
         // Restaurer l'onglet sauvegardé
         let tabRestored = false;
-        try {
-            const savedTab = localStorage.getItem('pdf_builder_active_tab');
-            if (savedTab) {
-                const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = document.getElementById('tab-content-' + savedTab);
+
+        // Essayer d'abord LocalCache
+        if (window.LocalCache) {
+            const cachedState = window.LocalCache.load();
+            if (cachedState && cachedState.activeTab) {
+                const savedTabElement = tabsContainer.querySelector('[data-tab="' + cachedState.activeTab + '"]');
+                const savedContent = document.getElementById('tab-content-' + cachedState.activeTab);
                 if (savedTabElement && savedContent) {
                     savedTabElement.click();
                     tabRestored = true;
                 }
             }
-        } catch (e) {
-            // Ignore les erreurs localStorage
+        }
+
+        // Fallback vers localStorage si LocalCache n'est pas disponible ou n'a pas de données
+        if (!tabRestored) {
+            try {
+                const savedTab = localStorage.getItem('pdf_builder_active_tab');
+                if (savedTab) {
+                    const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
+                    const savedContent = document.getElementById('tab-content-' + savedTab);
+                    if (savedTabElement && savedContent) {
+                        savedTabElement.click();
+                        tabRestored = true;
+                    }
+                }
+            } catch (e) {
+                // Ignore les erreurs localStorage
+            }
         }
 
         // Activer le premier onglet par défaut seulement si aucun onglet n'a été restauré
@@ -88,6 +121,11 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
             if (firstTab) {
                 firstTab.click();
             }
+        }
+
+        // Terminer le tracking de performance
+        if (window.PerformanceMetrics) {
+            window.PerformanceMetrics.end('tabs_initialization');
         }
     }
 
