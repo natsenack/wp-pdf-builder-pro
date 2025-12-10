@@ -111,7 +111,7 @@
             checkElementStyles(container, `#${modalId} .cache-modal-container`, {
                 'background-color': 'rgb(255, 255, 255)',
                 'border-radius': '8px',
-                'box-shadow': '0px 4px 20px rgba(0, 0, 0, 0.3)',
+                'box-shadow': 'rgba(0, 0, 0, 0.3) 0px 4px 20px 0px', // Format retourné par getComputedStyle
                 'max-width': '800px'
             });
 
