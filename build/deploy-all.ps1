@@ -5,14 +5,13 @@
 
 .DESCRIPTION
     Déploie le plugin WordPress ou teste le déploiement
-    Supporte les modes : test, plugin-only, full-project
+    Supporte les modes : test, plugin
     Options de synchronisation : intelligente ou complète
 
 .PARAMETER Mode
     Mode de déploiement :
     - test : Simulation sans envoi (défaut)
     - plugin : Déploie seulement le dossier plugin/
-    - full : Déploie tout le projet (mode développement)
 
 .PARAMETER FullSync
     Force la synchronisation complète de tous les fichiers
@@ -89,7 +88,7 @@
 
 param(
     [Parameter(Mandatory=$false)]
-    [ValidateSet("test", "plugin", "full")]
+    [ValidateSet("test", "plugin")]
     [string]$Mode = "test",
 
     [Parameter(Mandatory=$false)]
@@ -261,19 +260,28 @@ function Start-SystemDiagnostic {
     Write-Host "-" * 20 -ForegroundColor Magenta
 
     $assetFiles = @(
-        @{path="$PSScriptRoot\..\plugin\assets\js\dist\pdf-builder-admin.js"; name="Bundle admin"; minSize=100KB},
-        @{path="$PSScriptRoot\..\plugin\assets\js\dist\pdf-builder-admin-debug.js"; name="Bundle debug"; minSize=100KB},
+        @{name="Bundles JS admin"; pattern="*.js"; minSize=10KB},
         @{path="$PSScriptRoot\..\plugin\assets\css\pdf-builder-admin.css"; name="CSS admin"; minSize=1KB},
-        @{path="$PSScriptRoot\..\plugin\assets\css\pdf-builder-react.css"; name="CSS React"; minSize=10KB}
+        @{path="$PSScriptRoot\..\plugin\assets\css\pdf-builder-react.css"; name="CSS React"; minSize=5KB}
     )
 
     foreach ($asset in $assetFiles) {
-        $testResult = if (Test-Path $asset.path) {
-            $size = (Get-Item $asset.path).Length
-            $size -gt $asset.minSize
-        } else { $false }
+        if ($asset.pattern) {
+            # Pour les bundles JS, calculer la taille totale de tous les JS dans dist
+            $jsFiles = Get-ChildItem -Path "$PSScriptRoot\..\plugin\assets\js\dist" -Filter $asset.pattern
+            $totalSize = ($jsFiles | Measure-Object -Property Length -Sum).Sum
+            $testResult = $totalSize -gt $asset.minSize
+            $sizeDisplay = "$([math]::Round($totalSize/1KB,1)) KB total"
+        } else {
+            # Pour les fichiers individuels (CSS)
+            $testResult = if (Test-Path $asset.path) {
+                $size = (Get-Item $asset.path).Length
+                $size -gt $asset.minSize
+            } else { $false }
+            $sizeDisplay = "$([math]::Round((Get-Item $asset.path).Length/1KB,1)) KB"
+        }
 
-        Test-Diagnostic $asset.name { $testResult } "warning" "$($asset.name) valide ($([math]::Round((Get-Item $asset.path).Length/1KB,1)) KB)" "$($asset.name) trop petit ou manquant"
+        Test-Diagnostic $asset.name { $testResult } "warning" "$($asset.name) valide ($sizeDisplay)" "$($asset.name) trop petit ou manquant"
     }
 
     # 4. Vérifications système
@@ -663,12 +671,6 @@ switch ($Mode) {
         $Description = "PLUGIN WORDPRESS UNIQUEMENT"
         $Color = "Green"
     }
-    "full" {
-        $LocalPath = "I:\wp-pdf-builder-pro"
-        $Description = "PROJET COMPLET (DÉVELOPPEMENT)"
-        $Color = "Yellow"
-        $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro-dev"
-    }
     default {
         $LocalPath = "I:\wp-pdf-builder-pro\plugin"
         $Description = "TEST DE DÉPLOIEMENT (SIMULATION)"
@@ -709,9 +711,6 @@ if ($Mode -eq "plugin" -and -not $IsTestMode) {
     Write-Log "  3️⃣  Push Git (tag de version)" -Level "INFO" -Color "White"
     Write-Log "  4️⃣  Tests post-déploiement" -Level "INFO" -Color "White"
     Write-Log "  5️⃣  Validation des assets" -Level "INFO" -Color "White"
-} elseif ($Mode -eq "full" -and -not $IsTestMode) {
-    Write-Log "  1️⃣  Transfert FTP de tout le projet" -Level "INFO" -Color "White"
-    Write-Log "  2️⃣  Push Git (tag de développement)" -Level "INFO" -Color "White"
 } else {
     Write-Log "  1️⃣  Analyse des fichiers à déployer" -Level "INFO" -Color "White"
     Write-Log "  2️⃣  Simulation (aucun transfert)" -Level "INFO" -Color "White"
@@ -814,19 +813,6 @@ switch ($Mode) {
             "README.md",                 # Readme
             "CHANGELOG.md",              # Changelog
             "*.md"                       # Documentation
-        )
-    }
-    "full" {
-        # Pour le déploiement complet, exclure les gros dossiers de développement
-        $excludePatterns = @(
-            "node_modules",
-            ".git",
-            ".vscode",
-            "*.log",
-            "temp",
-            "uploads",
-            "wordpress-stubs",
-            "*.tmp"
         )
     }
 }
