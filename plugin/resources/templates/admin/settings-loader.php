@@ -24,10 +24,9 @@ function pdf_builder_load_settings_assets($hook) {
     //     return;
     // }
 
-    // TEMPORAIREMENT DÉSACTIVÉ : Assets personnalisés causent des conflits avec WordPress
-    // Ces styles personnalisés interfèrent avec la structure WordPress et causent le chevauchement du footer
+    // ACTIVATION DES STYLES CSS PERSONNALISES
+    // Styles pour les paramètres du plugin PDF Builder Pro
 
-    /*
     // Charger les styles CSS généraux
     wp_enqueue_style(
         'pdf-builder-settings',
@@ -135,7 +134,6 @@ function pdf_builder_load_settings_assets($hook) {
         PDF_BUILDER_VERSION . '-' . time(),
         'all'
     );
-    */
 
     // DEBUG: Avant enqueue du script
     error_log('PDF Builder - Avant wp_enqueue_script');
