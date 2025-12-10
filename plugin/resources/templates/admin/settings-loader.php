@@ -131,7 +131,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-modals-contenu',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/modals-contenu.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid(),
+        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . rand(1000, 9999),
         'all'
     );
 
