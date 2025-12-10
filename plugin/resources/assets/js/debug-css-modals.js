@@ -586,10 +586,58 @@
         }, 100);
     }
 
-    // Exposer la fonction de forçage de visibilité
-    window.forceModalVisibility = forceModalVisibility;
+    // Fonction pour vérifier si le CSS est chargé dans la page
+    function checkCSSLoading() {
+        log('🔍 Vérification du chargement des CSS...');
 
-    // Démarrer le débogage
-    init();
+        const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+        let contenuCssFound = false;
+        let contenuCssLoaded = false;
 
-})();
+        cssLinks.forEach(link => {
+            if (link.href && link.href.includes('contenu-settings.css')) {
+                contenuCssFound = true;
+                log('✅ contenu-settings.css trouvé dans le DOM:', link.href);
+
+                // Vérifier si la feuille de style est chargée
+                try {
+                    if (link.sheet) {
+                        contenuCssLoaded = true;
+                        log('✅ contenu-settings.css chargé et accessible');
+
+                        // Compter les règles CSS
+                        const rules = link.sheet.cssRules || link.sheet.rules;
+                        log(`📊 Nombre de règles CSS dans contenu-settings.css: ${rules.length}`);
+
+                        // Chercher les règles de modales
+                        let modalRules = 0;
+                        for (let i = 0; i < rules.length; i++) {
+                            const rule = rules[i];
+                            if (rule.selectorText && rule.selectorText.includes('cache-modal')) {
+                                modalRules++;
+                            }
+                        }
+                        log(`🎯 Règles cache-modal trouvées: ${modalRules}`);
+
+                    } else {
+                        log('⚠️ contenu-settings.css trouvé mais feuille de style non accessible (CORS ou chargement en cours)');
+                    }
+                } catch (e) {
+                    log('⚠️ Erreur lors de l\'accès à contenu-settings.css:', e.message);
+                }
+            }
+        });
+
+        if (!contenuCssFound) {
+            error('❌ contenu-settings.css NON trouvé dans le DOM !');
+            log('📋 Liste de tous les CSS chargés:');
+            cssLinks.forEach((link, index) => {
+                log(`  ${index + 1}. ${link.href}`);
+            });
+        }
+
+        return contenuCssLoaded;
+    }
+
+    // Exposer la fonction de vérification CSS
+    window.checkCSSLoading = checkCSSLoading;
