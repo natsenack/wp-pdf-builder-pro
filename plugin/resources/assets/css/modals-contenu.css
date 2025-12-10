@@ -126,7 +126,7 @@
 }
 
 .cache-modal-body {
-    padding: 28px;
+    padding: 32px;
     flex: 1;
     overflow-y: auto;
     background-color: var(--modal-bg);
@@ -253,13 +253,13 @@
 .cache-modal-container .cache-details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 32px;
+    margin-bottom: 32px;
 }
 
 .cache-modal-container .cache-folder-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    padding: 24px;
+    padding: 32px;
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -371,19 +371,19 @@
 }
 
 .cache-modal-container .cache-section {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 }
 
 .cache-modal-container .cache-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    margin-bottom: 24px;
+    gap: 24px;
+    margin-bottom: 32px;
 }
 
 .cache-modal-container .cache-stat-item {
     text-align: center;
-    padding: 20px;
+    padding: 28px;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     border-radius: 10px;
     border: 1px solid var(--modal-border-color);
@@ -467,7 +467,7 @@
 .contenu-settings .form-table th,
 .cache-modal-container .form-table th {
     text-align: left;
-    padding: 12px;
+    padding: 16px 20px;
     background-color: #f8f9fa;
     border-bottom: 1px solid #e1e5e9;
     font-weight: 600;
@@ -476,7 +476,7 @@
 
 .contenu-settings .form-table td,
 .cache-modal-container .form-table td {
-    padding: 12px;
+    padding: 16px 20px;
     border-bottom: 1px solid #e1e5e9;
 }
 
@@ -490,7 +490,7 @@
 .cache-modal-container textarea {
     width: 100%;
     max-width: 100%;
-    padding: 8px 12px;
+    padding: 12px 16px;
     border: 1px solid #d3dadf;
     border-radius: 4px;
     font-size: 14px;
@@ -590,7 +590,7 @@
 }
 
 .canvas-modal-body {
-    padding: 28px;
+    padding: 32px;
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
@@ -654,7 +654,7 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--modal-text-primary);
-    margin: 20px 0 16px 0;
+    margin: 28px 0 20px 0;
     padding: 0;
     display: flex;
     align-items: center;
@@ -667,7 +667,7 @@
 }
 
 .canvas-modal-section-title.spaced {
-    margin-top: 32px;
+    margin-top: 40px;
 }
 
 .canvas-modal-inline-flex {
@@ -679,7 +679,7 @@
 .canvas-modal-sub-description {
     font-size: 14px;
     color: var(--modal-text-secondary);
-    margin: 12px 0 20px 0;
+    margin: 16px 0 24px 0;
     line-height: 1.5;
 }
 
@@ -687,8 +687,8 @@
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     border: 1px solid var(--modal-border-color);
     border-radius: 8px;
-    padding: 16px;
-    margin: 12px 0;
+    padding: 20px;
+    margin: 16px 0;
     font-size: 14px;
     color: var(--modal-text-secondary);
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
