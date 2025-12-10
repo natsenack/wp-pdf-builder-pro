@@ -28,7 +28,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Ces styles personnalisés interfèrent avec la structure WordPress et causent le chevauchement du footer
 
     /*
-    // Charger les styles CSS généraux*/
+    // Charger les styles CSS généraux
     wp_enqueue_style(
         'pdf-builder-settings',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings.css',
