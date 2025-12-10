@@ -1,7 +1,7 @@
 /**
  * Système de monitoring et synchronisation des cartes canvas
  * Assure la cohérence entre toutes les cartes et les modals
- * Version: 1.0.0 - 10/12/2025
+ * Version: 1.0.0 - 10/12/2025 - Deployed
  */
 
 window.CanvasCardMonitor = {
