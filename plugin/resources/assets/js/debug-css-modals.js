@@ -397,7 +397,30 @@
         });
     }
 
-    // Démarrer le débogage
-    init();
+    // Fonction pour forcer l'ouverture d'une modale pour test
+    function forceOpenModal(modalId) {
+        log(`🔧 Forçage de l'ouverture de la modale: ${modalId}`);
 
-})();
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            error(`❌ Modale ${modalId} non trouvée`);
+            return;
+        }
+
+        // Ajouter la classe active à l'overlay
+        const overlay = modal.querySelector('.cache-modal-overlay');
+        if (overlay) {
+            overlay.classList.add('active');
+            log(`✅ Classe 'active' ajoutée à l'overlay de ${modalId}`);
+        } else {
+            error(`❌ Overlay non trouvé pour ${modalId}`);
+        }
+
+        // Lancer le diagnostic après un court délai
+        setTimeout(() => {
+            diagnoseCSSIssues();
+        }, 100);
+    }
+
+    // Exposer la fonction de test
+    window.forceOpenModal = forceOpenModal;
