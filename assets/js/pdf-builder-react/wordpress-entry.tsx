@@ -44,10 +44,10 @@ declare global {
       resetAPI: typeof resetAPI;
     };
     // Notification functions
-    showSuccessNotification?: (message: string, options?: any) => void;
-    showErrorNotification?: (message: string, options?: any) => void;
-    showWarningNotification?: (message: string, options?: any) => void;
-    showInfoNotification?: (message: string, options?: any) => void;
+    showSuccessNotification?: (message: string, duration?: number) => void;
+    showErrorNotification?: (message: string, duration?: number) => void;
+    showWarningNotification?: (message: string, duration?: number) => void;
+    showInfoNotification?: (message: string, duration?: number) => void;
   }
 }
 

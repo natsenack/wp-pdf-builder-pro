@@ -65,7 +65,6 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         WebkitBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
         MozBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
         fontSize: '14px',
         fontWeight: 'bold',
         fontFamily: 'Arial, sans-serif',
@@ -75,10 +74,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         WebkitBoxAlign: 'center',
         WebkitAlignItems: 'center',
         MozBoxAlign: 'center',
-        msFlexAlign: 'center',
         alignItems: 'center',
-        WebkitGap: '12px',
-        MozGap: '12px',
         gap: '12px',
         minWidth: '200px',
         animation: state === 'saving' ? 'pulse 2s infinite' : 'slideIn 0.3s ease-out'

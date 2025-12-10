@@ -528,7 +528,7 @@ export const Header = memo(function Header({
               // Informations sur les éléments
               elementsInfo: {
                 totalElements: state.elements?.length || 0,
-                elementTypes: state.elements?.reduce((acc, el) => {
+                elementTypes: state.elements?.reduce((acc: Record<string, number>, el) => {
                   acc[el.type] = (acc[el.type] || 0) + 1;
                   return acc;
                 }, {}) || {}
@@ -538,16 +538,15 @@ export const Header = memo(function Header({
                 template: state.template ? {
                   name: state.template.name,
                   description: state.template.description,
-                  hasBackground: !!state.template.backgroundColor
+                  hasBackground: !!state.canvas.backgroundColor
                 } : null,
-                selectedElement: state.selectedElement?.id || null,
-                zoom: state.zoom || 1
+                selectedElement: state.selection.selectedElements[0] || null,
+                zoom: state.canvas.zoom || 1
               },
               // Paramètres canvas
               canvasSettings: {
                 guidesEnabled: canvasSettings.guidesEnabled,
-                fpsTarget: canvasSettings.fpsTarget,
-                memoryLimit: canvasSettings.memoryLimit
+                memoryLimit: canvasSettings.memoryLimitJs
               }
             });
 
@@ -578,10 +577,10 @@ export const Header = memo(function Header({
               debugLog('📊 [PDF Builder] Métriques de sauvegarde', {
                 duration: saveDuration,
                 avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
-                memoryUsage: performance.memory ? {
-                  used: performance.memory.usedJSHeapSize,
-                  total: performance.memory.totalJSHeapSize,
-                  limit: performance.memory.jsHeapSizeLimit
+                memoryUsage: (performance as any).memory ? {
+                  used: (performance as any).memory.usedJSHeapSize,
+                  total: (performance as any).memory.totalJSHeapSize,
+                  limit: (performance as any).memory.jsHeapSizeLimit
                 } : 'N/A'
               });
 

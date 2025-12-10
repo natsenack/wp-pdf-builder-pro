@@ -343,7 +343,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     Format d&apos;affichage
                   </label>
                   <select
-                    value={element.dateFormat || 'DD/MM/YYYY'}
+                    value={String(element.dateFormat || 'DD/MM/YYYY')}
                     onChange={(e) => onChange(element.id, 'dateFormat', e.target.value)}
                     style={{
                       width: '100%',
@@ -680,7 +680,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   type="number"
                   min="8"
                   max="32"
-                  value={element.headerFontSize || (element.fontSize || 14) + 2}
+                  value={element.headerFontSize as number || (Number(element.fontSize) || 14) + 2}
                   onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 16)}
                   style={{
                     width: '100%',
@@ -697,7 +697,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   Famille de police
                 </label>
                 <select
-                  value={element.headerFontFamily || element.fontFamily || 'Arial'}
+                  value={String(element.headerFontFamily || element.fontFamily || 'Arial')}
                   onChange={(e) => onChange(element.id, 'headerFontFamily', e.target.value)}
                   style={{
                     width: '100%',
@@ -812,7 +812,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 type="number"
                 min="8"
                 max="24"
-                value={element.dateFontSize || (element.bodyFontSize || element.fontSize || 14) - 2}
+                value={element.dateFontSize || (Number(element.bodyFontSize || element.fontSize) || 14) - 2}
                 onChange={(e) => onChange(element.id, 'dateFontSize', parseInt(e.target.value) || 12)}
                 style={{
                   width: '100%',

@@ -925,10 +925,10 @@ const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element, state:
   const fontWeight = props.fontWeight || 'normal';
   const fontStyle = props.fontStyle || 'normal';
   // Propriétés de police pour le label
-  const labelFontSize = props.labelFontSize || fontSize;
-  const labelFontFamily = props.labelFontFamily || fontFamily;
-  const labelFontWeight = props.labelFontWeight || 'bold';
-  const labelFontStyle = props.labelFontStyle || fontStyle;
+  const labelFontSize = props.headerFontSize || fontSize;
+  const labelFontFamily = props.headerFontFamily || fontFamily;
+  const labelFontWeight = props.headerFontWeight || 'bold';
+  const labelFontStyle = props.headerFontStyle || fontStyle;
   // Propriétés de police pour le numéro
   const numberFontSize = props.numberFontSize || fontSize;
   const numberFontFamily = props.numberFontFamily || fontFamily;

@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, ReactNode, useEffect, Dispatch } from 'react';
+import { createContext, useContext, useReducer, ReactNode, useEffect, useRef, Dispatch } from 'react';
 import { useCanvasSettings } from '../CanvasSettingsContext';
 import {
   BuilderState,

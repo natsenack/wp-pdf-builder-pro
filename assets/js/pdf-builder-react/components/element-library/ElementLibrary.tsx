@@ -1,4 +1,5 @@
-import { useIsMobile, useIsTablet, DragEvent } from 'react';
+import { DragEvent } from 'react';
+import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
 import { ResponsiveContainer } from '../ui/Responsive';
 
 // Définition des éléments WooCommerce (migration depuis l'ancien éditeur)

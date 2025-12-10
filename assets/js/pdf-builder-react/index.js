@@ -12,7 +12,7 @@ import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT, getCanvasDimensions } from
 import { debugLog, debugError } from './utils/debug.ts';
 
 // Import React pour les composants
-import { createElement, Component, useRef, useState } from 'react';
+import { createElement, Component, useRef, useState, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 
 console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
@@ -29,8 +29,8 @@ if (typeof window !== 'undefined' && !window.ReactDOM) {
   window.ReactDOM = { createRoot };
 }
 
-// Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
-import { PDFBuilder } from './PDFBuilder.tsx';
+// Lazy loading du composant principal pour réduire la taille du bundle initial
+const PDFBuilder = lazy(() => import('./PDFBuilder.tsx'));
 import {
   registerEditorInstance,
   loadTemplate,
@@ -161,7 +161,9 @@ async function initPDFBuilderReact() {
     console.log('📐 [initPDFBuilderReact] Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
 
     const element = createElement(ErrorBoundary, null,
-      createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
+      createElement(Suspense, { fallback: createElement('div', { style: { padding: '20px', textAlign: 'center' } }, 'Chargement de l\'éditeur PDF...') },
+        createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
+      )
     );
 
     if (root) {

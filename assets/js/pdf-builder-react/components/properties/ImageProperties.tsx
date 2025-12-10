@@ -1,6 +1,6 @@
-import { ImageElement } from '../../types/elements';
+import { BaseElement } from '../../types/elements';
 
-interface ExtendedElement extends Element {
+interface ExtendedElement extends BaseElement {
   src?: string;
   objectFit?: string;
 }

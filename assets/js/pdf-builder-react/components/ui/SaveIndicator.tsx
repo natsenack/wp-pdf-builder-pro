@@ -101,7 +101,6 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
           WebkitBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           MozBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           fontSize: '13px',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
           zIndex: 999999,
@@ -109,10 +108,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
           WebkitBoxAlign: 'center',
           WebkitAlignItems: 'center',
           MozBoxAlign: 'center',
-          msFlexAlign: 'center',
           alignItems: 'center',
-          WebkitGap: '8px',
-          MozGap: '8px',
           gap: '8px',
           maxWidth: '280px',
           animation: 'slideInDown 0.3s ease-out forwards'

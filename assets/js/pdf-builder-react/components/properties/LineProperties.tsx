@@ -1,6 +1,6 @@
-import { LineElement } from '../../types/elements';
+import { BaseElement } from '../../types/elements';
 
-interface ExtendedElement extends Element {
+interface ExtendedElement extends BaseElement {
   strokeColor?: string;
   strokeWidth?: number;
 }
