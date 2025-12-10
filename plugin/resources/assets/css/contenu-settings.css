@@ -604,6 +604,7 @@
     padding: 24px;
     flex: 1;
     overflow-y: auto;
+    background-color: #fff;
 }
 
 .contenu-settings .cache-modal-info {
