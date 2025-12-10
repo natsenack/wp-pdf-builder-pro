@@ -316,37 +316,37 @@
 }
 
 /* Cache Modal Content Styles - High Specificity */
-.cache-modal-container .cache-details-grid {
+.contenu-settings .cache-modal-container .cache-details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-top: 20px;
 }
 
-.cache-modal-container .cache-folder-card {
+.contenu-settings .cache-modal-container .cache-folder-card {
     padding: 15px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #dee2e6;
 }
 
-.cache-modal-container .cache-folder-title {
+.contenu-settings .cache-modal-container .cache-folder-title {
     margin-top: 0;
     color: #495057;
 }
 
-.cache-modal-container .cache-size-display {
+.contenu-settings .cache-modal-container .cache-size-display {
     font-size: 18px;
     font-weight: bold;
     color: #28a745;
 }
 
-.cache-modal-container .cache-folder-path {
+.contenu-settings .cache-modal-container .cache-folder-path {
     color: #666;
     font-size: 12px;
 }
 
-.cache-modal-container .cache-recommendations {
+.contenu-settings .cache-modal-container .cache-recommendations {
     margin-top: 20px;
     padding: 15px;
     background: #e7f5e9;
@@ -354,55 +354,55 @@
     border-radius: 8px;
 }
 
-.cache-modal-container .cache-recommendations-title {
+.contenu-settings .cache-modal-container .cache-recommendations-title {
     margin-top: 0;
     color: #155724;
 }
 
-.cache-modal-container .cache-recommendations-list {
+.contenu-settings .cache-modal-container .cache-recommendations-list {
     margin: 10px 0 0 0;
     padding-left: 20px;
     color: #155724;
 }
 
-.cache-modal-container .cache-section {
+.contenu-settings .cache-modal-container .cache-section {
     margin-top: 20px;
 }
 
-.cache-modal-container .cache-stats-grid {
+.contenu-settings .cache-modal-container .cache-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
     margin-top: 15px;
 }
 
-.cache-modal-container .cache-stat-item {
+.contenu-settings .cache-modal-container .cache-stat-item {
     text-align: center;
 }
 
-.cache-modal-container .cache-stat-number {
+.contenu-settings .cache-modal-container .cache-stat-number {
     font-size: 24px;
     font-weight: bold;
 }
 
-.cache-modal-container .cache-stat-number.total {
+.contenu-settings .cache-modal-container .cache-stat-number.total {
     color: #28a745;
 }
 
-.cache-modal-container .cache-stat-number.expired {
+.contenu-settings .cache-modal-container .cache-stat-number.expired {
     color: #17a2b8;
 }
 
-.cache-modal-container .cache-stat-number.pdf-builder {
+.contenu-settings .cache-modal-container .cache-stat-number.pdf-builder {
     color: #ffc107;
 }
 
-.cache-modal-container .cache-stat-label {
+.contenu-settings .cache-modal-container .cache-stat-label {
     color: #666;
     font-size: 12px;
 }
 
-.cache-modal-container .cache-warning {
+.contenu-settings .cache-modal-container .cache-warning {
     margin-top: 20px;
     padding: 15px;
     background: #fff3cd;
@@ -410,12 +410,12 @@
     border-radius: 8px;
 }
 
-.cache-modal-container .cache-warning-title {
+.contenu-settings .cache-modal-container .cache-warning-title {
     margin-top: 0;
     color: #8b4513;
 }
 
-.cache-modal-container .cache-warning-text {
+.contenu-settings .cache-modal-container .cache-warning-text {
     margin: 10px 0 0 0;
     color: #5d4e37;
 }
@@ -529,7 +529,7 @@
     display: none;
 }
 
-.cache-modal-overlay {
+.contenu-settings .cache-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -542,7 +542,7 @@
     justify-content: center;
 }
 
-.cache-modal-container {
+.contenu-settings .cache-modal-container {
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -553,7 +553,7 @@
     position: relative;
 }
 
-.cache-modal-header {
+.contenu-settings .cache-modal-header {
     padding: 20px 24px;
     border-bottom: 1px solid #e1e5e9;
     display: flex;
@@ -563,14 +563,14 @@
     border-radius: 8px 8px 0 0;
 }
 
-.cache-modal-header h3 {
+.contenu-settings .cache-modal-header h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
     color: #1e1e1e;
 }
 
-.cache-modal-close {
+.contenu-settings .cache-modal-close {
     background: none;
     border: none;
     font-size: 24px;
@@ -585,16 +585,16 @@
     border-radius: 4px;
 }
 
-.cache-modal-close:hover {
+.contenu-settings .cache-modal-close:hover {
     background: #e9ecef;
     color: #1e1e1e;
 }
 
-.cache-modal-body {
+.contenu-settings .cache-modal-body {
     padding: 24px;
 }
 
-.cache-modal-info {
+.contenu-settings .cache-modal-info {
     margin-bottom: 20px;
     padding: 16px;
     background: #e7f3ff;
@@ -631,13 +631,13 @@
 }
 
 /* Modal Form Styles */
-.modal-content .form-table,
-.cache-modal-container .form-table {
+.contenu-settings .modal-content .form-table,
+.contenu-settings .cache-modal-container .form-table {
     margin: 0;
 }
 
-.modal-content .form-table th,
-.cache-modal-container .form-table th {
+.contenu-settings .modal-content .form-table th,
+.contenu-settings .cache-modal-container .form-table th {
     padding: 12px 12px 12px 0;
     font-weight: 600;
     text-align: left;
@@ -645,19 +645,19 @@
     width: 150px;
 }
 
-.modal-content .form-table td,
-.cache-modal-container .form-table td {
+.contenu-settings .modal-content .form-table td,
+.contenu-settings .cache-modal-container .form-table td {
     padding: 12px 0;
 }
 
-.modal-content input[type="text"],
-.modal-content input[type="number"],
-.modal-content select,
-.modal-content textarea,
-.cache-modal-container input[type="text"],
-.cache-modal-container input[type="number"],
-.cache-modal-container select,
-.cache-modal-container textarea {
+.contenu-settings .modal-content input[type="text"],
+.contenu-settings .modal-content input[type="number"],
+.contenu-settings .modal-content select,
+.contenu-settings .modal-content textarea,
+.contenu-settings .cache-modal-container input[type="text"],
+.contenu-settings .cache-modal-container input[type="number"],
+.contenu-settings .cache-modal-container select,
+.contenu-settings .cache-modal-container textarea {
     width: 100%;
     max-width: none;
     padding: 8px 12px;
@@ -688,41 +688,41 @@
         font-size: 16px;
     }
 
-    .modal-content .form-table th,
-    .modal-content .form-table td,
-    .cache-modal-container .form-table th,
-    .cache-modal-container .form-table td {
+    .contenu-settings .modal-content .form-table th,
+    .contenu-settings .modal-content .form-table td,
+    .contenu-settings .cache-modal-container .form-table th,
+    .contenu-settings .cache-modal-container .form-table td {
         display: block;
         width: 100%;
         padding: 8px 0;
     }
 
-    .modal-content .form-table th,
-    .cache-modal-container .form-table th {
+    .contenu-settings .modal-content .form-table th,
+    .contenu-settings .cache-modal-container .form-table th {
         padding-bottom: 4px;
     }
 
-    .modal-content .form-table td,
-    .cache-modal-container .form-table td {
+    .contenu-settings .modal-content .form-table td,
+    .contenu-settings .cache-modal-container .form-table td {
         padding-top: 4px;
     }
 
-    .modal-footer,
-    .cache-modal-footer {
+    .contenu-settings .modal-footer,
+    .contenu-settings .cache-modal-footer {
         flex-direction: column;
     }
 
-    .modal-btn {
+    .contenu-settings .modal-btn {
         width: 100%;
         text-align: center;
     }
 
-    .cache-details-grid {
+    .contenu-settings .cache-details-grid {
         grid-template-columns: 1fr;
         gap: 15px;
     }
 
-    .cache-stats-grid {
+    .contenu-settings .cache-stats-grid {
         grid-template-columns: 1fr;
         gap: 10px;
     }
