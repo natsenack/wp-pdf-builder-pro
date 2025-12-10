@@ -1097,6 +1097,65 @@
                             });
 
                             console.log('Preview System: Event listeners setup for', modalInputs.length, 'inputs');
+                        },
+
+                        // Configurer les event listeners pour une modal spécifique
+                        setupModalEventListeners: function(category) {
+                            console.log('🎧 Setting up event listeners for modal:', category);
+
+                            // Trouver la modal spécifique
+                            const modal = document.getElementById(`canvas-${category}-modal`);
+                            if (!modal) {
+                                console.warn('⚠️ Modal not found for event listeners:', `canvas-${category}-modal`);
+                                return;
+                            }
+
+                            // Écouter les changements dans cette modal spécifique
+                            const modalInputs = modal.querySelectorAll('input, select');
+                            console.log('🎧 Found', modalInputs.length, 'inputs in modal', category);
+
+                            modalInputs.forEach(input => {
+                                // Éviter les doublons d'event listeners
+                                if (input.hasAttribute('data-preview-listener')) {
+                                    return;
+                                }
+                                input.setAttribute('data-preview-listener', 'true');
+
+                                input.addEventListener('input', (e) => {
+                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
+                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+
+                                    console.log('🔄 Modal change detected (input):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+
+                                    // Conversion des types
+                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
+                                    if (['canvas_canvas_shadow_enabled', 'canvas_canvas_grid_enabled', 'canvas_canvas_guides_enabled', 'canvas_canvas_snap_to_grid', 'canvas_canvas_export_transparent', 'canvas_canvas_lazy_loading_editor', 'canvas_canvas_performance_monitoring', 'canvas_canvas_error_reporting'].includes(key)) {
+                                        value = value === true || value === '1' || value === 1;
+                                        console.log('🔄 Boolean conversion for', key, ':', value);
+                                    }
+
+                                    this.updateValue(key, value);
+                                });
+
+                                // Pour les selects et autres contrôles qui utilisent 'change'
+                                input.addEventListener('change', (e) => {
+                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
+                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+
+                                    console.log('🔄 Modal change detected (change):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+
+                                    // Conversion des types
+                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
+                                    if (['canvas_canvas_shadow_enabled', 'canvas_canvas_grid_enabled', 'canvas_canvas_guides_enabled', 'canvas_canvas_snap_to_grid', 'canvas_canvas_export_transparent', 'canvas_canvas_lazy_loading_editor', 'canvas_canvas_performance_monitoring', 'canvas_canvas_error_reporting'].includes(key)) {
+                                        value = value === true || value === '1' || value === 1;
+                                        console.log('🔄 Boolean conversion for', key, ':', value);
+                                    }
+
+                                    this.updateValue(key, value);
+                                });
+                            });
+
+                            console.log('✅ Event listeners setup for modal', category, 'with', modalInputs.length, 'inputs');
                         }
                     };
 
@@ -1692,6 +1751,11 @@
                             }
 
                             console.log('🎉 [OPEN MODAL] Modal ouverte:', modalId);
+
+                            // Configurer les event listeners pour cette modal après l'ouverture
+                            setTimeout(() => {
+                                previewSystem.setupModalEventListeners(category);
+                            }, 100);
                         } else {
                             console.error('❌ [OPEN MODAL] Overlay NON trouvé pour:', category);
                         }
