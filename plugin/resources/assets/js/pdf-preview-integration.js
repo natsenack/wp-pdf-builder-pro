@@ -615,14 +615,16 @@ window.updateInteractionsCardPreview = function() {
 
     const modeIcons = document.querySelectorAll('.canvas-card[data-category="interactions"] .mode-icon');
     const statusIndicator = window.CanvasPreviewManager.getCardElement('interactions', '.status-indicator');
+    const zoomLevel = window.CanvasPreviewManager.getCardElement('interactions', '.zoom-level');
+    const keyboardShortcutsContainer = window.CanvasPreviewManager.getCardElement('interactions', '.keyboard-shortcuts');
 
     // Mettre à jour les icônes de mode
     modeIcons.forEach(icon => {
         icon.classList.remove('active');
-        const isActive = (selectionMode === 'rectangle' && icon.title === 'Rectangle') ||
-                        (selectionMode === 'lasso' && icon.title === 'Lasso') ||
-                        (selectionMode === 'click' && icon.title === 'Clic');
-        if (isActive) icon.classList.add('active');
+        const mode = icon.getAttribute('data-mode');
+        if (mode === selectionMode) {
+            icon.classList.add('active');
+        }
     });
 
     // Mettre à jour l'indicateur de statut
@@ -630,6 +632,18 @@ window.updateInteractionsCardPreview = function() {
         const isEnabled = keyboardShortcuts;
         statusIndicator.textContent = isEnabled ? 'Raccourcis activés' : 'Raccourcis désactivés';
         statusIndicator.className = `status-indicator ${isEnabled ? 'enabled' : 'disabled'}`;
+    }
+
+    // Mettre à jour le niveau de zoom (simulation)
+    if (zoomLevel) {
+        const zoomValues = ['75%', '100%', '125%', '150%'];
+        const randomZoom = zoomValues[Math.floor(Math.random() * zoomValues.length)];
+        zoomLevel.textContent = randomZoom;
+    }
+
+    // Mettre à jour la visibilité des raccourcis clavier
+    if (keyboardShortcutsContainer) {
+        keyboardShortcutsContainer.style.display = keyboardShortcuts ? 'flex' : 'none';
     }
 };
 

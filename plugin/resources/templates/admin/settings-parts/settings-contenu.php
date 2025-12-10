@@ -267,40 +267,61 @@
                                         <div class="mini-canvas-grid"></div>
 
                                         <!-- Éléments sur le canvas -->
-                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 40px; height: 20px;">
+                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 40px; height: 20px;" title="Élément texte">
                                             <div class="mini-element-content">T</div>
                                         </div>
-                                        <div class="mini-element shape-element selected" style="top: 45px; left: 15px; width: 35px; height: 25px;">
+                                        <div class="mini-element shape-element selected" style="top: 45px; left: 15px; width: 35px; height: 25px;" title="Élément sélectionné">
                                             <div class="mini-element-content">□</div>
                                             <!-- Poignées de sélection -->
-                                            <div class="mini-handle nw"></div>
-                                            <div class="mini-handle ne"></div>
-                                            <div class="mini-handle sw"></div>
-                                            <div class="mini-handle se"></div>
-                                            <div class="mini-handle rotation" style="top: -8px; left: 50%; transform: translateX(-50%);"></div>
+                                            <div class="mini-handle nw" title="Redimensionner NW"></div>
+                                            <div class="mini-handle ne" title="Redimensionner NE"></div>
+                                            <div class="mini-handle sw" title="Redimensionner SW"></div>
+                                            <div class="mini-handle se" title="Redimensionner SE"></div>
+                                            <div class="mini-handle rotation" style="top: -8px; left: 50%; transform: translateX(-50%);" title="Rotation"></div>
                                         </div>
-                                        <div class="mini-element image-element" style="top: 20px; left: 70px; width: 30px; height: 30px;">
+                                        <div class="mini-element image-element" style="top: 20px; left: 70px; width: 30px; height: 30px;" title="Élément image">
                                             <div class="mini-element-content">🖼</div>
                                         </div>
 
                                         <!-- Sélection rectangle en cours -->
-                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 60px; height: 40px;"></div>
+                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 60px; height: 40px;" title="Zone de sélection"></div>
 
                                         <!-- Curseur de souris -->
                                         <div class="mouse-cursor" style="top: 55px; left: 85px;">
                                             <div class="cursor-icon">👆</div>
+                                        </div>
+
+                                        <!-- Indicateur de zoom -->
+                                        <div class="zoom-indicator" title="Niveau de zoom actuel">
+                                            <span class="zoom-level">100%</span>
                                         </div>
                                     </div>
 
                                     <!-- Contrôles en bas -->
                                     <div class="interactions-controls">
                                         <div class="selection-mode-indicator">
-                                            <span class="mode-icon active" title="Rectangle">▭</span>
-                                            <span class="mode-icon" title="Lasso">🪢</span>
-                                            <span class="mode-icon" title="Clic">👆</span>
+                                            <span class="mode-icon active" title="Sélection rectangle (R)" data-mode="rectangle">▭</span>
+                                            <span class="mode-icon" title="Sélection lasso (L)" data-mode="lasso">🪢</span>
+                                            <span class="mode-icon" title="Sélection par clic (C)" data-mode="click">👆</span>
                                         </div>
                                         <div class="interaction-status">
-                                            <span class="status-indicator selecting">Sélection en cours</span>
+                                            <span class="status-indicator selecting">Sélection active</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Raccourcis clavier -->
+                                    <div class="keyboard-shortcuts">
+                                        <div class="shortcut-group">
+                                            <span class="shortcut-key">Ctrl+Z</span>
+                                            <span class="shortcut-desc">Annuler</span>
+                                        </div>
+                                        <div class="shortcut-group">
+                                            <span class="shortcut-key">Ctrl+Y</span>
+                                            <span class="shortcut-desc">Rétablir</span>
+                                        </div>
+                                        <div class="shortcut-group">
+                                            <span class="shortcut-key">Del</span>
+                                            <span class="shortcut-desc">Supprimer</span>
                                         </div>
                                     </div>
                                 </div>
