@@ -25,6 +25,52 @@
         error_log("  {$option->option_name} = {$option->option_value} (type: " . gettype($option->option_value) . ")");
     }
 
+    // INITIALISER LES OPTIONS CANVAS AVEC VALEURS PAR DÉFAUT SI ELLES N'EXISTENT PAS
+    $default_canvas_options = [
+        'pdf_builder_canvas_canvas_width' => '794',
+        'pdf_builder_canvas_canvas_height' => '1123',
+        'pdf_builder_canvas_canvas_dpi' => '96',
+        'pdf_builder_canvas_canvas_format' => 'A4',
+        'pdf_builder_canvas_canvas_bg_color' => '#ffffff',
+        'pdf_builder_canvas_canvas_border_color' => '#cccccc',
+        'pdf_builder_canvas_canvas_border_width' => '1',
+        'pdf_builder_canvas_canvas_container_bg_color' => '#f8f9fa',
+        'pdf_builder_canvas_canvas_shadow_enabled' => '0',
+        'pdf_builder_canvas_canvas_grid_enabled' => '1',
+        'pdf_builder_canvas_canvas_grid_size' => '20',
+        'pdf_builder_canvas_canvas_guides_enabled' => '1',
+        'pdf_builder_canvas_canvas_snap_to_grid' => '1',
+        'pdf_builder_canvas_canvas_zoom_min' => '25',
+        'pdf_builder_canvas_canvas_zoom_max' => '500',
+        'pdf_builder_canvas_canvas_zoom_default' => '100',
+        'pdf_builder_canvas_canvas_zoom_step' => '25',
+        'pdf_builder_canvas_canvas_export_quality' => '90',
+        'pdf_builder_canvas_canvas_export_format' => 'png',
+        'pdf_builder_canvas_canvas_export_transparent' => '0',
+        'pdf_builder_canvas_canvas_drag_enabled' => '1',
+        'pdf_builder_canvas_canvas_resize_enabled' => '1',
+        'pdf_builder_canvas_canvas_rotate_enabled' => '1',
+        'pdf_builder_canvas_canvas_multi_select' => '1',
+        'pdf_builder_canvas_canvas_selection_mode' => 'single',
+        'pdf_builder_canvas_canvas_keyboard_shortcuts' => '1',
+        'pdf_builder_canvas_canvas_fps_target' => '60',
+        'pdf_builder_canvas_canvas_memory_limit_js' => '50',
+        'pdf_builder_canvas_canvas_response_timeout' => '5000',
+        'pdf_builder_canvas_canvas_lazy_loading_editor' => '1',
+        'pdf_builder_canvas_canvas_preload_critical' => '1',
+        'pdf_builder_canvas_canvas_lazy_loading_plugin' => '1',
+        'pdf_builder_canvas_canvas_debug_enabled' => '0',
+        'pdf_builder_canvas_canvas_performance_monitoring' => '0',
+        'pdf_builder_canvas_canvas_error_reporting' => '0',
+        'pdf_builder_canvas_canvas_memory_limit_php' => '128'
+    ];
+
+    foreach ($default_canvas_options as $option_name => $default_value) {
+        if (get_option($option_name) === false) {
+            add_option($option_name, $default_value);
+            error_log("[INIT CANVAS OPTIONS] Created option: $option_name = $default_value");
+        }
+    }
 ?>
 <section id="contenu" class="settings-section contenu-settings" role="tabpanel" aria-labelledby="tab-contenu">
 
@@ -878,13 +924,41 @@
                     const previewSystem = {
                         // Valeurs actuelles des paramètres
                         values: {
-                            canvas_canvas_width: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_width', '794')); ?>,
-                            canvas_canvas_height: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_height', '1123')); ?>,
-                            canvas_canvas_dpi: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_dpi', '96')); ?>,
-                            canvas_canvas_format: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_format', 'A4')); ?>,
-                            canvas_canvas_bg_color: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff')); ?>,
-                            canvas_canvas_border_color: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_border_color', '#cccccc')); ?>,
-                            canvas_canvas_border_width: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_border_width', '1')); ?>,
+                            canvas_canvas_width: <?php 
+                                $width = get_option('pdf_builder_canvas_canvas_width', '794');
+                                error_log("[DEBUG JS VALUES] canvas_width: '$width' (type: " . gettype($width) . ")");
+                                echo json_encode($width ?: '794'); 
+                            ?>,
+                            canvas_canvas_height: <?php 
+                                $height = get_option('pdf_builder_canvas_canvas_height', '1123');
+                                error_log("[DEBUG JS VALUES] canvas_height: '$height' (type: " . gettype($height) . ")");
+                                echo json_encode($height ?: '1123'); 
+                            ?>,
+                            canvas_canvas_dpi: <?php 
+                                $dpi = get_option('pdf_builder_canvas_canvas_dpi', '96');
+                                error_log("[DEBUG JS VALUES] canvas_dpi: '$dpi' (type: " . gettype($dpi) . ")");
+                                echo json_encode($dpi ?: '96'); 
+                            ?>,
+                            canvas_canvas_format: <?php 
+                                $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
+                                error_log("[DEBUG JS VALUES] canvas_format: '$format' (type: " . gettype($format) . ")");
+                                echo json_encode($format ?: 'A4'); 
+                            ?>,
+                            canvas_canvas_bg_color: <?php 
+                                $bg_color = get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff');
+                                error_log("[DEBUG JS VALUES] canvas_bg_color: '$bg_color' (type: " . gettype($bg_color) . ")");
+                                echo json_encode($bg_color ?: '#ffffff'); 
+                            ?>,
+                            canvas_canvas_border_color: <?php 
+                                $border_color = get_option('pdf_builder_canvas_canvas_border_color', '#cccccc');
+                                error_log("[DEBUG JS VALUES] canvas_border_color: '$border_color' (type: " . gettype($border_color) . ")");
+                                echo json_encode($border_color ?: '#cccccc'); 
+                            ?>,
+                            canvas_canvas_border_width: <?php 
+                                $border_width = get_option('pdf_builder_canvas_canvas_border_width', '1');
+                                error_log("[DEBUG JS VALUES] canvas_border_width: '$border_width' (type: " . gettype($border_width) . ")");
+                                echo json_encode($border_width ?: '1'); 
+                            ?>,
                             canvas_canvas_container_bg_color: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_container_bg_color', '#f8f9fa')); ?>,
                             canvas_canvas_shadow_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_shadow_enabled', '0') === '1'); ?>,
                             canvas_canvas_grid_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_grid_enabled', '1') === '1'); ?>,
@@ -931,6 +1005,17 @@
 
                         // Rafraîchir toutes les previews
                         refreshPreviews: function() {
+                            // OPTIMISATION: Éviter les appels répétés avec un debounce
+                            if (this._refreshPending) return;
+                            this._refreshPending = true;
+
+                            requestAnimationFrame(() => {
+                                this._refreshPending = false;
+                                this._doRefreshPreviews();
+                            });
+                        },
+
+                        _doRefreshPreviews: function() {
                             console.log('🔄 REFRESH PREVIEWS CALLED');
 
                             const v = this.values;
@@ -940,9 +1025,12 @@
                             // Attendre que le DOM soit prêt
                             if (document.readyState !== 'complete') {
                                 console.log('DOM not ready, retrying in 100ms...');
-                                setTimeout(() => this.refreshPreviews(), 100);
+                                setTimeout(() => this._doRefreshPreviews(), 100);
                                 return;
                             }
+
+                            // OPTIMISATION: Grouper les mises à jour DOM pour éviter les reflows
+                            const updates = [];
 
                             // Preview Dimensions
                             const widthEl = document.getElementById('card-canvas-width');
