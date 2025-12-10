@@ -4,19 +4,14 @@
  * Date: 2025-12-03
  */
 
-console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
-
-(function() {
-    'use strict';
-
-    // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
-    if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
-        window.PDF_BUILDER_CONFIG = {
-            debug: false,
-            ajaxurl: '',
-            nonce: ''
-        };
-    }
+// Définition de PDF_BUILDER_CONFIG si elle n'existe pas
+if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
+    window.PDF_BUILDER_CONFIG = {
+        debug: false,
+        ajaxurl: '',
+        nonce: ''
+    };
+}
 
     // Fonctions de debug conditionnel
     let debugging = false; // Garde contre la récursion infinie
@@ -141,7 +136,7 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
             return;
         }
 
-        console.log('PDF Builder - Initialisation du bouton flottant...');
+        // Initialisation du bouton flottant
 
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
@@ -181,11 +176,9 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
                     
                     // Log des données du formulaire avant soumission
                     const formData = new FormData(mainForm);
-                    console.log('PDF Builder: Form data before submit:');
                     let templateFieldsFound = 0;
                     for (let [key, value] of formData.entries()) {
                         if (key.includes('template') || key.includes('pdf_builder_settings')) {
-                            console.log('  ', key, '=', value);
                             templateFieldsFound++;
                         }
                     }
@@ -208,11 +201,8 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
                     debugError('PDF Builder - Formulaire principal non trouvé');
                     // Log all forms on the page
                     const allForms = document.querySelectorAll('form');
-                    console.log('PDF Builder: All forms on page:', allForms.length);
                     allForms.forEach((form, index) => {
-                        console.log('  Form', index, ': action=', form.action, 'method=', form.method);
                         const templateFields = form.querySelectorAll('[name*="template"], [name*="pdf_builder_settings"]');
-                        console.log('    Template fields in form:', templateFields.length);
                     });
                 }
             });
