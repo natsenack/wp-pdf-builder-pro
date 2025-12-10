@@ -476,7 +476,14 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'debug_fields_in_saved_settings' => array_filter($saved_settings, function($key) {
                     return strpos($key, 'debug') !== false;
                 }, ARRAY_FILTER_USE_KEY),
-                'debug_javascript_value' => $saved_settings['pdf_builder_debug_javascript'] ?? 'NOT_IN_SAVED_SETTINGS'
+                'debug_javascript_value' => $saved_settings['pdf_builder_debug_javascript'] ?? 'NOT_IN_SAVED_SETTINGS',
+                // LOGS POUR LES CHAMPS CANVAS
+                'canvas_fields_in_saved_settings' => array_filter($saved_settings, function($key) {
+                    return strpos($key, 'pdf_builder_canvas_') === 0;
+                }, ARRAY_FILTER_USE_KEY),
+                'total_canvas_fields' => count(array_filter($saved_settings, function($key) {
+                    return strpos($key, 'pdf_builder_canvas_') === 0;
+                }, ARRAY_FILTER_USE_KEY))
             ]
         ];
     }

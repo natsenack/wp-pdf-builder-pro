@@ -1939,7 +1939,9 @@
 
                                     // Mettre à jour previewSystem.values avec les vraies valeurs sauvegardées
                                     if (data.saved_settings && typeof data.saved_settings === 'object') {
-                                        console.log('🔄 Updating previewSystem with server values...');
+                                        console.log('🔄 [AJAX SUCCESS] Updating previewSystem with server values...');
+                                        console.log('🔄 [AJAX SUCCESS] saved_settings received:', data.saved_settings);
+                                        console.log('🔄 [AJAX SUCCESS] Canvas fields in response:', Object.keys(data.saved_settings).filter(key => key.startsWith('pdf_builder_canvas_')));
 
                                         // Mapping des clés courtes vers les clés longues utilisées par previewSystem
                                         const keyMapping = {
