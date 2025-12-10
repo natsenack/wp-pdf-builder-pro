@@ -13,39 +13,12 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
     };
 }
 
-    // Fonctions de debug conditionnel
-    let debugging = false; // Garde contre la récursion infinie
-    let debugEnabled = false; // Cache de l'état du debug
+    // Fonctions de debug (désactivées)
+    function debugLog() {}
+    function debugError() {}
+    function debugWarn() {}
 
-    function isDebugEnabled() {
-        return debugEnabled;
-    }
-
-    function debugLog(...args) {
-        if (debugging) return; // Évite la récursion infinie
-        debugging = true;
-        try {
-            if (isDebugEnabled()) {
-                console.log(...args);
-            }
-        } finally {
-            debugging = false;
-        }
-    }
-
-    function debugError(...args) {
-        if (isDebugEnabled()) {
-            console.error(...args);
-        }
-    }
-
-    function debugWarn(...args) {
-        if (isDebugEnabled()) {
-            console.warn(...args);
-        }
-    }
-
-    // Système de navigation des onglets
+    // Système de navigation des onglets (debug supprimé)
     function initTabs() {
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
