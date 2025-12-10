@@ -285,7 +285,182 @@ window.CanvasCardMonitor = {
             });
         }
 
+        // Surveiller les changements en temps réel dans les cartes
+        this.setupRealtimeCardMonitoring();
+
         this.log('INFO', 'Écouteurs d\'événements configurés');
+    },
+
+    // Configurer la surveillance en temps réel des cartes
+    setupRealtimeCardMonitoring: function() {
+        this.log('DEBUG', 'Configuration de la surveillance temps réel des cartes');
+
+        // Utiliser MutationObserver pour surveiller les changements dans les cartes
+        Object.values(this.state.cards).forEach(card => {
+            this.setupCardObserver(card);
+        });
+
+        // Surveiller également les changements dans les éléments spécifiques des cartes
+        this.setupSpecificElementMonitoring();
+
+        this.log('INFO', 'Surveillance temps réel des cartes configurée');
+    },
+
+    // Configurer un observateur pour une carte spécifique
+    setupCardObserver: function(card) {
+        const observer = new MutationObserver((mutations) => {
+            let hasChanged = false;
+            const changes = [];
+
+            mutations.forEach(mutation => {
+                if (mutation.type === 'childList' || mutation.type === 'characterData' || mutation.type === 'attributes') {
+                    hasChanged = true;
+                    changes.push({
+                        type: mutation.type,
+                        target: mutation.target,
+                        attribute: mutation.attributeName,
+                        oldValue: mutation.oldValue,
+                        newValue: mutation.target.textContent || mutation.target.value
+                    });
+                }
+            });
+
+            if (hasChanged) {
+                this.log('DEBUG', `Changement temps réel détecté dans carte ${card.category}`);
+                card.lastUpdate = new Date();
+                this.onCardRealtimeChange(card.category, changes);
+            }
+        });
+
+        // Observer les changements dans la carte
+        observer.observe(card.element, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+            attributes: true,
+            attributeOldValue: true,
+            characterDataOldValue: true
+        });
+
+        // Stocker l'observateur pour pouvoir le nettoyer plus tard
+        card.observer = observer;
+    },
+
+    // Surveiller des éléments spécifiques qui changent souvent
+    setupSpecificElementMonitoring: function() {
+        const elementsToMonitor = [
+            '#card-canvas-width',
+            '#card-canvas-height',
+            '#card-canvas-dpi',
+            '.metric-value',
+            '.status-indicator',
+            '.progress-fill',
+            '.performance-fill'
+        ];
+
+        elementsToMonitor.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                // Créer un observateur spécifique pour cet élément
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach(mutation => {
+                        if (mutation.type === 'characterData' || (mutation.type === 'attributes' && mutation.attributeName === 'style')) {
+                            const category = this.getCategoryFromElement(element);
+                            if (category) {
+                                this.log('DEBUG', `Changement spécifique détecté: ${selector} dans ${category}`);
+                                this.onSpecificElementChange(category, selector, element);
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(element, {
+                    characterData: true,
+                    attributes: true,
+                    attributeFilter: ['style', 'class'],
+                    characterDataOldValue: true
+                });
+
+                this.log('DEBUG', `Surveillance configurée pour ${selector}`);
+            }
+        });
+    },
+
+    // Déterminer la catégorie d'une carte à partir d'un élément
+    getCategoryFromElement: function(element) {
+        let currentElement = element;
+        while (currentElement && currentElement !== document.body) {
+            if (currentElement.classList && currentElement.classList.contains('canvas-card')) {
+                return currentElement.dataset.category;
+            }
+            currentElement = currentElement.parentElement;
+        }
+        return null;
+    },
+
+    // Gestionnaire de changement en temps réel dans une carte
+    onCardRealtimeChange: function(category, changes) {
+        this.log('INFO', `Changement temps réel dans carte ${category}: ${changes.length} mutations`);
+
+        // Mettre à jour l'état de la carte
+        if (this.state.cards[category]) {
+            this.state.cards[category].lastRealtimeChange = new Date();
+            this.state.cards[category].realtimeChanges = changes;
+        }
+
+        // Vérifier la cohérence après un court délai
+        if (this.realtimeValidationTimeout) {
+            clearTimeout(this.realtimeValidationTimeout);
+        }
+
+        this.realtimeValidationTimeout = setTimeout(() => {
+            this.validateCardConsistency(category);
+        }, 500);
+    },
+
+    // Gestionnaire de changement dans un élément spécifique
+    onSpecificElementChange: function(category, selector, element) {
+        const value = element.textContent || element.value || element.style.width;
+        this.log('DEBUG', `Élément ${selector} changé dans ${category}: ${value}`);
+
+        // Mettre à jour les valeurs en cache de la carte
+        if (this.state.cards[category]) {
+            if (!this.state.cards[category].currentValues) {
+                this.state.cards[category].currentValues = {};
+            }
+            this.state.cards[category].currentValues[selector] = value;
+        }
+    },
+
+    // Valider la cohérence d'une carte spécifique
+    validateCardConsistency: function(category) {
+        const card = this.state.cards[category];
+        if (!card) return;
+
+        const displayedValues = this.getCardDisplayedValues(card);
+        const expectedValues = this.getExpectedValuesForCard(category);
+
+        let inconsistencies = 0;
+        Object.keys(expectedValues).forEach(key => {
+            const expected = expectedValues[key];
+            const displayed = displayedValues[key];
+
+            if (expected !== undefined && displayed !== undefined && expected != displayed) {
+                inconsistencies++;
+                this.log('WARN', `Incohérence temps réel dans ${category}.${key}: attendu=${expected}, affiché=${displayed}`);
+            }
+        });
+
+        card.status = inconsistencies > 0 ? 'inconsistent' : 'consistent';
+
+        if (inconsistencies > 0) {
+            this.state.warnings.push({
+                type: 'REALTIME_INCONSISTENCY',
+                category: category,
+                message: `${inconsistencies} incohérences détectées en temps réel`,
+                timestamp: new Date()
+            });
+        }
     },
 
     // Gestionnaire de changement de valeur dans un modal
@@ -429,6 +604,8 @@ window.CanvasCardMonitor = {
 
     // Obtenir le statut du système
     getStatus: function() {
+        const realtimeStats = this.getRealtimeStats();
+
         return {
             initialized: this.state.initialized,
             cardsCount: Object.keys(this.state.cards).length,
@@ -437,7 +614,43 @@ window.CanvasCardMonitor = {
             lastSync: this.state.lastSync,
             errorsCount: this.state.errors.length,
             warningsCount: this.state.warnings.length,
-            autoSyncActive: !!this.autoSyncInterval
+            autoSyncActive: !!this.autoSyncInterval,
+            realtimeMonitoring: {
+                active: true,
+                totalChanges: realtimeStats.totalChanges,
+                lastChange: realtimeStats.lastChange,
+                mostActiveCard: realtimeStats.mostActiveCard
+            }
+        };
+    },
+
+    // Obtenir les statistiques temps réel
+    getRealtimeStats: function() {
+        let totalChanges = 0;
+        let lastChange = null;
+        let mostActiveCard = null;
+        let maxChanges = 0;
+
+        Object.values(this.state.cards).forEach(card => {
+            if (card.realtimeChanges) {
+                const changes = card.realtimeChanges.length;
+                totalChanges += changes;
+
+                if (changes > maxChanges) {
+                    maxChanges = changes;
+                    mostActiveCard = card.category;
+                }
+            }
+
+            if (card.lastRealtimeChange && (!lastChange || card.lastRealtimeChange > lastChange)) {
+                lastChange = card.lastRealtimeChange;
+            }
+        });
+
+        return {
+            totalChanges: totalChanges,
+            lastChange: lastChange,
+            mostActiveCard: mostActiveCard
         };
     },
 
@@ -458,9 +671,43 @@ window.CanvasCardMonitor = {
         this.syncAllCards();
     },
 
+    // Obtenir les détails des changements temps réel
+    getRealtimeChanges: function(limit = 10) {
+        const changes = [];
+
+        Object.values(this.state.cards).forEach(card => {
+            if (card.realtimeChanges && card.lastRealtimeChange) {
+                changes.push({
+                    category: card.category,
+                    timestamp: card.lastRealtimeChange,
+                    changesCount: card.realtimeChanges.length,
+                    lastChanges: card.realtimeChanges.slice(-3) // Derniers 3 changements
+                });
+            }
+        });
+
+        // Trier par timestamp décroissant
+        changes.sort((a, b) => b.timestamp - a.timestamp);
+
+        return changes.slice(0, limit);
+    },
+
     // Nettoyer le système
     destroy: function() {
         this.stopAutoSync();
+
+        // Nettoyer les observateurs
+        Object.values(this.state.cards).forEach(card => {
+            if (card.observer) {
+                card.observer.disconnect();
+            }
+        });
+
+        // Nettoyer les timeouts
+        if (this.realtimeValidationTimeout) {
+            clearTimeout(this.realtimeValidationTimeout);
+        }
+
         this.state.initialized = false;
         this.log('INFO', 'Système de monitoring détruit');
     }
@@ -479,6 +726,8 @@ window.CanvasCardMonitorDebug = {
     getStatus: () => window.CanvasCardMonitor.getStatus(),
     getErrors: () => window.CanvasCardMonitor.getRecentErrors(),
     getWarnings: () => window.CanvasCardMonitor.getRecentWarnings(),
+    getRealtimeChanges: () => window.CanvasCardMonitor.getRealtimeChanges(),
+    getRealtimeStats: () => window.CanvasCardMonitor.getRealtimeStats(),
     forceResync: () => window.CanvasCardMonitor.forceResync(),
     setLogLevel: (level) => { window.CanvasCardMonitor.config.logLevel = level; },
     toggleAutoSync: () => {
@@ -487,6 +736,21 @@ window.CanvasCardMonitorDebug = {
         } else {
             window.CanvasCardMonitor.startAutoSync();
         }
+    },
+    validateNow: () => {
+        window.CanvasCardMonitor.loadSettingsFromDOM();
+        return window.CanvasCardMonitor.validateConsistency();
+    },
+    getCardDetails: (category) => {
+        const card = window.CanvasCardMonitor.state.cards[category];
+        return card ? {
+            category: card.category,
+            status: card.status,
+            lastUpdate: card.lastUpdate,
+            lastRealtimeChange: card.lastRealtimeChange,
+            realtimeChangesCount: card.realtimeChanges ? card.realtimeChanges.length : 0,
+            currentValues: card.currentValues
+        } : null;
     }
 };</content>
 <parameter name="filePath">i:\wp-pdf-builder-pro\plugin\resources\assets\js\canvas-card-monitor.js
