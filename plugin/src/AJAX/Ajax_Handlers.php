@@ -232,6 +232,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $option_key = 'pdf_builder_canvas_' . $key;
                     $option_value = sanitize_text_field($value ?? '');
                     update_option($option_key, $option_value); // Canvas fields saved separately
+                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
@@ -254,6 +255,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $option_key = 'pdf_builder_canvas_' . $key;
                     $option_value = intval($value ?? 0);
                     update_option($option_key, $option_value); // Canvas fields saved separately
+                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
@@ -279,6 +281,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $option_key = 'pdf_builder_canvas_' . $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
                     update_option($option_key, $option_value); // Canvas fields saved separately
+                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
@@ -308,8 +311,6 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     update_option($option_key, $option_value); // Canvas fields saved separately
                 }
                 $saved_count++;
-                // DEBUG: Log bool field processing
-                // error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($flattened_data[$key]) ? 'true' : 'false') . ", data_value='" . ($flattened_data[$key] ?? 'null') . "'");
 
                 // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
                 if (strpos($key, 'debug_javascript') !== false) {
