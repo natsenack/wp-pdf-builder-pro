@@ -20,7 +20,7 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
 
     // Fonctions de debug conditionnel
     function isDebugEnabled() {
-        return typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript;
+        return false; // Désactivé temporairement pour éviter la récursion infinie
     }
 
     function debugLog(...args) {
