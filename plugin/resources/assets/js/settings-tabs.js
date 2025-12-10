@@ -4,9 +4,6 @@
  * Date: 2025-12-03
  */
 
-// Importer les utilitaires
-import './pdf-builder-utils.js';
-
 // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
 if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
     window.PDF_BUILDER_CONFIG = {
