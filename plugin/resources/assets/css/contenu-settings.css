@@ -315,38 +315,38 @@
     }
 }
 
-/* Cache Modal Content Styles */
-.cache-details-grid {
+/* Cache Modal Content Styles - High Specificity */
+.cache-modal-container .cache-details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-top: 20px;
 }
 
-.cache-folder-card {
+.cache-modal-container .cache-folder-card {
     padding: 15px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #dee2e6;
 }
 
-.cache-folder-title {
+.cache-modal-container .cache-folder-title {
     margin-top: 0;
     color: #495057;
 }
 
-.cache-size-display {
+.cache-modal-container .cache-size-display {
     font-size: 18px;
     font-weight: bold;
     color: #28a745;
 }
 
-.cache-folder-path {
+.cache-modal-container .cache-folder-path {
     color: #666;
     font-size: 12px;
 }
 
-.cache-recommendations {
+.cache-modal-container .cache-recommendations {
     margin-top: 20px;
     padding: 15px;
     background: #e7f5e9;
@@ -354,55 +354,55 @@
     border-radius: 8px;
 }
 
-.cache-recommendations-title {
+.cache-modal-container .cache-recommendations-title {
     margin-top: 0;
     color: #155724;
 }
 
-.cache-recommendations-list {
+.cache-modal-container .cache-recommendations-list {
     margin: 10px 0 0 0;
     padding-left: 20px;
     color: #155724;
 }
 
-.cache-section {
+.cache-modal-container .cache-section {
     margin-top: 20px;
 }
 
-.cache-stats-grid {
+.cache-modal-container .cache-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
     margin-top: 15px;
 }
 
-.cache-stat-item {
+.cache-modal-container .cache-stat-item {
     text-align: center;
 }
 
-.cache-stat-number {
+.cache-modal-container .cache-stat-number {
     font-size: 24px;
     font-weight: bold;
 }
 
-.cache-stat-number.total {
+.cache-modal-container .cache-stat-number.total {
     color: #28a745;
 }
 
-.cache-stat-number.expired {
+.cache-modal-container .cache-stat-number.expired {
     color: #17a2b8;
 }
 
-.cache-stat-number.pdf-builder {
+.cache-modal-container .cache-stat-number.pdf-builder {
     color: #ffc107;
 }
 
-.cache-stat-label {
+.cache-modal-container .cache-stat-label {
     color: #666;
     font-size: 12px;
 }
 
-.cache-warning {
+.cache-modal-container .cache-warning {
     margin-top: 20px;
     padding: 15px;
     background: #fff3cd;
@@ -410,12 +410,12 @@
     border-radius: 8px;
 }
 
-.cache-warning-title {
+.cache-modal-container .cache-warning-title {
     margin-top: 0;
     color: #8b4513;
 }
 
-.cache-warning-text {
+.cache-modal-container .cache-warning-text {
     margin: 10px 0 0 0;
     color: #5d4e37;
 }
