@@ -28,6 +28,20 @@
         }
     }
 
+    // Fonction pour vérifier les styles calculés d'un élément
+    function getComputedStyles(element, properties) {
+        if (!element) return {};
+
+        const computed = window.getComputedStyle(element);
+        const result = {};
+
+        properties.forEach(prop => {
+            result[prop] = computed.getPropertyValue(prop);
+        });
+
+        return result;
+    }
+
     // Fonction de diagnostic complet des styles CSS
     function diagnoseCSSIssues() {
         log('🔍 === DIAGNOSTIC COMPLET CSS ===');
