@@ -1021,6 +1021,9 @@
                             const v = this.values;
                             console.log('🔄 Current values object:', v);
                             console.log('🔄 Keys in values:', Object.keys(v));
+                            console.log('🔄 canvas_canvas_width:', v.canvas_canvas_width);
+                            console.log('🔄 canvas_canvas_height:', v.canvas_canvas_height);
+                            console.log('🔄 canvas_canvas_dpi:', v.canvas_canvas_dpi);
 
                             // Attendre que le DOM soit prêt
                             if (document.readyState !== 'complete') {
@@ -1966,6 +1969,7 @@
                                 // Mettre à jour la valeur dans le système de previews
                                 const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                 previewSystem.values[previewKey] = value;
+                                console.log('🔄 Preview system updated:', previewKey, '=', value, '(from input:', input.name, ')');
 
                                 // Debug log pour l'ombre
                                 if (input.name === 'pdf_builder_canvas_canvas_shadow_enabled') {
@@ -2096,7 +2100,7 @@
                                             if (data.data.saved_settings.hasOwnProperty(shortKey) && data.data.saved_settings[shortKey] !== undefined && data.data.saved_settings[shortKey] !== null) {
                                                 const oldValue = previewSystem.values[longKey];
                                                 previewSystem.values[longKey] = data.data.saved_settings[shortKey];
-                                                console.log(`🔄 Preview system updated: ${longKey} = ${data.data.saved_settings[shortKey]} (was: ${oldValue})`);
+                                                console.log(`🔄 Server update: ${longKey} = ${data.data.saved_settings[shortKey]} (was: ${oldValue})`);
                                                 updatedCount++;
                                             }
                                         });
