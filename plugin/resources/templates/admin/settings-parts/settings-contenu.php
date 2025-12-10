@@ -8,22 +8,6 @@
     // require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
     $settings = get_option('pdf_builder_settings', array());
-    error_log('[PDF Builder] settings-contenu.php loaded - settings count: ' . count($settings) . ', canvas_shadow_enabled: ' . ($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? 'not set'));
-
-    error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . count($settings) . ', ' . ($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? 'NOT_SET'));
-
-    error_log("[PDF Builder Debug] Page load: grid_enabled: " . ($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? null) . ")");
-    error_log("[PDF Builder Debug] Page load: guides_enabled: " . ($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? null) . ")");
-    error_log("[PDF Builder Debug] Page load: snap_to_grid: " . ($settings['pdf_builder_canvas_canvas_snap_to_grid'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_snap_to_grid'] ?? null) . ")");
-    error_log("[PDF Builder Debug] Page load: grid_size: " . ($settings['pdf_builder_canvas_canvas_grid_size'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_grid_size'] ?? null) . ")");
-
-    // Debug: check all canvas options
-    global $wpdb;
-    $canvas_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_canvas_canvas_%' LIMIT 20");
-    error_log("[PDF Builder Debug] All canvas options in DB:");
-    foreach ($canvas_options as $option) {
-        error_log("  {$option->option_name} = {$option->option_value} (type: " . gettype($option->option_value) . ")");
-    }
 
     // INITIALISER LES OPTIONS CANVAS AVEC VALEURS PAR DÉFAUT SI ELLES N'EXISTENT PAS
     $default_canvas_options = [
@@ -77,22 +61,6 @@
     <div class="settings-content">
 <?php
     $settings = get_option('pdf_builder_settings', array());
-    error_log('[PDF Builder] settings-contenu.php loaded - settings count: ' . count($settings) . ', canvas_shadow_enabled: ' . ($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? 'not set'));
-
-    error_log("[PDF Builder Debug] Page load: pdf_builder_settings contains shadow_enabled: " . count($settings) . ', ' . ($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? 'NOT_SET'));
-
-    error_log("[PDF Builder Debug] Page load: grid_enabled: " . ($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? null) . ")");
-    error_log("[PDF Builder Debug] Page load: guides_enabled: " . ($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? null) . ")");
-    error_log("[PDF Builder Debug] Page load: snap_to_grid: " . ($settings['pdf_builder_canvas_canvas_snap_to_grid'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_snap_to_grid'] ?? null) . ")");
-    error_log("[PDF Builder Debug] Page load: grid_size: " . ($settings['pdf_builder_canvas_canvas_grid_size'] ?? 'NOT_SET') . " (type: " . gettype($settings['pdf_builder_canvas_canvas_grid_size'] ?? null) . ")");
-
-    // Debug: check all canvas options
-    global $wpdb;
-    $canvas_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_canvas_canvas_%' LIMIT 20");
-    error_log("[PDF Builder Debug] All canvas options in DB:");
-    foreach ($canvas_options as $option) {
-        error_log("  {$option->option_name} = {$option->option_value} (type: " . gettype($option->option_value) . ")");
-    }
 
 ?>
             <h2>🎨 Contenu & Design</h2>
@@ -1039,8 +1007,8 @@
 
                             // Recharger les valeurs depuis les champs cachés pour assurer la cohérence
                             this.values = {};
-                            document.querySelectorAll('input[name^="pdf_builder_canvas_"]').forEach(field => {
-                                const key = field.name.replace('pdf_builder_canvas_', 'canvas_');
+                            document.querySelectorAll('input[name^="pdf_builder_settings[pdf_builder_canvas_"]').forEach(field => {
+                                const key = field.name.replace('pdf_builder_settings[pdf_builder_canvas_', 'canvas_');
                                 this.values[key] = field.value || '';
                             });
                             console.log('🔄 Values reloaded from hidden fields:', this.values);
