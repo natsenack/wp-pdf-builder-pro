@@ -2500,6 +2500,17 @@
                 // ==========================================
                 console.log('🔍 [MONITORING] Chargement du système de monitoring des cartes...');
 
+                <?php
+                // Vérifier si le fichier JS existe et logger en PHP
+                $plugin_root = dirname(__DIR__, 4);
+                $file_path = $plugin_root . '/resources/assets/js/canvas-card-monitor.js';
+                if (!file_exists($file_path)) {
+                    error_log('PHP LOG: canvas-card-monitor.js not found at ' . $file_path);
+                } else {
+                    error_log('PHP LOG: canvas-card-monitor.js exists at ' . $file_path . ', size: ' . filesize($file_path));
+                }
+                ?>
+
                 // Fonction pour charger le script de monitoring
                 function loadCanvasCardMonitor() {
                     return new Promise((resolve, reject) => {
