@@ -889,4 +889,3 @@ window.CanvasCardMonitorDebug = {
 // === END OF CANVAS CARD MONITOR ===
 // This file should end here. Any content after this line is corrupted cache data.
 // Version: 1.0.1 - Cache Fix Applied - 11/12/2025
-<parameter name="filePath">i:\wp-pdf-builder-pro\plugin\resources\assets\js\canvas-card-monitor.js
