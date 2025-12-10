@@ -608,14 +608,14 @@
     border-radius: 6px;
 }
 
-.cache-modal-info p {
+.contenu-settings .cache-modal-info p {
     margin: 0;
     color: #0c5460;
     font-size: 14px;
     line-height: 1.5;
 }
 
-.cache-modal-footer {
+.contenu-settings .cache-modal-footer {
     padding: 20px 24px;
     border-top: 1px solid #e1e5e9;
     display: flex;
@@ -625,13 +625,13 @@
     border-radius: 0 0 8px 8px;
 }
 
-.cache-modal-cancel {
+.contenu-settings .cache-modal-cancel {
     background: #6c757d !important;
     border-color: #6c757d !important;
     color: white !important;
 }
 
-.cache-modal-cancel:hover {
+.contenu-settings .cache-modal-cancel:hover {
     background: #5a6268 !important;
     border-color: #5a6268 !important;
 }
