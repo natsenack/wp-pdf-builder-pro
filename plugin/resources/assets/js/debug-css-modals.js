@@ -28,18 +28,88 @@
         }
     }
 
-    // Fonction pour vérifier les styles calculés d'un élément
-    function getComputedStyles(element, properties) {
-        if (!element) return {};
+    // Fonction de diagnostic complet des styles CSS
+    function diagnoseCSSIssues() {
+        log('🔍 === DIAGNOSTIC COMPLET CSS ===');
 
-        const computed = window.getComputedStyle(element);
-        const result = {};
+        // 1. Vérifier si les fichiers CSS sont chargés
+        log('📄 Vérification des fichiers CSS chargés...');
+        const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+        let contenuCssLoaded = false;
+        cssLinks.forEach(link => {
+            if (link.href && link.href.includes('contenu-settings.css')) {
+                contenuCssLoaded = true;
+                log('✅ contenu-settings.css trouvé:', link.href);
+            }
+        });
+        if (!contenuCssLoaded) {
+            warn('❌ contenu-settings.css NON trouvé dans les liens CSS chargés');
+        }
 
-        properties.forEach(prop => {
-            result[prop] = computed.getPropertyValue(prop);
+        // 2. Vérifier les éléments des modales
+        log('🔍 Vérification des éléments des modales...');
+        const modalIds = ['cache-size-modal', 'cache-transients-modal', 'cache-status-modal'];
+
+        modalIds.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                warn(`❌ Modale ${modalId} non trouvée dans le DOM`);
+                return;
+            }
+
+            log(`✅ Modale ${modalId} trouvée`);
+
+            // Vérifier le contexte
+            const contenuSection = document.querySelector('.contenu-settings');
+            const isInContext = contenuSection && contenuSection.contains(modal);
+            log(`📍 Contexte .contenu-settings: ${isInContext ? '✅ DANS le contexte' : '❌ HORS du contexte'}`);
+
+            // Vérifier les classes
+            log(`🏷️ Classes de la modale: ${modal.className}`);
+
+            // Vérifier l'overlay
+            const overlay = modal.querySelector('.cache-modal-overlay');
+            if (overlay) {
+                log(`✅ Overlay trouvé avec classes: ${overlay.className}`);
+                log(`🎨 Styles calculés overlay:`, getComputedStyles(overlay, ['display', 'position', 'background-color', 'z-index']));
+            } else {
+                warn(`❌ Overlay non trouvé pour ${modalId}`);
+            }
+
+            // Vérifier le container
+            const container = modal.querySelector('.cache-modal-container');
+            if (container) {
+                log(`✅ Container trouvé`);
+                log(`🎨 Styles calculés container:`, getComputedStyles(container, ['background-color', 'border-radius', 'box-shadow', 'max-width']));
+            } else {
+                warn(`❌ Container non trouvé pour ${modalId}`);
+            }
         });
 
-        return result;
+        // 3. Vérifier les règles CSS dans les stylesheets
+        log('📋 Vérification des règles CSS...');
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            try {
+                const sheet = document.styleSheets[i];
+                if (sheet.href && sheet.href.includes('contenu-settings.css')) {
+                    log('✅ Feuille de style contenu-settings.css accessible');
+                    const rules = sheet.cssRules || sheet.rules;
+                    let modalRulesCount = 0;
+                    for (let j = 0; j < rules.length; j++) {
+                        const rule = rules[j];
+                        if (rule.selectorText && rule.selectorText.includes('cache-modal')) {
+                            modalRulesCount++;
+                            log(`📝 Règle trouvée: ${rule.selectorText}`);
+                        }
+                    }
+                    log(`📊 Nombre de règles cache-modal trouvées: ${modalRulesCount}`);
+                }
+            } catch (e) {
+                log('⚠️ Impossible d\'accéder à une feuille de style (CORS ou autre):', e.message);
+            }
+        }
+
+        log('🔍 === FIN DIAGNOSTIC CSS ===');
     }
 
     // Fonction pour vérifier si un élément a des styles CSS appliqués
@@ -253,6 +323,7 @@
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
+                    diagnoseCSSIssues(); // Diagnostic complet en premier
                     debugCacheModals();
                     monitorStyleChanges();
                     testModalToggle();
@@ -261,6 +332,7 @@
             });
         } else {
             setTimeout(() => {
+                diagnoseCSSIssues(); // Diagnostic complet en premier
                 debugCacheModals();
                 monitorStyleChanges();
                 testModalToggle();
@@ -272,11 +344,13 @@
         window.debugCacheModals = debugCacheModals;
         window.testModalToggle = testModalToggle;
         window.checkModalContext = checkModalContext;
+        window.diagnoseCSSIssues = diagnoseCSSIssues; // Nouvelle fonction de diagnostic
 
         log('💡 Commandes disponibles dans la console:');
         log('   - debugCacheModals() : Analyser les styles des modales');
         log('   - testModalToggle() : Tester ouverture/fermeture');
         log('   - checkModalContext() : Vérifier le contexte des modales');
+        log('   - diagnoseCSSIssues() : Diagnostic complet CSS (NOUVEAU)'); // Nouvelle commande
     }
 
     // Fonction pour vérifier le contexte des modales
