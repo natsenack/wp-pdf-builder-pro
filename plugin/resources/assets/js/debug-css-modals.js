@@ -105,8 +105,8 @@
         for (let i = 0; i < document.styleSheets.length; i++) {
             try {
                 const sheet = document.styleSheets[i];
-                if (sheet.href && sheet.href.includes('contenu-settings.css')) {
-                    log('✅ Feuille de style contenu-settings.css accessible');
+                if (sheet.href && (sheet.href.includes('contenu-settings.css') || sheet.href.includes('modals-contenu.css'))) {
+                    log(`✅ Feuille de style accessible: ${sheet.href.includes('contenu-settings.css') ? 'contenu-settings.css' : 'modals-contenu.css'}`);
                     const rules = sheet.cssRules || sheet.rules;
                     let modalRulesCount = 0;
                     for (let j = 0; j < rules.length; j++) {
