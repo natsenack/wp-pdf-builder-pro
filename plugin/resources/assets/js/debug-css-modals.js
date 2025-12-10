@@ -92,10 +92,9 @@
 
             log(`\n📋 Analyse de la modale: ${modalId}`);
 
-            // Vérifier la modale principale
+            // Vérifier la modale principale (doit être masquée par défaut)
             checkElementStyles(modal, `#${modalId}`, {
-                'display': 'block',
-                'position': 'fixed'
+                'display': 'none' // La modale racine est toujours masquée
             });
 
             // Vérifier l'overlay
