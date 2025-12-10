@@ -123,11 +123,22 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     return strpos($key, 'pdf_builder_canvas_') === 0;
                 }, ARRAY_FILTER_USE_KEY)));
 
-                $this->send_success([
+                $response_data = [
                     'saved_count' => $result['saved_count'],
                     'saved_settings' => $result['saved_settings'],
-                    'new_nonce' => wp_create_nonce($this->nonce_action)
-                ], 'Paramètres sauvegardés avec succès');
+                    'new_nonce' => wp_create_nonce($this->nonce_action),
+                    // DEBUG INFO FOR JAVASCRIPT
+                    'debug_info' => [
+                        'saved_settings_count' => count($result['saved_settings']),
+                        'has_saved_settings' => isset($result['saved_settings']) && is_array($result['saved_settings']),
+                        'canvas_fields_count' => count(array_filter($result['saved_settings'], function($key) {
+                            return strpos($key, 'pdf_builder_canvas_') === 0;
+                        }, ARRAY_FILTER_USE_KEY)),
+                        'all_keys' => array_keys($result['saved_settings'])
+                    ]
+                ];
+
+                $this->send_success($response_data, 'Paramètres sauvegardés avec succès');
             } else {
                 $this->send_error('Aucun paramètre sauvegardé', 400);
             }

@@ -1995,6 +1995,11 @@
                             const saveStartTime = Date.now();
                             console.log('Sauvegarde côté serveur...');
 
+                            // DEBUG: Log what we're sending
+                            console.log('[DEBUG AJAX SEND] Sending values:', values);
+                            console.log('[DEBUG AJAX SEND] Values keys:', Object.keys(values));
+                            console.log('[DEBUG AJAX SEND] Canvas values:', Object.keys(values).filter(k => k.includes('canvas')));
+
                             // Debug: vérifier la valeur de l'ombre
                             if (values['pdf_builder_canvas_canvas_shadow_enabled'] !== undefined) {
                                 console.log('🔍 DEBUG: Sending shadow_enabled to server:', values['pdf_builder_canvas_canvas_shadow_enabled'], '(type:', typeof values['pdf_builder_canvas_canvas_shadow_enabled'], ')');
@@ -2028,16 +2033,26 @@
                                 }
                                 if (data.success) {
                                     console.log('✅ AJAX SUCCESS - Raw response data:', data);
-                                    console.log('✅ saved_settings received:', data.saved_settings);
+                                    console.log('✅ saved_settings received:', data.data ? data.data.saved_settings : 'NO DATA PROPERTY');
+                                    console.log('✅ debug_info received:', data.data ? data.data.debug_info : 'NO DEBUG INFO');
+
+                                    // Check if saved_settings exists
+                                    if (data.data && data.data.saved_settings) {
+                                        console.log('✅ saved_settings is present, count:', Object.keys(data.data.saved_settings).length);
+                                        console.log('✅ Canvas fields in saved_settings:', Object.keys(data.data.saved_settings).filter(k => k.includes('pdf_builder_canvas_')));
+                                    } else {
+                                        console.log('❌ saved_settings is missing from response');
+                                        console.log('❌ Available keys in response.data:', data.data ? Object.keys(data.data) : 'NO DATA');
+                                    }
 
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
-                                    console.log('Paramètres sauvegardés avec succès:', data.saved_count, 'paramètres');
+                                    console.log('Paramètres sauvegardés avec succès:', data.data ? data.data.saved_count : 'UNKNOWN', 'paramètres');
 
                                     // Mettre à jour previewSystem.values avec les vraies valeurs sauvegardées
-                                    if (data.saved_settings && typeof data.saved_settings === 'object') {
+                                    if (data.data && data.data.saved_settings && typeof data.data.saved_settings === 'object') {
                                         console.log('🔄 [AJAX SUCCESS] Updating previewSystem with server values...');
-                                        console.log('🔄 [AJAX SUCCESS] saved_settings received:', data.saved_settings);
-                                        console.log('🔄 [AJAX SUCCESS] Canvas fields in response:', Object.keys(data.saved_settings).filter(key => key.startsWith('pdf_builder_canvas_')));
+                                        console.log('🔄 [AJAX SUCCESS] saved_settings received:', data.data.saved_settings);
+                                        console.log('🔄 [AJAX SUCCESS] Canvas fields in response:', Object.keys(data.data.saved_settings).filter(key => key.startsWith('pdf_builder_canvas_')));
 
                                         // Mapping des clés courtes vers les clés longues utilisées par previewSystem
                                         const keyMapping = {
@@ -2078,16 +2093,21 @@
                                         // Mettre à jour previewSystem.values avec les valeurs du serveur
                                         let updatedCount = 0;
                                         Object.entries(keyMapping).forEach(([shortKey, longKey]) => {
-                                            if (data.saved_settings.hasOwnProperty(shortKey) && data.saved_settings[shortKey] !== undefined && data.saved_settings[shortKey] !== null) {
+                                            if (data.data.saved_settings.hasOwnProperty(shortKey) && data.data.saved_settings[shortKey] !== undefined && data.data.saved_settings[shortKey] !== null) {
                                                 const oldValue = previewSystem.values[longKey];
-                                                previewSystem.values[longKey] = data.saved_settings[shortKey];
-                                                console.log(`🔄 Preview system updated: ${longKey} = ${data.saved_settings[shortKey]} (was: ${oldValue})`);
+                                                previewSystem.values[longKey] = data.data.saved_settings[shortKey];
+                                                console.log(`🔄 Preview system updated: ${longKey} = ${data.data.saved_settings[shortKey]} (was: ${oldValue})`);
                                                 updatedCount++;
                                             }
                                         });
                                         console.log(`🔄 Total values updated from server: ${updatedCount}`);
                                     } else {
                                         console.warn('⚠️ No saved_settings received from server, using local values');
+                                        console.log('⚠️ Response structure:', {
+                                            hasData: !!data.data,
+                                            dataKeys: data.data ? Object.keys(data.data) : [],
+                                            fullResponse: data
+                                        });
                                     }
 
                                     // Rafraîchir les previews avec les vraies valeurs
