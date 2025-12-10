@@ -56,12 +56,9 @@
         const rect = element.getBoundingClientRect();
         log(`Dimensions: ${rect.width}x${rect.height}, visible: ${rect.width > 0 && rect.height > 0}`);
 
-        // Vérifier les styles calculés
-        const computed = getComputedStyles(element, [
-            'display', 'visibility', 'opacity', 'position',
-            'background-color', 'border', 'padding', 'margin',
-            'width', 'height', 'z-index'
-        ]);
+        // Obtenir les styles calculés pour tous les propriétés attendues
+        const allProperties = Object.keys(expectedStyles);
+        const computed = getComputedStyles(element, allProperties);
 
         log(`Styles calculés:`, computed);
 
