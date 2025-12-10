@@ -105,7 +105,7 @@
             const overlay = modal.querySelector('.cache-modal-overlay');
             checkElementStyles(overlay, `#${modalId} .cache-modal-overlay`, {
                 'position': 'fixed',
-                'display': 'none', // Normalement masquée par défaut
+                'display': 'none', // Masquée par défaut
                 'background-color': 'rgba(0, 0, 0, 0.5)',
                 'z-index': '10000'
             });

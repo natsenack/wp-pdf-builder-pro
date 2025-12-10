@@ -537,9 +537,13 @@
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 10000;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
+}
+
+.contenu-settings .cache-modal-overlay.active {
+    display: flex;
 }
 
 .contenu-settings .cache-modal-container {
