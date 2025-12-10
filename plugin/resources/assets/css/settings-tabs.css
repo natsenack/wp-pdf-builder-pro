@@ -1,165 +1,59 @@
 /**
- * PDF Builder Pro - Styles pour les onglets de paramètres
+ * PDF Builder Pro - Styles simplifiés pour les onglets de paramètres
  */
 
-/* Styles pour les onglets WordPress - Design moderne uniforme */
+/* Styles pour les onglets WordPress - Design minimal */
 .nav-tab-wrapper {
-    border-bottom: none;
-    margin-bottom: 35px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 16px;
-    padding: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(0,123,186,0.1);
-}
-
-.nav-tab-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #007cba 0%, #005a87 30%, #007cba 60%, #005a87 100%);
-    background-size: 200% 100%;
-    animation: shimmer 3s ease-in-out infinite;
-    opacity: 0.8;
-}
-
-@keyframes shimmer {
-    0%, 100% { background-position: -200% 0; }
-    50% { background-position: 200% 0; }
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e5e9;
+    margin-bottom: 20px;
+    padding: 0 16px;
 }
 
 .nav-tab {
-    border: none;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    color: #6c757d;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.5;
-    margin-left: 0;
-    margin-right: 8px;
-    padding: 14px 24px;
+    padding: 10px 16px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #646970;
     text-decoration: none;
-    vertical-align: top;
-    border-radius: 12px;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid transparent;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    min-height: 48px;
-    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    gap: 6px;
 }
 
 .nav-tab .tab-icon {
-    font-size: 16px;
-    line-height: 1;
-    flex-shrink: 0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
 }
 
 .nav-tab .tab-text {
-    font-weight: 600;
-    letter-spacing: 0.3px;
+    font-weight: 500;
 }
 
 .nav-tab:hover {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,123,186,0.3);
-    border-color: #007cba;
-}
-
-.nav-tab:hover .tab-icon {
-    transform: scale(1.1);
-    filter: brightness(1.2);
+    color: #007cba;
+    border-bottom-color: rgba(0, 123, 186, 0.3);
 }
 
 .nav-tab.nav-tab-active,
 .nav-tab.nav-tab-active:hover {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-    border-bottom: none;
-    color: white;
-    margin-bottom: -1px;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,123,186,0.5);
-    font-weight: 700;
-    border-color: #005a87;
-    position: relative;
-}
-
-.nav-tab.nav-tab-active .tab-icon {
-    transform: scale(1.05);
-    filter: brightness(1.1);
-}
-
-.nav-tab.nav-tab-active::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg, #007cba, #005a87);
-    border-radius: 14px;
-    z-index: -1;
-    opacity: 0.3;
-}
-
-.nav-tab.nav-tab-active::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #005a87;
-}
-
-.nav-tab.nav-tab-active::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: white;
-    opacity: 0.3;
+    background: #fff;
+    color: #007cba;
+    border-bottom-color: #007cba;
 }
 
 .nav-tab:focus {
-    box-shadow: 0 0 0 1px #2271b1;
-    outline: 2px solid transparent;
-    outline-offset: -2px;
-}
-
-/* Effets de brillance pour les onglets actifs */
-.nav-tab-active::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
-    border-radius: 12px;
-    animation: glow 2s ease-in-out infinite alternate;
-    pointer-events: none;
-}
-
-@keyframes glow {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.6; }
+    outline: none;
+    box-shadow: 0 0 0 1px #007cba;
 }
 
 /* Styles pour le contenu des onglets */
@@ -174,20 +68,24 @@
 /* Styles pour les sections dans les onglets */
 .tab-section {
     background: #fff;
-    border: 1px solid #c3c4c7;
+    border: 1px solid #e1e5e9;
     border-radius: 4px;
     margin-bottom: 20px;
     padding: 20px;
 }
 
 .tab-section h3 {
-    border-bottom: 1px solid #dcdcde;
+    border-bottom: 1px solid #e1e5e9;
     margin: 0 0 20px 0;
     padding-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .tab-section h4 {
     margin: 20px 0 10px 0;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* Styles pour les formulaires dans les onglets */
@@ -215,13 +113,16 @@
 .form-table textarea {
     max-width: 400px;
     width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
 }
 
 /* Styles pour les boutons */
 .button-primary {
-    background: #2271b1;
-    border: 1px solid #2271b1;
-    border-radius: 2px;
+    background: #007cba;
+    border: 1px solid #007cba;
+    border-radius: 4px;
     color: #fff;
     cursor: pointer;
     display: inline-block;
@@ -237,16 +138,16 @@
 
 .button-primary:hover,
 .button-primary:focus {
-    background: #135e96;
-    border-color: #135e96;
+    background: #005a87;
+    border-color: #005a87;
     color: #fff;
 }
 
 .button-secondary {
     background: #f6f7f7;
-    border: 1px solid #c3c4c7;
-    border-radius: 2px;
-    color: #2271b1;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    color: #007cba;
     cursor: pointer;
     display: inline-block;
     font-size: 13px;
@@ -261,8 +162,8 @@
 .button-secondary:hover,
 .button-secondary:focus {
     background: #f0f0f1;
-    border-color: #8c8f94;
-    color: #135e96;
+    border-color: #c3c4c7;
+    color: #005a87;
 }
 
 /* Styles pour les messages */
@@ -270,7 +171,6 @@
     background: #fff;
     border-left: 4px solid #72aee6;
     border-radius: 4px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
     margin: 20px 0;
     padding: 12px;
 }
@@ -291,203 +191,48 @@
     border-left-color: #72aee6;
 }
 
-/* Styles responsives modernes pour les onglets */
+/* Styles responsives pour les onglets */
 @media screen and (max-width: 782px) {
     .nav-tab-wrapper {
-        position: relative;
-        border-bottom: none;
-        margin-bottom: 20px;
-        padding: 6px;
-        border-radius: 8px;
+        padding: 0 8px;
+        margin-bottom: 15px;
     }
 
-    /* Menu hamburger moderne */
-    .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 16px;
-        background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-        border-radius: 8px;
-        margin-bottom: 10px;
-        box-shadow: 0 3px 12px rgba(0,123,186,0.3);
-        color: white;
-    }
-
-    .current-tab-text {
-        font-weight: 600;
-        color: white;
-        font-size: 16px;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-
-    .mobile-menu-button {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 24px;
-        height: 18px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-
-    }
-
-    .hamburger-line {
-        display: block;
-        width: 100%;
-        height: 2px;
-        background: white;
-        border-radius: 1px;
-
-        transform-origin: center;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-
-    .mobile-menu-button.active .hamburger-line:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-        background: white;
-    }
-
-    .mobile-menu-button.active .hamburger-line:nth-child(2) {
-        opacity: 0;
-        transform: scale(0);
-    }
-
-    .mobile-menu-button.active .hamburger-line:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
-        background: white;
-    }
-
-    /* Container des onglets mobile */
-    .nav-tabs-container {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border: 2px solid #007cba;
-        border-radius: 8px;
-        box-shadow: 0 8px 25px rgba(0,123,186,0.15);
-        z-index: 1000;
-        max-height: 70vh;
-        overflow-y: auto;
-        margin-top: 5px;
-    }
-
-    .nav-tabs-container.active {
-        display: block;
-        animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    /* Onglets en mode mobile */
-    .nav-tabs-container .nav-tab {
+    .nav-tab {
         display: block;
         width: 100%;
         margin: 0;
         border: none;
-        border-radius: 0;
-        border-bottom: 1px solid #e9ecef;
-        padding: 15px 18px;
+        border-bottom: 1px solid #e1e5e9;
+        padding: 12px 16px;
         text-align: left;
         white-space: normal;
-        background: transparent;
-        color: #495057;
-        font-size: 14px;
-        font-weight: 500;
-
     }
 
-    .nav-tabs-container .nav-tab:last-child {
+    .nav-tab:last-child {
         border-bottom: none;
     }
 
-    .nav-tabs-container .nav-tab:hover {
-        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-        color: #007cba;
-        padding-left: 22px;
+    .nav-tab:hover {
+        background: #f8f9fa;
+        border-bottom-color: #007cba;
     }
 
-    .nav-tabs-container .nav-tab-active {
-        background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-        color: white;
+    .nav-tab.nav-tab-active {
+        background: #fff;
         border-bottom-color: #007cba;
         font-weight: 600;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .nav-tabs-container .nav-tab-active:hover {
-        background: linear-gradient(135deg, #005a87 0%, #004080 100%);
-        color: white;
-        padding-left: 18px;
     }
 }
 
 @media screen and (max-width: 480px) {
     .nav-tab-wrapper {
-        padding: 4px;
-        margin-bottom: 15px;
+        padding: 0 4px;
+        margin-bottom: 10px;
     }
 
-    .mobile-menu-toggle {
-        padding: 10px 12px;
-        border-radius: 6px;
-    }
-
-    .current-tab-text {
-        font-size: 14px;
-    }
-
-    .nav-tabs-container .nav-tab {
-        padding: 12px 14px;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    .nav-tabs-container .nav-tab:hover {
-        padding-left: 18px;
-    }
-
-    .nav-tabs-container .nav-tab-active {
-        padding-left: 14px;
-    }
-
-    /* Animations d'apparition pour les onglets */
     .nav-tab {
-        animation: fadeInUp 0.4s ease-out;
-    }
-
-    .nav-tab:nth-child(1) { animation-delay: 0.1s; }
-    .nav-tab:nth-child(2) { animation-delay: 0.2s; }
-    .nav-tab:nth-child(3) { animation-delay: 0.3s; }
-    .nav-tab:nth-child(4) { animation-delay: 0.4s; }
-    .nav-tab:nth-child(5) { animation-delay: 0.5s; }
-    .nav-tab:nth-child(6) { animation-delay: 0.6s; }
-    .nav-tab:nth-child(7) { animation-delay: 0.7s; }
-    .nav-tab:nth-child(8) { animation-delay: 0.8s; }
-    .nav-tab:nth-child(9) { animation-delay: 0.9s; }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        padding: 10px 12px;
+        font-size: 14px;
     }
 }
