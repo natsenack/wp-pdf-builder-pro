@@ -1905,33 +1905,25 @@
                         modalMonitoring.trackModalClose(currentModalCategory);
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
-                        const modal = document.getElementById(modalId);
-                        console.log('🔍 [CLOSE MODAL] Modal trouvée:', !!modal, 'ID:', modalId);
+                        console.log('🔍 [CLOSE MODAL] Modal element ignoré (removed)');
 
-                        // Fermer la modal en retirant la classe 'active' de l'overlay
-                        if (modal) {
-                            const overlay = document.getElementById(`canvas-${currentModalCategory}-modal-overlay`);
-                            console.log('🔍 [CLOSE MODAL] Overlay séparé trouvé:', !!overlay, 'ID:', `canvas-${currentModalCategory}-modal-overlay`);
+                        // Fermer la modal en retirant la classe 'active' de l'overlay seulement
+                        const overlay = document.getElementById(`canvas-${currentModalCategory}-modal-overlay`);
+                        console.log('🔍 [CLOSE MODAL] Overlay trouvé:', !!overlay, 'ID:', `canvas-${currentModalCategory}-modal-overlay`);
 
-                            if (overlay) {
-                                const wasActive = overlay.classList.contains('active');
-                                console.log('🔍 [CLOSE MODAL] Overlay était actif:', wasActive);
+                        if (overlay) {
+                            const wasActive = overlay.classList.contains('active');
+                            console.log('🔍 [CLOSE MODAL] Overlay était actif:', wasActive);
 
-                                if (wasActive) {
-                                    overlay.classList.remove('active');
-                                    document.body.classList.remove('canvas-modal-open');
-                                    // Remove active class from modal
-                                    modal.classList.remove('active');
-                                    console.log('✅ [CLOSE MODAL] Classe active retirée');
-                                } else {
-                                    console.log('⚠️ [CLOSE MODAL] Overlay déjà inactif');
-                                }
-
+                            if (wasActive) {
+                                overlay.classList.remove('active');
+                                document.body.classList.remove('canvas-modal-open');
+                                console.log('✅ [CLOSE MODAL] Classe active retirée de l\'overlay');
                             } else {
-                                console.error('❌ [CLOSE MODAL] Overlay séparé NON trouvé pour:', currentModalCategory);
+                                console.log('⚠️ [CLOSE MODAL] Overlay déjà inactif');
                             }
                         } else {
-                            console.error('❌ [CLOSE MODAL] Modal NON trouvée:', modalId);
+                            console.error('❌ [CLOSE MODAL] Overlay NON trouvé pour:', currentModalCategory);
                         }
 
                         console.log('🔄 [CLOSE MODAL] Reset currentModalCategory');
