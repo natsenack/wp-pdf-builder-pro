@@ -4329,7 +4329,7 @@ body.modal-open {
 .mini-canvas-apparence {
     width: 100%;
     max-width: 120px;
-    height: 70px;
+    height: 50px;
     border-radius: 4px;
     position: relative;
     overflow: hidden;
@@ -4347,8 +4347,8 @@ body.modal-open {
 }
 
 .mini-element {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     background: #666;
     border-radius: 1px;
 }
@@ -4361,11 +4361,11 @@ body.modal-open {
 .mini-element.shape-text {
     width: auto;
     height: auto;
-    font-size: 6px;
+    font-size: 5px;
     color: #333;
     background: none;
     font-weight: bold;
-    padding: 0 2px;
+    padding: 0 1px;
 }
 
 .mini-canvas-info {
@@ -4375,9 +4375,9 @@ body.modal-open {
     right: 2px;
     background: rgba(0,0,0,0.7);
     color: white;
-    padding: 2px 4px;
+    padding: 1px 3px;
     border-radius: 2px;
-    font-size: 6px;
+    font-size: 5px;
     text-align: center;
     line-height: 1.2;
 }
@@ -4456,9 +4456,9 @@ body.modal-open {
 .feature-indicators {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     width: 100%;
-    margin-top: 6px;
+    margin-top: 4px;
 }
 
 .feature-indicator {
@@ -4487,7 +4487,7 @@ body.modal-open {
 .apparence-indicators {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     width: 100%;
 }
 
