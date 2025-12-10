@@ -540,9 +540,9 @@
 }
 
 .contenu-settings .cache-modal-overlay.active {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
+    display: flex !important;
+    width: 100vw !important;
+    height: 100vh !important;
 }
 
 .contenu-settings .cache-modal-container {
