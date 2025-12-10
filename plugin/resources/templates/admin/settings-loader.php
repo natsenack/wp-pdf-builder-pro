@@ -38,13 +38,31 @@ function pdf_builder_load_settings_assets($hook) {
     );
 
     // Charger les styles pour les onglets (nav-tab-wrapper)
-    // wp_enqueue_style(
-    //     'pdf-builder-tabs',
-    //     PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings-tabs.css',
-    //     array(),
-    //     PDF_BUILDER_VERSION . '-' . time(),
-    //     'all'
-    // );
+    wp_enqueue_style(
+        'pdf-builder-tabs',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings-tabs.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet développeur
+    wp_enqueue_style(
+        'pdf-builder-developer-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/developer-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
+
+    // Charger les styles pour l'onglet système
+    wp_enqueue_style(
+        'pdf-builder-system-settings',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/system-settings.css',
+        array(),
+        PDF_BUILDER_VERSION . '-' . time(),
+        'all'
+    );
     */
 
     // DEBUG: Avant enqueue du script

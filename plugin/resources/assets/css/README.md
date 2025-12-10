@@ -16,8 +16,12 @@ Dossier principal contenant tous les fichiers CSS utilisés par l'application.
   - Animations et effets visuels
 
 - **`developer-settings.css`** - Styles pour les paramètres développeur
-  - Onglet "Système" (`.dev-system-status`, `.dev-system-info-content`)
-  - Contrôles développeur, bannières d'état
+  - Onglet "Développeur" : contrôles développeur, outils, logs, modales
+  - Bannière de statut, grille de contrôles, section outils développeur
+
+- **`system-settings.css`** - Styles spécifiques à l'onglet "Système"
+  - Cache & Performance : sections, métriques, boutons système
+  - Indicateurs de statut, animations, design responsive
 
 - **`notifications.css`** - Styles du système de notifications
   - Toasts, alertes, messages utilisateur
