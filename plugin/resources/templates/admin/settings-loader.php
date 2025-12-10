@@ -135,6 +135,15 @@ function pdf_builder_load_settings_assets($hook) {
         'all'
     );
 
+    // Script pour forcer le rechargement CSS (en cas de cache persistant)
+    wp_enqueue_script(
+        'pdf-builder-force-css-reload',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/force-css-reload.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true
+    );
+
     // Charger les styles pour l'onglet principal
     wp_enqueue_style(
         'pdf-builder-main-settings',
