@@ -760,6 +760,75 @@
     accent-color: var(--modal-info-color);
 }
 
+/* Toggle Switches in Modals - Matching Plugin Standards */
+.cache-modal-container .toggle,
+.canvas-modal-container .toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+    margin-right: 12px;
+    vertical-align: middle;
+}
+
+.cache-modal-container .toggle input,
+.canvas-modal-container .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.cache-modal-container .toggle-slider,
+.canvas-modal-container .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e2e8f0;
+    transition: 0.3s;
+    border-radius: 13px;
+    border: 1px solid #cbd5e1;
+}
+
+.cache-modal-container .toggle-slider:before,
+.canvas-modal-container .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 0px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid #e2e8f0;
+}
+
+.cache-modal-container .toggle input:checked + .toggle-slider,
+.canvas-modal-container .toggle input:checked + .toggle-slider {
+    background-color: #3b82f6;
+    border-color: #2563eb;
+}
+
+.cache-modal-container .toggle input:checked + .toggle-slider:before,
+.canvas-modal-container .toggle input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.cache-modal-container .toggle.disabled,
+.canvas-modal-container .toggle.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cache-modal-container .toggle.disabled .toggle-slider,
+.canvas-modal-container .toggle.disabled .toggle-slider {
+    cursor: not-allowed;
+}
+
 /* Fieldset Styling */
 .cache-modal-container fieldset,
 .canvas-modal-container fieldset {
