@@ -697,6 +697,39 @@ window.CanvasPreviewManager = {
     },
 
     /**
+     * Met à jour la prévisualisation de la carte grille
+     */
+    updateGrilleCardPreview: function() {
+        try {
+            const values = this.getCardValues('grille');
+            const { show_grid: gridEnabled, snap_to_grid: snapToGrid, show_guides: showGuides } = values;
+
+            const gridContainer = this.getCardElement('grille', '.grid-preview-container');
+            if (!gridContainer) return;
+
+            // Activer/désactiver la grille
+            gridContainer.classList.toggle('grid-enabled', gridEnabled);
+            gridContainer.classList.toggle('grid-disabled', !gridEnabled);
+
+            // Afficher/cacher les guides
+            const guideLines = gridContainer.querySelectorAll('.guide-line');
+            guideLines.forEach(guide => guide.classList.toggle('active', showGuides));
+
+            // Mettre à jour l'indicateur de snap
+            const snapIndicator = gridContainer.querySelector('.snap-indicator');
+            if (snapIndicator) {
+                const isActive = snapToGrid && gridEnabled;
+                snapIndicator.textContent = isActive ? '🔗 Snap activé' : '🔗 Snap désactivé';
+                snapIndicator.style.color = isActive ? '#28a745' : '#6c757d';
+            }
+
+            debugLog('✅ Grille preview updated:', { gridEnabled, snapToGrid, showGuides });
+        } catch (error) {
+            debugError('❌ Error updating grille preview:', error);
+        }
+    },
+
+    /**
      * Initialise les mises à jour en temps réel pour une catégorie
      */
     initializeRealTimeUpdates: function(modal) {

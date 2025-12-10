@@ -206,6 +206,7 @@
                                         <span class="legend-item">📐 Grille</span>
                                         <span class="legend-item">📏 Guides</span>
                                         <span class="legend-item">📦 Élément</span>
+                                        <span class="snap-indicator">🔗 Snap activé</span>
                                     </div>
                                 </div>
                             </aside>
@@ -326,8 +327,8 @@
                                 <div class="export-quality-preview">
                                     <div class="quality-bar">
                                         <div class="quality-fill" style="width: 90%"></div>
+                                        <div class="quality-text">90%</div>
                                     </div>
-                                    <div class="quality-text">90%</div>
                                     <div class="export-formats">
                                         <span class="format-badge">PNG</span>
                                         <span class="format-badge">JPG</span>

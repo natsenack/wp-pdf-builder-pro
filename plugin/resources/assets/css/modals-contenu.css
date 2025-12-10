@@ -916,11 +916,16 @@
 }
 
 .canvas-card-preview .quality-text {
-    font-size: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
     font-weight: 600;
-    color: var(--modal-text-primary);
-    text-align: center;
-    margin: 4px 0;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    pointer-events: none;
 }
 
 .canvas-card-preview .export-formats {
@@ -947,6 +952,188 @@
     color: white;
     border-color: #2563eb;
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+/* Grid Card Preview Styles */
+.canvas-card-preview .grid-preview-container {
+    width: 100%;
+    height: 120px;
+    background: #ffffff;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.canvas-card-preview .grid-canvas {
+    width: 100%;
+    height: 90px;
+    position: relative;
+    background: #fafbfc;
+}
+
+.canvas-card-preview .grid-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.canvas-card-preview .grid-line {
+    position: absolute;
+    background: #cbd5e1;
+    opacity: 0.3;
+}
+
+.canvas-card-preview .grid-line.horizontal {
+    width: 100%;
+    height: 1px;
+    top: 25%;
+}
+
+.canvas-card-preview .grid-line.horizontal:nth-child(2) {
+    top: 50%;
+}
+
+.canvas-card-preview .grid-line.horizontal:nth-child(3) {
+    top: 75%;
+}
+
+.canvas-card-preview .grid-line.vertical {
+    width: 1px;
+    height: 100%;
+    left: 25%;
+}
+
+.canvas-card-preview .grid-line.vertical:nth-child(4) {
+    left: 50%;
+}
+
+.canvas-card-preview .grid-line.vertical:nth-child(5) {
+    left: 75%;
+}
+
+.canvas-card-preview .grid-dots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.canvas-card-preview .grid-dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #94a3b8;
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+.canvas-card-preview .grid-dot:nth-child(1) { top: 25%; left: 25%; }
+.canvas-card-preview .grid-dot:nth-child(2) { top: 25%; left: 50%; }
+.canvas-card-preview .grid-dot:nth-child(3) { top: 25%; left: 75%; }
+.canvas-card-preview .grid-dot:nth-child(4) { top: 50%; left: 25%; }
+.canvas-card-preview .grid-dot:nth-child(5) { top: 50%; left: 50%; }
+.canvas-card-preview .grid-dot:nth-child(6) { top: 50%; left: 75%; }
+.canvas-card-preview .grid-dot:nth-child(7) { top: 75%; left: 25%; }
+.canvas-card-preview .grid-dot:nth-child(8) { top: 75%; left: 50%; }
+.canvas-card-preview .grid-dot:nth-child(9) { top: 75%; left: 75%; }
+
+.canvas-card-preview .guide-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.canvas-card-preview .guide-line {
+    position: absolute;
+    background: #3b82f6;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.canvas-card-preview .guide-line.active {
+    opacity: 0.8;
+}
+
+.canvas-card-preview .guide-line.horizontal {
+    width: 100%;
+    height: 2px;
+    top: 40%;
+}
+
+.canvas-card-preview .guide-line.vertical {
+    width: 2px;
+    height: 100%;
+    left: 60%;
+}
+
+.canvas-card-preview .preview-element {
+    position: absolute;
+    top: 35%;
+    left: 35%;
+}
+
+.canvas-card-preview .element-box {
+    width: 20px;
+    height: 20px;
+    background: #6366f1;
+    border: 2px solid #4f46e5;
+    border-radius: 3px;
+    position: relative;
+}
+
+.canvas-card-preview .element-box::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 1px dashed #4f46e5;
+    border-radius: 3px;
+    opacity: 0.5;
+}
+
+.canvas-card-preview .grid-legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background: #f8f9fa;
+    border-top: 1px solid #e1e5e9;
+    font-size: 11px;
+}
+
+.canvas-card-preview .legend-item {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.canvas-card-preview .snap-indicator {
+    font-size: 10px;
+    font-weight: 600;
+    color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(40, 167, 69, 0.2);
+    transition: all 0.3s ease;
+}
+
+.canvas-card-preview.grid-disabled .grid-lines,
+.canvas-card-preview.grid-disabled .grid-dots {
+    opacity: 0.2;
+}
+
+.canvas-card-preview.grid-disabled .snap-indicator {
+    color: #6c757d;
+    background: rgba(108, 117, 125, 0.1);
+    border-color: rgba(108, 117, 125, 0.2);
 }
 
 .contenu-settings input[type="text"],
