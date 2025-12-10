@@ -918,7 +918,9 @@
 
                         // Mettre à jour une valeur et rafraîchir les previews
                         updateValue: function(key, value) {
+                            console.log('📝 [UPDATE] updateValue called with:', key, '=', value, '(type:', typeof value + ')');
                             this.values[key] = value;
+                            console.log('📝 [UPDATE] Calling refreshPreviews...');
                             this.refreshPreviews();
                         },
 
@@ -1101,37 +1103,42 @@
 
                         // Configurer les event listeners pour une modal spécifique
                         setupModalEventListeners: function(category) {
-                            console.log('🎧 Setting up event listeners for modal:', category);
+                            console.log('🎧 [SETUP] Setting up event listeners for modal:', category);
 
                             // Trouver la modal spécifique
                             const modal = document.getElementById(`canvas-${category}-modal`);
+                            console.log('🎧 [SETUP] Modal element found:', !!modal, 'ID:', `canvas-${category}-modal`);
                             if (!modal) {
-                                console.warn('⚠️ Modal not found for event listeners:', `canvas-${category}-modal`);
+                                console.warn('⚠️ [SETUP] Modal not found for event listeners:', `canvas-${category}-modal`);
                                 return;
                             }
 
                             // Écouter les changements dans cette modal spécifique
                             const modalInputs = modal.querySelectorAll('input, select');
-                            console.log('🎧 Found', modalInputs.length, 'inputs in modal', category);
+                            console.log('🎧 [SETUP] Found', modalInputs.length, 'inputs in modal', category);
 
-                            modalInputs.forEach(input => {
+                            modalInputs.forEach((input, index) => {
+                                console.log(`🎧 [SETUP] Input ${index}: name="${input.name}", type="${input.type}", hasListener=${input.hasAttribute('data-preview-listener')}`);
+
                                 // Éviter les doublons d'event listeners
                                 if (input.hasAttribute('data-preview-listener')) {
+                                    console.log(`🎧 [SETUP] Skipping input ${index} - already has listener`);
                                     return;
                                 }
                                 input.setAttribute('data-preview-listener', 'true');
+                                console.log(`🎧 [SETUP] Setting up listeners for input ${index}: ${input.name}`);
 
                                 input.addEventListener('input', (e) => {
                                     const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
-                                    console.log('🔄 Modal change detected (input):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+                                    console.log('🔄 [INPUT] Modal change detected:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
 
                                     // Conversion des types
                                     if (e.target.type === 'number') value = parseFloat(value) || 0;
                                     if (['canvas_canvas_shadow_enabled', 'canvas_canvas_grid_enabled', 'canvas_canvas_guides_enabled', 'canvas_canvas_snap_to_grid', 'canvas_canvas_export_transparent', 'canvas_canvas_lazy_loading_editor', 'canvas_canvas_performance_monitoring', 'canvas_canvas_error_reporting'].includes(key)) {
                                         value = value === true || value === '1' || value === 1;
-                                        console.log('🔄 Boolean conversion for', key, ':', value);
+                                        console.log('🔄 [INPUT] Boolean conversion for', key, ':', value);
                                     }
 
                                     this.updateValue(key, value);
@@ -1142,20 +1149,20 @@
                                     const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                     let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
 
-                                    console.log('🔄 Modal change detected (change):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
+                                    console.log('🔄 [CHANGE] Modal change detected:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
 
                                     // Conversion des types
                                     if (e.target.type === 'number') value = parseFloat(value) || 0;
                                     if (['canvas_canvas_shadow_enabled', 'canvas_canvas_grid_enabled', 'canvas_canvas_guides_enabled', 'canvas_canvas_snap_to_grid', 'canvas_canvas_export_transparent', 'canvas_canvas_lazy_loading_editor', 'canvas_canvas_performance_monitoring', 'canvas_canvas_error_reporting'].includes(key)) {
                                         value = value === true || value === '1' || value === 1;
-                                        console.log('🔄 Boolean conversion for', key, ':', value);
+                                        console.log('🔄 [CHANGE] Boolean conversion for', key, ':', value);
                                     }
 
                                     this.updateValue(key, value);
                                 });
                             });
 
-                            console.log('✅ Event listeners setup for modal', category, 'with', modalInputs.length, 'inputs');
+                            console.log('✅ [SETUP] Event listeners setup complete for modal', category, 'with', modalInputs.length, 'inputs');
                         }
                     };
 
@@ -1754,6 +1761,7 @@
 
                             // Configurer les event listeners pour cette modal après l'ouverture
                             setTimeout(() => {
+                                console.log('🔧 Calling setupModalEventListeners for category:', category);
                                 previewSystem.setupModalEventListeners(category);
                             }, 100);
                         } else {
