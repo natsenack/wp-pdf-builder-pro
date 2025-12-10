@@ -25,25 +25,25 @@
                     </p>
                 </aside>
                 <article id="cache-size-details">
-                    <section style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
-                        <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <h4 style="margin-top: 0; color: #495057;">[DOSSIER APERCUS] Dossier des aperçus</h4>
-                            <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="previews-cache-size">
+                    <section class="cache-details-grid">
+                        <article class="cache-folder-card">
+                            <h4 class="cache-folder-title">[DOSSIER APERCUS] Dossier des aperçus</h4>
+                            <div class="cache-size-display" id="previews-cache-size">
                                 Calcul en cours...
                             </div>
-                            <div style="color: #666; font-size: 12px;">wp-content/cache/wp-pdf-builder-previews/</div>
+                            <div class="cache-folder-path">wp-content/cache/wp-pdf-builder-previews/</div>
                         </article>
-                        <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <h4 style="margin-top: 0; color: #495057;">[DOSSIER PRINCIPAL] Dossier principal</h4>
-                            <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="main-cache-size">
+                        <article class="cache-folder-card">
+                            <h4 class="cache-folder-title">[DOSSIER PRINCIPAL] Dossier principal</h4>
+                            <div class="cache-size-display" id="main-cache-size">
                                 Calcul en cours...
                             </div>
-                            <div style="color: #666; font-size: 12px;">wp-content/uploads/pdf-builder-cache/</div>
+                            <div class="cache-folder-path">wp-content/uploads/pdf-builder-cache/</div>
                         </article>
                     </section>
-                    <aside style="margin-top: 20px; padding: 15px; background: #e7f5e9; border: 1px solid #28a745; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #155724;">💡 Recommandations</h4>
-                        <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #155724;">
+                    <aside class="cache-recommendations">
+                        <h4 class="cache-recommendations-title">💡 Recommandations</h4>
+                        <ul class="cache-recommendations-list">
                             <li>Une taille de cache normale est inférieure à 100 Mo</li>
                             <li>Si la taille dépasse 500 Mo, considérez un nettoyage manuel</li>
                             <li>Le cache est automatiquement nettoyé selon les paramètres configurés</li>
@@ -75,27 +75,27 @@
                     </p>
                 </aside>
                 <article id="cache-transients-details">
-                    <section style="margin-top: 20px;">
-                        <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <h4 style="margin-top: 0; color: #495057;">📊 Statistiques des transients</h4>
-                            <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
-                                <article style="text-align: center;">
-                                    <div style="font-size: 24px; font-weight: bold; color: #28a745;" id="total-transients-count">0</div>
-                                    <div style="color: #666; font-size: 12px;">Total actifs</div>
+                    <section class="cache-section">
+                        <article class="cache-folder-card">
+                            <h4 class="cache-folder-title">📊 Statistiques des transients</h4>
+                            <section class="cache-stats-grid">
+                                <article class="cache-stat-item">
+                                    <div class="cache-stat-number total" id="total-transients-count">0</div>
+                                    <div class="cache-stat-label">Total actifs</div>
                                 </article>
-                                <article style="text-align: center;">
-                                    <div style="font-size: 24px; font-weight: bold; color: #17a2b8;" id="expired-transients-count">0</div>
-                                    <div style="color: #666; font-size: 12px;">Expirés</div>
+                                <article class="cache-stat-item">
+                                    <div class="cache-stat-number expired" id="expired-transients-count">0</div>
+                                    <div class="cache-stat-label">Expirés</div>
                                 </article>
-                                <article style="text-align: center;">
-                                    <div style="font-size: 24px; font-weight: bold; color: #ffc107;" id="pdf-builder-transients-count">0</div>
-                                    <div style="color: #666; font-size: 12px;">PDF Builder</div>
+                                <article class="cache-stat-item">
+                                    <div class="cache-stat-number pdf-builder" id="pdf-builder-transients-count">0</div>
+                                    <div class="cache-stat-label">PDF Builder</div>
                                 </article>
                             </section>
                         </article>
-                        <aside style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 8px;">
-                            <h4 style="margin-top: 0; color: #8b4513;">⚠️ Note importante</h4>
-                            <p style="margin: 10px 0 0 0; color: #5d4e37;">
+                        <aside class="cache-warning">
+                            <h4 class="cache-warning-title">⚠️ Note importante</h4>
+                            <p class="cache-warning-text">
                                 Les transients expirent automatiquement. Un nombre élevé de transients n'est généralement pas préoccupant,
                                 mais si vous remarquez des problèmes de performance, vous pouvez les vider manuellement.
                             </p>
