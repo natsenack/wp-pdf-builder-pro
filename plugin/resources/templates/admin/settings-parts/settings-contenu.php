@@ -1008,8 +1008,12 @@
                             // Recharger les valeurs depuis les champs cachés pour assurer la cohérence
                             this.values = {};
                             document.querySelectorAll('input[name^="pdf_builder_settings[pdf_builder_canvas_"]').forEach(field => {
-                                const key = field.name.replace('pdf_builder_settings[pdf_builder_canvas_', 'canvas_');
-                                this.values[key] = field.value || '';
+                                const name = field.name;
+                                const keyMatch = name.match(/pdf_builder_settings\[pdf_builder_canvas_(.+)\]/);
+                                if (keyMatch) {
+                                    const key = 'canvas_' + keyMatch[1];
+                                    this.values[key] = field.value || '';
+                                }
                             });
                             console.log('🔄 Values reloaded from hidden fields:', this.values);
 
