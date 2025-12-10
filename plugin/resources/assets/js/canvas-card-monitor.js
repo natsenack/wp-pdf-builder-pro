@@ -884,5 +884,5 @@ window.CanvasCardMonitorDebug = {
             currentValues: card.currentValues
         } : null;
     }
-};</content>
+};
 <parameter name="filePath">i:\wp-pdf-builder-pro\plugin\resources\assets\js\canvas-card-monitor.js
