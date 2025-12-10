@@ -419,12 +419,120 @@
     border-color: #c3c4c7;
 }
 
+/* Cache Modal Styles (used in settings-modals.php) */
+.cache-modal {
+    display: none;
+}
+
+.cache-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cache-modal-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.cache-modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e1e5e9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.cache-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.cache-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #646970;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.cache-modal-close:hover {
+    background: #e9ecef;
+    color: #1e1e1e;
+}
+
+.cache-modal-body {
+    padding: 24px;
+}
+
+.cache-modal-info {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 6px;
+}
+
+.cache-modal-info p {
+    margin: 0;
+    color: #0c5460;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.cache-modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid #e1e5e9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.cache-modal-cancel {
+    background: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
+}
+
+.cache-modal-cancel:hover {
+    background: #5a6268 !important;
+    border-color: #5a6268 !important;
+}
+
 /* Modal Form Styles */
-.modal-content .form-table {
+.modal-content .form-table,
+.cache-modal-container .form-table {
     margin: 0;
 }
 
-.modal-content .form-table th {
+.modal-content .form-table th,
+.cache-modal-container .form-table th {
     padding: 12px 12px 12px 0;
     font-weight: 600;
     text-align: left;
@@ -432,14 +540,19 @@
     width: 150px;
 }
 
-.modal-content .form-table td {
+.modal-content .form-table td,
+.cache-modal-container .form-table td {
     padding: 12px 0;
 }
 
 .modal-content input[type="text"],
 .modal-content input[type="number"],
 .modal-content select,
-.modal-content textarea {
+.modal-content textarea,
+.cache-modal-container input[type="text"],
+.cache-modal-container input[type="number"],
+.cache-modal-container select,
+.cache-modal-container textarea {
     width: 100%;
     max-width: none;
     padding: 8px 12px;
@@ -449,7 +562,8 @@
 
 /* Responsive Modal */
 @media screen and (max-width: 782px) {
-    .modal-content {
+    .modal-content,
+    .cache-modal-container {
         width: 95%;
         max-height: 90vh;
         margin: 20px;
@@ -457,30 +571,39 @@
 
     .modal-header,
     .modal-body,
-    .modal-footer {
+    .modal-footer,
+    .cache-modal-header,
+    .cache-modal-body,
+    .cache-modal-footer {
         padding: 15px;
     }
 
-    .modal-title {
+    .modal-title,
+    .cache-modal-header h3 {
         font-size: 16px;
     }
 
     .modal-content .form-table th,
-    .modal-content .form-table td {
+    .modal-content .form-table td,
+    .cache-modal-container .form-table th,
+    .cache-modal-container .form-table td {
         display: block;
         width: 100%;
         padding: 8px 0;
     }
 
-    .modal-content .form-table th {
+    .modal-content .form-table th,
+    .cache-modal-container .form-table th {
         padding-bottom: 4px;
     }
 
-    .modal-content .form-table td {
+    .modal-content .form-table td,
+    .cache-modal-container .form-table td {
         padding-top: 4px;
     }
 
-    .modal-footer {
+    .modal-footer,
+    .cache-modal-footer {
         flex-direction: column;
     }
 
