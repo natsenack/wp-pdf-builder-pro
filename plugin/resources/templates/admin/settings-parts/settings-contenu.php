@@ -934,6 +934,8 @@
                             console.log('🔄 REFRESH PREVIEWS CALLED');
 
                             const v = this.values;
+                            console.log('🔄 Current values object:', v);
+                            console.log('🔄 Keys in values:', Object.keys(v));
 
                             // Attendre que le DOM soit prêt
                             if (document.readyState !== 'complete') {
@@ -950,12 +952,18 @@
                             console.log('Elements found:', { widthEl: !!widthEl, heightEl: !!heightEl, dpiEl: !!dpiEl });
 
                             if (widthEl) {
+                                const oldValue = widthEl.textContent;
                                 widthEl.textContent = v.canvas_canvas_width;
-                                console.log('✅ Width updated to:', v.canvas_canvas_width);
+                                console.log('✅ Width updated from', oldValue, 'to:', v.canvas_canvas_width);
+                            } else {
+                                console.log('❌ Width element not found');
                             }
                             if (heightEl) {
+                                const oldValue = heightEl.textContent;
                                 heightEl.textContent = v.canvas_canvas_height;
-                                console.log('✅ Height updated to:', v.canvas_canvas_height);
+                                console.log('✅ Height updated from', oldValue, 'to:', v.canvas_canvas_height);
+                            } else {
+                                console.log('❌ Height element not found');
                             }
                             if (dpiEl) {
                                 const format = v.canvas_canvas_format || 'A4';
