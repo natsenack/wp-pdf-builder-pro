@@ -1367,6 +1367,10 @@
                                 // Validation numérique
                                 if (fieldConfig.type === 'number') {
                                     const numValue = parseFloat(field.value);
+                                    // DEBUG: Log pour diagnostiquer le problème de validation
+                                    if (field.name.includes('border_width')) {
+                                        console.log('🔍 DEBUG validation border_width:', field.name, 'field.value:', '"' + field.value + '"', 'numValue:', numValue, 'isNaN:', isNaN(numValue));
+                                    }
                                     if (isNaN(numValue)) {
                                         errors.push(`${fieldConfig.label} doit être un nombre`);
                                     } else {
@@ -1856,6 +1860,10 @@
                                     value = input.checked ? '1' : '0';
                                 } else if (input.type === 'number') {
                                     value = parseFloat(input.value) || 0;
+                                    // DEBUG: Log pour diagnostiquer le problème de validation
+                                    if (input.name.includes('border_width')) {
+                                        console.log('🔍 DEBUG border_width:', input.name, 'input.value:', '"' + input.value + '"', 'parsed:', value, 'isNaN:', isNaN(value));
+                                    }
                                 } else {
                                     value = input.value;
                                 }
