@@ -1021,7 +1021,7 @@
                             // Recharger les valeurs depuis les champs cachés pour assurer la cohérence
                             this.values = {};
                             document.querySelectorAll('input[name^="pdf_builder_canvas_"]').forEach(field => {
-                                const key = field.name.replace('pdf_builder_', '');
+                                const key = field.name.replace('pdf_builder_canvas_', 'canvas_canvas_');
                                 this.values[key] = field.value || '';
                             });
                             console.log('🔄 Values reloaded from hidden fields:', this.values);
@@ -2140,10 +2140,11 @@
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
                                     Object.entries(values).forEach(([key, value]) => {
                                         if (key.startsWith('pdf_builder_canvas_canvas_')) {
-                                            const hiddenField = document.querySelector(`input[type="hidden"][name="${key}"]`);
+                                            const hiddenKey = key.replace('pdf_builder_canvas_canvas_', 'pdf_builder_canvas_');
+                                            const hiddenField = document.querySelector(`input[type="hidden"][name="${hiddenKey}"]`);
                                             if (hiddenField) {
                                                 hiddenField.value = value;
-                                                console.log(`🔄 Champ caché mis à jour après sauvegarde modale: ${key} = ${value}`);
+                                                console.log(`🔄 Champ caché mis à jour après sauvegarde modale: ${hiddenKey} = ${value}`);
                                             }
                                         }
                                     });
