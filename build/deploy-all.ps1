@@ -812,7 +812,14 @@ switch ($Mode) {
             "composer.lock",             # Composer lock (énorme!)
             "README.md",                 # Readme
             "CHANGELOG.md",              # Changelog
-            "*.md"                       # Documentation
+            "*.md",                      # Documentation
+            "assets/ts",                 # Fichiers TypeScript sources
+            "assets/shared",             # Types partagés TypeScript
+            "assets/config",             # Configuration TypeScript
+            # TEMPORAIRE - NE PAS SUPPRIMER SANS AUTORISATION EXPLICITE
+            # Exclusions TypeScript pour la phase alpha - à retirer seulement quand demandé
+            "*.ts",                      # Fichiers TypeScript
+            "*.tsx"                      # Fichiers TypeScript React
         )
     }
 }

@@ -131,8 +131,15 @@ try {
                 $filePath = $_
                 $isPlugin = ($filePath -like "plugin/*")
                 $isNotExcluded = ($filePath -notlike "assets/js/src/*" -and
+                                $filePath -notlike "assets/ts/*" -and
+                                $filePath -notlike "assets/shared/*" -and
+                                $filePath -notlike "assets/config/*" -and
                                 $filePath -notlike "plugin/config/*" -and
-                                $filePath -notlike "plugin/docs/*")
+                                $filePath -notlike "plugin/docs/*" -and
+                                # TEMPORAIRE - NE PAS SUPPRIMER SANS AUTORISATION EXPLICITE
+                                # Exclusions TypeScript pour la phase alpha - à retirer seulement quand demandé
+                                $filePath -notlike "*.ts" -and
+                                $filePath -notlike "*.tsx")
                 $exists = $false
                 if ($isPlugin -and $isNotExcluded) {
                     try {
