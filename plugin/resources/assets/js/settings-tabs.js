@@ -19,13 +19,21 @@ console.log('PDF Builder - settings-tabs.js LOADED AND EXECUTING');
     }
 
     // Fonctions de debug conditionnel
+    let debugging = false; // Garde contre la récursion infinie
+
     function isDebugEnabled() {
-        return false; // Désactivé temporairement pour éviter la récursion infinie
+        return typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript;
     }
 
     function debugLog(...args) {
-        if (isDebugEnabled()) {
-            console.log(...args);
+        if (debugging) return; // Évite la récursion infinie
+        debugging = true;
+        try {
+            if (isDebugEnabled()) {
+                console.log(...args);
+            }
+        } finally {
+            debugging = false;
         }
     }
 
