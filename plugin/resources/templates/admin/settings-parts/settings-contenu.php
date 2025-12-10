@@ -857,6 +857,25 @@
                                 });
                                 console.groupEnd();
                             }
+
+                            // Ajouter les informations des cartes Canvas
+                            if (window.CanvasCardMonitor && window.CanvasCardMonitor.state) {
+                                console.group('🎨 État des cartes Canvas');
+                                const cardState = window.CanvasCardMonitor.getStatus();
+                                console.table(cardState.cards);
+                                console.log('🔧 État du monitoring:', {
+                                    initialized: cardState.initialized,
+                                    totalCards: Object.keys(cardState.cards).length,
+                                    totalModals: Object.keys(cardState.modals).length,
+                                    lastSync: cardState.lastSync,
+                                    errors: cardState.errors.length,
+                                    warnings: cardState.warnings.length
+                                });
+                                console.groupEnd();
+                            } else {
+                                console.log('⚠️ CanvasCardMonitor non disponible');
+                            }
+
                             console.groupEnd();
 
                             // Mettre à jour l'indicateur visuel

@@ -883,6 +883,21 @@ window.CanvasCardMonitorDebug = {
             realtimeChangesCount: card.realtimeChanges ? card.realtimeChanges.length : 0,
             currentValues: card.currentValues
         } : null;
+    },
+    getStatus: () => {
+        return {
+            initialized: window.CanvasCardMonitor.state.initialized,
+            cards: Object.keys(window.CanvasCardMonitor.state.cards).map(cat => ({
+                category: cat,
+                status: window.CanvasCardMonitor.state.cards[cat].status,
+                lastUpdate: window.CanvasCardMonitor.state.cards[cat].lastUpdate,
+                errors: window.CanvasCardMonitor.state.cards[cat].errors || []
+            })),
+            modals: Object.keys(window.CanvasCardMonitor.state.modals),
+            lastSync: window.CanvasCardMonitor.state.lastSync,
+            errors: window.CanvasCardMonitor.state.errors,
+            warnings: window.CanvasCardMonitor.state.warnings
+        };
     }
 };
 
