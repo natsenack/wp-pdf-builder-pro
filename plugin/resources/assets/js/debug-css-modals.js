@@ -422,10 +422,117 @@
         }, 100);
     }
 
-    // Exposer la fonction de test
-    window.forceOpenModal = forceOpenModal;
+    // Fonction pour analyser en profondeur le DOM et les styles
+    function deepDOMAnalysis() {
+        log('🔬 === ANALYSE PROFONDE DOM & CSS ===');
 
-    // Démarrer le débogage
-    init();
+        // 1. Vérifier la structure DOM complète
+        log('📋 Analyse de la structure DOM...');
 
-})();
+        const contenuSection = document.querySelector('.contenu-settings');
+        if (!contenuSection) {
+            error('❌ Section .contenu-settings non trouvée !');
+            return;
+        }
+
+        log('✅ Section .contenu-settings trouvée');
+
+        // Lister tous les enfants de .contenu-settings
+        const children = contenuSection.children;
+        log(`📝 Enfants directs de .contenu-settings (${children.length}):`);
+        for (let i = 0; i < children.length; i++) {
+            const child = children[i];
+            log(`  ${i + 1}. ${child.tagName}${child.id ? '#' + child.id : ''}${child.className ? '.' + child.className.replace(/\s+/g, '.') : ''}`);
+        }
+
+        // 2. Chercher les modales dans tout le document
+        log('🔍 Recherche des modales dans le document...');
+        const allModals = document.querySelectorAll('.cache-modal');
+        log(`📊 Nombre total de modales trouvées: ${allModals.length}`);
+
+        allModals.forEach((modal, index) => {
+            log(`📍 Modale ${index + 1}: #${modal.id}`);
+            log(`   - Parent immédiat: ${modal.parentElement?.tagName}${modal.parentElement?.id ? '#' + modal.parentElement.id : ''}${modal.parentElement?.className ? '.' + modal.parentElement.className.replace(/\s+/g, '.') : ''}`);
+            log(`   - Dans .contenu-settings: ${contenuSection.contains(modal) ? '✅ OUI' : '❌ NON'}`);
+
+            // Vérifier la hiérarchie complète
+            let current = modal.parentElement;
+            let depth = 1;
+            let hierarchy = [`${modal.tagName}#${modal.id}`];
+            while (current && depth < 10) {
+                hierarchy.push(`${current.tagName}${current.id ? '#' + current.id : ''}${current.className ? '.' + current.className.replace(/\s+/g, '.') : ''}`);
+                if (current === contenuSection) {
+                    log(`   - Hiérarchie jusqu'à .contenu-settings (${depth} niveaux): ${hierarchy.reverse().join(' > ')}`);
+                    break;
+                }
+                current = current.parentElement;
+                depth++;
+            }
+        });
+
+        // 3. Analyser les styles CSS calculés
+        log('🎨 Analyse des styles CSS calculés...');
+
+        const modalIds = ['cache-size-modal', 'cache-transients-modal', 'cache-status-modal'];
+        modalIds.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                error(`❌ Modale ${modalId} non trouvée`);
+                return;
+            }
+
+            const overlay = modal.querySelector('.cache-modal-overlay');
+            const container = modal.querySelector('.cache-modal-container');
+
+            log(`📊 Styles pour ${modalId}:`);
+
+            if (overlay) {
+                const overlayStyles = getComputedStyles(overlay, ['display', 'position', 'background-color', 'z-index', 'opacity']);
+                log(`   Overlay: display=${overlayStyles.display}, position=${overlayStyles.position}, z-index=${overlayStyles.zIndex}`);
+            }
+
+            if (container) {
+                const containerStyles = getComputedStyles(container, ['background-color', 'border-radius', 'box-shadow', 'width', 'height']);
+                log(`   Container: background=${containerStyles['background-color']}, width=${containerStyles.width}`);
+            }
+        });
+
+        // 4. Vérifier les règles CSS spécifiques
+        log('📝 Vérification des règles CSS spécifiques...');
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            try {
+                const sheet = document.styleSheets[i];
+                if (sheet.href && sheet.href.includes('contenu-settings.css')) {
+                    log('✅ Feuille contenu-settings.css trouvée et accessible');
+                    const rules = sheet.cssRules || sheet.rules;
+
+                    const relevantRules = [];
+                    for (let j = 0; j < rules.length; j++) {
+                        const rule = rules[j];
+                        if (rule.selectorText && (
+                            rule.selectorText.includes('.cache-modal') ||
+                            rule.selectorText.includes('.contenu-settings')
+                        )) {
+                            relevantRules.push({
+                                selector: rule.selectorText,
+                                cssText: rule.cssText.substring(0, 100) + (rule.cssText.length > 100 ? '...' : '')
+                            });
+                        }
+                    }
+
+                    log(`📋 Règles CSS pertinentes trouvées (${relevantRules.length}):`);
+                    relevantRules.forEach((rule, index) => {
+                        log(`   ${index + 1}. ${rule.selector}`);
+                        log(`      ${rule.cssText}`);
+                    });
+                }
+            } catch (e) {
+                log(`⚠️ Impossible d'accéder à une feuille de style: ${e.message}`);
+            }
+        }
+
+        log('🔬 === FIN ANALYSE PROFONDE ===');
+    }
+
+    // Exposer la fonction d'analyse profonde
+    window.deepDOMAnalysis = deepDOMAnalysis;
