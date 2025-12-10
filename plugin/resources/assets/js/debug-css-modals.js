@@ -186,7 +186,7 @@
             checkElementStyles(overlay, `#${modalId} .cache-modal-overlay`, {
                 'position': 'fixed',
                 'display': 'none', // Masquée par défaut
-                'background-color': 'rgba(0, 0, 0, 0.5)',
+                'background-color': 'rgba(0, 0, 0, 0.6)', // Mis à jour pour les nouvelles améliorations
                 'z-index': '10000'
             });
 
@@ -194,22 +194,22 @@
             const container = modal.querySelector('.cache-modal-container');
             checkElementStyles(container, `#${modalId} .cache-modal-container`, {
                 'background-color': 'rgb(255, 255, 255)',
-                'border-radius': '8px',
-                'box-shadow': 'rgba(0, 0, 0, 0.3) 0px 4px 20px 0px', // Format retourné par getComputedStyle
-                'max-width': '800px'
+                'border-radius': '12px', // Mis à jour pour les nouvelles améliorations
+                'box-shadow': 'rgba(0, 0, 0, 0.3) 0px 8px 32px 0px', // Mis à jour pour les nouvelles améliorations
+                'max-width': '900px' // Mis à jour pour les nouvelles améliorations
             });
 
             // Vérifier le header
             const header = modal.querySelector('.cache-modal-header');
             checkElementStyles(header, `#${modalId} .cache-modal-header`, {
                 'background-color': 'rgb(248, 249, 250)',
-                'padding': '20px 24px'
+                'padding': '24px 28px' // Mis à jour pour les nouvelles améliorations
             });
 
             // Vérifier le body
             const body = modal.querySelector('.cache-modal-body');
             checkElementStyles(body, `#${modalId} .cache-modal-body`, {
-                'padding': '24px'
+                'padding': '28px' // Mis à jour pour les nouvelles améliorations
             });
 
             // Vérifier les éléments de contenu spécifiques
@@ -217,16 +217,16 @@
             if (detailsGrid) {
                 checkElementStyles(detailsGrid, `#${modalId} .cache-details-grid`, {
                     'display': 'grid',
-                    'grid-template-columns': '1fr 1fr'
+                    'grid-template-columns': 'repeat(auto-fit, minmax(280px, 1fr))' // Mis à jour pour les nouvelles améliorations
                 });
             }
 
             const folderCards = modal.querySelectorAll('.cache-folder-card');
             folderCards.forEach((card, index) => {
                 checkElementStyles(card, `#${modalId} .cache-folder-card:nth-child(${index + 1})`, {
-                    'background-color': 'rgb(248, 249, 250)',
-                    'padding': '15px',
-                    'border-radius': '8px'
+                    'background-color': 'rgba(0, 0, 0, 0)', // Mis à jour pour les nouvelles améliorations (dégradé subtil)
+                    'padding': '20px', // Mis à jour pour les nouvelles améliorations
+                    'border-radius': '10px' // Mis à jour pour les nouvelles améliorations
                 });
             });
 
