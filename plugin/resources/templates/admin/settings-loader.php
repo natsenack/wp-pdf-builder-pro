@@ -159,7 +159,7 @@ function pdf_builder_load_settings_assets($hook) {
     // DEBUG: Après localization
     error_log('PDF Builder - Après wp_localize_script');
 
-    // Charger le script de débogage CSS des modales (uniquement en mode debug)
+    // Charger le script de débogage CSS des modales (uniquement en mode debug) - v2
     if (isset($_GET['debug']) && $_GET['debug'] === 'css') {
         wp_enqueue_script(
             'pdf-builder-debug-css-modals',
