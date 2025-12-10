@@ -963,7 +963,7 @@
                                 console.log('✅ DPI updated to:', dpiEl.textContent);
                             }
 
-                            // Preview Apparence
+                            // Preview Apparence - Anciens éléments (pour compatibilité)
                             const bgPreview = document.getElementById('card-bg-preview');
                             const borderPreview = document.getElementById('card-border-preview');
 
@@ -980,6 +980,35 @@
                                 borderPreview.style.borderWidth = v.canvas_canvas_border_width + 'px';
                                 borderPreview.style.boxShadow = v.canvas_canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
                                 console.log('✅ Border updated:', v.canvas_canvas_border_color, v.canvas_canvas_border_width + 'px');
+                            }
+
+                            // Preview Apparence - Nouveaux éléments (aperçu amélioré)
+                            const apparenceBackground = document.querySelector('.apparence-background');
+                            const apparenceBorder = document.querySelector('.apparence-border');
+                            const apparenceShadow = document.querySelector('.apparence-shadow');
+                            const apparenceLegend = document.querySelector('.apparence-legend .legend-item:nth-child(3)');
+
+                            if (apparenceBackground) {
+                                apparenceBackground.style.backgroundColor = v.canvas_canvas_bg_color;
+                                console.log('✅ Apparence background updated to:', v.canvas_canvas_bg_color);
+                            }
+                            if (apparenceBorder) {
+                                apparenceBorder.style.border = v.canvas_canvas_border_width + 'px solid ' + v.canvas_canvas_border_color;
+                                console.log('✅ Apparence border updated:', v.canvas_canvas_border_color, v.canvas_canvas_border_width + 'px');
+                            }
+                            if (apparenceShadow) {
+                                if (v.canvas_canvas_shadow_enabled === '1' || v.canvas_canvas_shadow_enabled === true) {
+                                    apparenceShadow.style.display = 'block';
+                                    console.log('✅ Apparence shadow enabled');
+                                } else {
+                                    apparenceShadow.style.display = 'none';
+                                    console.log('✅ Apparence shadow disabled');
+                                }
+                            }
+                            if (apparenceLegend) {
+                                const shadowIcon = (v.canvas_canvas_shadow_enabled === '1' || v.canvas_canvas_shadow_enabled === true) ? '🌑' : '☀️';
+                                apparenceLegend.innerHTML = shadowIcon + ' Ombre';
+                                console.log('✅ Apparence legend updated:', shadowIcon + ' Ombre');
                             }
 
                             // Preview Grille
