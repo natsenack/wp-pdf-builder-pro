@@ -641,3 +641,8 @@
 
     // Exposer la fonction de vérification CSS
     window.checkCSSLoading = checkCSSLoading;
+
+    // Démarrer le débogage
+    init();
+
+})();
