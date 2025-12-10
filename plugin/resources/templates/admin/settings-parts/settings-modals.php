@@ -264,7 +264,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 </div>
 <!-- Canvas Dimensions Modal Overlay -->
 <div id="canvas-dimensions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-dimensions-modal">
-    <section class="canvas-modal-container">
+    <section id="canvas-dimensions-modal" class="canvas-modal-container">
         <header class="canvas-modal-header">
             <h3>📏 Dimensions & Format</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
@@ -380,7 +380,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Zoom & Navigation -->
 <!-- Canvas Zoom Modal Overlay -->
 <div id="canvas-zoom-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-zoom-modal">
-    <section class="canvas-modal-container">
+    <section id="canvas-zoom-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3>🔍 Zoom</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -532,7 +532,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Grille & Guides -->
 <!-- Canvas Grille Modal Overlay -->
 <div id="canvas-grille-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-grille-modal">
-        <section class="canvas-modal-container">
+        <section id="canvas-grille-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📐 Grille & Guides</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -601,7 +601,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Interactions & Comportement-->
 <!-- Canvas Interactions Modal Overlay -->
 <div id="canvas-interactions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-interactions-modal">
-        <section class="canvas-modal-container">
+        <section id="canvas-interactions-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🖱️ Interactions & Comportement</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -705,7 +705,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Export & Qualité -->
 <!-- Canvas Export Modal Overlay -->
 <div id="canvas-export-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-export-modal">
-        <section class="canvas-modal-container">
+        <section id="canvas-export-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >📤 Export & Qualité</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -762,7 +762,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Performance -->
 <!-- Canvas Performance Modal Overlay -->
 <div id="canvas-performance-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-performance-modal">
-        <section class="canvas-modal-container">
+        <section id="canvas-performance-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >⚡ Performance</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
@@ -895,7 +895,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Debug -->
 <!-- Canvas Debug Modal Overlay -->
 <div id="canvas-debug-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-debug-modal">
-        <section class="canvas-modal-container">
+        <section id="canvas-debug-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🐛 Debug</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
