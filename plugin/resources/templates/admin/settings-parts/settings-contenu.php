@@ -2209,8 +2209,9 @@
             </script>
 
     </div> <!-- Fermeture de settings-content -->
-</section> <!-- Fermeture de settings-section contenu-settings -->
 
             <!-- Inclusion des modales Canvas -->
             <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
+</section> <!-- Fermeture de settings-section contenu-settings -->
 
