@@ -1018,6 +1018,14 @@
                         _doRefreshPreviews: function() {
                             console.log('🔄 REFRESH PREVIEWS CALLED');
 
+                            // Recharger les valeurs depuis les champs cachés pour assurer la cohérence
+                            this.values = {};
+                            document.querySelectorAll('input[name^="pdf_builder_canvas_"]').forEach(field => {
+                                const key = field.name.replace('pdf_builder_', '');
+                                this.values[key] = field.value || '';
+                            });
+                            console.log('🔄 Values reloaded from hidden fields:', this.values);
+
                             const v = this.values;
                             console.log('🔄 Current values object:', v);
                             console.log('🔄 Keys in values:', Object.keys(v));
