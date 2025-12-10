@@ -228,11 +228,110 @@
     // ==========================================
 
     /**
-     * Validation des données de formulaire pour les paramètres
-     * @param {Object} formData - Données du formulaire
-     * @returns {Array} Liste des erreurs de validation
+     * Validation générique des données de formulaire
+     * @param {Object} data - Données à valider
+     * @param {Object} rules - Règles de validation (optionnel)
+     * @returns {Array|Object} Tableau d'erreurs ou objet {isValid, errors}
      */
-    window.validateFormData = function(formData) {
+    window.validateFormData = function(data, rules) {
+        // Si pas de règles, utiliser la validation par défaut pour PDF Builder
+        if (!rules || typeof rules !== 'object') {
+            return window.validatePDFFormData(data);
+        }
+
+        const result = {
+            isValid: true,
+            errors: {}
+        };
+
+        if (!data || typeof data !== 'object') {
+            result.isValid = false;
+            result.errors.general = ['Données invalides'];
+            return result;
+        }
+
+        for (const [field, rule] of Object.entries(rules)) {
+            const value = data[field];
+            const fieldErrors = [];
+
+            // Validation required
+            if (rule.required && (value === undefined || value === null || value === '')) {
+                fieldErrors.push('requis');
+            }
+
+            // Si la valeur est vide et non requise, passer au champ suivant
+            if ((value === undefined || value === null || value === '') && !rule.required) {
+                continue;
+            }
+
+            // Validation de type
+            if (rule.type) {
+                switch (rule.type) {
+                    case 'string':
+                        if (typeof value !== 'string') {
+                            fieldErrors.push('doit être une chaîne de caractères');
+                        }
+                        break;
+                    case 'number':
+                        if (typeof value !== 'number' && isNaN(Number(value))) {
+                            fieldErrors.push('doit être un nombre');
+                        }
+                        break;
+                    case 'boolean':
+                        if (typeof value !== 'boolean' && value !== 'true' && value !== 'false') {
+                            fieldErrors.push('doit être un booléen');
+                        }
+                        break;
+                    case 'array':
+                        if (!Array.isArray(value)) {
+                            fieldErrors.push('doit être un tableau');
+                        }
+                        break;
+                    case 'email': {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (typeof value !== 'string' || !emailRegex.test(value)) {
+                            fieldErrors.push('doit être une adresse email valide');
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Validation de longueur pour les chaînes
+            if (rule.type === 'string' || typeof value === 'string') {
+                if (rule.minLength && value.length < rule.minLength) {
+                    fieldErrors.push(`minimum ${rule.minLength} caractères`);
+                }
+                if (rule.maxLength && value.length > rule.maxLength) {
+                    fieldErrors.push(`maximum ${rule.maxLength} caractères`);
+                }
+                if (rule.length && value.length !== rule.length) {
+                    fieldErrors.push(`doit faire exactement ${rule.length} caractères`);
+                }
+            }
+
+            // Validation numérique
+            if (rule.type === 'number' || typeof value === 'number' || !isNaN(Number(value))) {
+                const numValue = Number(value);
+                if (rule.min !== undefined && numValue < rule.min) {
+                    fieldErrors.push(`minimum ${rule.min}`);
+                }
+                if (rule.max !== undefined && numValue > rule.max) {
+                    fieldErrors.push(`maximum ${rule.max}`);
+                }
+            }
+
+            if (fieldErrors.length > 0) {
+                result.errors[field] = fieldErrors;
+                result.isValid = false;
+            }
+        }
+
+        return result;
+    };
+
+    // Garder l'ancienne fonction pour compatibilité
+    window.validatePDFFormData = function(formData) {
         const errors = [];
 
         if (!formData || typeof formData !== 'object') {
@@ -274,7 +373,7 @@
             if (formData[field] && formData[field].trim()) {
                 try {
                     new URL(formData[field]);
-                } catch (e) {
+                } catch (_e) {
                     errors.push(`${field.replace('pdf_builder_', '').replace(/_/g, ' ')} doit être une URL valide`);
                 }
             }
@@ -299,6 +398,108 @@
      * Compatibilité AJAX avec gestion d'erreurs
      */
     window.AjaxCompat = {
+        cache: new Map(),
+        lastRequestTime: 0,
+        throttleDelay: 100, // 100ms entre requêtes
+
+        /**
+         * Réinitialise l'état d'AjaxCompat
+         */
+        reset: function() {
+            this.cache.clear();
+            this.lastRequestTime = 0;
+        },
+
+        /**
+         * Requête AJAX générique avec retry et cache
+         * @param {string} action - Action WordPress
+         * @param {Object} data - Données à envoyer
+         * @param {Object} options - Options (retries, cache, etc.)
+         * @returns {Promise} Promesse de réponse
+         */
+        request: async function(action, data = {}, options = {}) {
+            const cacheKey = options.cache !== false ? JSON.stringify({action, data}) : null;
+
+            // Vérifier le cache
+            if (cacheKey && this.cache.has(cacheKey)) {
+                return this.cache.get(cacheKey);
+            }
+
+            // Rate limiting
+            const now = Date.now();
+            const timeSinceLastRequest = now - this.lastRequestTime;
+            if (timeSinceLastRequest < this.throttleDelay) {
+                await new Promise(resolve => setTimeout(resolve, this.throttleDelay - timeSinceLastRequest));
+            }
+            this.lastRequestTime = Date.now();
+
+            const maxRetries = options.retries || 0;
+            let lastError;
+
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const result = await this._executeRequest(action, data);
+
+                    // Mettre en cache si demandé
+                    if (cacheKey) {
+                        this.cache.set(cacheKey, result);
+                    }
+
+                    return result;
+                } catch (error) {
+                    lastError = error;
+                    if (attempt < maxRetries) {
+                        // Attendre avant retry (exponential backoff)
+                        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                    }
+                }
+            }
+
+            throw lastError;
+        },
+
+        /**
+         * Exécute une requête HTTP
+         * @private
+         */
+        _executeRequest: async function(action, data) {
+            const operationId = 'ajax_' + action + '_' + Date.now();
+            window.PerformanceMetrics.start(operationId);
+
+            try {
+                const formData = new FormData();
+                formData.append('action', action);
+
+                // Ajouter le nonce
+                if (window.PDF_BUILDER_CONFIG && window.PDF_BUILDER_CONFIG.nonce) {
+                    formData.append('nonce', window.PDF_BUILDER_CONFIG.nonce);
+                }
+
+                // Ajouter les données
+                for (const [key, value] of Object.entries(data)) {
+                    formData.append(key, value);
+                }
+
+                const response = await fetch(window.PDF_BUILDER_CONFIG.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                window.PerformanceMetrics.end(operationId);
+                return result;
+
+            } catch (error) {
+                window.PerformanceMetrics.error(operationId, error);
+                throw error;
+            }
+        },
+
         /**
          * Fetch avec gestion d'erreurs améliorée
          * @param {string} url - URL à appeler

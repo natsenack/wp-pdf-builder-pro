@@ -1,6 +1,7 @@
 {
   "name": "wp-pdf-builder-pro",
   "version": "1.1.0",
+  "type": "module",
   "description": "WordPress PDF Builder Pro - Frontend Assets",
   "scripts": {
     "build": "webpack --config=dev/config/build/webpack.config.js --mode=production",

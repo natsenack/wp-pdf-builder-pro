@@ -142,11 +142,11 @@ class PDF_Builder_WooCommerce_Integration
             $order_id = $order->get_id();
         } elseif (is_a($post_or_order, 'WP_Post')) {
             $order_id = $post_or_order->ID;
-            $order = wc_get_order($order_id);
+            $order = \wc_get_order($order_id);
         } else {
             // Try to get order ID from URL for HPOS
             $order_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
-            $order = wc_get_order($order_id);
+            $order = \wc_get_order($order_id);
         }
 
         if (!$order) {
@@ -229,7 +229,7 @@ class PDF_Builder_WooCommerce_Integration
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
 
         // Récupérer le label du statut WooCommerce
-        $order_statuses = wc_get_order_statuses();
+        $order_statuses = \wc_get_order_statuses();
         $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
 
         // Déterminer si le template a été trouvé via mapping ou fallback
@@ -377,7 +377,7 @@ class PDF_Builder_WooCommerce_Integration
 
         try {
             // Charger la commande WooCommerce
-            $order = wc_get_order($order_id);
+            $order = \wc_get_order($order_id);
             if (!$order) {
                 wp_send_json_error('Commande introuvable');
                 return;
@@ -385,7 +385,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // LOGGING DÉTAILLÉ pour debug
             $current_status = $order->get_status();
-            $valid_statuses = array_keys(wc_get_order_statuses());
+            $valid_statuses = array_keys(\wc_get_order_statuses());
             $status_with_prefix = 'wc-' . $current_status;
             $status_without_prefix = str_replace('wc-', '', $current_status);
 
@@ -415,7 +415,7 @@ class PDF_Builder_WooCommerce_Integration
                 $normalized_current = 'wc-' . $current_status;
             }
 
-            $valid_statuses = array_keys(wc_get_order_statuses());
+            $valid_statuses = array_keys(\wc_get_order_statuses());
 
             // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
             $settings = get_option('pdf_builder_settings', []);
@@ -872,7 +872,7 @@ class PDF_Builder_WooCommerce_Integration
             '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->format('d/m/Y H:i:s') : '',
             '{{order_date_modified}}' => $order->get_date_modified() ? $order->get_date_modified()->format('d/m/Y') : '',
             '{{order_total}}' => $order->get_formatted_order_total(),
-            '{{order_status}}' => wc_get_order_status_name($order->get_status()),
+            '{{order_status}}' => \wc_get_order_status_name($order->get_status()),
             '{{customer_name}}' => $order->get_formatted_billing_full_name(),
             '{{customer_email}}' => $order->get_billing_email() ?: '',
             '{{customer_phone}}' => $order->get_billing_phone() ?: '',
@@ -894,11 +894,11 @@ class PDF_Builder_WooCommerce_Integration
         $replacements = array_merge(
             $replacements,
             [
-            '{{subtotal}}' => wc_price($subtotal),
-            '{{tax_amount}}' => wc_price($total_tax),
-            '{{shipping_amount}}' => wc_price($shipping_total),
-            '{{discount_amount}}' => wc_price($discount_total),
-            '{{total_excl_tax}}' => wc_price($order->get_total() - $total_tax),
+            '{{subtotal}}' => \wc_price($subtotal),
+            '{{tax_amount}}' => \wc_price($total_tax),
+            '{{shipping_amount}}' => \wc_price($shipping_total),
+            '{{discount_amount}}' => \wc_price($discount_total),
+            '{{total_excl_tax}}' => \wc_price($order->get_total() - $total_tax),
             ]
         );
 
@@ -912,8 +912,8 @@ class PDF_Builder_WooCommerce_Integration
                 [
                 '{{product_name}}' => $first_item->get_name(),
                 '{{product_qty}}' => $first_item->get_quantity(),
-                '{{product_price}}' => wc_price($first_item->get_total() / $first_item->get_quantity()),
-                '{{product_total}}' => wc_price($first_item->get_total()),
+                '{{product_price}}' => \wc_price($first_item->get_total() / $first_item->get_quantity()),
+                '{{product_total}}' => \wc_price($first_item->get_total()),
                 '{{product_sku}}' => $first_item->get_product() ? $first_item->get_product()->get_sku() : '',
                 ]
             );
@@ -922,11 +922,11 @@ class PDF_Builder_WooCommerce_Integration
             if (count($items) > 1) {
                 $product_summary = '';
                 foreach ($items as $item) {
-                    $product_summary .= $item->get_name() . ' (x' . $item->get_quantity() . ') - ' . wc_price($item->get_total()) . "\n";
+                    $product_summary .= $item->get_name() . ' (x' . $item->get_quantity() . ') - ' . \wc_price($item->get_total()) . "\n";
                 }
                 $replacements['{{products_list}}'] = $product_summary;
             } else {
-                $replacements['{{products_list}}'] = $first_item->get_name() . ' (x' . $first_item->get_quantity() . ') - ' . wc_price($first_item->get_total());
+                $replacements['{{products_list}}'] = $first_item->get_name() . ' (x' . $first_item->get_quantity() . ') - ' . \wc_price($first_item->get_total());
             }
         }
 
@@ -991,7 +991,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Valider que la commande existe
-            $order = wc_get_order($order_id);
+            $order = \wc_get_order($order_id);
             if (!$order) {
                 wp_send_json_error('Commande introuvable');
                 return;
@@ -1147,7 +1147,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Valider que la commande existe
-            $order = wc_get_order($order_id);
+            $order = \wc_get_order($order_id);
             if (!$order) {
                 wp_send_json_error('Commande introuvable');
                 return;
@@ -1397,7 +1397,7 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         // Récupérer la commande
-        $order = wc_get_order($order_id);
+        $order = \wc_get_order($order_id);
         if (!$order) {
             return new WP_Error('order_not_found', 'Commande introuvable');
         }
@@ -1429,7 +1429,7 @@ class PDF_Builder_WooCommerce_Integration
             $normalized_current = 'wc-' . $current_status;
         }
 
-        $valid_statuses = array_keys(wc_get_order_statuses());
+        $valid_statuses = array_keys(\wc_get_order_statuses());
 
         // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
         $settings = get_option('pdf_builder_settings', []);
@@ -1473,7 +1473,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Gestion des variations
             if ($item->get_variation_id()) {
-                $variation = wc_get_product($item->get_variation_id());
+                $variation = \wc_get_product($item->get_variation_id());
                 if ($variation) {
                     $item_data['variation_attributes'] = [];
                     $variation_attributes = $variation->get_variation_attributes();
