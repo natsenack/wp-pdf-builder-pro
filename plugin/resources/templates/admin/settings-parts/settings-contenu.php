@@ -152,29 +152,25 @@
                                 <div id="card-border-preview" class="color-preview border" style="display: none;"></div>
                                 
                                 <div class="apparence-preview-container">
-                                    <div class="mini-canvas-apparence" id="mini-canvas-apparence" style="background-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>; border: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>px solid <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>; <?php if (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') echo 'box-shadow: 0 4px 8px rgba(0,0,0,0.15);'; ?>">
-                                        <div class="mini-canvas-content">
-                                            <div class="mini-element shape-rect"></div>
-                                            <div class="mini-element shape-circle"></div>
-                                            <div class="mini-element shape-text">PDF</div>
+                                    <div class="apparence-canvas">
+                                        <!-- Fond coloré -->
+                                        <div class="apparence-background" style="background-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>;"></div>
+                                        <!-- Bordure -->
+                                        <div class="apparence-border" style="border: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>px solid <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>;"></div>
+                                        <!-- Ombre -->
+                                        <?php if (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1'): ?>
+                                        <div class="apparence-shadow"></div>
+                                        <?php endif; ?>
+                                        <!-- Élément d'exemple -->
+                                        <div class="apparence-element">
+                                            <div class="element-shape rect"></div>
+                                            <div class="element-shape circle"></div>
                                         </div>
                                     </div>
-                                    <div class="apparence-indicators">
-                                        <div class="color-indicator">
-                                            <span class="color-label">Fond:</span>
-                                            <div class="color-swatch" style="background-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>;"></div>
-                                            <span class="color-value"><?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?></span>
-                                        </div>
-                                        <div class="color-indicator">
-                                            <span class="color-label">Bordure:</span>
-                                            <div class="color-swatch border-swatch" style="border-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>; border-width: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>px;"></div>
-                                            <span class="color-value"><?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?></span>
-                                        </div>
-                                        <div class="effect-indicator">
-                                            <span class="effect-icon"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? '🌑' : '☀️'; ?></span>
-                                            <span class="effect-label">Ombre</span>
-                                            <span class="effect-status"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? 'ON' : 'OFF'; ?></span>
-                                        </div>
+                                    <div class="apparence-legend">
+                                        <span class="legend-item">🎨 Fond</span>
+                                        <span class="legend-item">🔲 Bordure</span>
+                                        <span class="legend-item"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? '🌑' : '☀️'; ?> Ombre</span>
                                     </div>
                                 </div>
                             </aside>
