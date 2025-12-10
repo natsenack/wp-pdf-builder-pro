@@ -4368,6 +4368,122 @@ body.modal-open {
     padding: 0 2px;
 }
 
+.mini-canvas-info {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-size: 6px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.canvas-size {
+    display: block;
+    font-weight: bold;
+    color: #fff;
+}
+
+.canvas-dims {
+    display: block;
+    color: #ccc;
+    font-size: 5px;
+}
+
+.mini-grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mini-grid-line {
+    position: absolute;
+    background: rgba(0,0,0,0.1);
+}
+
+.mini-grid-line.horizontal {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+
+.mini-grid-line.vertical {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+}
+
+.mini-guide-line {
+    position: absolute;
+    background: rgba(255,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mini-guide-line.horizontal {
+    top: 30%;
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+
+.mini-guide-line.vertical {
+    top: 0;
+    bottom: 0;
+    left: 70%;
+    width: 1px;
+}
+
+.mini-grid-overlay.active {
+    opacity: 1;
+}
+
+.mini-guide-line.active {
+    opacity: 1;
+}
+
+.feature-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.feature-indicator {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 7px;
+    color: #666;
+}
+
+.feature-icon {
+    font-size: 8px;
+}
+
+.feature-label {
+    font-weight: bold;
+    min-width: 28px;
+}
+
+.feature-status {
+    color: #007cba;
+    font-weight: bold;
+    font-size: 6px;
+}
+
 .apparence-indicators {
     display: flex;
     flex-direction: column;

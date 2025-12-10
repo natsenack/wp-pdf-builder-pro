@@ -157,6 +157,20 @@
                                             <div class="mini-element shape-rect"></div>
                                             <div class="mini-element shape-circle"></div>
                                             <div class="mini-element shape-text">PDF</div>
+                                            <?php if (($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? '1') === '1'): ?>
+                                                <div class="mini-grid-overlay">
+                                                    <div class="mini-grid-line horizontal"></div>
+                                                    <div class="mini-grid-line vertical"></div>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if (($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? '1') === '1'): ?>
+                                                <div class="mini-guide-line horizontal"></div>
+                                                <div class="mini-guide-line vertical"></div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="mini-canvas-info">
+                                            <span class="canvas-size"><?php echo esc_html($settings['pdf_builder_canvas_canvas_format'] ?? 'A4'); ?></span>
+                                            <span class="canvas-dims"><?php echo esc_html($settings['pdf_builder_canvas_canvas_width'] ?? '794'); ?>×<?php echo esc_html($settings['pdf_builder_canvas_canvas_height'] ?? '1123'); ?>px</span>
                                         </div>
                                     </div>
                                     <div class="apparence-indicators">
@@ -170,10 +184,22 @@
                                             <div class="color-swatch border-swatch" style="border-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>; border-width: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>px;"></div>
                                             <span class="color-value"><?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?></span>
                                         </div>
-                                        <div class="effect-indicator">
-                                            <span class="effect-icon"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? '🌑' : '☀️'; ?></span>
-                                            <span class="effect-label">Ombre</span>
-                                            <span class="effect-status"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? 'ON' : 'OFF'; ?></span>
+                                        <div class="feature-indicators">
+                                            <div class="feature-indicator">
+                                                <span class="feature-icon"><?php echo (($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? '1') === '1') ? '📐' : '📏'; ?></span>
+                                                <span class="feature-label">Grille</span>
+                                                <span class="feature-status"><?php echo (($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? '1') === '1') ? 'ON' : 'OFF'; ?></span>
+                                            </div>
+                                            <div class="feature-indicator">
+                                                <span class="feature-icon"><?php echo (($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? '1') === '1') ? '📍' : '📌'; ?></span>
+                                                <span class="feature-label">Guides</span>
+                                                <span class="feature-status"><?php echo (($settings['pdf_builder_canvas_canvas_guides_enabled'] ?? '1') === '1') ? 'ON' : 'OFF'; ?></span>
+                                            </div>
+                                            <div class="feature-indicator">
+                                                <span class="feature-icon"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? '🌑' : '☀️'; ?></span>
+                                                <span class="feature-label">Ombre</span>
+                                                <span class="feature-status"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? 'ON' : 'OFF'; ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

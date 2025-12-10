@@ -935,9 +935,9 @@ window.CanvasPreviewManager = {
             ]
         },
         apparence: {
-            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled'],
-            settings: ['canvas_background_color', 'border_color', 'border_width', 'shadow_enabled'],
-            defaults: ['#ffffff', '#cccccc', 1, false],
+            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_format', 'canvas_width', 'canvas_height'],
+            settings: ['canvas_background_color', 'border_color', 'border_width', 'shadow_enabled', 'grid_enabled', 'guides_enabled', 'format', 'width', 'height'],
+            defaults: ['#ffffff', '#cccccc', 1, false, true, true, 'A4', 794, 1123],
             updateFunction: 'updateApparenceCardPreview',
             previewRules: [
                 {
@@ -994,15 +994,57 @@ window.CanvasPreviewManager = {
                 },
                 {
                     type: 'element_update',
-                    target: '.effect-status',
+                    target: '.canvas-size',
                     property: 'textContent',
-                    value: '{{shadow_enabled ? "ON" : "OFF"}}'
+                    value: '{{format}}'
                 },
                 {
                     type: 'element_update',
-                    target: '.effect-icon',
+                    target: '.canvas-dims',
                     property: 'textContent',
-                    value: '{{shadow_enabled ? "🌑" : "☀️"}}'
+                    value: '{{width}}×{{height}}px'
+                },
+                {
+                    type: 'element_update',
+                    target: '.feature-status',
+                    property: 'textContent',
+                    value: function(values) {
+                        // Mettre à jour tous les statuts de fonctionnalités
+                        const statuses = document.querySelectorAll('.feature-status');
+                        if (statuses.length >= 3) {
+                            statuses[0].textContent = values.grid_enabled ? 'ON' : 'OFF';
+                            statuses[1].textContent = values.guides_enabled ? 'ON' : 'OFF';
+                            statuses[2].textContent = values.shadow_enabled ? 'ON' : 'OFF';
+                        }
+                        return values.shadow_enabled ? 'ON' : 'OFF';
+                    }
+                },
+                {
+                    type: 'element_update',
+                    target: '.feature-icon',
+                    property: 'textContent',
+                    value: function(values) {
+                        // Mettre à jour toutes les icônes de fonctionnalités
+                        const icons = document.querySelectorAll('.feature-icon');
+                        if (icons.length >= 3) {
+                            icons[0].textContent = values.grid_enabled ? '📐' : '📏';
+                            icons[1].textContent = values.guides_enabled ? '📍' : '📌';
+                            icons[2].textContent = values.shadow_enabled ? '🌑' : '☀️';
+                        }
+                        return values.shadow_enabled ? '🌑' : '☀️';
+                    }
+                },
+                {
+                    type: 'class_toggle',
+                    target: '.mini-grid-overlay',
+                    className: 'active',
+                    condition: '{{grid_enabled}}'
+                },
+                {
+                    type: 'class_toggle',
+                    target: '.mini-guide-line',
+                    className: 'active',
+                    condition: '{{guides_enabled}}'
                 }
             ]
         },
