@@ -442,7 +442,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Configuration Modals Apparence -->
 <!-- Canvas Apparence Modal Overlay -->
 <div id="canvas-apparence-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-apparence-modal">
-        <section class="canvas-modal-container">
+        <section id="canvas-apparence-modal" class="canvas-modal-container">
             <header class="canvas-modal-header">
                 <h3 >🎨 Apparence</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
