@@ -1734,6 +1734,7 @@
                             console.error('Erreur de sauvegarde:', error);
                             alert('Erreur de connexion lors de la sauvegarde');
                         });
+                    }
 
 
                     // Gestionnaire d'événements pour les boutons de configuration - VERSION RENFORCÉE
