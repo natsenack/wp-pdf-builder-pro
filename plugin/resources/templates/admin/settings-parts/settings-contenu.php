@@ -106,15 +106,15 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_rotate_enabled]" value="<?php echo esc_attr($settings['pdf_builder_canvas_rotate_enabled'] ?? '1'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_multi_select]" value="<?php echo esc_attr($settings['pdf_builder_canvas_multi_select'] ?? '1'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_selection_mode]" value="<?php echo esc_attr($settings['pdf_builder_canvas_selection_mode'] ?? 'single'); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_keyboard_shortcuts]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_keyboard_shortcuts', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_fps_target]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_fps_target', '60')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_memory_limit_js]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_memory_limit_js', '50')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_response_timeout]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_response_timeout', '5000')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_lazy_loading_editor]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_preload_critical]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_preload_critical', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_lazy_loading_plugin]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_lazy_loading_plugin', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_debug_enabled]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_debug_enabled', '0')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_canvas_performance_monitoring]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_canvas_performance_monitoring', '0')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_keyboard_shortcuts]" value="<?php echo esc_attr($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_fps_target]" value="<?php echo esc_attr($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_js]" value="<?php echo esc_attr($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_response_timeout]" value="<?php echo esc_attr($settings['pdf_builder_canvas_response_timeout'] ?? '5000'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_lazy_loading_editor]" value="<?php echo esc_attr($settings['pdf_builder_canvas_lazy_loading_editor'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_preload_critical]" value="<?php echo esc_attr($settings['pdf_builder_canvas_preload_critical'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_lazy_loading_plugin]" value="<?php echo esc_attr($settings['pdf_builder_canvas_lazy_loading_plugin'] ?? '1'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_debug_enabled]" value="<?php echo esc_attr($settings['pdf_builder_canvas_debug_enabled'] ?? '0'); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_performance_monitoring]" value="<?php echo esc_attr($settings['pdf_builder_canvas_performance_monitoring'] ?? '0'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_error_reporting]" value="<?php echo esc_attr($settings['pdf_builder_canvas_error_reporting'] ?? '0'); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_php]" value="<?php echo esc_attr($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>">
 
@@ -134,15 +134,15 @@
                             <aside class="canvas-card-preview">
                                 <div class="preview-format">
                                     <div >
-                                        <span id="card-canvas-width"><?php echo esc_html(get_option('pdf_builder_canvas_canvas_width', '794')); ?></span>×
-                                        <span id="card-canvas-height"><?php echo esc_html(get_option('pdf_builder_canvas_canvas_height', '1123')); ?></span>px
+                                        <span id="card-canvas-width"><?php echo esc_html($settings['pdf_builder_canvas_width'] ?? '794'); ?></span>×
+                                        <span id="card-canvas-height"><?php echo esc_html($settings['pdf_builder_canvas_height'] ?? '1123'); ?></span>px
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
                                         <?php
-                                        $width = intval(get_option('pdf_builder_canvas_canvas_width', '794'));
-                                        $height = intval(get_option('pdf_builder_canvas_canvas_height', '1123'));
-                                        $dpi = intval(get_option('pdf_builder_canvas_canvas_dpi', '96'));
-                                        $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
+                                        $width = intval($settings['pdf_builder_canvas_width'] ?? '794');
+                                        $height = intval($settings['pdf_builder_canvas_height'] ?? '1123');
+                                        $dpi = intval($settings['pdf_builder_canvas_dpi'] ?? '96');
+                                        $format = $settings['pdf_builder_canvas_format'] ?? 'A4';
 
                                         // Protection contre division par zéro
                                         $dpi = max(1, $dpi); // Au minimum 1 DPI pour éviter division par zéro
@@ -180,11 +180,11 @@
                                 <div class="apparence-preview-container">
                                     <div class="apparence-canvas">
                                         <!-- Fond coloré -->
-                                        <div class="apparence-background" style="background-color: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_bg_color'] ?? '#ffffff'); ?>;"></div>
+                                        <div class="apparence-background" style="background-color: <?php echo esc_attr($settings['pdf_builder_canvas_bg_color'] ?? '#ffffff'); ?>;"></div>
                                         <!-- Bordure -->
-                                        <div class="apparence-border" style="border: <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_width'] ?? '1'); ?>px solid <?php echo esc_attr($settings['pdf_builder_canvas_canvas_border_color'] ?? '#cccccc'); ?>;"></div>
+                                        <div class="apparence-border" style="border: <?php echo esc_attr($settings['pdf_builder_canvas_border_width'] ?? '1'); ?>px solid <?php echo esc_attr($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'); ?>;"></div>
                                         <!-- Ombre -->
-                                        <?php if (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1'): ?>
+                                        <?php if (($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1'): ?>
                                         <div class="apparence-shadow"></div>
                                         <?php endif; ?>
                                         <!-- Élément d'exemple -->
@@ -196,7 +196,7 @@
                                     <div class="apparence-legend">
                                         <span class="legend-item">🎨 Fond</span>
                                         <span class="legend-item">🔲 Bordure</span>
-                                        <span class="legend-item"><?php echo (($settings['pdf_builder_canvas_canvas_shadow_enabled'] ?? '0') === '1') ? '🌑' : '☀️'; ?> Ombre</span>
+                                        <span class="legend-item"><?php echo (($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') === '1') ? '🌑' : '☀️'; ?> Ombre</span>
                                     </div>
                                 </div>
                             </aside>
@@ -434,15 +434,15 @@
                                     <div class="performance-metrics">
                                         <div class="metric-item">
                                             <span class="metric-label">FPS</span>
-                                            <span id="card-perf-preview" class="metric-value">60</span>
+                                            <span id="card-perf-preview" class="metric-value"><?php echo esc_html($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?></span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM JS</span>
-                                            <span class="metric-value">50MB</span>
+                                            <span class="metric-value"><?php echo esc_html($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>MB</span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM PHP</span>
-                                            <span class="metric-value">128MB</span>
+                                            <span class="metric-value"><?php echo esc_html($settings['pdf_builder_canvas_memory_limit_php'] ?? '128'); ?>MB</span>
                                         </div>
                                     </div>
                                     <div class="performance-status">
@@ -494,15 +494,15 @@
                                     <div class="debug-stats">
                                         <div class="stat-item">
                                             <span class="stat-label">FPS</span>
-                                            <span class="stat-value">60</span>
+                                            <span class="stat-value"><?php echo esc_html($settings['pdf_builder_canvas_fps_target'] ?? '60'); ?></span>
                                         </div>
                                         <div class="stat-item">
                                             <span class="stat-label">RAM</span>
-                                            <span class="stat-value">85MB</span>
+                                            <span class="stat-value"><?php echo esc_html($settings['pdf_builder_canvas_memory_limit_js'] ?? '50'); ?>MB</span>
                                         </div>
                                         <div class="stat-item">
                                             <span class="stat-label">Errors</span>
-                                            <span class="stat-value">2</span>
+                                            <span class="stat-value">0</span>
                                         </div>
                                     </div>
                                 </div>
