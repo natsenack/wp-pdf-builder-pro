@@ -1722,57 +1722,6 @@
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.data ? data.data.saved_count : 'UNKNOWN', 'paramètres');
 
-                                    // Mettre à jour previewSystem.values avec les vraies valeurs sauvegardées
-                                    if (data.data && data.data.saved_settings && typeof data.data.saved_settings === 'object') {
-                                        console.log('🔄 [AJAX SUCCESS] Updating previewSystem with server values...');
-                                        console.log('🔄 [AJAX SUCCESS] saved_settings received:', data.data.saved_settings);
-                                        console.log('🔄 [AJAX SUCCESS] Canvas fields in response:', Object.keys(data.data.saved_settings).filter(key => key.startsWith('pdf_builder_canvas_')));
-
-                                        // Mapping des clés du serveur vers les clés utilisées par previewSystem
-                                        const keyMapping = {
-                                            'pdf_builder_canvas_width': 'canvas_canvas_width',
-                                            'pdf_builder_canvas_height': 'canvas_canvas_height',
-                                            'pdf_builder_canvas_dpi': 'canvas_canvas_dpi',
-                                            'pdf_builder_canvas_format': 'canvas_canvas_format',
-                                            'pdf_builder_canvas_bg_color': 'canvas_canvas_bg_color',
-                                            'pdf_builder_canvas_border_color': 'canvas_canvas_border_color',
-                                            'pdf_builder_canvas_border_width': 'canvas_canvas_border_width',
-                                            'pdf_builder_canvas_shadow_enabled': 'canvas_canvas_shadow_enabled',
-                                            'pdf_builder_canvas_container_bg_color': 'canvas_canvas_container_bg_color',
-                                            'pdf_builder_canvas_grid_enabled': 'canvas_canvas_grid_enabled',
-                                            'pdf_builder_canvas_grid_size': 'canvas_canvas_grid_size',
-                                            'pdf_builder_canvas_guides_enabled': 'canvas_canvas_guides_enabled',
-                                            'pdf_builder_canvas_snap_to_grid': 'canvas_canvas_snap_to_grid',
-                                            'pdf_builder_canvas_zoom_min': 'canvas_canvas_zoom_min',
-                                            'pdf_builder_canvas_zoom_max': 'canvas_canvas_zoom_max',
-                                            'pdf_builder_canvas_zoom_default': 'canvas_canvas_zoom_default',
-                                            'pdf_builder_canvas_zoom_step': 'canvas_canvas_zoom_step',
-                                            'pdf_builder_canvas_drag_enabled': 'canvas_canvas_drag_enabled',
-                                            'pdf_builder_canvas_resize_enabled': 'canvas_canvas_resize_enabled',
-                                            'pdf_builder_canvas_rotate_enabled': 'canvas_canvas_rotate_enabled',
-                                            'pdf_builder_canvas_multi_select': 'canvas_canvas_multi_select',
-                                            'pdf_builder_canvas_selection_mode': 'canvas_canvas_selection_mode',
-                                            'pdf_builder_canvas_keyboard_shortcuts': 'canvas_canvas_keyboard_shortcuts',
-                                            'pdf_builder_canvas_export_quality': 'canvas_canvas_export_quality',
-                                            'pdf_builder_canvas_export_format': 'canvas_canvas_export_format',
-                                            'pdf_builder_canvas_export_transparent': 'canvas_canvas_export_transparent',
-                                            'pdf_builder_canvas_fps_target': 'canvas_canvas_fps_target',
-                                            'pdf_builder_canvas_memory_limit_js': 'canvas_canvas_memory_limit_js',
-                                            'pdf_builder_canvas_memory_limit_php': 'canvas_canvas_memory_limit_php',
-                                            'pdf_builder_canvas_lazy_loading_editor': 'canvas_canvas_lazy_loading_editor',
-                                            'pdf_builder_canvas_performance_monitoring': 'canvas_canvas_performance_monitoring',
-                                            'pdf_builder_canvas_error_reporting': 'canvas_canvas_error_reporting'
-                                        };
-
-                                    } else {
-                                        console.warn('⚠️ No saved_settings received from server, using local values');
-                                        console.log('⚠️ Response structure:', {
-                                            hasData: !!data.data,
-                                            dataKeys: data.data ? Object.keys(data.data) : [],
-                                            fullResponse: data
-                                        });
-                                    }
-
                                     // Fermer la modale après sauvegarde
                                     console.log('🔒 Closing modal after preview update...');
                                     closeModal();
