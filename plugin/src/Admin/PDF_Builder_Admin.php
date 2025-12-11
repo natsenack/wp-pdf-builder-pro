@@ -887,7 +887,7 @@ class PdfBuilderAdmin
 // Hook pdf_builder_get_template déjà enregistré plus haut
 
         // Hooks WooCommerce - Délégation vers le manager
-        if (class_exists('WooCommerce') && $this->woocommerce_integration !== null) {
+        if (did_action('plugins_loaded') && class_exists('WooCommerce') && $this->woocommerce_integration !== null) {
             add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
             // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement s'il existe
             if (has_action('add_meta_boxes_woocommerce_page_wc-orders') !== false || defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {

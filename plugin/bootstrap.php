@@ -952,7 +952,7 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
     add_action('init', function() {
-        if (class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
             \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
         }
     });

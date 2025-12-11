@@ -41,9 +41,14 @@
             return self::$instance;
         }
 
-        // Initialisation des statuts WooCommerce
+        // Initialisation des statuts WooCommerce - différée
         private function init_woocommerce_status() {
-            $this->woocommerce_active = class_exists('WooCommerce');
+            // Différer la vérification pour éviter les problèmes de chargement prématuré
+            if (did_action('plugins_loaded')) {
+                $this->woocommerce_active = class_exists('WooCommerce');
+            } else {
+                $this->woocommerce_active = false;
+            }
 
             if (!$this->woocommerce_active) {
                 return;
