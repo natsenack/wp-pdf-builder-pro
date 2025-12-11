@@ -1677,6 +1677,8 @@
                         },
 
                         // Mettre à jour l'affichage des valeurs dans les cartes après sauvegarde
+                        // Mise à jour dynamique des previews désactivée
+                        /*
                         updateDisplayValues: function() {
                             console.log('🔄 Mise à jour de l\'affichage des valeurs...');
 
@@ -1721,6 +1723,7 @@
 
                             console.log('✅ Affichage des valeurs mis à jour avec succès');
                         },
+                        */
 
                         // Sauvegarder côté serveur
                         saveToServer: function(values) {
@@ -1780,8 +1783,8 @@
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.data ? data.data.saved_count : 'UNKNOWN', 'paramètres');
 
-                                    // Mettre à jour l'affichage des valeurs dans les cartes
-                                    this.updateDisplayValues();
+                                    // Mise à jour dynamique des previews désactivée - previews restent statiques
+                                    // this.updateDisplayValues();
 
                                     // Fermer la modale après sauvegarde
                                     console.log('🔒 Closing modal after preview update...');
@@ -2196,12 +2199,14 @@
                     });
                 }, 1500);
 
-                // Initialiser les previews avec des valeurs par défaut
-                initializeCanvasPreviews();
+                // Initialisation dynamique des previews désactivée - previews restent statiques
+                // initializeCanvasPreviews();
 
             </script>
 
+            <!-- Fonction d'initialisation des previews désactivée -->
             <script>
+            /*
             /**
              * Initialise les previews des cartes canvas avec des valeurs par défaut
              */
@@ -2284,6 +2289,7 @@
 
                 console.log('✅ Previews canvas initialisées avec les valeurs par défaut');
             }
+            */
 
     </div> <!-- Fermeture de settings-content -->
 
