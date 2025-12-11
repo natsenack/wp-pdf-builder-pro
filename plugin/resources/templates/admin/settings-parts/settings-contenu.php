@@ -684,6 +684,15 @@
                         }
                     }
 
+                    // Fonction pour fermer une modale
+                    function closeModal(modalId) {
+                        const modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }
+                    }
+
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
                         const form = document.querySelector(`#canvas-${category}-modal form`);
