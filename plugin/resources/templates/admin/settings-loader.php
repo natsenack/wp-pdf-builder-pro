@@ -196,6 +196,8 @@ function pdf_builder_load_settings_assets($hook) {
         $notification_manager = PDF_Builder_Notification_Manager::get_instance();
         $notification_manager->enqueue_scripts();
         error_log('PDF Builder - Système de notifications chargé');
+    } else {
+        error_log('PDF Builder - ERREUR: Classe PDF_Builder_Notification_Manager non trouvée');
     }
 
     // Charger le script de débogage CSS des modales (uniquement en mode debug) - v2
