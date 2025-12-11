@@ -1053,11 +1053,11 @@
                                     break;
 
                                 case 'checkbox':
-                                    const checked = (value == '1' || value === true || value === 'true') ? ' checked' : '';
-                                    html += `<label class="toggle-switch">`;
-                                    html += `<input type="checkbox" id="${fieldId}" name="${fieldNameAttr}" value="1"${checked}>`;
-                                    html += `<span class="toggle-slider"></span>`;
-                                    html += `</label>`;
+                                    const checkedAttr = (value == '1' || value === true || value === 'true') ? ' checked' : '';
+                                    html += '<label class="toggle-switch">';
+                                    html += '<input type="checkbox" id="' + fieldId + '" name="' + fieldNameAttr + '" value="1"' + checkedAttr + '>';
+                                    html += '<span class="toggle-slider"></span>';
+                                    html += '</label>';
                                     break;
 
                                 case 'range':
