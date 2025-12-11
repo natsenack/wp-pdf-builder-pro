@@ -13,7 +13,9 @@
     function get_canvas_option_contenu($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
         $value = get_option($option_key, $default);
-        error_log("[PDF Builder] get_canvas_option_contenu - {$key}: {$value} (default: {$default})");
+        if ($key === 'canvas_border_width') {
+            error_log("[PDF Builder] BORDER_WIDTH - get_canvas_option_contenu - {$key}: {$value} (default: {$default})");
+        }
         return $value;
     }
 
