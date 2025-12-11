@@ -1498,9 +1498,16 @@
                                     value = hiddenField.value;
                                     console.log(`[PDF Builder] UPDATE_MODAL - Using hidden field value for ${settingKey}: ${value}`);
                                 } else {
-                                    // Utiliser la valeur par défaut si le champ caché est vide ou n'existe pas
-                                    value = defaultValues[settingKey] || '';
-                                    console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value} (hidden field was empty)`);
+                                    // Vérifier le cache localStorage
+                                    const cachedData = loadModalFromCache(category);
+                                    if (cachedData && cachedData.hasOwnProperty(settingKey)) {
+                                        value = cachedData[settingKey];
+                                        console.log(`[PDF Builder] UPDATE_MODAL - Using cached value for ${settingKey}: ${value}`);
+                                    } else {
+                                        // Utiliser la valeur par défaut si rien n'est trouvé
+                                        value = defaultValues[settingKey] || '';
+                                        console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value}`);
+                                    }
                                 }
                                 
                                 if (category === 'grille') {
@@ -1543,6 +1550,54 @@
                             } else {
                                 console.log(`Field not found for ${fieldId} or ${settingKey}`);
                             }
+                        }
+
+                        // Ajouter les event listeners pour sauvegarder automatiquement dans le cache
+                        const allInputs = modal.querySelectorAll('input, select, textarea');
+                        allInputs.forEach(input => {
+                            input.addEventListener('change', () => saveModalToCache(category));
+                            input.addEventListener('input', () => saveModalToCache(category));
+                        });
+                    }
+
+                    // Fonction pour sauvegarder les valeurs d'une modale dans localStorage
+                    function saveModalToCache(category) {
+                        try {
+                            const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
+                            if (!modal) return;
+
+                            const modalData = {};
+                            const inputs = modal.querySelectorAll('input, select, textarea');
+
+                            inputs.forEach(input => {
+                                if (input.name && input.name.startsWith('canvas_')) {
+                                    if (input.type === 'checkbox') {
+                                        modalData[input.name] = input.checked ? '1' : '0';
+                                    } else {
+                                        modalData[input.name] = input.value;
+                                    }
+                                }
+                            });
+
+                            localStorage.setItem(`pdf_builder_modal_${category}`, JSON.stringify(modalData));
+                            console.log(`[PDF Builder] MODAL_CACHE - Saved ${category} modal data`);
+                        } catch (error) {
+                            console.warn('[PDF Builder] MODAL_CACHE - Failed to save modal data:', error);
+                        }
+                    }
+
+                    // Fonction pour charger les valeurs d'une modale depuis localStorage
+                    function loadModalFromCache(category) {
+                        try {
+                            const cached = localStorage.getItem(`pdf_builder_modal_${category}`);
+                            if (!cached) return null;
+
+                            const modalData = JSON.parse(cached);
+                            console.log(`[PDF Builder] MODAL_CACHE - Loaded ${category} modal data`);
+                            return modalData;
+                        } catch (error) {
+                            console.warn('[PDF Builder] MODAL_CACHE - Failed to load modal data:', error);
+                            return null;
                         }
                     }
 
@@ -1665,6 +1720,7 @@
                                     CanvasMetrics.recordSaveEnd(true);
                                     CanvasHealth.recordSuccess();
                                     CanvasCache.clear(); // Nettoyer le cache après succès
+                                    localStorage.removeItem(`pdf_builder_modal_${category}`); // Nettoyer le cache modal
 
                                     closeModal(`canvas-${category}-modal-overlay`);
                                     location.reload();
