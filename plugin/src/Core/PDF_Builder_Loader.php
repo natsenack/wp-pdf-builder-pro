@@ -206,9 +206,13 @@ class PDF_Builder_Loader {
      */
     private function load_utilities() {
         $utilities = [
-            'PDF_Builder_Onboarding_Manager.php',
             'PDF_Builder_GDPR_Manager.php'
         ];
+
+        // Charger l'Onboarding Manager seulement si WooCommerce est actif
+        if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+            $utilities[] = 'PDF_Builder_Onboarding_Manager.php';
+        }
 
         foreach ($utilities as $utility) {
             $this->require_file('src/utilities/' . $utility);

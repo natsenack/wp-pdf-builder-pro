@@ -34,9 +34,13 @@ function pdf_builder_load_utilities_emergency() {
     }
 
     $utilities = array(
-        'PDF_Builder_Onboarding_Manager.php',
         'PDF_Builder_GDPR_Manager.php'
     );
+
+    // Charger PDF_Builder_Onboarding_Manager seulement si WooCommerce est actif (pour éviter les problèmes de traductions)
+    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+        $utilities[] = 'PDF_Builder_Onboarding_Manager.php';
+    }
 
     foreach ($utilities as $utility) {
         $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
@@ -57,6 +61,11 @@ function pdf_builder_load_utilities_emergency() {
  * Peut être appelée depuis n'importe où dans le code
  */
 function pdf_builder_ensure_onboarding_manager() {
+    // Ne charger l'Onboarding Manager que si WooCommerce est actif pour éviter les problèmes de traductions
+    if (!did_action('plugins_loaded') || !class_exists('WooCommerce')) {
+        return false; // WooCommerce pas encore disponible
+    }
+
     if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         pdf_builder_load_utilities_emergency();
 
@@ -77,6 +86,16 @@ function pdf_builder_ensure_onboarding_manager() {
 function pdf_builder_get_onboarding_manager() {
     // Essayer d'abord la vraie classe
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        return \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
+    }
+
+    // Si WooCommerce n'est pas disponible, retourner null
+    if (!did_action('plugins_loaded') || !class_exists('WooCommerce')) {
+        return null;
+    }
+
+    // Tenter de charger l'Onboarding Manager
+    if (pdf_builder_ensure_onboarding_manager()) {
         return \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
 
