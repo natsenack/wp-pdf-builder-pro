@@ -54,6 +54,4 @@
             totalCapacity: MAX_CONCURRENT_REQUESTS
         };
     };
-
-    console.log('✅ [AJAX Throttle] Connection pool manager initialized (max ' + MAX_CONCURRENT_REQUESTS + ' concurrent)');
 })();

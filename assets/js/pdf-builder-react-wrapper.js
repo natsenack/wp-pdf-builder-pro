@@ -4,8 +4,6 @@
  * This file acts as the true webpack entry point that exports everything to window
  */
 
-console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react-wrapper.js loading...');
-
 // Import the actual React module
 import * as pdfBuilderReactModule from './pdf-builder-react/index.js';
 
@@ -30,11 +28,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   try {
     // Assigner manuellement à window pour s'assurer que c'est disponible
     window.pdfBuilderReact = moduleExports;
-    console.log('✅ [pdf-builder-wrapper] window.pdfBuilderReact assigned manually');
 
     const event = new Event('pdfBuilderReactLoaded');
     document.dispatchEvent(event);
-    console.log('✅ [pdf-builder-wrapper] pdfBuilderReactLoaded event dispatched');
   } catch (e) {
     console.error('[pdf-builder-wrapper] Error dispatching event:', e);
   }

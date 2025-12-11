@@ -15,9 +15,6 @@
             const ts = new Date().toISOString();
             const entry = { ts: ts, msg: message, data: data };
             window.pdfBuilderRootLog.push(entry);
-            if (DEBUG) {
-                console.log('📡 PDF-ROOT:', message, data || '');
-            }
         } catch (e) {}
     }
 
@@ -147,7 +144,7 @@
             });
             console.groupEnd();
         } catch(e) {
-            console.log('Error dumping root log', e);
+            // Error logging disabled
         }
         return window.pdfBuilderRootLog;
     };

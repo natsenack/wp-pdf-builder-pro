@@ -29,29 +29,26 @@
     // Create initial stub
     window.pdfBuilderReact = createStub();
     Object.assign(initialized, window.pdfBuilderReact);
-    console.log('✅ [pdf-builder-wrap] Stub pdfBuilderReact created on window');
 
     // Check if webpack bundle has replaced the stub
     // A real implementation will have non-empty function bodies
     var checkRealModule = setInterval(function() {
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
             var fnStr = window.pdfBuilderReact.initPDFBuilderReact.toString();
-            
+
             // Check if this is a real implementation (not a stub that just returns false)
             if (fnStr.indexOf('return false') === -1 && fnStr.indexOf('warn') === -1) {
                 // Verify it's different from our stub
                 var isReal = fnStr.length > 50; // Real function will be longer
-                
+
                 if (isReal) {
-                    console.log('✅ [pdf-builder-wrap] Real pdfBuilderReact loaded from webpack');
                     isInitialized = true;
                     clearInterval(checkRealModule);
-                    
+
                     // Dispatch ready event
                     try {
                         var event = new Event('pdfBuilderReactReady');
                         document.dispatchEvent(event);
-                        console.log('✅ [pdf-builder-wrap] pdfBuilderReactReady event dispatched');
                     } catch (e) {
                         console.error('[pdf-builder-wrap] Error dispatching event:', e);
                     }
@@ -65,7 +62,6 @@
     setTimeout(function() {
         if (!isInitialized) {
             clearInterval(checkRealModule);
-            console.log('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
             // Still dispatch event so initialization can proceed with stub
             try {
                 var event = new Event('pdfBuilderReactReady');

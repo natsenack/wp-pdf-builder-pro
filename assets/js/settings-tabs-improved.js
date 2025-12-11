@@ -8,7 +8,6 @@
 
     // Si un manager canonical est présent, sortir pour éviter conflits
     if (typeof window !== 'undefined' && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
-        console.log('PDF Builder: settings-tabs-improved.js chargé mais un manager canonical est présent — exit to avoid conflict');
         return;
     }
 
@@ -29,35 +28,11 @@
 
     // Fonction de logging avec fallback
     function log() {
-        if (CONFIG.debug && typeof console !== 'undefined' && console.log) {
-            // Formater les objets pour un meilleur debugging
-            const args = Array.prototype.slice.call(arguments);
-            for (let i = 0; i < args.length; i++) {
-                if (typeof args[i] === 'object' && args[i] !== null) {
-                    try {
-                        args[i] = JSON.stringify(args[i], null, 2);
-                    } catch (e) {
-                        args[i] = '[Object - cannot stringify]';
-                    }
-                }
-            }
-            console.log.apply(console, ['🎯 PDF BUILDER TABS:'].concat(args));
-        }
+        // Logging disabled for production
     }
 
     function error() {
-        if (CONFIG.debug && typeof console !== 'undefined' && console.error) {
-            const args = Array.prototype.slice.call(arguments);
-            for (let i = 0; i < args.length; i++) {
-                if (typeof args[i] === 'object' && args[i] !== null) {
-                    try {
-                        args[i] = JSON.stringify(args[i], null, 2);
-                    } catch (e) {
-                        args[i] = '[Object - cannot stringify]';
-                    }
-                }
-            }
-            console.error.apply(console, ['💥 PDF BUILDER TABS:'].concat(args));
+        // Error logging disabled for production
         }
     }
 

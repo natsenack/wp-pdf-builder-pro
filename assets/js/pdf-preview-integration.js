@@ -12,8 +12,7 @@ function isDebugEnabled() {
 }
 
 function debugLog(...args) {
-    // TEMP: Always log for debugging
-    console.log(...args);
+    // Debug logging disabled for production
 }
 
 function debugError(...args) {

@@ -566,15 +566,6 @@
                 (function() {
                     'use strict';
 
-                    // LOGS JAVASCRIPT DÉTAILLÉS POUR DÉBOGAGE MAXIMAL
-                    console.log('🚀 [JS INIT] Début chargement script modales - ' + new Date().toISOString());
-                    console.log('🔍 [JS INIT] URL actuelle:', window.location.href);
-                    console.log('🔍 [JS INIT] UserAgent:', navigator.userAgent);
-                    console.log('🔍 [JS INIT] Viewport:', window.innerWidth + 'x' + window.innerHeight);
-                    console.log('🔍 [JS INIT] DOM ready:', document.readyState);
-                    console.log('🔍 [JS INIT] jQuery loaded:', typeof jQuery !== 'undefined');
-                    console.log('🔍 [JS INIT] WordPress ajaxurl:', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
-
                     // Fonction d'échappement pour les attributs HTML
                     function escapeHtmlAttr(str) {
                         return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -621,7 +612,6 @@
 
                         // Initialiser le monitoring
                         init: function() {
-                            console.log('🔍 Modal Monitoring System: Initialisé');
                             this.loadFromStorage();
                             this.log('system', 'Monitoring activé', { timestamp: Date.now() });
                         },
@@ -635,7 +625,6 @@
                                     this.metrics = Object.assign({}, this.metrics, data.metrics);
                                     this.history = data.history || [];
                                     this.currentState = Object.assign({}, this.currentState, data.currentState);
-                                    console.log('📥 Monitoring chargé depuis localStorage');
                                 }
                             } catch (e) {
                                 console.warn('⚠️ Erreur chargement monitoring localStorage:', e);
@@ -686,8 +675,6 @@
                                 'system': '🔧',
                                 'performance': '⚡'
                             };
-
-                            console.log(`${emoji[type] || '📝'} [${type.toUpperCase()}] ${message}`, data);
 
                             // Sauvegarder après chaque log
                             this.saveToStorage();
@@ -859,39 +846,6 @@
                         // Afficher le tableau de bord de monitoring (pour debug)
                         showDashboard: function() {
                             const report = this.generateReport();
-                            console.group('📊 Modal Monitoring Dashboard');
-                            console.table(report.summary);
-                            console.log('🔄 État actuel:', report.currentState);
-                            console.log('📝 Activité récente:', report.recentActivity);
-                            if (report.alerts.length > 0) {
-                                console.group('🚨 Alertes');
-                                report.alerts.forEach(alert => {
-                                    console.log(`[${alert.level.toUpperCase()}] ${alert.message}`);
-                                    console.log(`💡 Suggestion: ${alert.suggestion}`);
-                                });
-                                console.groupEnd();
-                            }
-
-                            // Ajouter les informations des cartes Canvas
-                            if (window.CanvasCardMonitor && window.CanvasCardMonitor.state) {
-                                console.group('🎨 État des cartes Canvas');
-                                const cardState = window.CanvasCardMonitor.getStatus();
-                                console.table(cardState.cards);
-                                console.log('🔧 État du monitoring:', {
-                                    initialized: cardState.initialized,
-                                    totalCards: Object.keys(cardState.cards).length,
-                                    totalModals: Object.keys(cardState.modals).length,
-                                    lastSync: cardState.lastSync,
-                                    errors: cardState.errors.length,
-                                    warnings: cardState.warnings.length
-                                });
-                                console.groupEnd();
-                            } else {
-                                console.log('⚠️ CanvasCardMonitor non disponible');
-                            }
-
-                            console.groupEnd();
-
                             // Mettre à jour l'indicateur visuel
                             this.updateVisualIndicator();
                         },
@@ -944,8 +898,6 @@
                             setInterval(() => {
                                 this.updateVisualIndicator();
                             }, 5000);
-
-                            console.log('🔄 Auto-monitoring démarré (vérifications toutes les 30s)');
                         }
                     };
 
@@ -1147,10 +1099,6 @@
                                 // Validation numérique
                                 if (fieldConfig.type === 'number') {
                                     const numValue = parseFloat(field.value);
-                                    // DEBUG: Log pour diagnostiquer le problème de validation
-                                    if (field.name.includes('border_width')) {
-                                        console.log('🔍 DEBUG validation border_width:', field.name, 'field.value:', '"' + field.value + '"', 'numValue:', numValue, 'isNaN:', isNaN(numValue));
-                                    }
                                     if (isNaN(numValue)) {
                                         errors.push(`${fieldConfig.label} doit être un nombre`);
                                     } else {
@@ -1488,23 +1436,18 @@
 
                     // Ouvrir une modal avec le nouveau système de génération
                     function openModal(category) {
-                        console.log('🚪 [OPEN MODAL] Ouverture modal:', category);
-
                         // Fermer toute modal existante
                         if (currentModalCategory) {
-                            console.log('🔄 [OPEN MODAL] Fermeture modal existante:', currentModalCategory);
                             closeModal();
                         }
 
                         currentModalCategory = category;
-                        console.log('✅ [OPEN MODAL] currentModalCategory défini:', currentModalCategory);
 
                         // Monitorer l'ouverture
                         modalMonitoring.trackModalOpen(category);
 
                         // Générer le contenu de la modal
                         const modalContent = formGenerator.generateModalHTML(category);
-                        console.log('📝 [OPEN MODAL] Contenu généré, longueur:', modalContent.length);
 
                         // Insérer le contenu dans la modal (chercher d'abord dans l'overlay, puis dans la modal)
                         const modalId = `canvas-${category}-modal`;
@@ -1524,39 +1467,28 @@
                             }
                         }
 
-                        console.log('🔍 [OPEN MODAL] Modal body trouvé:', !!modalBody, 'pour ID:', modalId, '(overlay:', !!overlay, ')');
-
                         if (modalBody) {
                             modalBody.innerHTML = modalContent;
-                            console.log('✅ [OPEN MODAL] Contenu inséré');
                         } else {
                             console.error('❌ [OPEN MODAL] Modal body NON trouvé pour:', modalId);
                         }
 
                         // Afficher la modal en ajoutant la classe 'active' à l'overlay
-                        console.log('🔍 [OPEN MODAL] Modal element ignoré (removed)');
-
-                        console.log('🔍 [OPEN MODAL] Overlay trouvé:', !!overlay, 'ID:', `canvas-${category}-modal-overlay`);
 
                         if (overlay) {
                             const wasActive = overlay.classList.contains('active');
-                            console.log('🔍 [OPEN MODAL] Overlay était actif:', wasActive);
 
                             if (!wasActive) {
                                 // Add active class to overlay only (canvas-modal elements removed)
                                 overlay.classList.add('active');
                                 document.body.classList.add('canvas-modal-open');
-                                console.log('✅ [OPEN MODAL] Classe active ajoutée à overlay seulement');
                             }
-
-                            console.log('🎉 [OPEN MODAL] Modal ouverte:', modalId);
 
                             // Synchroniser les valeurs de la modal avec les champs cachés
                             modalSettingsManager.syncModalValues();
 
                             // Configurer les event listeners pour cette modal après l'ouverture
                             setTimeout(() => {
-                                console.log('🔧 Modal event listeners setup skipped (preview system removed)');
                             }, 100);
                         } else {
                             console.error('❌ [OPEN MODAL] Overlay NON trouvé pour:', category);
@@ -1568,8 +1500,6 @@
                         // Synchroniser les valeurs des champs cachés vers la modal actuelle
                         syncModalValues: function() {
                             if (!currentModalCategory) return;
-
-                            console.log('Synchronisation des valeurs de la modal pour:', currentModalCategory);
 
                             // Trouver la modal actuelle
                             let currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal-fullscreen`);
@@ -1593,12 +1523,8 @@
                                     } else {
                                         modalField.value = value;
                                     }
-
-                                    console.log(`🔄 Modal synchronisée: ${fieldName} = ${value}`);
                                 }
                             });
-
-                            console.log('✅ Valeurs de la modal synchronisées');
                         },
 
                         // Sauvegarder les paramètres de la modal actuelle
@@ -1606,12 +1532,10 @@
                             if (!currentModalCategory) return;
 
                             const startTime = Date.now();
-                            console.log('Sauvegarde des paramètres pour:', currentModalCategory);
 
                             // Validation du formulaire
                             const errors = formGenerator.validateForm(currentModalCategory);
                             if (errors.length > 0) {
-                                console.error('Erreurs de validation:', errors);
                                 modalMonitoring.trackValidationError(currentModalCategory, errors);
                                 alert('Erreurs de validation:\n' + errors.join('\n'));
                                 return;
@@ -1639,31 +1563,16 @@
                                     value = input.checked ? '1' : '0';
                                 } else if (input.type === 'number') {
                                     value = parseFloat(input.value) || 0;
-                                    // DEBUG: Log pour diagnostiquer le problème de validation
-                                    if (input.name.includes('border_width')) {
-                                        console.log('🔍 DEBUG border_width:', input.name, 'input.value:', '"' + input.value + '"', 'parsed:', value, 'isNaN:', isNaN(value));
-                                    }
                                 } else {
                                     value = input.value;
                                 }
 
                                 updatedValues[input.name] = value;
 
-                                // Debug log pour les paramètres de grille
-                                if (input.name.includes('grid') || input.name.includes('guide') || input.name.includes('snap')) {
-                                    console.log('🔍 DEBUG: Grid field collected:', input.name, '=', value, '(type:', input.type, 'checked:', input.checked, ')');
-                                }
-
-                                // Debug log pour l'ombre
-                                if (input.name === 'pdf_builder_canvas_canvas_shadow_enabled') {
-                                    console.log('🔍 DEBUG: Shadow enabled value collected:', value, '(type:', typeof value, ')');
-                                }
-
                                 // Mettre à jour le champ caché correspondant
                                 const hiddenField = document.querySelector(`input[name="${input.name}"]`);
                                 if (hiddenField) {
                                     hiddenField.value = value;
-                                    console.log(`Champ caché mis à jour: ${input.name} = ${value}`);
                                 }
                             });
 
@@ -1690,8 +1599,6 @@
                             const dpi = dpiField ? dpiField.value : '96';
                             const format = formatField ? formatField.value : 'A4';
 
-                            console.log('🔄 Valeurs récupérées:', { width, height, dpi, format });
-
                             // Calculer les dimensions en mm
                             const calculateMM = function(pixels, dpi) {
                                 return ((pixels / dpi) * 25.4).toFixed(1);
@@ -1707,35 +1614,19 @@
 
                             if (widthEl) {
                                 widthEl.textContent = width;
-                                console.log('✅ Largeur mise à jour:', width);
                             }
                             if (heightEl) {
                                 heightEl.textContent = height;
-                                console.log('✅ Hauteur mise à jour:', height);
                             }
                             if (dpiEl) {
                                 dpiEl.textContent = `${dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
-                                console.log('✅ DPI mis à jour:', dpiEl.textContent);
                             }
-
-                            console.log('✅ Affichage des valeurs mis à jour avec succès');
                         },
                         */
 
                         // Sauvegarder côté serveur
                         saveToServer: function(values) {
                             const saveStartTime = Date.now();
-                            console.log('Sauvegarde côté serveur...');
-
-                            // DEBUG: Log what we're sending
-                            console.log('[DEBUG AJAX SEND] Sending values:', values);
-                            console.log('[DEBUG AJAX SEND] Values keys:', Object.keys(values));
-                            console.log('[DEBUG AJAX SEND] Canvas values:', Object.keys(values).filter(k => k.includes('canvas')));
-
-                            // Debug: vérifier la valeur de l'ombre
-                            if (values['pdf_builder_canvas_canvas_shadow_enabled'] !== undefined) {
-                                console.log('🔍 DEBUG: Sending shadow_enabled to server:', values['pdf_builder_canvas_canvas_shadow_enabled'], '(type:', typeof values['pdf_builder_canvas_canvas_shadow_enabled'], ')');
-                            }
 
                             // Créer FormData avec les valeurs
                             const formData = new FormData();
@@ -1754,44 +1645,23 @@
                                 body: formData
                             })
                             .then(response => {
-                                console.log('Response status:', response.status);
                                 return response.json();
                             })
                             .then(data => {
                                 const saveTime = Date.now() - saveStartTime;
-                                console.log('Response data:', data);
-                                if (data.data && data.data.canvas_shadow_enabled !== undefined) {
-                                    console.log('🔍 DEBUG: Server returned shadow_enabled:', data.data.canvas_shadow_enabled, '(type:', typeof data.data.canvas_shadow_enabled, ')');
-                                }
                                 if (data.success) {
-                                    console.log('✅ AJAX SUCCESS - Raw response data:', data);
-                                    console.log('✅ saved_settings received:', data.data ? data.data.saved_settings : 'NO DATA PROPERTY');
-                                    console.log('✅ debug_info received:', data.data ? data.data.debug_info : 'NO DEBUG INFO');
-
-                                    // Check if saved_settings exists
-                                    if (data.data && data.data.saved_settings) {
-                                        console.log('✅ saved_settings is present, count:', Object.keys(data.data.saved_settings).length);
-                                        console.log('✅ Canvas fields in saved_settings:', Object.keys(data.data.saved_settings).filter(k => k.includes('pdf_builder_canvas_')));
-                                    } else {
-                                        console.log('❌ saved_settings is missing from response');
-                                        console.log('❌ Available keys in response.data:', data.data ? Object.keys(data.data) : 'NO DATA');
-                                    }
 
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
-                                    console.log('Paramètres sauvegardés avec succès:', data.data ? data.data.saved_count : 'UNKNOWN', 'paramètres');
 
                                     // Mise à jour dynamique des previews désactivée - previews restent statiques
                                     // this.updateDisplayValues();
 
                                     // Fermer la modale après sauvegarde
-                                    console.log('🔒 Closing modal after preview update...');
                                     closeModal();
 
                                     // Afficher une notification de succès sans rechargement de page
                                     if (window.pdfBuilderDeveloper && typeof window.pdfBuilderDeveloper.showSuccess === 'function') {
                                         window.pdfBuilderDeveloper.showSuccess('Paramètres sauvegardés avec succès');
-                                    } else {
-                                        console.log('✅ Paramètres sauvegardés avec succès');
                                     }
 
                                     // Mettre à jour les champs cachés du formulaire principal avec les nouvelles valeurs
@@ -1800,7 +1670,6 @@
                                             const hiddenField = document.querySelector(`input[type="hidden"][name="${key}"]`);
                                             if (hiddenField) {
                                                 hiddenField.value = value;
-                                                console.log(`🔄 Champ caché mis à jour après sauvegarde modale: ${key} = ${value}`);
                                             }
                                         }
                                     });
@@ -1831,10 +1700,7 @@
 
                     // Fermer la modal (version corrigée)
                     function closeModal() {
-                        console.log('🚪 [CLOSE MODAL] Fermeture modal, currentModalCategory:', currentModalCategory);
-
                         if (!currentModalCategory) {
-                            console.log('⚠️ [CLOSE MODAL] Aucune modal ouverte');
                             return;
                         }
 
@@ -1842,28 +1708,21 @@
                         modalMonitoring.trackModalClose(currentModalCategory);
 
                         const modalId = `canvas-${currentModalCategory}-modal`;
-                        console.log('🔍 [CLOSE MODAL] Modal element ignoré (removed)');
 
                         // Fermer la modal en retirant la classe 'active' de l'overlay seulement
                         const overlay = document.getElementById(`canvas-${currentModalCategory}-modal-overlay`);
-                        console.log('🔍 [CLOSE MODAL] Overlay trouvé:', !!overlay, 'ID:', `canvas-${currentModalCategory}-modal-overlay`);
 
                         if (overlay) {
                             const wasActive = overlay.classList.contains('active');
-                            console.log('🔍 [CLOSE MODAL] Overlay était actif:', wasActive);
 
                             if (wasActive) {
                                 overlay.classList.remove('active');
                                 document.body.classList.remove('canvas-modal-open');
-                                console.log('✅ [CLOSE MODAL] Classe active retirée de l\'overlay');
-                            } else {
-                                console.log('⚠️ [CLOSE MODAL] Overlay déjà inactif');
                             }
                         } else {
                             console.error('❌ [CLOSE MODAL] Overlay NON trouvé pour:', currentModalCategory);
                         }
 
-                        console.log('🔄 [CLOSE MODAL] Reset currentModalCategory');
                         currentModalCategory = null;
                     }
 
@@ -1874,28 +1733,24 @@
 
                     // Initialisation : fermer toutes les modales au départ
                     document.addEventListener('DOMContentLoaded', function() {
-                        console.log('🔍 DEBUG: Fermeture de toutes les modales au démarrage');
                         const allOverlays = document.querySelectorAll('.canvas-modal-overlay');
                         allOverlays.forEach(overlay => {
                             overlay.classList.remove('active');
                         });
                         document.body.classList.remove('canvas-modal-open');
-                        console.log('🔍 DEBUG: Toutes les modales fermées au démarrage');
                     });
 
                     // Écouter l'événement de sauvegarde globale pour mettre à jour les indicateurs
                     document.addEventListener('pdfBuilderSettingsSaved', function(event) {
-                        console.log('🎨 Contenu: Sauvegarde globale détectée, mise à jour des indicateurs');
-                        
+
                         // Mettre à jour l'indicateur de la bibliothèque de templates
                         const templateLibraryCheckbox = document.getElementById('template_library_enabled');
                         const templateLibraryIndicator = document.getElementById('template-library-indicator');
-                        
+
                         if (templateLibraryCheckbox && templateLibraryIndicator) {
                             const isEnabled = templateLibraryCheckbox.checked;
                             templateLibraryIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
                             templateLibraryIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
-                            console.log('📋 Indicateur bibliothèque templates mis à jour:', isEnabled ? 'ACTIF' : 'INACTIF');
                         }
                     });
                     document.addEventListener('click', function(e) {
@@ -1949,8 +1804,6 @@
                         }
                     });
 
-                    console.log('Système de modal PDF Builder initialisé');
-
                     // ===========================================
                     // ===========================================
                     // FONCTIONS GLOBALES DE MONITORING
@@ -1963,7 +1816,6 @@
                         clearHistory: () => {
                             modalMonitoring.history = [];
                             localStorage.removeItem('pdfBuilderMonitoring');
-                            console.log('📝 Historique de monitoring effacé (localStorage inclus)');
                         },
                         exportData: () => {
                             const data = {
@@ -1971,12 +1823,9 @@
                                 report: modalMonitoring.generateReport(),
                                 timestamp: new Date().toISOString()
                             };
-                            console.log('📊 Données de monitoring exportées:', data);
                             return data;
                         }
                     };
-
-                    console.log('🔍 Monitoring accessible via: window.pdfBuilderMonitoring.showDashboard()');
 
                     // ===========================================
                     // SYNCHRONISATION DES TOGGLES AVEC CHAMPS CACHÉS
@@ -2007,7 +1856,6 @@
                                     }
 
                                     hiddenField.value = newValue;
-                                    console.log(`🔄 Champ synchronisé: ${fieldName} = ${newValue} (type: ${target.type})`);
                                 }
                             }
                         });
@@ -2025,12 +1873,9 @@
                                     } else {
                                         target.value = hiddenField.value;
                                     }
-                                    console.log(`🔄 Champ mis à jour depuis caché: ${fieldName} = ${hiddenField.value}`);
                                 }
                             }
                         });
-
-                        console.log('🔗 Synchronisation champs ↔ champs cachés activée');
                     }
 
                     // Initialiser la synchronisation
@@ -2038,8 +1883,6 @@
 
                     // === DIAGNOSTIC COMPLET DE L'ONGLET CANVAS ===
                     function runCanvasDiagnostic() {
-                        console.log('🔍 === DIAGNOSTIC COMPLET CANVAS ===');
-
                         const results = {
                             cards: 0,
                             buttons: 0,
@@ -2052,7 +1895,6 @@
                         // 1. Vérifier les cartes
                         const cards = document.querySelectorAll('.canvas-card');
                         results.cards = cards.length;
-                        console.log(`📋 Cartes trouvées: ${results.cards}`);
 
                         cards.forEach((card, index) => {
                             const category = card.dataset.category;
@@ -2076,7 +1918,6 @@
                         // 3. Vérifier les champs cachés
                         const hiddenFields = document.querySelectorAll('input[type="hidden"][name^="pdf_builder_canvas_canvas_"]');
                         results.hiddenFields = hiddenFields.length;
-                        console.log(`🔒 Champs cachés: ${results.hiddenFields}`);
 
                         // 4. Vérifier les éléments de preview
                         const previewElements = ['card-canvas-width', 'card-canvas-height', 'card-canvas-dpi',
@@ -2093,30 +1934,12 @@
                         if (typeof formGenerator === 'undefined') {
                             results.issues.push('formGenerator non défini');
                         } else {
-                            console.log('✅ formGenerator défini');
                             if (!formGenerator.generateModalHTML) results.issues.push('formGenerator.generateModalHTML manquant');
                         }
 
                         // 6. Vérifier modalSettingsManager
                         if (typeof modalSettingsManager === 'undefined') {
                             results.issues.push('modalSettingsManager non défini');
-                        } else {
-                            console.log('✅ modalSettingsManager défini');
-                        }
-
-                        // Résumé
-                        console.log('📊 RÉSULTATS DIAGNOSTIC:');
-                        console.log(`   Cartes: ${results.cards}/8`);
-                        console.log(`   Boutons: ${results.buttons}/8`);
-                        console.log(`   Modales: ${results.modals}/8`);
-                        console.log(`   Champs cachés: ${results.hiddenFields}`);
-                        console.log(`   Éléments preview: ${results.previewElements}/8`);
-
-                        if (results.issues.length === 0) {
-                            console.log('✅ AUCUN PROBLÈME DÉTECTÉ');
-                        } else {
-                            console.error('❌ PROBLÈMES DÉTECTÉS:');
-                            results.issues.forEach(issue => console.error(`   - ${issue}`));
                         }
 
                         return results;
@@ -2125,16 +1948,11 @@
                     // Lancer le diagnostic automatiquement
                     setTimeout(runCanvasDiagnostic, 1000);
 
-                    console.log('✅ [JS INIT] Script modales chargé avec succès - ' + new Date().toISOString());
-                    console.log('🔍 [JS INIT] Fonctions disponibles: openModal, closeModal, saveModalSettings');
-                    console.log('🔍 [JS INIT] Variables globales: currentModalCategory =', currentModalCategory);
-
                 })();
 
                 // ==========================================
                 // CHARGEMENT DU SYSTÈME DE MONITORING
                 // ==========================================
-                console.log('🔍 [MONITORING] Chargement du système de monitoring des cartes...');
 
                 <?php
                 // Vérifier si le fichier JS existe et logger en PHP
@@ -2151,11 +1969,9 @@
                 function loadCanvasCardMonitor() {
                     return new Promise((resolve, reject) => {
                         const scriptUrl = '<?php echo plugins_url('wp-pdf-builder-pro/resources/assets/js/canvas-card-monitor.js') . "?v=" . time(); ?>';
-                        console.log('🔍 [MONITORING] URL du script:', scriptUrl);
                         const script = document.createElement('script');
                         script.src = scriptUrl;
                         script.onload = () => {
-                            console.log('✅ [MONITORING] Système de monitoring chargé');
                             resolve();
                         };
                         script.onerror = (error) => {
@@ -2169,14 +1985,6 @@
                 // Charger le monitoring après un court délai
                 setTimeout(() => {
                     loadCanvasCardMonitor().then(() => {
-                        console.log('🎯 [MONITORING] Système de monitoring initialisé avec succès');
-                        console.log('🔧 [MONITORING] Commandes de débogage disponibles:');
-                        console.log('   - CanvasCardMonitorDebug.getStatus()');
-                        console.log('   - CanvasCardMonitorDebug.getErrors()');
-                        console.log('   - CanvasCardMonitorDebug.getWarnings()');
-                        console.log('   - CanvasCardMonitorDebug.forceResync()');
-                        console.log('   - CanvasCardMonitorDebug.setLogLevel("DEBUG")');
-                        console.log('   - CanvasCardMonitorDebug.toggleAutoSync()');
                     }).catch(error => {
                         console.error('❌ [MONITORING] Échec de l\'initialisation du système de monitoring:', error);
                     });

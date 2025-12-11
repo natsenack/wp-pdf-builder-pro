@@ -2,10 +2,10 @@
 
 // Debug function
 const debugEnabled = typeof window !== 'undefined' && window.pdfBuilderDebugSettings?.javascript;
-const debugLog = (...args) => debugEnabled && console.log(...args);
-const debugError = (...args) => debugEnabled && console.error(...args);
-const debugWarn = (...args) => debugEnabled && console.warn(...args);
-const debugTable = (...args) => debugEnabled && console.table(...args);
+const debugLog = (...args) => {}; // Debug logging disabled for production
+const debugError = (...args) => {}; // Debug error logging disabled for production
+const debugWarn = (...args) => {}; // Debug warn logging disabled for production
+const debugTable = (...args) => {}; // Debug table logging disabled for production
 
 
 // Vérifier les APIs critiques

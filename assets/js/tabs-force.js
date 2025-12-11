@@ -5,8 +5,6 @@
 (function() {
     'use strict';
 
-    console.log('🔥 PDF BUILDER - TABS FORCE CHARGEMENT - Version diagnostic');
-    
     // Configuration de force
     const CONFIG = {
         debug: true,
@@ -15,12 +13,7 @@
 
     // Fonction de logging
     function log(message, data = null) {
-        if (CONFIG.debug) {
-            console.log('🔥 FORCE:', message, data || '');
-        }
-    }
-
-    // Fonction de switch d'onglet
+        // Logging disabled for production
     function switchTab(tabId) {
         log('SWITCH vers:', tabId);
         
