@@ -13,6 +13,7 @@ class PDF_Builder_Nonce_Manager {
     private $max_retries = 2;
     private $nonce_mappings = [
         'save_settings' => 'pdf_builder_save_settings_nonce',
+        'pdf_builder_canvas_settings' => 'pdf_builder_canvas_settings',
         'get_cache_metrics' => 'pdf_builder_ajax',
         'test_cache_integration' => 'pdf_builder_ajax',
         'clear_cache' => 'pdf_builder_ajax',

@@ -640,7 +640,8 @@
                                 // Recharger la page pour afficher les nouvelles valeurs
                                 location.reload();
                             } else {
-                                alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
+                                const errorMessage = (data.data && data.data.message) ? data.data.message : 'Erreur inconnue';
+                                alert('Erreur lors de la sauvegarde: ' + errorMessage);
                             }
                         })
                         .catch(error => {
