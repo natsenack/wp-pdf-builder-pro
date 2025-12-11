@@ -243,6 +243,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                         error_log("[PDF Builder] GRID_TOGGLE_SAVE - {$setting_key}: {$value}");
                     }
                     
+                    // Log pour tous les toggles d'interactions
+                    if (in_array($setting_key, ['pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
+                        error_log("[PDF Builder] INTERACTIONS_TOGGLE_SAVE - {$setting_key}: {$value}");
+                    }
+                    
                     // Validation spécifique selon le type de paramètre
                     if ((strpos($setting_key, '_width') !== false && strpos($setting_key, '_border_width') === false) || strpos($setting_key, '_height') !== false) {
                         $value = intval($value);
