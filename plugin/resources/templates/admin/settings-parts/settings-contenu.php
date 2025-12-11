@@ -1713,7 +1713,7 @@
 
                     // Fonction pour réinitialiser tous les paramètres Canvas aux valeurs par défaut
                     function resetCanvasSettings() {
-                        console.log('[PDF Builder] RESET_CANVAS - Starting Canvas settings reset');
+                        console.log('[PDF Builder] RESET_CANVAS - Function called, starting Canvas settings reset');
 
                         try {
                             // Valeurs par défaut pour tous les paramètres Canvas
@@ -1773,7 +1773,8 @@
                             });
 
                             // Faire une requête AJAX pour réinitialiser les options WordPress
-                            fetch(ajaxurl, {
+                            const ajaxUrl = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
+                            fetch(ajaxUrl, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                 body: new URLSearchParams({
@@ -1958,10 +1959,13 @@
                             const resetBtn = e.target.closest('#reset-canvas-settings');
                             if (resetBtn) {
                                 e.preventDefault();
-                                console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked');
+                                console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked on button:', resetBtn);
 
                                 if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres Canvas aux valeurs par défaut ? Cette action est irréversible.')) {
+                                    console.log('[PDF Builder] RESET_BUTTON - User confirmed, calling resetCanvasSettings');
                                     resetCanvasSettings();
+                                } else {
+                                    console.log('[PDF Builder] RESET_BUTTON - User cancelled reset');
                                 }
                                 return;
                             }
