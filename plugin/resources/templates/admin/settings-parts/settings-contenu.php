@@ -1405,8 +1405,8 @@
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
 
-                            // Focus sur la modale pour l'accessibilité
-                            modal.setAttribute('aria-hidden', 'false');
+                            // Accessibilité - utiliser inert au lieu d'aria-hidden
+                            modal.removeAttribute('inert');
                             modal.focus();
 
                             console.log(`[PDF Builder] OPEN_MODAL - Modal opened successfully: ${modalId}`);
@@ -1561,8 +1561,9 @@
                             modal.style.display = 'none';
                             document.body.style.overflow = '';
 
-                            // Accessibilité
-                            modal.setAttribute('aria-hidden', 'true');
+                            // Accessibilité - déplacer le focus et utiliser inert
+                            document.body.focus();
+                            modal.setAttribute('inert', '');
 
                             console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
 
