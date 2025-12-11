@@ -562,19 +562,8 @@
                 // wp_enqueue_style('pdf-builder-canvas-modals', $css_url, array(), '1.0.0');
             ?>
 
-<script>
-                // Force cache clear
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for(let registration of registrations) {
-                            registration.unregister();
-                        }
-                    });
-                }
-                // Clear localStorage and sessionStorage
-                localStorage.clear();
-                sessionStorage.clear();
-                console.log('Cache cleared by PDF Builder');
+            <script></script>
+
 
     </div> <!-- Fermeture de settings-content -->
 
@@ -582,4 +571,5 @@
             <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
+
 
