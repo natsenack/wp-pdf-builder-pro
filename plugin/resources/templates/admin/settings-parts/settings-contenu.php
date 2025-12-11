@@ -11,7 +11,10 @@
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option_contenu($key, $default = '') {
-        return get_option('pdf_builder_' . $key, $default);
+        $option_key = 'pdf_builder_' . $key;
+        $value = get_option($option_key, $default);
+        error_log("[PDF Builder] get_canvas_option_contenu - {$key}: {$value} (default: {$default})");
+        return $value;
     }
 
     // INITIALISER LES OPTIONS CANVAS AVEC VALEURS PAR DÉFAUT SI ELLES N'EXISTENT PAS
@@ -670,7 +673,6 @@
                                 const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
                                 if (hiddenField) {
                                     const value = hiddenField.value;
-                                    console.log(`Updating ${fieldId} (${settingKey}) with value: ${value}`);
                                     
                                     if (field.type === 'checkbox') {
                                         field.checked = value === '1';
@@ -685,11 +687,7 @@
                                             });
                                         }
                                     }
-                                } else {
-                                    console.log(`Hidden field not found for ${settingKey}`);
                                 }
-                            } else {
-                                console.log(`Field not found for ${fieldId} or ${settingKey}`);
                             }
                         }
                     }

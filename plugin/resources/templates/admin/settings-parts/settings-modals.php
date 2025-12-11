@@ -9,7 +9,10 @@
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option($key, $default = '') {
-        return get_option('pdf_builder_' . $key, $default);
+        $option_key = 'pdf_builder_' . $key;
+        $value = get_option($option_key, $default);
+        error_log("[PDF Builder] get_canvas_option - {$key}: {$value} (default: {$default})");
+        return $value;
     }
 ?>
 

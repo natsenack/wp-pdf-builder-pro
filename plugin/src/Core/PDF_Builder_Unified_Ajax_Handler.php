@@ -233,6 +233,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if (isset($_POST[$setting_key])) {
                     $value = sanitize_text_field($_POST[$setting_key]);
                     
+                    // Log pour déboguer
+                    error_log("[PDF Builder] Sauvegarde Canvas - {$setting_key}: {$value}");
+                    
                     // Validation spécifique selon le type de paramètre
                     if ((strpos($setting_key, '_width') !== false && strpos($setting_key, '_border_width') === false) || strpos($setting_key, '_height') !== false) {
                         $value = intval($value);
@@ -240,6 +243,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     } elseif (strpos($setting_key, '_border_width') !== false) {
                         $value = intval($value);
                         $value = max(0, min(10, $value)); // Limiter entre 0 et 10 pour l'épaisseur des bordures
+                        error_log("[PDF Builder] Border width validé: {$value}");
                     } elseif (strpos($setting_key, '_dpi') !== false) {
                         $value = intval($value);
                         $value = max(72, min(600, $value)); // Limiter entre 72 et 600 DPI
