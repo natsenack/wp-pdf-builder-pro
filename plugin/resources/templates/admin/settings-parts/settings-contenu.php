@@ -80,10 +80,13 @@
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
                 <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); ?>
-                <h3>
+                <h3 style="display: flex; justify-content: space-between; align-items: center;">
                     <span>
                         🎨 Canvas
                     </span>
+                    <button type="button" id="reset-canvas-settings" class="button button-secondary" style="font-size: 12px; padding: 4px 8px;" title="Réinitialiser tous les paramètres Canvas aux valeurs par défaut">
+                        🔄 Réinitialiser
+                    </button>
                 </h3>
 
                 <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
@@ -1436,6 +1439,41 @@
                         }
                     }
 
+                    // Fonction pour mettre à jour l'affichage des cartes Canvas après réinitialisation
+                    function updateCanvasCardsDisplay() {
+                        console.log('[PDF Builder] UPDATE_CARDS - Updating canvas cards display');
+
+                        try {
+                            // Mettre à jour les indicateurs de statut sur les cartes
+                            const cards = document.querySelectorAll('.canvas-card');
+                            cards.forEach(card => {
+                                const category = card.getAttribute('data-category');
+                                if (category) {
+                                    // Marquer comme valeurs par défaut
+                                    const statusIndicator = card.querySelector('.canvas-status');
+                                    if (statusIndicator) {
+                                        statusIndicator.textContent = 'Défaut';
+                                        statusIndicator.className = 'canvas-status status-default';
+                                    }
+
+                                    console.log(`[PDF Builder] UPDATE_CARDS - Updated card for category: ${category}`);
+                                }
+                            });
+
+                            // Forcer la mise à jour des valeurs dans toutes les modales ouvertes
+                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                            openModals.forEach(modal => {
+                                const category = modal.id.replace('canvas-', '').replace('-modal-overlay', '');
+                                if (category) {
+                                    updateModalValues(category);
+                                }
+                            });
+
+                        } catch (error) {
+                            console.error('[PDF Builder] UPDATE_CARDS - Error updating cards display:', error);
+                        }
+                    }
+
                     // Fonction pour mettre à jour les valeurs d'une modale avec les paramètres actuels
                     function updateModalValues(category) {
                         console.log(`[PDF Builder] UPDATE_MODAL - Called with category: ${category}`);
@@ -1673,6 +1711,108 @@
                         }
                     }
 
+                    // Fonction pour réinitialiser tous les paramètres Canvas aux valeurs par défaut
+                    function resetCanvasSettings() {
+                        console.log('[PDF Builder] RESET_CANVAS - Starting Canvas settings reset');
+
+                        try {
+                            // Valeurs par défaut pour tous les paramètres Canvas
+                            const defaultValues = {
+                                'pdf_builder_canvas_width': '794',
+                                'pdf_builder_canvas_height': '1123',
+                                'pdf_builder_canvas_dpi': '96',
+                                'pdf_builder_canvas_format': 'A4',
+                                'pdf_builder_canvas_bg_color': '#ffffff',
+                                'pdf_builder_canvas_border_color': '#cccccc',
+                                'pdf_builder_canvas_border_width': '1',
+                                'pdf_builder_canvas_container_bg_color': '#f8f9fa',
+                                'pdf_builder_canvas_shadow_enabled': '0',
+                                'pdf_builder_canvas_grid_enabled': '1',
+                                'pdf_builder_canvas_grid_size': '20',
+                                'pdf_builder_canvas_guides_enabled': '1',
+                                'pdf_builder_canvas_snap_to_grid': '1',
+                                'pdf_builder_canvas_zoom_min': '0.1',
+                                'pdf_builder_canvas_zoom_max': '5',
+                                'pdf_builder_canvas_zoom_default': '1',
+                                'pdf_builder_canvas_zoom_step': '0.1',
+                                'pdf_builder_canvas_export_quality': '90',
+                                'pdf_builder_canvas_export_format': 'pdf',
+                                'pdf_builder_canvas_export_transparent': '0',
+                                'pdf_builder_canvas_drag_enabled': '1',
+                                'pdf_builder_canvas_resize_enabled': '1',
+                                'pdf_builder_canvas_rotate_enabled': '1',
+                                'pdf_builder_canvas_multi_select': '1',
+                                'pdf_builder_canvas_selection_mode': 'single',
+                                'pdf_builder_canvas_keyboard_shortcuts': '1',
+                                'pdf_builder_canvas_fps_target': '60',
+                                'pdf_builder_canvas_memory_limit_js': '128',
+                                'pdf_builder_canvas_response_timeout': '5000',
+                                'pdf_builder_canvas_lazy_loading_editor': '1',
+                                'pdf_builder_canvas_preload_critical': '1',
+                                'pdf_builder_canvas_lazy_loading_plugin': '1',
+                                'pdf_builder_canvas_debug_enabled': '0',
+                                'pdf_builder_canvas_performance_monitoring': '1',
+                                'pdf_builder_canvas_error_reporting': '1',
+                                'pdf_builder_canvas_memory_limit_php': '256'
+                            };
+
+                            // Réinitialiser les champs cachés
+                            Object.keys(defaultValues).forEach(key => {
+                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${key}]"]`);
+                                if (hiddenField) {
+                                    hiddenField.value = defaultValues[key];
+                                    console.log(`[PDF Builder] RESET_CANVAS - Reset ${key} to ${defaultValues[key]}`);
+                                }
+                            });
+
+                            // Effacer le cache localStorage pour toutes les catégories
+                            const categories = ['dimensions', 'apparence', 'grille', 'zoom', 'export', 'interaction', 'performance', 'debug'];
+                            categories.forEach(category => {
+                                localStorage.removeItem(`pdf_builder_modal_${category}`);
+                                console.log(`[PDF Builder] RESET_CANVAS - Cleared cache for category: ${category}`);
+                            });
+
+                            // Faire une requête AJAX pour réinitialiser les options WordPress
+                            fetch(ajaxurl, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: new URLSearchParams({
+                                    action: 'pdf_builder_reset_canvas_defaults',
+                                    nonce: '<?php echo wp_create_nonce("reset_canvas_defaults"); ?>'
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    console.log('[PDF Builder] RESET_CANVAS - Server-side reset successful');
+
+                                    // Fermer toutes les modales ouvertes
+                                    const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                                    openModals.forEach(modal => {
+                                        const modalId = modal.id;
+                                        closeModal(modalId);
+                                    });
+
+                                    // Mettre à jour l'affichage des cartes avec les nouvelles valeurs
+                                    updateCanvasCardsDisplay();
+
+                                    alert('✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.');
+                                } else {
+                                    console.error('[PDF Builder] RESET_CANVAS - Server-side reset failed:', data);
+                                    alert('❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('[PDF Builder] RESET_CANVAS - AJAX error:', error);
+                                alert('❌ Erreur de connexion lors de la réinitialisation.');
+                            });
+
+                        } catch (error) {
+                            console.error('[PDF Builder] RESET_CANVAS - Error during reset:', error);
+                            alert('❌ Erreur lors de la réinitialisation des paramètres.');
+                        }
+                    }
+
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
                         const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
@@ -1810,6 +1950,18 @@
                                 if (modal) {
                                     const modalId = modal.id;
                                     closeModal(modalId);
+                                }
+                                return;
+                            }
+
+                            // Gestionnaire pour réinitialiser les paramètres Canvas
+                            const resetBtn = e.target.closest('#reset-canvas-settings');
+                            if (resetBtn) {
+                                e.preventDefault();
+                                console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked');
+
+                                if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres Canvas aux valeurs par défaut ? Cette action est irréversible.')) {
+                                    resetCanvasSettings();
                                 }
                                 return;
                             }
