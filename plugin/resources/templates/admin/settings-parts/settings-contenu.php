@@ -1863,6 +1863,10 @@
 
                         // Configurer les gestionnaires d'événements pour les dépendances
                         setupDependencyHandlers: function() {
+                            // Temporairement désactivé pour éviter l'erreur currentModalCategory
+                            console.log('🔧 setupDependencyHandlers temporairement désactivé');
+                            return;
+
                             if (!currentModalCategory) return;
 
                             const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
