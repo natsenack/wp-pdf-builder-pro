@@ -4,6 +4,10 @@
  * Date: 2025-12-03
  */
 
+// Protection contre les rechargements multiples
+if (typeof window.pdfBuilderTabsInitialized === 'undefined') {
+    window.pdfBuilderTabsInitialized = true;
+
 // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
 if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
     window.PDF_BUILDER_CONFIG = {
@@ -264,3 +268,6 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
             }
         }
     };
+
+// Fin de la protection contre les rechargements multiples
+}
