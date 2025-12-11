@@ -235,8 +235,8 @@ class PDF_Builder_Loader {
      * Charge les intégrations
      */
     private function load_integrations() {
-        // WooCommerce si actif
-        if (class_exists('WooCommerce')) {
+        // WooCommerce si actif - différer la vérification pour éviter les problèmes de chargement
+        if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
             $this->require_file('src/Cache/WooCommerceCache.php');
         }
     }

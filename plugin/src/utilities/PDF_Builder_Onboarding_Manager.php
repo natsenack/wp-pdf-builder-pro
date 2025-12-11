@@ -89,6 +89,19 @@ class PDF_Builder_Onboarding_Manager {
     private function save_onboarding_options() {
         update_option('pdf_builder_onboarding', $this->onboarding_options);
     }
+
+    /**
+     * Vérifier si WooCommerce est disponible (différé pour éviter les problèmes de chargement)
+     */
+    private function is_woocommerce_available() {
+        // Vérifier seulement si nous sommes dans un contexte WordPress approprié
+        if (!did_action('plugins_loaded')) {
+            return false; // Pas encore prêt
+        }
+
+        // Vérifier si WooCommerce est installé et actif
+        return class_exists('WooCommerce') && defined('WC_VERSION');
+    }
     /**
      * Vérifier le statut d'onboarding (appelé via admin_enqueue_scripts)
      */
@@ -202,7 +215,8 @@ class PDF_Builder_Onboarding_Manager {
             ]
         ];
         // Ajouter l'étape WooCommerce seulement si WooCommerce est installé
-        if (class_exists('WooCommerce')) {
+        // Utiliser une vérification différée pour éviter les problèmes de chargement prématuré
+        if ($this->is_woocommerce_available()) {
             $steps[5] = [
                 'id' => 'woocommerce_setup',
                 'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
@@ -478,7 +492,7 @@ class PDF_Builder_Onboarding_Manager {
                     </div>
                 ';
             case 'woocommerce_setup':
-                if (class_exists('WooCommerce')) {
+                if ($this->is_woocommerce_available()) {
                     return '
                         <div class="woocommerce-setup">
                             <div class="setup-notice success">
