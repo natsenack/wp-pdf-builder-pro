@@ -1952,20 +1952,6 @@
                     console.log('Système de modal PDF Builder initialisé');
 
                     // ===========================================
-                    // PRÉVENTION DU RECHARGEMENT DE PAGE
-                    // ===========================================
-
-                    // Empêcher la soumission du formulaire principal (canvas-form)
-                    const canvasForm = document.getElementById('canvas-form');
-                    if (canvasForm) {
-                        canvasForm.addEventListener('submit', function(e) {
-                            e.preventDefault();
-                            console.log('🚫 Soumission du formulaire principal empêchée - toutes les sauvegardes passent par AJAX');
-                            return false;
-                        });
-                        console.log('✅ Prévention du rechargement de page activée');
-                    }
-
                     // ===========================================
                     // FONCTIONS GLOBALES DE MONITORING
 
