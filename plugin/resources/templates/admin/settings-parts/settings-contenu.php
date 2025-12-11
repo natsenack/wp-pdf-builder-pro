@@ -139,9 +139,9 @@
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
                                         <?php
-                                        $width = get_option('pdf_builder_canvas_canvas_width', '794');
-                                        $height = get_option('pdf_builder_canvas_canvas_height', '1123');
-                                        $dpi = get_option('pdf_builder_canvas_canvas_dpi', '96');
+                                        $width = intval(get_option('pdf_builder_canvas_canvas_width', '794'));
+                                        $height = intval(get_option('pdf_builder_canvas_canvas_height', '1123'));
+                                        $dpi = intval(get_option('pdf_builder_canvas_canvas_dpi', '96'));
                                         $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
                                         $widthMM = round(($width / $dpi) * 25.4, 1);
                                         $heightMM = round(($height / $dpi) * 25.4, 1);
