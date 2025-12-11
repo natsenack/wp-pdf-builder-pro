@@ -1333,13 +1333,42 @@
                         }
                     }
 
-                    // Appeler l'initialisation quand le DOM est prêt
+                    // Appeler l'initialisation quand le DOM est prêt et les modals sont chargées
                     function initWhenReady() {
                         if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', () => initializeModals(0));
+                            document.addEventListener('DOMContentLoaded', () => waitForModalsAndInitialize(0));
                         } else {
-                            // DOM déjà chargé, mais attendre un peu pour s'assurer que les modals sont rendues
-                            setTimeout(() => initializeModals(0), 100);
+                            // DOM déjà chargé, attendre les modals
+                            waitForModalsAndInitialize(0);
+                        }
+                    }
+
+                    // Fonction pour attendre que les modals soient chargées
+                    function waitForModalsAndInitialize(attempt = 0) {
+                        const maxAttempts = 10;
+                        const modalIds = [
+                            'canvas-dimensions-modal-overlay',
+                            'canvas-apparence-modal-overlay',
+                            'canvas-grille-modal-overlay',
+                            'canvas-zoom-modal-overlay',
+                            'canvas-interactions-modal-overlay',
+                            'canvas-export-modal-overlay',
+                            'canvas-performance-modal-overlay',
+                            'canvas-debug-modal-overlay'
+                        ];
+
+                        const allModalsLoaded = modalIds.every(id => document.getElementById(id) !== null);
+
+                        if (allModalsLoaded) {
+                            console.log('[PDF Builder] MODALS_READY - All modals loaded, initializing...');
+                            initializeModals(0);
+                        } else if (attempt < maxAttempts) {
+                            console.log(`[PDF Builder] MODALS_WAIT - Waiting for modals (attempt ${attempt + 1}/${maxAttempts})`);
+                            setTimeout(() => waitForModalsAndInitialize(attempt + 1), 100);
+                        } else {
+                            console.error('[PDF Builder] MODALS_TIMEOUT - Modals failed to load after maximum attempts');
+                            // Essayer quand même d'initialiser avec ce qui est disponible
+                            initializeModals(0);
                         }
                     }
 
@@ -1931,7 +1960,7 @@
                 })();
             </script>
 
-            <!-- Inclusion des modales Canvas - DÉPLACÉ AVANT LE SCRIPT -->
+            <!-- Inclusion des modales Canvas -->
             <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
