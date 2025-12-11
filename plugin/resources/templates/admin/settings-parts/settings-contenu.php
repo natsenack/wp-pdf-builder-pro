@@ -768,10 +768,18 @@
                         const formData = new FormData(form);
                         const settings = {};
 
+                        // Ajouter manuellement toutes les checkboxes avec leur valeur actuelle
+                        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach(checkbox => {
+                            formData.set(checkbox.name, checkbox.checked ? '1' : '0');
+                        });
+
                         // Convertir FormData en objet
                         for (let [key, value] of formData.entries()) {
                             settings[key] = value;
                         }
+
+                        console.log('SAVE_DEBUG: Settings to save:', settings);
 
                         // Ajouter l'action et le nonce
                         settings['action'] = 'pdf_builder_save_canvas_settings';

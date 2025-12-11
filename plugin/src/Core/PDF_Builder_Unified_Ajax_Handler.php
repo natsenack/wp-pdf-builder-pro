@@ -184,6 +184,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
+        error_log("[PDF Builder] SAVE_CANVAS_START - Received POST data: " . print_r($_POST, true));
+
         try {
             $saved_count = 0;
             $saved_options = [];
