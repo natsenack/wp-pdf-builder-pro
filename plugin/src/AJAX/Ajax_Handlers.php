@@ -469,7 +469,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
         return [
             'saved_count' => $saved_count,
-            'saved_settings' => $settings,
+            'saved_settings' => $this->format_saved_settings_for_js($saved_settings),
             'debug_logs' => [
                 'processed_fields' => array_keys($saved_settings),
                 'total_processed' => count($saved_settings),
@@ -491,6 +491,64 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 }, ARRAY_FILTER_USE_KEY))
             ]
         ];
+    }
+
+    /**
+     * Formate les paramètres sauvegardés pour le JavaScript (clés courtes)
+     */
+    private function format_saved_settings_for_js($saved_settings) {
+        $formatted = [];
+
+        // Mapping des clés pour le JavaScript
+        $key_mapping = [
+            'pdf_builder_canvas_canvas_width' => 'canvas_width',
+            'pdf_builder_canvas_canvas_height' => 'canvas_height',
+            'pdf_builder_canvas_canvas_dpi' => 'canvas_dpi',
+            'pdf_builder_canvas_canvas_format' => 'canvas_format',
+            'pdf_builder_canvas_canvas_bg_color' => 'canvas_bg_color',
+            'pdf_builder_canvas_canvas_border_color' => 'canvas_border_color',
+            'pdf_builder_canvas_canvas_border_width' => 'canvas_border_width',
+            'pdf_builder_canvas_canvas_container_bg_color' => 'canvas_container_bg_color',
+            'pdf_builder_canvas_canvas_shadow_enabled' => 'canvas_shadow_enabled',
+            'pdf_builder_canvas_canvas_grid_enabled' => 'canvas_grid_enabled',
+            'pdf_builder_canvas_canvas_grid_size' => 'canvas_grid_size',
+            'pdf_builder_canvas_canvas_guides_enabled' => 'canvas_guides_enabled',
+            'pdf_builder_canvas_canvas_snap_to_grid' => 'canvas_snap_to_grid',
+            'pdf_builder_canvas_canvas_zoom_min' => 'canvas_zoom_min',
+            'pdf_builder_canvas_canvas_zoom_max' => 'canvas_zoom_max',
+            'pdf_builder_canvas_canvas_zoom_default' => 'canvas_zoom_default',
+            'pdf_builder_canvas_canvas_zoom_step' => 'canvas_zoom_step',
+            'pdf_builder_canvas_canvas_export_quality' => 'canvas_export_quality',
+            'pdf_builder_canvas_canvas_export_format' => 'canvas_export_format',
+            'pdf_builder_canvas_canvas_export_transparent' => 'canvas_export_transparent',
+            'pdf_builder_canvas_canvas_drag_enabled' => 'canvas_drag_enabled',
+            'pdf_builder_canvas_canvas_resize_enabled' => 'canvas_resize_enabled',
+            'pdf_builder_canvas_canvas_rotate_enabled' => 'canvas_rotate_enabled',
+            'pdf_builder_canvas_canvas_multi_select' => 'canvas_multi_select',
+            'pdf_builder_canvas_canvas_selection_mode' => 'canvas_selection_mode',
+            'pdf_builder_canvas_canvas_keyboard_shortcuts' => 'canvas_keyboard_shortcuts',
+            'pdf_builder_canvas_canvas_fps_target' => 'canvas_fps_target',
+            'pdf_builder_canvas_canvas_memory_limit_js' => 'canvas_memory_limit_js',
+            'pdf_builder_canvas_canvas_response_timeout' => 'canvas_response_timeout',
+            'pdf_builder_canvas_canvas_lazy_loading_editor' => 'canvas_lazy_loading_editor',
+            'pdf_builder_canvas_canvas_preload_critical' => 'canvas_preload_critical',
+            'pdf_builder_canvas_canvas_lazy_loading_plugin' => 'canvas_lazy_loading_plugin',
+            'pdf_builder_canvas_canvas_debug_enabled' => 'canvas_debug_enabled',
+            'pdf_builder_canvas_canvas_performance_monitoring' => 'canvas_performance_monitoring',
+            'pdf_builder_canvas_canvas_error_reporting' => 'canvas_error_reporting',
+            'pdf_builder_canvas_canvas_memory_limit_php' => 'canvas_memory_limit_php'
+        ];
+
+        // Convertir les clés pour le JavaScript
+        foreach ($saved_settings as $full_key => $value) {
+            if (isset($key_mapping[$full_key])) {
+                $formatted[$key_mapping[$full_key]] = $value;
+            }
+        }
+
+        error_log("[DEBUG AJAX] Formatted saved_settings for JS: " . json_encode($formatted));
+
+        return $formatted;
     }
 }
 

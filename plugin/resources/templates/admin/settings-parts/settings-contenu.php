@@ -134,11 +134,19 @@
                             <aside class="canvas-card-preview">
                                 <div class="preview-format">
                                     <div >
-                                        <span id="card-canvas-width">794</span>×
-                                        <span id="card-canvas-height">1123</span>px
+                                        <span id="card-canvas-width"><?php echo esc_html(get_option('pdf_builder_canvas_canvas_width', '794')); ?></span>×
+                                        <span id="card-canvas-height"><?php echo esc_html(get_option('pdf_builder_canvas_canvas_height', '1123')); ?></span>px
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
-                                        96 DPI - A4 (210.0×297.0mm)
+                                        <?php
+                                        $width = get_option('pdf_builder_canvas_canvas_width', '794');
+                                        $height = get_option('pdf_builder_canvas_canvas_height', '1123');
+                                        $dpi = get_option('pdf_builder_canvas_canvas_dpi', '96');
+                                        $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
+                                        $widthMM = round(($width / $dpi) * 25.4, 1);
+                                        $heightMM = round(($height / $dpi) * 25.4, 1);
+                                        echo esc_html("{$dpi} DPI - {$format} ({$widthMM}×{$heightMM}mm)");
+                                        ?>
                                     </span>
                                 </div>
                             </aside>
@@ -1541,6 +1549,9 @@
 
                             console.log('🎉 [OPEN MODAL] Modal ouverte:', modalId);
 
+                            // Synchroniser les valeurs de la modal avec les champs cachés
+                            modalSettingsManager.syncModalValues();
+
                             // Configurer les event listeners pour cette modal après l'ouverture
                             setTimeout(() => {
                                 console.log('🔧 Modal event listeners setup skipped (preview system removed)');
@@ -1557,6 +1568,36 @@
                             if (!currentModalCategory) return;
 
                             console.log('Synchronisation des valeurs de la modal pour:', currentModalCategory);
+
+                            // Trouver la modal actuelle
+                            let currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal-fullscreen`);
+                            if (!currentModal) {
+                                currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
+                            }
+                            if (!currentModal) return;
+
+                            // Pour chaque champ caché canvas, mettre à jour le champ correspondant dans la modal
+                            const hiddenFields = document.querySelectorAll('input[type="hidden"][name^="pdf_builder_settings[pdf_builder_canvas_"]');
+
+                            hiddenFields.forEach(hiddenField => {
+                                const fieldName = hiddenField.name.replace('pdf_builder_settings[', '').replace(']', '');
+                                const modalField = currentModal.querySelector(`[name="${fieldName}"]`);
+
+                                if (modalField) {
+                                    const value = hiddenField.value;
+
+                                    if (modalField.type === 'checkbox' || modalField.classList.contains('toggle-checkbox')) {
+                                        modalField.checked = value === '1';
+                                    } else {
+                                        modalField.value = value;
+                                    }
+
+                                    console.log(`🔄 Modal synchronisée: ${fieldName} = ${value}`);
+                                }
+                            });
+
+                            console.log('✅ Valeurs de la modal synchronisées');
+                        },
 
                             // Trouver le modal actuellement ouvert
                             const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
@@ -1664,6 +1705,52 @@
                             // closeModal(); // Déplacé dans le callback AJAX
                         },
 
+                        // Mettre à jour l'affichage des valeurs dans les cartes après sauvegarde
+                        updateDisplayValues: function() {
+                            console.log('🔄 Mise à jour de l\'affichage des valeurs...');
+
+                            // Récupérer les valeurs depuis les champs cachés
+                            const widthField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_canvas_width]"]');
+                            const heightField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_canvas_height]"]');
+                            const dpiField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_canvas_dpi]"]');
+                            const formatField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_canvas_format]"]');
+
+                            const width = widthField ? widthField.value : '794';
+                            const height = heightField ? heightField.value : '1123';
+                            const dpi = dpiField ? dpiField.value : '96';
+                            const format = formatField ? formatField.value : 'A4';
+
+                            console.log('🔄 Valeurs récupérées:', { width, height, dpi, format });
+
+                            // Calculer les dimensions en mm
+                            const calculateMM = function(pixels, dpi) {
+                                return ((pixels / dpi) * 25.4).toFixed(1);
+                            };
+
+                            const widthMM = calculateMM(width, dpi);
+                            const heightMM = calculateMM(height, dpi);
+
+                            // Mettre à jour les éléments d'affichage
+                            const widthEl = document.getElementById('card-canvas-width');
+                            const heightEl = document.getElementById('card-canvas-height');
+                            const dpiEl = document.getElementById('card-canvas-dpi');
+
+                            if (widthEl) {
+                                widthEl.textContent = width;
+                                console.log('✅ Largeur mise à jour:', width);
+                            }
+                            if (heightEl) {
+                                heightEl.textContent = height;
+                                console.log('✅ Hauteur mise à jour:', height);
+                            }
+                            if (dpiEl) {
+                                dpiEl.textContent = `${dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
+                                console.log('✅ DPI mis à jour:', dpiEl.textContent);
+                            }
+
+                            console.log('✅ Affichage des valeurs mis à jour avec succès');
+                        },
+
                         // Sauvegarder côté serveur
                         saveToServer: function(values) {
                             const saveStartTime = Date.now();
@@ -1721,6 +1808,9 @@
 
                                     modalMonitoring.trackSaveSuccess(currentModalCategory, saveTime, Object.keys(values).length);
                                     console.log('Paramètres sauvegardés avec succès:', data.data ? data.data.saved_count : 'UNKNOWN', 'paramètres');
+
+                                    // Mettre à jour l'affichage des valeurs dans les cartes
+                                    this.updateDisplayValues();
 
                                     // Fermer la modale après sauvegarde
                                     console.log('🔒 Closing modal after preview update...');
@@ -1954,36 +2044,59 @@
                     // SYNCHRONISATION DES TOGGLES AVEC CHAMPS CACHÉS
                     // ===========================================
 
-                    // Fonction pour synchroniser les toggles avec les champs cachés
-                    function syncTogglesWithHiddenFields() {
-                        // Écouter tous les changements sur les checkboxes et toggles
+                    // Fonction pour synchroniser les champs avec les champs cachés
+                    function syncFieldsWithHiddenFields() {
+                        // Écouter tous les changements sur les champs canvas
                         document.addEventListener('change', function(e) {
                             const target = e.target;
+                            const fieldName = target.name || target.getAttribute('data-field');
 
-                            // Vérifier si c'est une checkbox ou un toggle
-                            if (target.type === 'checkbox' || target.classList.contains('toggle-checkbox')) {
-                                const fieldName = target.name || target.getAttribute('data-field');
+                            if (fieldName && fieldName.startsWith('pdf_builder_canvas_canvas_')) {
+                                // Trouver le champ caché correspondant
+                                const hiddenField = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
 
-                                if (fieldName && fieldName.startsWith('pdf_builder_canvas_canvas_')) {
-                                    // Trouver le champ caché correspondant
-                                    const hiddenField = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
+                                if (hiddenField) {
+                                    let newValue;
 
-                                    if (hiddenField) {
-                                        // Mettre à jour la valeur du champ caché
-                                        const newValue = target.checked ? '1' : '0';
-                                        hiddenField.value = newValue;
-
-                                        console.log(`🔄 Toggle synchronisé: ${fieldName} = ${newValue}`);
+                                    // Gérer différents types de champs
+                                    if (target.type === 'checkbox' || target.classList.contains('toggle-checkbox')) {
+                                        newValue = target.checked ? '1' : '0';
+                                    } else if (target.type === 'number') {
+                                        newValue = parseFloat(target.value) || 0;
+                                        newValue = newValue.toString();
+                                    } else {
+                                        newValue = target.value;
                                     }
+
+                                    hiddenField.value = newValue;
+                                    console.log(`🔄 Champ synchronisé: ${fieldName} = ${newValue} (type: ${target.type})`);
                                 }
                             }
                         });
 
-                        console.log('🔗 Synchronisation toggles ↔ champs cachés activée');
+                        // Synchronisation bidirectionnelle: mettre à jour les champs depuis les cachés lors du focus
+                        document.addEventListener('focus', function(e) {
+                            const target = e.target;
+                            const fieldName = target.name || target.getAttribute('data-field');
+
+                            if (fieldName && fieldName.startsWith('pdf_builder_canvas_canvas_')) {
+                                const hiddenField = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
+                                if (hiddenField && hiddenField.value !== target.value) {
+                                    if (target.type === 'checkbox' || target.classList.contains('toggle-checkbox')) {
+                                        target.checked = hiddenField.value === '1';
+                                    } else {
+                                        target.value = hiddenField.value;
+                                    }
+                                    console.log(`🔄 Champ mis à jour depuis caché: ${fieldName} = ${hiddenField.value}`);
+                                }
+                            }
+                        });
+
+                        console.log('🔗 Synchronisation champs ↔ champs cachés activée');
                     }
 
                     // Initialiser la synchronisation
-                    syncTogglesWithHiddenFields();
+                    syncFieldsWithHiddenFields();
 
                     // === DIAGNOSTIC COMPLET DE L'ONGLET CANVAS ===
                     function runCanvasDiagnostic() {
