@@ -1862,7 +1862,7 @@
                         }
                     };
 
-                    // Fermer la modal
+                    // Fermer la modal (version corrigée)
                     function closeModal() {
                         console.log('🚪 [CLOSE MODAL] Fermeture modal, currentModalCategory:', currentModalCategory);
 
