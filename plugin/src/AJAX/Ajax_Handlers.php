@@ -204,7 +204,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'pdf_quality', 'default_format', 'default_orientation', 'default_template',
                 'pdf_builder_developer_password',
                 // Canvas text fields
-                'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_export_format',
+                'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_format', 'canvas_export_format',
                 'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
             ],
             'int_fields' => [
@@ -319,7 +319,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     update_option('pdf_builder_canvas_settings', $canvas_settings);
                     // error_log("[AJAX DEBUG] Updated canvas settings debug.$debug_key = $option_value");
                 }
-            } elseif (in_array($key, $field_rules['array_fields'])) {
+            } elseif (in_array($short_key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
