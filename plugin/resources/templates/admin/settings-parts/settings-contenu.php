@@ -941,363 +941,7 @@
                     // Initialiser le monitoring
                     modalMonitoring.init();
 
-                    // Démarrer l'auto-monitoring
-                    modalMonitoring.startAutoMonitoring();
-                    const previewSystem = {
-                        // Valeurs actuelles des paramètres
-                        values: {
-                            canvas_canvas_width: <?php 
-                                $width = get_option('pdf_builder_canvas_canvas_width', '794');
-                                error_log("[DEBUG JS VALUES] canvas_width: '$width' (type: " . gettype($width) . ")");
-                                echo json_encode($width ?: '794'); 
-                            ?>,
-                            canvas_canvas_height: <?php 
-                                $height = get_option('pdf_builder_canvas_canvas_height', '1123');
-                                error_log("[DEBUG JS VALUES] canvas_height: '$height' (type: " . gettype($height) . ")");
-                                echo json_encode($height ?: '1123'); 
-                            ?>,
-                            canvas_canvas_dpi: <?php 
-                                $dpi = get_option('pdf_builder_canvas_canvas_dpi', '96');
-                                error_log("[DEBUG JS VALUES] canvas_dpi: '$dpi' (type: " . gettype($dpi) . ")");
-                                echo json_encode($dpi ?: '96'); 
-                            ?>,
-                            canvas_canvas_format: <?php 
-                                $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
-                                error_log("[DEBUG JS VALUES] canvas_format: '$format' (type: " . gettype($format) . ")");
-                                echo json_encode($format ?: 'A4'); 
-                            ?>,
-                            canvas_canvas_bg_color: <?php 
-                                $bg_color = get_option('pdf_builder_canvas_canvas_bg_color', '#ffffff');
-                                error_log("[DEBUG JS VALUES] canvas_bg_color: '$bg_color' (type: " . gettype($bg_color) . ")");
-                                echo json_encode($bg_color ?: '#ffffff'); 
-                            ?>,
-                            canvas_canvas_border_color: <?php 
-                                $border_color = get_option('pdf_builder_canvas_canvas_border_color', '#cccccc');
-                                error_log("[DEBUG JS VALUES] canvas_border_color: '$border_color' (type: " . gettype($border_color) . ")");
-                                echo json_encode($border_color ?: '#cccccc'); 
-                            ?>,
-                            canvas_canvas_border_width: <?php 
-                                $border_width = get_option('pdf_builder_canvas_canvas_border_width', '1');
-                                error_log("[DEBUG JS VALUES] canvas_border_width: '$border_width' (type: " . gettype($border_width) . ")");
-                                echo json_encode($border_width ?: '1'); 
-                            ?>,
-                            canvas_canvas_container_bg_color: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_container_bg_color', '#f8f9fa')); ?>,
-                            canvas_canvas_shadow_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_shadow_enabled', '0') === '1'); ?>,
-                            canvas_canvas_grid_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_grid_enabled', '1') === '1'); ?>,
-                            canvas_canvas_grid_size: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_grid_size', '20')); ?>,
-                            canvas_canvas_guides_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_guides_enabled', '1') === '1'); ?>,
-                            canvas_canvas_snap_to_grid: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_snap_to_grid', '1') === '1'); ?>,
-                            canvas_canvas_zoom_min: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_min', '25')); ?>,
-                            canvas_canvas_zoom_max: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_max', '500')); ?>,
-                            canvas_canvas_zoom_default: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_default', '100')); ?>,
-                            canvas_canvas_zoom_step: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_zoom_step', '25')); ?>,
-                            canvas_canvas_export_quality: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_export_quality', '90')); ?>,
-                            canvas_canvas_export_format: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_export_format', 'png')); ?>,
-                            canvas_canvas_export_transparent: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_export_transparent', '0') === '1'); ?>,
-                            canvas_canvas_drag_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_drag_enabled', '1') === '1'); ?>,
-                            canvas_canvas_resize_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_resize_enabled', '1') === '1'); ?>,
-                            canvas_canvas_rotate_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_rotate_enabled', '1') === '1'); ?>,
-                            canvas_canvas_multi_select: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_multi_select', '1') === '1'); ?>,
-                            canvas_canvas_selection_mode: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_selection_mode', 'single')); ?>,
-                            canvas_canvas_keyboard_shortcuts: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_keyboard_shortcuts', '1') === '1'); ?>,
-                            canvas_canvas_fps_target: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_fps_target', '60')); ?>,
-                            canvas_canvas_memory_limit_js: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_memory_limit_js', '50')); ?>,
-                            canvas_canvas_response_timeout: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_response_timeout', '5000')); ?>,
-                            canvas_canvas_lazy_loading_editor: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1') === '1'); ?>,
-                            canvas_canvas_preload_critical: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_preload_critical', '1') === '1'); ?>,
-                            canvas_canvas_lazy_loading_plugin: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_lazy_loading_plugin', '1') === '1'); ?>,
-                            canvas_canvas_debug_enabled: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_debug_enabled', '0') === '1'); ?>,
-                            canvas_canvas_performance_monitoring: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_performance_monitoring', '0') === '1'); ?>,
-                            canvas_canvas_error_reporting: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_error_reporting', '0') === '1'); ?>,
-                            canvas_canvas_memory_limit_php: <?php echo json_encode(get_option('pdf_builder_canvas_canvas_memory_limit_php', '128')); ?>
-                        },
 
-                        // Mettre à jour une valeur et rafraîchir les previews
-                        updateValue: function(key, value) {
-                            console.log('📝 [UPDATE] updateValue called with:', key, '=', value, '(type:', typeof value + ')');
-                            this.values[key] = value;
-                            console.log('📝 [UPDATE] Calling refreshPreviews...');
-                            this.refreshPreviews();
-                        },
-
-                        // Calculer les dimensions en mm
-                        calculateMM: function(pixels, dpi) {
-                            return ((pixels / dpi) * 25.4).toFixed(1);
-                        },
-
-                        // Rafraîchir toutes les previews
-                        refreshPreviews: function() {
-                            // OPTIMISATION: Éviter les appels répétés avec un debounce
-                            if (this._refreshPending) return;
-                            this._refreshPending = true;
-
-                            requestAnimationFrame(() => {
-                                this._refreshPending = false;
-                                this._doRefreshPreviews();
-                            });
-                        },
-
-                        _doRefreshPreviews: function() {
-                            console.log('🔄 REFRESH PREVIEWS CALLED');
-
-                            // Recharger les valeurs depuis les champs cachés pour assurer la cohérence
-                            this.values = {};
-                            document.querySelectorAll('input[name^="pdf_builder_settings[pdf_builder_canvas_"]').forEach(field => {
-                                const name = field.name;
-                                const keyMatch = name.match(/pdf_builder_settings\[pdf_builder_canvas_(.+)\]/);
-                                if (keyMatch) {
-                                    const key = 'canvas_' + keyMatch[1];
-                                    this.values[key] = field.value || '';
-                                }
-                            });
-                            console.log('🔄 Values reloaded from hidden fields:', this.values);
-
-                            const v = this.values;
-                            console.log('🔄 Current values object:', v);
-                            console.log('🔄 Keys in values:', Object.keys(v));
-                            console.log('🔄 canvas_width:', v.canvas_width);
-                            console.log('🔄 canvas_height:', v.canvas_height);
-                            console.log('🔄 canvas_dpi:', v.canvas_dpi);
-
-                            // Attendre que le DOM soit prêt
-                            if (document.readyState !== 'complete') {
-                                console.log('DOM not ready, retrying in 100ms...');
-                                setTimeout(() => this._doRefreshPreviews(), 100);
-                                return;
-                            }
-
-                            // OPTIMISATION: Grouper les mises à jour DOM pour éviter les reflows
-                            const updates = [];
-
-                            // Preview Dimensions
-                            const widthEl = document.getElementById('card-canvas-width');
-                            const heightEl = document.getElementById('card-canvas-height');
-                            const dpiEl = document.getElementById('card-canvas-dpi');
-
-                            console.log('Elements found:', { widthEl: !!widthEl, heightEl: !!heightEl, dpiEl: !!dpiEl });
-
-                            if (widthEl) {
-                                const oldValue = widthEl.textContent;
-                                widthEl.textContent = v.canvas_width;
-                                console.log('✅ Width updated from', oldValue, 'to:', v.canvas_width);
-                            } else {
-                                console.log('❌ Width element not found');
-                            }
-                            if (heightEl) {
-                                const oldValue = heightEl.textContent;
-                                heightEl.textContent = v.canvas_height;
-                                console.log('✅ Height updated from', oldValue, 'to:', v.canvas_height);
-                            } else {
-                                console.log('❌ Height element not found');
-                            }
-                            if (dpiEl) {
-                                const format = v.canvas_format || 'A4';
-                                const widthMM = this.calculateMM(v.canvas_width, v.canvas_dpi);
-                                const heightMM = this.calculateMM(v.canvas_height, v.canvas_dpi);
-                                dpiEl.textContent = `${v.canvas_dpi} DPI - ${format} (${widthMM}×${heightMM}mm)`;
-                                console.log('✅ DPI updated to:', dpiEl.textContent);
-                            }
-
-                            // Preview Apparence - Anciens éléments (pour compatibilité)
-                            const bgPreview = document.getElementById('card-bg-preview');
-                            const borderPreview = document.getElementById('card-border-preview');
-
-                            console.log('Appearance elements:', { bgPreview: !!bgPreview, borderPreview: !!borderPreview });
-
-                            if (bgPreview) {
-                                bgPreview.style.backgroundColor = v.canvas_bg_color;
-                                bgPreview.style.borderColor = v.canvas_bg_color;
-                                console.log('✅ BG color updated to:', v.canvas_bg_color);
-                            }
-                            if (borderPreview) {
-                                borderPreview.style.borderColor = v.canvas_border_color;
-                                borderPreview.style.backgroundColor = v.canvas_bg_color;
-                                borderPreview.style.borderWidth = v.canvas_border_width + 'px';
-                                borderPreview.style.boxShadow = v.canvas_shadow_enabled ? '0 4px 8px rgba(0,0,0,0.2)' : 'none';
-                                console.log('✅ Border updated:', v.canvas_border_color, v.canvas_border_width + 'px');
-                            }
-
-                            // Preview Apparence - Nouveaux éléments (aperçu amélioré)
-                            const apparenceBackground = document.querySelector('.apparence-background');
-                            const apparenceBorder = document.querySelector('.apparence-border');
-                            const apparenceShadow = document.querySelector('.apparence-shadow');
-                            const apparenceLegend = document.querySelector('.apparence-legend .legend-item:nth-child(3)');
-
-                            if (apparenceBackground) {
-                                apparenceBackground.style.backgroundColor = v.canvas_bg_color;
-                                console.log('✅ Apparence background updated to:', v.canvas_bg_color);
-                            }
-                            if (apparenceBorder) {
-                                apparenceBorder.style.border = v.canvas_border_width + 'px solid ' + v.canvas_border_color;
-                                console.log('✅ Apparence border updated:', v.canvas_border_color, v.canvas_border_width + 'px');
-                            }
-                            if (apparenceShadow) {
-                                if (v.canvas_shadow_enabled === '1' || v.canvas_shadow_enabled === true) {
-                                    apparenceShadow.style.display = 'block';
-                                    console.log('✅ Apparence shadow enabled');
-                                } else {
-                                    apparenceShadow.style.display = 'none';
-                                    console.log('✅ Apparence shadow disabled');
-                                }
-                            }
-                            if (apparenceLegend) {
-                                const shadowIcon = (v.canvas_shadow_enabled === '1' || v.canvas_shadow_enabled === true) ? '🌑' : '☀️';
-                                apparenceLegend.innerHTML = shadowIcon + ' Ombre';
-                                console.log('✅ Apparence legend updated:', shadowIcon + ' Ombre');
-                            }
-
-                            // Preview Grille
-                            const gridPreview = document.getElementById('card-grid-preview');
-                            if (gridPreview) {
-                                gridPreview.style.backgroundImage = v.canvas_grid_enabled ?
-                                    `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)` : 'none';
-                                gridPreview.style.backgroundSize = v.canvas_grid_enabled ? `${v.canvas_grid_size}px ${v.canvas_grid_size}px` : 'auto';
-                                console.log('✅ Grid updated');
-                            }
-
-                            // Preview Zoom
-                            const zoomPreview = document.getElementById('card-zoom-preview');
-                            if (zoomPreview) {
-                                zoomPreview.textContent = `${v.canvas_zoom_default}%`;
-                                zoomPreview.style.fontSize = Math.max(12, Math.min(24, v.canvas_zoom_default / 4)) + 'px';
-                                console.log('✅ Zoom updated to:', v.canvas_zoom_default + '%');
-                            }
-
-                            // Preview Performance
-                            const perfPreview = document.getElementById('card-perf-preview');
-                            if (perfPreview) {
-                                perfPreview.textContent = `${v.canvas_fps_target} FPS`;
-                                perfPreview.style.color = v.canvas_fps_target >= 60 ? '#28a745' : v.canvas_fps_target >= 30 ? '#ffc107' : '#dc3545';
-                                console.log('✅ Performance updated to:', v.canvas_fps_target + ' FPS');
-                            }
-
-                            console.log('✅ All previews refreshed successfully');
-                        },
-
-                        // Initialiser le système
-                        init: function() {
-                            console.log('🎬 Initializing preview system...');
-
-                            // Attendre que le DOM soit complètement chargé
-                            const initPreviews = () => {
-                                if (document.readyState === 'complete') {
-                                    this.refreshPreviews();
-                                    this.setupEventListeners();
-                                    console.log('✅ Preview system initialized');
-                                } else {
-                                    setTimeout(initPreviews, 50);
-                                }
-                            };
-
-                            initPreviews();
-                        },
-                        // Configurer les event listeners pour les inputs des modales
-                        setupEventListeners: function() {
-                            // Écouter les changements dans toutes les modales canvas
-                            const modalInputs = document.querySelectorAll('[id^="canvas-"][id$="-modal"] input, [id^="canvas-"][id$="-modal"] select');
-
-                            modalInputs.forEach(input => {
-                                input.addEventListener('input', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_');
-                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-
-                                    console.log('Changement détecté (input):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
-
-                                    // Conversion des types
-                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
-                                    if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
-                                        value = value === true || value === '1' || value === 1;
-                                        console.log('Conversion boolean pour', key, ':', value);
-                                    }
-
-                                    this.updateValue(key, value);
-                                });
-
-                                // Pour les selects et autres contrôles qui utilisent 'change'
-                                input.addEventListener('change', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_');
-                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-
-                                    console.log('Changement détecté (change):', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
-
-                                    // Conversion des types
-                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
-                                    if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
-                                        value = value === true || value === '1' || value === 1;
-                                        console.log('Conversion boolean pour', key, ':', value);
-                                    }
-
-                                    this.updateValue(key, value);
-                                });
-                            });
-
-                            console.log('Preview System: Event listeners setup for', modalInputs.length, 'inputs');
-                        },
-
-                        // Configurer les event listeners pour une modal spécifique
-                        setupModalEventListeners: function(category) {
-                            console.log('🎧 [SETUP] Setting up event listeners for modal:', category);
-
-                            // Trouver la modal spécifique
-                            const modal = document.getElementById(`canvas-${category}-modal`);
-                            console.log('🎧 [SETUP] Modal element found:', !!modal, 'ID:', `canvas-${category}-modal`);
-                            if (!modal) {
-                                console.warn('⚠️ [SETUP] Modal not found for event listeners:', `canvas-${category}-modal`);
-                                return;
-                            }
-
-                            // Écouter les changements dans cette modal spécifique
-                            const modalInputs = modal.querySelectorAll('input, select');
-                            console.log('🎧 [SETUP] Found', modalInputs.length, 'inputs in modal', category);
-
-                            modalInputs.forEach((input, index) => {
-                                console.log(`🎧 [SETUP] Input ${index}: name="${input.name}", type="${input.type}", hasListener=${input.hasAttribute('data-preview-listener')}`);
-
-                                // Éviter les doublons d'event listeners
-                                if (input.hasAttribute('data-preview-listener')) {
-                                    console.log(`🎧 [SETUP] Skipping input ${index} - already has listener`);
-                                    return;
-                                }
-                                input.setAttribute('data-preview-listener', 'true');
-                                console.log(`🎧 [SETUP] Setting up listeners for input ${index}: ${input.name}`);
-
-                                input.addEventListener('input', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_');
-                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-
-                                    console.log('🔄 [INPUT] Modal change detected:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
-
-                                    // Conversion des types
-                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
-                                    if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
-                                        value = value === true || value === '1' || value === 1;
-                                        console.log('🔄 [INPUT] Boolean conversion for', key, ':', value);
-                                    }
-
-                                    this.updateValue(key, value);
-                                });
-
-                                // Pour les selects et autres contrôles qui utilisent 'change'
-                                input.addEventListener('change', (e) => {
-                                    const key = e.target.name.replace('pdf_builder_canvas_', 'canvas_');
-                                    let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-
-                                    console.log('🔄 [CHANGE] Modal change detected:', e.target.name, '->', key, '=', value, '(type:', e.target.type + ')');
-
-                                    // Conversion des types
-                                    if (e.target.type === 'number') value = parseFloat(value) || 0;
-                                    if (['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_performance_monitoring', 'canvas_error_reporting'].includes(key)) {
-                                        value = value === true || value === '1' || value === 1;
-                                        console.log('🔄 [CHANGE] Boolean conversion for', key, ':', value);
-                                    }
-
-                                    this.updateValue(key, value);
-                                });
-                            });
-
-                            console.log('✅ [SETUP] Event listeners setup complete for modal', category, 'with', modalInputs.length, 'inputs');
-                        }
-                    };
 
                     // ===========================================
                     // SYSTÈME UNIFIÉ DE FORMULAIRES DE MODALES
@@ -1454,7 +1098,8 @@
                             let html = '<div class="modal-form-grid">';
 
                             fields.forEach(fieldName => {
-                                const currentValue = previewSystem.values[`canvas_${fieldName}`];
+                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[pdf_builder_canvas_${fieldName}]"]`);
+                                const currentValue = hiddenField ? hiddenField.value : '';
                                 html += this.generateFieldHTML(fieldName, currentValue);
                             });
 
@@ -1898,8 +1543,7 @@
 
                             // Configurer les event listeners pour cette modal après l'ouverture
                             setTimeout(() => {
-                                console.log('🔧 Calling setupModalEventListeners for category:', category);
-                                previewSystem.setupModalEventListeners(category);
+                                console.log('🔧 Modal event listeners setup skipped (preview system removed)');
                             }, 100);
                         } else {
                             console.error('❌ [OPEN MODAL] Overlay NON trouvé pour:', category);
@@ -2000,11 +1644,6 @@
                                     console.log('🔍 DEBUG: Grid field collected:', input.name, '=', value, '(type:', input.type, 'checked:', input.checked, ')');
                                 }
 
-                                // Mettre à jour la valeur dans le système de previews
-                                const previewKey = input.name.replace('pdf_builder_canvas_', 'canvas_');
-                                previewSystem.values[previewKey] = value;
-                                console.log('🔄 Preview system updated:', previewKey, '=', value, '(from input:', input.name, ')');
-
                                 // Debug log pour l'ombre
                                 if (input.name === 'pdf_builder_canvas_canvas_shadow_enabled') {
                                     console.log('🔍 DEBUG: Shadow enabled value collected:', value, '(type:', typeof value, ')');
@@ -2017,9 +1656,6 @@
                                     console.log(`Champ caché mis à jour: ${input.name} = ${value}`);
                                 }
                             });
-
-                            // Rafraîchir toutes les previews avec les nouvelles valeurs
-                            previewSystem.refreshPreviews();
 
                             // Sauvegarder côté serveur via AJAX
                             this.saveToServer(updatedValues);
@@ -2148,11 +1784,7 @@
                                         });
                                     }
 
-                                    // Rafraîchir les previews avec les vraies valeurs
-                                    console.log('🔄 Calling refreshPreviews()...');
-                                    previewSystem.refreshPreviews();
-
-                                    // Fermer la modale après avoir mis à jour les previews
+                                    // Fermer la modale après sauvegarde
                                     console.log('🔒 Closing modal after preview update...');
                                     closeModal();
 
@@ -2415,9 +2047,6 @@
                     // Initialiser la synchronisation
                     syncTogglesWithHiddenFields();
 
-                    // Initialiser le système de previews dynamiques
-                    previewSystem.init();
-
                     // === DIAGNOSTIC COMPLET DE L'ONGLET CANVAS ===
                     function runCanvasDiagnostic() {
                         console.log('🔍 === DIAGNOSTIC COMPLET CANVAS ===');
@@ -2471,16 +2100,7 @@
                             else results.issues.push(`Élément preview manquant: ${id}`);
                         });
 
-                        // 5. Vérifier previewSystem
-                        if (typeof previewSystem === 'undefined') {
-                            results.issues.push('previewSystem non défini');
-                        } else {
-                            console.log('✅ previewSystem défini');
-                            if (!previewSystem.values) results.issues.push('previewSystem.values manquant');
-                            if (!previewSystem.refreshPreviews) results.issues.push('previewSystem.refreshPreviews manquant');
-                        }
-
-                        // 6. Vérifier formGenerator
+                        // 5. Vérifier formGenerator
                         if (typeof formGenerator === 'undefined') {
                             results.issues.push('formGenerator non défini');
                         } else {
@@ -2488,7 +2108,7 @@
                             if (!formGenerator.generateModalHTML) results.issues.push('formGenerator.generateModalHTML manquant');
                         }
 
-                        // 7. Vérifier modalSettingsManager
+                        // 6. Vérifier modalSettingsManager
                         if (typeof modalSettingsManager === 'undefined') {
                             results.issues.push('modalSettingsManager non défini');
                         } else {
