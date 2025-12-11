@@ -363,8 +363,7 @@ function pdf_builder_load_core()
         'PDF_Builder_Settings_Manager.php',
         'PDF_Builder_Status_Manager.php',
         'PDF_Builder_Template_Manager.php',
-        'PDF_Builder_Variable_Mapper.php',
-        'PDF_Builder_WooCommerce_Integration.php'
+        'PDF_Builder_Variable_Mapper.php'
     );
     foreach ($managers as $manager) {
         $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
@@ -373,15 +372,30 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger PDF_Builder_WooCommerce_Integration seulement si WooCommerce est actif
+    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+        $woocommerce_manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_WooCommerce_Integration.php';
+        if (file_exists($woocommerce_manager_path)) {
+            require_once $woocommerce_manager_path;
+        }
+    }
+
     // Charger les classes de cache essentielles depuis src/Cache/
     $cache_classes = array(
-        'RendererCache.php',
-        'WooCommerceCache.php'
+        'RendererCache.php'
     );
     foreach ($cache_classes as $cache_class) {
         $cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/' . $cache_class;
         if (file_exists($cache_path)) {
             require_once $cache_path;
+        }
+    }
+
+    // Charger WooCommerceCache seulement si WooCommerce est actif
+    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+        $woocommerce_cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/WooCommerceCache.php';
+        if (file_exists($woocommerce_cache_path)) {
+            require_once $woocommerce_cache_path;
         }
     }
 

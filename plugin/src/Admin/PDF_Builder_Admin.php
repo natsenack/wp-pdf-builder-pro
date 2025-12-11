@@ -178,7 +178,7 @@ class PdfBuilderAdmin
         $this->utils = new Utils($this);
 
         // Initialiser l'intégration WooCommerce si disponible
-        if (class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
+        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
             $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
         }
 
