@@ -800,7 +800,8 @@ function pdf_builder_load_bootstrap()
         PDF_Builder_Notification_Manager::get_instance();
     }
 
-    // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS
+    // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
+    /*
     add_action('admin_enqueue_scripts', function() {
         // Charger le CSS des notifications
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/css/notifications.css')) {
@@ -896,6 +897,7 @@ function pdf_builder_load_bootstrap()
             }
         }
     });
+    */
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Retarder complètement le chargement et l'initialisation au hook 'init'
