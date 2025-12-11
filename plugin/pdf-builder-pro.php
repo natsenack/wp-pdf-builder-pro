@@ -99,6 +99,56 @@ function pdf_builder_activate()
     }
     update_option('pdf_builder_version', '1.1.0');
 
+    // Définir les valeurs par défaut pour les paramètres canvas
+    $default_canvas_settings = array(
+        // Dimensions (A4 par défaut)
+        'pdf_builder_canvas_canvas_width' => '794',  // A4 width at 96 DPI
+        'pdf_builder_canvas_canvas_height' => '1123', // A4 height at 96 DPI
+        'pdf_builder_canvas_canvas_dpi' => '96',
+        'pdf_builder_canvas_canvas_format' => 'A4',
+
+        // Apparence
+        'pdf_builder_canvas_canvas_bg_color' => '#ffffff',
+        'pdf_builder_canvas_canvas_border_color' => '#cccccc',
+        'pdf_builder_canvas_canvas_border_width' => '1',
+        'pdf_builder_canvas_canvas_shadow_enabled' => '0',
+
+        // Grille
+        'pdf_builder_canvas_canvas_grid_enabled' => '1',
+        'pdf_builder_canvas_canvas_grid_size' => '20',
+        'pdf_builder_canvas_canvas_grid_color' => '#e0e0e0',
+        'pdf_builder_canvas_canvas_snap_to_grid' => '0',
+
+        // Autres paramètres par défaut
+        'pdf_builder_canvas_canvas_margin_top' => '10',
+        'pdf_builder_canvas_canvas_margin_right' => '10',
+        'pdf_builder_canvas_canvas_margin_bottom' => '10',
+        'pdf_builder_canvas_canvas_margin_left' => '10',
+    );
+
+    // Définir les valeurs par défaut seulement si elles n'existent pas déjà
+    foreach ($default_canvas_settings as $option_key => $default_value) {
+        if (!get_option($option_key)) {
+            update_option($option_key, $default_value);
+        }
+    }
+
+    // Définir d'autres valeurs par défaut générales
+    $default_general_settings = array(
+        'pdf_builder_pdf_quality' => 'high',
+        'pdf_builder_pdf_page_size' => 'A4',
+        'pdf_builder_pdf_orientation' => 'portrait',
+        'pdf_builder_pdf_compression' => 'medium',
+        'pdf_builder_pdf_metadata_enabled' => '1',
+        'pdf_builder_pdf_print_optimized' => '1',
+    );
+
+    foreach ($default_general_settings as $option_key => $default_value) {
+        if (!get_option($option_key)) {
+            update_option($option_key, $default_value);
+        }
+    }
+
     // Vérifier et créer les tables manquantes pour les mises à jour
     pdf_builder_check_tables();
 }
