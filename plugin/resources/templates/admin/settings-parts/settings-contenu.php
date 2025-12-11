@@ -799,6 +799,17 @@
                                 saveModalSettings(category);
                             }
                         }
+
+                        // Gestionnaire pour annuler les modales
+                        const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
+                        if (cancelBtn) {
+                            e.preventDefault();
+                            const modal = cancelBtn.closest('.canvas-modal-overlay');
+                            if (modal) {
+                                modal.style.display = 'none';
+                                document.body.style.overflow = '';
+                            }
+                        }
                     });
 
                     console.log('Modal manager initialized');
