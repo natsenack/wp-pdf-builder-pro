@@ -724,6 +724,9 @@
                                             } else {
                                                 toggleSwitch.classList.remove('checked');
                                             }
+                                            console.log(`TOGGLE_DEBUG: ${fieldId} - checked=${field.checked}, toggle classes: ${toggleSwitch.className}`);
+                                        } else {
+                                            console.log(`TOGGLE_DEBUG: ${fieldId} - No toggle-switch parent found`);
                                         }
                                         if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
                                             console.log(`GRID_TOGGLE: Set checkbox ${fieldId} checked to: ${field.checked}, toggle class: ${toggleSwitch ? toggleSwitch.className : 'no toggle'}`);
@@ -881,10 +884,27 @@
                             } else {
                                 toggleSwitch.classList.remove('checked');
                             }
+                            console.log(`TOGGLE_CHANGE: ${checkbox.id} changed to ${checkbox.checked}, toggle classes: ${toggleSwitch.className}`);
                         }
                     });
 
                     console.log('Modal manager initialized');
+
+                    // Test CSS des toggles
+                    setTimeout(() => {
+                        const testToggle = document.querySelector('.toggle-switch');
+                        if (testToggle) {
+                            console.log('TOGGLE_CSS_TEST: Found toggle-switch, classes:', testToggle.className);
+                            const slider = testToggle.querySelector('.toggle-slider');
+                            if (slider) {
+                                const computedStyle = window.getComputedStyle(slider);
+                                console.log('TOGGLE_CSS_TEST: Slider background:', computedStyle.backgroundColor);
+                                console.log('TOGGLE_CSS_TEST: Slider ::before transform:', window.getComputedStyle(slider, ':before').transform);
+                            }
+                        } else {
+                            console.log('TOGGLE_CSS_TEST: No toggle-switch found');
+                        }
+                    }, 1000);
                 })();
             </script>
 
