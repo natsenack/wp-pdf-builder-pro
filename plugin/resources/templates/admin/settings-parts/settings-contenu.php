@@ -716,8 +716,17 @@
                                     
                                     if (field.type === 'checkbox') {
                                         field.checked = value === '1';
+                                        // Synchroniser la classe CSS pour les toggles
+                                        const toggleSwitch = field.closest('.toggle-switch');
+                                        if (toggleSwitch) {
+                                            if (value === '1') {
+                                                toggleSwitch.classList.add('checked');
+                                            } else {
+                                                toggleSwitch.classList.remove('checked');
+                                            }
+                                        }
                                         if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
-                                            console.log(`GRID_TOGGLE: Set checkbox ${fieldId} checked to: ${field.checked}`);
+                                            console.log(`GRID_TOGGLE: Set checkbox ${fieldId} checked to: ${field.checked}, toggle class: ${toggleSwitch ? toggleSwitch.className : 'no toggle'}`);
                                         }
                                     } else {
                                         field.value = value;
@@ -858,6 +867,19 @@
                             if (modal) {
                                 modal.style.display = 'none';
                                 document.body.style.overflow = '';
+                            }
+                        }
+                    });
+
+                    // Synchronisation des toggles CSS lors des changements manuels
+                    document.addEventListener('change', function(e) {
+                        const checkbox = e.target;
+                        if (checkbox.type === 'checkbox' && checkbox.closest('.toggle-switch')) {
+                            const toggleSwitch = checkbox.closest('.toggle-switch');
+                            if (checkbox.checked) {
+                                toggleSwitch.classList.add('checked');
+                            } else {
+                                toggleSwitch.classList.remove('checked');
                             }
                         }
                     });
