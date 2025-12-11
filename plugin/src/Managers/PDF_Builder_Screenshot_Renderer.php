@@ -301,7 +301,9 @@ class PdfBuilderScreenshotRenderer
             $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
             $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
 
-            $dompdf = new Dompdf\Dompdf();
+            // Créer les options Dompdf pour éviter l'erreur de dépréciation
+            $options = new Dompdf\Options();
+            $dompdf = new Dompdf\Dompdf($options);
             $dompdf->set_option('isRemoteEnabled', true);
             $dompdf->set_option('isHtml5ParserEnabled', true);
             $dompdf->set_option('defaultFont', 'Arial');
