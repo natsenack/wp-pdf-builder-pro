@@ -575,8 +575,7 @@
                 localStorage.clear();
                 sessionStorage.clear();
                 console.log('Cache cleared by PDF Builder');
-
-    </div> <!-- Fermeture de settings-content -->
+            </script>
 
             <!-- Inclusion des modales Canvas -->
             <?php require_once __DIR__ . '/settings-modals.php'; ?>
