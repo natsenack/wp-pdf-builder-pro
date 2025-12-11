@@ -13,8 +13,8 @@
     function get_canvas_option_contenu($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
         $value = get_option($option_key, $default);
-        if ($key === 'canvas_border_width') {
-            error_log("[PDF Builder] BORDER_WIDTH - get_canvas_option_contenu - {$key}: {$value} (default: {$default})");
+        if (in_array($key, ['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'])) {
+            error_log("[PDF Builder] GRID_TOGGLES - get_canvas_option_contenu - {$key}: {$value} (default: {$default})");
         }
         return $value;
     }
@@ -676,8 +676,16 @@
                                 if (hiddenField) {
                                     const value = hiddenField.value;
                                     
+                                    // Log spécifique pour les toggles de grille
+                                    if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
+                                        console.log(`GRID_TOGGLE: Updating ${fieldId} (${settingKey}) with value: ${value}, field type: ${field.type}`);
+                                    }
+                                    
                                     if (field.type === 'checkbox') {
                                         field.checked = value === '1';
+                                        if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
+                                            console.log(`GRID_TOGGLE: Set checkbox ${fieldId} checked to: ${field.checked}`);
+                                        }
                                     } else {
                                         field.value = value;
                                         
@@ -689,7 +697,11 @@
                                             });
                                         }
                                     }
+                                } else {
+                                    console.log(`Hidden field not found for ${settingKey}`);
                                 }
+                            } else {
+                                console.log(`Field not found for ${fieldId} or ${settingKey}`);
                             }
                         }
                     }
