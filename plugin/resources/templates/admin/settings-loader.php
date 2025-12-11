@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function pdf_builder_load_settings_assets($hook) {
     // DEBUG: Fonction appelée
-    error_log('PDF Builder - pdf_builder_load_settings_assets appelée pour hook: ' . $hook);
+    error_log('PDF Builder - pdf_builder_load_settings_assets appelée pour hook: ' . $hook . ' - DÉBUT FONCTION');
 
     // DEBUG: Log du hook actuel
     error_log('PDF Builder - Hook actuel: ' . $hook);
@@ -210,6 +210,8 @@ function pdf_builder_load_settings_assets($hook) {
             true // Chargé dans le footer
         );
     }
+
+    error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 
 // Enregistrer le hook pour charger les assets
