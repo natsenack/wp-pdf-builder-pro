@@ -88,7 +88,9 @@ class PDF_Builder_Notification_Manager {
      * Charger les scripts et styles
      */
     public function enqueue_scripts() {
+        error_log('PDF_Builder_Notification_Manager::enqueue_scripts() called');
         if (!$this->settings['enabled']) {
+            error_log('PDF_Builder_Notification_Manager: notifications disabled in settings');
             return;
         }
 
@@ -103,9 +105,10 @@ class PDF_Builder_Notification_Manager {
             'pdf-builder-notifications',
             plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/js/notifications.js',
             ['jquery'],
-            '1.0.0',
-            true
+            '1.0.0-' . time(),
+            false
         );
+        error_log('PDF_Builder_Notification_Manager: script enqueued');
 
         // Localiser le script avec les paramètres
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [

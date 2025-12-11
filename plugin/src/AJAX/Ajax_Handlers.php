@@ -792,18 +792,18 @@ function pdf_builder_test_roles_handler() {
  * Handler AJAX pour réinitialiser les paramètres canvas par défaut
  */
 function pdf_builder_reset_canvas_defaults_handler() {
-    // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== DÉBUT DU HANDLER =====');
+    error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== DÉBUT DU HANDLER =====');
 
     // Vérifier le nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'reset_canvas_defaults')) {
-        // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Nonce invalide');
+        error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Nonce invalide');
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;
     }
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Permissions insuffisantes');
+        error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Permissions insuffisantes');
         wp_send_json_error(['message' => 'Permissions insuffisantes'], 403);
         return;
     }
@@ -882,16 +882,16 @@ function pdf_builder_reset_canvas_defaults_handler() {
                 'timestamp' => current_time('timestamp')
             ]);
         } else {
-            // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Échec de la sauvegarde');
+            error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Échec de la sauvegarde');
             wp_send_json_error(['message' => 'Échec de la sauvegarde des paramètres'], 500);
         }
 
     } catch (Exception $e) {
-        // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Exception: ' . $e->getMessage());
+        error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Exception: ' . $e->getMessage());
         wp_send_json_error(['message' => 'Erreur lors de la réinitialisation: ' . $e->getMessage()], 500);
     }
 
-    // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== FIN DU HANDLER =====');
+    error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== FIN DU HANDLER =====');
 }
 
 /**

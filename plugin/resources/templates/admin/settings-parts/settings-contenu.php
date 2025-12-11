@@ -1711,6 +1711,22 @@
                         }
                     }
 
+                    // Fonction helper pour les notifications avec fallback
+                    function showNotification(type, message, options) {
+                        console.log(`[PDF Builder] NOTIFICATION_HELPER - Attempting to show ${type} notification:`, message);
+
+                        if (type === 'success' && typeof showSuccessNotification === 'function') {
+                            console.log('[PDF Builder] NOTIFICATION_HELPER - Using showSuccessNotification');
+                            showSuccessNotification(message, options);
+                        } else if (type === 'error' && typeof showErrorNotification === 'function') {
+                            console.log('[PDF Builder] NOTIFICATION_HELPER - Using showErrorNotification');
+                            showErrorNotification(message, options);
+                        } else {
+                            console.log('[PDF Builder] NOTIFICATION_HELPER - Using alert fallback');
+                            alert(message);
+                        }
+                    }
+
                     // Fonction pour réinitialiser tous les paramètres Canvas aux valeurs par défaut
                     function resetCanvasSettings() {
                         console.log('[PDF Builder] RESET_CANVAS - Function called, starting Canvas settings reset');
@@ -1798,14 +1814,14 @@
                                     updateCanvasCardsDisplay();
 
                                     // Notification de succès
-                                    showSuccessNotification('✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.', {
+                                    showNotification('success', '✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.', {
                                         duration: 6000,
                                         dismissible: true
                                     });
                                 } else {
                                     console.error('[PDF Builder] RESET_CANVAS - Server-side reset failed:', data);
                                     // Notification d'erreur
-                                    showErrorNotification('❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'), {
+                                    showNotification('error', '❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'), {
                                         duration: 8000,
                                         dismissible: true
                                     });
@@ -1814,7 +1830,7 @@
                             .catch(error => {
                                 console.error('[PDF Builder] RESET_CANVAS - AJAX error:', error);
                                 // Notification d'erreur de connexion
-                                showErrorNotification('❌ Erreur de connexion lors de la réinitialisation.', {
+                                showNotification('error', '❌ Erreur de connexion lors de la réinitialisation.', {
                                     duration: 8000,
                                     dismissible: true
                                 });
@@ -1823,7 +1839,7 @@
                         } catch (error) {
                             console.error('[PDF Builder] RESET_CANVAS - Error during reset:', error);
                             // Notification d'erreur générale
-                            showErrorNotification('❌ Erreur lors de la réinitialisation des paramètres.', {
+                            showNotification('error', '❌ Erreur lors de la réinitialisation des paramètres.', {
                                 duration: 8000,
                                 dismissible: true
                             });
@@ -1961,7 +1977,7 @@
                             const resetBtn = e.target.closest('#reset-canvas-settings');
                             if (resetBtn) {
                                 e.preventDefault();
-                                console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked on button:', resetBtn);
+                                console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked');
 
                                 if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres Canvas aux valeurs par défaut ? Cette action est irréversible.')) {
                                     console.log('[PDF Builder] RESET_BUTTON - User confirmed, calling resetCanvasSettings');
