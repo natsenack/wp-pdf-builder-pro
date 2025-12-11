@@ -230,6 +230,13 @@ if (function_exists('add_action')) {
         }, 1);
     // Also enforce HTTPS for the administration pages if configured
     add_action('admin_init', function() {
+        // Désactiver le cache pour la page de paramètres PDF Builder
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+        }
+
         // Skip CLI, AJAX and REST calls
         if (defined('WP_CLI') && WP_CLI) return;
         if (defined('DOING_AJAX') && DOING_AJAX) return;
