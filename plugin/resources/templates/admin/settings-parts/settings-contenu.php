@@ -670,6 +670,7 @@
                                 const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
                                 if (hiddenField) {
                                     const value = hiddenField.value;
+                                    console.log(`Updating ${fieldId} (${settingKey}) with value: ${value}`);
                                     
                                     if (field.type === 'checkbox') {
                                         field.checked = value === '1';
@@ -684,7 +685,11 @@
                                             });
                                         }
                                     }
+                                } else {
+                                    console.log(`Hidden field not found for ${settingKey}`);
                                 }
+                            } else {
+                                console.log(`Field not found for ${fieldId} or ${settingKey}`);
                             }
                         }
                     }
