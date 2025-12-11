@@ -5,10 +5,11 @@
  * Updated: 2025-11-29
  */
 
-console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
+try {
+    console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
 
-(function($) {
-    'use strict';
+    (function($) {
+        'use strict';
 
     // Fonction de debug conditionnel
 
@@ -635,4 +636,18 @@ console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
     });
 
 })(jQuery);
+
+} catch (error) {
+    console.error('[PDF Builder] NOTIFICATIONS.JS - Error during script execution:', error);
+    // Fallback: définir au moins les fonctions globales de base
+    window.showSuccessNotification = function(message) {
+        console.log('FALLBACK SUCCESS:', message);
+        alert('✅ ' + message);
+    };
+    window.showErrorNotification = function(message) {
+        console.log('FALLBACK ERROR:', message);
+        alert('❌ ' + message);
+    };
+    console.log('[PDF Builder] NOTIFICATIONS.JS - Fallback functions defined');
+}
 
