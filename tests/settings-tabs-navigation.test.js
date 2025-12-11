@@ -33,8 +33,14 @@ describe('Settings Tabs Navigation', () => {
             writable: true
         });
 
+        // Mock LocalCache pour qu'il échoue et force l'utilisation de localStorage
+        window.LocalCache = {
+            load: jest.fn().mockReturnValue(null),
+            save: jest.fn()
+        };
+
         // Charger le script
-        require('../assets/js/settings-tabs.js');
+        require('../plugin/resources/assets/js/settings-tabs.js');
 
         // Simuler l'événement DOMContentLoaded pour initialiser les tabs
         const event = new Event('DOMContentLoaded');
@@ -118,7 +124,7 @@ describe('Settings Tabs Navigation', () => {
 
         // Recharger le script - ne devrait pas planter
         expect(() => {
-            require('../assets/js/settings-tabs.js');
+            require('../plugin/resources/assets/js/settings-tabs.js');
         }).not.toThrow();
     });
 

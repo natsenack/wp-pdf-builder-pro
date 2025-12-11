@@ -1680,7 +1680,6 @@
                         // Mise à jour dynamique des previews désactivée
                         /*
                         updateDisplayValues: function() {
-                            console.log('🔄 Mise à jour de l\'affichage des valeurs...');
 
                             // Récupérer les valeurs depuis les champs cachés
                             const widthField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_canvas_width]"]');
@@ -2198,7 +2197,7 @@
                         console.error('❌ [MONITORING] Échec de l\'initialisation du système de monitoring:', error);
                     });
                 }, 1500);
-
+                */
                 // Initialisation dynamique des previews désactivée - previews restent statiques
                 // initializeCanvasPreviews();
 
@@ -2207,7 +2206,6 @@
             <!-- Fonction d'initialisation des previews désactivée -->
             <script>
             /*
-            /**
              * Initialise les previews des cartes canvas avec des valeurs par défaut
              */
             function initializeCanvasPreviews() {
