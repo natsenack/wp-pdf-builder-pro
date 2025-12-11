@@ -274,10 +274,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $saved_options[$setting_key] = $value;
                     $saved_count++;
                     
-                    // Vérifier que la valeur a été correctement sauvegardée
+                    // Vérifier immédiatement que la valeur a été sauvegardée
                     $verify_value = get_option($setting_key);
-                    if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'])) {
-                        error_log("[PDF Builder] GRID_TOGGLE_VERIFY - {$setting_key} saved as: {$verify_value}");
+                    error_log("[PDF Builder] SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}");
+                    
+                    // Log spécifique pour les toggles
+                    if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid', 'pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
+                        error_log("[PDF Builder] TOGGLE_SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}");
                     }
                 }
             }
