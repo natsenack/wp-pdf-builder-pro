@@ -40,7 +40,7 @@ class PDF_Builder_Localization {
     private function __construct() {
         $this->current_locale = get_locale();
         $this->init_hooks();
-        $this->load_textdomain();
+        // $this->load_textdomain(); // REMOVED: Ne pas charger trop tôt
     }
 
     private function init_hooks() {

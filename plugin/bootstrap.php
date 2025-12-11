@@ -1210,7 +1210,7 @@ function pdf_builder_load_core_on_demand()
     }
 
     // Chargement d'urgence des utilitaires dès le départ
-    pdf_builder_load_utilities_emergency();
+    // pdf_builder_load_utilities_emergency(); // REMOVED: Ne pas charger trop tôt pour éviter les problèmes de traductions
 
     // Détection ultra-rapide
     $load_core = false;
