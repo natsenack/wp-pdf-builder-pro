@@ -80,11 +80,11 @@
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
                 <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); ?>
-                <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                     <span>
                         🎨 Canvas
                     </span>
-                    <button type="button" id="reset-canvas-settings" class="button button-secondary" style="font-size: 12px; padding: 4px 8px;" title="Réinitialiser tous les paramètres Canvas aux valeurs par défaut">
+                    <button type="button" id="reset-canvas-settings" class="button button-secondary" style="font-size: 12px; padding: 4px 8px; margin-left: auto;" title="Réinitialiser tous les paramètres Canvas aux valeurs par défaut">
                         🔄 Réinitialiser
                     </button>
                 </h3>
