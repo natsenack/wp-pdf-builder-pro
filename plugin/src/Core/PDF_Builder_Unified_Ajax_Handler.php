@@ -227,7 +227,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_canvas_debug_enabled',
                 'pdf_builder_canvas_performance_monitoring',
                 'pdf_builder_canvas_error_reporting',
-                'pdf_builder_canvas_memory_limit_php'
+                'pdf_builder_canvas_memory_limit_php',
+                'pdf_builder_canvas_backup' // Paramètre de cache/backup
             ];
 
             // Sauvegarder chaque paramètre
