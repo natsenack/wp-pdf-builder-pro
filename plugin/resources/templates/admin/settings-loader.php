@@ -191,6 +191,13 @@ function pdf_builder_load_settings_assets($hook) {
     // DEBUG: Après localization
     error_log('PDF Builder - Après wp_localize_script');
 
+    // Charger le système de notifications
+    if (class_exists('PDF_Builder_Notification_Manager')) {
+        $notification_manager = PDF_Builder_Notification_Manager::get_instance();
+        $notification_manager->enqueue_scripts();
+        error_log('PDF Builder - Système de notifications chargé');
+    }
+
     // Charger le script de débogage CSS des modales (uniquement en mode debug) - v2
     if (isset($_GET['debug']) && $_GET['debug'] === 'css') {
         wp_enqueue_script(
