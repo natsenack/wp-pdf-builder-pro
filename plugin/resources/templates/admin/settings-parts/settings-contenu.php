@@ -1859,29 +1859,6 @@
                                 // Fermer la modale même en cas d'erreur réseau
                                 closeModal();
                             });
-                        },
-
-                        // Configurer les gestionnaires d'événements pour les dépendances
-                        setupDependencyHandlers: function() {
-                            // Temporairement désactivé pour éviter l'erreur currentModalCategory
-                            console.log('🔧 setupDependencyHandlers temporairement désactivé');
-                            return;
-
-                            if (!currentModalCategory) return;
-
-                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
-                            if (!currentModal) return;
-
-                            // Écouter les changements sur les champs qui ont des dépendances
-                            Object.keys(formGenerator.fieldDependencies).forEach(masterField => {
-                                const masterInput = currentModal.querySelector(`input[name="pdf_builder_settings[pdf_builder_canvas_canvas_${masterField}"], select[name="pdf_builder_settings[pdf_builder_canvas_canvas_${masterField}"]`);
-                                if (masterInput) {
-                                    masterInput.addEventListener('change', (e) => {
-                                        const isEnabled = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-                                        formGenerator.updateFieldDependencies(masterField, isEnabled);
-                                    });
-                                }
-                            });
                         }
                     };
 
