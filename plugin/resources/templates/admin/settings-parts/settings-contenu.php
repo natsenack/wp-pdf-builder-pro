@@ -598,6 +598,64 @@
                         }
                     }
 
+                    // Fonction pour sauvegarder les paramètres d'une modale
+                    function saveModalSettings(category) {
+                        const form = document.querySelector(`#canvas-${category}-modal form`);
+                        if (!form) return;
+
+                        const formData = new FormData(form);
+                        const settings = {};
+
+                        // Convertir FormData en objet
+                        for (let [key, value] of formData.entries()) {
+                            settings[key] = value;
+                        }
+
+                        // Ajouter l'action et le nonce
+                        settings['action'] = 'pdf_builder_save_canvas_settings';
+                        settings['nonce'] = '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>';
+
+                        // Afficher un indicateur de chargement
+                        const saveBtn = document.querySelector(`.canvas-modal-save[data-category="${category}"]`);
+                        if (saveBtn) {
+                            const originalText = saveBtn.innerHTML;
+                            saveBtn.innerHTML = '⏳ Sauvegarde...';
+                            saveBtn.disabled = true;
+                        }
+
+                        // Envoyer via AJAX
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams(settings)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Fermer la modale
+                                closeModal(`canvas-${category}-modal-overlay`);
+                                
+                                // Recharger la page pour afficher les nouvelles valeurs
+                                location.reload();
+                            } else {
+                                alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur AJAX:', error);
+                            alert('Erreur de communication avec le serveur');
+                        })
+                        .finally(() => {
+                            // Restaurer le bouton
+                            if (saveBtn) {
+                                saveBtn.innerHTML = '💾 Sauvegarder';
+                                saveBtn.disabled = false;
+                            }
+                        });
+                    }
+
                     // Gestionnaire d'événements pour les boutons de configuration
                     document.addEventListener('click', function(e) {
                         const button = e.target.closest('.canvas-configure-btn');
@@ -629,6 +687,16 @@
                         if (overlay && e.target === overlay) {
                             overlay.style.display = 'none';
                             document.body.style.overflow = '';
+                        }
+
+                        // Gestionnaire pour sauvegarder les paramètres
+                        const saveBtn = e.target.closest('.canvas-modal-save');
+                        if (saveBtn) {
+                            e.preventDefault();
+                            const category = saveBtn.getAttribute('data-category');
+                            if (category) {
+                                saveModalSettings(category);
+                            }
                         }
                     });
 
