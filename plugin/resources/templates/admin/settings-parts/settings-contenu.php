@@ -1065,13 +1065,13 @@
                                     if (field.min !== undefined) html += ` min="${field.min}"`;
                                     if (field.max !== undefined) html += ` max="${field.max}"`;
                                     if (field.step !== undefined) html += ` step="${field.step}"`;
-                                    html += '>';
+                                    html += `>`;
                                     break;
 
                                 default: // text
                                     html += `<input type="text" id="${fieldId}" name="${fieldNameAttr}" value="${escapedValue}"`;
                                     if (field.placeholder) html += ` placeholder="${escapeHtmlAttr(field.placeholder)}"`;
-                                    html += '>';
+                                    html += `>`;
                             }
 
                             // Description
