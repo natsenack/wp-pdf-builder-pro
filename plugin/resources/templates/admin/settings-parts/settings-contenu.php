@@ -588,7 +588,352 @@
 
 
 
-            <!-- CSS pour les modales Canvas - REMOVED - file doesn't exist -->
+            <!-- CSS pour les modales Canvas - AJOUTÉ -->
+            <style>
+/* === CSS POUR LES MODALES CANVAS === */
+
+/* Overlay de la modale */
+.canvas-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(2px);
+}
+
+/* Conteneur principal de la modale */
+.canvas-modal-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Header de la modale */
+.canvas-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e1e5e9;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.canvas-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.canvas-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.canvas-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Corps de la modale */
+.canvas-modal-body {
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Section d'information */
+.canvas-modal-info {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.canvas-modal-info p {
+    margin: 0;
+    color: #495057;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Formulaire dans la modale */
+#canvas-dimensions-form,
+#canvas-apparence-form,
+#canvas-grille-form,
+#canvas-zoom-form,
+#canvas-interactions-form,
+#canvas-export-form,
+#canvas-performance-form,
+#canvas-debug-form {
+    margin: 0;
+}
+
+/* Table des paramètres */
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.form-table th,
+.form-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+    vertical-align: top;
+}
+
+.form-table th {
+    width: 200px;
+    text-align: left;
+    font-weight: 600;
+    color: #37474f;
+}
+
+.form-table td {
+    padding-left: 20px;
+}
+
+/* Champs de formulaire */
+.form-table input[type="text"],
+.form-table input[type="number"],
+.form-table select {
+    width: 100%;
+    max-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-table input:focus,
+.form-table select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* Toggles dans les modals */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #667eea;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-switch.checked .toggle-slider {
+    background-color: #667eea;
+}
+
+.toggle-switch.checked .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+/* Descriptions */
+.canvas-modal-description {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Aperçu dans la modale */
+.canvas-modal-display {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.canvas-modal-display h4 {
+    margin: 0 0 12px 0;
+    color: #495057;
+    font-size: 16px;
+}
+
+/* Footer de la modale */
+.canvas-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #e1e5e9;
+    background: #f8f9fa;
+}
+
+.canvas-modal-cancel,
+.canvas-modal-save {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.canvas-modal-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.canvas-modal-cancel:hover {
+    background: #5a6268;
+}
+
+.canvas-modal-save {
+    background: #667eea;
+    color: white;
+}
+
+.canvas-modal-save:hover {
+    background: #5a67d8;
+}
+
+.canvas-modal-save:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .canvas-modal-container {
+        width: 95%;
+        margin: 20px;
+    }
+
+    .canvas-modal-header,
+    .canvas-modal-body,
+    .canvas-modal-footer {
+        padding: 16px;
+    }
+
+    .form-table th {
+        width: 150px;
+        font-size: 14px;
+    }
+
+    .form-table td {
+        padding-left: 12px;
+    }
+}
+
+/* États de chargement */
+.canvas-modal-save.loading {
+    position: relative;
+    color: transparent;
+}
+
+.canvas-modal-save.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Messages d'erreur */
+.canvas-modal-error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #f5c6cb;
+}
+
+.canvas-modal-success {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #c3e6cb;
+}
+            </style>
             <?php
                 // $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
                 // $css_url = plugins_url('resources/assets/css/canvas-modals.css', $plugin_dir . '/pdf-builder-pro.php');
@@ -924,20 +1269,92 @@
                 (function() {
                     'use strict';
 
-                    // Fonction pour ouvrir une modale
+                    console.log('[PDF Builder] MODALS_INIT - Initializing Canvas modals system');
+
+                    // Fonction d'initialisation
+                    function initializeModals() {
+                        try {
+                            console.log('[PDF Builder] MODALS_INIT - Setting up modal infrastructure');
+
+                            // Vérifier que les modals existent
+                            const modalCategories = ['dimensions', 'apparence', 'grille', 'zoom', 'interactions', 'export', 'performance', 'debug'];
+                            let missingModals = [];
+
+                            modalCategories.forEach(category => {
+                                const modalId = `canvas-${category}-modal-overlay`;
+                                const modal = document.getElementById(modalId);
+                                if (!modal) {
+                                    missingModals.push(modalId);
+                                    console.warn(`[PDF Builder] MODALS_INIT - Missing modal: ${modalId}`);
+                                }
+                            });
+
+                            if (missingModals.length > 0) {
+                                console.error(`[PDF Builder] MODALS_INIT - ${missingModals.length} modals are missing:`, missingModals);
+                                alert(`Attention: ${missingModals.length} modales sont manquantes. Certaines fonctionnalités risquent de ne pas fonctionner.`);
+                            } else {
+                                console.log('[PDF Builder] MODALS_INIT - All modals found successfully');
+                            }
+
+                            // Vérifier que les boutons de configuration existent
+                            const configButtons = document.querySelectorAll('.canvas-configure-btn');
+                            console.log(`[PDF Builder] MODALS_INIT - Found ${configButtons.length} configuration buttons`);
+
+                            if (configButtons.length === 0) {
+                                console.warn('[PDF Builder] MODALS_INIT - No configuration buttons found');
+                            }
+
+                            console.log('[PDF Builder] MODALS_INIT - Modal system initialized successfully');
+
+                        } catch (error) {
+                            console.error('[PDF Builder] MODALS_INIT - Error during initialization:', error);
+                        }
+                    }
+
+                    // Appeler l'initialisation quand le DOM est prêt
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initializeModals);
+                    } else {
+                        initializeModals();
+                    }
+
+                    // Fonction pour ouvrir une modale - VERSION RENFORCÉE
                     function openModal(modalId) {
-                        const modal = document.getElementById(modalId);
-                        if (modal) {
+                        try {
+                            console.log(`[PDF Builder] OPEN_MODAL - Attempting to open: ${modalId}`);
+
+                            const modal = document.getElementById(modalId);
+                            if (!modal) {
+                                console.error(`[PDF Builder] OPEN_MODAL - Modal element not found: ${modalId}`);
+                                alert(`Erreur: La modale ${modalId} n'a pas été trouvée.`);
+                                return;
+                            }
+
                             // Extraire la catégorie depuis l'ID de la modale
-                            const categoryMatch = modalId.match(/canvas-(\w+)-modal/);
+                            const categoryMatch = modalId.match(/canvas-(\w+)-modal-overlay/);
                             if (categoryMatch) {
                                 const category = categoryMatch[1];
+                                console.log(`[PDF Builder] OPEN_MODAL - Opening modal for category: ${category}`);
+
                                 // Mettre à jour les valeurs avant d'ouvrir
                                 updateModalValues(category);
+                            } else {
+                                console.warn(`[PDF Builder] OPEN_MODAL - Could not extract category from modalId: ${modalId}`);
                             }
-                            
+
+                            // Afficher la modale avec animation
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
+
+                            // Focus sur la modale pour l'accessibilité
+                            modal.setAttribute('aria-hidden', 'false');
+                            modal.focus();
+
+                            console.log(`[PDF Builder] OPEN_MODAL - Modal opened successfully: ${modalId}`);
+
+                        } catch (error) {
+                            console.error(`[PDF Builder] OPEN_MODAL - Error opening modal ${modalId}:`, error);
+                            alert(`Erreur lors de l'ouverture de la modale: ${error.message}`);
                         }
                     }
 
@@ -945,9 +1362,9 @@
                     function updateModalValues(category) {
                         console.log(`[PDF Builder] UPDATE_MODAL - Called with category: ${category}`);
                         console.log('[PDF Builder] UPDATE_MODAL - Starting modal value synchronization');
-                        const modal = document.querySelector(`#canvas-${category}-modal`);
+                        const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
                         if (!modal) {
-                            console.log(`[PDF Builder] UPDATE_MODAL - Modal #canvas-${category}-modal not found`);
+                            console.log(`[PDF Builder] UPDATE_MODAL - Modal #canvas-${category}-modal-overlay not found`);
                             return;
                         }
                         console.log(`[PDF Builder] UPDATE_MODAL - Modal found, processing category: ${category}`);
@@ -1070,12 +1487,28 @@
                         }
                     }
 
-                    // Fonction pour fermer une modale
+                    // Fonction pour fermer une modale - VERSION RENFORCÉE
                     function closeModal(modalId) {
-                        const modal = document.getElementById(modalId);
-                        if (modal) {
+                        try {
+                            console.log(`[PDF Builder] CLOSE_MODAL - Attempting to close: ${modalId}`);
+
+                            const modal = document.getElementById(modalId);
+                            if (!modal) {
+                                console.warn(`[PDF Builder] CLOSE_MODAL - Modal element not found: ${modalId}`);
+                                return;
+                            }
+
+                            // Masquer la modale
                             modal.style.display = 'none';
                             document.body.style.overflow = '';
+
+                            // Accessibilité
+                            modal.setAttribute('aria-hidden', 'true');
+
+                            console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
+
+                        } catch (error) {
+                            console.error(`[PDF Builder] CLOSE_MODAL - Error closing modal ${modalId}:`, error);
                         }
                     }
 
@@ -1219,58 +1652,99 @@
                         attemptSave();
                     }
 
-                    // Gestionnaire d'événements pour les boutons de configuration
+                    // Gestionnaire d'événements pour les boutons de configuration - VERSION RENFORCÉE
                     document.addEventListener('click', function(e) {
-                        const button = e.target.closest('.canvas-configure-btn');
-                        if (button) {
-                            e.preventDefault();
-                            const card = button.closest('.canvas-card');
-                            if (card) {
-                                const category = card.getAttribute('data-category');
-                                if (category) {
-                                    const modalId = 'canvas-' + category + '-modal-overlay';
-                                    openModal(modalId);
+                        try {
+                            // Gestionnaire pour ouvrir les modales
+                            const button = e.target.closest('.canvas-configure-btn');
+                            if (button) {
+                                e.preventDefault();
+                                console.log('[PDF Builder] CONFIG_BUTTON - Configure button clicked');
+
+                                const card = button.closest('.canvas-card');
+                                if (card) {
+                                    const category = card.getAttribute('data-category');
+                                    if (category) {
+                                        const modalId = 'canvas-' + category + '-modal-overlay';
+                                        console.log(`[PDF Builder] CONFIG_BUTTON - Opening modal for category: ${category}`);
+                                        openModal(modalId);
+                                    } else {
+                                        console.error('[PDF Builder] CONFIG_BUTTON - No data-category attribute found on card');
+                                    }
+                                } else {
+                                    console.error('[PDF Builder] CONFIG_BUTTON - No canvas-card parent found');
                                 }
+                                return;
                             }
-                        }
 
-                        // Gestionnaire pour fermer les modales
-                        const closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
-                        if (closeBtn) {
-                            e.preventDefault();
-                            const modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
-                            if (modal) {
-                                modal.style.display = 'none';
-                                document.body.style.overflow = '';
+                            // Gestionnaire pour fermer les modales
+                            const closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
+                            if (closeBtn) {
+                                e.preventDefault();
+                                console.log('[PDF Builder] CLOSE_BUTTON - Close button clicked');
+
+                                const modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
+                                if (modal) {
+                                    const modalId = modal.id;
+                                    closeModal(modalId);
+                                }
+                                return;
                             }
-                        }
 
-                        // Fermer en cliquant sur l'overlay
-                        const overlay = e.target.closest('.canvas-modal-overlay');
-                        if (overlay && e.target === overlay) {
-                            overlay.style.display = 'none';
-                            document.body.style.overflow = '';
-                        }
-
-                        // Gestionnaire pour sauvegarder les paramètres
-                        const saveBtn = e.target.closest('.canvas-modal-save');
-                        if (saveBtn) {
-                            e.preventDefault();
-                            const category = saveBtn.getAttribute('data-category');
-                            if (category) {
-                                saveModalSettings(category);
+                            // Fermer en cliquant sur l'overlay
+                            const overlay = e.target.closest('.canvas-modal-overlay');
+                            if (overlay && e.target === overlay) {
+                                console.log('[PDF Builder] OVERLAY_CLICK - Overlay clicked');
+                                const modalId = overlay.id;
+                                closeModal(modalId);
+                                return;
                             }
-                        }
 
-                        // Gestionnaire pour annuler les modales
-                        const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
-                        if (cancelBtn) {
-                            e.preventDefault();
-                            const modal = cancelBtn.closest('.canvas-modal-overlay');
-                            if (modal) {
-                                modal.style.display = 'none';
-                                document.body.style.overflow = '';
+                            // Gestionnaire pour sauvegarder les paramètres
+                            const saveBtn = e.target.closest('.canvas-modal-save');
+                            if (saveBtn) {
+                                e.preventDefault();
+                                console.log('[PDF Builder] SAVE_BUTTON - Save button clicked');
+
+                                const category = saveBtn.getAttribute('data-category');
+                                if (category) {
+                                    saveModalSettings(category);
+                                } else {
+                                    console.error('[PDF Builder] SAVE_BUTTON - No data-category attribute on save button');
+                                }
+                                return;
                             }
+
+                            // Gestionnaire pour annuler les modales
+                            const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
+                            if (cancelBtn) {
+                                e.preventDefault();
+                                console.log('[PDF Builder] CANCEL_BUTTON - Cancel button clicked');
+
+                                const modal = cancelBtn.closest('.canvas-modal-overlay');
+                                if (modal) {
+                                    const modalId = modal.id;
+                                    closeModal(modalId);
+                                }
+                                return;
+                            }
+
+                        } catch (error) {
+                            console.error('[PDF Builder] EVENT_HANDLER - Error in click handler:', error);
+                        }
+                    });
+
+                    // Gestionnaire pour la touche Échap - VERSION RENFORCÉE
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            console.log('[PDF Builder] ESC_KEY - Escape key pressed');
+
+                            // Fermer toutes les modales ouvertes
+                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"], .cache-modal[style*="display: block"]');
+                            openModals.forEach(modal => {
+                                const modalId = modal.id;
+                                closeModal(modalId);
+                            });
                         }
                     });
 
