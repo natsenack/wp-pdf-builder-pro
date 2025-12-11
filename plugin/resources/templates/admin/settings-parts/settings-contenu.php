@@ -1038,7 +1038,7 @@
                         /**
                          * Génère le HTML complet pour une modale
                          */
-                        function generateModalHTML(category) {
+                        generateModalHTML(category) {
                             // Configuration des champs par catégorie
                             const categoryFields = {
                                 dimensions: ['width', 'height', 'dpi', 'format'],
