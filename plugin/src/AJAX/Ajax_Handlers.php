@@ -6,6 +6,48 @@
 
 // error_log('PDF Builder: [AJAX_HANDLERS.PHP] File loaded at ' . current_time('Y-m-d H:i:s'));
 
+/**
+ * Fonction utilitaire pour sauvegarder les rôles autorisés
+ * @param mixed $value Valeur brute des rôles
+ * @return array Tableau des rôles traités
+ */
+function pdf_builder_save_allowed_roles($value) {
+    // error_log("[PDF_BUILDER_SAVE_ALLOWED_ROLES] Processing value: " . print_r($value, true));
+
+    $roles = array();
+
+    // Si c'est déjà un tableau, l'utiliser directement
+    if (is_array($value)) {
+        $roles = $value;
+    }
+    // Si c'est un string JSON, le décoder
+    elseif (is_string($value)) {
+        if (strpos($value, '[') === 0 || strpos($value, '{') === 0) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $roles = $decoded;
+            }
+        } else {
+            // Si c'est une liste séparée par des virgules
+            $roles = array_map('trim', explode(',', $value));
+        }
+    }
+
+    // Filtrer et valider les rôles
+    $valid_roles = array();
+    $wp_roles = wp_roles();
+    $available_roles = array_keys($wp_roles->roles);
+
+    foreach ($roles as $role) {
+        if (in_array($role, $available_roles)) {
+            $valid_roles[] = $role;
+        }
+    }
+
+    // error_log("[PDF_BUILDER_SAVE_ALLOWED_ROLES] Final roles: " . json_encode($valid_roles));
+    return $valid_roles;
+}
+
 abstract class PDF_Builder_Ajax_Base {
     protected $required_capability = 'manage_options';
     protected $nonce_action = 'pdf_builder_ajax';

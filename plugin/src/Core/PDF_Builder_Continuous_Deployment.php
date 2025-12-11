@@ -494,17 +494,30 @@ class PDF_Builder_Continuous_Deployment {
      * Extrait et déploie les fichiers
      */
     private function extract_and_deploy($archive_path, $deployment_id) {
+        // Valider les chemins d'entrée
+        if (!file_exists($archive_path) || !is_readable($archive_path)) {
+            throw new Exception('Archive non accessible ou inexistante');
+        }
+
         $extract_path = sys_get_temp_dir() . '/pdf_builder_deploy_' . $deployment_id;
 
-        wp_mkdir_p($extract_path);
+        // Créer le répertoire d'extraction de manière sécurisée
+        if (!wp_mkdir_p($extract_path)) {
+            throw new Exception('Impossible de créer le répertoire d\'extraction');
+        }
 
-        // Extraire l'archive
-        $command = "unzip -q $archive_path -d $extract_path";
+        // Sécuriser la commande unzip
+        $command = sprintf(
+            'unzip -q %s -d %s',
+            escapeshellarg($archive_path),
+            escapeshellarg($extract_path)
+        );
+
         exec($command, $output, $return_var);
 
         if ($return_var !== 0) {
             $this->cleanup_temp_files($extract_path);
-            throw new Exception('Erreur lors de l\'extraction de l\'archive');
+            throw new Exception('Erreur lors de l\'extraction de l\'archive: ' . implode(' ', $output));
         }
 
         // Sauvegarder les fichiers actuels

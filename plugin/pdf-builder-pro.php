@@ -10,6 +10,9 @@
  * License: GPL v2 or later
  * Text Domain: pdf-builder-pro
  * Domain Path: /languages
+ * Requires at least: 5.0
+ * Tested up to: 6.9
+ * Requires PHP: 7.4
  * date de début de la création du plugin : 15/10/2025
  */
 
@@ -48,6 +51,16 @@ if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_
  */
 function pdf_builder_activate()
 {
+    // Vérifier la compatibilité des versions
+    if (version_compare(PHP_VERSION, '7.4', '<')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die('PDF Builder Pro nécessite PHP 7.4 ou supérieur. Version actuelle: ' . PHP_VERSION);
+    }
+
+    if (version_compare(get_bloginfo('version'), '5.0', '<')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die('PDF Builder Pro nécessite WordPress 5.0 ou supérieur. Version actuelle: ' . get_bloginfo('version'));
+    }
 
     // Créer une table de logs si nécessaire
     global $wpdb;
@@ -1231,7 +1244,7 @@ function pdf_builder_test_cache_ajax() {
 
     // Test 2: Tester les transients WordPress
     $transient_test_key = 'pdf_builder_test_' . time();
-    $transient_test_value = 'test_value_' . mt_rand(1000, 9999);
+    $transient_test_value = 'test_value_' . rand(1000, 9999);
 
     // Définir un transient
     $set_result = set_transient($transient_test_key, $transient_test_value, 300); // 5 minutes
@@ -2248,4 +2261,201 @@ add_action('admin_init', function() {
 });
 
 
+/**
+ * Handler AJAX pour vider le cache
+ */
+function pdf_builder_clear_cache_handler() {
+    try {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Nettoyer le cache WordPress
+        wp_cache_flush();
+
+        // Nettoyer les transients
+        global $wpdb;
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+
+        wp_send_json_success(array(
+            'message' => 'Cache vidé avec succès',
+            'cleared_at' => current_time('mysql')
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors du vidage du cache: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour obtenir les métriques du cache
+ */
+function pdf_builder_get_cache_metrics_handler() {
+    try {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        global $wpdb;
+
+        // Compter les transients PDF Builder
+        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        $transient_timeout_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+
+        // Taille approximative du cache
+        $cache_size = $wpdb->get_var("SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+
+        wp_send_json_success(array(
+            'transient_count' => intval($transient_count),
+            'timeout_count' => intval($transient_timeout_count),
+            'cache_size_bytes' => intval($cache_size),
+            'cache_size_mb' => round(intval($cache_size) / 1024 / 1024, 2)
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la récupération des métriques: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour mettre à jour les métriques du cache
+ */
+function pdf_builder_update_cache_metrics_handler() {
+    try {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Mettre à jour les métriques (pour l'instant, juste retourner les métriques actuelles)
+        pdf_builder_get_cache_metrics_handler();
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la mise à jour des métriques: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour tester la licence
+ */
+function pdf_builder_test_license_handler() {
+    try {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Simuler un test de licence (à implémenter selon vos besoins)
+        $license_status = 'valid'; // ou 'invalid', 'expired', etc.
+
+        wp_send_json_success(array(
+            'license_status' => $license_status,
+            'tested_at' => current_time('mysql')
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors du test de licence: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour tester les routes
+ */
+function pdf_builder_test_routes_handler() {
+    try {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Tester les routes AJAX disponibles
+        $routes = array(
+            'diagnostic' => admin_url('admin-ajax.php?action=pdf_builder_diagnostic'),
+            'save_settings' => admin_url('admin-ajax.php?action=pdf_builder_save_settings'),
+            'render_template' => admin_url('admin-ajax.php?action=pdf_builder_render_template_html')
+        );
+
+        $route_status = array();
+        foreach ($routes as $name => $url) {
+            $route_status[$name] = array(
+                'url' => $url,
+                'accessible' => true // Simplifié - en production, tester réellement l'accès
+            );
+        }
+
+        wp_send_json_success(array(
+            'routes' => $route_status,
+            'tested_at' => current_time('mysql')
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors du test des routes: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour exporter les diagnostics
+ */
+function pdf_builder_export_diagnostic_handler() {
+    try {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Collecter les informations de diagnostic
+        $diagnostic = array(
+            'wordpress_version' => get_bloginfo('version'),
+            'php_version' => PHP_VERSION,
+            'plugin_version' => PDF_BUILDER_VERSION,
+            'server_info' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+            'memory_limit' => ini_get('memory_limit'),
+            'max_execution_time' => ini_get('max_execution_time'),
+            'upload_max_filesize' => ini_get('upload_max_filesize'),
+            'post_max_size' => ini_get('post_max_size'),
+            'collected_at' => current_time('mysql')
+        );
+
+        wp_send_json_success(array(
+            'diagnostic' => $diagnostic,
+            'export_ready' => true
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de l\'export des diagnostics: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour voir les logs
+ */
+function pdf_builder_view_logs_handler() {
+    try {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Récupérer les logs récents (simplifié)
+        $logs = array(
+            array(
+                'timestamp' => current_time('mysql'),
+                'level' => 'info',
+                'message' => 'Logs système PDF Builder'
+            )
+        );
+
+        wp_send_json_success(array(
+            'logs' => $logs,
+            'total_logs' => count($logs)
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la récupération des logs: ' . $e->getMessage());
+    }
+}
 

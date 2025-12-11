@@ -1603,39 +1603,6 @@
                             console.log('✅ Valeurs de la modal synchronisées');
                         },
 
-                            // Trouver le modal actuellement ouvert
-                            const currentModal = document.querySelector(`#canvas-${currentModalCategory}-modal`);
-                            if (!currentModal) {
-                                console.error('Modal non trouvé pour la catégorie:', currentModalCategory);
-                                return;
-                            }
-
-                            // Parcourir tous les champs de la modal actuelle
-                            const modalInputs = currentModal.querySelectorAll('input, select');
-
-                            modalInputs.forEach(input => {
-                                if (!input.name) return;
-
-                                // Trouver le champ caché correspondant
-                                const hiddenField = document.querySelector(`input[name="${input.name}"]`);
-
-                                if (hiddenField) {
-                                    const currentValue = hiddenField.value;
-                                    console.log(`Synchronisation ${input.name} = ${currentValue}`);
-
-                                    if (input.type === 'checkbox') {
-                                        input.checked = currentValue === '1' || currentValue === 'true';
-                                    } else {
-                                        input.value = currentValue;
-                                    }
-
-                                    // Gérer les dépendances avec le nouveau système
-                                    const fieldName = input.name.replace('pdf_builder_canvas_canvas_', '');
-                                    formGenerator.updateFieldDependencies(fieldName, input.checked || input.value);
-                                }
-                            });
-                        },
-
                         // Sauvegarder les paramètres de la modal actuelle
                         saveModalSettings: function() {
                             if (!currentModalCategory) return;
