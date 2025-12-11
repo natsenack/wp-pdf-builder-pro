@@ -871,18 +871,29 @@ function pdf_builder_reset_canvas_defaults_handler() {
         // Fusionner avec les valeurs par défaut (conserver les autres paramètres non-canvas)
         $updated_settings = array_merge($current_settings, $default_canvas_settings);
 
-        // Sauvegarder les paramètres
-        $result = update_option('pdf_builder_settings', $updated_settings);
+        // Sauvegarder les paramètres individuellement (comme le fait le reste du système)
+        $success_count = 0;
+        foreach ($default_canvas_settings as $key => $value) {
+            if (update_option($key, $value)) {
+                $success_count++;
+                // error_log("PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Reset $key to $value");
+            } else {
+                error_log("PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Failed to reset $key");
+            }
+        }
 
-        if ($result) {
+        // Aussi sauvegarder dans l'option globale pour compatibilité
+        $global_result = update_option('pdf_builder_settings', $updated_settings);
+
+        if ($success_count > 0) {
             // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Paramètres réinitialisés avec succès');
             wp_send_json_success([
                 'message' => 'Paramètres canvas réinitialisés avec succès',
-                'reset_count' => count($default_canvas_settings),
+                'reset_count' => $success_count,
                 'timestamp' => current_time('timestamp')
             ]);
         } else {
-            error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Échec de la sauvegarde');
+            error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Échec de la sauvegarde - aucun paramètre n\'a pu être sauvegardé');
             wp_send_json_error(['message' => 'Échec de la sauvegarde des paramètres'], 500);
         }
 
