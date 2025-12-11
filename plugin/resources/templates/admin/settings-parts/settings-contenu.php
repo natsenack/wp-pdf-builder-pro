@@ -1764,17 +1764,6 @@
                                             'pdf_builder_canvas_error_reporting': 'canvas_canvas_error_reporting'
                                         };
 
-                                        // Mettre à jour previewSystem.values avec les valeurs du serveur
-                                        let updatedCount = 0;
-                                        Object.entries(keyMapping).forEach(([shortKey, longKey]) => {
-                                            if (data.data.saved_settings.hasOwnProperty(shortKey) && data.data.saved_settings[shortKey] !== undefined && data.data.saved_settings[shortKey] !== null) {
-                                                const oldValue = previewSystem.values[longKey];
-                                                previewSystem.values[longKey] = data.data.saved_settings[shortKey];
-                                                console.log(`🔄 Server update: ${longKey} = ${data.data.saved_settings[shortKey]} (was: ${oldValue})`);
-                                                updatedCount++;
-                                            } // Removed else branch that was setting values to empty strings
-                                        });
-                                        console.log(`🔄 Total values updated from server: ${updatedCount}`);
                                     } else {
                                         console.warn('⚠️ No saved_settings received from server, using local values');
                                         console.log('⚠️ Response structure:', {
