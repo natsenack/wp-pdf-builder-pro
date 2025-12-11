@@ -241,94 +241,61 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             // DEBUG: Log each field being processed
             // error_log("[AJAX HANDLER] Processing field: '$key' = '$value'");
 
+            // Extract short key for validation
+            $short_key = $key;
+            $is_prefixed = false;
+            if (strpos($key, 'pdf_builder_') === 0) {
+                $short_key = substr($key, 13); // Remove 'pdf_builder_' prefix
+                $is_prefixed = true;
+            }
+
             $option_key = '';
             $option_value = null;
 
-            if (in_array($key, $field_rules['text_fields'])) {
-                // Special handling for canvas fields
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $key;
-                    $option_value = sanitize_text_field($value ?? '');
-                    update_option($option_key, $option_value); // Canvas fields saved separately
-                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
-                } elseif (strpos($key, 'pdf_builder_') === 0) {
-                    // Already prefixed, save as-is
-                    $option_key = $key;
-                    $option_value = sanitize_text_field($value ?? '');
-                    $settings[$option_key] = $option_value;
-                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
-                } elseif (strpos($key, 'debug_') === 0) {
-                    // Debug fields need pdf_builder_ prefix
-                    $option_key = 'pdf_builder_' . $key;
-                    $option_value = sanitize_text_field($value ?? '');
-                    $settings[$option_key] = $option_value;
+            if (in_array($short_key, $field_rules['text_fields'])) {
+                if ($is_prefixed) {
+                    $option_key = $key; // Already has prefix
                 } else {
                     $option_key = 'pdf_builder_' . $key;
-                    $option_value = sanitize_text_field($value ?? '');
+                }
+                $option_value = sanitize_text_field($value ?? '');
+                if ($is_prefixed) {
                     $settings[$option_key] = $option_value;
                 }
-                $saved_count++;
-            } elseif (in_array($key, $field_rules['int_fields'])) {
-                // Special handling for canvas fields
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $key;
-                    $option_value = intval($value ?? 0);
-                    update_option($option_key, $option_value); // Canvas fields saved separately
-                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
-                } elseif (strpos($key, 'pdf_builder_') === 0) {
-                    // Already prefixed, save as-is
-                    $option_key = $key;
-                    $option_value = intval($value ?? 0);
-                    $settings[$option_key] = $option_value;
-                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
-                } elseif (strpos($key, 'debug_') === 0) {
-                    // Debug fields need pdf_builder_ prefix
-                    $option_key = 'pdf_builder_' . $key;
-                    $option_value = intval($value ?? 0);
-                    $settings[$option_key] = $option_value;
+                $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
+            } elseif (in_array($short_key, $field_rules['int_fields'])) {
+                if ($is_prefixed) {
+                    $option_key = $key; // Already has prefix
                 } else {
                     $option_key = 'pdf_builder_' . $key;
-                    $option_value = intval($value ?? 0);
+                }
+                $option_value = intval($value ?? 0);
+                if ($is_prefixed) {
                     $settings[$option_key] = $option_value;
                 }
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    update_option($option_key, $option_value); // Canvas fields saved separately
-                }
-                $saved_count++;
-            } elseif (in_array($key, $field_rules['bool_fields'])) {
-                // Special handling for canvas fields
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    $option_key = 'pdf_builder_canvas_' . $key;
-                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
-                    update_option($option_key, $option_value); // Canvas fields saved separately
-                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
-                } elseif (strpos($key, 'pdf_builder_') === 0) {
-                    // Already prefixed, save as-is
-                    $option_key = $key;
-                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
-                    $settings[$option_key] = $option_value;
-                    $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
-                } elseif (strpos($key, 'debug_') === 0) {
-                    // Debug fields need pdf_builder_ prefix
+                $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
+            } elseif (in_array($short_key, $field_rules['bool_fields'])) {
+                if ($is_prefixed) {
+                    $option_key = $key; // Already has prefix
+                } else {
                     $option_key = 'pdf_builder_' . $key;
-                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
+                }
+                $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
+                if ($is_prefixed) {
                     $settings[$option_key] = $option_value;
+                }
+                $saved_settings[$option_key] = $option_value; // Add to saved_settings for AJAX response
+                if (strpos($short_key, 'debug_javascript') !== false) {
                     // DEBUG SPECIFIC FOR JAVASCRIPT DEBUG
-                    if ($key === 'debug_javascript') {
-                        // error_log("[DEBUG JAVASCRIPT TOGGLE] Processing debug_javascript:");
-                        // error_log("  - key: '$key'");
-                        // error_log("  - option_key: '$option_key'");
-                        // error_log("  - isset in flattened_data: " . (isset($flattened_data[$key]) ? 'YES' : 'NO'));
-                        // error_log("  - value in flattened_data: '" . ($flattened_data[$key] ?? 'NULL') . "'");
-                        // error_log("  - calculated option_value: $option_value");
-                        // error_log("  - will save to settings['$option_key'] = $option_value");
-                    }
-                } else {
-                    $option_key = 'pdf_builder_' . $key;
-                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
-                    $settings[$option_key] = $option_value;
+                    // error_log("[DEBUG JAVASCRIPT TOGGLE] Processing debug_javascript:");
+                    // error_log("  - key: '$key'");
+                    // error_log("  - option_key: '$option_key'");
+                    // error_log("  - isset in flattened_data: " . (isset($flattened_data[$key]) ? 'YES' : 'NO'));
+                    // error_log("  - value in flattened_data: '" . ($flattened_data[$key] ?? 'NULL') . "'");
+                    // error_log("  - calculated option_value: $option_value");
+                    // error_log("  - will save to settings['$option_key'] = $option_value");
                 }
-                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
+                if (strpos($short_key, 'canvas_') === 0 || strpos($short_key, 'zoom_') === 0 || strpos($short_key, 'default_canvas_') === 0) {
                     update_option($option_key, $option_value); // Canvas fields saved separately
                 }
                 $saved_count++;
