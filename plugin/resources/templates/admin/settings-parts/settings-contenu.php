@@ -575,6 +575,65 @@
                 localStorage.clear();
                 sessionStorage.clear();
                 console.log('Cache cleared by PDF Builder');
+
+                // Gestionnaire des modales Canvas
+                (function() {
+                    'use strict';
+
+                    // Fonction pour ouvrir une modale
+                    function openModal(modalId) {
+                        const modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                        }
+                    }
+
+                    // Fonction pour fermer une modale
+                    function closeModal(modalId) {
+                        const modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }
+                    }
+
+                    // Gestionnaire d'événements pour les boutons de configuration
+                    document.addEventListener('click', function(e) {
+                        const button = e.target.closest('.canvas-configure-btn');
+                        if (button) {
+                            e.preventDefault();
+                            const card = button.closest('.canvas-card');
+                            if (card) {
+                                const category = card.getAttribute('data-category');
+                                if (category) {
+                                    const modalId = 'canvas-' + category + '-modal-overlay';
+                                    openModal(modalId);
+                                }
+                            }
+                        }
+
+                        // Gestionnaire pour fermer les modales
+                        const closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
+                        if (closeBtn) {
+                            e.preventDefault();
+                            const modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
+                            if (modal) {
+                                modal.style.display = 'none';
+                                document.body.style.overflow = '';
+                            }
+                        }
+
+                        // Fermer en cliquant sur l'overlay
+                        const overlay = e.target.closest('.canvas-modal-overlay');
+                        if (overlay && e.target === overlay) {
+                            overlay.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }
+                    });
+
+                    console.log('Modal manager initialized');
+                })();
             </script>
 
             <!-- Inclusion des modales Canvas -->
