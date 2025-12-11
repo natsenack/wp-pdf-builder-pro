@@ -762,32 +762,31 @@
 
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
-                        const form = document.querySelector(`#canvas-${category}-modal form`);
-                        if (!form) return;
-
-                        const formData = new FormData(form);
+                        // Récupérer TOUS les champs cachés Canvas de la page, pas seulement ceux du modal
+                        const allCanvasInputs = document.querySelectorAll('input[name^="pdf_builder_canvas_"]');
                         const settings = {};
 
-                        // Ajouter manuellement toutes les checkboxes avec leur valeur actuelle
-                        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-                        checkboxes.forEach(checkbox => {
-                            formData.set(checkbox.name, checkbox.checked ? '1' : '0');
+                        // Collecter toutes les valeurs des champs cachés
+                        allCanvasInputs.forEach(input => {
+                            if (input.type === 'checkbox') {
+                                settings[input.name] = input.checked ? '1' : '0';
+                            } else {
+                                settings[input.name] = input.value;
+                            }
                         });
 
-                        // Convertir FormData en objet
-                        for (let [key, value] of formData.entries()) {
-                            settings[key] = value;
-                        }
-
-                        console.log('SAVE_DEBUG: Settings to save:', settings);
+                        console.log('SAVE_DEBUG: All Canvas settings to save:', settings);
 
                         // Ajouter l'action et le nonce
                         settings['action'] = 'pdf_builder_save_canvas_settings';
                         settings['nonce'] = '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>';
 
-                        // Afficher un indicateur de chargement
+                        // Afficher un indicateur de chargement sur le bouton qui a déclenché la sauvegarde
                         const saveBtn = document.querySelector(`.canvas-modal-save[data-category="${category}"]`);
                         if (saveBtn) {
+                            const originalText = saveBtn.innerHTML;
+                            saveBtn.innerHTML = '⏳ Sauvegarde...';
+                            saveBtn.disabled = true;
                             const originalText = saveBtn.innerHTML;
                             saveBtn.innerHTML = '⏳ Sauvegarde...';
                             saveBtn.disabled = true;
