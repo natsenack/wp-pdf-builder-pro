@@ -143,6 +143,10 @@
                                         $height = intval(get_option('pdf_builder_canvas_canvas_height', '1123'));
                                         $dpi = intval(get_option('pdf_builder_canvas_canvas_dpi', '96'));
                                         $format = get_option('pdf_builder_canvas_canvas_format', 'A4');
+
+                                        // Protection contre division par zéro
+                                        $dpi = max(1, $dpi); // Au minimum 1 DPI pour éviter division par zéro
+
                                         $widthMM = round(($width / $dpi) * 25.4, 1);
                                         $heightMM = round(($height / $dpi) * 25.4, 1);
                                         echo esc_html("{$dpi} DPI - {$format} ({$widthMM}×{$heightMM}mm)");
