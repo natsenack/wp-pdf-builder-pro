@@ -117,9 +117,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
             if ($result['saved_count'] > 0) {
                 // LOGS ACTIFS POUR DIAGNOSTIC RÉPONSE AJAX
-                error_log("[DEBUG AJAX] About to send success response with saved_settings");
-                error_log("[DEBUG AJAX] saved_settings count: " . count($result['saved_settings']));
-                error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($result['saved_settings'], function($key) {
+                // Send updated settings
+        error_log("[DEBUG AJAX] About to send success response with saved_settings");
+                // Send updated settings
+        error_log("[DEBUG AJAX] saved_settings count: " . count($result['saved_settings']));
+                // Send updated settings
+        error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($result['saved_settings'], function($key) {
                     return strpos($key, 'pdf_builder_canvas_') === 0;
                 }, ARRAY_FILTER_USE_KEY)));
 
@@ -451,13 +454,17 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         // error_log("All saved debug fields: " . json_encode($saved_debug_fields));
 
         // LOGS ACTIFS POUR DIAGNOSTIC CANVAS
+        // Send updated settings
         error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($saved_settings, function($key) {
             return strpos($key, 'pdf_builder_canvas_') === 0;
         }, ARRAY_FILTER_USE_KEY)));
+        // Send updated settings
         error_log("[DEBUG AJAX] Total canvas fields in saved_settings: " . count(array_filter($saved_settings, function($key) {
             return strpos($key, 'pdf_builder_canvas_') === 0;
         }, ARRAY_FILTER_USE_KEY)));
+        // Send updated settings
         error_log("[DEBUG AJAX] Total saved_settings count: " . count($saved_settings));
+        // Send updated settings
         error_log("[DEBUG AJAX] saved_settings keys: " . json_encode(array_keys($saved_settings)));
 
         return [
@@ -851,11 +858,13 @@ function pdf_builder_verify_canvas_settings_consistency_handler() {
         }
 
         // Log pour debug
+        // Send updated settings
         error_log('PDF Builder: [VERIFY CONSISTENCY] Canvas settings from DB: ' . count($canvas_settings));
 
         wp_send_json_success($canvas_settings);
 
     } catch (Exception $e) {
+        // Send updated settings
         error_log('PDF Builder: [VERIFY CONSISTENCY] Error: ' . $e->getMessage());
         wp_send_json_error('Erreur lors de la vérification: ' . $e->getMessage());
     }
