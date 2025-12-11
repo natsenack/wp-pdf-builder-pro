@@ -14,7 +14,6 @@ namespace PDF_Builder\Managers;
 
 // Importer les classes nécessaires
 use DateTime;
-use WC_DateTime;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -366,7 +365,7 @@ class PDFBuilderVariableMapper
      */
     private function formatDate($date)
     {
-        if (is_a($date, 'WC_DateTime')) {
+        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format'));
         }
         if ($date instanceof DateTime) {
@@ -383,7 +382,7 @@ class PDFBuilderVariableMapper
      */
     private function formatDatetime($date)
     {
-        if (is_a($date, 'WC_DateTime')) {
+        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format') . ' ' . get_option('time_format'));
         }
         if ($date instanceof DateTime) {
@@ -484,14 +483,14 @@ class PDFBuilderVariableMapper
      */
     public static function getFallbacks()
     {
-        return array(
+        $fallbacks = array(
             'order_number' => 'N/A',
             'order_date' => date_i18n(get_option('date_format')),
             'order_date_time' => date_i18n(get_option('date_format') . ' ' . get_option('time_format')),
             'order_date_modified' => date_i18n(get_option('date_format')),
-            'order_total' => \wc_price(0),
+            'order_total' => '0',
             'order_status' => __('Unknown', 'pdf-builder-pro'),
-            'currency' => get_woocommerce_currency(),
+            'currency' => 'USD',
             'customer_name' => __('Customer', 'pdf-builder-pro'),
             'customer_first_name' => '',
             'customer_last_name' => '',
@@ -509,11 +508,11 @@ class PDFBuilderVariableMapper
             'billing_postcode' => '',
             'billing_country' => '',
             'billing_state' => '',
-            'subtotal' => \wc_price(0),
-            'tax_amount' => \wc_price(0),
-            'shipping_amount' => \wc_price(0),
-            'discount_amount' => \wc_price(0),
-            'total_excl_tax' => \wc_price(0),
+            'subtotal' => '0',
+            'tax_amount' => '0',
+            'shipping_amount' => '0',
+            'discount_amount' => '0',
+            'total_excl_tax' => '0',
             'payment_method' => '',
             'payment_method_code' => '',
             'transaction_id' => '',
@@ -528,5 +527,18 @@ class PDFBuilderVariableMapper
             'company_phone' => '',
             'company_email' => get_option('admin_email', '')
         );
+
+        // Add WooCommerce-specific fallbacks only if WooCommerce is available
+        if (did_action('plugins_loaded') && class_exists('WooCommerce') && function_exists('wc_price') && function_exists('get_woocommerce_currency')) {
+            $fallbacks['order_total'] = \wc_price(0);
+            $fallbacks['currency'] = get_woocommerce_currency();
+            $fallbacks['subtotal'] = \wc_price(0);
+            $fallbacks['tax_amount'] = \wc_price(0);
+            $fallbacks['shipping_amount'] = \wc_price(0);
+            $fallbacks['discount_amount'] = \wc_price(0);
+            $fallbacks['total_excl_tax'] = \wc_price(0);
+        }
+
+        return $fallbacks;
     }
 }
