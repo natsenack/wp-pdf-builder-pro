@@ -1797,20 +1797,52 @@
                                     // Mettre à jour l'affichage des cartes avec les nouvelles valeurs
                                     updateCanvasCardsDisplay();
 
-                                    alert('✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.');
+                                    // Notification de succès
+                                    if (typeof showSuccessNotification !== 'undefined') {
+                                        showSuccessNotification('✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.', {
+                                            duration: 6000,
+                                            dismissible: true
+                                        });
+                                    } else {
+                                        alert('✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.');
+                                    }
                                 } else {
                                     console.error('[PDF Builder] RESET_CANVAS - Server-side reset failed:', data);
-                                    alert('❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'));
+                                    // Notification d'erreur
+                                    if (typeof showErrorNotification !== 'undefined') {
+                                        showErrorNotification('❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'), {
+                                            duration: 8000,
+                                            dismissible: true
+                                        });
+                                    } else {
+                                        alert('❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'));
+                                    }
                                 }
                             })
                             .catch(error => {
                                 console.error('[PDF Builder] RESET_CANVAS - AJAX error:', error);
-                                alert('❌ Erreur de connexion lors de la réinitialisation.');
+                                // Notification d'erreur de connexion
+                                if (typeof showErrorNotification !== 'undefined') {
+                                    showErrorNotification('❌ Erreur de connexion lors de la réinitialisation.', {
+                                        duration: 8000,
+                                        dismissible: true
+                                    });
+                                } else {
+                                    alert('❌ Erreur de connexion lors de la réinitialisation.');
+                                }
                             });
 
                         } catch (error) {
                             console.error('[PDF Builder] RESET_CANVAS - Error during reset:', error);
-                            alert('❌ Erreur lors de la réinitialisation des paramètres.');
+                            // Notification d'erreur générale
+                            if (typeof showErrorNotification !== 'undefined') {
+                                showErrorNotification('❌ Erreur lors de la réinitialisation des paramètres.', {
+                                    duration: 8000,
+                                    dismissible: true
+                                });
+                            } else {
+                                alert('❌ Erreur lors de la réinitialisation des paramètres.');
+                            }
                         }
                     }
 
@@ -1941,20 +1973,6 @@
                                 return;
                             }
 
-                            // Gestionnaire pour annuler les modales
-                            const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
-                            if (cancelBtn) {
-                                e.preventDefault();
-                                console.log('[PDF Builder] CANCEL_BUTTON - Cancel button clicked');
-
-                                const modal = cancelBtn.closest('.canvas-modal-overlay');
-                                if (modal) {
-                                    const modalId = modal.id;
-                                    closeModal(modalId);
-                                }
-                                return;
-                            }
-
                             // Gestionnaire pour réinitialiser les paramètres Canvas
                             const resetBtn = e.target.closest('#reset-canvas-settings');
                             if (resetBtn) {
@@ -1966,6 +1984,20 @@
                                     resetCanvasSettings();
                                 } else {
                                     console.log('[PDF Builder] RESET_BUTTON - User cancelled reset');
+                                }
+                                return;
+                            }
+
+                            // Gestionnaire pour annuler les modales
+                            const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
+                            if (cancelBtn) {
+                                e.preventDefault();
+                                console.log('[PDF Builder] CANCEL_BUTTON - Cancel button clicked');
+
+                                const modal = cancelBtn.closest('.canvas-modal-overlay');
+                                if (modal) {
+                                    const modalId = modal.id;
+                                    closeModal(modalId);
                                 }
                                 return;
                             }
