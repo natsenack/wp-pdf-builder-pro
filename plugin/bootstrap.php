@@ -807,6 +807,13 @@ function pdf_builder_load_bootstrap()
         PDF_Builder_Notification_Manager::get_instance();
     }
 
+    // CHARGER LE MONITEUR DE SANTE
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Health_Monitor.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Health_Monitor.php';
+        // Initialiser l'instance
+        PDF_Builder_Health_Monitor::get_instance();
+    }
+
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
     /*
     add_action('admin_enqueue_scripts', function() {

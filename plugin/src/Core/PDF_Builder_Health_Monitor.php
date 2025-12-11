@@ -820,7 +820,7 @@ class PDF_Builder_Health_Monitor {
      */
     public function health_check_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_health')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
