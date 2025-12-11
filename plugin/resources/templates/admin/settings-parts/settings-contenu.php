@@ -7,6 +7,8 @@
 
     // require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 
+    echo "<!-- TEST: settings-contenu.php loaded -->";
+
     $settings = get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
@@ -77,6 +79,7 @@
 
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
+                <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); ?>
                 <h3>
                     <span>
                         🎨 Canvas
@@ -90,7 +93,9 @@
                     <span id="monitoring-status">🔍 Monitoring actif</span>
                 </div>
 
+                <?php error_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields"); ?>
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
+                <!-- DEBUG: Hidden fields rendering started -->
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_width]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_width', '794')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_height]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_height', '1123')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_dpi]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_dpi', '96')); ?>">
@@ -101,9 +106,24 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_shadow_enabled]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_shadow_enabled', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_container_bg_color]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_grid_enabled]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_grid_enabled', '1')); ?>">
+                    <?php
+                    $grid_enabled_value = get_canvas_option_contenu('canvas_grid_enabled', '1');
+                    error_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_grid_enabled: " . $grid_enabled_value);
+                    echo "<!-- DEBUG: canvas_grid_enabled = $grid_enabled_value -->";
+                    ?>
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_grid_size]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_grid_size', '20')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_guides_enabled]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_guides_enabled', '1')); ?>">
+                    <?php
+                    $guides_enabled_value = get_canvas_option_contenu('canvas_guides_enabled', '1');
+                    error_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_guides_enabled: " . $guides_enabled_value);
+                    echo "<!-- DEBUG: canvas_guides_enabled = $guides_enabled_value -->";
+                    ?>
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_snap_to_grid]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_snap_to_grid', '1')); ?>">
+                    <?php
+                    $snap_enabled_value = get_canvas_option_contenu('canvas_snap_to_grid', '1');
+                    error_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_snap_to_grid: " . $snap_enabled_value);
+                    echo "<!-- DEBUG: canvas_snap_to_grid = $snap_enabled_value -->";
+                    ?>
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_zoom_min]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_zoom_max]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_zoom_max', '500')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_zoom_default]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>">
@@ -127,6 +147,9 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_performance_monitoring]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_performance_monitoring', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_error_reporting]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_error_reporting', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_php]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>">
+
+                    <!-- DEBUG: Hidden fields rendering completed -->
+                    <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
@@ -609,8 +632,14 @@
 
                     // Fonction pour mettre à jour les valeurs d'une modale avec les paramètres actuels
                     function updateModalValues(category) {
+                        console.log(`[PDF Builder] UPDATE_MODAL - Called with category: ${category}`);
+                        console.log('[PDF Builder] UPDATE_MODAL - Starting modal value synchronization');
                         const modal = document.querySelector(`#canvas-${category}-modal`);
-                        if (!modal) return;
+                        if (!modal) {
+                            console.log(`[PDF Builder] UPDATE_MODAL - Modal #canvas-${category}-modal not found`);
+                            return;
+                        }
+                        console.log(`[PDF Builder] UPDATE_MODAL - Modal found, processing category: ${category}`);
 
                         // Mapping des champs selon la catégorie
                         const fieldMappings = {
@@ -674,6 +703,10 @@
                                 // Chercher la valeur dans les champs cachés
                                 const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
                                 if (hiddenField) {
+                                    console.log(`[PDF Builder] UPDATE_MODAL - Found hidden field for ${settingKey}: ${hiddenField.value}`);
+                                    if (category === 'grille') {
+                                        console.log(`[PDF Builder] GRID_UPDATE - Processing grid field ${fieldId} with value: ${hiddenField.value}`);
+                                    }
                                     const value = hiddenField.value;
                                     
                                     // Log spécifique pour les toggles de grille

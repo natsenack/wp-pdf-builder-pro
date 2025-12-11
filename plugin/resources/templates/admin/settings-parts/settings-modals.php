@@ -538,6 +538,14 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas apparence Modal (hidden container) -->
 <!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Grille & Guides -->
+<?php
+    error_log("[PDF Builder] MODAL_RENDER - Rendering grille modal");
+    $grille_guides_enabled = get_canvas_option('canvas_guides_enabled', '1');
+    $grille_grid_enabled = get_canvas_option('canvas_grid_enabled', '1');
+    $grille_grid_size = get_canvas_option('canvas_grid_size', '20');
+    $grille_snap_to_grid = get_canvas_option('canvas_snap_to_grid', '1');
+    error_log("[PDF Builder] MODAL_RENDER - Grille values: guides=$grille_guides_enabled, grid=$grille_grid_enabled, size=$grille_grid_size, snap=$grille_snap_to_grid");
+?>
 <!-- Canvas Grille Modal Overlay -->
 <div id="canvas-grille-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-grille-modal">
         <section id="canvas-grille-modal" class="canvas-modal-container">

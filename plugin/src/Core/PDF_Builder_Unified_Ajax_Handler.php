@@ -236,6 +236,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Log pour déboguer
                     error_log("[PDF Builder] Sauvegarde Canvas - {$setting_key}: {$value}");
                     
+                    // Log spécifique pour les toggles de grille
+                    if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'])) {
+                        error_log("[PDF Builder] GRID_TOGGLE_SAVE - {$setting_key}: {$value}");
+                    }
+                    
                     // Validation spécifique selon le type de paramètre
                     if ((strpos($setting_key, '_width') !== false && strpos($setting_key, '_border_width') === false) || strpos($setting_key, '_height') !== false) {
                         $value = intval($value);
@@ -261,6 +266,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                     update_option($setting_key, $value);
                     $saved_options[$setting_key] = $value;
                     $saved_count++;
+                    
+                    // Vérifier que la valeur a été correctement sauvegardée
+                    $verify_value = get_option($setting_key);
+                    if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'])) {
+                        error_log("[PDF Builder] GRID_TOGGLE_VERIFY - {$setting_key} saved as: {$verify_value}");
+                    }
                 }
             }
 
