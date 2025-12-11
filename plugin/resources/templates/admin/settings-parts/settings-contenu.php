@@ -632,9 +632,9 @@
                                 const stored = localStorage.getItem('pdfBuilderMonitoring');
                                 if (stored) {
                                     const data = JSON.parse(stored);
-                                    this.metrics = { ...this.metrics, ...data.metrics };
+                                    this.metrics = Object.assign({}, this.metrics, data.metrics);
                                     this.history = data.history || [];
-                                    this.currentState = { ...this.currentState, ...data.currentState };
+                                    this.currentState = Object.assign({}, this.currentState, data.currentState);
                                     console.log('📥 Monitoring chargé depuis localStorage');
                                 }
                             } catch (e) {
@@ -793,8 +793,7 @@
 
                         // Obtenir les métriques actuelles
                         getMetrics: function() {
-                            return {
-                                ...this.metrics,
+                            return Object.assign({}, this.metrics, {
                                 historyLength: this.history.length,
                                 currentState: this.currentState,
                                 uptime: Date.now() - (this.history[0]?.timestamp || Date.now())
@@ -988,10 +987,9 @@
                                 description: config.description || '',
                                 validation: config.validation || null,
                                 dependencies: config.dependencies || [],
-                                group: config.group || 'default',
-                                ...config
+                                group: config.group || 'default'
                             };
-                            return this;
+                            return Object.assign(field, config);
                         }
 
                         /**
