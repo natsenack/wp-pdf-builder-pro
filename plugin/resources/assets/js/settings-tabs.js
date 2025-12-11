@@ -87,7 +87,6 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
             // Ignore les erreurs localStorage
         }
     }
-    }
 
     // Initialiser au chargement du DOM
     document.addEventListener('DOMContentLoaded', initTabs);
