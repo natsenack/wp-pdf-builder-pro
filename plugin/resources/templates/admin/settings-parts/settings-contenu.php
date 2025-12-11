@@ -933,6 +933,25 @@
     margin-bottom: 16px;
     border: 1px solid #c3e6cb;
 }
+
+/* Indicateurs de valeur */
+.value-indicator {
+    font-size: 12px;
+    font-style: italic;
+    margin-left: 8px;
+}
+
+.value-default {
+    border-left: 3px solid #666;
+}
+
+.value-custom {
+    border-left: 3px solid #007cba;
+}
+
+.value-cached {
+    border-left: 3px solid #f39c12;
+}
             </style>
             <?php
                 // $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
@@ -1493,19 +1512,23 @@
                                 // Chercher la valeur dans les champs cachés
                                 const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
                                 let value = '';
+                                let valueSource = 'default'; // default, custom, cached
                                 
                                 if (hiddenField && hiddenField.value && hiddenField.value.trim() !== '') {
                                     value = hiddenField.value;
-                                    console.log(`[PDF Builder] UPDATE_MODAL - Using hidden field value for ${settingKey}: ${value}`);
+                                    valueSource = 'custom';
+                                    console.log(`[PDF Builder] UPDATE_MODAL - Using custom value for ${settingKey}: ${value}`);
                                 } else {
                                     // Vérifier le cache localStorage
                                     const cachedData = loadModalFromCache(category);
                                     if (cachedData && cachedData.hasOwnProperty(settingKey)) {
                                         value = cachedData[settingKey];
+                                        valueSource = 'cached';
                                         console.log(`[PDF Builder] UPDATE_MODAL - Using cached value for ${settingKey}: ${value}`);
                                     } else {
                                         // Utiliser la valeur par défaut si rien n'est trouvé
                                         value = defaultValues[settingKey] || '';
+                                        valueSource = 'default';
                                         console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value}`);
                                     }
                                 }
@@ -1546,6 +1569,29 @@
                                             option.selected = option.value === value;
                                         });
                                     }
+                                }
+
+                                // Ajouter les indicateurs visuels selon la source de la valeur
+                                field.classList.remove('value-default', 'value-custom', 'value-cached');
+                                field.classList.add(`value-${valueSource}`);
+                                
+                                // Ajouter un indicateur textuel près du champ
+                                let indicator = field.parentNode.querySelector('.value-indicator');
+                                if (!indicator) {
+                                    indicator = document.createElement('span');
+                                    indicator.className = 'value-indicator';
+                                    field.parentNode.appendChild(indicator);
+                                }
+                                
+                                if (valueSource === 'default') {
+                                    indicator.textContent = ' (Défaut)';
+                                    indicator.style.color = '#666';
+                                } else if (valueSource === 'custom') {
+                                    indicator.textContent = ' (Personnalisé)';
+                                    indicator.style.color = '#007cba';
+                                } else if (valueSource === 'cached') {
+                                    indicator.textContent = ' (En cache)';
+                                    indicator.style.color = '#f39c12';
                                 }
                             } else {
                                 console.log(`Field not found for ${fieldId} or ${settingKey}`);
@@ -1629,144 +1675,66 @@
 
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
-                        // VALIDATION CÔTÉ CLIENT AVANT ENVOI
-                        const allCanvasInputs = document.querySelectorAll('input[name^="pdf_builder_canvas_"]');
-                        const settings = {};
-                        let validationErrors = [];
+                        const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
+                        if (!modal) return;
 
-                        // Collecter et valider toutes les valeurs
-                        allCanvasInputs.forEach(input => {
-                            let value = '';
-                            if (input.type === 'checkbox') {
-                                value = input.checked ? '1' : '0';
-                            } else {
-                                value = input.value;
+                        const settings = {
+                            action: 'pdf_builder_save_canvas_settings',
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>'
+                        };
+
+                        // Collecter les valeurs de la modale
+                        const inputs = modal.querySelectorAll('input, select, textarea');
+                        inputs.forEach(input => {
+                            if (input.name && input.name.startsWith('canvas_')) {
+                                if (input.type === 'checkbox') {
+                                    settings[input.name] = input.checked ? '1' : '0';
+                                } else {
+                                    settings[input.name] = input.value;
+                                }
                             }
-
-                            // Utiliser la valeur par défaut si vide
-                            if (!value || value.trim() === '') {
-                                value = CANVAS_DEFAULT_VALUES[input.name] || '';
-                                console.log(`SAVE_DEFAULT: Applied default for ${input.name}: ${value}`);
-                            }
-
-                        // VALIDATION CÔTÉ CLIENT (si activée)
-                        if (FeatureGate.isEnabled('ENABLE_VALIDATION')) {
-                            // Validation côté client
-                            if (!CanvasValidators.validateField(input.name, value)) {
-                                validationErrors.push(`${input.name}: valeur invalide "${value}"`);
-                                value = CANVAS_DEFAULT_VALUES[input.name] || '';
-                                console.warn(`VALIDATION_FIX: Corrected invalid value for ${input.name} to ${value}`);
-                            }
-                        }
-
-                        settings[input.name] = value;
                         });
 
-                        // Bloquer si trop d'erreurs de validation
-                        if (validationErrors.length > 5) {
-                            alert('Trop d\'erreurs de validation. Rechargement de la page...');
-                            location.reload();
-                            return;
-                        }
-
-                        console.log('SAVE_DEBUG: Validated settings to save:', settings);
-
-                        // SAUVEGARDE EN CACHE LOCAL AVANT ENVOI
-                        CanvasCache.save(settings);
-
-                        // Ajouter métadonnées
-                        settings['action'] = 'pdf_builder_save_canvas_settings';
-                        settings['nonce'] = '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>';
-                        settings['client_timestamp'] = Date.now();
-
-                        // FONCTION DE SAUVEGARDE AVEC RETRY
-                        function attemptSave(retryCount = 0) {
-                            CanvasMetrics.recordSaveStart();
-
-                            // VÉRIFICATION HEALTH AVANT ENVOI
-                            if (!CanvasHealth.checkHealth() && retryCount === 0) {
-                                console.warn('HEALTH_CHECK: System unhealthy, attempting save anyway');
-                            }
-
-                            const saveBtn = document.querySelector(`.canvas-modal-save[data-category="${category}"]`);
-                            if (saveBtn) {
-                                saveBtn.innerHTML = retryCount > 0 ? `⏳ Retry ${retryCount}/${CANVAS_CONFIG.MAX_RETRIES}...` : '⏳ Sauvegarde...';
-                                saveBtn.disabled = true;
-                            }
-
-                            // CONTROLLER POUR ANNULER SI TROP LONG
-                            const controller = new AbortController();
-                            const timeoutId = setTimeout(() => {
-                                controller.abort();
-                            }, CANVAS_CONFIG.AJAX_TIMEOUT);
-
-                            fetch(ajaxurl, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                },
-                                body: new URLSearchParams(settings),
-                                signal: controller.signal
-                            })
-                            .then(response => {
-                                clearTimeout(timeoutId);
-                                if (!response.ok) {
-                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success) {
-                                    CanvasMetrics.recordSaveEnd(true);
-                                    CanvasHealth.recordSuccess();
-                                    CanvasCache.clear(); // Nettoyer le cache après succès
-                                    localStorage.removeItem(`pdf_builder_modal_${category}`); // Nettoyer le cache modal
-
-                                    closeModal(`canvas-${category}-modal-overlay`);
-                                    location.reload();
-                                } else {
-                                    throw new Error(data.data?.message || 'Erreur serveur inconnue');
-                                }
-                            })
-                            .catch(error => {
-                                CanvasMetrics.recordSaveEnd(false);
-                                clearTimeout(timeoutId);
-                                CanvasHealth.recordFailure();
-
-                                console.error(`SAVE_ERROR (attempt ${retryCount + 1}):`, error);
-
-                                // RETRY AUTOMATIQUE
-                                if (retryCount < CANVAS_CONFIG.MAX_RETRIES) {
-                                    console.log(`RETRY: Attempting save again in ${CANVAS_CONFIG.RETRY_DELAY}ms...`);
-                                    setTimeout(() => {
-                                        attemptSave(retryCount + 1);
-                                    }, CANVAS_CONFIG.RETRY_DELAY * (retryCount + 1)); // Backoff exponentiel
-                                } else {
-                                    // ÉCHEC FINAL - TENTER RECUPÉRATION VIA CACHE
-                                    console.error('SAVE_FAILED: All retry attempts failed');
-
-                                    const cachedData = CanvasCache.load();
-                                    if (cachedData) {
-                                        console.log('FALLBACK: Attempting to restore from cache');
-                                        // Ici on pourrait implémenter une restauration silencieuse
-                                        alert('Sauvegarde échouée. Données préservées en cache local.');
-                                    } else {
-                                        alert(`Erreur de sauvegarde après ${CANVAS_CONFIG.MAX_RETRIES} tentatives: ${error.message}`);
+                        // Sauvegarde simple
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams(settings)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Mettre à jour les champs cachés
+                                inputs.forEach(input => {
+                                    if (input.name && input.name.startsWith('canvas_')) {
+                                        const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
+                                        if (hiddenField) {
+                                            hiddenField.value = settings[input.name];
+                                        }
+                                        
+                                        // Marquer comme valeur personnalisée
+                                        input.classList.remove('value-default', 'value-cached');
+                                        input.classList.add('value-custom');
+                                        
+                                        let indicator = input.parentNode.querySelector('.value-indicator');
+                                        if (indicator) {
+                                            indicator.textContent = ' (Personnalisé)';
+                                            indicator.style.color = '#007cba';
+                                        }
                                     }
-                                }
-                            })
-                            .finally(() => {
-                                const saveBtn = document.querySelector(`.canvas-modal-save[data-category="${category}"]`);
-                                if (saveBtn && retryCount >= CANVAS_CONFIG.MAX_RETRIES) {
-                                    saveBtn.innerHTML = '💾 Sauvegarder';
-                                    saveBtn.disabled = false;
-                                }
-                            });
-                        }
+                                });
 
-                        // Démarrer la sauvegarde
-                        attemptSave();
-                    }
+                                closeModal(`canvas-${category}-modal-overlay`);
+                                alert('Paramètres sauvegardés avec succès !');
+                            } else {
+                                alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur de sauvegarde:', error);
+                            alert('Erreur de connexion lors de la sauvegarde');
+                        });
+
 
                     // Gestionnaire d'événements pour les boutons de configuration - VERSION RENFORCÉE
                     document.addEventListener('click', function(e) {
