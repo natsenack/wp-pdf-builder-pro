@@ -462,7 +462,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
         return [
             'saved_count' => $saved_count,
-            'saved_settings' => $saved_settings,
+            'saved_settings' => $settings,
             'debug_logs' => [
                 'processed_fields' => array_keys($saved_settings),
                 'total_processed' => count($saved_settings),
