@@ -29,8 +29,14 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
  * @return bool True si WooCommerce est actif
  */
 function pdf_builder_is_woocommerce_active() {
-    // Cette fonction ne doit être appelée que dans des hooks WordPress appropriés
-    // (init, admin_init, etc.) et jamais pendant le bootstrap
+    // Pour éviter complètement tout risque d'autoloading prématuré,
+    // on ne fait la vérification que si nous sommes dans un hook approprié
+    // (init ou plus tard) et que WooCommerce est déjà chargé
+    if (!did_action('init')) {
+        return false; // Trop tôt, retourner false pour éviter tout autoloading
+    }
+
+    // À partir du hook 'init', il est sûr de vérifier
     return defined('WC_VERSION');
 }
 

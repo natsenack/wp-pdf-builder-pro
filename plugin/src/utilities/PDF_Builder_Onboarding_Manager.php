@@ -204,40 +204,21 @@ class PDF_Builder_Onboarding_Manager {
             ]
         ];
         // Ajouter l'étape WooCommerce seulement si WooCommerce est installé
-        // Utiliser une vérification différée pour éviter les problèmes de chargement prématuré
-        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
-            $steps[5] = [
-                'id' => 'woocommerce_setup',
-                'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
-                'description' => __('Intégrez vos PDFs dans vos commandes WooCommerce.', 'pdf-builder-pro'),
-                'content' => $this->get_step_content('woocommerce_setup'),
-                'action' => __('Suivant', 'pdf-builder-pro'),
-                'action_type' => 'next',
-                'can_skip' => true, // Peut être ignorée
-                'skip_text' => __('Ignorer cette étape', 'pdf-builder-pro'),
-                'requires_selection' => false // Ne nécessite pas de sélection
-            ];
-            $steps[6] = [
-                'id' => 'completed',
-                'title' => __('Configuration terminée !', 'pdf-builder-pro'),
-                'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
-                'content' => $this->get_step_content('completed'),
-                'action' => __('Commencer à créer', 'pdf-builder-pro'),
-                'action_type' => 'finish',
-                'can_skip' => false // Dernière étape, ne peut pas être ignorée
-            ];
-        } else {
-            // Si WooCommerce n'est pas installé, l'étape 5 devient l'étape finale
-            $steps[5] = [
-                'id' => 'completed',
-                'title' => __('Configuration terminée !', 'pdf-builder-pro'),
-                'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
-                'content' => $this->get_step_content('completed'),
-                'action' => __('Commencer à créer', 'pdf-builder-pro'),
-                'action_type' => 'finish',
-                'can_skip' => false // Dernière étape, ne peut pas être ignorée
-            ];
-        }
+        // La vérification est différée pour éviter tout chargement prématuré
+        // L'étape sera ajoutée dynamiquement plus tard si WooCommerce est disponible
+        // Pour l'instant, on termine avec l'étape 'completed' à la position 5
+
+        // Étape finale - toujours présente
+        $steps[5] = [
+            'id' => 'completed',
+            'title' => __('Configuration terminée !', 'pdf-builder-pro'),
+            'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
+            'content' => $this->get_step_content('completed'),
+            'action' => __('Commencer à créer', 'pdf-builder-pro'),
+            'action_type' => 'finish',
+            'can_skip' => false // Dernière étape, ne peut pas être ignorée
+        ];
+
         return $steps;
     }
     /**
