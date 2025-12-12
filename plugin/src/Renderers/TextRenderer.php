@@ -16,8 +16,7 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-// Import du système de cache
-use PDF_Builder\Cache\RendererCache;
+// Système de cache supprimé - génération directe des styles
 use PDF_Builder\Performance\PerformanceMonitor;
 
 class TextRenderer
@@ -112,14 +111,8 @@ class TextRenderer
     {
         // Remplacement des variables (avec cache)
         $processedContent = $this->replaceVariables($content, $context);
-// Génération des styles CSS (avec cache)
-        $styleKey = RendererCache::generateStyleKey($properties, 'text');
-        $css = RendererCache::get($styleKey);
-        if ($css === null) {
-            $css = $this->generateTextStyles($properties);
-            RendererCache::set($styleKey, $css, 600);
-        // Cache 10 minutes pour les styles
-        }
+// Génération des styles CSS (sans cache - génération directe)
+        $css = $this->generateTextStyles($properties);
 
         // Génération du HTML
         $html = $this->generateTextHtml($processedContent, $properties);
@@ -163,14 +156,8 @@ class TextRenderer
      */
     private function replaceVariables(string $content, array $context): string
     {
-        // Extraction des variables du contenu (avec cache)
-        $contentKey = 'content_vars_' . md5($content);
-        $variables = RendererCache::get($contentKey);
-        if ($variables === null) {
-            $variables = $this->extractVariables($content);
-            RendererCache::set($contentKey, $variables, 3600);
-        // Cache 1 heure pour l'extraction
-        }
+        // Extraction des variables du contenu (sans cache - extraction directe)
+        $variables = $this->extractVariables($content);
 
         $result = $content;
         foreach ($variables as $variable) {
@@ -210,17 +197,9 @@ class TextRenderer
      */
     private function getVariableValue(string $variable, array $context): string
     {
-        // Variables système (avec cache)
+        // Variables système (sans cache - génération directe)
         if (isset(self::SYSTEM_VARIABLES[$variable])) {
-            $cacheKey = RendererCache::generateVariableKey($variable, []);
-            $cachedValue = RendererCache::get($cacheKey);
-            if ($cachedValue !== null) {
-                return $cachedValue;
-            }
-
             $value = $this->getSystemVariableValue($variable);
-            RendererCache::set($cacheKey, $value, 60);
-// Cache 1 minute pour les variables système
             return $value;
         }
 

@@ -339,14 +339,6 @@ class PDF_Builder_Health_Monitor {
             }
         }
 
-        // Cache
-        if (class_exists('PDF_Builder_Smart_Cache')) {
-            $cache_health = PDF_Builder_Smart_Cache::get_instance()->check_health();
-            if ($cache_health['status'] !== 'healthy') {
-                $issues[] = 'Problèmes de cache détectés';
-            }
-        }
-
         $status = empty($issues) ? 'healthy' : (count($issues) > 1 ? 'critical' : 'warning');
 
         return [

@@ -230,13 +230,6 @@ if (function_exists('add_action')) {
         }, 1);
     // Also enforce HTTPS for the administration pages if configured
     add_action('admin_init', function() {
-        // Désactiver le cache pour la page de paramètres PDF Builder
-        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
-            header('Cache-Control: no-cache, no-store, must-revalidate');
-            header('Pragma: no-cache');
-            header('Expires: 0');
-        }
-
         // Skip CLI, AJAX and REST calls
         if (defined('WP_CLI') && WP_CLI) return;
         if (defined('DOING_AJAX') && DOING_AJAX) return;
@@ -352,7 +345,6 @@ function pdf_builder_load_core()
     // Charger les managers essentiels depuis src/Managers/
     $managers = array(
         'PDF_Builder_Backup_Restore_Manager.php',
-        'PDF_Builder_Cache_Manager.php',
         'PDF_Builder_Canvas_Manager.php',
         'PDF_Builder_Drag_Drop_Manager.php',
         'PDF_Builder_Feature_Manager.php',
@@ -370,18 +362,6 @@ function pdf_builder_load_core()
         $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
         if (file_exists($manager_path)) {
             require_once $manager_path;
-        }
-    }
-
-    // Charger les classes de cache essentielles depuis src/Cache/
-    $cache_classes = array(
-        'RendererCache.php',
-        'WooCommerceCache.php'
-    );
-    foreach ($cache_classes as $cache_class) {
-        $cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/' . $cache_class;
-        if (file_exists($cache_path)) {
-            require_once $cache_path;
         }
     }
 
@@ -526,11 +506,6 @@ function pdf_builder_load_core()
     // Charger le handler AJAX d'image de prévisualisation (Phase 3.0)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
-    }
-
-    // Charger les handlers AJAX pour le cache
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/cache-handlers.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/cache-handlers.php';
     }
 
     // Charger les handlers AJAX pour les paramètres
@@ -744,12 +719,6 @@ function pdf_builder_load_bootstrap()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php';
     }
 
-    // CHARGER LE TEST D'INTÉGRATION DU CACHE (seulement en mode développeur)
-    $developer_mode = get_option('pdf_builder_developer_enabled', false);
-    if ($developer_mode && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php';
-    }
-
     // CHARGER LE HANDLER DE TEST DE LICENCE (toujours chargé pour permettre l'activation/désactivation)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
@@ -942,13 +911,6 @@ function pdf_builder_load_bootstrap()
             \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
         }
     }, 5);
-
-    // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
-    add_action('init', function() {
-        if (class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
-            \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
-        }
-    });
 
     // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
     pdf_builder_register_essential_ajax_hooks();
@@ -1216,7 +1178,6 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_template',
             'pdf_builder_load_template',
             'pdf_builder_auto_save_template',
-            'pdf_builder_flush_rest_cache',
             // Actions AJAX de l'Onboarding Manager
             'pdf_builder_complete_onboarding_step',
             'pdf_builder_skip_onboarding',

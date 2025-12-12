@@ -265,7 +265,7 @@ class PDF_Builder_Intelligent_Loader {
     }
 
     private function load_cache_component() {
-        return class_exists('PDF_Builder_Smart_Cache');
+        return false; // Système de cache supprimé
     }
 
     private function load_database_component() {

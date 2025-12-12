@@ -6,7 +6,8 @@ use PDF_Builder\Generators\GeneratorManager;
 use PDF_Builder\Data\SampleDataProvider;
 use PDF_Builder\Data\WooCommerceDataProvider;
 use PDF_Builder\Utilities\ImageConverter;
-use PDF_Builder\Cache\RendererCache;
+
+// Système de cache supprimé - génération directe des données
 
 // Declare WooCommerce functions for linter
 if (!function_exists('wc_get_order')) {
@@ -511,38 +512,16 @@ class PreviewImageAPI
 
         $cache_key = $this->generateCacheKey($params);
 
-        // Utiliser le cache intelligent RendererCache pour les métadonnées
-        $cache_metadata_key = 'preview_metadata_' . $cache_key;
-        $cached_metadata = RendererCache::get($cache_metadata_key);
-
-        if ($cached_metadata && isset($cached_metadata['image_url'])) {
-            // Vérifier si le fichier cache existe toujours
-            $cache_file = self::$cache_dir . $cache_key . '.' . $params['format'];
-            if (file_exists($cache_file)) {
-                $this->performance_metrics['requests_cached']++;
-                $generation_time = microtime(true) - $start_time;
-                $this->performance_metrics['generation_times'][] = $generation_time;
-
-                return array_merge($cached_metadata, [
-                    'cached' => true,
-                    'cache_source' => 'intelligent',
-                    'generation_time' => round($generation_time, 3)
-                ]);
-            } else {
-                // Fichier supprimé, invalider le cache
-                RendererCache::delete($cache_metadata_key);
-            }
-        }
-
+        // Système de cache supprimé - génération directe des métadonnées
         $cache_file = self::$cache_dir . $cache_key . '.' . $params['format'];
 
-        // Vérifier si cache fichier valide (fallback)
+        // Vérifier si cache fichier valide (seul système de cache restant)
         if ($this->isCacheValid($cache_file, $params)) {
             $this->performance_metrics['requests_cached']++;
             $generation_time = microtime(true) - $start_time;
             $this->performance_metrics['generation_times'][] = $generation_time;
 
-            $result = array(
+            return array(
                 'image_url' => $this->getCacheUrl($cache_key, $params['format']),
                 'cached' => true,
                 'cache_key' => $cache_key,
@@ -552,11 +531,6 @@ class PreviewImageAPI
                 'cache_source' => 'file',
                 'generation_time' => round($generation_time, 3)
             );
-
-            // Stocker dans le cache intelligent
-            RendererCache::set($cache_metadata_key, $result, 1800); // 30 minutes
-
-            return $result;
         }
 
         // Générer l'image réelle
@@ -575,9 +549,6 @@ class PreviewImageAPI
             'cache_source' => 'generated',
             'generation_time' => round($generation_time, 3)
         );
-
-        // Stocker dans le cache intelligent
-        RendererCache::set($cache_metadata_key, $result, 1800); // 30 minutes
 
         return $result;
     }
@@ -1028,24 +999,13 @@ class PreviewImageAPI
     }
 
     /**
-     * Nettoie le cache intelligent RendererCache
+     * Nettoie le cache intelligent (fonction supprimée - système de cache retiré)
      * Supprime les entrées expirées et optimise les performances
      */
     public static function cleanup_intelligent_cache()
     {
-        try {
-            // RendererCache gère automatiquement le nettoyage des entrées expirées
-            // Nous pouvons forcer un nettoyage manuel si nécessaire
-            RendererCache::cleanup();
-
-            // Log du nettoyage
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                // error_log('[PDF Builder] Cache intelligent nettoyé automatiquement');
-            }
-
-        } catch (\Exception $e) {
-            // error_log('[PDF Builder] Erreur nettoyage cache intelligent: ' . $e->getMessage());
-        }
+        // Système de cache supprimé - cette méthode ne fait plus rien
+        return;
     }
 
     /**
@@ -1063,8 +1023,7 @@ class PreviewImageAPI
                 $pattern .= '*' . $context . '*';
             }
 
-            // Supprimer toutes les entrées de cache correspondant au pattern
-            RendererCache::deleteByPattern($pattern);
+            // Système de cache supprimé - plus de suppression par pattern
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 // error_log('[PDF Builder] Cache invalidé pour template ' . $template_id . ' (' . $context . ')');
@@ -1083,7 +1042,11 @@ class PreviewImageAPI
     public static function getCacheMetrics()
     {
         $instance = self::getInstance();
-        $intelligent_metrics = RendererCache::getMetrics();
+        // Système de cache intelligent supprimé
+        $intelligent_metrics = [
+            'status' => 'disabled',
+            'message' => 'Intelligent cache system removed'
+        ];
 
         // Calculer le taux de succès du cache
         $total_requests = $instance->performance_metrics['requests_total'];

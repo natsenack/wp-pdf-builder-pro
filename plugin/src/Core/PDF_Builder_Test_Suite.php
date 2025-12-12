@@ -266,43 +266,7 @@ class PDF_Builder_Test_Suite {
     }
 
     public function test_cache_system($options = []) {
-        $results = [];
-
-        if (!class_exists('PDF_Builder_Smart_Cache')) {
-            return $this->test_failed('Système de cache non disponible');
-        }
-
-        $cache = PDF_Builder_Smart_Cache::get_instance();
-
-        // Test de stockage
-        $test_key = 'test_key_' . time();
-        $test_value = ['data' => 'test_value', 'timestamp' => time()];
-
-        $results['set'] = $this->assert_true(
-            $cache->set($test_key, $test_value, 300),
-            'Stockage en cache réussi'
-        );
-
-        // Test de récupération
-        $results['get'] = $this->assert_equals(
-            $cache->get($test_key),
-            $test_value,
-            'Récupération depuis le cache réussie'
-        );
-
-        // Test de suppression
-        $results['delete'] = $this->assert_true(
-            $cache->delete($test_key),
-            'Suppression du cache réussie'
-        );
-
-        // Vérifier que la valeur a été supprimée
-        $results['verify_delete'] = $this->assert_null(
-            $cache->get($test_key),
-            'Vérification de la suppression réussie'
-        );
-
-        return $this->summarize_test_results($results, 'Tests du système de cache');
+        return $this->test_info('Système de cache supprimé - Cette fonctionnalité n\'est plus disponible');
     }
 
     public function test_security_validator($options = []) {

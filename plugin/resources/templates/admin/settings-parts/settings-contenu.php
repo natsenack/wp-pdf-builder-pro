@@ -984,9 +984,6 @@
                         }
                     });
                 }
-                // Clear localStorage and sessionStorage
-                localStorage.clear();
-                sessionStorage.clear();
                 console.log('Cache cleared by PDF Builder');
 
                 // Valeurs par défaut globales pour tous les champs Canvas - SOURCE UNIQUE DE VÉRITÉ
@@ -1035,14 +1032,12 @@
                     RETRY_DELAY: 1000, // ms
                     AJAX_TIMEOUT: 30000, // 30 secondes
                     HEALTH_CHECK_INTERVAL: 60000, // 1 minute
-                    CACHE_KEY: 'pdf_builder_canvas_backup',
-                    CACHE_TTL: 3600000 // 1 heure
+                    CACHE_KEY: 'pdf_builder_canvas_backup'
                 };
 
                 // Feature flags pour contrôle granulaire
                 const CANVAS_FEATURES = {
                     ENABLE_VALIDATION: true,
-                    ENABLE_CACHE: true,
                     ENABLE_RETRY: true,
                     ENABLE_HEALTH_CHECK: true,
                     ENABLE_METRICS: true,
@@ -1111,54 +1106,6 @@
                             return CanvasValidators.isValidBoolean(value);
                         }
                         return true; // Autres champs acceptés par défaut
-                    }
-                };
-
-                // Gestionnaire de cache localStorage
-                const CanvasCache = {
-                    save: (data) => {
-                        try {
-                            const cacheData = {
-                                data: data,
-                                timestamp: Date.now(),
-                                version: '1.0'
-                            };
-                            localStorage.setItem(CANVAS_CONFIG.CACHE_KEY, JSON.stringify(cacheData));
-                            console.log('CACHE_SAVE: Canvas settings cached locally');
-                        } catch (e) {
-                            console.warn('CACHE_ERROR: Failed to save to localStorage:', e);
-                        }
-                    },
-
-                    load: () => {
-                        try {
-                            const cached = localStorage.getItem(CANVAS_CONFIG.CACHE_KEY);
-                            if (!cached) return null;
-
-                            const cacheData = JSON.parse(cached);
-                            const age = Date.now() - cacheData.timestamp;
-
-                            if (age > CANVAS_CONFIG.CACHE_TTL) {
-                                console.log('CACHE_EXPIRED: Cache too old, removing');
-                                CanvasCache.clear();
-                                return null;
-                            }
-
-                            console.log('CACHE_LOAD: Loaded cached settings');
-                            return cacheData.data;
-                        } catch (e) {
-                            console.warn('CACHE_ERROR: Failed to load from localStorage:', e);
-                            return null;
-                        }
-                    },
-
-                    clear: () => {
-                        try {
-                            localStorage.removeItem(CANVAS_CONFIG.CACHE_KEY);
-                            console.log('CACHE_CLEAR: Local cache cleared');
-                        } catch (e) {
-                            console.warn('CACHE_ERROR: Failed to clear cache:', e);
-                        }
                     }
                 };
 
@@ -1239,9 +1186,6 @@
                             CanvasRecovery.performHealthCheck();
                         }, CANVAS_CONFIG.HEALTH_CHECK_INTERVAL);
 
-                        // Récupération au chargement de la page
-                        CanvasRecovery.attemptRecovery();
-
                         console.log('RECOVERY_INIT: Auto-recovery system initialized');
                     },
 
@@ -1284,35 +1228,6 @@
                             CanvasHealth.recordFailure();
                             console.warn('HEALTH_CHECK: Failed to reach server:', error.message);
                         });
-                    },
-
-                    attemptRecovery: () => {
-                        // Vérifier s'il y a des données en cache non sauvegardées
-                        const cachedData = CanvasCache.load();
-                        if (cachedData) {
-                            console.log('RECOVERY: Found unsaved data in cache, attempting auto-save');
-
-                            // Interface utilisateur pour informer l'utilisateur
-                            if (confirm('Des paramètres non sauvegardés ont été trouvés. Voulez-vous les restaurer ?')) {
-                                CanvasRecovery.restoreFromCache(cachedData);
-                            }
-                        }
-                    },
-
-                    restoreFromCache: (cachedData) => {
-                        console.log('CACHE_RESTORE: Restoring settings from cache');
-
-                        // Appliquer les données cachées aux champs cachés
-                        Object.entries(cachedData).forEach(([key, value]) => {
-                            const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${key}]"]`);
-                            if (hiddenField) {
-                                hiddenField.value = value;
-                                console.log(`CACHE_RESTORE: Restored ${key} = ${value}`);
-                            }
-                        });
-
-                        // Notification à l'utilisateur
-                        alert('Paramètres restaurés depuis le cache local. Pensez à sauvegarder !');
                     }
                 };
 
@@ -1578,25 +1493,17 @@
                                 // Chercher la valeur dans les champs cachés
                                 const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
                                 let value = '';
-                                let valueSource = 'default'; // default, custom, cached
+                                let valueSource = 'default'; // default, custom
                                 
                                 if (hiddenField && hiddenField.value && hiddenField.value.trim() !== '') {
                                     value = hiddenField.value;
                                     valueSource = 'custom';
                                     console.log(`[PDF Builder] UPDATE_MODAL - Using custom value for ${settingKey}: ${value}`);
                                 } else {
-                                    // Vérifier le cache localStorage
-                                    const cachedData = loadModalFromCache(category);
-                                    if (cachedData && cachedData.hasOwnProperty(settingKey)) {
-                                        value = cachedData[settingKey];
-                                        valueSource = 'cached';
-                                        console.log(`[PDF Builder] UPDATE_MODAL - Using cached value for ${settingKey}: ${value}`);
-                                    } else {
-                                        // Utiliser la valeur par défaut si rien n'est trouvé
-                                        value = defaultValues[settingKey] || '';
-                                        valueSource = 'default';
-                                        console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value}`);
-                                    }
+                                    // Utiliser la valeur par défaut si rien n'est trouvé
+                                    value = defaultValues[settingKey] || '';
+                                    valueSource = 'default';
+                                    console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value}`);
                                 }
                                 
                                 if (category === 'grille') {
@@ -1664,53 +1571,13 @@
                             }
                         }
 
-                        // Ajouter les event listeners pour sauvegarder automatiquement dans le cache
+                        // Ajouter les event listeners pour les changements (sans cache localStorage)
                         const allInputs = modal.querySelectorAll('input, select, textarea');
                         allInputs.forEach(input => {
-                            input.addEventListener('change', () => saveModalToCache(category));
-                            input.addEventListener('input', () => saveModalToCache(category));
-                        });
-                    }
-
-                    // Fonction pour sauvegarder les valeurs d'une modale dans localStorage
-                    function saveModalToCache(category) {
-                        try {
-                            const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
-                            if (!modal) return;
-
-                            const modalData = {};
-                            const inputs = modal.querySelectorAll('input, select, textarea');
-
-                            inputs.forEach(input => {
-                                if (input.name && input.name.startsWith('canvas_')) {
-                                    if (input.type === 'checkbox') {
-                                        modalData[input.name] = input.checked ? '1' : '0';
-                                    } else {
-                                        modalData[input.name] = input.value;
-                                    }
-                                }
+                            input.addEventListener('change', () => {
+                                console.log(`[PDF Builder] INPUT_CHANGE - ${input.name} changed`);
                             });
-
-                            localStorage.setItem(`pdf_builder_modal_${category}`, JSON.stringify(modalData));
-                            console.log(`[PDF Builder] MODAL_CACHE - Saved ${category} modal data`);
-                        } catch (error) {
-                            console.warn('[PDF Builder] MODAL_CACHE - Failed to save modal data:', error);
-                        }
-                    }
-
-                    // Fonction pour charger les valeurs d'une modale depuis localStorage
-                    function loadModalFromCache(category) {
-                        try {
-                            const cached = localStorage.getItem(`pdf_builder_modal_${category}`);
-                            if (!cached) return null;
-
-                            const modalData = JSON.parse(cached);
-                            console.log(`[PDF Builder] MODAL_CACHE - Loaded ${category} modal data`);
-                            return modalData;
-                        } catch (error) {
-                            console.warn('[PDF Builder] MODAL_CACHE - Failed to load modal data:', error);
-                            return null;
-                        }
+                        });
                     }
 
                     // Fonction pour fermer une modale - VERSION RENFORCÉE
@@ -1807,13 +1674,6 @@
                                     hiddenField.value = defaultValues[key];
                                     console.log(`[PDF Builder] RESET_CANVAS - Reset ${key} to ${defaultValues[key]}`);
                                 }
-                            });
-
-                            // Effacer le cache localStorage pour toutes les catégories
-                            const categories = ['dimensions', 'apparence', 'grille', 'zoom', 'export', 'interaction', 'performance', 'debug'];
-                            categories.forEach(category => {
-                                localStorage.removeItem(`pdf_builder_modal_${category}`);
-                                console.log(`[PDF Builder] RESET_CANVAS - Cleared cache for category: ${category}`);
                             });
 
                             // Faire une requête AJAX pour réinitialiser les options WordPress
@@ -2203,18 +2063,7 @@
 
                         getMetrics: () => CanvasMetrics.getStats(),
 
-                        getCacheStatus: () => {
-                            const cached = CanvasCache.load();
-                            return cached ? {
-                                hasCache: true,
-                                age: Math.round((Date.now() - JSON.parse(localStorage.getItem(CANVAS_CONFIG.CACHE_KEY) || '{}').timestamp || 0) / 1000) + 's',
-                                data: cached
-                            } : { hasCache: false };
-                        },
-
                         forceHealthCheck: () => CanvasRecovery.performHealthCheck(),
-
-                        clearCache: () => CanvasCache.clear(),
 
                         simulateFailure: () => {
                             CanvasHealth.recordFailure();
@@ -2224,7 +2073,6 @@
                         getSystemStatus: () => ({
                             health: window.CanvasDebug.getHealthStatus(),
                             metrics: window.CanvasDebug.getMetrics(),
-                            cache: window.CanvasDebug.getCacheStatus(),
                             config: CANVAS_CONFIG
                         })
                     };

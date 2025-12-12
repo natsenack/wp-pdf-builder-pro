@@ -17,8 +17,7 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-// Import du système de cache
-use PDF_Builder\Cache\RendererCache;
+// Système de cache supprimé - génération directe des styles
 
 class InfoRenderer
 {
@@ -168,14 +167,8 @@ class InfoRenderer
         }
 
         $html .= '</div>';
-// Génération des styles CSS (avec cache)
-        $styleKey = RendererCache::generateStyleKey($properties, 'info_customer');
-        $css = RendererCache::get($styleKey);
-        if ($css === null) {
-            $css = $this->generateInfoStyles($properties, 'customer-info');
-            RendererCache::set($styleKey, $css, 600);
-        // Cache 10 minutes
-        }
+// Génération des styles CSS (sans cache - génération directe)
+        $css = $this->generateInfoStyles($properties, 'customer-info');
 
         return [
             'html' => $html,
@@ -211,14 +204,8 @@ class InfoRenderer
         }
 
         $html .= '</div>';
-// Génération des styles CSS (avec cache)
-        $styleKey = RendererCache::generateStyleKey($properties, 'info_company');
-        $css = RendererCache::get($styleKey);
-        if ($css === null) {
-            $css = $this->generateInfoStyles($properties, 'company-info');
-            RendererCache::set($styleKey, $css, 600);
-        // Cache 10 minutes
-        }
+// Génération des styles CSS (sans cache - génération directe)
+        $css = $this->generateInfoStyles($properties, 'company-info');
 
         return [
             'html' => $html,
@@ -252,14 +239,8 @@ class InfoRenderer
         }
 
         $html .= '</div>';
-// Génération des styles CSS (avec cache)
-        $styleKey = RendererCache::generateStyleKey($properties, 'info_mentions');
-        $css = RendererCache::get($styleKey);
-        if ($css === null) {
-            $css = $this->generateMentionsStyles($properties);
-            RendererCache::set($styleKey, $css, 600);
-        // Cache 10 minutes
-        }
+// Génération des styles CSS (sans cache - génération directe)
+        $css = $this->generateMentionsStyles($properties);
 
         return [
             'html' => $html,

@@ -2242,7 +2242,6 @@ function pdf_builder_check_advanced_systems_status() {
     $systems_status = array(
         'intelligent_loader' => class_exists('PDF_Builder_Intelligent_Loader') && PDF_Builder_Intelligent_Loader::get_instance() !== null,
         'config_manager' => class_exists('PDF_Builder_Config_Manager') && PDF_Builder_Config_Manager::get_instance() !== null,
-        'smart_cache' => class_exists('PDF_Builder_Smart_Cache') && PDF_Builder_Smart_Cache::get_instance() !== null,
         'advanced_logger' => class_exists('PDF_Builder_Advanced_Logger') && PDF_Builder_Advanced_Logger::get_instance() !== null,
         'security_validator' => class_exists('PDF_Builder_Security_Validator') && PDF_Builder_Security_Validator::get_instance() !== null,
         'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,

@@ -52,7 +52,6 @@ class PDF_Builder_Ajax_Handler {
      */
     private function init_systems() {
         $this->systems = array(
-            'cache' => PDF_Builder_Smart_Cache::get_instance(),
             'logger' => PDF_Builder_Advanced_Logger::get_instance(),
             'security' => PDF_Builder_Security_Validator::get_instance(),
             'diagnostic' => PDF_Builder_Diagnostic_Tool::get_instance(),

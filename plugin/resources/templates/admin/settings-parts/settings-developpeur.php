@@ -421,8 +421,6 @@
                             <h5 style="margin-top: 0; color: #856404;">📂 Fichiers concernés :</h5>
                             <ul style="margin-bottom: 0;">
                                 <li><code>src/Cache/</code> - Répertoire complet du système de cache</li>
-                                <li><code>src/Managers/PDF_Builder_Cache_Manager.php</code></li>
-                                <li><code>src/Managers/PDF_Builder_Extended_Cache_Manager.php</code></li>
                                 <li><code>templates/admin/settings-page.php</code> - Section système (lignes ~2133, ~276, ~349)</li>
                                 <li><code>pdf-builder-pro.php</code> - Référence ligne 671</li>
                             </ul>

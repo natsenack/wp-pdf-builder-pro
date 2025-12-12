@@ -46,7 +46,6 @@ class PdfBuilderCore
     {
         // Charger les managers essentiels
         $managers = array(
-            'PDF_Builder_Cache_Manager.php',
             'PDF_Builder_Canvas_Manager.php',
             'PDF_Builder_Drag_Drop_Manager.php',
             'PDF_Builder_Feature_Manager.php',

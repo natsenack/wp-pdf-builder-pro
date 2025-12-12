@@ -15,8 +15,7 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-// Import du système de cache
-use PDF_Builder\Cache\RendererCache;
+// Système de cache supprimé - génération directe des styles
 
 class TableRenderer
 {
@@ -101,14 +100,8 @@ class TableRenderer
         $columns = $this->getTableColumns($properties);
 // Génération du HTML du tableau
         $html = $this->generateTableHTML($products, $columns, $properties);
-// Génération des styles CSS (avec cache)
-        $styleKey = RendererCache::generateStyleKey(array_merge($properties, ['columns' => $columns]), 'table');
-        $css = RendererCache::get($styleKey);
-        if ($css === null) {
-            $css = $this->generateTableStyles($properties, $columns);
-            RendererCache::set($styleKey, $css, 600);
-        // Cache 10 minutes pour les styles de tableau
-        }
+// Génération des styles CSS (sans cache - génération directe)
+        $css = $this->generateTableStyles($properties, $columns);
 
         return [
             'html' => $html,

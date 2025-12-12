@@ -181,7 +181,6 @@ class PDF_Builder_Loader {
     private function load_managers() {
         $managers = [
             'PDF_Builder_Backup_Restore_Manager.php',
-            'PDF_Builder_Cache_Manager.php',
             'PDF_Builder_Canvas_Manager.php',
             'PDF_Builder_Drag_Drop_Manager.php',
             'PDF_Builder_Feature_Manager.php',
@@ -252,7 +251,7 @@ class PDF_Builder_Loader {
     private function load_integrations() {
         // WooCommerce si actif - différer la vérification pour éviter les problèmes de chargement
         if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
-            $this->require_file('src/Cache/WooCommerceCache.php');
+            // Intégration WooCommerce - cache supprimé
         }
     }
 

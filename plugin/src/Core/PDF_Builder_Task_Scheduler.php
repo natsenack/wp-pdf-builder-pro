@@ -601,22 +601,11 @@ class PDF_Builder_Task_Scheduler {
     }
 
     /**
-     * Callback pour nettoyer le cache expiré
+     * Nettoyer le cache expiré (fonction supprimée - système de cache retiré)
      */
     public function cleanup_expired_cache() {
-        // // error_log('PDF Builder: [CACHE CLEANUP] Starting cache cleanup');
-
-        try {
-            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Cache_Manager')) {
-                $cache_manager = new \PDF_Builder\Managers\PDF_Builder_Cache_Manager();
-                $cache_manager->cleanup_expired_cache();
-                // // error_log('PDF Builder: [CACHE CLEANUP] Cache cleanup completed');
-            } else {
-                // // error_log('PDF Builder: [CACHE CLEANUP] Cache manager not available');
-            }
-        } catch (\Exception $e) {
-            // // error_log('PDF Builder: [CACHE CLEANUP] Exception during cleanup: ' . $e->getMessage());
-        }
+        // Système de cache supprimé - cette méthode ne fait plus rien
+        return;
     }
 
     /**

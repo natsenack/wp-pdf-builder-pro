@@ -44,14 +44,12 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
-        add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajaxFlushRestCache']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
 
         // Hooks AJAX de maintenance
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajaxCheckDatabase']);
         add_action('wp_ajax_pdf_builder_repair_database', [$this, 'ajaxRepairDatabase']);
         add_action('wp_ajax_pdf_builder_execute_sql_repair', [$this, 'ajaxExecuteSqlRepair']);
-        add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'ajaxClearCache']);
         add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajaxCheckIntegrity']);
         add_action('wp_ajax_pdf_builder_check_template_limit', [$this, 'ajaxCheckTemplateLimit']);
 
@@ -340,37 +338,6 @@ class AjaxHandler
     }
 
     /**
-     * Vider le cache REST
-     */
-    public function ajaxFlushRestCache()
-    {
-        try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
-
-            // Vider le cache
-            wp_cache_flush();
-            delete_transient('pdf_builder_cache');
-
-            wp_send_json_success([
-                'message' => 'Cache vidé avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du vidage du cache: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Générer un PDF de commande
      */
     public function ajaxGenerateOrderPdf()
@@ -437,7 +404,6 @@ class AjaxHandler
             $checks = [
                 'templates_table' => $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder_templates'") !== null,
                 'orders_table' => $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder_orders'") !== null,
-                'cache_table' => $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder_cache'") !== null,
             ];
 
             $issues = [];
@@ -529,43 +495,6 @@ class AjaxHandler
     }
 
     /**
-     * Vider le cache
-     */
-    public function ajaxClearCache()
-    {
-        try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
-
-            // Vider tous les caches
-            wp_cache_flush();
-            delete_transient('pdf_builder_cache');
-            delete_transient('pdf_builder_templates_cache');
-
-            // Vider le cache des templates
-            if (function_exists('wp_cache_delete')) {
-                wp_cache_delete('pdf_builder_templates', 'pdf_builder');
-            }
-
-            wp_send_json_success([
-                'message' => 'Cache vidé avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du vidage du cache: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Sauvegarder les paramètres
      */
     public function ajaxSaveSettings()
@@ -586,8 +515,6 @@ class AjaxHandler
             // Sauvegarder les paramètres généraux
             $settings = [
                 'pdf_builder_enable_debug' => isset($_POST['enable_debug']) ? '1' : '0',
-                'pdf_builder_enable_cache' => isset($_POST['enable_cache']) ? '1' : '0',
-                'pdf_builder_cache_timeout' => intval($_POST['cache_timeout'] ?? 3600),
                 'pdf_builder_max_file_size' => intval($_POST['max_file_size'] ?? 10),
             ];
 
@@ -829,9 +756,6 @@ class AjaxHandler
         // Collecter seulement les paramètres de performance
         $performance_settings = [];
         $performance_fields = [
-            'pdf_builder_cache_enabled',
-            'pdf_builder_cache_max_size',
-            'pdf_builder_cache_ttl',
             'pdf_builder_performance_monitoring'
         ];
 
@@ -1046,8 +970,6 @@ class AjaxHandler
 
             // Paramètres de performance
             $settings = [
-                'pdf_builder_enable_cache' => isset($_POST['enable_cache']) ? '1' : '0',
-                'pdf_builder_cache_timeout' => intval($_POST['cache_timeout'] ?? 3600),
                 'pdf_builder_compression_level' => intval($_POST['compression_level'] ?? 6),
                 'pdf_builder_memory_limit' => intval($_POST['memory_limit'] ?? 256),
                 'pdf_builder_max_execution_time' => intval($_POST['max_execution_time'] ?? 30),
