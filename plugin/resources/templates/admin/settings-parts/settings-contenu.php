@@ -814,9 +814,10 @@
             ?>
 
 <script>
-                console.log('[PDF Builder] MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
-                console.log('[PDF Builder] Date: 2025-12-11 21:35');
-                console.log('[PDF Builder] Fix: HTML/PHP moved outside script tags');
+                (function() {
+                    console.log('[PDF Builder] MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
+                    console.log('[PDF Builder] Date: 2025-12-11 21:35');
+                    console.log('[PDF Builder] Fix: HTML/PHP moved outside script tags');
                 // Fonction d'initialisation avec retry
                 function initializeModals(retryCount) {
                     if (typeof retryCount === 'undefined') retryCount = 0;
