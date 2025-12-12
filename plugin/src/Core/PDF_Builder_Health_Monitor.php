@@ -820,10 +820,7 @@ class PDF_Builder_Health_Monitor {
      */
     public function health_check_ajax() {
         try {
-            error_log('[HEALTH CHECK] AJAX called with POST: ' . print_r($_POST, true));
-            
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-                error_log('[HEALTH CHECK] Nonce verification failed');
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
