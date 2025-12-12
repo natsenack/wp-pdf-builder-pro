@@ -370,7 +370,13 @@ class AdminScriptLoader
 
         // Vérifier si c'est un script inline (pas de src)
         if (empty($src)) {
-            // Rechercher les patterns Elementor dans le contenu du script
+            // Check if the script content starts with HTML (indicating it's a template)
+            if (preg_match('/^\s*<[^>]+>/', $tag)) {
+                error_log('[PDF Builder] Found HTML template script, REMOVING for handle: ' . $handle);
+                return '';
+            }
+
+            // Also check for specific Elementor patterns as backup
             if (strpos($tag, 'elementor-templates-modal__header__logo-area') !== false ||
                 strpos($tag, 'elementor-templates-modal__header__logo__icon-wrapper') !== false ||
                 strpos($tag, 'elementor-finder__search') !== false ||
