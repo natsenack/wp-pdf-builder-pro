@@ -418,6 +418,12 @@ function pdf_builder_load_core()
                         require_once $manager_path;
                     }
                 }
+
+                // Charger WooCommerceDataProvider si pas déjà chargé
+                $woocommerce_data_provider_path = PDF_BUILDER_PLUGIN_DIR . 'config/data/WooCommerceDataProvider.php';
+                if (file_exists($woocommerce_data_provider_path) && !class_exists('WooCommerceDataProvider')) {
+                    require_once $woocommerce_data_provider_path;
+                }
             }
         }, 5); // Priorité 5 pour s'assurer que c'est après WooCommerce
     }
@@ -582,8 +588,22 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/predefined-templates-manager.php';
     }
 
-    // Charger le contrôleur PDF
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+    // Charger le contrôleur PDF - différé si WooCommerce n'est pas disponible
+    $load_pdf_controller_now = true;
+    if (!did_action('plugins_loaded')) {
+        // Si plugins_loaded n'a pas encore eu lieu, on charge maintenant
+        $load_pdf_controller_now = true;
+    } elseif (!class_exists('WooCommerce')) {
+        // Si WooCommerce n'est pas disponible, on peut différer
+        $load_pdf_controller_now = false;
+        add_action('plugins_loaded', function() {
+            if (class_exists('WooCommerce') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
+            }
+        }, 5);
+    }
+
+    if ($load_pdf_controller_now && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
     }
 
@@ -707,9 +727,14 @@ function pdf_builder_load_new_classes()
     // Charger les interfaces et classes de données
     $data_classes = [
         'src/Interfaces/DataProviderInterface.php',
-        'config/data/SampleDataProvider.php',
-        'config/data/WooCommerceDataProvider.php'
+        'config/data/SampleDataProvider.php'
     ];
+
+    // Charger WooCommerceDataProvider seulement si WooCommerce est disponible
+    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+        $data_classes[] = 'config/data/WooCommerceDataProvider.php';
+    }
+
     foreach ($data_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
         if (file_exists($file_path)) {
