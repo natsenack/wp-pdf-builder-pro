@@ -832,19 +832,28 @@
 
                     // Fonction simple pour ouvrir une modal
                     function openModal(category) {
+                        console.log('[PDF Builder] openModal called with category:', category);
                         var modalId = modalConfig[category];
+                        console.log('[PDF Builder] Looking for modal ID:', modalId);
                         if (!modalId) {
                             console.error('[PDF Builder] Unknown category:', category);
                             return;
                         }
 
                         var modal = document.getElementById(modalId);
+                        console.log('[PDF Builder] Modal element found:', modal);
                         if (modal) {
+                            console.log('[PDF Builder] Setting modal display to flex');
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
                             console.log('[PDF Builder] Opened modal:', modalId);
                         } else {
                             console.error('[PDF Builder] Modal not found:', modalId);
+                            console.log('[PDF Builder] Available modal IDs:');
+                            Object.values(modalConfig).forEach(function(id) {
+                                var element = document.getElementById(id);
+                                console.log('  -', id, ':', element ? 'EXISTS' : 'NOT FOUND');
+                            });
                         }
                     }
 
@@ -890,16 +899,25 @@
 
                         // Boutons de configuration
                         document.addEventListener('click', function(e) {
+                            console.log('[PDF Builder] Click detected on:', e.target);
+
                             // Ouvrir modal
                             var configBtn = e.target.closest('.canvas-configure-btn');
                             if (configBtn) {
+                                console.log('[PDF Builder] Configure button clicked');
                                 e.preventDefault();
                                 var card = configBtn.closest('.canvas-card');
                                 if (card) {
                                     var category = card.getAttribute('data-category');
+                                    console.log('[PDF Builder] Card category:', category);
                                     if (category && modalConfig[category]) {
+                                        console.log('[PDF Builder] Opening modal for category:', category);
                                         openModal(category);
+                                    } else {
+                                        console.log('[PDF Builder] Invalid category or no modal config for:', category);
                                     }
+                                } else {
+                                    console.log('[PDF Builder] No parent card found');
                                 }
                                 return;
                             }
