@@ -64,13 +64,13 @@ function get_canvas_modal_value($key, $default = '') {
                     <div class="setting-group">
                         <label for="modal_canvas_width">Largeur (px)</label>
                         <input type="number" id="modal_canvas_width" name="pdf_builder_canvas_width"
-                               value="<?php echo esc_attr(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>">
+                               value="<?php echo esc_attr(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>" readonly>
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['width']; ?>px</span>
                     </div>
                     <div class="setting-group">
                         <label for="modal_canvas_height">Hauteur (px)</label>
                         <input type="number" id="modal_canvas_height" name="pdf_builder_canvas_height"
-                               value="<?php echo esc_attr(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>">
+                               value="<?php echo esc_attr(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>" readonly>
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['height']; ?>px</span>
                     </div>
                     <div class="setting-group">
@@ -132,6 +132,80 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
             </div>
+
+            <script>
+            (function() {
+                // Formats de papier en mm
+                const PAPER_FORMATS = {
+                    'A4': { width: 210, height: 297 },
+                    'A3': { width: 297, height: 420 },
+                    'A5': { width: 148, height: 210 },
+                    'Letter': { width: 215.9, height: 279.4 },
+                    'Legal': { width: 215.9, height: 355.6 },
+                    'Tabloid': { width: 279.4, height: 431.8 },
+                    'EtiquetteColis': { width: 100, height: 150 }
+                };
+
+                // Fonction pour calculer les pixels
+                function calculatePixels(mm, dpi) {
+                    return Math.round((mm / 25.4) * dpi);
+                }
+
+                // Fonction pour mettre à jour les dimensions
+                function updateDimensions() {
+                    const formatSelect = document.getElementById('modal_canvas_format');
+                    const dpiSelect = document.getElementById('modal_canvas_dpi');
+                    const widthInput = document.getElementById('modal_canvas_width');
+                    const heightInput = document.getElementById('modal_canvas_height');
+
+                    if (!formatSelect || !dpiSelect || !widthInput || !heightInput) return;
+
+                    const format = formatSelect.value;
+                    const dpi = parseInt(dpiSelect.value);
+
+                    if (PAPER_FORMATS[format]) {
+                        const dimensions = PAPER_FORMATS[format];
+                        const widthPx = calculatePixels(dimensions.width, dpi);
+                        const heightPx = calculatePixels(dimensions.height, dpi);
+
+                        widthInput.value = widthPx;
+                        heightInput.value = heightPx;
+                    }
+                }
+
+                // Écouteurs d'événements
+                document.addEventListener('DOMContentLoaded', function() {
+                    const formatSelect = document.getElementById('modal_canvas_format');
+                    const dpiSelect = document.getElementById('modal_canvas_dpi');
+
+                    if (formatSelect) {
+                        formatSelect.addEventListener('change', updateDimensions);
+                    }
+                    if (dpiSelect) {
+                        dpiSelect.addEventListener('change', updateDimensions);
+                    }
+
+                    // Mise à jour initiale
+                    updateDimensions();
+                });
+
+                // Mise à jour lors de l'ouverture de la modale
+                const modal = document.getElementById('canvas-affichage-modal-overlay');
+                if (modal) {
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                                const display = modal.style.display;
+                                if (display === 'flex' || display === 'block') {
+                                    setTimeout(updateDimensions, 100);
+                                }
+                            }
+                        });
+                    });
+                    observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+                }
+            })();
+            </script>
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">Annuler</button>
