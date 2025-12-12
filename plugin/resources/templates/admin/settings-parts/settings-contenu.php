@@ -1820,7 +1820,6 @@
                         } catch (error) {
                             console.error('[PDF Builder] UPDATE_CARDS - Error updating cards display:', error);
                         }
-                    }
 
                     // Fonction pour mettre à jour les valeurs d'une modale avec les paramètres actuels
                     function updateModalValues(category) {
