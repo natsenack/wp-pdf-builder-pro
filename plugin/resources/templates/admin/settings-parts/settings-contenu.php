@@ -945,8 +945,20 @@
 
                     // Initialisation au chargement du DOM
                     if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', initEvents);
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // S'assurer que tous les modals sont cachés au chargement
+                            var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                            allModals.forEach(function(modal) {
+                                modal.style.display = 'none';
+                            });
+                            initEvents();
+                        });
                     } else {
+                        // S'assurer que tous les modals sont cachés au chargement
+                        var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                        allModals.forEach(function(modal) {
+                            modal.style.display = 'none';
+                        });
                         initEvents();
                     }
 
