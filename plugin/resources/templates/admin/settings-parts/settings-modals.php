@@ -90,10 +90,10 @@ function get_canvas_modal_value($key, $default = '') {
                         <label for="modal_canvas_format">Format prédéfini</label>
                         <select id="modal_canvas_format" name="pdf_builder_canvas_format">
                             <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>A4 (210×297mm)</option>
-                            <option value="A3" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm)</option>
-                            <option value="Letter" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter (8.5×11")</option>
-                            <option value="Legal" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14")</option>
-                            <option value="EtiquetteColis" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (10×15cm)</option>
+                            <option value="A3" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm) - soon</option>
+                            <option value="Letter" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter (8.5×11") - soon</option>
+                            <option value="Legal" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14") - soon</option>
+                            <option value="EtiquetteColis" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (10×15cm) - soon</option>
                         </select>
                     </div>
                 </div>

@@ -2320,3 +2320,13 @@
 .toggle-switch.checked .toggle-slider:before {
     transform: translateX(26px);
 }
+
+/* ============================================
+   STYLES POUR OPTIONS DISABLED
+   ============================================ */
+
+.setting-group select option:disabled {
+    color: #9ca3af;
+    font-style: italic;
+    background-color: #f9fafb;
+}
