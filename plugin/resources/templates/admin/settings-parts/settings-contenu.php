@@ -1862,11 +1862,9 @@
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
                         console.log('[JS SAVE] Starting saveModalSettings for category:', category);
-                        alert('Sauvegarde démarrée pour: ' + category); // DEBUG ALERT
                         const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
                         if (!modal) {
                             console.error('[JS SAVE] Modal not found for category:', category);
-                            alert('Modal non trouvée pour: ' + category); // DEBUG ALERT
                             return;
                         }
 
@@ -1878,21 +1876,16 @@
 
                         // Collecter les valeurs de la modale
                         const inputs = modal.querySelectorAll('input, select, textarea');
-                        console.log('[JS SAVE] Found', inputs.length, 'inputs in modal');
                         inputs.forEach(input => {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                 // Le nom est déjà correctement préfixé
                                 if (input.type === 'checkbox') {
                                     settings[input.name] = input.checked ? '1' : '0';
-                                    console.log('[JS SAVE] Checkbox', input.name, 'value:', settings[input.name], '(checked:', input.checked, ')');
                                 } else {
                                     settings[input.name] = input.value;
-                                    console.log('[JS SAVE] Input', input.name, 'value:', settings[input.name]);
                                 }
                             }
                         });
-
-                        console.log('[JS SAVE] Final settings object:', settings);
 
                         // Sauvegarde simple
                         fetch(ajaxurl, {
@@ -1903,7 +1896,6 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                alert('Sauvegarde réussie pour: ' + category); // DEBUG ALERT
                                 // Mettre à jour les champs cachés
                                 inputs.forEach(input => {
                                     if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
