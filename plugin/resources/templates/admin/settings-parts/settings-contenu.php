@@ -1031,7 +1031,10 @@
                     'use strict';
 
                     // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
-                    const CANVAS_DEFAULT_VALUES = <?php echo json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+                    <?php
+                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+                    echo "const CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
+                    ?>
 
                     console.log('[PDF Builder] 🚀 MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
                     console.log('[PDF Builder] 📅 Date: 2025-12-11 21:35');
