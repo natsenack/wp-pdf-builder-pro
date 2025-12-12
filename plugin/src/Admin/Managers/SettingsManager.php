@@ -434,9 +434,9 @@ class SettingsManager
         // LOGS SPECIFIQUES POUR LES COULEURS CANVAS
         error_log('[PDF Builder] === CHECKING CANVAS COLOR FIELDS ===');
         $canvas_color_fields = [
-            'pdf_builder_canvas_canvas_bg_color',
-            'pdf_builder_canvas_canvas_border_color',
-            'pdf_builder_canvas_canvas_container_bg_color'
+            'pdf_builder_canvas_bg_color',
+            'pdf_builder_canvas_border_color',
+            'pdf_builder_canvas_container_bg_color'
         ];
         foreach ($canvas_color_fields as $field) {
             if (isset($input[$field])) {
@@ -582,27 +582,42 @@ class SettingsManager
 
         // Sanitisation des paramètres canvas
         $canvas_fields = [
-            'pdf_builder_canvas_canvas_width' => 'intval',
-            'pdf_builder_canvas_canvas_height' => 'intval',
-            'pdf_builder_canvas_canvas_dpi' => 'intval',
-            'pdf_builder_canvas_canvas_format' => 'sanitize_text_field',
-            'pdf_builder_canvas_canvas_bg_color' => 'sanitize_hex_color',
-            'pdf_builder_canvas_canvas_border_color' => 'sanitize_hex_color',
-            'pdf_builder_canvas_canvas_border_width' => 'intval',
-            'pdf_builder_canvas_canvas_shadow_enabled' => 'bool',
-            'pdf_builder_canvas_canvas_container_bg_color' => 'sanitize_hex_color',
-            'pdf_builder_canvas_canvas_grid_enabled' => 'bool',
-            'pdf_builder_canvas_canvas_grid_size' => 'intval',
-            'pdf_builder_canvas_canvas_guides_enabled' => 'bool',
-            'pdf_builder_canvas_canvas_snap_to_grid' => 'bool',
-            'pdf_builder_canvas_canvas_zoom_min' => 'intval',
-            'pdf_builder_canvas_canvas_zoom_max' => 'intval',
-            'pdf_builder_canvas_canvas_zoom_default' => 'intval',
-            'pdf_builder_canvas_canvas_zoom_step' => 'intval',
-            'pdf_builder_canvas_canvas_export_quality' => 'intval',
-            'pdf_builder_canvas_canvas_export_format' => 'sanitize_text_field',
-            'pdf_builder_canvas_canvas_export_transparent' => 'bool',
-            'pdf_builder_canvas_canvas_drag_enabled' => 'bool',
+            'pdf_builder_canvas_width' => 'intval',
+            'pdf_builder_canvas_height' => 'intval',
+            'pdf_builder_canvas_dpi' => 'intval',
+            'pdf_builder_canvas_format' => 'sanitize_text_field',
+            'pdf_builder_canvas_bg_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_border_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_border_width' => 'intval',
+            'pdf_builder_canvas_shadow_enabled' => 'bool',
+            'pdf_builder_canvas_container_bg_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_grid_enabled' => 'bool',
+            'pdf_builder_canvas_grid_size' => 'intval',
+            'pdf_builder_canvas_guides_enabled' => 'bool',
+            'pdf_builder_canvas_snap_to_grid' => 'bool',
+            'pdf_builder_canvas_zoom_min' => 'intval',
+            'pdf_builder_canvas_zoom_max' => 'intval',
+            'pdf_builder_canvas_zoom_default' => 'intval',
+            'pdf_builder_canvas_zoom_step' => 'intval',
+            'pdf_builder_canvas_export_quality' => 'intval',
+            'pdf_builder_canvas_export_format' => 'sanitize_text_field',
+            'pdf_builder_canvas_export_transparent' => 'bool',
+            'pdf_builder_canvas_drag_enabled' => 'bool',
+            'pdf_builder_canvas_resize_enabled' => 'bool',
+            'pdf_builder_canvas_rotate_enabled' => 'bool',
+            'pdf_builder_canvas_multi_select' => 'bool',
+            'pdf_builder_canvas_selection_mode' => 'sanitize_text_field',
+            'pdf_builder_canvas_keyboard_shortcuts' => 'bool',
+            'pdf_builder_canvas_fps_target' => 'intval',
+            'pdf_builder_canvas_memory_limit_js' => 'intval',
+            'pdf_builder_canvas_response_timeout' => 'intval',
+            'pdf_builder_canvas_lazy_loading_editor' => 'bool',
+            'pdf_builder_canvas_preload_critical' => 'bool',
+            'pdf_builder_canvas_lazy_loading_plugin' => 'bool',
+            'pdf_builder_canvas_debug_enabled' => 'bool',
+            'pdf_builder_canvas_performance_monitoring' => 'bool',
+            'pdf_builder_canvas_error_reporting' => 'bool',
+            'pdf_builder_canvas_memory_limit_php' => 'intval',
         ];
 
         foreach ($canvas_fields as $field => $type) {

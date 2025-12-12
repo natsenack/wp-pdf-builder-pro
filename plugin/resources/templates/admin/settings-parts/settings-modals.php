@@ -389,7 +389,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
         </main>
         <footer class="canvas-modal-footer">
             <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions">Sauvegarder</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="dimensions">Appliquer</button>
         </footer>
     </section>
 </div>
@@ -451,7 +451,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="zoom">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="zoom">Appliquer</button>
             </footer>
     </section>
 </div>
@@ -540,7 +540,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="apparence">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="apparence">Appliquer</button>
             </footer>
         </section>
 </div>
@@ -632,7 +632,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="grille">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="grille">Appliquer</button>
             </footer>
         </section>
 </div>
@@ -736,7 +736,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="interactions">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="interactions">Appliquer</button>
             </footer>
         </section>
 </div>
@@ -793,7 +793,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="export">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="export">Appliquer</button>
             </footer>
         </section>
 </div>
@@ -927,7 +927,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="performance">Appliquer</button>
             </footer>
         </section>
 </div>
@@ -985,7 +985,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
             </main>
             <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-apply" data-category="debug">Appliquer</button>
             </footer>
         </section>
 </div>

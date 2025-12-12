@@ -1143,6 +1143,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Traiter tous les paramètres canvas qui commencent par pdf_builder_canvas_
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                error_log("[PHP SAVE] Processing canvas setting: {$key} = {$value}");
+
                 // Sanitiser selon le type de paramètre
                 if (strpos($key, '_color') !== false || strpos($key, '_bg_color') !== false || strpos($key, '_border_color') !== false) {
                     // Couleurs - utiliser sanitize_hex_color
@@ -1168,6 +1170,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
             }
         }
+
+        error_log("[PHP SAVE] ===== COMPLETED: saved {$saved_count} settings =====");
 
         // Paramètres de contenu généraux (si présents)
         $general_settings = [
