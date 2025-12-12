@@ -1233,7 +1233,7 @@
                             document.body.style.overflow = '';
 
                             // Accessibilité - déplacer le focus et utiliser inert
-                            document.body.focus();
+                            // document.body.focus(); // Cette ligne causait une erreur de syntaxe
                             modal.setAttribute('inert', '');
 
                             console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
