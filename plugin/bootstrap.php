@@ -448,7 +448,7 @@ function pdf_builder_load_core()
     }
 
     // Charger WooCommerceCache seulement si WooCommerce est actif
-    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
         $woocommerce_cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/WooCommerceCache.php';
         if (file_exists($woocommerce_cache_path)) {
             require_once $woocommerce_cache_path;
@@ -593,11 +593,11 @@ function pdf_builder_load_core()
     if (!did_action('plugins_loaded')) {
         // Si plugins_loaded n'a pas encore eu lieu, on charge maintenant
         $load_pdf_controller_now = true;
-    } elseif (!class_exists('WooCommerce')) {
+    } elseif (!defined('WC_VERSION')) {
         // Si WooCommerce n'est pas disponible, on peut différer
         $load_pdf_controller_now = false;
         add_action('plugins_loaded', function() {
-            if (class_exists('WooCommerce') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+            if (defined('WC_VERSION') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
                 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
             }
         }, 5);
@@ -1041,7 +1041,7 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
     add_action('init', function() {
-        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
             \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
         }
     });
@@ -1809,7 +1809,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 function pdf_builder_load_woocommerce_managers() {
     static $woocommerce_managers_loaded = false;
 
-    if ($woocommerce_managers_loaded || !did_action('plugins_loaded') || !class_exists('WooCommerce')) {
+    if ($woocommerce_managers_loaded || !did_action('plugins_loaded') || !defined('WC_VERSION')) {
         return;
     }
 
