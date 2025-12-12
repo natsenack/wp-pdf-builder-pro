@@ -2579,19 +2579,6 @@ body.canvas-modal-open {
     display: block !important;
 }
 
-.canvas-modal-body {
-    padding: 24px;
-    overflow-y: auto;
-    flex: 1 1 auto;
-    min-height: 0; /* Important pour que flex fonctionne avec overflow */
-    background-color: #fff;
-}
-
-/* Modal Interactions & Comportement - ajustement du body pour le footer */
-#canvas-interactions-modal .canvas-modal-body {
-    max-height: none;
-}
-
 .canvas-modal-footer {
     display: flex;
     justify-content: flex-end;
@@ -3993,10 +3980,6 @@ select option:disabled {
         padding: 16px 20px;
     }
 
-    .canvas-modal-body {
-        padding: 20px;
-    }
-
     .canvas-modal-footer {
         padding: 16px 20px;
         flex-direction: column;
@@ -4036,10 +4019,6 @@ select option:disabled {
 
     .canvas-modal-header h3 {
         font-size: 18px;
-    }
-
-    .canvas-modal-body {
-        padding: 16px;
     }
 
     .canvas-modal-form .form-row {
