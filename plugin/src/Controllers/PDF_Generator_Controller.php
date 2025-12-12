@@ -815,8 +815,8 @@ class PdfBuilderProGenerator
         // Variables de commande (seulement si ordre existe)
         $order_replacements = array();
         if ($order) {
-            $billing_address = self::formatAddress($order, 'billing');
-            $shipping_address = self::formatAddress($order, 'shipping');
+            $billing_address = self::formatOrderAddress($order, 'billing');
+            $shipping_address = self::formatOrderAddress($order, 'shipping');
 
             $order_replacements = array(
                 '{{order_id}}' => $order->get_id(),
@@ -1965,9 +1965,9 @@ class PdfBuilderProGenerator
     }
 
     /**
-     * Formate une adresse manuellement pour éviter l'autoloading WooCommerce
+     * Formate une adresse de commande manuellement pour éviter l'autoloading WooCommerce
      */
-    private static function formatAddress($order, $type = 'billing')
+    private static function formatOrderAddress($order, $type = 'billing')
     {
         $address_parts = array();
 
