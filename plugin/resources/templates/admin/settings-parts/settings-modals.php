@@ -573,7 +573,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                             <tr>
                                 <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="toggle-switch<?php echo (get_canvas_option('canvas_guides_enabled', '1') === '1') ? ' checked' : ''; ?>">
                                         <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_canvas_option('canvas_guides_enabled', '1'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -583,7 +583,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                             <tr>
                                 <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="toggle-switch<?php echo (get_canvas_option('canvas_grid_enabled', '1') === '1') ? ' checked' : ''; ?>">
                                         <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_canvas_option('canvas_grid_enabled', '1'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
@@ -600,7 +600,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                             <tr>
                                 <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="toggle-switch<?php echo (get_canvas_option('canvas_snap_to_grid', '1') === '1') ? ' checked' : ''; ?>">
                                         <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_canvas_option('canvas_snap_to_grid', '1'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
