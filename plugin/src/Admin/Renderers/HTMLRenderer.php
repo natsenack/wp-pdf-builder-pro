@@ -203,11 +203,13 @@ class HTMLRenderer
             }
 
             if ($columns['price'] ?? true) {
-                $html .= '<td style="' . $row_style . ' text-align: right;">' . call_user_func('wc_price', $item->get_total() / $item->get_quantity()) . '</td>';
+                $price = function_exists('wc_price') ? call_user_func('wc_price', $item->get_total() / $item->get_quantity()) : '$' . number_format($item->get_total() / $item->get_quantity(), 2);
+                $html .= '<td style="' . $row_style . ' text-align: right;">' . $price . '</td>';
             }
 
             if ($columns['total'] ?? true) {
-                $html .= '<td style="' . $row_style . ' text-align: right;">' . call_user_func('wc_price', $item->get_total()) . '</td>';
+                $total = function_exists('wc_price') ? call_user_func('wc_price', $item->get_total()) : '$' . number_format($item->get_total(), 2);
+                $html .= '<td style="' . $row_style . ' text-align: right;">' . $total . '</td>';
             }
 
             $html .= '</tr>';
@@ -236,7 +238,8 @@ class HTMLRenderer
                 $html .= '<td style="' . $row_style . ' text-align: right;">-</td>';
             }
             if ($columns['total'] ?? true) {
-                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . call_user_func('wc_price', $fee_total) . '</td>';
+                $fee_price = function_exists('wc_price') ? call_user_func('wc_price', $fee_total) : '$' . number_format($fee_total, 2);
+                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . $fee_price . '</td>';
             }
             $html .= '</tr>';
             $row_count++;
@@ -267,7 +270,8 @@ class HTMLRenderer
                 $html .= '<td colspan="' . $colspan . '" style="' . $row_style . ' text-align: right; font-weight: bold;">Sous-total:</td>';
             }
             if ($columns['total'] ?? true) {
-                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . call_user_func('wc_price', $order->get_subtotal()) . '</td>';
+                $subtotal = function_exists('wc_price') ? call_user_func('wc_price', $order->get_subtotal()) : '$' . number_format($order->get_subtotal(), 2);
+                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . $subtotal . '</td>';
             }
             $html .= '</tr>';
         }
@@ -319,13 +323,13 @@ class HTMLRenderer
             '{{shipping_postcode}}' => $order->get_shipping_postcode(),
             '{{shipping_country}}' => $order->get_shipping_country(),
             '{{shipping_address}}' => $shipping_address ?: 'Adresse de livraison non disponible',
-            '{{total}}' => call_user_func('wc_price', $order->get_total()),
-            '{{subtotal}}' => call_user_func('wc_price', $order->get_subtotal()),
-            '{{tax}}' => call_user_func('wc_price', $order->get_total_tax()),
-            '{{shipping_total}}' => call_user_func('wc_price', $order->get_shipping_total()),
-            '{{discount_total}}' => call_user_func('wc_price', $order->get_discount_total()),
+            '{{total}}' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_total()) : '$' . number_format($order->get_total(), 2),
+            '{{subtotal}}' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_subtotal()) : '$' . number_format($order->get_subtotal(), 2),
+            '{{tax}}' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_total_tax()) : '$' . number_format($order->get_total_tax(), 2),
+            '{{shipping_total}}' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_shipping_total()) : '$' . number_format($order->get_shipping_total(), 2),
+            '{{discount_total}}' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_discount_total()) : '$' . number_format($order->get_discount_total(), 2),
             '{{payment_method}}' => $order->get_payment_method_title(),
-            '{{order_status}}' => call_user_func('wc_get_order_status_name', $order->get_status()),
+            '{{order_status}}' => function_exists('wc_get_order_status_name') ? call_user_func('wc_get_order_status_name', $order->get_status()) : $order->get_status(),
             '{{currency}}' => $order->get_currency(),
             '{{document_type}}' => $document_type,
             '{{document_type_label}}' => $document_type_label,
@@ -361,13 +365,13 @@ class HTMLRenderer
             '[shipping_address]' => $shipping_address ?: 'Adresse de livraison non disponible',
             '[customer_email]' => $order->get_billing_email(),
             '[customer_phone]' => $order->get_billing_phone(),
-            '[total]' => call_user_func('wc_price', $order->get_total()),
-            '[subtotal]' => call_user_func('wc_price', $order->get_subtotal()),
-            '[tax]' => call_user_func('wc_price', $order->get_total_tax()),
-            '[shipping_total]' => call_user_func('wc_price', $order->get_shipping_total()),
-            '[discount_total]' => call_user_func('wc_price', $order->get_discount_total()),
+            '[total]' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_total()) : '$' . number_format($order->get_total(), 2),
+            '[subtotal]' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_subtotal()) : '$' . number_format($order->get_subtotal(), 2),
+            '[tax]' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_total_tax()) : '$' . number_format($order->get_total_tax(), 2),
+            '[shipping_total]' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_shipping_total()) : '$' . number_format($order->get_shipping_total(), 2),
+            '[discount_total]' => function_exists('wc_price') ? call_user_func('wc_price', $order->get_discount_total()) : '$' . number_format($order->get_discount_total(), 2),
             '[payment_method]' => $order->get_payment_method_title(),
-            '[order_status]' => call_user_func('wc_get_order_status_name', $order->get_status()),
+            '[order_status]' => function_exists('wc_get_order_status_name') ? call_user_func('wc_get_order_status_name', $order->get_status()) : $order->get_status(),
             '[currency]' => $order->get_currency(),
             '[document_type]' => $document_type,
             '[document_type_label]' => $document_type_label,

@@ -26,7 +26,7 @@ class WooCommerceDataProvider implements DataProviderInterface
     public function __construct(?int $orderId = null, string $context = 'metabox')
     {
         $this->context = $context;
-        if ($orderId) {
+        if ($orderId && function_exists('wc_get_order')) {
             $this->order = wc_get_order($orderId);
         }
     }
@@ -121,8 +121,11 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return $this->order->getBillingPostcode();
                 case 'customer_country':
                 case 'billing_country':
-                    return WC()->countries->countries[$this->order->getBillingCountry()] ??
-                        $this->order->getBillingCountry();
+                    if (function_exists('WC') && WC() && WC()->countries) {
+                        return WC()->countries->countries[$this->order->getBillingCountry()] ??
+                            $this->order->getBillingCountry();
+                    }
+                    return $this->order->getBillingCountry();
                 case 'billing_state':
                     return $this->order->getBillingState();
                 case 'billing_company':
@@ -141,8 +144,11 @@ class WooCommerceDataProvider implements DataProviderInterface
                 case 'shipping_postcode':
                     return $this->order->getShippingPostcode();
                 case 'shipping_country':
-                    return WC()->countries->countries[$this->order->getShippingCountry()] ??
-                        $this->order->getShippingCountry();
+                    if (function_exists('WC') && WC() && WC()->countries) {
+                        return WC()->countries->countries[$this->order->getShippingCountry()] ??
+                            $this->order->getShippingCountry();
+                    }
+                    return $this->order->getShippingCountry();
                 case 'shipping_state':
                     return $this->order->getShippingState();
                 case 'shipping_company':
@@ -158,7 +164,10 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return get_option('woocommerce_store_postcode', '');
                 case 'company_country':
                     $country = get_option('woocommerce_default_country', '');
-                    return WC()->countries->countries[$country] ?? $country;
+                    if (function_exists('WC') && WC() && WC()->countries) {
+                        return WC()->countries->countries[$country] ?? $country;
+                    }
+                    return $country;
                 case 'company_phone':
                     return get_option('woocommerce_store_phone', '');
                 case 'company_email':
@@ -261,9 +270,9 @@ class WooCommerceDataProvider implements DataProviderInterface
             case 'is_paid':
                 return $this->order->isPaid() ? 'true' : 'false';
             case 'currency_symbol':
-                return get_woocommerce_currency_symbol();
+                return function_exists('get_woocommerce_currency_symbol') ? get_woocommerce_currency_symbol() : '$';
             case 'currency_code':
-                return get_woocommerce_currency();
+                return function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'USD';
             case 'tax_rate':
                 // Calcul du taux de TVA moyen (simplifié)
                 $taxes = $this->order->getTaxTotals();
@@ -293,7 +302,10 @@ class WooCommerceDataProvider implements DataProviderInterface
      */
     private function formatPrice(float $price): string
     {
-        return wc_price($price, ['currency' => $this->order->getCurrency()]);
+        if (function_exists('wc_price')) {
+            return wc_price($price, ['currency' => $this->order->getCurrency()]);
+        }
+        return '$' . number_format($price, 2);
     }
 
     /**
