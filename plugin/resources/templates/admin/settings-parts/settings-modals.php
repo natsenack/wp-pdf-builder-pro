@@ -93,6 +93,7 @@ function get_canvas_modal_value($key, $default = '') {
                             <option value="A3" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm)</option>
                             <option value="Letter" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter (8.5×11")</option>
                             <option value="Legal" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14")</option>
+                            <option value="EtiquetteColis" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (10×15cm)</option>
                         </select>
                     </div>
                 </div>

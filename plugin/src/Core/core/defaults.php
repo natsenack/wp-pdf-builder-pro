@@ -79,7 +79,8 @@ class PDF_Builder_Defaults {
         'A5' => ['width' => 148, 'height' => 210],
         'Letter' => ['width' => 215.9, 'height' => 279.4],
         'Legal' => ['width' => 215.9, 'height' => 355.6],
-        'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+        'Tabloid' => ['width' => 279.4, 'height' => 431.8],
+        'EtiquetteColis' => ['width' => 100, 'height' => 150]
     ];
 
     // ==========================================
