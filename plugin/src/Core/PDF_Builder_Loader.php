@@ -190,14 +190,25 @@ class PDF_Builder_Loader {
             'PDF_Builder_PDF_Generator.php',
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
+            'PDF_Builder_Template_Manager.php'
+        ];
+
+        // Managers dépendants de WooCommerce - chargés seulement si WooCommerce est disponible
+        $woocommerce_managers = [
             'PDF_Builder_Status_Manager.php',
-            'PDF_Builder_Template_Manager.php',
             'PDF_Builder_Variable_Mapper.php',
             'PDF_Builder_WooCommerce_Integration.php'
         ];
 
         foreach ($managers as $manager) {
             $this->require_file('src/Managers/' . $manager);
+        }
+
+        // Charger les managers WooCommerce seulement si WooCommerce est actif
+        if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+            foreach ($woocommerce_managers as $manager) {
+                $this->require_file('src/Managers/' . $manager);
+            }
         }
     }
 

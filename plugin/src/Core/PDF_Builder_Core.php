@@ -55,8 +55,12 @@ class PdfBuilderCore
             'PDF_Builder_PDF_Generator.php',
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
+            'PDF_Builder_Template_Manager.php'
+        );
+
+        // Managers dépendants de WooCommerce - chargés seulement si WooCommerce est disponible
+        $woocommerce_managers = array(
             'PDF_Builder_Status_Manager.php',
-            'PDF_Builder_Template_Manager.php',
             'PDF_Builder_Variable_Mapper.php',
             'PDF_Builder_WooCommerce_Integration.php'
         );
@@ -65,6 +69,16 @@ class PdfBuilderCore
             $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
             if (file_exists($manager_path)) {
                 require_once $manager_path;
+            }
+        }
+
+        // Charger les managers WooCommerce seulement si WooCommerce est actif
+        if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+            foreach ($woocommerce_managers as $manager) {
+                $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
+                if (file_exists($manager_path)) {
+                    require_once $manager_path;
+                }
             }
         }
 

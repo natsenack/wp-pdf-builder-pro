@@ -380,15 +380,46 @@ function pdf_builder_load_core()
         'PDF_Builder_PDF_Generator.php',
         'PDF_Builder_Resize_Manager.php',
         'PDF_Builder_Settings_Manager.php',
+        'PDF_Builder_Template_Manager.php'
+    );
+
+    // Managers qui nécessitent WooCommerce - chargés seulement si WooCommerce est disponible
+    $woocommerce_dependent_managers = array(
         'PDF_Builder_Status_Manager.php',
-        'PDF_Builder_Template_Manager.php',
         'PDF_Builder_Variable_Mapper.php'
     );
+
     foreach ($managers as $manager) {
         $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
         if (file_exists($manager_path)) {
             require_once $manager_path;
         }
+    }
+
+    // Charger les managers dépendants de WooCommerce seulement si WooCommerce est actif
+    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+        foreach ($woocommerce_dependent_managers as $manager) {
+            $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
+            if (file_exists($manager_path)) {
+                require_once $manager_path;
+            }
+        }
+    } else {
+        // Si WooCommerce n'est pas encore disponible, programmer un chargement retardé
+        add_action('plugins_loaded', function() {
+            if (class_exists('WooCommerce')) {
+                $woocommerce_dependent_managers = array(
+                    'PDF_Builder_Status_Manager.php',
+                    'PDF_Builder_Variable_Mapper.php'
+                );
+                foreach ($woocommerce_dependent_managers as $manager) {
+                    $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
+                    if (file_exists($manager_path) && !class_exists('PDF_Builder\\Managers\\' . str_replace('.php', '', str_replace('PDF_Builder_', '', $manager)))) {
+                        require_once $manager_path;
+                    }
+                }
+            }
+        }, 5); // Priorité 5 pour s'assurer que c'est après WooCommerce
     }
 
     // Charger PDF_Builder_WooCommerce_Integration seulement si WooCommerce est actif
