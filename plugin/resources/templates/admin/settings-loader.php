@@ -200,16 +200,14 @@ function pdf_builder_load_settings_assets($hook) {
         error_log('PDF Builder - ERREUR: Classe PDF_Builder_Notification_Manager non trouvée');
     }
 
-    // Charger le script de débogage CSS des modales (uniquement en mode debug) - v2
-    if (isset($_GET['debug']) && $_GET['debug'] === 'css') {
-        wp_enqueue_script(
-            'pdf-builder-debug-css-modals',
-            PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/debug-css-modals.js',
-            array('jquery'),
-            PDF_BUILDER_VERSION . '-' . time(),
-            true // Chargé dans le footer
-        );
-    }
+    // Charger le script de diagnostic de syntaxe JavaScript
+    wp_enqueue_script(
+        'pdf-builder-syntax-diagnostic',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/syntax-diagnostic.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true // Chargé dans le footer
+    );
 
     error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
