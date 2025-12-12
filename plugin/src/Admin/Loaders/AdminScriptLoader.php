@@ -405,6 +405,7 @@ class AdminScriptLoader
      */
     public function startOutputBuffering()
     {
+        error_log('[PDF Builder] Starting output buffering for Elementor script filtering');
         ob_start();
     }
 
@@ -414,6 +415,7 @@ class AdminScriptLoader
     public function endOutputBuffering()
     {
         $content = ob_get_clean();
+        error_log('[PDF Builder] Ending output buffering, content length: ' . strlen($content));
         $content = $this->filterElementorInlineScripts($content);
         echo $content;
     }
@@ -423,6 +425,8 @@ class AdminScriptLoader
      */
     private function filterElementorInlineScripts($content)
     {
+        error_log('[PDF Builder] Starting Elementor script filtering');
+        
         // Regex pour trouver les scripts inline contenant du HTML au début
         $pattern = '/<script[^>]*>(?:\s*<[^>]+>.*?)<\/script>/is';
         
@@ -445,6 +449,7 @@ class AdminScriptLoader
             return $script_content;
         }, $content);
         
+        error_log('[PDF Builder] Finished Elementor script filtering');
         return $content;
     }
 }
