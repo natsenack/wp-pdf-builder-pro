@@ -51,7 +51,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL AFFICHAGE -->
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal" style="display: block;">
+    <div class="canvas-modal" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3>Paramètres d'Affichage</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
@@ -116,7 +116,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL NAVIGATION -->
 <div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal" style="display: block;">
+    <div class="canvas-modal" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3>Paramètres de Navigation</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
@@ -183,7 +183,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL COMPORTEMENT -->
 <div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal" style="display: block;">
+    <div class="canvas-modal" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3>Paramètres de Comportement</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
@@ -263,7 +263,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL SYSTEME -->
 <div id="canvas-systeme-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal" style="display: block;">
+    <div class="canvas-modal" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3>Paramètres Système</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
@@ -341,6 +341,8 @@ function get_canvas_modal_value($key, $default = '') {
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+    z-index: 10001;
+    position: relative;
 }
 
 .canvas-modal-header {
