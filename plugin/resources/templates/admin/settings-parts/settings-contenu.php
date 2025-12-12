@@ -9,15 +9,15 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION FIXÉE 2025-12-11 -->";
 
+    error_log("[PDF Builder] PAGE_LOAD_START - settings-contenu.php loaded");
+
     $settings = get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option_contenu($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
         $value = get_option($option_key, $default);
-        if (in_array($key, ['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'])) {
-            error_log("[PDF Builder] GRID_TOGGLES - get_canvas_option_contenu - {$key}: {$value} (default: {$default})");
-        }
+        error_log("[PDF Builder] PAGE_LOAD - get_canvas_option_contenu - {$key}: '{$value}' (default: '{$default}')");
         return $value;
     }
 
