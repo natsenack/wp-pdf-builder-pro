@@ -33,6 +33,12 @@ class AdminScriptLoader
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
 
+        // Pour la page des paramètres PDF Builder, utiliser le buffering de sortie pour filtrer les scripts inline
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
+            add_action('admin_head', [$this, 'startOutputBuffering'], 1);
+            add_action('admin_footer', [$this, 'endOutputBuffering'], 999);
+        }
+
         // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
 
         // Styles CSS de base
@@ -392,5 +398,53 @@ class AdminScriptLoader
         }
 
         return $tag;
+    }
+
+    /**
+     * Démarre le buffering de sortie pour filtrer les scripts inline
+     */
+    public function startOutputBuffering()
+    {
+        ob_start();
+    }
+
+    /**
+     * Termine le buffering de sortie et filtre le contenu
+     */
+    public function endOutputBuffering()
+    {
+        $content = ob_get_clean();
+        $content = $this->filterElementorInlineScripts($content);
+        echo $content;
+    }
+
+    /**
+     * Filtre les scripts inline Elementor contenant du HTML
+     */
+    private function filterElementorInlineScripts($content)
+    {
+        // Regex pour trouver les scripts inline contenant du HTML au début
+        $pattern = '/<script[^>]*>(?:\s*<[^>]+>.*?)<\/script>/is';
+        
+        $content = preg_replace_callback($pattern, function($matches) {
+            $script_content = $matches[0];
+            
+            // Extraire le contenu entre les balises script
+            if (preg_match('/<script[^>]*>(.*?)<\/script>/is', $script_content, $inner_matches)) {
+                $inner_content = $inner_matches[1];
+                
+                // Vérifier si le contenu commence par du HTML (après espaces)
+                if (preg_match('/^\s*<[^>]+>/', $inner_content)) {
+                    // C'est un template HTML, supprimer le script
+                    error_log('[PDF Builder] Removed Elementor HTML template script: ' . substr($inner_content, 0, 100) . '...');
+                    return '';
+                }
+            }
+            
+            // Garder le script normal
+            return $script_content;
+        }, $content);
+        
+        return $content;
     }
 }
