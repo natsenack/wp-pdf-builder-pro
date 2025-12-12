@@ -1434,7 +1434,7 @@
                 console.log('SYSTEM_INIT: Canvas modals system initialized successfully');
                 })();
             </script>
-            </script>
+            <script>
 
             <!-- Inclusion des modales Canvas -->
 
