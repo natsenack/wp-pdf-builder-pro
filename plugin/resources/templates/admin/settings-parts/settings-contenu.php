@@ -9,6 +9,82 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION FIXÉE 2025-12-11 -->";
 
+    // TRAITEMENT AUTOMATIQUE DES SAUVEGARDES CANVAS DEPUIS localStorage
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        echo "<!-- CHECKING localStorage AUTO-SAVE -->";
+        echo "<script>
+            // Récupérer les paramètres sauvegardés automatiquement depuis localStorage
+            const autoSaveData = localStorage.getItem('pdf_builder_canvas_auto_save');
+            if (autoSaveData) {
+                try {
+                    const data = JSON.parse(autoSaveData);
+                    console.log('[PHP AUTO-SAVE] Found auto-save data:', data);
+
+                    // Vérifier que les données ne sont pas trop anciennes (max 30 secondes)
+                    if (Date.now() - data.timestamp < 30000) {
+                        // Créer un formulaire caché pour soumettre les données
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = window.location.href;
+                        form.style.display = 'none';
+
+                        // Ajouter le nonce de sécurité
+                        const nonceField = document.createElement('input');
+                        nonceField.type = 'hidden';
+                        nonceField.name = '_wpnonce';
+                        nonceField.value = '" . wp_create_nonce('pdf_builder_settings') . "';
+                        form.appendChild(nonceField);
+
+                        // Ajouter l'action
+                        const actionField = document.createElement('input');
+                        actionField.type = 'hidden';
+                        actionField.name = 'action';
+                        actionField.value = 'pdf_builder_save_settings';
+                        form.appendChild(actionField);
+
+                        // Ajouter l'onglet
+                        const tabField = document.createElement('input');
+                        tabField.type = 'hidden';
+                        tabField.name = 'tab';
+                        tabField.value = 'contenu';
+                        form.appendChild(tabField);
+
+                        // Ajouter un indicateur d'auto-sauvegarde
+                        const autoSaveField = document.createElement('input');
+                        autoSaveField.type = 'hidden';
+                        autoSaveField.name = 'canvas_auto_save';
+                        autoSaveField.value = '1';
+                        form.appendChild(autoSaveField);
+
+                        // Ajouter tous les paramètres canvas
+                        Object.keys(data.settings).forEach(key => {
+                            const field = document.createElement('input');
+                            field.type = 'hidden';
+                            field.name = key;
+                            field.value = data.settings[key];
+                            form.appendChild(field);
+                            console.log('[PHP AUTO-SAVE] Adding field:', key, '=', data.settings[key]);
+                        });
+
+                        // Nettoyer le localStorage avant soumission
+                        localStorage.removeItem('pdf_builder_canvas_auto_save');
+
+                        // Soumettre automatiquement
+                        document.body.appendChild(form);
+                        console.log('[PHP AUTO-SAVE] Submitting auto-save form...');
+                        form.submit();
+                    } else {
+                        console.log('[PHP AUTO-SAVE] Auto-save data too old, cleaning up');
+                        localStorage.removeItem('pdf_builder_canvas_auto_save');
+                    }
+                } catch (e) {
+                    console.error('[PHP AUTO-SAVE] Error processing auto-save data:', e);
+                    localStorage.removeItem('pdf_builder_canvas_auto_save');
+                }
+            }
+        </script>";
+    }
+
     $settings = get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
@@ -1874,7 +1950,7 @@
                         }
                     }
 
-                    // Fonction pour sauvegarder les paramètres d'une modale
+                    // Fonction pour sauvegarder les paramètres d'une modale - VERSION ULTRA SIMPLIFIÉE AVEC localStorage
                     function saveModalSettings(category) {
                         console.log('[JS SAVE] Starting saveModalSettings for category:', category);
                         const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
@@ -1883,54 +1959,32 @@
                             return;
                         }
 
-                        // Créer un formulaire caché pour la sauvegarde
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = window.location.href;
-                        form.style.display = 'none';
-
-                        // Ajouter les champs de sécurité WordPress
-                        const nonceField = document.createElement('input');
-                        nonceField.type = 'hidden';
-                        nonceField.name = '_wpnonce';
-                        nonceField.value = '<?php echo wp_create_nonce("pdf_builder_settings"); ?>';
-                        form.appendChild(nonceField);
-
-                        const actionField = document.createElement('input');
-                        actionField.type = 'hidden';
-                        actionField.name = 'action';
-                        actionField.value = 'pdf_builder_save_settings';
-                        form.appendChild(actionField);
-
-                        // Collecter les valeurs de la modale et les ajouter au formulaire
+                        // Collecter les valeurs de la modale
                         const inputs = modal.querySelectorAll('input, select, textarea');
+                        const canvasSettings = {};
+
                         inputs.forEach(input => {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
-                                const formField = document.createElement('input');
-                                formField.type = 'hidden';
-                                formField.name = input.name;
-
-                                // Le nom est déjà correctement préfixé
-                                if (input.type === 'checkbox') {
-                                    formField.value = input.checked ? '1' : '0';
-                                } else {
-                                    formField.value = input.value;
-                                }
-
-                                form.appendChild(formField);
-                                console.log(`[JS SAVE] Adding field ${input.name} = ${formField.value}`);
+                                const value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+                                canvasSettings[input.name] = value;
+                                console.log(`[JS SAVE] Collected ${input.name} = ${value}`);
                             }
                         });
 
-                        // Ajouter le formulaire au DOM et le soumettre
-                        document.body.appendChild(form);
+                        if (Object.keys(canvasSettings).length === 0) {
+                            console.warn('[JS SAVE] No canvas settings collected');
+                            return;
+                        }
 
-                        // Ajouter le paramètre tab pour indiquer l'onglet contenu
-                        const tabField = document.createElement('input');
-                        tabField.type = 'hidden';
-                        tabField.name = 'tab';
-                        tabField.value = 'contenu';
-                        form.appendChild(tabField);
+                        // Stocker dans localStorage pour récupération après rechargement
+                        localStorage.setItem('pdf_builder_canvas_auto_save', JSON.stringify({
+                            settings: canvasSettings,
+                            timestamp: Date.now(),
+                            category: category
+                        }));
+
+                        // Fermer la modale
+                        closeModal(`canvas-${category}-modal-overlay`);
 
                         // Afficher un message de sauvegarde
                         showNotification('info', '💾 Sauvegarde en cours...', {
@@ -1938,11 +1992,10 @@
                             dismissible: false
                         });
 
-                        // Fermer la modale avant la soumission
-                        closeModal(`canvas-${category}-modal-overlay`);
-
-                        // Soumettre le formulaire (va recharger la page)
-                        form.submit();
+                        // Recharger la page pour appliquer les changements
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
                     }
 
 
