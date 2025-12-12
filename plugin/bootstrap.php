@@ -414,9 +414,7 @@ function pdf_builder_load_core()
         }
 
         // Charger les utilitaires WooCommerce seulement si WooCommerce est actif
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Utilities.php';
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Order_Utilities.php';
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Product_Utilities.php';
+        // Note: WooCommerce_Utilities.php n'existe pas - utilitaires supprimés ou déplacés
     } else {
         // Si WooCommerce n'est pas encore disponible, programmer un chargement retardé
         add_action('plugins_loaded', function() {
@@ -439,9 +437,7 @@ function pdf_builder_load_core()
                 }
 
                 // Charger les utilitaires WooCommerce
-                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Utilities.php';
-                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Order_Utilities.php';
-                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Product_Utilities.php';
+                // Note: WooCommerce_Utilities.php n'existe pas - utilitaires supprimés ou déplacés
             }
         }, 5); // Priorité 5 pour s'assurer que c'est après WooCommerce
     }
