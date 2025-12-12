@@ -30,6 +30,9 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
+        // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
+        add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
+
         // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
 
         // Styles CSS de base
@@ -354,5 +357,37 @@ class AdminScriptLoader
         ";
         wp_add_inline_script('jquery', $diagnostic_script, 'after');
         // error_log('[WP AdminScriptLoader] Diagnostic script added to jquery');
+    }
+
+    /**
+     * Corrige les templates Elementor qui sont chargés comme des scripts JavaScript
+     * Les templates HTML doivent avoir type="text/template" au lieu de type="text/javascript"
+     */
+    public function fixElementorTemplates($tag, $handle, $src)
+    {
+        // Vérifier si c'est un script inline (pas de src)
+        if (empty($src)) {
+            // Rechercher les patterns Elementor dans le contenu du script
+            if (strpos($tag, 'elementor-templates-modal__header__logo-area') !== false ||
+                strpos($tag, 'elementor-templates-modal__header__logo__icon-wrapper') !== false ||
+                strpos($tag, 'elementor-finder__search') !== false ||
+                strpos($tag, 'elementor-finder__no-results') !== false ||
+                strpos($tag, 'elementor-finder__results__category__title') !== false ||
+                strpos($tag, 'elementor-finder__results__item__link') !== false) {
+
+                // Remplacer type="text/javascript" par type="text/template"
+                $tag = str_replace('type="text/javascript"', 'type="text/template"', $tag);
+                $tag = str_replace("type='text/javascript'", "type='text/template'", $tag);
+
+                // Si aucun type n'est spécifié, l'ajouter
+                if (strpos($tag, 'type=') === false) {
+                    $tag = str_replace('<script', '<script type="text/template"', $tag);
+                }
+
+                error_log('[PDF Builder] Fixed Elementor template script type for handle: ' . $handle);
+            }
+        }
+
+        return $tag;
     }
 }
