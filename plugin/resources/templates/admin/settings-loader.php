@@ -200,10 +200,10 @@ function pdf_builder_load_settings_assets($hook) {
         error_log('PDF Builder - ERREUR: Classe PDF_Builder_Notification_Manager non trouvée');
     }
 
-    // Charger le script de diagnostic de syntaxe JavaScript
+    // Charger le script de vérification de syntaxe JavaScript
     wp_enqueue_script(
-        'pdf-builder-syntax-diagnostic',
-        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/syntax-diagnostic.js',
+        'pdf-builder-js-syntax-check',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/js-syntax-check.js',
         array('jquery'),
         PDF_BUILDER_VERSION . '-' . time(),
         true // Chargé dans le footer
