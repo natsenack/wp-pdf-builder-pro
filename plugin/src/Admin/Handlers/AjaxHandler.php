@@ -1505,19 +1505,41 @@ class AjaxHandler
 
         // Guides activés
         if (isset($_POST['pdf_builder_canvas_guides_enabled'])) {
-            update_option('pdf_builder_canvas_guides_enabled', '1');
+            $value = $_POST['pdf_builder_canvas_guides_enabled'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_guides_enabled', $value);
+            error_log('🔄 [PHP AJAX SAVE] GRID_TOGGLE_SAVE - pdf_builder_canvas_guides_enabled: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_guides_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_guides_enabled DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_guides_enabled', '0');
+            $result = update_option('pdf_builder_canvas_guides_enabled', '0');
+            error_log('🔄 [PHP AJAX SAVE] GRID_TOGGLE_SAVE - pdf_builder_canvas_guides_enabled: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_guides_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_guides_enabled DB value: ' . $db_value);
             $updated++;
         }
 
         // Grille activée
         if (isset($_POST['pdf_builder_canvas_grid_enabled'])) {
-            update_option('pdf_builder_canvas_grid_enabled', '1');
+            $value = $_POST['pdf_builder_canvas_grid_enabled'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_grid_enabled', $value);
+            error_log('🔄 [PHP AJAX SAVE] GRID_TOGGLE_SAVE - pdf_builder_canvas_grid_enabled: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_grid_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_grid_enabled DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_grid_enabled', '0');
+            $result = update_option('pdf_builder_canvas_grid_enabled', '0');
+            error_log('🔄 [PHP AJAX SAVE] GRID_TOGGLE_SAVE - pdf_builder_canvas_grid_enabled: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_grid_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_grid_enabled DB value: ' . $db_value);
             $updated++;
         }
 
@@ -1525,17 +1547,29 @@ class AjaxHandler
         if (isset($_POST['pdf_builder_canvas_grid_size'])) {
             $size = intval($_POST['pdf_builder_canvas_grid_size']);
             if ($size >= 5 && $size <= 100) {
-                update_option('pdf_builder_canvas_grid_size', $size);
+                $result = update_option('pdf_builder_canvas_grid_size', $size);
+                error_log('🔄 [PHP AJAX SAVE] GRID_SIZE_SAVE - pdf_builder_canvas_grid_size: ' . $size . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
                 $updated++;
             }
         }
 
         // Accrochage à la grille
         if (isset($_POST['pdf_builder_canvas_snap_to_grid'])) {
-            update_option('pdf_builder_canvas_snap_to_grid', '1');
+            $value = $_POST['pdf_builder_canvas_snap_to_grid'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_snap_to_grid', $value);
+            error_log('🔄 [PHP AJAX SAVE] GRID_TOGGLE_SAVE - pdf_builder_canvas_snap_to_grid: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_snap_to_grid'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_snap_to_grid DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_snap_to_grid', '0');
+            $result = update_option('pdf_builder_canvas_snap_to_grid', '0');
+            error_log('🔄 [PHP AJAX SAVE] GRID_TOGGLE_SAVE - pdf_builder_canvas_snap_to_grid: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_snap_to_grid'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_snap_to_grid DB value: ' . $db_value);
             $updated++;
         }
 
