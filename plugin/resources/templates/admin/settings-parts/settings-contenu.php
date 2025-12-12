@@ -960,7 +960,7 @@
                         console.log('[JS APPLY] ===== VERIFYING HIDDEN FIELDS =====');
                         inputs.forEach(function(input) {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
-                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
                                     console.log('[JS APPLY] VERIFY: ' + input.name + ' -> hidden field value: ' + hiddenField.value);
                                 }
@@ -976,16 +976,16 @@
                         document.addEventListener('click', function(e) {
                             try {
                                 // Gestionnaire pour ouvrir les modales
-                                const button = e.target.closest('.canvas-configure-btn');
+                                var button = e.target.closest('.canvas-configure-btn');
                                 if (button) {
                                     e.preventDefault();
                                     console.log('[PDF Builder] CONFIG_BUTTON - Configure button clicked');
 
-                                    const card = button.closest('.canvas-card');
+                                    var card = button.closest('.canvas-card');
                                     if (card) {
-                                        const category = card.getAttribute('data-category');
+                                        var category = card.getAttribute('data-category');
                                         if (category) {
-                                            const modalId = 'canvas-' + category + '-modal-overlay';
+                                            var modalId = 'canvas-' + category + '-modal-overlay';
                                             console.log('[PDF Builder] CONFIG_BUTTON - Opening modal for category: ' + category);
                                             openModal(modalId);
                                         } else {
@@ -998,12 +998,12 @@
                                 }
 
                                 // Gestionnaire pour fermer les modales
-                                const closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
+                                var closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
                                 if (closeBtn) {
                                     e.preventDefault();
                                     console.log('[PDF Builder] CLOSE_BUTTON - Close button clicked');
 
-                                    const modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
+                                    var modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
                                     if (modal) {
                                         closeModal(modal);
                                     }
@@ -1019,12 +1019,12 @@
                                 }
 
                                 // Gestionnaire pour appliquer les paramètres (synchroniser et fermer la modale)
-                                const applyBtn = e.target.closest('.canvas-modal-apply');
+                                var applyBtn = e.target.closest('.canvas-modal-apply');
                                 if (applyBtn) {
                                     e.preventDefault();
                                     console.log('[PDF Builder] APPLY_BUTTON - Apply button clicked');
 
-                                    const category = applyBtn.getAttribute('data-category');
+                                    var category = applyBtn.getAttribute('data-category');
                                     if (category) {
                                         // Synchroniser les valeurs de la modale vers les champs cachés
                                         applyModalSettings(category);
@@ -1035,7 +1035,7 @@
                                 }
 
                                 // Gestionnaire pour réinitialiser les paramètres Canvas
-                                const resetBtn = e.target.closest('#reset-canvas-settings');
+                                var resetBtn = e.target.closest('#reset-canvas-settings');
                                 if (resetBtn) {
                                     e.preventDefault();
                                     console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked');
@@ -1050,12 +1050,12 @@
                                 }
 
                                 // Gestionnaire pour annuler les modales
-                                const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
+                                var cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
                                 if (cancelBtn) {
                                     e.preventDefault();
                                     console.log('[PDF Builder] CANCEL_BUTTON - Cancel button clicked');
 
-                                    const modal = cancelBtn.closest('.canvas-modal-overlay');
+                                    var modal = cancelBtn.closest('.canvas-modal-overlay');
                                     if (modal) {
                                         closeModal(modal);
                                     }
@@ -1073,7 +1073,7 @@
                                 console.log('[PDF Builder] ESC_KEY - Escape key pressed');
 
                                 // Fermer toutes les modales ouvertes
-                                const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"], .cache-modal[style*="display: block"]');
+                                var openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"], .cache-modal[style*="display: block"]');
                                 openModals.forEach(function(modal) {
                                     closeModal(modal);
                                 });
@@ -1108,7 +1108,7 @@
                             'canvas-debug-modal-overlay'
                         ];
 
-                        const allModalsLoaded = modalIds.every(function(id) { return document.getElementById(id) !== null; });
+                        var allModalsLoaded = modalIds.every(function(id) { return document.getElementById(id) !== null; });
 
                         if (allModalsLoaded) {
                             console.log('[PDF Builder] MODALS_READY - All modals loaded, initializing...');
@@ -1138,9 +1138,9 @@
                             }
 
                             // Extraire la catégorie depuis l'ID de la modale
-                            const categoryMatch = modalId.match(/canvas-(\w+)-modal-overlay/);
+                            var categoryMatch = modalId.match(/canvas-(\w+)-modal-overlay/);
                             if (categoryMatch) {
-                                const category = categoryMatch[1];
+                                var category = categoryMatch[1];
                                 console.log('[PDF Builder] OPEN_MODAL - Opening modal for category: ' + category);
 
                                 // Mettre à jour les valeurs avant d'ouvrir
@@ -1189,12 +1189,12 @@
 
                         try {
                             // Mettre à jour les indicateurs de statut sur les cartes
-                            const cards = document.querySelectorAll('.canvas-card');
+                            var cards = document.querySelectorAll('.canvas-card');
                             cards.forEach(function(card) {
-                                const category = card.getAttribute('data-category');
+                                var category = card.getAttribute('data-category');
                                 if (category) {
                                     // Marquer comme valeurs par défaut
-                                    const statusIndicator = card.querySelector('.canvas-status');
+                                    var statusIndicator = card.querySelector('.canvas-status');
                                     if (statusIndicator) {
                                         statusIndicator.textContent = 'Défaut';
                                         statusIndicator.className = 'canvas-status status-default';
@@ -1222,7 +1222,7 @@
                     function updateModalValues(category) {
                         console.log('[PDF Builder] UPDATE_MODAL - Called with category: ' + category);
                         console.log('[PDF Builder] UPDATE_MODAL - Starting modal value synchronization');
-                        const modal = document.querySelector('#canvas-' + category + '-modal-overlay');
+                        var modal = document.querySelector('#canvas-' + category + '-modal-overlay');
                         if (!modal) {
                             console.log('[PDF Builder] UPDATE_MODAL - Modal #canvas-' + category + '-modal-overlay not found');
                             return;
@@ -1230,7 +1230,7 @@
                         console.log('[PDF Builder] UPDATE_MODAL - Modal found, processing category: ' + category);
 
                         // Mapping des champs selon la catégorie
-                        const fieldMappings = {
+                        var fieldMappings = {
                             'dimensions': {
                                 'canvas_width': 'pdf_builder_canvas_width',
                                 'canvas_height': 'pdf_builder_canvas_height',
@@ -1281,22 +1281,22 @@
                             }
                         };
 
-                        const mappings = fieldMappings[category];
+                        var mappings = fieldMappings[category];
                         if (!mappings) return;
 
                         // Valeurs par défaut pour les champs Canvas
-                        const defaultValues = CANVAS_DEFAULT_VALUES;
+                        var defaultValues = CANVAS_DEFAULT_VALUES;
 
                         // Mettre à jour chaque champ
-                        for (const entry of Object.entries(mappings)) {
-                            const fieldId = entry[0];
-                            const settingKey = entry[1];
-                            const field = modal.querySelector('#' + fieldId + ', [name="' + settingKey + '"]');
+                        for (var entry of Object.entries(mappings)) {
+                            var fieldId = entry[0];
+                            var settingKey = entry[1];
+                            var field = modal.querySelector('#' + fieldId + ', [name="' + settingKey + '"]');
                             if (field) {
                                 // Chercher la valeur dans les champs cachés
-                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + settingKey + ']"]');
-                                let value = '';
-                                let valueSource = 'default'; // default, custom
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + settingKey + ']"]');
+                                var value = '';
+                                var valueSource = 'default'; // default, custom
                                 
                                 if (hiddenField && hiddenField.value && hiddenField.value.trim() !== '') {
                                     value = hiddenField.value;
@@ -1340,7 +1340,7 @@
                                     
                                     // Pour les selects, mettre à jour l'attribut selected
                                     if (field.tagName === 'SELECT') {
-                                        const options = field.querySelectorAll('option');
+                                        var options = field.querySelectorAll('option');
                                         options.forEach(function(option) {
                                             option.selected = option.value === value;
                                         });
@@ -1352,7 +1352,7 @@
                                 field.classList.add('value-' + valueSource);
                                 
                                 // Ajouter un indicateur textuel près du champ
-                                let indicator = field.parentNode.querySelector('.value-indicator');
+                                var indicator = field.parentNode.querySelector('.value-indicator');
                                 if (!indicator) {
                                     indicator = document.createElement('span');
                                     indicator.className = 'value-indicator';
@@ -1384,7 +1384,7 @@
                             // Gestion spécifique des toggles (checkboxes)
                             if (input.type === 'checkbox') {
                                 input.addEventListener('change', function() {
-                                    const toggleSwitch = this.closest('.toggle-switch');
+                                    var toggleSwitch = this.closest('.toggle-switch');
                                     if (toggleSwitch) {
                                         if (this.checked) {
                                             toggleSwitch.classList.add('checked');
@@ -1461,7 +1461,7 @@
 
                         try {
                             // Valeurs par défaut pour tous les paramètres Canvas
-                            const defaultValues = {
+                            var defaultValues = {
                                 'pdf_builder_canvas_width': '794',
                                 'pdf_builder_canvas_height': '1123',
                                 'pdf_builder_canvas_dpi': '96',
@@ -1502,7 +1502,7 @@
 
                             // Réinitialiser les champs cachés
                             Object.keys(defaultValues).forEach(function(key) {
-                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + key + ']"]');
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + key + ']"]');
                                 if (hiddenField) {
                                     hiddenField.value = defaultValues[key];
                                     console.log('[PDF Builder] RESET_CANVAS - Reset ' + key + ' to ' + defaultValues[key]);
@@ -1513,9 +1513,9 @@
                             console.log('[PDF Builder] RESET_CANVAS - Client-side reset completed');
 
                             // Fermer toutes les modales ouvertes
-                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                            var openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
                             openModals.forEach(function(modal) {
-                                const modalId = modal.id;
+                                var modalId = modal.id;
                                 closeModal(modalId);
                             });
 
