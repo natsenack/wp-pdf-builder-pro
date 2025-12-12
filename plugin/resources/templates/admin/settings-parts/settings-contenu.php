@@ -1862,9 +1862,11 @@
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
                         console.log('[JS SAVE] Starting saveModalSettings for category:', category);
+                        alert('Sauvegarde démarrée pour: ' + category); // DEBUG ALERT
                         const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
                         if (!modal) {
                             console.error('[JS SAVE] Modal not found for category:', category);
+                            alert('Modal non trouvée pour: ' + category); // DEBUG ALERT
                             return;
                         }
 
@@ -1901,6 +1903,7 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
+                                alert('Sauvegarde réussie pour: ' + category); // DEBUG ALERT
                                 // Mettre à jour les champs cachés
                                 inputs.forEach(input => {
                                     if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
