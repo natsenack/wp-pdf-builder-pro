@@ -269,12 +269,12 @@
 
                     performHealthCheck: () => {
                         // Ping simple du serveur
-                        fetch(ajaxurl, {
+                        fetch(pdfBuilderCanvasAjax.ajaxurl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: new URLSearchParams({
                                 action: 'pdf_builder_health_check',
-                                nonce: '<?php echo wp_create_nonce("pdf_builder_health"); ?>'
+                                nonce: pdfBuilderCanvasAjax.nonce
                             })
                         })
                         .then(response => response.json())
@@ -678,7 +678,7 @@
                         // Ajouter métadonnées
                         settings['action'] = 'pdf_builder_save_canvas_settings';
                         settings['category'] = category;
-                        settings['nonce'] = '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>';
+                        settings['nonce'] = pdfBuilderCanvasAjax.nonce;
                         settings['client_timestamp'] = Date.now();
 
                         // FONCTION DE SAUVEGARDE AVEC RETRY
@@ -702,7 +702,7 @@
                                 controller.abort();
                             }, CANVAS_CONFIG.AJAX_TIMEOUT);
 
-                            fetch(ajaxurl, {
+                            fetch(pdfBuilderCanvasAjax.ajaxurl, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded',
