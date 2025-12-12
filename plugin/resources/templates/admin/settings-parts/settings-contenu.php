@@ -2131,7 +2131,7 @@
 
                     console.log('Modal manager initialized');
 
-                    console.log('SYSTEM_INIT: Canvas modals system initialized successfully');
+                    console.log('SYSTEM_INIT: Canvas modals system initialized successfully - v2.1.1');
                 })();
             </script>
 
