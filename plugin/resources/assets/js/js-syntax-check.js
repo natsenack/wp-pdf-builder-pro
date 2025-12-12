@@ -41,13 +41,21 @@
     function checkScriptSyntax(script, index) {
         if (!script || !script.textContent) return null;
 
+        const content = script.textContent.trim();
+
+        // Skip scripts that contain HTML templates (Elementor templates)
+        if (content.startsWith('<') || content.includes('<div') || content.includes('<span') || content.includes('<a ')) {
+            console.log(`⏭️ Skipping HTML template script ${index} (${script.src || 'inline'})`);
+            return { index: index, src: script.src || 'inline', syntaxValid: true, error: null, skipped: true };
+        }
+
         try {
             // Try to create a new Function to check syntax
-            new Function(script.textContent);
+            new Function(content);
             return { index: index, src: script.src || 'inline', syntaxValid: true, error: null };
         } catch (syntaxError) {
             // Log the first 200 characters of the problematic script
-            const scriptPreview = script.textContent.substring(0, 200).replace(/\n/g, '\\n');
+            const scriptPreview = content.substring(0, 200).replace(/\n/g, '\\n');
             console.error(`❌ SYNTAX ERROR in script ${index} (${script.src || 'inline'}):`, syntaxError.message);
             console.error(`❌ SCRIPT PREVIEW (${index}): "${scriptPreview}..."`);
             return {
