@@ -45,7 +45,7 @@
         private function init_woocommerce_status() {
             // Différer la vérification pour éviter les problèmes de chargement prématuré
             if (did_action('plugins_loaded')) {
-                $this->woocommerce_active = class_exists('WooCommerce');
+                $this->woocommerce_active = defined('WC_VERSION');
             } else {
                 $this->woocommerce_active = false;
             }

@@ -100,7 +100,7 @@ class PDF_Builder_Onboarding_Manager {
         }
 
         // Vérifier si WooCommerce est installé et actif
-        return class_exists('WooCommerce') && defined('WC_VERSION');
+        return defined('WC_VERSION');
     }
     /**
      * Vérifier le statut d'onboarding (appelé via admin_enqueue_scripts)

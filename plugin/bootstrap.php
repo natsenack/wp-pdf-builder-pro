@@ -38,7 +38,7 @@ function pdf_builder_load_utilities_emergency() {
     );
 
     // Charger PDF_Builder_Onboarding_Manager seulement si WooCommerce est actif (pour éviter les problèmes de traductions)
-    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
         $utilities[] = 'PDF_Builder_Onboarding_Manager.php';
     }
 
@@ -62,7 +62,7 @@ function pdf_builder_load_utilities_emergency() {
  */
 function pdf_builder_ensure_onboarding_manager() {
     // Ne charger l'Onboarding Manager que si WooCommerce est actif pour éviter les problèmes de traductions
-    if (!did_action('plugins_loaded') || !class_exists('WooCommerce')) {
+    if (!did_action('plugins_loaded') || !defined('WC_VERSION')) {
         return false; // WooCommerce pas encore disponible
     }
 
@@ -90,7 +90,7 @@ function pdf_builder_get_onboarding_manager() {
     }
 
     // Si WooCommerce n'est pas disponible, retourner null
-    if (!did_action('plugins_loaded') || !class_exists('WooCommerce')) {
+    if (!did_action('plugins_loaded') || !defined('WC_VERSION')) {
         return null;
     }
 
@@ -397,7 +397,7 @@ function pdf_builder_load_core()
     }
 
     // Charger les managers dépendants de WooCommerce seulement si WooCommerce est actif
-    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
         foreach ($woocommerce_dependent_managers as $manager) {
             $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
             if (file_exists($manager_path)) {
@@ -407,7 +407,7 @@ function pdf_builder_load_core()
     } else {
         // Si WooCommerce n'est pas encore disponible, programmer un chargement retardé
         add_action('plugins_loaded', function() {
-            if (class_exists('WooCommerce')) {
+            if (defined('WC_VERSION')) {
                 $woocommerce_dependent_managers = array(
                     'PDF_Builder_Status_Manager.php',
                     'PDF_Builder_Variable_Mapper.php'
@@ -429,7 +429,7 @@ function pdf_builder_load_core()
     }
 
     // Charger PDF_Builder_WooCommerce_Integration seulement si WooCommerce est actif
-    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
         $woocommerce_manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_WooCommerce_Integration.php';
         if (file_exists($woocommerce_manager_path)) {
             require_once $woocommerce_manager_path;
@@ -731,7 +731,7 @@ function pdf_builder_load_new_classes()
     ];
 
     // Charger WooCommerceDataProvider seulement si WooCommerce est disponible
-    if (did_action('plugins_loaded') && class_exists('WooCommerce')) {
+    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
         $data_classes[] = 'config/data/WooCommerceDataProvider.php';
     }
 

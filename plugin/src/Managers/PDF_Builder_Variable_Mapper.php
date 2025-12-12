@@ -365,7 +365,7 @@ class PDFBuilderVariableMapper
      */
     private function formatDate($date)
     {
-        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format'));
         }
         if ($date instanceof DateTime) {
@@ -382,7 +382,7 @@ class PDFBuilderVariableMapper
      */
     private function formatDatetime($date)
     {
-        if (did_action('plugins_loaded') && class_exists('WooCommerce') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format') . ' ' . get_option('time_format'));
         }
         if ($date instanceof DateTime) {
@@ -529,7 +529,7 @@ class PDFBuilderVariableMapper
         );
 
         // Add WooCommerce-specific fallbacks only if WooCommerce is available
-        if (did_action('plugins_loaded') && class_exists('WooCommerce') && function_exists('wc_price') && function_exists('get_woocommerce_currency')) {
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && function_exists('wc_price') && function_exists('get_woocommerce_currency')) {
             $fallbacks['order_total'] = \wc_price(0);
             $fallbacks['currency'] = get_woocommerce_currency();
             $fallbacks['subtotal'] = \wc_price(0);
