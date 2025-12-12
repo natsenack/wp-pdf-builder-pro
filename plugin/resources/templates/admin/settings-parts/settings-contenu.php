@@ -1236,16 +1236,16 @@
                             // document.body.focus(); // Cette ligne causait une erreur de syntaxe
                             modal.setAttribute('inert', '');
 
-                            console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
+                            console.log('[PDF Builder] CLOSE_MODAL - Modal closed successfully: ' + modalId);
 
                         } catch (error) {
-                            console.error(`[PDF Builder] CLOSE_MODAL - Error closing modal:`, error);
+                            console.error('[PDF Builder] CLOSE_MODAL - Error closing modal:', error);
                         }
                     }
 
                     // Fonction helper pour les notifications avec fallback
                     function showNotification(type, message, options) {
-                        console.log(`[PDF Builder] NOTIFICATION_HELPER - Attempting to show ${type} notification:`, message);
+                        console.log('[PDF Builder] NOTIFICATION_HELPER - Attempting to show ' + type + ' notification:', message);
 
                         if (type === 'success' && typeof showSuccessNotification === 'function') {
                             console.log('[PDF Builder] NOTIFICATION_HELPER - Using showSuccessNotification');
