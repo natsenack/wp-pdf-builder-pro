@@ -1032,11 +1032,11 @@
                                     });
                                 }
                             });
-                                openModals.forEach(modal => {
-                                    closeModal(modal);
-                                });
-                            }
-                        });
+
+                        } catch (error) {
+                            console.error('[PDF Builder] EVENT_LISTENERS - Error in event handler:', error);
+                        }
+                    }
 
                         console.log('[PDF Builder] ATTACH_LISTENERS - Event listeners attached successfully');
                     }
