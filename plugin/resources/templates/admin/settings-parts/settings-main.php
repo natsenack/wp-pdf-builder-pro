@@ -181,10 +181,12 @@
 
         <?php submit_button(); ?>
 
-        <!-- Bouton flottant de sauvegarde simple -->
-        <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
-            💾 Enregistrer
-        </button>
+        <!-- Bouton flottant de sauvegarde -->
+        <div id="pdf-builder-save-floating" class="pdf-builder-save-floating-container">
+            <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
+                💾 Enregistrer
+            </button>
+        </div>
     </div>
     </form>
 

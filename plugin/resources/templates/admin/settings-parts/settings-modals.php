@@ -494,66 +494,9 @@ function get_canvas_modal_value($key, $default = '') {
     background-color: #f1f1f1;
 }
 </style>
-                                Calcul en cours...
-                            </div>
-                            <div class="cache-folder-path">wp-content/cache/wp-pdf-builder-previews/</div>
-                        </article>
-                        <article class="cache-folder-card">
-                            <h4 class="cache-folder-title">[DOSSIER PRINCIPAL] Dossier principal</h4>
-                            <div class="cache-size-display" id="main-cache-size">
-                                Calcul en cours...
-                            </div>
-                            <div class="cache-folder-path">wp-content/uploads/pdf-builder-cache/</div>
-                        </article>
-                    </section>
-                    <aside class="cache-recommendations">
-                        <h4 class="cache-recommendations-title">💡 Recommandations</h4>
-                        <ul class="cache-recommendations-list">
-                            <li>Une taille de cache normale est inférieure à 100 Mo</li>
-                            <li>Si la taille dépasse 500 Mo, considérez un nettoyage manuel</li>
-                            <li>Le cache est automatiquement nettoyé selon les paramètres configurés</li>
-                        </ul>
-                    </aside>
-                </article>
-            </main>
-            <footer class="cache-modal-footer">
-                <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
-                <button type="button" class="button button-primary" id="clear-cache-from-modal">🗑️ Vider le cache</button>
-            </footer>
-        </section>
-    </div>
-</div>
 
-<!-- Cache Transients Details Modal -->
-<div id="cache-transients-modal" class="cache-modal" data-category="transients">debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style incorrect - padding: attendu "20px", obtenu "24px"
-warn @ debug-css-modals.js?ver=1.1.0-1765365773:21
-(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:154
-checkElementStyles @ debug-css-modals.js?ver=1.1.0-1765365773:151
-(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:226
-(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:225
-debugCacheModals @ debug-css-modals.js?ver=1.1.0-1765365773:170
-(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:341
-setTimeout
-(anonyme) @ debug-css-modals.js?ver=1.1.0-1765365773:339
-debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style incorrect - border-radius: attendu "10px", obtenu "12px"
-    <div class="cache-modal-overlay">
-        <section class="cache-modal-container">
-            <header class="cache-modal-header">
-                <h3>📊 Détails des transients actifs</h3>
-                <button type="button" class="cache-modal-close">&times;</button>
-            </header>
-            <main class="cache-modal-body">
-                <aside class="cache-modal-info">
-                    <p>
-                        <strong>ℹ️ Informations sur les transients :</strong> Les transients sont des données temporaires stockées dans la base de données WordPress.
-                        Ils expirent automatiquement et améliorent les performances en évitant les recalculs.
-                    </p>
-                </aside>
-                <article id="cache-transients-details">
-                    <section class="cache-section">
-                        <article class="cache-folder-card">
-                            <h4 class="cache-folder-title">📊 Statistiques des transients</h4>
-                            <section class="cache-stats-grid">
+<!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+<?php
                                 <article class="cache-stat-item">
                                     <div class="cache-stat-number total" id="total-transients-count">0</div>
                                     <div class="cache-stat-label">Total actifs</div>

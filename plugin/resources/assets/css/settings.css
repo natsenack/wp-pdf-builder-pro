@@ -4563,4 +4563,17 @@ body.modal-open {
     }
 }
 
+/* Conteneur du bouton flottant */
+.pdf-builder-save-floating-container {
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    z-index: 99999;
+    pointer-events: none; /* Permet de cliquer à travers si nécessaire */
+}
+
+.pdf-builder-save-floating-container .pdf-builder-floating-save {
+    pointer-events: auto; /* Le bouton lui-même peut être cliqué */
+}
+
 
