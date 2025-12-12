@@ -1625,8 +1625,8 @@
                                     indicator.textContent = ' (Défaut)';
                                     indicator.style.color = '#666';
                                 } else if (valueSource === 'custom') {
-                                    indicator.textContent = ' (Personnalisé)';
-                                    indicator.style.color = '#007cba';
+                                    // Ne plus afficher "(Personnalisé)" car c'est redondant
+                                    indicator.textContent = '';
                                 } else if (valueSource === 'cached') {
                                     indicator.textContent = ' (En cache)';
                                     indicator.style.color = '#f39c12';
@@ -1891,12 +1891,6 @@
                                         // Marquer comme valeur personnalisée
                                         input.classList.remove('value-default', 'value-cached');
                                         input.classList.add('value-custom');
-                                        
-                                        let indicator = input.parentNode.querySelector('.value-indicator');
-                                        if (indicator) {
-                                            indicator.textContent = ' (Personnalisé)';
-                                            indicator.style.color = '#007cba';
-                                        }
                                     }
                                 });
 
