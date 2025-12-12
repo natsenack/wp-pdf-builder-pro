@@ -847,66 +847,6 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                     </p>
                 </aside>
                 <form id="canvas-performance-form">
-                    <!-- Section Éditeur PDF -->
-                    <section>
-                        <header>
-                            <h4 class="canvas-modal-section-title margin-25">
-                                <span class="canvas-modal-inline-flex">
-                                    [EDITEUR PDF] Éditeur PDF
-                                </span>
-                            </h4>
-                        </header>
-                        <p class="canvas-modal-sub-description">Paramètres de performance pour l'interface de conception</p>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
-                                <td>
-                                    <select id="canvas_fps_target" name="pdf_builder_canvas_fps_target">
-                                        <option value="30" <?php selected(get_canvas_option('canvas_fps_target', 60), 30); ?>>30 FPS (Économie)</option>
-                                        <option value="60" <?php selected(get_canvas_option('canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
-                                        <option value="120" <?php selected(get_canvas_option('canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
-                                    </select>
-                                    <aside id="fps_preview" class="canvas-modal-preview">
-                                        FPS actuel : <span id="current_fps_value"><?php echo intval(get_canvas_option('canvas_fps_target', 60)); ?></span>
-                                    </aside>
-                                    <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
-                                <td>
-                                    <select id="canvas_memory_limit_js" name="pdf_builder_canvas_memory_limit_js">
-                                        <option value="128" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
-                                        <option value="256" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
-                                        <option value="512" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
-                                        <option value="1024" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
-                                    </select>
-                                    <p class="canvas-modal-description">Mémoire allouée au canvas et aux éléments</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="pdf_builder_canvas_lazy_loading_editor" value="1" <?php checked(get_canvas_option('canvas_lazy_loading_editor', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_preload_critical" name="pdf_builder_canvas_preload_critical" value="1" <?php checked(get_canvas_option('canvas_preload_critical', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-
                     <!-- Section Plugin WordPress -->
                     <section>
                         <header>
@@ -967,6 +907,83 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Debug -->
 
+
+<!-- Canvas Éditeur PDF Modal -->
+<div id="canvas-editeur-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-editeur-modal">
+    <section class="canvas-modal-container">
+        <header class="canvas-modal-header">
+            <h3>🎨 Éditeur PDF - Configuration</h3>
+            <button type="button" class="canvas-modal-close">&times;</button>
+        </header>
+        <main class="canvas-modal-body">
+            <form id="canvas-editeur-form">
+                <!-- Section Éditeur PDF -->
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title margin-25">
+                            <span class="canvas-modal-inline-flex">
+                                [EDITEUR PDF] Éditeur PDF
+                            </span>
+                        </h4>
+                    </header>
+                    <p class="canvas-modal-sub-description">Paramètres de performance pour l'interface de conception</p>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
+                            <td>
+                                <select id="canvas_fps_target" name="pdf_builder_canvas_fps_target">
+                                    <option value="30" <?php selected(get_canvas_option('canvas_fps_target', 60), 30); ?>>30 FPS (Économie)</option>
+                                    <option value="60" <?php selected(get_canvas_option('canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
+                                    <option value="120" <?php selected(get_canvas_option('canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
+                                </select>
+                                <aside id="fps_preview" class="canvas-modal-preview">
+                                    FPS actuel : <span id="current_fps_value"><?php echo intval(get_canvas_option('canvas_fps_target', 60)); ?></span>
+                                </aside>
+                                <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
+                            <td>
+                                <select id="canvas_memory_limit_js" name="pdf_builder_canvas_memory_limit_js">
+                                    <option value="128" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
+                                    <option value="256" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
+                                    <option value="512" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
+                                    <option value="1024" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
+                                </select>
+                                <p class="canvas-modal-description">Mémoire allouée au canvas et aux éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_lazy_loading_editor" name="pdf_builder_canvas_lazy_loading_editor" value="1" <?php checked(get_canvas_option('canvas_lazy_loading_editor', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_preload_critical" name="pdf_builder_canvas_preload_critical" value="1" <?php checked(get_canvas_option('canvas_preload_critical', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+            </form>
+        </main>
+        <footer class="canvas-modal-footer">
+            <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="editeur">Appliquer</button>
+        </footer>
+    </section>
+</div>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <?php

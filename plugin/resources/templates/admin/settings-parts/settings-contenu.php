@@ -403,6 +403,42 @@
                     </div>
 
 
+                    <!-- Nouvelle carte Éditeur PDF -->
+                    <div class="canvas-cards-grid-single">
+                        <article class="canvas-card" data-category="editeur">
+                            <header class="canvas-card-header">
+                                <div class="canvas-card-header-left">
+                                    <span class="canvas-card-icon">🎨</span>
+                                </div>
+                                <h4>Éditeur PDF</h4>
+                            </header>
+                            <main class="canvas-card-content">
+                                <p>Configurez les paramètres de performance et d'interface pour l'éditeur PDF.</p>
+                            </main>
+                            <aside class="canvas-card-preview">
+                                <div class="preview-format">
+                                    <div>
+                                        <span id="card-fps-target"><?php echo esc_html(get_canvas_option_contenu('canvas_fps_target', '60')); ?></span> FPS
+                                        <div style="font-size: 10px; color: #666; margin-top: 5px;">
+                                            Performance: <?php
+                                            $fps = intval(get_canvas_option_contenu('canvas_fps_target', '60'));
+                                            if ($fps >= 120) echo 'Haute';
+                                            elseif ($fps >= 60) echo 'Standard';
+                                            else echo 'Économie';
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+                            <footer class="canvas-card-actions">
+                                <button type="button" class="canvas-configure-btn">
+                                    <span>⚙️</span> Configurer
+                                </button>
+                            </footer>
+                        </article>
+                    </div>
+
+
             </section>
 
                 <!-- Section Templates -->
@@ -828,7 +864,7 @@
                         // Initialiser l'état des toggles existants
                         initializeToggleStates();
                         // Vérifier que les modals existent
-                        var modalCategories = ['affichage', 'navigation', 'comportement', 'systeme'];
+                        var modalCategories = ['affichage', 'navigation', 'comportement', 'systeme', 'editeur'];
                         var missingModals = [];
                         var foundModals = [];
                         modalCategories.forEach(function(category) {
@@ -1043,7 +1079,8 @@
                         'canvas-affichage-modal-overlay',
                         'canvas-navigation-modal-overlay',
                         'canvas-comportement-modal-overlay',
-                        'canvas-systeme-modal-overlay'
+                        'canvas-systeme-modal-overlay',
+                        'canvas-editeur-modal-overlay'
                     ];
                     var allModalsLoaded = modalIds.every(function(id) {
                         return document.getElementById(id) !== null;
@@ -1191,6 +1228,12 @@
                             'canvas_debug_enabled': 'pdf_builder_canvas_debug_enabled',
                             'canvas_performance_monitoring': 'pdf_builder_canvas_performance_monitoring',
                             'canvas_error_reporting': 'pdf_builder_canvas_error_reporting'
+                        },
+                        'editeur': {
+                            'canvas_fps_target': 'pdf_builder_canvas_fps_target',
+                            'canvas_memory_limit_js': 'pdf_builder_canvas_memory_limit_js',
+                            'canvas_lazy_loading_editor': 'pdf_builder_canvas_lazy_loading_editor',
+                            'canvas_preload_critical': 'pdf_builder_canvas_preload_critical'
                         }
                     };
                     var mappings = fieldMappings[category];
