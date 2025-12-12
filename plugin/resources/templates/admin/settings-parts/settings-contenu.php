@@ -11,6 +11,25 @@
 
     error_log("[PDF Builder] PAGE_LOAD_START - settings-contenu.php loaded");
 
+    // DEBUG: Afficher les valeurs directement dans le HTML
+    echo "<!-- DEBUG CANVAS VALUES START -->\n";
+    $debug_keys = ['canvas_width', 'canvas_height', 'canvas_bg_color', 'canvas_grid_enabled'];
+    foreach ($debug_keys as $key) {
+        $option_key = 'pdf_builder_' . $key;
+        $value = get_option($option_key, 'NOT_SET');
+        echo "<!-- DEBUG: {$key} = '{$value}' (key: {$option_key}) -->\n";
+    }
+    echo "<!-- DEBUG CANVAS VALUES END -->\n";
+
+    // Script de débogage pour afficher les valeurs dans la console
+    echo "<script>
+        console.log('[PDF Builder] Page loaded - Canvas values:');
+        console.log('Width:', '" . get_canvas_option_contenu('canvas_width', '794') . "');
+        console.log('Height:', '" . get_canvas_option_contenu('canvas_height', '1123') . "');
+        console.log('BG Color:', '" . get_canvas_option_contenu('canvas_bg_color', '#ffffff') . "');
+        console.log('Grid Enabled:', '" . get_canvas_option_contenu('canvas_grid_enabled', '1') . "');
+    </script>\n";
+
     $settings = get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
