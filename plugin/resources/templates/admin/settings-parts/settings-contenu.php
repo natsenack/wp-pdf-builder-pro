@@ -817,7 +817,8 @@
                 // Force cache clear
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for(let registration of registrations) {
+                        for(var i = 0; i < registrations.length; i++) {
+                            var registration = registrations[i];
                             registration.unregister();
                         }
                     });
@@ -830,7 +831,7 @@
 
                     // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
                     <?php
-                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
                     echo "const CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
                     ?>
 
