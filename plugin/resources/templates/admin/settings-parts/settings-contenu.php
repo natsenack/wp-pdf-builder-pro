@@ -840,7 +840,8 @@
                     console.log('[PDF Builder] 🔧 Fix: HTML/PHP moved outside script tags');
 
                     // Fonction d'initialisation avec retry
-                    function initializeModals(retryCount = 0) {
+                    function initializeModals(retryCount) {
+                        if (typeof retryCount === 'undefined') retryCount = 0;
                         const maxRetries = 5;
                         const retryDelay = 200; // ms
 
@@ -855,7 +856,7 @@
                             let missingModals = [];
                             let foundModals = [];
 
-                            modalCategories.forEach(category => {
+                            modalCategories.forEach(function(category) {
                                 const modalId = 'canvas-' + category + '-modal-overlay';
                                 const modal = document.getElementById(modalId);
                                 if (!modal) {
@@ -874,7 +875,7 @@
                             if (missingModals.length > 0) {
                                 if (retryCount < maxRetries) {
                                     console.warn('[PDF Builder] MODALS_INIT - ' + missingModals.length + ' modals missing, retrying in ' + retryDelay + 'ms...');
-                                    setTimeout(() => initializeModals(retryCount + 1), retryDelay);
+                                    setTimeout(function() { initializeModals(retryCount + 1); }, retryDelay);
                                     return;
                                 } else {
                                     console.error('[PDF Builder] MODALS_INIT - ' + missingModals.length + ' modals are missing after ' + maxRetries + ' retries:', missingModals);
@@ -888,7 +889,7 @@
                                 console.warn('[PDF Builder] MODALS_INIT - No configuration buttons found');
                                 if (retryCount < maxRetries) {
                                     console.warn('[PDF Builder] MODALS_INIT - Retrying buttons check in ' + retryDelay + 'ms...');
-                                    setTimeout(() => initializeModals(retryCount + 1), retryDelay);
+                                    setTimeout(function() { initializeModals(retryCount + 1); }, retryDelay);
                                     return;
                                 }
                             }
@@ -902,7 +903,7 @@
                             console.error('[PDF Builder] MODALS_INIT - Error during initialization:', error);
                             if (retryCount < maxRetries) {
                                 console.warn('[PDF Builder] MODALS_INIT - Retrying after error in ' + retryDelay + 'ms...');
-                                setTimeout(() => initializeModals(retryCount + 1), retryDelay);
+                                setTimeout(function() { initializeModals(retryCount + 1); }, retryDelay);
                             }
                         }
                     }
@@ -925,7 +926,7 @@
 
                         let updatedCount = 0;
 
-                        inputs.forEach(input => {
+                        inputs.forEach(function(input) {
                             console.log('[JS APPLY] Processing input: ' + (input.name || input.id) + ' (type: ' + input.type + ')');
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                 // Trouver le champ caché correspondant dans le formulaire principal
@@ -957,7 +958,7 @@
 
                         // DEBUG: Vérifier que les champs cachés ont été mis à jour
                         console.log('[JS APPLY] ===== VERIFYING HIDDEN FIELDS =====');
-                        inputs.forEach(input => {
+                        inputs.forEach(function(input) {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                 const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
@@ -1073,7 +1074,7 @@
 
                                 // Fermer toutes les modales ouvertes
                                 const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"], .cache-modal[style*="display: block"]');
-                                openModals.forEach(modal => {
+                                openModals.forEach(function(modal) {
                                     closeModal(modal);
                                 });
                             }
@@ -1106,7 +1107,7 @@
                             'canvas-debug-modal-overlay'
                         ];
 
-                        const allModalsLoaded = modalIds.every(id => document.getElementById(id) !== null);
+                        const allModalsLoaded = modalIds.every(function(id) { return document.getElementById(id) !== null; });
 
                         if (allModalsLoaded) {
                             console.log('[PDF Builder] MODALS_READY - All modals loaded, initializing...');
@@ -1169,7 +1170,7 @@
 
                         // Parcourir tous les toggles existants
                         const allToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
-                        allToggles.forEach(checkbox => {
+                        allToggles.forEach(function(checkbox) {
                             const toggleSwitch = checkbox.closest('.toggle-switch');
                             if (toggleSwitch) {
                                 if (checkbox.checked) {
@@ -1188,7 +1189,7 @@
                         try {
                             // Mettre à jour les indicateurs de statut sur les cartes
                             const cards = document.querySelectorAll('.canvas-card');
-                            cards.forEach(card => {
+                            cards.forEach(function(card) {
                                 const category = card.getAttribute('data-category');
                                 if (category) {
                                     // Marquer comme valeurs par défaut
@@ -1204,7 +1205,7 @@
 
                             // Forcer la mise à jour des valeurs dans toutes les modales ouvertes
                             const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
-                            openModals.forEach(modal => {
+                            openModals.forEach(function(modal) {
                                 const category = modal.id.replace('canvas-', '').replace('-modal-overlay', '');
                                 if (category) {
                                     updateModalValues(category);
@@ -1286,7 +1287,9 @@
                         const defaultValues = CANVAS_DEFAULT_VALUES;
 
                         // Mettre à jour chaque champ
-                        for (const [fieldId, settingKey] of Object.entries(mappings)) {
+                        for (const entry of Object.entries(mappings)) {
+                            const fieldId = entry[0];
+                            const settingKey = entry[1];
                             const field = modal.querySelector('#' + fieldId + ', [name="' + settingKey + '"]');
                             if (field) {
                                 // Chercher la valeur dans les champs cachés
@@ -1337,7 +1340,7 @@
                                     // Pour les selects, mettre à jour l'attribut selected
                                     if (field.tagName === 'SELECT') {
                                         const options = field.querySelectorAll('option');
-                                        options.forEach(option => {
+                                        options.forEach(function(option) {
                                             option.selected = option.value === value;
                                         });
                                     }
@@ -1372,8 +1375,8 @@
 
                         // Ajouter les event listeners pour les changements (sans cache localStorage)
                         const allInputs = modal.querySelectorAll('input, select, textarea');
-                        allInputs.forEach(input => {
-                            input.addEventListener('change', () => {
+                        allInputs.forEach(function(input) {
+                            input.addEventListener('change', function() {
                                 console.log('[PDF Builder] INPUT_CHANGE - ' + input.name + ' changed');
                             });
 
@@ -1497,7 +1500,7 @@
                             };
 
                             // Réinitialiser les champs cachés
-                            Object.keys(defaultValues).forEach(key => {
+                            Object.keys(defaultValues).forEach(function(key) {
                                 const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + key + ']"]');
                                 if (hiddenField) {
                                     hiddenField.value = defaultValues[key];
@@ -1510,7 +1513,7 @@
 
                             // Fermer toutes les modales ouvertes
                             const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
-                            openModals.forEach(modal => {
+                            openModals.forEach(function(modal) {
                                 const modalId = modal.id;
                                 closeModal(modalId);
                             });
