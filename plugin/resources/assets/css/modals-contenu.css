@@ -1250,6 +1250,7 @@
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
+    max-height: calc(90vh - 120px);
     background-color: var(--modal-bg);
     scrollbar-width: thin;
     scrollbar-color: var(--modal-text-muted) transparent;
@@ -1457,6 +1458,11 @@
     .canvas-modal-footer,
     .cache-modal-footer {
         padding: 16px;
+    }
+
+    .canvas-modal-body,
+    .cache-modal-body {
+        max-height: calc(95vh - 120px);
     }
 
     .modal-settings-grid {
