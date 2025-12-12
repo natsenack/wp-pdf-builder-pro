@@ -10,7 +10,14 @@
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
-        $value = get_option($option_key, $default);
+        // Forcer la lecture directe depuis la base de données en contournant le cache
+        global $wpdb;
+        $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+
+        if ($value === null) {
+            $value = $default;
+        }
+
         error_log("[PDF Builder] get_canvas_option - {$key}: {$value} (default: {$default})");
         return $value;
     }
