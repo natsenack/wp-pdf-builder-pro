@@ -845,7 +845,7 @@
                         const retryDelay = 200; // ms
 
                         try {
-                            console.log(`[PDF Builder] MODALS_INIT - Initializing Canvas modals system (attempt ${retryCount + 1}/${maxRetries + 1})`);
+                            console.log('[PDF Builder] MODALS_INIT - Initializing Canvas modals system (attempt ' + (retryCount + 1) + '/' + (maxRetries + 1) + ')');
 
                             // Initialiser l'état des toggles existants
                             initializeToggleStates();
@@ -856,38 +856,38 @@
                             let foundModals = [];
 
                             modalCategories.forEach(category => {
-                                const modalId = `canvas-${category}-modal-overlay`;
+                                const modalId = 'canvas-' + category + '-modal-overlay';
                                 const modal = document.getElementById(modalId);
                                 if (!modal) {
                                     missingModals.push(modalId);
-                                    console.warn(`[PDF Builder] MODALS_INIT - Missing modal: ${modalId}`);
+                                    console.warn('[PDF Builder] MODALS_INIT - Missing modal: ' + modalId);
                                 } else {
                                     foundModals.push(modalId);
-                                    console.log(`[PDF Builder] MODALS_INIT - Found modal: ${modalId}`);
+                                    console.log('[PDF Builder] MODALS_INIT - Found modal: ' + modalId);
                                 }
                             });
 
                             // Vérifier que les boutons de configuration existent
                             const configButtons = document.querySelectorAll('.canvas-configure-btn');
-                            console.log(`[PDF Builder] MODALS_INIT - Found ${configButtons.length} configuration buttons`);
+                            console.log('[PDF Builder] MODALS_INIT - Found ' + configButtons.length + ' configuration buttons');
 
                             if (missingModals.length > 0) {
                                 if (retryCount < maxRetries) {
-                                    console.warn(`[PDF Builder] MODALS_INIT - ${missingModals.length} modals missing, retrying in ${retryDelay}ms...`);
+                                    console.warn('[PDF Builder] MODALS_INIT - ' + missingModals.length + ' modals missing, retrying in ' + retryDelay + 'ms...');
                                     setTimeout(() => initializeModals(retryCount + 1), retryDelay);
                                     return;
                                 } else {
-                                    console.error(`[PDF Builder] MODALS_INIT - ${missingModals.length} modals are missing after ${maxRetries} retries:`, missingModals);
-                                    alert(`Attention: ${missingModals.length} modales sont manquantes. Certaines fonctionnalités risquent de ne pas fonctionner.`);
+                                    console.error('[PDF Builder] MODALS_INIT - ' + missingModals.length + ' modals are missing after ' + maxRetries + ' retries:', missingModals);
+                                    alert('Attention: ' + missingModals.length + ' modales sont manquantes. Certaines fonctionnalités risquent de ne pas fonctionner.');
                                 }
                             } else {
-                                console.log(`[PDF Builder] MODALS_INIT - All ${foundModals.length} modals found successfully`);
+                                console.log('[PDF Builder] MODALS_INIT - All ' + foundModals.length + ' modals found successfully');
                             }
 
                             if (configButtons.length === 0) {
                                 console.warn('[PDF Builder] MODALS_INIT - No configuration buttons found');
                                 if (retryCount < maxRetries) {
-                                    console.warn(`[PDF Builder] MODALS_INIT - Retrying buttons check in ${retryDelay}ms...`);
+                                    console.warn('[PDF Builder] MODALS_INIT - Retrying buttons check in ' + retryDelay + 'ms...');
                                     setTimeout(() => initializeModals(retryCount + 1), retryDelay);
                                     return;
                                 }
@@ -901,7 +901,7 @@
                         } catch (error) {
                             console.error('[PDF Builder] MODALS_INIT - Error during initialization:', error);
                             if (retryCount < maxRetries) {
-                                console.warn(`[PDF Builder] MODALS_INIT - Retrying after error in ${retryDelay}ms...`);
+                                console.warn('[PDF Builder] MODALS_INIT - Retrying after error in ' + retryDelay + 'ms...');
                                 setTimeout(() => initializeModals(retryCount + 1), retryDelay);
                             }
                         }
@@ -911,7 +911,7 @@
                     function applyModalSettings(category) {
                         console.log('[JS APPLY] ===== STARTING applyModalSettings for category:', category);
 
-                        const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
+                        const modal = document.querySelector('#canvas-' + category + '-modal-overlay');
                         if (!modal) {
                             console.error('[JS APPLY] ❌ Modal not found for category:', category);
                             return;
@@ -926,29 +926,29 @@
                         let updatedCount = 0;
 
                         inputs.forEach(input => {
-                            console.log(`[JS APPLY] Processing input: ${input.name || input.id} (type: ${input.type})`);
+                            console.log('[JS APPLY] Processing input: ' + (input.name || input.id) + ' (type: ' + input.type + ')');
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                 // Trouver le champ caché correspondant dans le formulaire principal
-                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
+                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
                                     // Mettre à jour la valeur du champ caché
                                     const newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
                                     hiddenField.value = newValue;
                                     updatedCount++;
-                                    console.log(`[JS APPLY] ✅ Synced: ${input.name} = ${newValue}`);
+                                    console.log('[JS APPLY] ✅ Synced: ' + input.name + ' = ' + newValue);
                                 } else {
-                                    console.warn(`[JS APPLY] ⚠️ Hidden field not found for: ${input.name}`);
+                                    console.warn('[JS APPLY] ⚠️ Hidden field not found for: ' + input.name);
                                 }
                             }
                         });
 
-                        console.log(`[JS APPLY] Total synced fields: ${updatedCount}`);
+                        console.log('[JS APPLY] Total synced fields: ' + updatedCount);
 
                         // Fermer la modale
-                        closeModal(`canvas-${category}-modal-overlay`);
+                        closeModal('canvas-' + category + '-modal-overlay');
 
                         // Afficher un message de confirmation
-                        showNotification('success', `✅ ${updatedCount} paramètres appliqués`, {
+                        showNotification('success', '✅ ' + updatedCount + ' paramètres appliqués', {
                             duration: 2000,
                             dismissible: true
                         });
@@ -959,9 +959,9 @@
                         console.log('[JS APPLY] ===== VERIFYING HIDDEN FIELDS =====');
                         inputs.forEach(input => {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
-                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
+                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
-                                    console.log(`[JS APPLY] VERIFY: ${input.name} -> hidden field value: ${hiddenField.value}`);
+                                    console.log('[JS APPLY] VERIFY: ' + input.name + ' -> hidden field value: ' + hiddenField.value);
                                 }
                             }
                         });
@@ -985,7 +985,7 @@
                                         const category = card.getAttribute('data-category');
                                         if (category) {
                                             const modalId = 'canvas-' + category + '-modal-overlay';
-                                            console.log(`[PDF Builder] CONFIG_BUTTON - Opening modal for category: ${category}`);
+                                            console.log('[PDF Builder] CONFIG_BUTTON - Opening modal for category: ' + category);
                                             openModal(modalId);
                                         } else {
                                             console.error('[PDF Builder] CONFIG_BUTTON - No data-category attribute found on card');
@@ -1112,7 +1112,7 @@
                             console.log('[PDF Builder] MODALS_READY - All modals loaded, initializing...');
                             initializeModals(0);
                         } else if (attempt < maxAttempts) {
-                            console.log(`[PDF Builder] MODALS_WAIT - Waiting for modals (attempt ${attempt + 1}/${maxAttempts})`);
+                            console.log('[PDF Builder] MODALS_WAIT - Waiting for modals (attempt ' + (attempt + 1) + '/' + maxAttempts + ')');
                             setTimeout(() => waitForModalsAndInitialize(attempt + 1), 100);
                         } else {
                             console.error('[PDF Builder] MODALS_TIMEOUT - Modals failed to load after maximum attempts');
@@ -1126,12 +1126,12 @@
                     // Fonction pour ouvrir une modale - VERSION RENFORCÉE
                     function openModal(modalId) {
                         try {
-                            console.log(`[PDF Builder] OPEN_MODAL - Attempting to open: ${modalId}`);
+                            console.log('[PDF Builder] OPEN_MODAL - Attempting to open: ' + modalId);
 
                             const modal = document.getElementById(modalId);
                             if (!modal) {
-                                console.error(`[PDF Builder] OPEN_MODAL - Modal element not found: ${modalId}`);
-                                alert(`Erreur: La modale ${modalId} n'a pas été trouvée.`);
+                                console.error('[PDF Builder] OPEN_MODAL - Modal element not found: ' + modalId);
+                                alert('Erreur: La modale ' + modalId + ' n\'a pas été trouvée.');
                                 return;
                             }
 
@@ -1139,12 +1139,12 @@
                             const categoryMatch = modalId.match(/canvas-(\w+)-modal-overlay/);
                             if (categoryMatch) {
                                 const category = categoryMatch[1];
-                                console.log(`[PDF Builder] OPEN_MODAL - Opening modal for category: ${category}`);
+                                console.log('[PDF Builder] OPEN_MODAL - Opening modal for category: ' + category);
 
                                 // Mettre à jour les valeurs avant d'ouvrir
                                 updateModalValues(category);
                             } else {
-                                console.warn(`[PDF Builder] OPEN_MODAL - Could not extract category from modalId: ${modalId}`);
+                                console.warn('[PDF Builder] OPEN_MODAL - Could not extract category from modalId: ' + modalId);
                             }
 
                             // Afficher la modale avec animation
@@ -1155,11 +1155,11 @@
                             modal.removeAttribute('inert');
                             modal.focus();
 
-                            console.log(`[PDF Builder] OPEN_MODAL - Modal opened successfully: ${modalId}`);
+                            console.log('[PDF Builder] OPEN_MODAL - Modal opened successfully: ' + modalId);
 
                         } catch (error) {
-                            console.error(`[PDF Builder] OPEN_MODAL - Error opening modal ${modalId}:`, error);
-                            alert(`Erreur lors de l'ouverture de la modale: ${error.message}`);
+                            console.error('[PDF Builder] OPEN_MODAL - Error opening modal ' + modalId + ':', error);
+                            alert('Erreur lors de l\'ouverture de la modale: ' + error.message);
                         }
                     }
 
