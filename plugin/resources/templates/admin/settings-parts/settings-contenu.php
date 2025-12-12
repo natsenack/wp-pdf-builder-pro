@@ -1859,13 +1859,12 @@
                         // Collecter les valeurs de la modale
                         const inputs = modal.querySelectorAll('input, select, textarea');
                         inputs.forEach(input => {
-                            if (input.name && input.name.startsWith('canvas_')) {
-                                // Préfixer correctement pour correspondre à ce que attend le backend
-                                const fullName = 'pdf_builder_' + input.name;
+                            if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
+                                // Le nom est déjà correctement préfixé
                                 if (input.type === 'checkbox') {
-                                    settings[fullName] = input.checked ? '1' : '0';
+                                    settings[input.name] = input.checked ? '1' : '0';
                                 } else {
-                                    settings[fullName] = input.value;
+                                    settings[input.name] = input.value;
                                 }
                             }
                         });
@@ -1881,11 +1880,10 @@
                             if (data.success) {
                                 // Mettre à jour les champs cachés
                                 inputs.forEach(input => {
-                                    if (input.name && input.name.startsWith('canvas_')) {
-                                        const fullName = 'pdf_builder_' + input.name;
+                                    if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                         const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
                                         if (hiddenField) {
-                                            hiddenField.value = settings[fullName];
+                                            hiddenField.value = settings[input.name];
                                         }
                                         
                                         // Marquer comme valeur personnalisée
