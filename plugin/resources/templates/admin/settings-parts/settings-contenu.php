@@ -1246,28 +1246,43 @@
                     },
 
                     performHealthCheck: () => {
+                        // Vérifier que l'utilisateur est connecté et a les permissions
+                        if (typeof wpApiSettings === 'undefined' || !wpApiSettings.nonce) {
+                            console.warn('HEALTH_CHECK: WordPress API not ready, skipping check');
+                            CanvasHealth.recordFailure();
+                            return;
+                        }
+
+                        // Utiliser le nonce WordPress global au lieu du nonce généré côté PHP
+                        const nonce = wpApiSettings.nonce || '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
+
                         // Ping simple du serveur
                         fetch(ajaxurl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: new URLSearchParams({
                                 action: 'pdf_builder_health_check',
-                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
+                                nonce: nonce
                             })
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             if (data.success) {
                                 CanvasHealth.recordSuccess();
                                 console.log('HEALTH_CHECK: System is healthy');
                             } else {
                                 CanvasHealth.recordFailure();
-                                console.warn('HEALTH_CHECK: System reported issues');
+                                console.warn('HEALTH_CHECK: System reported issues:', data.data);
                             }
                         })
                         .catch(error => {
                             CanvasHealth.recordFailure();
-                            console.warn('HEALTH_CHECK: Failed to reach server:', error);
+                            console.warn('HEALTH_CHECK: Failed to reach server:', error.message);
                         });
                     },
 
