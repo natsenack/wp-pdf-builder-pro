@@ -992,7 +992,7 @@
 
                     // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
                     <?php
-                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
                     echo "const CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
                     ?>
 
