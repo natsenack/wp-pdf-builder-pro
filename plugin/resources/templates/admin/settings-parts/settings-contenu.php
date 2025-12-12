@@ -814,27 +814,74 @@
             ?>
 
 <script>
-                // Force cache clear
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for(var i = 0; i < registrations.length; i++) {
-                            var registration = registrations[i];
-                            registration.unregister();
-                        }
-                    });
-                }
-                console.log('Cache cleared by PDF Builder');
-
-                // Gestionnaire des modales Canvas
+                // Minimal JavaScript for Canvas modals - ES5 compatible
                 (function() {
                     'use strict';
 
-                    // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
-                    <?php
-                    // $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
-                    // echo "var CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
-                    ?>
-                    var CANVAS_DEFAULT_VALUES = {};
+                    console.log('PDF Builder: Canvas modals system loaded (minimal version)');
+
+                    // Simple modal opening function
+                    function openModal(modalId) {
+                        var modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                        }
+                    }
+
+                    // Simple modal closing function
+                    function closeModal(modalId) {
+                        var modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }
+                    }
+
+                    // Attach basic event listeners
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('PDF Builder: Attaching event listeners');
+
+                        // Configure buttons
+                        var configButtons = document.querySelectorAll('.canvas-configure-btn');
+                        for (var i = 0; i < configButtons.length; i++) {
+                            configButtons[i].addEventListener('click', function() {
+                                var category = this.getAttribute('data-category');
+                                if (category) {
+                                    openModal('canvas-' + category + '-modal-overlay');
+                                }
+                            });
+                        }
+
+                        // Close buttons
+                        var closeButtons = document.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                        for (var j = 0; j < closeButtons.length; j++) {
+                            closeButtons[j].addEventListener('click', function() {
+                                var modal = this.closest('.canvas-modal-overlay');
+                                if (modal) {
+                                    modal.style.display = 'none';
+                                    document.body.style.overflow = '';
+                                }
+                            });
+                        }
+
+                        // Click outside to close
+                        var modals = document.querySelectorAll('.canvas-modal-overlay');
+                        for (var k = 0; k < modals.length; k++) {
+                            modals[k].addEventListener('click', function(e) {
+                                if (e.target === this) {
+                                    this.style.display = 'none';
+                                    document.body.style.overflow = '';
+                                }
+                            });
+                        }
+                    });
+
+                    console.log('PDF Builder: Canvas modals system initialized');
+                })();
+            </script>
+
+            <!-- Inclusion des modales Canvas -->
 
                     console.log('[PDF Builder] MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
                     console.log('[PDF Builder] Date: 2025-12-11 21:35');
