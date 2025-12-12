@@ -137,7 +137,7 @@ class PDF_Builder_WooCommerce_Integration
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Handle both legacy (WP_Post) and HPOS (WC_Order) cases
-        if (is_a($post_or_order, 'WC_Order')) {
+        if (defined('WC_VERSION') && function_exists('is_a') && is_a($post_or_order, 'WC_Order')) {
             $order = $post_or_order;
             $order_id = $order->get_id();
         } elseif (is_a($post_or_order, 'WP_Post')) {
@@ -1403,7 +1403,7 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         // Vérifier que c'est bien une commande WooCommerce
-        if (!is_a($order, 'WC_Order')) {
+        if (!defined('WC_VERSION') || !function_exists('is_a') || !is_a($order, 'WC_Order')) {
             return new WP_Error('invalid_order_type', 'Type d\'objet invalide');
         }
 

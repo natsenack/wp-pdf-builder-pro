@@ -365,7 +365,7 @@ class PDFBuilderVariableMapper
      */
     private function formatDate($date)
     {
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && function_exists('is_a') && is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format'));
         }
         if ($date instanceof DateTime) {
@@ -382,7 +382,7 @@ class PDFBuilderVariableMapper
      */
     private function formatDatetime($date)
     {
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('WC_DateTime') && is_a($date, 'WC_DateTime')) {
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && function_exists('is_a') && is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format') . ' ' . get_option('time_format'));
         }
         if ($date instanceof DateTime) {
@@ -451,7 +451,7 @@ class PDFBuilderVariableMapper
      */
     private function getCountryName($country_code)
     {
-        if (!function_exists('WC') || !$country_code || !WC()->countries) {
+        if (!defined('WC_VERSION') || !function_exists('WC') || !$country_code || !function_exists('WC') || !WC() || !WC()->countries) {
             return $country_code;
         }
 

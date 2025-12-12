@@ -62,7 +62,7 @@
         public function get_order_statuses() {
             if (function_exists('wc_get_order_statuses')) {
                 return wc_get_order_statuses();
-            } elseif (class_exists('WC_Order') && method_exists('WC_Order', 'get_statuses')) {
+            } elseif (defined('WC_VERSION') && class_exists('WC_Order') && method_exists('WC_Order', 'get_statuses')) {
                 return WC_Order::get_statuses();
             } else {
                 $statuses = get_option('wc_order_statuses', []);
