@@ -1,16 +1,3 @@
-                // Force cache clear
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for(let registration of registrations) {
-                            registration.unregister();
-                        }
-                    });
-                }
-                // Clear localStorage and sessionStorage
-                localStorage.clear();
-                sessionStorage.clear();
-                console.log('Cache cleared by PDF Builder');
-
                 // Valeurs par défaut globales pour tous les champs Canvas - SOURCE UNIQUE DE VÉRITÉ
                 const CANVAS_DEFAULT_VALUES = {
                     'pdf_builder_canvas_width': '794',
