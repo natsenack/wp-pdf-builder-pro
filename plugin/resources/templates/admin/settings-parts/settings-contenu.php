@@ -1030,12 +1030,12 @@
                 (function() {
                     'use strict';
 
+                    // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
+                    const CANVAS_DEFAULT_VALUES = <?php echo json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
                     console.log('[PDF Builder] 🚀 MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
                     console.log('[PDF Builder] 📅 Date: 2025-12-11 21:35');
                     console.log('[PDF Builder] 🔧 Fix: HTML/PHP moved outside script tags');
-
-                    // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
-                    const CANVAS_DEFAULT_VALUES = <?php echo json_encode($default_canvas_options); ?>;
 
                     // Fonction d'initialisation avec retry
                     function initializeModals(retryCount = 0) {
