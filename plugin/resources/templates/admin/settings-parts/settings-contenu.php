@@ -1034,6 +1034,9 @@
                     console.log('[PDF Builder] 📅 Date: 2025-12-11 21:35');
                     console.log('[PDF Builder] 🔧 Fix: HTML/PHP moved outside script tags');
 
+                    // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
+                    const CANVAS_DEFAULT_VALUES = <?php echo json_encode($default_canvas_options); ?>;
+
                     // Fonction d'initialisation avec retry
                     function initializeModals(retryCount = 0) {
                         const maxRetries = 5;
@@ -1041,6 +1044,9 @@
 
                         try {
                             console.log(`[PDF Builder] MODALS_INIT - Initializing Canvas modals system (attempt ${retryCount + 1}/${maxRetries + 1})`);
+
+                            // Initialiser l'état des toggles existants
+                            initializeToggleStates();
 
                             // Vérifier que les modals existent
                             const modalCategories = ['dimensions', 'apparence', 'grille', 'zoom', 'interactions', 'export', 'performance', 'debug'];
@@ -1355,8 +1361,26 @@
                         }
                     }
 
-                    // Fonction pour mettre à jour l'affichage des cartes Canvas après réinitialisation
-                    function updateCanvasCardsDisplay() {
+                    // Fonction pour initialiser l'état des toggles
+                    function initializeToggleStates() {
+                        console.log('[PDF Builder] TOGGLE_INIT - Initializing toggle states');
+
+                        // Parcourir tous les toggles existants
+                        const allToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+                        allToggles.forEach(checkbox => {
+                            const toggleSwitch = checkbox.closest('.toggle-switch');
+                            if (toggleSwitch) {
+                                if (checkbox.checked) {
+                                    toggleSwitch.classList.add('checked');
+                                } else {
+                                    toggleSwitch.classList.remove('checked');
+                                }
+                                console.log(`[PDF Builder] TOGGLE_INIT - ${checkbox.id || checkbox.name}: checked=${checkbox.checked}`);
+                            }
+                        });
+
+                        console.log(`[PDF Builder] TOGGLE_INIT - Initialized ${allToggles.length} toggles`);
+                    }
                         console.log('[PDF Builder] UPDATE_CARDS - Updating canvas cards display');
 
                         try {
@@ -1550,6 +1574,21 @@
                             input.addEventListener('change', () => {
                                 console.log(`[PDF Builder] INPUT_CHANGE - ${input.name} changed`);
                             });
+
+                            // Gestion spécifique des toggles (checkboxes)
+                            if (input.type === 'checkbox') {
+                                input.addEventListener('change', function() {
+                                    const toggleSwitch = this.closest('.toggle-switch');
+                                    if (toggleSwitch) {
+                                        if (this.checked) {
+                                            toggleSwitch.classList.add('checked');
+                                        } else {
+                                            toggleSwitch.classList.remove('checked');
+                                        }
+                                        console.log(`[PDF Builder] TOGGLE_CHANGE - ${this.id}: checked=${this.checked}, class=${toggleSwitch.className}`);
+                                    }
+                                });
+                            }
                         });
                     }
 
