@@ -1026,50 +1026,6 @@
                     'pdf_builder_canvas_memory_limit_php': '128'
                 };
 
-                // Configuration de robustesse
-                const CANVAS_CONFIG = {
-                    MAX_RETRIES: 3,
-                    RETRY_DELAY: 1000, // ms
-                    HEALTH_CHECK_INTERVAL: 60000, // 1 minute
-                    CACHE_KEY: 'pdf_builder_canvas_backup'
-                };
-
-                // Feature flags pour contrôle granulaire
-                const CANVAS_FEATURES = {
-                    ENABLE_VALIDATION: true,
-                    ENABLE_RETRY: true,
-                    ENABLE_HEALTH_CHECK: true,
-                    ENABLE_METRICS: true,
-                    ENABLE_RECOVERY: true,
-                    ENABLE_CIRCUIT_BREAKER: true
-                };
-
-                // Fonction de contrôle des features
-                const FeatureGate = {
-                    isEnabled: (feature) => {
-                        return CANVAS_FEATURES[feature] !== false;
-                    },
-
-                    disable: (feature) => {
-                        CANVAS_FEATURES[feature] = false;
-                        console.log(`FEATURE_DISABLED: ${feature} turned off`);
-                    },
-
-                    enable: (feature) => {
-                        CANVAS_FEATURES[feature] = true;
-                        console.log(`FEATURE_ENABLED: ${feature} turned on`);
-                    },
-
-                    emergencyShutdown: () => {
-                        console.warn('EMERGENCY: Disabling all advanced features');
-                        Object.keys(CANVAS_FEATURES).forEach(feature => {
-                            if (feature !== 'ENABLE_VALIDATION') { // Garder la validation
-                                CANVAS_FEATURES[feature] = false;
-                            }
-                        });
-                    }
-                };
-
                 // Gestionnaire des modales Canvas
                 (function() {
                     'use strict';
