@@ -183,7 +183,7 @@
                                         <span id="card-canvas-width"><?php echo esc_html(get_canvas_option_contenu('canvas_width', '794')); ?></span>×
                                         <span id="card-canvas-height"><?php echo esc_html(get_canvas_option_contenu('canvas_height', '1123')); ?></span>px
                                         <div style="font-size: 10px; color: #666; margin-top: 5px;">
-                                            <?php echo esc_html(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?> • <?php echo esc_html(get_canvas_option_contenu('canvas_border_width', '1')); ?>px
+                                            DEBUG: width=<?php echo get_canvas_option_contenu('canvas_width', '794'); ?>, height=<?php echo get_canvas_option_contenu('canvas_height', '1123'); ?>
                                         </div>
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
@@ -209,36 +209,6 @@
                                 </button>
                             </footer>
                         </article>
-                            <main class="canvas-card-content">
-                                <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
-                            </main>
-                            <aside class="canvas-card-preview">
-                                <!-- Éléments factices pour compatibilité avec l'ancien JavaScript -->
-                                <div id="card-bg-preview" class="color-preview bg" style="display: none;"></div>
-                                <div id="card-border-preview" class="color-preview border" style="display: none;"></div>
-                                
-                                <div class="apparence-preview-container">
-                                    <div class="apparence-canvas">
-                                        <!-- Fond coloré -->
-                                        <div class="apparence-background" style="background-color: <?php echo esc_attr(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>;"></div>
-                                        <!-- Bordure -->
-                                        <div class="apparence-border" style="border: <?php echo esc_attr(get_canvas_option_contenu('canvas_border_width', '1')); ?>px solid <?php echo esc_attr(get_canvas_option_contenu('canvas_border_color', '#cccccc')); ?>;"></div>
-                                        <!-- Ombre -->
-                                        <?php if (get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'): ?>
-                                        <div class="apparence-shadow"></div>
-                                        <?php endif; ?>
-                                        <!-- Élément d'exemple -->
-                                        <div class="apparence-element">
-                                            <div class="element-shape rect"></div>
-                                            <div class="element-shape circle"></div>
-                                        </div>
-                                    </div>
-                                    <div class="apparence-legend">
-                                        <span class="legend-item">🎨 Fond</span>
-                                        <span class="legend-item">🔲 Bordure</span>
-                                        <span class="legend-item"><?php echo (get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1') ? '🌑' : '☀️'; ?> Ombre</span>
-                                    </div>
-                        </article>
 
                         <!-- Carte Navigation (fusion Grille + Zoom) -->
                         <article class="canvas-card" data-category="navigation">
@@ -246,10 +216,10 @@
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🧭</span>
                                 </div>
-                                <h4>Navigation & Grille</h4>
+                                <h4>Navigation & Zoom</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Configurez la grille, les guides, le zoom et les options de navigation.</p>
+                                <p>Configurez la grille, les guides, le zoom et les options de navigation du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div id="card-grid-preview" class="grid-preview-container">
@@ -286,34 +256,16 @@
                                         </div>
                                     </div>
                                     <div class="grid-legend">
-                                        <span class="legend-item">📐 Grille <?php echo intval(get_canvas_option_contenu('canvas_grid_size', '20')); ?>px</span>
-                                        <span class="legend-item">🔍 Zoom <?php echo intval(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>%</span>
-                                        <span class="snap-indicator"><?php echo (get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1') ? '🔗' : '🔓'; ?> Snap</span>
+                                        <span class="legend-item">📐 Grille</span>
+                                        <span class="legend-item">📏 Guides</span>
+                                        <span class="legend-item">📦 Élément</span>
+                                        <span class="snap-indicator">🔗 Snap activé</span>
                                     </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>🧭</span> Configurer
-                                </button>
-                            </footer>
-                        </article>
-                            <aside class="canvas-card-preview">
-                                <div class="zoom-preview-container">
-                                    <div class="zoom-indicator">
-                                        <button class="zoom-btn zoom-minus" disabled>−</button>
-                                        <span id="card-zoom-preview" class="zoom-level">100%</span>
-                                        <button class="zoom-btn zoom-plus" disabled>+</button>
-                                    </div>
-                                    <div class="zoom-info">
-                                        <span>25% - 500%</span>
-                                        <span>Pas: 25%</span>
-                                    </div>
-                                </div>
-                            </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>🔍</span> Configurer
+                                    <span>📏</span> Configurer
                                 </button>
                             </footer>
                         </article>
@@ -322,50 +274,87 @@
                         <article class="canvas-card" data-category="comportement">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🎮</span>
+                                    <span class="canvas-card-icon">�</span>
                                 </div>
                                 <h4>Comportement & Export</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Configurez les interactions, la sélection et les options d'export.</p>
+                                <p>Configurez les interactions, la sélection, les raccourcis et les options d'export du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="interactions-preview-container">
                                     <!-- Canvas miniature avec éléments -->
                                     <div class="mini-canvas">
+                                        <!-- Grille de fond -->
+                                        <div class="mini-canvas-grid"></div>
+
                                         <!-- Éléments sur le canvas -->
-                                        <div class="mini-element shape-element selected" style="top: 40px; left: 15px; width: 32px; height: 22px;" title="Élément sélectionné">
-                                            <div class="mini-element-content">□</div>
+                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 35px; height: 18px;" title="Élément texte - Double-clic pour éditer">
+                                            <div class="mini-element-content">T</div>
                                         </div>
-                                        <div class="mini-element image-element" style="top: 18px; left: 75px; width: 28px; height: 28px;" title="Élément image">
+                                        <div class="mini-element shape-element selected" style="top: 40px; left: 15px; width: 32px; height: 22px;" title="Élément sélectionné - Glisser pour déplacer">
+                                            <div class="mini-element-content">□</div>
+                                            <!-- Poignées de sélection -->
+                                            <div class="mini-handle nw" title="Redimensionner (coin supérieur gauche)"></div>
+                                            <div class="mini-handle ne" title="Redimensionner (coin supérieur droit)"></div>
+                                            <div class="mini-handle sw" title="Redimensionner (coin inférieur gauche)"></div>
+                                            <div class="mini-handle se" title="Redimensionner (coin inférieur droit)"></div>
+                                            <div class="mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation - Maintenir Maj pour angles précis"></div>
+                                        </div>
+                                        <div class="mini-element image-element" style="top: 18px; left: 75px; width: 28px; height: 28px;" title="Élément image - Clic droit pour options">
                                             <div class="mini-element-content">🖼</div>
+                                        </div>
+
+                                        <!-- Sélection rectangle en cours -->
+                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 55px; height: 35px;" title="Sélection multiple - Relâcher pour sélectionner"></div>
+
+                                        <!-- Curseur de souris -->
+                                        <div class="mouse-cursor" style="top: 50px; left: 95px;">
+                                            <div class="cursor-icon">👆</div>
+                                        </div>
+
+                                        <!-- Indicateur de zoom -->
+                                        <div class="zoom-indicator" title="Niveau de zoom actuel - Ctrl+molette pour zoomer">
+                                            <span class="zoom-level">100%</span>
+                                        </div>
+
+                                        <!-- Indicateur de performance -->
+                                        <div class="performance-indicator" title="Performance canvas - 60 FPS">
+                                            <div class="performance-bar">
+                                                <div class="performance-fill" style="width: 85%"></div>
+                                            </div>
+                                            <span class="performance-text">85%</span>
                                         </div>
                                     </div>
 
-                                    <!-- Contrôles -->
+                                    <!-- Contrôles en bas -->
                                     <div class="interactions-controls">
                                         <div class="selection-mode-indicator">
-                                            <span class="mode-icon active" title="Sélection rectangle">▭</span>
-                                            <span class="mode-icon" title="Sélection lasso">🪢</span>
+                                            <span class="mode-icon active" title="Sélection rectangle (R) - Pour sélectionner plusieurs éléments" data-mode="rectangle">▭</span>
+                                            <span class="mode-icon" title="Sélection lasso (L) - Pour sélection libre" data-mode="lasso">🪢</span>
+                                            <span class="mode-icon" title="Sélection par clic (C) - Pour sélection simple" data-mode="click">👆</span>
                                         </div>
                                         <div class="interaction-status">
                                             <span class="status-indicator selecting">Sélection active</span>
-                                            <div class="keyboard-status" title="Raccourcis clavier">
+                                            <div class="keyboard-status" title="Raccourcis clavier activés">
                                                 <span class="keyboard-icon">⌨️</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Export formats -->
-                                    <div class="export-formats">
-                                        <span class="format-badge active"><?php echo esc_html(strtoupper(get_canvas_option_contenu('canvas_export_format', 'pdf'))); ?></span>
-                                        <span class="format-badge">Qualité <?php echo intval(get_canvas_option_contenu('canvas_export_quality', '90')); ?>%</span>
+                                    <!-- Barre de progression des interactions -->
+                                    <div class="interaction-progress">
+                                        <div class="progress-label">Fluidité</div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 92%"></div>
+                                        </div>
+                                        <div class="progress-value">92%</div>
                                     </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>🎮</span> Configurer
+                                    <span>🎯</span> Configurer
                                 </button>
                             </footer>
                         </article>
@@ -376,38 +365,38 @@
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">⚙️</span>
                                 </div>
-                                <h4>Système & Performance</h4>
+                                <h4>Performance & Système</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Configurez les performances, le débogage et les paramètres système.</p>
+                                <p>Optimisez les performances, la mémoire et configurez les options de debug et monitoring.</p>
                             </main>
                             <aside class="canvas-card-preview">
-                                <div class="system-preview-container">
-                                    <div class="system-metrics">
+                                <div class="performance-preview-container">
+                                    <div class="performance-metrics">
                                         <div class="metric-item">
                                             <span class="metric-label">FPS</span>
-                                            <span class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_fps_target', '60')); ?></span>
+                                            <span id="card-perf-preview" class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_fps_target', '60')); ?></span>
                                         </div>
                                         <div class="metric-item">
-                                            <span class="metric-label">RAM</span>
+                                            <span class="metric-label">RAM JS</span>
                                             <span class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>MB</span>
                                         </div>
                                         <div class="metric-item">
-                                            <span class="metric-label">Debug</span>
-                                            <span class="metric-value"><?php echo (get_canvas_option_contenu('canvas_debug_enabled', '0') === '1') ? 'ON' : 'OFF'; ?></span>
+                                            <span class="metric-label">RAM PHP</span>
+                                            <span class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>MB</span>
                                         </div>
                                     </div>
-                                    <div class="system-status">
+                                    <div class="performance-status">
                                         <div class="status-indicator">
-                                            <span class="status-dot <?php echo (get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1') ? 'active' : ''; ?>"></span>
-                                            <span class="status-text">Monitoring</span>
+                                            <span class="status-dot"></span>
+                                            <span class="status-text">Lazy Loading</span>
                                         </div>
                                     </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>⚙️</span> Configurer
+                                    <span>⚡</span> Configurer
                                 </button>
                             </footer>
                         </article>
@@ -826,14 +815,13 @@
 
 <script>
                 // Force cache clear
-                // Temporarily commented out service worker code to test syntax error
-                // if ('serviceWorker' in navigator) {
-                //     navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                //         for(let registration of registrations) {
-                //             registration.unregister();
-                //         }
-                //     });
-                // }
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(let registration of registrations) {
+                            registration.unregister();
+                        }
+                    });
+                }
                 console.log('Cache cleared by PDF Builder');
 
                 // Gestionnaire des modales Canvas
@@ -841,90 +829,84 @@
                     'use strict';
 
                     // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
-                    // <?php
-                    // $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-                    // echo "const CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
-                    // ?>
+                    <?php
+                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    echo "const CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
+                    ?>
 
-                    // Temporary: Use hardcoded values
-                    // const CANVAS_DEFAULT_VALUES = {
-                    //     'pdf_builder_canvas_width': '794',
-                    //     'pdf_builder_canvas_height': '1123',
-                    //     'pdf_builder_canvas_dpi': '96',
-                    //     'pdf_builder_canvas_format': 'A4',
-                    //     'pdf_builder_canvas_bg_color': '#ffffff',
-                    //     'pdf_builder_canvas_border_color': '#cccccc',
-                    //     'pdf_builder_canvas_border_width': '1',
-                    //     'pdf_builder_canvas_container_bg_color': '#f8f9fa',
-                    //     'pdf_builder_canvas_shadow_enabled': '0',
-                    //     'pdf_builder_canvas_grid_enabled': '1',
-                    //     'pdf_builder_canvas_grid_size': '20',
-                    //     'pdf_builder_canvas_guides_enabled': '1',
-                    //     'pdf_builder_canvas_snap_to_grid': '1',
-                    //     'pdf_builder_canvas_zoom_min': '25',
-                    //     'pdf_builder_canvas_zoom_max': '500',
-                    //     'pdf_builder_canvas_zoom_default': '100',
-                    //     'pdf_builder_canvas_zoom_step': '25',
-                    //     'pdf_builder_canvas_export_quality': '90',
-                    //     'pdf_builder_canvas_export_format': 'png',
-                    //     'pdf_builder_canvas_export_transparent': '0',
-                    //     'pdf_builder_canvas_drag_enabled': '1',
-                    //     'pdf_builder_canvas_resize_enabled': '1',
-                    //     'pdf_builder_canvas_rotate_enabled': '1',
-                    //     'pdf_builder_canvas_multi_select': '1',
-                    //     'pdf_builder_canvas_selection_mode': 'single',
-                    //     'pdf_builder_canvas_keyboard_shortcuts': '1',
-                    //     'pdf_builder_canvas_fps_target': '60',
-                    //     'pdf_builder_canvas_memory_limit_js': '50',
-                    //     'pdf_builder_canvas_response_timeout': '5000',
-                    //     'pdf_builder_canvas_lazy_loading_editor': '1',
-                    //     'pdf_builder_canvas_preload_critical': '1',
-                    //     'pdf_builder_canvas_lazy_loading_plugin': '1',
-                    //     'pdf_builder_canvas_debug_enabled': '0',
-                    //     'pdf_builder_canvas_performance_monitoring': '0',
-                    //     'pdf_builder_canvas_error_reporting': '0',
-                    //     'pdf_builder_canvas_memory_limit_php': '128'
-                    // };
+                    console.log('[PDF Builder] 🚀 MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
+                    console.log('[PDF Builder] 📅 Date: 2025-12-11 21:35');
+                    console.log('[PDF Builder] 🔧 Fix: HTML/PHP moved outside script tags');
 
-                    console.log('[PDF Builder] 🚀 MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (LIGHT VERSION)');
-
-                    // Fonction d'initialisation simplifiée
+                    // Fonction d'initialisation avec retry
                     function initializeModals(retryCount = 0) {
-                        const maxRetries = 3;
+                        const maxRetries = 5;
+                        const retryDelay = 200; // ms
 
                         try {
-                            console.log(`[PDF Builder] MODALS_INIT - Attempt ${retryCount + 1}/${maxRetries + 1}`);
+                            console.log(`[PDF Builder] MODALS_INIT - Initializing Canvas modals system (attempt ${retryCount + 1}/${maxRetries + 1})`);
 
+                            // Initialiser l'état des toggles existants
                             initializeToggleStates();
 
+                            // Vérifier que les modals existent
                             const modalCategories = ['affichage', 'navigation', 'comportement', 'systeme'];
                             let missingModals = [];
+                            let foundModals = [];
 
                             modalCategories.forEach(category => {
                                 const modalId = `canvas-${category}-modal-overlay`;
                                 const modal = document.getElementById(modalId);
-                                if (!modal) missingModals.push(modalId);
+                                if (!modal) {
+                                    missingModals.push(modalId);
+                                    console.warn(`[PDF Builder] MODALS_INIT - Missing modal: ${modalId}`);
+                                } else {
+                                    foundModals.push(modalId);
+                                    console.log(`[PDF Builder] MODALS_INIT - Found modal: ${modalId}`);
+                                }
                             });
 
-                            if (missingModals.length > 0 && retryCount < maxRetries) {
-                                setTimeout(() => initializeModals(retryCount + 1), 200);
-                                return;
-                            }
+                            // Vérifier que les boutons de configuration existent
+                            const configButtons = document.querySelectorAll('.canvas-configure-btn');
+                            console.log(`[PDF Builder] MODALS_INIT - Found ${configButtons.length} configuration buttons`);
 
                             if (missingModals.length > 0) {
-                                console.error('Missing modals:', missingModals);
-                                alert(`${missingModals.length} modales manquantes.`);
+                                if (retryCount < maxRetries) {
+                                    console.warn(`[PDF Builder] MODALS_INIT - ${missingModals.length} modals missing, retrying in ${retryDelay}ms...`);
+                                    setTimeout(() => initializeModals(retryCount + 1), retryDelay);
+                                    return;
+                                } else {
+                                    console.error(`[PDF Builder] MODALS_INIT - ${missingModals.length} modals are missing after ${maxRetries} retries:`, missingModals);
+                                    alert(`Attention: ${missingModals.length} modales sont manquantes. Certaines fonctionnalités risquent de ne pas fonctionner.`);
+                                }
+                            } else {
+                                console.log(`[PDF Builder] MODALS_INIT - All ${foundModals.length} modals found successfully`);
                             }
 
+                            if (configButtons.length === 0) {
+                                console.warn('[PDF Builder] MODALS_INIT - No configuration buttons found');
+                                if (retryCount < maxRetries) {
+                                    console.warn(`[PDF Builder] MODALS_INIT - Retrying buttons check in ${retryDelay}ms...`);
+                                    setTimeout(() => initializeModals(retryCount + 1), retryDelay);
+                                    return;
+                                }
+                            }
+
+                            console.log('[PDF Builder] MODALS_INIT - Modal system initialized successfully');
+
+                            // Attacher les event listeners maintenant que tout est chargé
                             attachEventListeners();
-                            console.log('[PDF Builder] MODALS_INIT - Success');
 
                         } catch (error) {
-                            console.error('[PDF Builder] MODALS_INIT - Error:', error);
+                            console.error('[PDF Builder] MODALS_INIT - Error during initialization:', error);
+                            if (retryCount < maxRetries) {
+                                console.warn(`[PDF Builder] MODALS_INIT - Retrying after error in ${retryDelay}ms...`);
+                                setTimeout(() => initializeModals(retryCount + 1), retryDelay);
+                            }
                         }
                     }
 
-                    // Fonction pour appliquer les paramètres de la modale (simplifiée)
+                    // Fonction pour appliquer les paramètres de la modale (synchroniser et fermer)
                     function applyModalSettings(category) {
                         console.log('[JS APPLY] ===== STARTING applyModalSettings for category:', category);
 
@@ -934,109 +916,167 @@
                             return;
                         }
 
-                        // Collecter et synchroniser les valeurs
+                        console.log('[JS APPLY] ✅ Modal found, synchronizing values...');
+
+                        // Collecter les valeurs de la modale et mettre à jour les champs cachés
                         const inputs = modal.querySelectorAll('input, select, textarea');
+                        console.log('[JS APPLY] Found', inputs.length, 'input elements in modal');
+
                         let updatedCount = 0;
 
                         inputs.forEach(input => {
+                            console.log(`[JS APPLY] Processing input: ${input.name || input.id} (type: ${input.type})`);
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
+                                // Trouver le champ caché correspondant dans le formulaire principal
                                 const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
                                 if (hiddenField) {
+                                    // Mettre à jour la valeur du champ caché
                                     const newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
                                     hiddenField.value = newValue;
                                     updatedCount++;
+                                    console.log(`[JS APPLY] ✅ Synced: ${input.name} = ${newValue}`);
+                                } else {
+                                    console.warn(`[JS APPLY] ⚠️ Hidden field not found for: ${input.name}`);
                                 }
                             }
                         });
 
-                        console.log(`[JS APPLY] Updated ${updatedCount} fields`);
+                        console.log(`[JS APPLY] Total synced fields: ${updatedCount}`);
 
-                        // Fermer la modale et notifier
+                        // Fermer la modale
                         closeModal(`canvas-${category}-modal-overlay`);
-                        showNotification('success', `✅ ${updatedCount} paramètres appliqués`);
+
+                        // Afficher un message de confirmation
+                        showNotification('success', `✅ ${updatedCount} paramètres appliqués`, {
+                            duration: 2000,
+                            dismissible: true
+                        });
+
+                        console.log('[JS APPLY] ===== APPLY PROCESS COMPLETED =====');
+
+                        // DEBUG: Vérifier que les champs cachés ont été mis à jour
+                        console.log('[JS APPLY] ===== VERIFYING HIDDEN FIELDS =====');
+                        inputs.forEach(input => {
+                            if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
+                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
+                                if (hiddenField) {
+                                    console.log(`[JS APPLY] VERIFY: ${input.name} -> hidden field value: ${hiddenField.value}`);
+                                }
+                            }
+                        });
                     }
 
                     // Fonction pour attacher tous les event listeners
                     function attachEventListeners() {
                         console.log('[PDF Builder] ATTACH_LISTENERS - Attaching event listeners');
 
-                            // Gestionnaire d'événements pour les boutons de configuration - VERSION SIMPLIFIÉE
-                            document.addEventListener('click', function(e) {
-                                try {
-                                    // Gestionnaire pour ouvrir les modales
-                                    const button = e.target.closest('.canvas-configure-btn');
-                                    if (button) {
-                                        e.preventDefault();
-                                        console.log('[PDF Builder] CONFIG_BUTTON - Configure button clicked');
+                        // Gestionnaire d'événements pour les boutons de configuration - VERSION RENFORCÉE
+                        document.addEventListener('click', function(e) {
+                            try {
+                                // Gestionnaire pour ouvrir les modales
+                                const button = e.target.closest('.canvas-configure-btn');
+                                if (button) {
+                                    e.preventDefault();
+                                    console.log('[PDF Builder] CONFIG_BUTTON - Configure button clicked');
 
-                                        const card = button.closest('.canvas-card');
-                                        if (card) {
-                                            const category = card.getAttribute('data-category');
-                                            if (category) {
-                                                const modalId = 'canvas-' + category + '-modal-overlay';
-                                                console.log(`[PDF Builder] CONFIG_BUTTON - Opening modal for category: ${category}`);
-                                                openModal(modalId);
-                                            }
-                                        }
-                                        return;
-                                    }
-
-                                    // Gestionnaire pour fermer les modales
-                                    const closeBtn = e.target.closest('.canvas-modal-close, .canvas-modal-cancel');
-                                    if (closeBtn) {
-                                        e.preventDefault();
-                                        const modal = closeBtn.closest('.canvas-modal-overlay');
-                                        if (modal) {
-                                            closeModal(modal.id);
-                                        }
-                                        return;
-                                    }
-
-                                    // Gestionnaire pour appliquer les paramètres
-                                    const applyBtn = e.target.closest('.canvas-modal-apply');
-                                    if (applyBtn) {
-                                        e.preventDefault();
-                                        const category = applyBtn.getAttribute('data-category');
+                                    const card = button.closest('.canvas-card');
+                                    if (card) {
+                                        const category = card.getAttribute('data-category');
                                         if (category) {
-                                            applyModalSettings(category);
+                                            const modalId = 'canvas-' + category + '-modal-overlay';
+                                            console.log(`[PDF Builder] CONFIG_BUTTON - Opening modal for category: ${category}`);
+                                            openModal(modalId);
+                                        } else {
+                                            console.error('[PDF Builder] CONFIG_BUTTON - No data-category attribute found on card');
                                         }
-                                        return;
+                                    } else {
+                                        console.error('[PDF Builder] CONFIG_BUTTON - No canvas-card parent found');
                                     }
-
-                                    // Gestionnaire pour les clics sur l'overlay (fermer la modale)
-                                    if (e.target.classList.contains('canvas-modal-overlay')) {
-                                        e.preventDefault();
-                                        closeModal(e.target.id);
-                                        return;
-                                    }
-
-                                    // Gestionnaire pour réinitialiser les paramètres Canvas
-                                    const resetBtn = e.target.closest('#reset-canvas-settings');
-                                    if (resetBtn) {
-                                        e.preventDefault();
-                                        if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres Canvas aux valeurs par défaut ?')) {
-                                            resetCanvasSettings();
-                                        }
-                                        return;
-                                    }
-
-                            // Gestionnaire pour la touche Échap
-                            document.addEventListener('keydown', function(e) {
-                                if (e.key === 'Escape') {
-                                    console.log('[PDF Builder] ESC_KEY - Escape key pressed');
-
-                                    // Fermer toutes les modales ouvertes
-                                    const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
-                                    openModals.forEach(modal => {
-                                        closeModal(modal.id);
-                                    });
+                                    return;
                                 }
-                            });
 
-                        } catch (error) {
-                            console.error('[PDF Builder] EVENT_LISTENERS - Error in event handler:', error);
-                        }
-                    }
+                                // Gestionnaire pour fermer les modales
+                                const closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
+                                if (closeBtn) {
+                                    e.preventDefault();
+                                    console.log('[PDF Builder] CLOSE_BUTTON - Close button clicked');
+
+                                    const modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
+                                    if (modal) {
+                                        closeModal(modal);
+                                    }
+                                    return;
+                                }
+
+                                // Gestionnaire pour les clics sur l'overlay (fermer la modale)
+                                if (e.target.classList.contains('canvas-modal-overlay')) {
+                                    e.preventDefault();
+                                    console.log('[PDF Builder] OVERLAY_CLICK - Overlay clicked, closing modal');
+                                    closeModal(e.target);
+                                    return;
+                                }
+
+                                // Gestionnaire pour appliquer les paramètres (synchroniser et fermer la modale)
+                                const applyBtn = e.target.closest('.canvas-modal-apply');
+                                if (applyBtn) {
+                                    e.preventDefault();
+                                    console.log('[PDF Builder] APPLY_BUTTON - Apply button clicked');
+
+                                    const category = applyBtn.getAttribute('data-category');
+                                    if (category) {
+                                        // Synchroniser les valeurs de la modale vers les champs cachés
+                                        applyModalSettings(category);
+                                    } else {
+                                        console.error('[PDF Builder] APPLY_BUTTON - No data-category attribute on apply button');
+                                    }
+                                    return;
+                                }
+
+                                // Gestionnaire pour réinitialiser les paramètres Canvas
+                                const resetBtn = e.target.closest('#reset-canvas-settings');
+                                if (resetBtn) {
+                                    e.preventDefault();
+                                    console.log('[PDF Builder] RESET_BUTTON - Reset Canvas settings clicked');
+
+                                    if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres Canvas aux valeurs par défaut ? Cette action est irréversible.')) {
+                                        console.log('[PDF Builder] RESET_BUTTON - User confirmed, calling resetCanvasSettings');
+                                        resetCanvasSettings();
+                                    } else {
+                                        console.log('[PDF Builder] RESET_BUTTON - User cancelled reset');
+                                    }
+                                    return;
+                                }
+
+                                // Gestionnaire pour annuler les modales
+                                const cancelBtn = e.target.closest('.canvas-modal-cancel, .button-secondary');
+                                if (cancelBtn) {
+                                    e.preventDefault();
+                                    console.log('[PDF Builder] CANCEL_BUTTON - Cancel button clicked');
+
+                                    const modal = cancelBtn.closest('.canvas-modal-overlay');
+                                    if (modal) {
+                                        closeModal(modal);
+                                    }
+                                    return;
+                                }
+
+                            } catch (error) {
+                                console.error('[PDF Builder] EVENT_HANDLER - Error in click handler:', error);
+                            }
+                        });
+
+                        // Gestionnaire pour la touche Échap - VERSION RENFORCÉE
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                console.log('[PDF Builder] ESC_KEY - Escape key pressed');
+
+                                // Fermer toutes les modales ouvertes
+                                const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"], .cache-modal[style*="display: block"]');
+                                openModals.forEach(modal => {
+                                    closeModal(modal);
+                                });
+                            }
+                        });
 
                         console.log('[PDF Builder] ATTACH_LISTENERS - Event listeners attached successfully');
                     }
@@ -1055,10 +1095,14 @@
                     function waitForModalsAndInitialize(attempt = 0) {
                         const maxAttempts = 10;
                         const modalIds = [
-                            'canvas-affichage-modal-overlay',
-                            'canvas-navigation-modal-overlay',
-                            'canvas-comportement-modal-overlay',
-                            'canvas-systeme-modal-overlay'
+                            'canvas-dimensions-modal-overlay',
+                            'canvas-apparence-modal-overlay',
+                            'canvas-grille-modal-overlay',
+                            'canvas-zoom-modal-overlay',
+                            'canvas-interactions-modal-overlay',
+                            'canvas-export-modal-overlay',
+                            'canvas-performance-modal-overlay',
+                            'canvas-debug-modal-overlay'
                         ];
 
                         const allModalsLoaded = modalIds.every(id => document.getElementById(id) !== null);
@@ -1172,32 +1216,179 @@
                     }
 
                     // Fonction pour mettre à jour les valeurs d'une modale avec les paramètres actuels
-                    // Fonction simplifiée pour mettre à jour les valeurs de la modale
                     function updateModalValues(category) {
+                        console.log(`[PDF Builder] UPDATE_MODAL - Called with category: ${category}`);
+                        console.log('[PDF Builder] UPDATE_MODAL - Starting modal value synchronization');
                         const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
-                        if (!modal) return;
+                        if (!modal) {
+                            console.log(`[PDF Builder] UPDATE_MODAL - Modal #canvas-${category}-modal-overlay not found`);
+                            return;
+                        }
+                        console.log(`[PDF Builder] UPDATE_MODAL - Modal found, processing category: ${category}`);
 
-                        // Mettre à jour tous les champs de la modale depuis les champs cachés
-                        const inputs = modal.querySelectorAll('input, select, textarea');
-                        inputs.forEach(input => {
-                            if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
-                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
-                                if (hiddenField && hiddenField.value) {
-                                    if (input.type === 'checkbox') {
-                                        input.checked = hiddenField.value === '1';
-                                        const toggleSwitch = input.closest('.toggle-switch');
-                                        if (toggleSwitch) {
-                                            toggleSwitch.classList.toggle('checked', input.checked);
+                        // Mapping des champs selon la catégorie
+                        const fieldMappings = {
+                            'dimensions': {
+                                'canvas_width': 'pdf_builder_canvas_width',
+                                'canvas_height': 'pdf_builder_canvas_height',
+                                'canvas_dpi': 'pdf_builder_canvas_dpi',
+                                'canvas_format': 'pdf_builder_canvas_format'
+                            },
+                            'apparence': {
+                                'canvas_bg_color': 'pdf_builder_canvas_bg_color',
+                                'canvas_border_color': 'pdf_builder_canvas_border_color',
+                                'canvas_border_width': 'pdf_builder_canvas_border_width',
+                                'canvas_shadow_enabled': 'pdf_builder_canvas_shadow_enabled',
+                                'canvas_container_bg_color': 'pdf_builder_canvas_container_bg_color'
+                            },
+                            'grille': {
+                                'canvas_grid_enabled': 'pdf_builder_canvas_grid_enabled',
+                                'canvas_grid_size': 'pdf_builder_canvas_grid_size',
+                                'canvas_guides_enabled': 'pdf_builder_canvas_guides_enabled',
+                                'canvas_snap_to_grid': 'pdf_builder_canvas_snap_to_grid'
+                            },
+                            'zoom': {
+                                'canvas_zoom_min': 'pdf_builder_canvas_zoom_min',
+                                'canvas_zoom_max': 'pdf_builder_canvas_zoom_max',
+                                'canvas_zoom_default': 'pdf_builder_canvas_zoom_default',
+                                'canvas_zoom_step': 'pdf_builder_canvas_zoom_step'
+                            },
+                            'interactions': {
+                                'canvas_drag_enabled': 'pdf_builder_canvas_drag_enabled',
+                                'canvas_resize_enabled': 'pdf_builder_canvas_resize_enabled',
+                                'canvas_rotate_enabled': 'pdf_builder_canvas_rotate_enabled',
+                                'canvas_multi_select': 'pdf_builder_canvas_multi_select',
+                                'canvas_selection_mode': 'pdf_builder_canvas_selection_mode',
+                                'canvas_keyboard_shortcuts': 'pdf_builder_canvas_keyboard_shortcuts'
+                            },
+                            'export': {
+                                'canvas_export_quality': 'pdf_builder_canvas_export_quality',
+                                'canvas_export_format': 'pdf_builder_canvas_export_format',
+                                'canvas_export_transparent': 'pdf_builder_canvas_export_transparent'
+                            },
+                            'performance': {
+                                'canvas_fps_target': 'pdf_builder_canvas_fps_target',
+                                'canvas_memory_limit_js': 'pdf_builder_canvas_memory_limit_js',
+                                'canvas_response_timeout': 'pdf_builder_canvas_response_timeout'
+                            },
+                            'debug': {
+                                'canvas_debug_enabled': 'pdf_builder_canvas_debug_enabled',
+                                'canvas_performance_monitoring': 'pdf_builder_canvas_performance_monitoring',
+                                'canvas_error_reporting': 'pdf_builder_canvas_error_reporting'
+                            }
+                        };
+
+                        const mappings = fieldMappings[category];
+                        if (!mappings) return;
+
+                        // Valeurs par défaut pour les champs Canvas
+                        const defaultValues = CANVAS_DEFAULT_VALUES;
+
+                        // Mettre à jour chaque champ
+                        for (const [fieldId, settingKey] of Object.entries(mappings)) {
+                            const field = modal.querySelector(`#${fieldId}, [name="${settingKey}"]`);
+                            if (field) {
+                                // Chercher la valeur dans les champs cachés
+                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
+                                let value = '';
+                                let valueSource = 'default'; // default, custom
+                                
+                                if (hiddenField && hiddenField.value && hiddenField.value.trim() !== '') {
+                                    value = hiddenField.value;
+                                    valueSource = 'custom';
+                                    console.log(`[PDF Builder] UPDATE_MODAL - Using custom value for ${settingKey}: ${value}`);
+                                } else {
+                                    // Utiliser la valeur par défaut si rien n'est trouvé
+                                    value = defaultValues[settingKey] || '';
+                                    valueSource = 'default';
+                                    console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value}`);
+                                }
+                                
+                                if (category === 'grille') {
+                                    console.log(`[PDF Builder] GRID_UPDATE - Processing grid field ${fieldId} with value: ${value}`);
+                                }
+                                
+                                // Log spécifique pour les toggles de grille
+                                if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
+                                    console.log(`GRID_TOGGLE: Updating ${fieldId} (${settingKey}) with value: ${value}, field type: ${field.type}`);
+                                }
+                                
+                                if (field.type === 'checkbox') {
+                                    field.checked = value === '1';
+                                    // Synchroniser la classe CSS pour les toggles
+                                    const toggleSwitch = field.closest('.toggle-switch');
+                                    if (toggleSwitch) {
+                                        if (value === '1') {
+                                            toggleSwitch.classList.add('checked');
+                                        } else {
+                                            toggleSwitch.classList.remove('checked');
                                         }
+                                        console.log(`TOGGLE_DEBUG: ${fieldId} - checked=${field.checked}, toggle classes: ${toggleSwitch.className}`);
                                     } else {
-                                        input.value = hiddenField.value;
-                                        if (input.tagName === 'SELECT') {
-                                            input.querySelectorAll('option').forEach(opt => {
-                                                opt.selected = opt.value === hiddenField.value;
-                                            });
-                                        }
+                                        console.log(`TOGGLE_DEBUG: ${fieldId} - No toggle-switch parent found`);
+                                    }
+                                    if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts'].includes(fieldId)) {
+                                        console.log(`ALL_TOGGLES: Set checkbox ${fieldId} checked to: ${field.checked}, toggle class: ${toggleSwitch ? toggleSwitch.className : 'no toggle'}`);
+                                    }
+                                } else {
+                                    field.value = value;
+                                    
+                                    // Pour les selects, mettre à jour l'attribut selected
+                                    if (field.tagName === 'SELECT') {
+                                        const options = field.querySelectorAll('option');
+                                        options.forEach(option => {
+                                            option.selected = option.value === value;
+                                        });
                                     }
                                 }
+
+                                // Ajouter les indicateurs visuels selon la source de la valeur
+                                field.classList.remove('value-default', 'value-custom', 'value-cached');
+                                field.classList.add(`value-${valueSource}`);
+                                
+                                // Ajouter un indicateur textuel près du champ
+                                let indicator = field.parentNode.querySelector('.value-indicator');
+                                if (!indicator) {
+                                    indicator = document.createElement('span');
+                                    indicator.className = 'value-indicator';
+                                    field.parentNode.appendChild(indicator);
+                                }
+                                
+                                if (valueSource === 'default') {
+                                    indicator.textContent = ' (Défaut)';
+                                    indicator.style.color = '#666';
+                                } else if (valueSource === 'custom') {
+                                    // Ne plus afficher "(Personnalisé)" car c'est redondant
+                                    indicator.textContent = '';
+                                } else if (valueSource === 'cached') {
+                                    indicator.textContent = ' (En cache)';
+                                    indicator.style.color = '#f39c12';
+                                }
+                            } else {
+                                console.log(`Field not found for ${fieldId} or ${settingKey}`);
+                            }
+                        }
+
+                        // Ajouter les event listeners pour les changements (sans cache localStorage)
+                        const allInputs = modal.querySelectorAll('input, select, textarea');
+                        allInputs.forEach(input => {
+                            input.addEventListener('change', () => {
+                                console.log(`[PDF Builder] INPUT_CHANGE - ${input.name} changed`);
+                            });
+
+                            // Gestion spécifique des toggles (checkboxes)
+                            if (input.type === 'checkbox') {
+                                input.addEventListener('change', function() {
+                                    const toggleSwitch = this.closest('.toggle-switch');
+                                    if (toggleSwitch) {
+                                        if (this.checked) {
+                                            toggleSwitch.classList.add('checked');
+                                        } else {
+                                            toggleSwitch.classList.remove('checked');
+                                        }
+                                        console.log(`[PDF Builder] TOGGLE_CHANGE - ${this.id}: checked=${this.checked}, class=${toggleSwitch.className}`);
+                                    }
+                                });
                             }
                         });
                     }
@@ -1233,19 +1424,19 @@
                             document.body.style.overflow = '';
 
                             // Accessibilité - déplacer le focus et utiliser inert
-                            // document.body.focus(); // Cette ligne causait une erreur de syntaxe
+                            document.body.focus();
                             modal.setAttribute('inert', '');
 
-                            console.log('[PDF Builder] CLOSE_MODAL - Modal closed successfully: ' + modalId);
+                            console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
 
                         } catch (error) {
-                            console.error('[PDF Builder] CLOSE_MODAL - Error closing modal:', error);
+                            console.error(`[PDF Builder] CLOSE_MODAL - Error closing modal:`, error);
                         }
                     }
 
                     // Fonction helper pour les notifications avec fallback
                     function showNotification(type, message, options) {
-                        console.log('[PDF Builder] NOTIFICATION_HELPER - Attempting to show ' + type + ' notification:', message);
+                        console.log(`[PDF Builder] NOTIFICATION_HELPER - Attempting to show ${type} notification:`, message);
 
                         if (type === 'success' && typeof showSuccessNotification === 'function') {
                             console.log('[PDF Builder] NOTIFICATION_HELPER - Using showSuccessNotification');

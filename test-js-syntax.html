@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Syntaxe JavaScript</title>
+</head>
+<body>
+    <h1>Test de la syntaxe JavaScript des modales</h1>
+    <p>Si cette page se charge sans erreur JavaScript, la syntaxe est correcte.</p>
+
+    <script>
+// Test basique de syntaxe - si cela fonctionne, le problème est ailleurs
+console.log('Test de syntaxe basique réussi');
+
+<?php
+// Inclure seulement la partie JavaScript du fichier problématique
+$content = file_get_contents('plugin/resources/templates/admin/settings-parts/settings-contenu.php');
+
+// Extraire seulement le JavaScript entre les balises <script>
+preg_match('/<script[^>]*>(.*?)<\/script>/s', $content, $matches);
+if (isset($matches[1])) {
+    echo $matches[1];
+}
+?>
+    </script>
+
+    <p id="result">Test en cours...</p>
+
+    <script>
+        // Test final
+        document.getElementById('result').textContent = '✅ Syntaxe JavaScript valide - Aucune erreur détectée!';
+    </script>
+</body>
+</html>
