@@ -1512,6 +1512,7 @@ class AjaxHandler
 
     private function saveGrilleSettings()
     {
+        error_log('🚀 [PHP AJAX SAVE] === saveGrilleSettings START === ' . date('Y-m-d H:i:s'));
         $updated = 0;
 
         // Guides activés
