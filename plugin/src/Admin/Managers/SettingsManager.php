@@ -48,12 +48,8 @@ class SettingsManager
      */
     public function registerSettings()
     {
-        error_log('[PDF Builder] registerSettings called');
-
         // Enregistrer le tableau principal des paramètres
         register_setting('pdf_builder_settings', 'pdf_builder_settings', [$this, 'sanitizeSettings']);
-
-        error_log('[PDF Builder] register_setting completed for pdf_builder_settings');
 
         // Section principale
         add_settings_section(

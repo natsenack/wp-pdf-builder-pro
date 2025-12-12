@@ -11,24 +11,17 @@
     function get_canvas_option($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
         
-        // Essayer d'abord avec get_option normal pour voir la différence
-        $wp_value = get_option($option_key, null);
-        error_log("[PDF Builder] get_option({$option_key}): '" . $wp_value . "' (type: " . gettype($wp_value) . ")");
-        
         // Forcer la lecture directe depuis la base de données en contournant le cache
         global $wpdb;
         $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
-        error_log("[PDF Builder] DB query result: '" . $db_value . "' (type: " . gettype($db_value) . ")");
 
         $value = $db_value;
         if ($value === null) {
             $value = $default;
-            error_log("[PDF Builder] Using default: '{$default}'");
         }
 
         // Convertir en string pour cohérence
         $value = (string) $value;
-        error_log("[PDF Builder] Final value for {$key}: '{$value}' (type: " . gettype($value) . ", default: {$default})");
         
         return $value;
     }
