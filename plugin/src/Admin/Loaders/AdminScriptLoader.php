@@ -378,19 +378,10 @@ class AdminScriptLoader
                 strpos($tag, 'elementor-finder__results__category__title') !== false ||
                 strpos($tag, 'elementor-finder__results__item__link') !== false) {
 
-                error_log('[PDF Builder] Found Elementor template script, modifying type for handle: ' . $handle);
+                error_log('[PDF Builder] Found Elementor template script, REMOVING for handle: ' . $handle);
 
-                // Remplacer type="text/javascript" par type="text/template"
-                $tag = str_replace('type="text/javascript"', 'type="text/template"', $tag);
-                $tag = str_replace("type='text/javascript'", "type='text/template'", $tag);
-
-                // Si aucun type n'est spécifié, l'ajouter
-                if (strpos($tag, 'type=') === false) {
-                    $tag = str_replace('<script', '<script type="text/template"', $tag);
-                }
-
-                error_log('[PDF Builder] Fixed Elementor template script type for handle: ' . $handle);
-                error_log('[PDF Builder] Modified tag: ' . substr($tag, 0, 200) . '...');
+                // Return empty string to remove the script tag entirely
+                return '';
             }
         }
 
