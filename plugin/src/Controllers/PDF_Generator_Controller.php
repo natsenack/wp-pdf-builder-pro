@@ -2012,7 +2012,7 @@ class PdfBuilderProGenerator
      */
     private static function getCountryName($country_code)
     {
-        if (!defined('WC_VERSION') || !$country_code) {
+        if ((!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active()) || !$country_code) {
             return $country_code;
         }
 

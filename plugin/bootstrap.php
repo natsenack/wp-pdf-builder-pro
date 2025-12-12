@@ -23,6 +23,30 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 // ============================================================================
 
 /**
+ * Vérifie si WooCommerce est actif sans déclencher l'autoloading
+ * Cette fonction est sûre à appeler tôt dans le cycle de chargement WordPress
+ *
+ * @return bool True si WooCommerce est actif
+ */
+function pdf_builder_is_woocommerce_active() {
+    static $is_active = null;
+
+    if ($is_active !== null) {
+        return $is_active;
+    }
+
+    // Vérifier si nous sommes après plugins_loaded
+    if (!did_action('plugins_loaded')) {
+        $is_active = false;
+        return false;
+    }
+
+    // Une fois que plugins_loaded a été déclenché, defined('WC_VERSION') est sûr
+    $is_active = defined('WC_VERSION');
+    return $is_active;
+}
+
+/**
  * Fonction d'urgence pour charger les utilitaires si nécessaire
  * Peut être appelée depuis n'importe où pour garantir la disponibilité des classes
  */
@@ -38,7 +62,8 @@ function pdf_builder_load_utilities_emergency() {
     );
 
     // Charger PDF_Builder_Onboarding_Manager seulement si WooCommerce est actif (pour éviter les problèmes de traductions)
-    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
+    // Utilisation d'une approche sécurisée qui n'entraîne pas l'autoloading prématuré
+    if (pdf_builder_is_woocommerce_active()) {
         $utilities[] = 'PDF_Builder_Onboarding_Manager.php';
     }
 
@@ -1041,7 +1066,7 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
     add_action('init', function() {
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+        if (pdf_builder_is_woocommerce_active() && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
             \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
         }
     });

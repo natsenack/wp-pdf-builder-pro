@@ -205,7 +205,7 @@ class PDF_Builder_Onboarding_Manager {
         ];
         // Ajouter l'étape WooCommerce seulement si WooCommerce est installé
         // Utiliser une vérification différée pour éviter les problèmes de chargement prématuré
-        if (defined('WC_VERSION')) {
+        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
             $steps[5] = [
                 'id' => 'woocommerce_setup',
                 'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
@@ -575,7 +575,7 @@ class PDF_Builder_Onboarding_Manager {
                 }
             case 'completed':
                 // Récupérer les informations de configuration
-                $has_woocommerce = defined('WC_VERSION');
+                $has_woocommerce = function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active();
                 $template_count = count(glob(plugin_dir_path(dirname(__FILE__)) . '../resources/templates/predefined/*.json'));
                 $current_user = wp_get_current_user();
                 return '
@@ -727,10 +727,10 @@ class PDF_Builder_Onboarding_Manager {
         // Vérification WooCommerce
         $checks[] = [
             'title' => __('WooCommerce', 'pdf-builder-pro'),
-            'description' => defined('WC_VERSION') ?
+            'description' => function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() ?
                 __('WooCommerce détecté et compatible', 'pdf-builder-pro') :
                 __('WooCommerce non détecté - Installation recommandée', 'pdf-builder-pro'),
-            'status' => defined('WC_VERSION')
+            'status' => function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()
         ];
         // Vérification mémoire
         $memory_limit = ini_get('memory_limit');
@@ -1179,7 +1179,7 @@ class PDF_Builder_Onboarding_Manager {
      * Créer la configuration WooCommerce pour le template
      */
     private function create_woocommerce_template_config($assignment_data) {
-        if (!defined('WC_VERSION')) {
+        if (!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active()) {
             return;
         }
         // Récupérer ou créer les options WooCommerce

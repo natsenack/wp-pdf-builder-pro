@@ -85,7 +85,7 @@ class PdfBuilderStatusManager
         $statuses = array_merge($statuses, $default_statuses);
 
         // Détecter les statuts personnalisés via WooCommerce UNIQUEMENT si WooCommerce est complètement chargé
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && function_exists('wc_get_order_statuses')) {
+        if (did_action('plugins_loaded') && function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && function_exists('wc_get_order_statuses')) {
             $wc_statuses = wc_get_order_statuses();
             foreach ($wc_statuses as $status_key => $status_name) {
                 // WooCommerce retourne les clés avec 'wc-' préfixe

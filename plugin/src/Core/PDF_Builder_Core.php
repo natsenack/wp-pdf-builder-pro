@@ -73,7 +73,7 @@ class PdfBuilderCore
         }
 
         // Charger les managers WooCommerce seulement si WooCommerce est actif
-        if (did_action('plugins_loaded') && defined('WC_VERSION')) {
+        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
             foreach ($woocommerce_managers as $manager) {
                 $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
                 if (file_exists($manager_path)) {
@@ -103,10 +103,10 @@ class PdfBuilderCore
         $load_pdf_controller_now = true;
         if (!did_action('plugins_loaded')) {
             $load_pdf_controller_now = true;
-        } elseif (!defined('WC_VERSION')) {
+        } elseif (!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active()) {
             $load_pdf_controller_now = false;
             add_action('plugins_loaded', function() {
-                if (defined('WC_VERSION') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+                if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
                     require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
                 }
             }, 5);
