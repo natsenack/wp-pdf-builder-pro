@@ -216,6 +216,9 @@
                                     <div >
                                         <span id="card-canvas-width"><?php echo esc_html(get_canvas_option_contenu('canvas_width', '794')); ?></span>×
                                         <span id="card-canvas-height"><?php echo esc_html(get_canvas_option_contenu('canvas_height', '1123')); ?></span>px
+                                        <div style="font-size: 10px; color: #666; margin-top: 5px;">
+                                            DEBUG: width=<?php echo get_canvas_option_contenu('canvas_width', '794'); ?>, height=<?php echo get_canvas_option_contenu('canvas_height', '1123'); ?>
+                                        </div>
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
                                         <?php
