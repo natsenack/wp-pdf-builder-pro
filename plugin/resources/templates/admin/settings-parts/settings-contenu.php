@@ -1070,44 +1070,6 @@
                     }
                 };
 
-                // Utilitaires de validation
-                const CanvasValidators = {
-                    isValidNumber: (value, min, max) => {
-                        const num = parseInt(value);
-                        return !isNaN(num) && num >= min && num <= max;
-                    },
-
-                    isValidHexColor: (value) => {
-                        return /^#[0-9A-Fa-f]{6}$/.test(value);
-                    },
-
-                    isValidBoolean: (value) => {
-                        return value === '0' || value === '1';
-                    },
-
-                    validateField: (key, value) => {
-                        if (key.includes('_width') && !key.includes('_border_width')) {
-                            return CanvasValidators.isValidNumber(value, 100, 5000);
-                        }
-                        if (key.includes('_height')) {
-                            return CanvasValidators.isValidNumber(value, 100, 5000);
-                        }
-                        if (key.includes('_border_width')) {
-                            return CanvasValidators.isValidNumber(value, 0, 10);
-                        }
-                        if (key.includes('_dpi')) {
-                            return CanvasValidators.isValidNumber(value, 72, 600);
-                        }
-                        if (key.includes('_color')) {
-                            return CanvasValidators.isValidHexColor(value);
-                        }
-                        if (key.includes('_enabled') || key.includes('_transparent')) {
-                            return CanvasValidators.isValidBoolean(value);
-                        }
-                        return true; // Autres champs acceptés par défaut
-                    }
-                };
-
                 // Gestionnaire des modales Canvas
                 (function() {
                     'use strict';
