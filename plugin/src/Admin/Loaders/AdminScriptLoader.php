@@ -365,6 +365,9 @@ class AdminScriptLoader
      */
     public function fixElementorTemplates($tag, $handle, $src)
     {
+        // Debug: Log all script tags to see what's being processed
+        error_log('[PDF Builder] Processing script tag for handle: ' . $handle . ', src: ' . ($src ?: 'inline'));
+
         // Vérifier si c'est un script inline (pas de src)
         if (empty($src)) {
             // Rechercher les patterns Elementor dans le contenu du script
@@ -374,6 +377,8 @@ class AdminScriptLoader
                 strpos($tag, 'elementor-finder__no-results') !== false ||
                 strpos($tag, 'elementor-finder__results__category__title') !== false ||
                 strpos($tag, 'elementor-finder__results__item__link') !== false) {
+
+                error_log('[PDF Builder] Found Elementor template script, modifying type for handle: ' . $handle);
 
                 // Remplacer type="text/javascript" par type="text/template"
                 $tag = str_replace('type="text/javascript"', 'type="text/template"', $tag);
@@ -385,6 +390,7 @@ class AdminScriptLoader
                 }
 
                 error_log('[PDF Builder] Fixed Elementor template script type for handle: ' . $handle);
+                error_log('[PDF Builder] Modified tag: ' . substr($tag, 0, 200) . '...');
             }
         }
 
