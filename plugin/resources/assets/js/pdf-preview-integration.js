@@ -261,11 +261,6 @@ class PDFEditorPreviewIntegration {
             return window.pdfEditorTemplate;
         }
 
-        if (localStorage.getItem('pdf-builder-template')) {
-            PDFBuilderLogger.debug('Utilisation du localStorage');
-            return JSON.parse(localStorage.getItem('pdf-builder-template'));
-        }
-
         // Template par défaut pour les tests
         PDFBuilderLogger.debug('Utilisation du template par défaut (test)');
         return {

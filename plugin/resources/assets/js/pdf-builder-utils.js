@@ -96,133 +96,7 @@
     };
 
     // ==========================================
-    // SYSTÈME DE CACHE LOCAL
-    // ==========================================
-
-    /**
-     * Système de cache local avec expiration et validation
-     */
-    window.LocalCache = {
-        VERSION: '1.1',
-        EXPIRY_HOURS: 3,
-
-        /**
-         * Efface tout le cache
-         */
-        clear: function() {
-            try {
-                sessionStorage.removeItem('pdf_builder_settings_backup');
-                sessionStorage.removeItem('pdf_builder_cache_metadata');
-            } catch (e) {
-                console.warn('LocalCache: Unable to clear cache', e);
-            }
-        },
-
-        /**
-         * Sauvegarde des données dans le cache
-         * @param {Object} data - Données à sauvegarder
-         */
-        save: function(data) {
-            try {
-                const cache = {
-                    data: data,
-                    timestamp: Date.now(),
-                    version: this.VERSION,
-                    hash: this.simpleHash(JSON.stringify(data)),
-                    sessionId: this.getSessionId()
-                };
-
-                sessionStorage.setItem('pdf_builder_settings_backup', JSON.stringify(cache));
-
-                // Sauvegarder les métadonnées séparément pour la validation
-                const metadata = {
-                    timestamp: cache.timestamp,
-                    version: cache.version,
-                    hash: cache.hash
-                };
-                sessionStorage.setItem('pdf_builder_cache_metadata', JSON.stringify(metadata));
-
-            } catch (e) {
-                console.warn('LocalCache: Unable to save data', e);
-            }
-        },
-
-        /**
-         * Charge les données du cache
-         * @returns {Object|null} Données chargées ou null si expiré/corrompu
-         */
-        load: function() {
-            try {
-                const cacheStr = sessionStorage.getItem('pdf_builder_settings_backup');
-                if (!cacheStr) return null;
-
-                const cache = JSON.parse(cacheStr);
-
-                // Vérifier l'expiration (3h ou plus)
-                if (Date.now() - cache.timestamp >= this.EXPIRY_HOURS * 60 * 60 * 1000) {
-                    this.clear(); // Nettoyer le cache expiré
-                    return null;
-                }
-
-                // Vérifier la version
-                if (cache.version !== this.VERSION) {
-                    this.clear();
-                    return null;
-                }
-
-                // Vérifier l'intégrité des données
-                if (cache.hash !== this.simpleHash(JSON.stringify(cache.data))) {
-                    this.clear();
-                    return null;
-                }
-
-                // Vérifier la session
-                if (cache.sessionId !== this.getSessionId()) {
-                    this.clear();
-                    return null;
-                }
-
-                return cache.data;
-
-            } catch (e) {
-                // Données corrompues
-                console.warn('LocalCache: Corrupted data, clearing cache', e);
-                this.clear();
-                return null;
-            }
-        },
-
-        /**
-         * Génère un hash simple pour la validation d'intégrité
-         * @param {string} str - Chaîne à hasher
-         * @returns {string} Hash généré
-         */
-        simpleHash: function(str) {
-            let hash = 0;
-            if (str.length === 0) return hash.toString();
-
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convertir en 32 bits
-            }
-            return hash.toString();
-        },
-
-        /**
-         * Génère un ID de session unique
-         * @returns {string} ID de session
-         */
-        getSessionId: function() {
-            let sessionId = sessionStorage.getItem('pdf_builder_session_id');
-            if (!sessionId) {
-                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                sessionStorage.setItem('pdf_builder_session_id', sessionId);
-            }
-            return sessionId;
-        }
-    };
-
+    // VALIDATION DES DONNÉES DE FORMULAIRE
     // ==========================================
     // VALIDATION DES DONNÉES DE FORMULAIRE
     // ==========================================
@@ -581,9 +455,6 @@
         if (window.PDF_BUILDER_CONFIG && window.PDF_BUILDER_CONFIG.debug) {
             console.log('PDF Builder Utilities initialized');
         }
-
-        // Nettoyer le cache expiré au démarrage
-        window.LocalCache.load(); // Cela nettoiera automatiquement le cache expiré
     }
 
 })(window, document);

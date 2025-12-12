@@ -192,16 +192,6 @@
                 }
             }, CONFIG.animationDuration + 50);
             
-            // Sauvegarder en localStorage
-            try {
-                if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem(CONFIG.storageKey, tabId);
-                }
-                log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
-            } catch(e) {
-                log('PDF Builder - Impossible de sauvegarder en localStorage:', e.message);
-            }
-            
             // Déclencher événement personnalisé
             if (typeof document !== 'undefined' && document.dispatchEvent) {
                 const event = new CustomEvent('pdfBuilderTabChanged', {
@@ -293,18 +283,6 @@
         }
     }
 
-    // Obtenir l'onglet sauvegardé
-    function getStoredActiveTab() {
-        try {
-            if (typeof localStorage !== 'undefined') {
-                return localStorage.getItem(CONFIG.storageKey);
-            }
-        } catch(e) {
-            // localStorage non disponible
-        }
-        return null;
-    }
-
     // Obtenir l'onglet par défaut
     function getDefaultActiveTab() {
         // Essayer de récupérer depuis l'URL hash
@@ -355,8 +333,7 @@
         bindEvents();
         
         // Déterminer l'onglet initial
-        const savedTab = getStoredActiveTab();
-        activeTab = (savedTab && document.getElementById(savedTab)) ? savedTab : getDefaultActiveTab();
+        activeTab = getDefaultActiveTab();
         
         if (activeTab) {
             log('PDF Builder - Activation de l\'onglet initial:', activeTab);

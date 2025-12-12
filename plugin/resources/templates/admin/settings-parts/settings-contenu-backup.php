@@ -614,38 +614,7 @@
 
                         // Initialiser le monitoring
                         init: function() {
-                            this.loadFromStorage();
                             this.log('system', 'Monitoring activé', { timestamp: Date.now() });
-                        },
-
-                        // Charger depuis localStorage
-                        loadFromStorage: function() {
-                            try {
-                                const stored = localStorage.getItem('pdfBuilderMonitoring');
-                                if (stored) {
-                                    const data = JSON.parse(stored);
-                                    this.metrics = Object.assign({}, this.metrics, data.metrics);
-                                    this.history = data.history || [];
-                                    this.currentState = Object.assign({}, this.currentState, data.currentState);
-                                }
-                            } catch (e) {
-                                console.warn('⚠️ Erreur chargement monitoring localStorage:', e);
-                            }
-                        },
-
-                        // Sauvegarder vers localStorage
-                        saveToStorage: function() {
-                            try {
-                                const data = {
-                                    metrics: this.metrics,
-                                    history: this.history.slice(-50), // Garder seulement les 50 dernières
-                                    currentState: this.currentState,
-                                    lastSave: Date.now()
-                                };
-                                localStorage.setItem('pdfBuilderMonitoring', JSON.stringify(data));
-                            } catch (e) {
-                                console.warn('⚠️ Erreur sauvegarde monitoring localStorage:', e);
-                            }
                         },
 
                         // Logger une action
@@ -678,8 +647,6 @@
                                 'performance': '⚡'
                             };
 
-                            // Sauvegarder après chaque log
-                            this.saveToStorage();
                         },
 
                         // Monitorer l'ouverture d'une modal
@@ -1823,7 +1790,6 @@
                         getReport: () => modalMonitoring.generateReport(),
                         clearHistory: () => {
                             modalMonitoring.history = [];
-                            localStorage.removeItem('pdfBuilderMonitoring');
                         },
                         exportData: () => {
                             const data = {

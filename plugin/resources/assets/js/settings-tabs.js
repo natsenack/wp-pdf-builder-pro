@@ -53,17 +53,10 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
             tab.setAttribute('aria-selected', 'true');
 
             // Afficher le contenu de l'onglet sélectionné
-            const targetContent = document.getElementById(tabId);
+            const targetContent = document.getElementById(`tab-content-${tabId}`);
             if (targetContent) {
                 targetContent.style.display = 'block';
                 targetContent.setAttribute('aria-hidden', 'false');
-            }
-
-            // Sauvegarder l'onglet actif dans localStorage
-            try {
-                localStorage.setItem('pdfBuilderActiveTab', tabId);
-            } catch (e) {
-                // Ignore les erreurs localStorage
             }
 
             // Mettre à jour l'URL sans recharger la page
@@ -74,18 +67,6 @@ if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
             }
         });
 
-        // Restaurer l'onglet actif depuis localStorage
-        try {
-            const savedTab = localStorage.getItem('pdfBuilderActiveTab');
-            if (savedTab) {
-                const savedTabElement = document.querySelector(`[data-tab="${savedTab}"]`);
-                if (savedTabElement) {
-                    savedTabElement.click();
-                }
-            }
-        } catch (e) {
-            // Ignore les erreurs localStorage
-        }
     }
 
     // Initialiser au chargement du DOM

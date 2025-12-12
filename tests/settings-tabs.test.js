@@ -7,21 +7,25 @@
 describe('PerformanceMetrics', () => {
     beforeEach(() => {
         // Reset des métriques
-        localStorage.removeItem('pdf_builder_metrics');
+        PerformanceMetrics.reset();
     });
 
     test('should track operation timing', () => {
+        jest.useFakeTimers();
+
         PerformanceMetrics.start('testOperation');
 
-        // Simuler du temps
-        setTimeout(() => {
-            PerformanceMetrics.end('testOperation');
+        // Avancer le temps de 10ms
+        jest.advanceTimersByTime(10);
 
-            const metrics = PerformanceMetrics.getMetrics();
-            expect(metrics.testOperation).toBeDefined();
-            expect(metrics.testOperation.count).toBe(1);
-            expect(metrics.testOperation.avgTime).toBeGreaterThan(0);
-        }, 10);
+        PerformanceMetrics.end('testOperation');
+
+        const metrics = PerformanceMetrics.getMetrics();
+        expect(metrics.testOperation).toBeDefined();
+        expect(metrics.testOperation.count).toBe(1);
+        expect(metrics.testOperation.avgTime).toBeGreaterThan(0);
+
+        jest.useRealTimers();
     });
 
     test('should track errors', () => {
@@ -30,50 +34,6 @@ describe('PerformanceMetrics', () => {
         const metrics = PerformanceMetrics.getMetrics();
         expect(metrics.testOperation).toBeDefined();
         expect(metrics.testOperation.errorCount).toBe(1);
-    });
-});
-
-// Tests pour le cache local
-describe('LocalCache', () => {
-    beforeEach(() => {
-        LocalCache.clear();
-    });
-
-    test('should save and load data', () => {
-        const testData = { key: 'value', array: [1, 2, 3] };
-
-        LocalCache.save(testData);
-        const loadedData = LocalCache.load();
-
-        expect(loadedData).toEqual(testData);
-    });
-
-    test('should handle corrupted data', () => {
-        // Sauvegarder des données normales
-        LocalCache.save({ valid: 'data' });
-
-        // Corrompre manuellement le cache
-        sessionStorage.setItem('pdf_builder_settings_backup', 'invalid json');
-
-        const loadedData = LocalCache.load();
-        expect(loadedData).toBeNull();
-    });
-
-    test('should expire old data', () => {
-        const testData = { key: 'value' };
-
-        // Sauvegarder avec un timestamp ancien
-        const oldCache = {
-            data: testData,
-            timestamp: Date.now() - (3 * 60 * 60 * 1000), // 3h dans le passé
-            version: '1.1',
-            hash: LocalCache.simpleHash(JSON.stringify(testData)),
-            sessionId: LocalCache.getSessionId()
-        };
-        sessionStorage.setItem('pdf_builder_settings_backup', JSON.stringify(oldCache));
-
-        const loadedData = LocalCache.load();
-        expect(loadedData).toBeNull(); // Devrait être expiré
     });
 });
 

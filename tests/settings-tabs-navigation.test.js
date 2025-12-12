@@ -4,8 +4,6 @@
  */
 
 describe('Settings Tabs Navigation', () => {
-    let mockLocalStorage;
-
     beforeEach(() => {
         // Setup DOM pour les tests
         document.body.innerHTML = `
@@ -20,24 +18,6 @@ describe('Settings Tabs Navigation', () => {
                 <div id="tab-content-advanced" class="tab-content">Contenu Avancé</div>
             </div>
         `;
-
-        // Mock localStorage
-        mockLocalStorage = {
-            getItem: jest.fn(),
-            setItem: jest.fn(),
-            removeItem: jest.fn(),
-            clear: jest.fn()
-        };
-        Object.defineProperty(window, 'localStorage', {
-            value: mockLocalStorage,
-            writable: true
-        });
-
-        // Mock LocalCache pour qu'il échoue et force l'utilisation de localStorage
-        window.LocalCache = {
-            load: jest.fn().mockReturnValue(null),
-            save: jest.fn()
-        };
 
         // Charger le script
         require('../plugin/resources/assets/js/settings-tabs.js');
@@ -78,54 +58,10 @@ describe('Settings Tabs Navigation', () => {
         expect(generalTab.getAttribute('aria-selected')).toBe('false');
 
         // Vérifier que le contenu templates est actif
-        expect(templatesContent.classList.contains('active')).toBe(true);
+        expect(templatesContent.style.display).toBe('block');
 
         // Vérifier que le contenu general n'est plus actif
-        expect(generalContent.classList.contains('active')).toBe(false);
-    });
-
-    test('should save active tab to localStorage', () => {
-        const templatesTab = document.querySelector('[data-tab="templates"]');
-
-        templatesTab.click();
-
-        expect(mockLocalStorage.setItem).toHaveBeenCalledWith('pdf_builder_active_tab', 'templates');
-    });
-
-    test('should restore saved tab from localStorage', () => {
-        mockLocalStorage.getItem.mockReturnValue('advanced');
-
-        // Simuler l'événement DOMContentLoaded après avoir mocké localStorage
-        const event = new Event('DOMContentLoaded');
-        document.dispatchEvent(event);
-
-        // Le script devrait avoir appelé getItem
-        expect(mockLocalStorage.getItem).toHaveBeenCalledWith('pdf_builder_active_tab');
-    });
-
-    test('should handle localStorage errors gracefully', () => {
-        // Mock localStorage pour qu'il lance une erreur
-        mockLocalStorage.setItem.mockImplementation(() => {
-            throw new Error('localStorage not available');
-        });
-
-        const templatesTab = document.querySelector('[data-tab="templates"]');
-
-        // Ne devrait pas planter même si localStorage échoue
-        expect(() => {
-            templatesTab.click();
-        }).not.toThrow();
-    });
-
-    test('should handle localStorage getItem errors gracefully', () => {
-        mockLocalStorage.getItem.mockImplementation(() => {
-            throw new Error('localStorage not available');
-        });
-
-        // Recharger le script - ne devrait pas planter
-        expect(() => {
-            require('../plugin/resources/assets/js/settings-tabs.js');
-        }).not.toThrow();
+        expect(generalContent.style.display).toBe('none');
     });
 
     test('should not switch tab if data-tab attribute is missing', () => {

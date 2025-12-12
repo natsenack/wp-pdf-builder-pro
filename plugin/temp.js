@@ -112,7 +112,7 @@
 
                     console.log('[PDF Builder] 🚀 MODALS_SYSTEM_SIMPLIFIED - Initializing Canvas modals system');
                     console.log('[PDF Builder] 📅 Date: 2025-12-12');
-                    console.log('[PDF Builder] 🔧 Direct database save only - no temporary storage');
+                    console.log('[PDF Builder] 🔧 Direct database save only');
 
                     // Fonction pour ouvrir une modale
                     function openModal(modalId) {
