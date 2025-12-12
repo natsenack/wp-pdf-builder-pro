@@ -46,12 +46,16 @@
             new Function(script.textContent);
             return { index: index, src: script.src || 'inline', syntaxValid: true, error: null };
         } catch (syntaxError) {
+            // Log the first 200 characters of the problematic script
+            const scriptPreview = script.textContent.substring(0, 200).replace(/\n/g, '\\n');
             console.error(`❌ SYNTAX ERROR in script ${index} (${script.src || 'inline'}):`, syntaxError.message);
+            console.error(`❌ SCRIPT PREVIEW (${index}): "${scriptPreview}..."`);
             return {
                 index: index,
                 src: script.src || 'inline',
                 syntaxValid: false,
                 error: syntaxError.message,
+                scriptPreview: scriptPreview,
                 line: syntaxError.lineNumber,
                 column: syntaxError.columnNumber
             };
