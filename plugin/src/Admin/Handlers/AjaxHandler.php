@@ -1101,6 +1101,7 @@ class AjaxHandler
             if (!wp_verify_nonce($nonce, 'pdf_builder_ajax') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_canvas_settings') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
                 error_log('❌ [PHP AJAX SAVE] ERREUR: Nonce invalide');
                 wp_send_json_error('Nonce invalide');
@@ -1321,8 +1322,8 @@ class AjaxHandler
         $updated = 0;
 
         // Format du document
-        if (isset($_POST['canvas_format'])) {
-            $format = sanitize_text_field($_POST['canvas_format']);
+        if (isset($_POST['pdf_builder_canvas_format'])) {
+            $format = sanitize_text_field($_POST['pdf_builder_canvas_format']);
             // Validation des formats supportés
             $valid_formats = ['A4', 'A3', 'A5', 'Letter', 'Legal', 'Tabloid'];
             if (in_array($format, $valid_formats)) {
@@ -1337,8 +1338,8 @@ class AjaxHandler
         $updated++;
 
         // Résolution DPI
-        if (isset($_POST['canvas_dpi'])) {
-            $dpi = intval($_POST['canvas_dpi']);
+        if (isset($_POST['pdf_builder_canvas_dpi'])) {
+            $dpi = intval($_POST['pdf_builder_canvas_dpi']);
             // Validation des DPI supportés
             $valid_dpi = [72, 96, 150, 300];
             if (in_array($dpi, $valid_dpi)) {
@@ -1389,8 +1390,8 @@ class AjaxHandler
         $updated = 0;
 
         // Zoom minimum
-        if (isset($_POST['canvas_zoom_min'])) {
-            $min = intval($_POST['canvas_zoom_min']);
+        if (isset($_POST['pdf_builder_canvas_zoom_min'])) {
+            $min = intval($_POST['pdf_builder_canvas_zoom_min']);
             if ($min >= 1 && $min <= 100) {
                 update_option('pdf_builder_canvas_zoom_min', $min);
                 $updated++;
@@ -1398,8 +1399,8 @@ class AjaxHandler
         }
 
         // Zoom maximum
-        if (isset($_POST['canvas_zoom_max'])) {
-            $max = intval($_POST['canvas_zoom_max']);
+        if (isset($_POST['pdf_builder_canvas_zoom_max'])) {
+            $max = intval($_POST['pdf_builder_canvas_zoom_max']);
             if ($max >= 100 && $max <= 1000) {
                 update_option('pdf_builder_canvas_zoom_max', $max);
                 $updated++;
@@ -1407,8 +1408,8 @@ class AjaxHandler
         }
 
         // Zoom par défaut
-        if (isset($_POST['canvas_zoom_default'])) {
-            $default = intval($_POST['canvas_zoom_default']);
+        if (isset($_POST['pdf_builder_canvas_zoom_default'])) {
+            $default = intval($_POST['pdf_builder_canvas_zoom_default']);
             if ($default >= 10 && $default <= 500) {
                 update_option('pdf_builder_canvas_zoom_default', $default);
                 $updated++;
@@ -1416,8 +1417,8 @@ class AjaxHandler
         }
 
         // Pas de zoom
-        if (isset($_POST['canvas_zoom_step'])) {
-            $step = intval($_POST['canvas_zoom_step']);
+        if (isset($_POST['pdf_builder_canvas_zoom_step'])) {
+            $step = intval($_POST['pdf_builder_canvas_zoom_step']);
             if ($step >= 5 && $step <= 50) {
                 update_option('pdf_builder_canvas_zoom_step', $step);
                 $updated++;
@@ -1433,25 +1434,25 @@ class AjaxHandler
         $updated = 0;
 
         // Couleur de fond du canvas
-        if (isset($_POST['canvas_bg_color'])) {
+        if (isset($_POST['pdf_builder_canvas_bg_color'])) {
             $old_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
-            update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['canvas_bg_color']));
+            update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['pdf_builder_canvas_bg_color']));
             $new_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
             $updated++;
         }
 
         // Couleur des bordures
-        if (isset($_POST['canvas_border_color'])) {
+        if (isset($_POST['pdf_builder_canvas_border_color'])) {
             $old_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
-            update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['canvas_border_color']));
+            update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['pdf_builder_canvas_border_color']));
             $new_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
             $updated++;
         }
 
         // Épaisseur des bordures
-        if (isset($_POST['canvas_border_width'])) {
+        if (isset($_POST['pdf_builder_canvas_border_width'])) {
             $old_value = get_option('pdf_builder_canvas_border_width', '1');
-            $width = intval($_POST['canvas_border_width']);
+            $width = intval($_POST['pdf_builder_canvas_border_width']);
             if ($width >= 0 && $width <= 10) {
                 update_option('pdf_builder_canvas_border_width', $width);
                 $new_value = get_option('pdf_builder_canvas_border_width', '1');
@@ -1490,9 +1491,9 @@ class AjaxHandler
         }
 
         // Arrière-plan de l'éditeur
-        if (isset($_POST['canvas_container_bg_color'])) {
+        if (isset($_POST['pdf_builder_canvas_container_bg_color'])) {
             $old_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
-            update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['canvas_container_bg_color']));
+            update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['pdf_builder_canvas_container_bg_color']));
             $new_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
             $updated++;
         }
@@ -1505,7 +1506,7 @@ class AjaxHandler
         $updated = 0;
 
         // Guides activés
-        if (isset($_POST['canvas_guides_enabled'])) {
+        if (isset($_POST['pdf_builder_canvas_guides_enabled'])) {
             update_option('pdf_builder_canvas_guides_enabled', '1');
             $updated++;
         } else {
@@ -1514,7 +1515,7 @@ class AjaxHandler
         }
 
         // Grille activée
-        if (isset($_POST['canvas_grid_enabled'])) {
+        if (isset($_POST['pdf_builder_canvas_grid_enabled'])) {
             update_option('pdf_builder_canvas_grid_enabled', '1');
             $updated++;
         } else {
@@ -1523,8 +1524,8 @@ class AjaxHandler
         }
 
         // Taille de la grille
-        if (isset($_POST['canvas_grid_size'])) {
-            $size = intval($_POST['canvas_grid_size']);
+        if (isset($_POST['pdf_builder_canvas_grid_size'])) {
+            $size = intval($_POST['pdf_builder_canvas_grid_size']);
             if ($size >= 5 && $size <= 100) {
                 update_option('pdf_builder_canvas_grid_size', $size);
                 $updated++;
@@ -1532,7 +1533,7 @@ class AjaxHandler
         }
 
         // Accrochage à la grille
-        if (isset($_POST['canvas_snap_to_grid'])) {
+        if (isset($_POST['pdf_builder_canvas_snap_to_grid'])) {
             update_option('pdf_builder_canvas_snap_to_grid', '1');
             $updated++;
         } else {
@@ -1548,7 +1549,7 @@ class AjaxHandler
         $updated = 0;
 
         // Glisser-déposer activé
-        if (isset($_POST['canvas_drag_enabled'])) {
+        if (isset($_POST['pdf_builder_canvas_drag_enabled'])) {
             update_option('pdf_builder_canvas_drag_enabled', '1');
             $updated++;
         } else {
@@ -1557,7 +1558,7 @@ class AjaxHandler
         }
 
         // Redimensionnement activé
-        if (isset($_POST['canvas_resize_enabled'])) {
+        if (isset($_POST['pdf_builder_canvas_resize_enabled'])) {
             update_option('pdf_builder_canvas_resize_enabled', '1');
             $updated++;
         } else {
@@ -1566,7 +1567,7 @@ class AjaxHandler
         }
 
         // Rotation activée
-        if (isset($_POST['canvas_rotate_enabled'])) {
+        if (isset($_POST['pdf_builder_canvas_rotate_enabled'])) {
             update_option('pdf_builder_canvas_rotate_enabled', '1');
             $updated++;
         } else {
@@ -1575,7 +1576,7 @@ class AjaxHandler
         }
 
         // Sélection multiple
-        if (isset($_POST['canvas_multi_select'])) {
+        if (isset($_POST['pdf_builder_canvas_multi_select'])) {
             update_option('pdf_builder_canvas_multi_select', '1');
             $updated++;
         } else {
@@ -1584,13 +1585,13 @@ class AjaxHandler
         }
 
         // Mode de sélection
-        if (isset($_POST['canvas_selection_mode'])) {
-            update_option('pdf_builder_canvas_selection_mode', sanitize_text_field($_POST['canvas_selection_mode']));
+        if (isset($_POST['pdf_builder_canvas_selection_mode'])) {
+            update_option('pdf_builder_canvas_selection_mode', sanitize_text_field($_POST['pdf_builder_canvas_selection_mode']));
             $updated++;
         }
 
         // Raccourcis clavier
-        if (isset($_POST['canvas_keyboard_shortcuts'])) {
+        if (isset($_POST['pdf_builder_canvas_keyboard_shortcuts'])) {
             update_option('pdf_builder_canvas_keyboard_shortcuts', '1');
             $updated++;
         } else {
@@ -1606,8 +1607,8 @@ class AjaxHandler
         $updated = 0;
 
         // Format d'export
-        if (isset($_POST['canvas_export_format'])) {
-            $format = sanitize_text_field($_POST['canvas_export_format']);
+        if (isset($_POST['pdf_builder_canvas_export_format'])) {
+            $format = sanitize_text_field($_POST['pdf_builder_canvas_export_format']);
             if (in_array($format, ['png', 'jpg', 'svg'])) {
                 update_option('pdf_builder_canvas_export_format', $format);
                 $updated++;
@@ -1615,8 +1616,8 @@ class AjaxHandler
         }
 
         // Qualité d'export
-        if (isset($_POST['canvas_export_quality'])) {
-            $quality = intval($_POST['canvas_export_quality']);
+        if (isset($_POST['pdf_builder_canvas_export_quality'])) {
+            $quality = intval($_POST['pdf_builder_canvas_export_quality']);
             if ($quality >= 1 && $quality <= 100) {
                 update_option('pdf_builder_canvas_export_quality', $quality);
                 $updated++;
@@ -1624,7 +1625,7 @@ class AjaxHandler
         }
 
         // Fond transparent
-        if (isset($_POST['canvas_export_transparent'])) {
+        if (isset($_POST['pdf_builder_canvas_export_transparent'])) {
             update_option('pdf_builder_canvas_export_transparent', '1');
             $updated++;
         } else {
@@ -1640,7 +1641,7 @@ class AjaxHandler
         $updated = 0;
 
         // Cible FPS
-        if (isset($_POST['canvas_fps_target'])) {
+        if (isset($_POST['pdf_builder_canvas_fps_target'])) {
             $fps = intval($_POST['canvas_fps_target']);
             if (in_array($fps, [30, 60, 120])) {
                 update_option('pdf_builder_canvas_fps_target', $fps);
@@ -1649,7 +1650,7 @@ class AjaxHandler
         }
 
         // Limite mémoire JavaScript
-        if (isset($_POST['canvas_memory_limit_js'])) {
+        if (isset($_POST['pdf_builder_canvas_memory_limit_js'])) {
             $memory_js = sanitize_text_field($_POST['canvas_memory_limit_js']);
             if (in_array($memory_js, ['128', '256', '512', '1024'])) {
                 update_option('pdf_builder_canvas_memory_limit_js', $memory_js);
@@ -1658,7 +1659,7 @@ class AjaxHandler
         }
 
         // Chargement paresseux éditeur
-        if (isset($_POST['canvas_lazy_loading_editor'])) {
+        if (isset($_POST['pdf_builder_canvas_lazy_loading_editor'])) {
             update_option('pdf_builder_canvas_lazy_loading_editor', '1');
             $updated++;
         } else {
@@ -1667,7 +1668,7 @@ class AjaxHandler
         }
 
         // Préchargement ressources critiques
-        if (isset($_POST['canvas_preload_critical'])) {
+        if (isset($_POST['pdf_builder_canvas_preload_critical'])) {
             update_option('pdf_builder_canvas_preload_critical', '1');
             $updated++;
         } else {
@@ -1676,7 +1677,7 @@ class AjaxHandler
         }
 
         // Limite mémoire PHP
-        if (isset($_POST['canvas_memory_limit_php'])) {
+        if (isset($_POST['pdf_builder_canvas_memory_limit_php'])) {
             $memory_php = sanitize_text_field($_POST['canvas_memory_limit_php']);
             if (in_array($memory_php, ['128', '256', '512', '1024'])) {
                 update_option('pdf_builder_canvas_memory_limit_php', $memory_php);
@@ -1685,7 +1686,7 @@ class AjaxHandler
         }
 
         // Timeout réponses AJAX
-        if (isset($_POST['canvas_response_timeout'])) {
+        if (isset($_POST['pdf_builder_canvas_response_timeout'])) {
             $timeout = intval($_POST['canvas_response_timeout']);
             if (in_array($timeout, [10, 30, 60, 120])) {
                 update_option('pdf_builder_canvas_response_timeout', $timeout);
@@ -1694,7 +1695,7 @@ class AjaxHandler
         }
 
         // Chargement paresseux plugin
-        if (isset($_POST['canvas_lazy_loading_plugin'])) {
+        if (isset($_POST['pdf_builder_canvas_lazy_loading_plugin'])) {
             update_option('pdf_builder_canvas_lazy_loading_plugin', '1');
             $updated++;
         } else {
@@ -1710,7 +1711,7 @@ class AjaxHandler
         $updated = 0;
 
         // Debug activé
-        if (isset($_POST['canvas_debug_enabled'])) {
+        if (isset($_POST['pdf_builder_canvas_debug_enabled'])) {
             update_option('pdf_builder_canvas_debug_enabled', '1');
             $updated++;
         } else {
@@ -1719,7 +1720,7 @@ class AjaxHandler
         }
 
         // Monitoring performance
-        if (isset($_POST['canvas_performance_monitoring'])) {
+        if (isset($_POST['pdf_builder_canvas_performance_monitoring'])) {
             update_option('pdf_builder_canvas_performance_monitoring', '1');
             $updated++;
         } else {
@@ -1728,7 +1729,7 @@ class AjaxHandler
         }
 
         // Rapport d'erreurs
-        if (isset($_POST['canvas_error_reporting'])) {
+        if (isset($_POST['pdf_builder_canvas_error_reporting'])) {
             update_option('pdf_builder_canvas_error_reporting', '1');
             $updated++;
         } else {
