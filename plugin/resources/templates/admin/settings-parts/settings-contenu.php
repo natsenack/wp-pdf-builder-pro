@@ -1554,11 +1554,26 @@
                     }
 
                     // Fonction pour fermer une modale - VERSION RENFORCÉE
-                    function closeModal(modalId) {
+                    function closeModal(modalOrId) {
                         try {
+                            let modal;
+                            let modalId;
+
+                            // Déterminer si c'est un ID ou un élément
+                            if (typeof modalOrId === 'string') {
+                                modalId = modalOrId;
+                                modal = document.getElementById(modalId);
+                            } else if (modalOrId && modalOrId.nodeType === 1) {
+                                // C'est un élément DOM
+                                modal = modalOrId;
+                                modalId = modal.id || 'unknown-modal';
+                            } else {
+                                console.error('[PDF Builder] CLOSE_MODAL - Invalid parameter:', modalOrId);
+                                return;
+                            }
+
                             console.log(`[PDF Builder] CLOSE_MODAL - Attempting to close: ${modalId}`);
 
-                            const modal = document.getElementById(modalId);
                             if (!modal) {
                                 console.warn(`[PDF Builder] CLOSE_MODAL - Modal element not found: ${modalId}`);
                                 return;
@@ -1575,7 +1590,7 @@
                             console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
 
                         } catch (error) {
-                            console.error(`[PDF Builder] CLOSE_MODAL - Error closing modal ${modalId}:`, error);
+                            console.error(`[PDF Builder] CLOSE_MODAL - Error closing modal:`, error);
                         }
                     }
 
