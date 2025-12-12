@@ -1893,7 +1893,7 @@
                                 });
 
                                 closeModal(`canvas-${category}-modal-overlay`);
-                                alert('Paramètres sauvegardés avec succès !');
+                                // Alert de succès supprimé sur demande de l'utilisateur
                             } else {
                                 alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
                             }
