@@ -1177,11 +1177,11 @@
                                 } else {
                                     toggleSwitch.classList.remove('checked');
                                 }
-                                console.log(`[PDF Builder] TOGGLE_INIT - ${checkbox.id || checkbox.name}: checked=${checkbox.checked}`);
+                                console.log('[PDF Builder] TOGGLE_INIT - ' + (checkbox.id || checkbox.name) + ': checked=' + checkbox.checked);
                             }
                         });
 
-                        console.log(`[PDF Builder] TOGGLE_INIT - Initialized ${allToggles.length} toggles`);
+                        console.log('[PDF Builder] TOGGLE_INIT - Initialized ' + allToggles.length + ' toggles');
                     }
                         console.log('[PDF Builder] UPDATE_CARDS - Updating canvas cards display');
 
@@ -1198,7 +1198,7 @@
                                         statusIndicator.className = 'canvas-status status-default';
                                     }
 
-                                    console.log(`[PDF Builder] UPDATE_CARDS - Updated card for category: ${category}`);
+                                    console.log('[PDF Builder] UPDATE_CARDS - Updated card for category: ' + category);
                                 }
                             });
 
@@ -1218,14 +1218,14 @@
 
                     // Fonction pour mettre à jour les valeurs d'une modale avec les paramètres actuels
                     function updateModalValues(category) {
-                        console.log(`[PDF Builder] UPDATE_MODAL - Called with category: ${category}`);
+                        console.log('[PDF Builder] UPDATE_MODAL - Called with category: ' + category);
                         console.log('[PDF Builder] UPDATE_MODAL - Starting modal value synchronization');
-                        const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
+                        const modal = document.querySelector('#canvas-' + category + '-modal-overlay');
                         if (!modal) {
-                            console.log(`[PDF Builder] UPDATE_MODAL - Modal #canvas-${category}-modal-overlay not found`);
+                            console.log('[PDF Builder] UPDATE_MODAL - Modal #canvas-' + category + '-modal-overlay not found');
                             return;
                         }
-                        console.log(`[PDF Builder] UPDATE_MODAL - Modal found, processing category: ${category}`);
+                        console.log('[PDF Builder] UPDATE_MODAL - Modal found, processing category: ' + category);
 
                         // Mapping des champs selon la catégorie
                         const fieldMappings = {
@@ -1287,31 +1287,31 @@
 
                         // Mettre à jour chaque champ
                         for (const [fieldId, settingKey] of Object.entries(mappings)) {
-                            const field = modal.querySelector(`#${fieldId}, [name="${settingKey}"]`);
+                            const field = modal.querySelector('#' + fieldId + ', [name="' + settingKey + '"]');
                             if (field) {
                                 // Chercher la valeur dans les champs cachés
-                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${settingKey}]"]`);
+                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + settingKey + ']"]');
                                 let value = '';
                                 let valueSource = 'default'; // default, custom
                                 
                                 if (hiddenField && hiddenField.value && hiddenField.value.trim() !== '') {
                                     value = hiddenField.value;
                                     valueSource = 'custom';
-                                    console.log(`[PDF Builder] UPDATE_MODAL - Using custom value for ${settingKey}: ${value}`);
+                                    console.log('[PDF Builder] UPDATE_MODAL - Using custom value for ' + settingKey + ': ' + value);
                                 } else {
                                     // Utiliser la valeur par défaut si rien n'est trouvé
                                     value = defaultValues[settingKey] || '';
                                     valueSource = 'default';
-                                    console.log(`[PDF Builder] UPDATE_MODAL - Using default value for ${settingKey}: ${value}`);
+                                    console.log('[PDF Builder] UPDATE_MODAL - Using default value for ' + settingKey + ': ' + value);
                                 }
                                 
                                 if (category === 'grille') {
-                                    console.log(`[PDF Builder] GRID_UPDATE - Processing grid field ${fieldId} with value: ${value}`);
+                                    console.log('[PDF Builder] GRID_UPDATE - Processing grid field ' + fieldId + ' with value: ' + value);
                                 }
                                 
                                 // Log spécifique pour les toggles de grille
                                 if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
-                                    console.log(`GRID_TOGGLE: Updating ${fieldId} (${settingKey}) with value: ${value}, field type: ${field.type}`);
+                                    console.log('GRID_TOGGLE: Updating ' + fieldId + ' (' + settingKey + ') with value: ' + value + ', field type: ' + field.type);
                                 }
                                 
                                 if (field.type === 'checkbox') {
@@ -1324,12 +1324,12 @@
                                         } else {
                                             toggleSwitch.classList.remove('checked');
                                         }
-                                        console.log(`TOGGLE_DEBUG: ${fieldId} - checked=${field.checked}, toggle classes: ${toggleSwitch.className}`);
+                                        console.log('TOGGLE_DEBUG: ' + fieldId + ' - checked=' + field.checked + ', toggle classes: ' + toggleSwitch.className);
                                     } else {
-                                        console.log(`TOGGLE_DEBUG: ${fieldId} - No toggle-switch parent found`);
+                                        console.log('TOGGLE_DEBUG: ' + fieldId + ' - No toggle-switch parent found');
                                     }
                                     if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts'].includes(fieldId)) {
-                                        console.log(`ALL_TOGGLES: Set checkbox ${fieldId} checked to: ${field.checked}, toggle class: ${toggleSwitch ? toggleSwitch.className : 'no toggle'}`);
+                                        console.log('ALL_TOGGLES: Set checkbox ' + fieldId + ' checked to: ' + field.checked + ', toggle class: ' + (toggleSwitch ? toggleSwitch.className : 'no toggle'));
                                     }
                                 } else {
                                     field.value = value;
@@ -1345,7 +1345,7 @@
 
                                 // Ajouter les indicateurs visuels selon la source de la valeur
                                 field.classList.remove('value-default', 'value-custom', 'value-cached');
-                                field.classList.add(`value-${valueSource}`);
+                                field.classList.add('value-' + valueSource);
                                 
                                 // Ajouter un indicateur textuel près du champ
                                 let indicator = field.parentNode.querySelector('.value-indicator');
@@ -1366,7 +1366,7 @@
                                     indicator.style.color = '#f39c12';
                                 }
                             } else {
-                                console.log(`Field not found for ${fieldId} or ${settingKey}`);
+                                console.log('Field not found for ' + fieldId + ' or ' + settingKey);
                             }
                         }
 
@@ -1374,7 +1374,7 @@
                         const allInputs = modal.querySelectorAll('input, select, textarea');
                         allInputs.forEach(input => {
                             input.addEventListener('change', () => {
-                                console.log(`[PDF Builder] INPUT_CHANGE - ${input.name} changed`);
+                                console.log('[PDF Builder] INPUT_CHANGE - ' + input.name + ' changed');
                             });
 
                             // Gestion spécifique des toggles (checkboxes)
@@ -1387,7 +1387,7 @@
                                         } else {
                                             toggleSwitch.classList.remove('checked');
                                         }
-                                        console.log(`[PDF Builder] TOGGLE_CHANGE - ${this.id}: checked=${this.checked}, class=${toggleSwitch.className}`);
+                                        console.log('[PDF Builder] TOGGLE_CHANGE - ' + this.id + ': checked=' + this.checked + ', class=' + toggleSwitch.className);
                                     }
                                 });
                             }
@@ -1413,10 +1413,10 @@
                                 return;
                             }
 
-                            console.log(`[PDF Builder] CLOSE_MODAL - Attempting to close: ${modalId}`);
+                            console.log('[PDF Builder] CLOSE_MODAL - Attempting to close: ' + modalId);
 
                             if (!modal) {
-                                console.warn(`[PDF Builder] CLOSE_MODAL - Modal element not found: ${modalId}`);
+                                console.warn('[PDF Builder] CLOSE_MODAL - Modal element not found: ' + modalId);
                                 return;
                             }
 
@@ -1428,16 +1428,16 @@
                             document.body.focus();
                             modal.setAttribute('inert', '');
 
-                            console.log(`[PDF Builder] CLOSE_MODAL - Modal closed successfully: ${modalId}`);
+                            console.log('[PDF Builder] CLOSE_MODAL - Modal closed successfully: ' + modalId);
 
                         } catch (error) {
-                            console.error(`[PDF Builder] CLOSE_MODAL - Error closing modal:`, error);
+                            console.error('[PDF Builder] CLOSE_MODAL - Error closing modal:', error);
                         }
                     }
 
                     // Fonction helper pour les notifications avec fallback
                     function showNotification(type, message, options) {
-                        console.log(`[PDF Builder] NOTIFICATION_HELPER - Attempting to show ${type} notification:`, message);
+                        console.log('[PDF Builder] NOTIFICATION_HELPER - Attempting to show ' + type + ' notification:', message);
 
                         if (type === 'success' && typeof showSuccessNotification === 'function') {
                             console.log('[PDF Builder] NOTIFICATION_HELPER - Using showSuccessNotification');
@@ -1498,10 +1498,10 @@
 
                             // Réinitialiser les champs cachés
                             Object.keys(defaultValues).forEach(key => {
-                                const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${key}]"]`);
+                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + key + ']"]');
                                 if (hiddenField) {
                                     hiddenField.value = defaultValues[key];
-                                    console.log(`[PDF Builder] RESET_CANVAS - Reset ${key} to ${defaultValues[key]}`);
+                                    console.log('[PDF Builder] RESET_CANVAS - Reset ' + key + ' to ' + defaultValues[key]);
                                 }
                             });
 
