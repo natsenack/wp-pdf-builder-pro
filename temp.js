@@ -677,6 +677,7 @@
 
                         // Ajouter métadonnées
                         settings['action'] = 'pdf_builder_save_canvas_settings';
+                        settings['category'] = category;
                         settings['nonce'] = '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>';
                         settings['client_timestamp'] = Date.now();
 

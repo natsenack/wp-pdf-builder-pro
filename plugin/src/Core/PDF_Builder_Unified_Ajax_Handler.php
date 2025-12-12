@@ -35,7 +35,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions de sauvegarde principales
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
         add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']);
-        add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
+        // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
+        // add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
 
         // Actions de cache
         add_action('wp_ajax_pdf_builder_get_cache_metrics', [$this, 'handle_get_cache_metrics']);

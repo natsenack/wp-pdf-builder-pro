@@ -88,9 +88,7 @@ class PDF_Builder_Notification_Manager {
      * Charger les scripts et styles
      */
     public function enqueue_scripts() {
-        error_log('PDF_Builder_Notification_Manager::enqueue_scripts() called');
         if (!$this->settings['enabled']) {
-            error_log('PDF_Builder_Notification_Manager: notifications disabled in settings');
             return;
         }
 
