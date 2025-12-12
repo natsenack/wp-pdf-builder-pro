@@ -38,7 +38,7 @@
                     'pdf_builder_canvas_memory_limit_php': '128'
                 };
 
-                // Configuration simplifiée - PAS DE CACHE, SAUVEGARDE DIRECTE EN BASE
+                // Configuration simplifiée - SAUVEGARDE DIRECTE EN BASE UNIQUEMENT
                 const CANVAS_CONFIG = {
                     MAX_RETRIES: 3,
                     RETRY_DELAY: 1000, // ms
@@ -106,13 +106,13 @@
                     }
                 };
 
-                // Gestionnaire des modales Canvas - VERSION SIMPLIFIÉE SANS CACHE
+                // Gestionnaire des modales Canvas - VERSION SIMPLIFIÉE SANS STOCKAGE TEMPORAIRE
                 (function() {
                     'use strict';
 
                     console.log('[PDF Builder] 🚀 MODALS_SYSTEM_SIMPLIFIED - Initializing Canvas modals system');
                     console.log('[PDF Builder] 📅 Date: 2025-12-12');
-                    console.log('[PDF Builder] 🔧 No cache - Direct database save only');
+                    console.log('[PDF Builder] 🔧 Direct database save only - no temporary storage');
 
                     // Fonction pour ouvrir une modale
                     function openModal(modalId) {
@@ -429,25 +429,6 @@
 
                         // Démarrer la sauvegarde
                         attemptSave();
-                                        console.log('FALLBACK: Attempting to restore from cache');
-                                        // Ici on pourrait implémenter une restauration silencieuse
-                                        alert('Sauvegarde échouée. Données préservées en cache local.');
-                                    } else {
-                                        alert(`Erreur de sauvegarde après ${CANVAS_CONFIG.MAX_RETRIES} tentatives: ${error.message}`);
-                                    }
-                                }
-                            })
-                            .finally(() => {
-                                const saveBtn = document.querySelector(`.canvas-modal-save[data-category="${category}"]`);
-                                if (saveBtn && retryCount >= CANVAS_CONFIG.MAX_RETRIES) {
-                                    saveBtn.innerHTML = '💾 Sauvegarder';
-                                    saveBtn.disabled = false;
-                                }
-                            });
-                        }
-
-                        // Démarrer la sauvegarde
-                        attemptSave();
                     }
 
                     // Gestionnaire d'événements pour les boutons de configuration - VERSION RENFORCÉE
@@ -476,12 +457,12 @@
                             }
 
                             // Gestionnaire pour fermer les modales
-                            const closeBtn = e.target.closest('.canvas-modal-close, .cache-modal-close');
+                            const closeBtn = e.target.closest('.canvas-modal-close');
                             if (closeBtn) {
                                 e.preventDefault();
                                 console.log('[PDF Builder] CLOSE_BUTTON - Close button clicked');
 
-                                const modal = closeBtn.closest('.canvas-modal-overlay, .cache-modal');
+                                const modal = closeBtn.closest('.canvas-modal-overlay');
                                 if (modal) {
                                     const modalId = modal.id;
                                     closeModal(modalId);
@@ -538,7 +519,7 @@
                             console.log('[PDF Builder] ESC_KEY - Escape key pressed');
 
                             // Fermer toutes les modales ouvertes
-                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"], .cache-modal[style*="display: block"]');
+                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
                             openModals.forEach(modal => {
                                 const modalId = modal.id;
                                 closeModal(modalId);
