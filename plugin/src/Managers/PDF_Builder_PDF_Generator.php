@@ -603,7 +603,7 @@ class PdfBuilderPdfGenerator
         $content = str_replace('{{order_id}}', $order->get_id(), $content);
         $content = str_replace('{{order_number}}', $order->get_order_number(), $content);
         $content = str_replace('{{order_date}}', $order->get_date_created()->date('d/m/Y'), $content);
-        $content = str_replace('{{order_total}}', function_exists('wc_price') ? wc_price($order->get_total()) : number_format($order->get_total(), 2), $content);
+        $content = str_replace('{{order_total}}', $order->get_formatted_order_total(), $content);
 
         // Informations client
         $content = str_replace('{{customer_name}}', $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(), $content);

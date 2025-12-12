@@ -887,13 +887,16 @@ class PdfBuilderAdmin
 // Hook pdf_builder_get_template déjà enregistré plus haut
 
         // Hooks WooCommerce - Délégation vers le manager
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
-            add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
-            // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement si WC_VERSION est défini et >= 7.1
-            if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
-                add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
+        // Différer l'enregistrement jusqu'à ce que WooCommerce soit complètement chargé
+        add_action('init', function() {
+            if (did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
+                add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
+                // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement si WC_VERSION est défini et >= 7.1
+                if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
+                    add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
+                }
             }
-        }
+        });
 
         // Hook pour la compatibilité avec les anciens liens template_id
         add_action('admin_init', [$this, 'handle_legacy_template_links']);

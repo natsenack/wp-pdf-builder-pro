@@ -23,24 +23,6 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 // ============================================================================
 
 /**
- * Vérifie si WooCommerce est actif sans déclencher l'autoloading
- * Cette fonction est sûre à appeler seulement après que WordPress soit complètement initialisé
- *
- * @return bool True si WooCommerce est actif
- */
-function pdf_builder_is_woocommerce_active() {
-    // Pour éviter complètement tout risque d'autoloading prématuré,
-    // on ne fait la vérification que si nous sommes dans un hook approprié
-    // (init ou plus tard) et que WooCommerce est déjà chargé
-    if (!did_action('init')) {
-        return false; // Trop tôt, retourner false pour éviter tout autoloading
-    }
-
-    // À partir du hook 'init', il est sûr de vérifier
-    return defined('WC_VERSION');
-}
-
-/**
  * Fonction d'urgence pour charger les utilitaires si nécessaire
  * Peut être appelée depuis n'importe où pour garantir la disponibilité des classes
  */
@@ -52,8 +34,8 @@ function pdf_builder_load_utilities_emergency() {
     }
 
     $utilities = array(
+        'PDF_Builder_Onboarding_Manager.php',
         'PDF_Builder_GDPR_Manager.php'
-        // PDF_Builder_Onboarding_Manager.php sera chargé plus tard si nécessaire
     );
 
     foreach ($utilities as $utility) {
@@ -75,11 +57,6 @@ function pdf_builder_load_utilities_emergency() {
  * Peut être appelée depuis n'importe où dans le code
  */
 function pdf_builder_ensure_onboarding_manager() {
-    // Ne charger l'Onboarding Manager que si WooCommerce est actif pour éviter les problèmes de traductions
-    if (!did_action('plugins_loaded') || !defined('WC_VERSION')) {
-        return false; // WooCommerce pas encore disponible
-    }
-
     if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         pdf_builder_load_utilities_emergency();
 
@@ -100,16 +77,6 @@ function pdf_builder_ensure_onboarding_manager() {
 function pdf_builder_get_onboarding_manager() {
     // Essayer d'abord la vraie classe
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-        return \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
-    }
-
-    // Si WooCommerce n'est pas disponible, retourner null
-    if (!did_action('plugins_loaded') || !defined('WC_VERSION')) {
-        return null;
-    }
-
-    // Tenter de charger l'Onboarding Manager
-    if (pdf_builder_ensure_onboarding_manager()) {
         return \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
 
@@ -394,15 +361,11 @@ function pdf_builder_load_core()
         'PDF_Builder_PDF_Generator.php',
         'PDF_Builder_Resize_Manager.php',
         'PDF_Builder_Settings_Manager.php',
-        'PDF_Builder_Template_Manager.php'
-    );
-
-    // Managers qui nécessitent WooCommerce - chargés seulement si WooCommerce est disponible
-    $woocommerce_dependent_managers = array(
         'PDF_Builder_Status_Manager.php',
-        'PDF_Builder_Variable_Mapper.php'
+        'PDF_Builder_Template_Manager.php',
+        'PDF_Builder_Variable_Mapper.php',
+        'PDF_Builder_WooCommerce_Integration.php'
     );
-
     foreach ($managers as $manager) {
         $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
         if (file_exists($manager_path)) {
@@ -410,68 +373,15 @@ function pdf_builder_load_core()
         }
     }
 
-    // Charger les managers dépendants de WooCommerce seulement si WooCommerce est actif
-    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
-        foreach ($woocommerce_dependent_managers as $manager) {
-            $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
-            if (file_exists($manager_path)) {
-                require_once $manager_path;
-            }
-        }
-
-        // Charger les utilitaires WooCommerce seulement si WooCommerce est actif
-        // Note: WooCommerce_Utilities.php n'existe pas - utilitaires supprimés ou déplacés
-    } else {
-        // Si WooCommerce n'est pas encore disponible, programmer un chargement retardé
-        add_action('plugins_loaded', function() {
-            if (defined('WC_VERSION')) {
-                $woocommerce_dependent_managers = array(
-                    'PDF_Builder_Status_Manager.php',
-                    'PDF_Builder_Variable_Mapper.php'
-                );
-                foreach ($woocommerce_dependent_managers as $manager) {
-                    $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
-                    if (file_exists($manager_path) && !class_exists('PDF_Builder\\Managers\\' . str_replace('.php', '', str_replace('PDF_Builder_', '', $manager)))) {
-                        require_once $manager_path;
-                    }
-                }
-
-                // Charger WooCommerceDataProvider si pas déjà chargé
-                $woocommerce_data_provider_path = PDF_BUILDER_PLUGIN_DIR . 'config/data/WooCommerceDataProvider.php';
-                if (file_exists($woocommerce_data_provider_path) && !class_exists('WooCommerceDataProvider')) {
-                    require_once $woocommerce_data_provider_path;
-                }
-
-                // Charger les utilitaires WooCommerce
-                // Note: WooCommerce_Utilities.php n'existe pas - utilitaires supprimés ou déplacés
-            }
-        }, 5); // Priorité 5 pour s'assurer que c'est après WooCommerce
-    }
-
-    // Charger PDF_Builder_WooCommerce_Integration seulement si WooCommerce est actif
-    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
-        $woocommerce_manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_WooCommerce_Integration.php';
-        if (file_exists($woocommerce_manager_path)) {
-            require_once $woocommerce_manager_path;
-        }
-    }
-
     // Charger les classes de cache essentielles depuis src/Cache/
     $cache_classes = array(
-        'RendererCache.php'
+        'RendererCache.php',
+        'WooCommerceCache.php'
     );
     foreach ($cache_classes as $cache_class) {
         $cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/' . $cache_class;
         if (file_exists($cache_path)) {
             require_once $cache_path;
-        }
-    }
-
-    // Charger WooCommerceCache seulement si WooCommerce est actif
-    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
-        $woocommerce_cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/WooCommerceCache.php';
-        if (file_exists($woocommerce_cache_path)) {
-            require_once $woocommerce_cache_path;
         }
     }
 
@@ -608,22 +518,8 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/predefined-templates-manager.php';
     }
 
-    // Charger le contrôleur PDF - différé si WooCommerce n'est pas disponible
-    $load_pdf_controller_now = true;
-    if (!did_action('plugins_loaded')) {
-        // Si plugins_loaded n'a pas encore eu lieu, on charge maintenant
-        $load_pdf_controller_now = true;
-    } elseif (!defined('WC_VERSION')) {
-        // Si WooCommerce n'est pas disponible, on peut différer
-        $load_pdf_controller_now = false;
-        add_action('plugins_loaded', function() {
-            if (defined('WC_VERSION') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-            }
-        }, 5);
-    }
-
-    if ($load_pdf_controller_now && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+    // Charger le contrôleur PDF
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
     }
 
@@ -747,14 +643,9 @@ function pdf_builder_load_new_classes()
     // Charger les interfaces et classes de données
     $data_classes = [
         'src/Interfaces/DataProviderInterface.php',
-        'config/data/SampleDataProvider.php'
+        'config/data/SampleDataProvider.php',
+        'config/data/WooCommerceDataProvider.php'
     ];
-
-    // Charger WooCommerceDataProvider seulement si WooCommerce est disponible
-    if (did_action('plugins_loaded') && defined('WC_VERSION')) {
-        $data_classes[] = 'config/data/WooCommerceDataProvider.php';
-    }
-
     foreach ($data_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
         if (file_exists($file_path)) {
@@ -916,13 +807,6 @@ function pdf_builder_load_bootstrap()
         PDF_Builder_Notification_Manager::get_instance();
     }
 
-    // CHARGER LE MONITEUR DE SANTE
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Health_Monitor.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Health_Monitor.php';
-        // Initialiser l'instance
-        PDF_Builder_Health_Monitor::get_instance();
-    }
-
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
     /*
     add_action('admin_enqueue_scripts', function() {
@@ -1061,24 +945,13 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
     add_action('init', function() {
-        if (pdf_builder_is_woocommerce_active() && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+        if (class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
             \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
         }
     });
 
     // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
     pdf_builder_register_essential_ajax_hooks();
-
-    // CHARGER LES UTILITAIRES WOOCOMMERCE PLUS TARD (après init complète)
-    add_action('init', function() {
-        if (defined('WC_VERSION')) {
-            // Charger PDF_Builder_Onboarding_Manager seulement maintenant
-            $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
-            if (file_exists($utility_path) && !class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-                require_once $utility_path;
-            }
-        }
-    });
 
     // INSTANCIER L'API PREVIEW POUR LES ROUTES REST (Étape 1.4)
     add_action('init', function() {
@@ -1330,7 +1203,7 @@ function pdf_builder_load_core_on_demand()
     }
 
     // Chargement d'urgence des utilitaires dès le départ
-    // pdf_builder_load_utilities_emergency(); // REMOVED: Ne pas charger trop tôt pour éviter les problèmes de traductions
+    pdf_builder_load_utilities_emergency();
 
     // Détection ultra-rapide
     $load_core = false;
@@ -1829,35 +1702,6 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });
-
-// ============================================================================
-// ✅ FONCTION DE CHARGEMENT À LA DEMANDE DES MANAGERS WOOCOMMERCE
-// ============================================================================
-
-/**
- * Charge les managers dépendants de WooCommerce à la demande
- */
-function pdf_builder_load_woocommerce_managers() {
-    static $woocommerce_managers_loaded = false;
-
-    if ($woocommerce_managers_loaded || !did_action('plugins_loaded') || !defined('WC_VERSION')) {
-        return;
-    }
-
-    $woocommerce_dependent_managers = array(
-        'PDF_Builder_Status_Manager.php',
-        'PDF_Builder_Variable_Mapper.php'
-    );
-
-    foreach ($woocommerce_dependent_managers as $manager) {
-        $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
-        if (file_exists($manager_path) && !class_exists('PDF_Builder\\Managers\\' . str_replace('.php', '', str_replace('PDF_Builder_', '', $manager)))) {
-            require_once $manager_path;
-        }
-    }
-
-    $woocommerce_managers_loaded = true;
-}
 
 // ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES

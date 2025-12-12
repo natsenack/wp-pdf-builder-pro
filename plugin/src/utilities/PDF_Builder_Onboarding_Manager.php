@@ -462,7 +462,7 @@ class PDF_Builder_Onboarding_Manager {
                     </div>
                 ';
             case 'woocommerce_setup':
-                if (defined('WC_VERSION')) {
+                if (did_action('init') && defined('WC_VERSION')) {
                     return '
                         <div class="woocommerce-setup">
                             <div class="setup-notice success">
