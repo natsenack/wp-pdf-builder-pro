@@ -121,9 +121,9 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return $this->order->getBillingPostcode();
                 case 'customer_country':
                 case 'billing_country':
-                    if (function_exists('WC') && WC() && WC()->countries) {
-                        return WC()->countries->countries[$this->order->getBillingCountry()] ??
-                            $this->order->getBillingCountry();
+                    $countries = get_option('woocommerce_countries', []);
+                    if (!empty($countries) && isset($countries[$this->order->getBillingCountry()])) {
+                        return $countries[$this->order->getBillingCountry()];
                     }
                     return $this->order->getBillingCountry();
                 case 'billing_state':
@@ -144,9 +144,9 @@ class WooCommerceDataProvider implements DataProviderInterface
                 case 'shipping_postcode':
                     return $this->order->getShippingPostcode();
                 case 'shipping_country':
-                    if (function_exists('WC') && WC() && WC()->countries) {
-                        return WC()->countries->countries[$this->order->getShippingCountry()] ??
-                            $this->order->getShippingCountry();
+                    $countries = get_option('woocommerce_countries', []);
+                    if (!empty($countries) && isset($countries[$this->order->getShippingCountry()])) {
+                        return $countries[$this->order->getShippingCountry()];
                     }
                     return $this->order->getShippingCountry();
                 case 'shipping_state':
@@ -164,8 +164,9 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return get_option('woocommerce_store_postcode', '');
                 case 'company_country':
                     $country = get_option('woocommerce_default_country', '');
-                    if (function_exists('WC') && WC() && WC()->countries) {
-                        return WC()->countries->countries[$country] ?? $country;
+                    $countries = get_option('woocommerce_countries', []);
+                    if (!empty($countries) && isset($countries[$country])) {
+                        return $countries[$country];
                     }
                     return $country;
                 case 'company_phone':

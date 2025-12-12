@@ -451,11 +451,15 @@ class PDFBuilderVariableMapper
      */
     private function getCountryName($country_code)
     {
-        if (!defined('WC_VERSION') || !function_exists('WC') || !$country_code || !function_exists('WC') || !WC() || !WC()->countries) {
+        if (!defined('WC_VERSION') || !$country_code) {
             return $country_code;
         }
 
-        $countries = WC()->countries->get_countries();
+        // Use get_option instead of WC()->countries to avoid autoloading
+        $countries = get_option('woocommerce_countries', []);
+        if (empty($countries)) {
+            $countries = get_option('woocommerce_allowed_countries', []);
+        }
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }
 
@@ -529,14 +533,14 @@ class PDFBuilderVariableMapper
         );
 
         // Add WooCommerce-specific fallbacks only if WooCommerce is available
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && function_exists('wc_price') && function_exists('get_woocommerce_currency')) {
-            $fallbacks['order_total'] = \wc_price(0);
+        if (did_action('plugins_loaded') && defined('WC_VERSION') && function_exists('get_woocommerce_currency')) {
+            $fallbacks['order_total'] = '$0.00';
             $fallbacks['currency'] = get_woocommerce_currency();
-            $fallbacks['subtotal'] = \wc_price(0);
-            $fallbacks['tax_amount'] = \wc_price(0);
-            $fallbacks['shipping_amount'] = \wc_price(0);
-            $fallbacks['discount_amount'] = \wc_price(0);
-            $fallbacks['total_excl_tax'] = \wc_price(0);
+            $fallbacks['subtotal'] = '$0.00';
+            $fallbacks['tax_amount'] = '$0.00';
+            $fallbacks['shipping_amount'] = '$0.00';
+            $fallbacks['discount_amount'] = '$0.00';
+            $fallbacks['total_excl_tax'] = '$0.00';
         }
 
         return $fallbacks;
