@@ -99,11 +99,11 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_shadow_enabled">Ombre activée</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled"
                                value="1" <?php checked(get_canvas_modal_value('shadow_enabled', $canvas_defaults['shadow_enabled']), '1'); ?>>
-                        <label for="modal_canvas_shadow_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -125,11 +125,11 @@ function get_canvas_modal_value($key, $default = '') {
             <div class="modal-settings-grid">
                 <div class="setting-group">
                     <label for="modal_canvas_grid_enabled">Grille activée</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
                                value="1" <?php checked(get_canvas_modal_value('grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
-                        <label for="modal_canvas_grid_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_grid_size">Taille grille (px)</label>
@@ -138,19 +138,19 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_guides_enabled">Guides activés</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
                                value="1" <?php checked(get_canvas_modal_value('guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
-                        <label for="modal_canvas_guides_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_snap_to_grid">Accrochage à la grille</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
                                value="1" <?php checked(get_canvas_modal_value('snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
-                        <label for="modal_canvas_snap_to_grid"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
@@ -192,35 +192,35 @@ function get_canvas_modal_value($key, $default = '') {
             <div class="modal-settings-grid">
                 <div class="setting-group">
                     <label for="modal_canvas_drag_enabled">Glisser activé</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled"
                                value="1" <?php checked(get_canvas_modal_value('drag_enabled', $canvas_defaults['drag_enabled']), '1'); ?>>
-                        <label for="modal_canvas_drag_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_resize_enabled">Redimensionnement activé</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled"
                                value="1" <?php checked(get_canvas_modal_value('resize_enabled', $canvas_defaults['resize_enabled']), '1'); ?>>
-                        <label for="modal_canvas_resize_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_rotate_enabled">Rotation activée</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled"
                                value="1" <?php checked(get_canvas_modal_value('rotate_enabled', $canvas_defaults['rotate_enabled']), '1'); ?>>
-                        <label for="modal_canvas_rotate_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_multi_select">Sélection multiple</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_multi_select" name="pdf_builder_canvas_multi_select"
                                value="1" <?php checked(get_canvas_modal_value('multi_select', $canvas_defaults['multi_select']), '1'); ?>>
-                        <label for="modal_canvas_multi_select"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_selection_mode">Mode de sélection</label>
@@ -232,11 +232,11 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts"
                                value="1" <?php checked(get_canvas_modal_value('keyboard_shortcuts', $canvas_defaults['keyboard_shortcuts']), '1'); ?>>
-                        <label for="modal_canvas_keyboard_shortcuts"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_export_quality">Qualité export (%)</label>
@@ -287,27 +287,27 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_debug_enabled">Debug activé</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled"
                                value="1" <?php checked(get_canvas_modal_value('debug_enabled', $canvas_defaults['debug_enabled']), '1'); ?>>
-                        <label for="modal_canvas_debug_enabled"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_performance_monitoring">Monitoring performance</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring"
                                value="1" <?php checked(get_canvas_modal_value('performance_monitoring', $canvas_defaults['performance_monitoring']), '1'); ?>>
-                        <label for="modal_canvas_performance_monitoring"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_error_reporting">Rapport d'erreurs</label>
-                    <div class="toggle-switch">
+                    <label class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_error_reporting" name="pdf_builder_canvas_error_reporting"
                                value="1" <?php checked(get_canvas_modal_value('error_reporting', $canvas_defaults['error_reporting']), '1'); ?>>
-                        <label for="modal_canvas_error_reporting"></label>
-                    </div>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
             </div>
         </div>
