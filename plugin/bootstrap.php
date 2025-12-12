@@ -835,7 +835,7 @@ function pdf_builder_load_bootstrap()
                 ]
             ]);
 
-            // Définir les paramètres de debug JavaScript pour notifications.js
+            // Définir les paramètres de debug JavaScript UNIQUEMENT pour notifications.js
             $settings = get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
