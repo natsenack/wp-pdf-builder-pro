@@ -102,7 +102,7 @@ class PdfBuilderPreviewAjax
                 'id' => $order->get_id(),
                 'number' => $order->get_order_number(),
                 'customer' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-                'total' => $order->get_formatted_order_total(),
+                'total' => function_exists('wc_price') ? wc_price($order->get_total()) : number_format($order->get_total(), 2),
                 'date' => $order->get_date_created()->format('d/m/Y')
             );
         }

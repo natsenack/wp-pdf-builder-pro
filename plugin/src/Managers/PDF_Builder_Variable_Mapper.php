@@ -122,7 +122,7 @@ class PDFBuilderVariableMapper
         }
 
         return array(
-            'customer_name' => $this->order->get_formatted_billing_full_name(),
+            'customer_name' => trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name()),
             'customer_first_name' => $this->order->get_billing_first_name(),
             'customer_last_name' => $this->order->get_billing_last_name(),
             'customer_email' => $this->order->get_billing_email(),
@@ -155,8 +155,8 @@ class PDFBuilderVariableMapper
         }
 
         return array(
-            'billing_address' => $this->order->get_formatted_billing_address(),
-            'shipping_address' => $this->order->get_formatted_shipping_address(),
+            'billing_address' => $this->formatAddress($this->order, 'billing'),
+            'shipping_address' => $this->formatAddress($this->order, 'shipping'),
             'billing_first_name' => $this->order->get_billing_first_name(),
             'billing_last_name' => $this->order->get_billing_last_name(),
             'billing_company' => $this->order->get_billing_company(),
@@ -544,5 +544,48 @@ class PDFBuilderVariableMapper
         }
 
         return $fallbacks;
+    }
+
+    /**
+     * Formate une adresse manuellement pour éviter l'autoloading WooCommerce
+     */
+    private function formatAddress($order, $type = 'billing')
+    {
+        $address_parts = array();
+
+        $company = $type === 'billing' ? $order->get_billing_company() : $order->get_shipping_company();
+        if (!empty($company)) {
+            $address_parts[] = $company;
+        }
+
+        $first_name = $type === 'billing' ? $order->get_billing_first_name() : $order->get_shipping_first_name();
+        $last_name = $type === 'billing' ? $order->get_billing_last_name() : $order->get_shipping_last_name();
+        if (!empty($first_name) || !empty($last_name)) {
+            $address_parts[] = trim($first_name . ' ' . $last_name);
+        }
+
+        $address_1 = $type === 'billing' ? $order->get_billing_address_1() : $order->get_shipping_address_1();
+        if (!empty($address_1)) {
+            $address_parts[] = $address_1;
+        }
+
+        $address_2 = $type === 'billing' ? $order->get_billing_address_2() : $order->get_shipping_address_2();
+        if (!empty($address_2)) {
+            $address_parts[] = $address_2;
+        }
+
+        $city = $type === 'billing' ? $order->get_billing_city() : $order->get_shipping_city();
+        $postcode = $type === 'billing' ? $order->get_billing_postcode() : $order->get_shipping_postcode();
+        $city_line = trim($city . ' ' . $postcode);
+        if (!empty($city_line)) {
+            $address_parts[] = $city_line;
+        }
+
+        $country = $type === 'billing' ? $this->getCountryName($order->get_billing_country()) : $this->getCountryName($order->get_shipping_country());
+        if (!empty($country)) {
+            $address_parts[] = $country;
+        }
+
+        return implode("\n", $address_parts);
     }
 }

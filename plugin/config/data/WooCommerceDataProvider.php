@@ -81,7 +81,7 @@ class WooCommerceDataProvider implements DataProviderInterface
                 case 'order_time':
                     return wp_date(get_option('time_format'), strtotime($this->order->getDateCreated()));
                 case 'order_status':
-                    return wc_get_order_status_name($this->order->getStatus());
+                    return function_exists('wc_get_order_status_name') ? wc_get_order_status_name($this->order->getStatus()) : $this->order->getStatus();
                 case 'order_total':
                     return $this->formatPrice($this->order->getTotal());
                 case 'order_subtotal':

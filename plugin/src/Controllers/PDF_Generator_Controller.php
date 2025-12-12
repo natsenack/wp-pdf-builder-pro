@@ -815,8 +815,8 @@ class PdfBuilderProGenerator
         // Variables de commande (seulement si ordre existe)
         $order_replacements = array();
         if ($order) {
-            $billing_address = $order->get_formatted_billing_address();
-            $shipping_address = $order->get_formatted_shipping_address();
+            $billing_address = self::formatAddress($order, 'billing');
+            $shipping_address = self::formatAddress($order, 'shipping');
 
             $order_replacements = array(
                 '{{order_id}}' => $order->get_id(),
@@ -1962,5 +1962,65 @@ class PdfBuilderProGenerator
 
 
         return $html;
+    }
+
+    /**
+     * Formate une adresse manuellement pour éviter l'autoloading WooCommerce
+     */
+    private static function formatAddress($order, $type = 'billing')
+    {
+        $address_parts = array();
+
+        $company = $type === 'billing' ? $order->get_billing_company() : $order->get_shipping_company();
+        if (!empty($company)) {
+            $address_parts[] = $company;
+        }
+
+        $first_name = $type === 'billing' ? $order->get_billing_first_name() : $order->get_shipping_first_name();
+        $last_name = $type === 'billing' ? $order->get_billing_last_name() : $order->get_shipping_last_name();
+        if (!empty($first_name) || !empty($last_name)) {
+            $address_parts[] = trim($first_name . ' ' . $last_name);
+        }
+
+        $address_1 = $type === 'billing' ? $order->get_billing_address_1() : $order->get_shipping_address_1();
+        if (!empty($address_1)) {
+            $address_parts[] = $address_1;
+        }
+
+        $address_2 = $type === 'billing' ? $order->get_billing_address_2() : $order->get_shipping_address_2();
+        if (!empty($address_2)) {
+            $address_parts[] = $address_2;
+        }
+
+        $city = $type === 'billing' ? $order->get_billing_city() : $order->get_shipping_city();
+        $postcode = $type === 'billing' ? $order->get_billing_postcode() : $order->get_shipping_postcode();
+        $city_line = trim($city . ' ' . $postcode);
+        if (!empty($city_line)) {
+            $address_parts[] = $city_line;
+        }
+
+        $country = $type === 'billing' ? self::getCountryName($order->get_billing_country()) : self::getCountryName($order->get_shipping_country());
+        if (!empty($country)) {
+            $address_parts[] = $country;
+        }
+
+        return implode("\n", $address_parts);
+    }
+
+    /**
+     * Get country name from country code
+     */
+    private static function getCountryName($country_code)
+    {
+        if (!defined('WC_VERSION') || !$country_code) {
+            return $country_code;
+        }
+
+        // Use get_option instead of WC()->countries to avoid autoloading
+        $countries = get_option('woocommerce_countries', []);
+        if (empty($countries)) {
+            $countries = get_option('woocommerce_allowed_countries', []);
+        }
+        return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }
 }
