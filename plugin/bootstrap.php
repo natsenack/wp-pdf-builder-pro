@@ -29,21 +29,10 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
  * @return bool True si WooCommerce est actif
  */
 function pdf_builder_is_woocommerce_active() {
-    static $is_active = null;
-
-    if ($is_active !== null) {
-        return $is_active;
-    }
-
-    // Vérifier si nous sommes après plugins_loaded
-    if (!did_action('plugins_loaded')) {
-        $is_active = false;
-        return false;
-    }
-
-    // Une fois que plugins_loaded a été déclenché, defined('WC_VERSION') est sûr
-    $is_active = defined('WC_VERSION');
-    return $is_active;
+    // Pour éviter complètement tout risque d'autoloading prématuré,
+    // on retourne toujours false pendant le bootstrap
+    // Les vérifications WooCommerce seront faites plus tard dans les hooks appropriés
+    return false;
 }
 
 /**
@@ -59,13 +48,8 @@ function pdf_builder_load_utilities_emergency() {
 
     $utilities = array(
         'PDF_Builder_GDPR_Manager.php'
+        // PDF_Builder_Onboarding_Manager.php sera chargé plus tard si nécessaire
     );
-
-    // Charger PDF_Builder_Onboarding_Manager seulement si WooCommerce est actif (pour éviter les problèmes de traductions)
-    // Utilisation d'une approche sécurisée qui n'entraîne pas l'autoloading prématuré
-    if (pdf_builder_is_woocommerce_active()) {
-        $utilities[] = 'PDF_Builder_Onboarding_Manager.php';
-    }
 
     foreach ($utilities as $utility) {
         $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
@@ -1073,6 +1057,17 @@ function pdf_builder_load_bootstrap()
 
     // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
     pdf_builder_register_essential_ajax_hooks();
+
+    // CHARGER LES UTILITAIRES WOOCOMMERCE PLUS TARD (après init complète)
+    add_action('init', function() {
+        if (defined('WC_VERSION')) {
+            // Charger PDF_Builder_Onboarding_Manager seulement maintenant
+            $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+            if (file_exists($utility_path) && !class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+                require_once $utility_path;
+            }
+        }
+    });
 
     // INSTANCIER L'API PREVIEW POUR LES ROUTES REST (Étape 1.4)
     add_action('init', function() {
