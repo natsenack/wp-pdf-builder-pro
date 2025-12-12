@@ -31,12 +31,13 @@ class AdminScriptLoader
     public function loadAdminScripts($hook = null)
     {
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
+        // Appliquer toujours, pas seulement sur les pages PDF Builder
         add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
 
         // Pour la page des paramètres PDF Builder, utiliser le buffering de sortie pour filtrer les scripts inline
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
-            add_action('admin_head', [$this, 'startOutputBuffering'], 1);
-            add_action('admin_footer', [$this, 'endOutputBuffering'], 999);
+            add_action('init', [$this, 'startOutputBuffering'], 1);
+            add_action('shutdown', [$this, 'endOutputBuffering'], 999);
         }
 
         // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
@@ -378,8 +379,10 @@ class AdminScriptLoader
         if (empty($src)) {
             // Check if the script content starts with HTML (indicating it's a template)
             if (preg_match('/^\s*<[^>]+>/', $tag)) {
-                error_log('[PDF Builder] Found HTML template script, REMOVING for handle: ' . $handle);
-                return '';
+                error_log('[PDF Builder] Found HTML template script, changing type to text/template for handle: ' . $handle);
+                // Change type to text/template instead of removing
+                $tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $tag);
+                return $tag;
             }
 
             // Also check for specific Elementor patterns as backup
@@ -390,10 +393,11 @@ class AdminScriptLoader
                 strpos($tag, 'elementor-finder__results__category__title') !== false ||
                 strpos($tag, 'elementor-finder__results__item__link') !== false) {
 
-                error_log('[PDF Builder] Found Elementor template script, REMOVING for handle: ' . $handle);
+                error_log('[PDF Builder] Found Elementor template script, changing type to text/template for handle: ' . $handle);
 
-                // Return empty string to remove the script tag entirely
-                return '';
+                // Change type to text/template instead of removing
+                $tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $tag);
+                return $tag;
             }
         }
 
@@ -431,22 +435,25 @@ class AdminScriptLoader
         $pattern = '/<script[^>]*>(?:\s*<[^>]+>.*?)<\/script>/is';
         
         $content = preg_replace_callback($pattern, function($matches) {
-            $script_content = $matches[0];
+            $script_tag = $matches[0];
             
             // Extraire le contenu entre les balises script
-            if (preg_match('/<script[^>]*>(.*?)<\/script>/is', $script_content, $inner_matches)) {
+            if (preg_match('/<script[^>]*>(.*?)<\/script>/is', $script_tag, $inner_matches)) {
                 $inner_content = $inner_matches[1];
                 
                 // Vérifier si le contenu commence par du HTML (après espaces)
                 if (preg_match('/^\s*<[^>]+>/', $inner_content)) {
-                    // C'est un template HTML, supprimer le script
-                    error_log('[PDF Builder] Removed Elementor HTML template script: ' . substr($inner_content, 0, 100) . '...');
-                    return '';
+                    // C'est un template HTML, changer le type au lieu de supprimer
+                    error_log('[PDF Builder] Changing Elementor HTML template script type to text/template: ' . substr($inner_content, 0, 100) . '...');
+                    
+                    // Remplacer type="text/javascript" par type="text/template"
+                    $modified_tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $script_tag);
+                    return $modified_tag;
                 }
             }
             
             // Garder le script normal
-            return $script_content;
+            return $script_tag;
         }, $content);
         
         error_log('[PDF Builder] Finished Elementor script filtering');
