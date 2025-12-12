@@ -820,17 +820,29 @@ class PDF_Builder_Health_Monitor {
      */
     public function health_check_ajax() {
         try {
+            // Debug logs
+            error_log('[HEALTH CHECK DEBUG] AJAX called');
+            error_log('[HEALTH CHECK DEBUG] POST data: ' . print_r($_POST, true));
+            error_log('[HEALTH CHECK DEBUG] REQUEST data: ' . print_r($_REQUEST, true));
+            error_log('[HEALTH CHECK DEBUG] Current user ID: ' . get_current_user_id());
+            error_log('[HEALTH CHECK DEBUG] Current user capabilities: ' . print_r(wp_get_current_user()->allcaps, true));
+
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+                error_log('[HEALTH CHECK DEBUG] Nonce verification FAILED');
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
+            error_log('[HEALTH CHECK DEBUG] Nonce verification PASSED');
 
             if (!current_user_can('manage_options')) {
+                error_log('[HEALTH CHECK DEBUG] Permission check FAILED - user cannot manage_options');
                 wp_send_json_error(['message' => 'Permissions insuffisantes']);
                 return;
             }
+            error_log('[HEALTH CHECK DEBUG] Permission check PASSED');
 
             $health_status = $this->perform_health_checks();
+            error_log('[HEALTH CHECK DEBUG] Health check completed successfully');
 
             wp_send_json_success([
                 'message' => 'Vérification de santé terminée',
@@ -838,6 +850,8 @@ class PDF_Builder_Health_Monitor {
             ]);
 
         } catch (Exception $e) {
+            error_log('[HEALTH CHECK DEBUG] Exception: ' . $e->getMessage());
+            error_log('[HEALTH CHECK DEBUG] Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
         }
     }
