@@ -1893,7 +1893,8 @@
                                 });
 
                                 closeModal(`canvas-${category}-modal-overlay`);
-                                // Alert de succès supprimé sur demande de l'utilisateur
+                                // Recharger la page pour refléter les nouvelles valeurs sauvegardées
+                                window.location.reload();
                             } else {
                                 alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
                             }
