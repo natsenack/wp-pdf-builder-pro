@@ -1959,3 +1959,180 @@
     min-width: 22px;
     text-align: right;
 }
+
+/* ============================================
+   ADDITIONAL CANVAS MODAL STYLES
+   ============================================ */
+
+/* États de chargement */
+.canvas-modal-apply.loading {
+    position: relative;
+    color: transparent;
+}
+
+.canvas-modal-apply.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Messages d'erreur et de succès */
+.canvas-modal-error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #f5c6cb;
+}
+
+.canvas-modal-success {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #c3e6cb;
+}
+
+/* Indicateurs de valeur */
+.value-indicator {
+    font-size: 12px;
+    font-style: italic;
+    margin-left: 8px;
+}
+
+.value-default {
+    border-left: 3px solid #666;
+}
+
+.value-custom {
+    border-left: 3px solid #007cba;
+}
+
+.value-cached {
+    border-left: 3px solid #f39c12;
+}
+
+/* Formulaire dans la modale */
+#canvas-dimensions-form,
+#canvas-apparence-form,
+#canvas-grille-form,
+#canvas-zoom-form,
+#canvas-interactions-form,
+#canvas-export-form,
+#canvas-performance-form,
+#canvas-debug-form {
+    margin: 0;
+}
+
+/* Table des paramètres */
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.form-table th,
+.form-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+    vertical-align: top;
+}
+
+.form-table th {
+    width: 200px;
+    text-align: left;
+    font-weight: 600;
+    color: #37474f;
+}
+
+.form-table td {
+    padding-left: 20px;
+}
+
+/* Champs de formulaire */
+.form-table input[type="text"],
+.form-table input[type="number"],
+.form-table select {
+    width: 100%;
+    max-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-table input:focus,
+.form-table select:focus {
+    outline: none;
+    border-color: var(--modal-info-color);
+    box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2);
+}
+
+/* Toggles dans les modals */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--modal-info-color);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-switch.checked .toggle-slider {
+    background-color: var(--modal-info-color);
+}
+
+.toggle-switch.checked .toggle-slider:before {
+    transform: translateX(26px);
+}
