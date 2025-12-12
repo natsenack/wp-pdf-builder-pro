@@ -135,7 +135,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-save" data-category="affichage">Appliquer</button>
         </div>
     </div>
 </div>
@@ -221,7 +221,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-save" data-category="navigation">Appliquer</button>
         </div>
     </div>
 </div>
@@ -327,7 +327,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-save" data-category="comportement">Appliquer</button>
         </div>
     </div>
 </div>
@@ -401,7 +401,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-save" data-category="systeme">Appliquer</button>
         </div>
     </div>
 </div>

@@ -1279,6 +1279,10 @@
     max-height: none;
 }
 
+input#modal_canvas_border_color, input#modal_canvas_bg_color {
+    padding: 0px;
+}
+
 .canvas-modal-info {
     margin-bottom: 24px;
     padding: 20px;
