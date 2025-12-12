@@ -10,15 +10,26 @@
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
+        
+        // Essayer d'abord avec get_option normal pour voir la différence
+        $wp_value = get_option($option_key, null);
+        error_log("[PDF Builder] get_option({$option_key}): '" . $wp_value . "' (type: " . gettype($wp_value) . ")");
+        
         // Forcer la lecture directe depuis la base de données en contournant le cache
         global $wpdb;
-        $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+        $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+        error_log("[PDF Builder] DB query result: '" . $db_value . "' (type: " . gettype($db_value) . ")");
 
+        $value = $db_value;
         if ($value === null) {
             $value = $default;
+            error_log("[PDF Builder] Using default: '{$default}'");
         }
 
-        error_log("[PDF Builder] get_canvas_option - {$key}: {$value} (default: {$default})");
+        // Convertir en string pour cohérence
+        $value = (string) $value;
+        error_log("[PDF Builder] Final value for {$key}: '{$value}' (type: " . gettype($value) . ", default: {$default})");
+        
         return $value;
     }
 ?>
@@ -573,8 +584,13 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                             <tr>
                                 <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                                 <td>
-                                    <label class="toggle-switch<?php echo (get_canvas_option('canvas_guides_enabled', '1') === '1') ? ' checked' : ''; ?>">
-                                        <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_canvas_option('canvas_guides_enabled', '1'), '1'); ?>>
+                                    <?php 
+                                    $guides_value = get_canvas_option('canvas_guides_enabled', '1');
+                                    $guides_checked = ($guides_value === '1') ? ' checked' : '';
+                                    error_log("[PDF Builder] canvas_guides_enabled - value: '{$guides_value}', checked: '{$guides_checked}'");
+                                    ?>
+                                    <label class="toggle-switch<?php echo $guides_checked ? ' checked' : ''; ?>">
+                                        <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1"<?php echo $guides_checked; ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
@@ -583,8 +599,13 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                             <tr>
                                 <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                                 <td>
-                                    <label class="toggle-switch<?php echo (get_canvas_option('canvas_grid_enabled', '1') === '1') ? ' checked' : ''; ?>">
-                                        <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_canvas_option('canvas_grid_enabled', '1'), '1'); ?>>
+                                    <?php 
+                                    $grid_value = get_canvas_option('canvas_grid_enabled', '1');
+                                    $grid_checked = ($grid_value === '1') ? ' checked' : '';
+                                    error_log("[PDF Builder] canvas_grid_enabled - value: '{$grid_value}', checked: '{$grid_checked}'");
+                                    ?>
+                                    <label class="toggle-switch<?php echo $grid_checked ? ' checked' : ''; ?>">
+                                        <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1"<?php echo $grid_checked; ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
@@ -600,8 +621,13 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
                             <tr>
                                 <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                                 <td>
-                                    <label class="toggle-switch<?php echo (get_canvas_option('canvas_snap_to_grid', '1') === '1') ? ' checked' : ''; ?>">
-                                        <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_canvas_option('canvas_snap_to_grid', '1'), '1'); ?>>
+                                    <?php 
+                                    $snap_value = get_canvas_option('canvas_snap_to_grid', '1');
+                                    $snap_checked = ($snap_value === '1') ? ' checked' : '';
+                                    error_log("[PDF Builder] canvas_snap_to_grid - value: '{$snap_value}', checked: '{$snap_checked}'");
+                                    ?>
+                                    <label class="toggle-switch<?php echo $snap_checked ? ' checked' : ''; ?>">
+                                        <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1"<?php echo $snap_checked; ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
