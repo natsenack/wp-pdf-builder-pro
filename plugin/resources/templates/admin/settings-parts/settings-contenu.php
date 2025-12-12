@@ -836,9 +836,9 @@
                     ?>
                     var CANVAS_DEFAULT_VALUES = {};
 
-                    console.log('[PDF Builder] 🚀 MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
-                    console.log('[PDF Builder] 📅 Date: 2025-12-11 21:35');
-                    console.log('[PDF Builder] 🔧 Fix: HTML/PHP moved outside script tags');
+                    console.log('[PDF Builder] MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
+                    console.log('[PDF Builder] Date: 2025-12-11 21:35');
+                    console.log('[PDF Builder] Fix: HTML/PHP moved outside script tags');
 
                     // Fonction d'initialisation avec retry
                     function initializeModals(retryCount) {
@@ -880,7 +880,7 @@
                                     return;
                                 } else {
                                     console.error('[PDF Builder] MODALS_INIT - ' + missingModals.length + ' modals are missing after ' + maxRetries + ' retries:', missingModals);
-                                    alert('Attention: ' + missingModals.length + ' modales sont manquantes. Certaines fonctionnalités risquent de ne pas fonctionner.');
+                                    alert('Attention: ' + missingModals.length + ' modales sont manquantes. Certaines fonctionnalites risquent de ne pas fonctionner.');
                                 }
                             } else {
                                 console.log('[PDF Builder] MODALS_INIT - All ' + foundModals.length + ' modals found successfully');
@@ -915,11 +915,11 @@
 
                         var modal = document.querySelector('#canvas-' + category + '-modal-overlay');
                         if (!modal) {
-                            console.error('[JS APPLY] ❌ Modal not found for category:', category);
+                            console.error('[JS APPLY] ERROR Modal not found for category:', category);
                             return;
                         }
 
-                        console.log('[JS APPLY] ✅ Modal found, synchronizing values...');
+                        console.log('[JS APPLY] SUCCESS Modal found, synchronizing values...');
 
                         // Collecter les valeurs de la modale et mettre à jour les champs cachés
                         var inputs = modal.querySelectorAll('input, select, textarea');
@@ -937,9 +937,9 @@
                                     var newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
                                     hiddenField.value = newValue;
                                     updatedCount++;
-                                    console.log('[JS APPLY] ✅ Synced: ' + input.name + ' = ' + newValue);
+                                    console.log('[JS APPLY] SUCCESS Synced: ' + input.name + ' = ' + newValue);
                                 } else {
-                                    console.warn('[JS APPLY] ⚠️ Hidden field not found for: ' + input.name);
+                                    console.warn('[JS APPLY] WARNING Hidden field not found for: ' + input.name);
                                 }
                             }
                         });
@@ -950,7 +950,7 @@
                         closeModal('canvas-' + category + '-modal-overlay');
 
                         // Afficher un message de confirmation
-                        showNotification('success', '✅ ' + updatedCount + ' paramètres appliqués', {
+                        showNotification('success', 'SUCCESS ' + updatedCount + ' parametres appliques', {
                             duration: 2000,
                             dismissible: true
                         });
@@ -1134,7 +1134,7 @@
                             var modal = document.getElementById(modalId);
                             if (!modal) {
                                 console.error('[PDF Builder] OPEN_MODAL - Modal element not found: ' + modalId);
-                                alert('Erreur: La modale ' + modalId + ' n\'a pas été trouvée.');
+                                alert('Erreur: La modale ' + modalId + ' n\'a pas ete trouvee.');
                                 return;
                             }
 
@@ -1429,9 +1429,9 @@
                             modal.style.display = 'none';
                             document.body.style.overflow = '';
 
-                            // Accessibilité - déplacer le focus et utiliser inert
+                            // Accessibilité - déplacer le focus
                             document.body.focus();
-                            modal.setAttribute('inert', '');
+                            // modal.setAttribute('inert', '');
 
                             console.log('[PDF Builder] CLOSE_MODAL - Modal closed successfully: ' + modalId);
 
@@ -1524,7 +1524,7 @@
                             updateCanvasCardsDisplay();
 
                             // Notification de succès
-                            showNotification('success', '✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut (côté client).', {
+                            showNotification('success', 'SUCCESS Tous les parametres Canvas ont ete reinitialises aux valeurs par defaut (cote client).', {
                                 duration: 6000,
                                 dismissible: true
                             });
@@ -1532,7 +1532,7 @@
                         } catch (error) {
                             console.error('[PDF Builder] RESET_CANVAS - Error during reset:', error);
                             // Notification d'erreur générale
-                            showNotification('error', '❌ Erreur lors de la réinitialisation des paramètres.', {
+                            showNotification('error', 'ERROR Erreur lors de la reinitialisation des parametres.', {
                                 duration: 8000,
                                 dismissible: true
                             });
