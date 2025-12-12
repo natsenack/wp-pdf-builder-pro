@@ -279,7 +279,13 @@ class AdminScriptLoader
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
-            $localize_data['canvasSettings'] = $canvas_manager->get_all_settings();
+            $canvas_settings = $canvas_manager->get_all_settings();
+            $localize_data['canvasSettings'] = $canvas_settings;
+            
+            // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
+            wp_add_inline_script('pdf-builder-admin', 
+                'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';'
+            );
         }
 
         // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
