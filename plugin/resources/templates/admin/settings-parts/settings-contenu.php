@@ -17,10 +17,17 @@
         // Forcer la lecture directe depuis la base de données en contournant le cache
         global $wpdb;
         $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+
+        // DEBUG: Vérifier si l'option existe vraiment
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+
         if ($value === null) {
             $value = $default;
+            error_log("[PDF Builder] PAGE_LOAD - {$key}: OPTION_NOT_FOUND - using default '{$default}' - KEY: {$option_key}");
+        } else {
+            error_log("[PDF Builder] PAGE_LOAD - {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key} - EXISTS: {$exists}");
         }
-        error_log("[PDF Builder] PAGE_LOAD - get_canvas_option_contenu - {$key}: '{$value}' (default: '{$default}') - KEY: {$option_key} - DIRECT_DB_READ");
+
         return $value;
     }
 
