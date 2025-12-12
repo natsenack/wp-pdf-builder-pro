@@ -1252,7 +1252,7 @@
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: new URLSearchParams({
                                 action: 'pdf_builder_health_check',
-                                nonce: '<?php echo wp_create_nonce("pdf_builder_health"); ?>'
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
                             })
                         })
                         .then(response => response.json())
