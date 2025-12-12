@@ -1138,20 +1138,55 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde des paramètres contenu
      */
     private function save_content_settings() {
-        $settings = [
-            'canvas_max_size' => intval($_POST['canvas_max_size']),
-            'canvas_dpi' => intval($_POST['canvas_dpi']),
-            'canvas_format' => sanitize_text_field($_POST['canvas_format']),
-            'canvas_quality' => intval($_POST['canvas_quality']),
+        $saved_count = 0;
+
+        // Traiter tous les paramètres canvas qui commencent par pdf_builder_canvas_
+        foreach ($_POST as $key => $value) {
+            if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                // Sanitiser selon le type de paramètre
+                if (strpos($key, '_color') !== false || strpos($key, '_bg_color') !== false || strpos($key, '_border_color') !== false) {
+                    // Couleurs - utiliser sanitize_hex_color
+                    $sanitized_value = sanitize_hex_color($value);
+                } elseif (strpos($key, '_enabled') !== false || strpos($key, '_activated') !== false ||
+                         strpos($key, '_visible') !== false || strpos($key, '_active') !== false) {
+                    // Booléens - convertir en '1' ou '0'
+                    $sanitized_value = in_array(strtolower($value), ['1', 'on', 'true', 'yes']) ? '1' : '0';
+                } elseif (is_numeric($value)) {
+                    // Valeurs numériques
+                    $sanitized_value = strpos($key, '_size') !== false ? intval($value) : (strpos($key, '_zoom') !== false ? floatval($value) : sanitize_text_field($value));
+                } else {
+                    // Texte par défaut
+                    $sanitized_value = sanitize_text_field($value);
+                }
+
+                update_option($key, $sanitized_value);
+                wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
+                $saved_count++;
+
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log("PDF Builder: Saved canvas setting {$key} = {$sanitized_value}");
+                }
+            }
+        }
+
+        // Paramètres de contenu généraux (si présents)
+        $general_settings = [
+            'canvas_max_size' => intval($_POST['canvas_max_size'] ?? 0),
+            'canvas_dpi' => intval($_POST['canvas_dpi'] ?? 0),
+            'canvas_format' => sanitize_text_field($_POST['canvas_format'] ?? ''),
+            'canvas_quality' => intval($_POST['canvas_quality'] ?? 0),
             'template_library_enabled' => isset($_POST['template_library_enabled']) ? '1' : '0',
             'default_template' => sanitize_text_field($_POST['default_template'] ?? 'blank'),
         ];
 
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+        foreach ($general_settings as $key => $value) {
+            if (!empty($value) || $value === 0 || $value === '0') {
+                update_option('pdf_builder_' . $key, $value);
+                $saved_count++;
+            }
         }
 
-        return count($settings);
+        return $saved_count;
     }
 
     /**

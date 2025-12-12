@@ -1883,59 +1883,66 @@
                             return;
                         }
 
-                        const settings = {
-                            action: 'pdf_builder_save_canvas_settings',
-                            nonce: '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>',
-                            category: category
-                        };
+                        // Créer un formulaire caché pour la sauvegarde
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = window.location.href;
+                        form.style.display = 'none';
 
-                        // Collecter les valeurs de la modale
+                        // Ajouter les champs de sécurité WordPress
+                        const nonceField = document.createElement('input');
+                        nonceField.type = 'hidden';
+                        nonceField.name = '_wpnonce';
+                        nonceField.value = '<?php echo wp_create_nonce("pdf_builder_settings"); ?>';
+                        form.appendChild(nonceField);
+
+                        const actionField = document.createElement('input');
+                        actionField.type = 'hidden';
+                        actionField.name = 'action';
+                        actionField.value = 'pdf_builder_save_settings';
+                        form.appendChild(actionField);
+
+                        // Collecter les valeurs de la modale et les ajouter au formulaire
                         const inputs = modal.querySelectorAll('input, select, textarea');
                         inputs.forEach(input => {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
+                                const formField = document.createElement('input');
+                                formField.type = 'hidden';
+                                formField.name = input.name;
+
                                 // Le nom est déjà correctement préfixé
                                 if (input.type === 'checkbox') {
-                                    settings[input.name] = input.checked ? '1' : '0';
+                                    formField.value = input.checked ? '1' : '0';
                                 } else {
-                                    settings[input.name] = input.value;
+                                    formField.value = input.value;
                                 }
+
+                                form.appendChild(formField);
+                                console.log(`[JS SAVE] Adding field ${input.name} = ${formField.value}`);
                             }
                         });
 
-                        // Sauvegarde simple
-                        fetch(ajaxurl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: new URLSearchParams(settings)
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Mettre à jour les champs cachés
-                                inputs.forEach(input => {
-                                    if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
-                                        const hiddenField = document.querySelector(`input[name="pdf_builder_settings[${input.name}]"]`);
-                                        if (hiddenField) {
-                                            hiddenField.value = settings[input.name];
-                                        }
-                                        
-                                        // Marquer comme valeur personnalisée
-                                        input.classList.remove('value-default', 'value-cached');
-                                        input.classList.add('value-custom');
-                                    }
-                                });
+                        // Ajouter le formulaire au DOM et le soumettre
+                        document.body.appendChild(form);
 
-                                closeModal(`canvas-${category}-modal-overlay`);
-                                // Recharger la page pour refléter les nouvelles valeurs sauvegardées
-                                window.location.reload();
-                            } else {
-                                alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erreur de sauvegarde:', error);
-                            alert('Erreur de connexion lors de la sauvegarde');
+                        // Ajouter le paramètre tab pour indiquer l'onglet contenu
+                        const tabField = document.createElement('input');
+                        tabField.type = 'hidden';
+                        tabField.name = 'tab';
+                        tabField.value = 'contenu';
+                        form.appendChild(tabField);
+
+                        // Afficher un message de sauvegarde
+                        showNotification('info', '💾 Sauvegarde en cours...', {
+                            duration: 2000,
+                            dismissible: false
                         });
+
+                        // Fermer la modale avant la soumission
+                        closeModal(`canvas-${category}-modal-overlay`);
+
+                        // Soumettre le formulaire (va recharger la page)
+                        form.submit();
                     }
 
 
