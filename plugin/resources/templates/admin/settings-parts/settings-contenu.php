@@ -166,16 +166,16 @@
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
-                        <!-- Carte Dimensions & Format -->
-                        <article class="canvas-card" data-category="dimensions">
+                        <!-- Carte Affichage (fusion Dimensions + Apparence) -->
+                        <article class="canvas-card" data-category="affichage">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">📐</span>
+                                    <span class="canvas-card-icon">🎨</span>
                                 </div>
-                                <h4>Dimensions & Format</h4>
+                                <h4>Affichage & Dimensions</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Définissez la taille, la résolution et le format de votre canvas de conception.</p>
+                                <p>Configurez les dimensions, le format, les couleurs et l'apparence générale du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="preview-format">
@@ -183,7 +183,7 @@
                                         <span id="card-canvas-width"><?php echo esc_html(get_canvas_option_contenu('canvas_width', '794')); ?></span>×
                                         <span id="card-canvas-height"><?php echo esc_html(get_canvas_option_contenu('canvas_height', '1123')); ?></span>px
                                         <div style="font-size: 10px; color: #666; margin-top: 5px;">
-                                            DEBUG: width=<?php echo get_canvas_option_contenu('canvas_width', '794'); ?>, height=<?php echo get_canvas_option_contenu('canvas_height', '1123'); ?>
+                                            <?php echo esc_html(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?> • <?php echo esc_html(get_canvas_option_contenu('canvas_border_width', '1')); ?>px
                                         </div>
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
@@ -209,15 +209,6 @@
                                 </button>
                             </footer>
                         </article>
-
-                        <!-- Carte Apparence -->
-                        <article class="canvas-card" data-category="apparence">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🎨</span>
-                                </div>
-                                <h4>Apparence</h4>
-                            </header>
                             <main class="canvas-card-content">
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                             </main>
@@ -247,25 +238,18 @@
                                         <span class="legend-item">🔲 Bordure</span>
                                         <span class="legend-item"><?php echo (get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1') ? '🌑' : '☀️'; ?> Ombre</span>
                                     </div>
-                                </div>
-                            </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>🎨</span> Configurer
-                                </button>
-                            </footer>
                         </article>
 
-                        <!-- Carte Grille & Guides -->
-                        <article class="canvas-card" data-category="grille">
+                        <!-- Carte Navigation (fusion Grille + Zoom) -->
+                        <article class="canvas-card" data-category="navigation">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">📏</span>
+                                    <span class="canvas-card-icon">🧭</span>
                                 </div>
-                                <h4>Grille & Guides</h4>
+                                <h4>Navigation & Grille</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
+                                <p>Configurez la grille, les guides, le zoom et les options de navigation.</p>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div id="card-grid-preview" class="grid-preview-container">
@@ -302,31 +286,18 @@
                                         </div>
                                     </div>
                                     <div class="grid-legend">
-                                        <span class="legend-item">📐 Grille</span>
-                                        <span class="legend-item">📏 Guides</span>
-                                        <span class="legend-item">📦 Élément</span>
-                                        <span class="snap-indicator">🔗 Snap activé</span>
+                                        <span class="legend-item">📐 Grille <?php echo intval(get_canvas_option_contenu('canvas_grid_size', '20')); ?>px</span>
+                                        <span class="legend-item">🔍 Zoom <?php echo intval(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>%</span>
+                                        <span class="snap-indicator"><?php echo (get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1') ? '🔗' : '🔓'; ?> Snap</span>
                                     </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>📏</span> Configurer
+                                    <span>🧭</span> Configurer
                                 </button>
                             </footer>
                         </article>
-
-                        <!-- Carte Zoom -->
-                        <article class="canvas-card" id="zoom-navigation-card" data-category="zoom">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🔍</span>
-                                </div>
-                                <h4>Zoom</h4>
-                            </header>
-                            <main class="canvas-card-content">
-                                <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
-                            </main>
                             <aside class="canvas-card-preview">
                                 <div class="zoom-preview-container">
                                     <div class="zoom-indicator">
@@ -347,218 +318,96 @@
                             </footer>
                         </article>
 
-                        <!-- Carte Interactions & Comportement -->
-                        <article class="canvas-card" data-category="interactions">
+                        <!-- Carte Comportement (fusion Interactions + Export) -->
+                        <article class="canvas-card" data-category="comportement">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🎯</span>
+                                    <span class="canvas-card-icon">🎮</span>
                                 </div>
-                                <h4>Interactions & Comportement</h4>
+                                <h4>Comportement & Export</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Contrôlez les interactions canvas, la sélection et les raccourcis clavier.</p>
+                                <p>Configurez les interactions, la sélection et les options d'export.</p>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="interactions-preview-container">
                                     <!-- Canvas miniature avec éléments -->
                                     <div class="mini-canvas">
-                                        <!-- Grille de fond -->
-                                        <div class="mini-canvas-grid"></div>
-
                                         <!-- Éléments sur le canvas -->
-                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 35px; height: 18px;" title="Élément texte - Double-clic pour éditer">
-                                            <div class="mini-element-content">T</div>
-                                        </div>
-                                        <div class="mini-element shape-element selected" style="top: 40px; left: 15px; width: 32px; height: 22px;" title="Élément sélectionné - Glisser pour déplacer">
+                                        <div class="mini-element shape-element selected" style="top: 40px; left: 15px; width: 32px; height: 22px;" title="Élément sélectionné">
                                             <div class="mini-element-content">□</div>
-                                            <!-- Poignées de sélection -->
-                                            <div class="mini-handle nw" title="Redimensionner (coin supérieur gauche)"></div>
-                                            <div class="mini-handle ne" title="Redimensionner (coin supérieur droit)"></div>
-                                            <div class="mini-handle sw" title="Redimensionner (coin inférieur gauche)"></div>
-                                            <div class="mini-handle se" title="Redimensionner (coin inférieur droit)"></div>
-                                            <div class="mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation - Maintenir Maj pour angles précis"></div>
                                         </div>
-                                        <div class="mini-element image-element" style="top: 18px; left: 75px; width: 28px; height: 28px;" title="Élément image - Clic droit pour options">
+                                        <div class="mini-element image-element" style="top: 18px; left: 75px; width: 28px; height: 28px;" title="Élément image">
                                             <div class="mini-element-content">🖼</div>
-                                        </div>
-
-                                        <!-- Sélection rectangle en cours -->
-                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 55px; height: 35px;" title="Sélection multiple - Relâcher pour sélectionner"></div>
-
-                                        <!-- Curseur de souris -->
-                                        <div class="mouse-cursor" style="top: 50px; left: 95px;">
-                                            <div class="cursor-icon">👆</div>
-                                        </div>
-
-                                        <!-- Indicateur de zoom -->
-                                        <div class="zoom-indicator" title="Niveau de zoom actuel - Ctrl+molette pour zoomer">
-                                            <span class="zoom-level">100%</span>
-                                        </div>
-
-                                        <!-- Indicateur de performance -->
-                                        <div class="performance-indicator" title="Performance canvas - 60 FPS">
-                                            <div class="performance-bar">
-                                                <div class="performance-fill" style="width: 85%"></div>
-                                            </div>
-                                            <span class="performance-text">85%</span>
                                         </div>
                                     </div>
 
-                                    <!-- Contrôles en bas -->
+                                    <!-- Contrôles -->
                                     <div class="interactions-controls">
                                         <div class="selection-mode-indicator">
-                                            <span class="mode-icon active" title="Sélection rectangle (R) - Pour sélectionner plusieurs éléments" data-mode="rectangle">▭</span>
-                                            <span class="mode-icon" title="Sélection lasso (L) - Pour sélection libre" data-mode="lasso">🪢</span>
-                                            <span class="mode-icon" title="Sélection par clic (C) - Pour sélection simple" data-mode="click">👆</span>
+                                            <span class="mode-icon active" title="Sélection rectangle">▭</span>
+                                            <span class="mode-icon" title="Sélection lasso">🪢</span>
                                         </div>
                                         <div class="interaction-status">
                                             <span class="status-indicator selecting">Sélection active</span>
-                                            <div class="keyboard-status" title="Raccourcis clavier activés">
+                                            <div class="keyboard-status" title="Raccourcis clavier">
                                                 <span class="keyboard-icon">⌨️</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Barre de progression des interactions -->
-                                    <div class="interaction-progress">
-                                        <div class="progress-label">Fluidité</div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: 92%"></div>
-                                        </div>
-                                        <div class="progress-value">92%</div>
-                                    </div>
-                                </div>
-                            </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>🎯</span> Configurer
-                                </button>
-                            </footer>
-                        </article>
-
-                        <!-- Carte Export & Qualité -->
-                        <article class="canvas-card" data-category="export">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">📤</span>
-                                </div>
-                                <h4>Export & Qualité</h4>
-                            </header>
-                            <main class="canvas-card-content">
-                                <p>Configurez les formats et la qualité d'export des designs.</p>
-                            </main>
-                            <aside class="canvas-card-preview">
-                                <div class="export-quality-preview">
-                                    <div class="quality-bar">
-                                        <div class="quality-fill" style="width: 90%"></div>
-                                        <div class="quality-text">90%</div>
-                                    </div>
+                                    <!-- Export formats -->
                                     <div class="export-formats">
-                                        <span class="format-badge">PNG</span>
-                                        <span class="format-badge">JPG</span>
-                                        <span class="format-badge active">PDF</span>
+                                        <span class="format-badge active"><?php echo esc_html(strtoupper(get_canvas_option_contenu('canvas_export_format', 'pdf'))); ?></span>
+                                        <span class="format-badge">Qualité <?php echo intval(get_canvas_option_contenu('canvas_export_quality', '90')); ?>%</span>
                                     </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>📤</span> Configurer
+                                    <span>🎮</span> Configurer
                                 </button>
                             </footer>
                         </article>
 
-                        <!-- Carte Performance -->
-                        <article class="canvas-card" data-category="performance">
+                        <!-- Carte Système (fusion Performance + Debug) -->
+                        <article class="canvas-card" data-category="systeme">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">⚡</span>
+                                    <span class="canvas-card-icon">⚙️</span>
                                 </div>
-                                <h4>Performance</h4>
+                                <h4>Système & Performance</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Optimisez les FPS, mémoire et temps de réponse.</p>
+                                <p>Configurez les performances, le débogage et les paramètres système.</p>
                             </main>
                             <aside class="canvas-card-preview">
-                                <div class="performance-preview-container">
-                                    <div class="performance-metrics">
+                                <div class="system-preview-container">
+                                    <div class="system-metrics">
                                         <div class="metric-item">
                                             <span class="metric-label">FPS</span>
-                                            <span id="card-perf-preview" class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_fps_target', '60')); ?></span>
+                                            <span class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_fps_target', '60')); ?></span>
                                         </div>
                                         <div class="metric-item">
-                                            <span class="metric-label">RAM JS</span>
+                                            <span class="metric-label">RAM</span>
                                             <span class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>MB</span>
                                         </div>
                                         <div class="metric-item">
-                                            <span class="metric-label">RAM PHP</span>
-                                            <span class="metric-value"><?php echo esc_html(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>MB</span>
+                                            <span class="metric-label">Debug</span>
+                                            <span class="metric-value"><?php echo (get_canvas_option_contenu('canvas_debug_enabled', '0') === '1') ? 'ON' : 'OFF'; ?></span>
                                         </div>
                                     </div>
-                                    <div class="performance-status">
+                                    <div class="system-status">
                                         <div class="status-indicator">
-                                            <span class="status-dot"></span>
-                                            <span class="status-text">Lazy Loading</span>
+                                            <span class="status-dot <?php echo (get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1') ? 'active' : ''; ?>"></span>
+                                            <span class="status-text">Monitoring</span>
                                         </div>
                                     </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>⚡</span> Configurer
-                                </button>
-                            </footer>
-                        </article>
-
-                        <!-- Carte Debug -->
-                        <article class="canvas-card" data-category="debug">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🐛</span>
-                                </div>
-                                <h4>Debug</h4>
-                            </header>
-                            <main class="canvas-card-content">
-                                <p>Outils de débogage et monitoring des performances.</p>
-                            </main>
-                            <aside class="canvas-card-preview">
-                                <div class="debug-preview-container">
-                                    <div class="debug-console">
-                                        <div class="console-line">
-                                            <span class="console-timestamp">[14:32:15]</span>
-                                            <span class="console-level info">INFO</span>
-                                            <span class="console-message">Canvas initialized</span>
-                                        </div>
-                                        <div class="console-line">
-                                            <span class="console-timestamp">[14:32:16]</span>
-                                            <span class="console-level warn">WARN</span>
-                                            <span class="console-message">Memory usage: 85%</span>
-                                        </div>
-                                        <div class="console-line">
-                                            <span class="console-timestamp">[14:32:17]</span>
-                                            <span class="console-level error">ERROR</span>
-                                            <span class="console-message">Failed to load image</span>
-                                        </div>
-                                        <div class="console-cursor">_</div>
-                                    </div>
-                                    <div class="debug-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-label">FPS</span>
-                                            <span class="stat-value"><?php echo esc_html(get_canvas_option_contenu('canvas_fps_target', '60')); ?></span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-label">RAM</span>
-                                            <span class="stat-value"><?php echo esc_html(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>MB</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-label">Errors</span>
-                                            <span class="stat-value">0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>🐛</span> Configurer
+                                    <span>⚙️</span> Configurer
                                 </button>
                             </footer>
                         </article>
@@ -1048,7 +897,7 @@
 
                             initializeToggleStates();
 
-                            const modalCategories = ['dimensions', 'apparence', 'grille', 'zoom', 'interactions', 'export', 'performance', 'debug'];
+                            const modalCategories = ['affichage', 'navigation', 'comportement', 'systeme'];
                             let missingModals = [];
 
                             modalCategories.forEach(category => {
@@ -1206,14 +1055,10 @@
                     function waitForModalsAndInitialize(attempt = 0) {
                         const maxAttempts = 10;
                         const modalIds = [
-                            'canvas-dimensions-modal-overlay',
-                            'canvas-apparence-modal-overlay',
-                            'canvas-grille-modal-overlay',
-                            'canvas-zoom-modal-overlay',
-                            'canvas-interactions-modal-overlay',
-                            'canvas-export-modal-overlay',
-                            'canvas-performance-modal-overlay',
-                            'canvas-debug-modal-overlay'
+                            'canvas-affichage-modal-overlay',
+                            'canvas-navigation-modal-overlay',
+                            'canvas-comportement-modal-overlay',
+                            'canvas-systeme-modal-overlay'
                         ];
 
                         const allModalsLoaded = modalIds.every(id => document.getElementById(id) !== null);

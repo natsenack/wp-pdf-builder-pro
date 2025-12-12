@@ -281,61 +281,109 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
         </section>
     </div>
 </div>
-<!-- Canvas Dimensions Modal Overlay -->
-<div id="canvas-dimensions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-dimensions-modal">
-    <section id="canvas-dimensions-modal" class="canvas-modal-container">
+<!-- Canvas Affichage Modal Overlay (fusion Dimensions + Apparence) -->
+<div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-affichage-modal">
+    <section id="canvas-affichage-modal" class="canvas-modal-container">
         <header class="canvas-modal-header">
-            <h3>📏 Dimensions & Format</h3>
+            <h3>🎨 Affichage & Dimensions</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
         </header>
         <main class="canvas-modal-body">
             <aside class="canvas-modal-info">
                 <p>
-                    <strong>ℹ️ Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré.
-                    Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
+                    <strong>ℹ️ Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation, la qualité et l'apparence générale du document PDF généré.
+                    Configurez les dimensions, les couleurs et les effets visuels.
                 </p>
             </aside>
-            <form id="canvas-dimensions-form">
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="canvas_format">Format du document</label></th>
-                        <td>
-                            <select id="canvas_format" name="pdf_builder_canvas_format">
-                                <option value="A4" <?php selected(get_canvas_option('canvas_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
-                                <option value="A3" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'A3'); ?>>A3 (297×420mm) - soon</option>
-                                <option value="A5" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'A5'); ?>>A5 (148×210mm) - soon</option>
-                                <option value="Letter" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'Letter'); ?>>Letter (8.5×11") - soon</option>
-                                <option value="Legal" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14") - soon</option>
-                                <option value="Tabloid" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17") - soon</option>
-                            </select>
-                            <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label>Orientation</label></th>
-                        <td>
-                            <aside style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
-                                <strong>📄 Portrait uniquement (v1.0)</strong><br>
-                                <small style="color: #666;">
-                                    L'orientation paysage sera disponible dans la version 2.0 avec recalcul automatique des dimensions.
-                                    Actuellement, tous les documents sont générés en format portrait pour garantir la stabilité.
-                                </small>
-                            </aside>
-                            <p class="canvas-modal-description">Orientation fixée en portrait pour la v1.0</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
-                        <td>
-                            <select id="canvas_dpi" name="pdf_builder_canvas_dpi">
-                                <option value="72" <?php selected(get_canvas_option('canvas_dpi', 96), '72'); ?>>72 DPI (Web)</option>
-                                <option value="96" <?php selected(get_canvas_option('canvas_dpi', 96), '96'); ?>>96 DPI (Écran)</option>
-                                <option value="150" <?php selected(get_canvas_option('canvas_dpi', 96), '150'); ?>>150 DPI (Impression)</option>
-                                <option value="300" <?php selected(get_canvas_option('canvas_dpi', 96), '300'); ?>>300 DPI (Haute qualité)</option>
-                            </select>
-                            <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
-                        </td>
-                    </tr>
+            <form id="canvas-affichage-form">
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title">📏 Dimensions & Format</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_format">Format du document</label></th>
+                            <td>
+                                <select id="canvas_format" name="pdf_builder_canvas_format">
+                                    <option value="A4" <?php selected(get_canvas_option('canvas_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
+                                    <option value="A3" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'A3'); ?>>A3 (297×420mm) - soon</option>
+                                    <option value="A5" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'A5'); ?>>A5 (148×210mm) - soon</option>
+                                    <option value="Letter" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'Letter'); ?>>Letter (8.5×11") - soon</option>
+                                    <option value="Legal" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14") - soon</option>
+                                    <option value="Tabloid" disabled <?php selected(get_canvas_option('canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17") - soon</option>
+                                </select>
+                                <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
+                            <td>
+                                <select id="canvas_dpi" name="pdf_builder_canvas_dpi">
+                                    <option value="72" <?php selected(get_canvas_option('canvas_dpi', 96), '72'); ?>>72 DPI (Web)</option>
+                                    <option value="96" <?php selected(get_canvas_option('canvas_dpi', 96), '96'); ?>>96 DPI (Écran)</option>
+                                    <option value="150" <?php selected(get_canvas_option('canvas_dpi', 96), '150'); ?>>150 DPI (Impression)</option>
+                                    <option value="300" <?php selected(get_canvas_option('canvas_dpi', 96), '300'); ?>>300 DPI (Haute qualité)</option>
+                                </select>
+                                <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title">🎨 Apparence</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_bg_color">Couleur de fond</label></th>
+                            <td>
+                                <input type="color" id="canvas_bg_color" name="pdf_builder_canvas_bg_color" value="<?php echo esc_attr(get_canvas_option('canvas_bg_color', '#ffffff')); ?>" />
+                                <p class="canvas-modal-description">Couleur de fond du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_border_color">Couleur de bordure</label></th>
+                            <td>
+                                <input type="color" id="canvas_border_color" name="pdf_builder_canvas_border_color" value="<?php echo esc_attr(get_canvas_option('canvas_border_color', '#cccccc')); ?>" />
+                                <p class="canvas-modal-description">Couleur de la bordure du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_border_width">Épaisseur de bordure (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_border_width" name="pdf_builder_canvas_border_width" value="<?php echo intval(get_canvas_option('canvas_border_width', 1)); ?>" min="0" max="10" />
+                                <p class="canvas-modal-description">Épaisseur de la bordure en pixels</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_shadow_enabled" value="0">
+                                    <input type="checkbox" id="canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled" value="1" <?php checked(get_canvas_option('canvas_shadow_enabled', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Ajoute une ombre au canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_container_bg_color">Fond du conteneur</label></th>
+                            <td>
+                                <input type="color" id="canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color" value="<?php echo esc_attr(get_canvas_option('canvas_container_bg_color', '#f8f9fa')); ?>" />
+                                <p class="canvas-modal-description">Couleur de fond de la zone autour du canvas</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+            </form>
+        </main>
+        <footer class="canvas-modal-footer">
+            <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">Appliquer</button>
+        </footer>
+    </section>
+</div>
                         <?php
                             /**
                              * Canvas Configuration Modals
@@ -397,157 +445,9 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas Dimensions Modal (hidden container) -->
 <!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Zoom & Navigation -->
-<!-- Canvas Zoom Modal Overlay -->
-<div id="canvas-zoom-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-zoom-modal">
-    <section id="canvas-zoom-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3>🔍 Zoom</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p>
-                        <strong>ℹ️ Comment ça marche :</strong> Contrôlez les niveaux de zoom et les options de navigation du canvas.
-                        Le zoom avec la molette de souris peut être activé/désactivé, et la navigation au clavier permet de se déplacer dans le canvas.
-                    </p>
-                </aside>
-                <form id="zoom-form">
-                    <section>
-                        <header>
-                            <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
-                        </header>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
-                                <td>
-                                    <input type="number" id="zoom_min" name="pdf_builder_canvas_zoom_min" value="<?php echo intval(get_canvas_option('canvas_zoom_min', 10)); ?>" min="1" max="100" />
-                                    <p class="canvas-modal-description">Niveau de zoom minimum autorisé</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="zoom_max">Zoom maximum (%)</label></th>
-                                <td>
-                                    <input type="number" id="zoom_max" name="pdf_builder_canvas_zoom_max" value="<?php echo intval(get_canvas_option('canvas_zoom_max', 500)); ?>" min="100" max="1000" />
-                                    <p class="canvas-modal-description">Niveau de zoom maximum autorisé</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="zoom_default">Zoom par défaut (%)</label></th>
-                                <td>
-                                    <input type="number" id="zoom_default" name="pdf_builder_canvas_zoom_default" value="<?php echo intval(get_canvas_option('canvas_zoom_default', 100)); ?>" min="10" max="500" />
-                                    <p class="canvas-modal-description">Niveau de zoom au chargement du canvas</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="zoom_step">Pas de zoom (%)</label></th>
-                                <td>
-                                    <input type="number" id="zoom_step" name="pdf_builder_canvas_zoom_step" value="<?php echo intval(get_canvas_option('canvas_zoom_step', 25)); ?>" min="5" max="50" />
-                                    <p class="canvas-modal-description">Incrément de zoom par étape</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-apply" data-category="zoom">Appliquer</button>
-            </footer>
-    </section>
-</div>
 
-<!-- Canvas zoom Modal (hidden container) -->
-<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Apparence -->
-<!-- Canvas Apparence Modal Overlay -->
-<div id="canvas-apparence-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-apparence-modal">
-        <section id="canvas-apparence-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3 >🎨 Apparence</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p >
-                        <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
-                        Personnalisez les couleurs et les effets pour un meilleur confort de travail.
-                    </p>
-                </aside>
-                <?php
-                /**
-                 * Paramètres canvas pour les modales
-                 * Définit les valeurs par défaut depuis les options séparées (synchronisées)
-                 */
 
-                // Les modales lisent depuis les options séparées pour cohérence
-                ?>
-
-                <form id="canvas-apparence-form">
-                    <section>
-                        <header>
-                            <h4 class="canvas-modal-section-title">🎨 Canvas</h4>
-                        </header>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
-                                <td>
-                                    <input type="color" id="canvas_bg_color" name="pdf_builder_canvas_bg_color" value="<?php echo esc_attr(get_canvas_option('canvas_bg_color', '#ffffff')); ?>" />
-                                    <p class="canvas-modal-description">Couleur d'arrière-plan de la zone de conception</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
-                                <td>
-                                    <input type="color" id="canvas_border_color" name="pdf_builder_canvas_border_color" value="<?php echo esc_attr(get_canvas_option('canvas_border_color', '#cccccc')); ?>" />
-                                    <p class="canvas-modal-description">Couleur des bordures autour du canvas</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
-                                <td>
-                                    <input type="number" id="canvas_border_width" name="pdf_builder_canvas_border_width" value="<?php echo intval(get_canvas_option('canvas_border_width', 1)); ?>" min="0" max="10" />
-                                    <p class="canvas-modal-description">Épaisseur des bordures en pixels (0 = aucune)</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled" value="1" <?php checked(get_canvas_option('canvas_shadow_enabled', '0'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Ajoute une ombre portée au canvas</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                    
-                    <section>
-                        <header>
-                            <h4 class="canvas-modal-section-title spaced">✏️ Éditeur</h4>
-                        </header>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
-                                <td>
-                                    <input type="color" id="canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color" value="<?php echo esc_attr(get_canvas_option('canvas_container_bg_color', '#f8f9fa')); ?>" />
-                                    <p class="canvas-modal-description">Couleur de fond de l'interface d'édition</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-apply" data-category="apparence">Appliquer</button>
-            </footer>
-        </section>
-</div>
-
-
-<!-- Canvas apparence Modal (hidden container) -->
-<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Grille & Guides -->
 <?php
     error_log("[PDF Builder] MODAL_RENDER - Rendering grille modal");
@@ -557,258 +457,389 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
     $grille_snap_to_grid = get_canvas_option('canvas_snap_to_grid', '1');
     error_log("[PDF Builder] MODAL_RENDER - Grille values: guides=$grille_guides_enabled, grid=$grille_grid_enabled, size=$grille_grid_size, snap=$grille_snap_to_grid");
 ?>
-<!-- Canvas Grille Modal Overlay -->
-<div id="canvas-grille-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-grille-modal">
-        <section id="canvas-grille-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3 >📐 Grille & Guides</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p >
-                        <strong>ℹ️ Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
-                        Les éléments s'aligneront automatiquement sur les lignes de la grille si l'accrochage est activé.
-                    </p>
-                </aside>
-                <form id="canvas-grille-form">
-                    <section>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
-                                <td>
-                                    <?php 
-                                    $guides_value = get_canvas_option('canvas_guides_enabled', '1');
-                                    $guides_checked = ($guides_value === '1') ? ' checked' : '';
-                                    error_log("[PDF Builder] canvas_guides_enabled - value: '{$guides_value}', checked: '{$guides_checked}'");
-                                    ?>
-                                    <label class="toggle-switch<?php echo $guides_checked ? ' checked' : ''; ?>">
-                                        <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1"<?php echo $guides_checked; ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
-                                <td>
-                                    <?php 
-                                    $grid_value = get_canvas_option('canvas_grid_enabled', '1');
-                                    $grid_checked = ($grid_value === '1') ? ' checked' : '';
-                                    error_log("[PDF Builder] canvas_grid_enabled - value: '{$grid_value}', checked: '{$grid_checked}'");
-                                    ?>
-                                    <label class="toggle-switch<?php echo $grid_checked ? ' checked' : ''; ?>">
-                                        <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1"<?php echo $grid_checked; ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
-                                <td>
-                                    <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_grid_size" value="<?php echo intval(get_canvas_option('canvas_grid_size', 20)); ?>" min="5" max="100" />
-                                    <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
-                                <td>
-                                    <?php 
-                                    $snap_value = get_canvas_option('canvas_snap_to_grid', '1');
-                                    $snap_checked = ($snap_value === '1') ? ' checked' : '';
-                                    error_log("[PDF Builder] canvas_snap_to_grid - value: '{$snap_value}', checked: '{$snap_checked}'");
-                                    ?>
-                                    <label class="toggle-switch<?php echo $snap_checked ? ' checked' : ''; ?>">
-                                        <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1"<?php echo $snap_checked; ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-apply" data-category="grille">Appliquer</button>
-            </footer>
-        </section>
+<!-- Canvas Navigation Modal Overlay (fusion Grille + Zoom) -->
+<div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-navigation-modal">
+    <section id="canvas-navigation-modal" class="canvas-modal-container">
+        <header class="canvas-modal-header">
+            <h3>🧭 Navigation & Zoom</h3>
+            <button type="button" class="canvas-modal-close">&times;</button>
+        </header>
+        <main class="canvas-modal-body">
+            <aside class="canvas-modal-info">
+                <p>
+                    <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent la navigation et le zoom sur le canvas.
+                    Configurez la grille d'alignement, les niveaux de zoom et les options de déplacement.
+                </p>
+            </aside>
+            <form id="canvas-navigation-form">
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title">📐 Grille & Guides</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_guides_enabled" value="0">
+                                    <input type="checkbox" id="canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_canvas_option('canvas_guides_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_grid_enabled" value="0">
+                                    <input type="checkbox" id="canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_canvas_option('canvas_grid_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_size" name="pdf_builder_canvas_grid_size" value="<?php echo intval(get_canvas_option('canvas_grid_size', 20)); ?>" min="5" max="100" />
+                                <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_snap_to_grid" value="0">
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_canvas_option('canvas_snap_to_grid', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title spaced">🔍 Zoom</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
+                            <td>
+                                <input type="number" id="zoom_min" name="pdf_builder_canvas_zoom_min" value="<?php echo intval(get_canvas_option('canvas_zoom_min', 10)); ?>" min="1" max="100" />
+                                <p class="canvas-modal-description">Niveau de zoom minimum autorisé</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="zoom_max">Zoom maximum (%)</label></th>
+                            <td>
+                                <input type="number" id="zoom_max" name="pdf_builder_canvas_zoom_max" value="<?php echo intval(get_canvas_option('canvas_zoom_max', 500)); ?>" min="100" max="1000" />
+                                <p class="canvas-modal-description">Niveau de zoom maximum autorisé</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="zoom_default">Zoom par défaut (%)</label></th>
+                            <td>
+                                <input type="number" id="zoom_default" name="pdf_builder_canvas_zoom_default" value="<?php echo intval(get_canvas_option('canvas_zoom_default', 100)); ?>" min="10" max="500" />
+                                <p class="canvas-modal-description">Niveau de zoom au chargement du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="zoom_step">Pas de zoom (%)</label></th>
+                            <td>
+                                <input type="number" id="zoom_step" name="pdf_builder_canvas_zoom_step" value="<?php echo intval(get_canvas_option('canvas_zoom_step', 25)); ?>" min="5" max="50" />
+                                <p class="canvas-modal-description">Incrément de zoom par étape</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+            </form>
+        </main>
+        <footer class="canvas-modal-footer">
+            <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">Appliquer</button>
+        </footer>
+    </section>
 </div>
-
-
-<!-- Canvas grille Modal (hidden container) -->
-<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Interactions & Comportement-->
-<!-- Canvas Interactions Modal Overlay -->
-<div id="canvas-interactions-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-interactions-modal">
-        <section id="canvas-interactions-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3 >🖱️ Interactions & Comportement</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p >
-                        <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
-                        ainsi que le comportement général de sélection et les raccourcis clavier.
-                    </p>
-                </aside>
-                <form id="canvas-interactions-form">
-                    <section>
-                        <header>
-                            <h4 class="canvas-modal-section-title">🖱️ Interactions</h4>
-                        </header>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled" value="1" <?php checked(get_canvas_option('canvas_drag_enabled', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Permet de déplacer les éléments sur le canvas</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_resize_enabled">Redimensionnement activé</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled" value="1" <?php checked(get_canvas_option('canvas_resize_enabled', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Affiche les poignées pour redimensionner les éléments</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_rotate_enabled">Rotation activée</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled" value="1" <?php checked(get_canvas_option('canvas_rotate_enabled', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Permet de faire pivoter les éléments avec la souris</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_multi_select" name="pdf_builder_canvas_multi_select" value="1" <?php checked(get_canvas_option('canvas_multi_select', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
-                                <td>
-                                    <select id="canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
-                                        <option value="click" <?php selected(get_canvas_option('canvas_selection_mode', 'click'), 'click'); ?>>Clic simple</option>
-                                        <option value="lasso" <?php selected(get_canvas_option('canvas_selection_mode', 'click'), 'lasso'); ?>>Lasso</option>
-                                        <option value="rectangle" <?php selected(get_canvas_option('canvas_selection_mode', 'click'), 'rectangle'); ?>>Rectangle</option>
-                                    </select>
-                                    <p class="canvas-modal-description">Méthode de sélection des éléments sur le canvas</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
+<!-- Canvas Comportement Modal Overlay (fusion Interactions + Export) -->
+<div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-comportement-modal">
+    <section id="canvas-comportement-modal" class="canvas-modal-container">
+        <header class="canvas-modal-header">
+            <h3>🎮 Comportement & Export</h3>
+            <button type="button" class="canvas-modal-close">&times;</button>
+        </header>
+        <main class="canvas-modal-body">
+            <aside class="canvas-modal-info">
+                <p>
+                    <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent les interactions avec le canvas et les options d'export.
+                    Configurez les manipulations d'éléments, les raccourcis clavier et les formats d'export.
+                </p>
+            </aside>
+            <form id="canvas-comportement-form">
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title">🖱️ Interactions</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_drag_enabled" value="0">
+                                    <input type="checkbox" id="canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled" value="1" <?php checked(get_canvas_option('canvas_drag_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Permet de déplacer les éléments sur le canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_resize_enabled">Redimensionnement activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_resize_enabled" value="0">
+                                    <input type="checkbox" id="canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled" value="1" <?php checked(get_canvas_option('canvas_resize_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Affiche les poignées pour redimensionner les éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_rotate_enabled">Rotation activée</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_rotate_enabled" value="0">
+                                    <input type="checkbox" id="canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled" value="1" <?php checked(get_canvas_option('canvas_rotate_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Permet de faire pivoter les éléments avec la souris</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_multi_select" value="0">
+                                    <input type="checkbox" id="canvas_multi_select" name="pdf_builder_canvas_multi_select" value="1" <?php checked(get_canvas_option('canvas_multi_select', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
+                            <td>
+                                <select id="canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
+                                    <option value="click" <?php selected(get_canvas_option('canvas_selection_mode', 'click'), 'click'); ?>>Clic simple</option>
+                                    <option value="lasso" <?php selected(get_canvas_option('canvas_selection_mode', 'click'), 'lasso'); ?>>Lasso</option>
+                                    <option value="rectangle" <?php selected(get_canvas_option('canvas_selection_mode', 'click'), 'rectangle'); ?>>Rectangle</option>
+                                </select>
+                                <p class="canvas-modal-description">Méthode de sélection des éléments sur le canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_keyboard_shortcuts" value="0">
+                                    <input type="checkbox" id="canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts" value="1" <?php checked(get_canvas_option('canvas_keyboard_shortcuts', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
 
-                    <section>
-                        <header>
-                            <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
-                        </header>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts" value="1" <?php checked(get_canvas_option('canvas_keyboard_shortcuts', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="canvas-modal-description">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-apply" data-category="interactions">Appliquer</button>
-            </footer>
-        </section>
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title spaced">📤 Export</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_export_format">Format d'export par défaut</label></th>
+                            <td>
+                                <select id="canvas_export_format" name="pdf_builder_canvas_export_format">
+                                    <option value="png" <?php selected(get_canvas_option('canvas_export_format', 'png'), 'png'); ?>>PNG</option>
+                                    <option value="jpg" <?php selected(get_canvas_option('canvas_export_format', 'png'), 'jpg'); ?>>JPG</option>
+                                    <option value="pdf" <?php selected(get_canvas_option('canvas_export_format', 'png'), 'pdf'); ?>>PDF</option>
+                                </select>
+                                <p class="canvas-modal-description">Format par défaut pour l'export</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_export_quality">Qualité d'export (%)</label></th>
+                            <td>
+                                <input type="number" id="canvas_export_quality" name="pdf_builder_canvas_export_quality" value="<?php echo intval(get_canvas_option('canvas_export_quality', 90)); ?>" min="1" max="100" />
+                                <p class="canvas-modal-description">Qualité de l'image exportée (1-100%)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_export_transparent">Fond transparent</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_export_transparent" value="0">
+                                    <input type="checkbox" id="canvas_export_transparent" name="pdf_builder_canvas_export_transparent" value="1" <?php checked(get_canvas_option('canvas_export_transparent', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Export avec fond transparent (PNG uniquement)</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+            </form>
+        </main>
+        <footer class="canvas-modal-footer">
+            <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">Appliquer</button>
+        </footer>
+    </section>
 </div>
-
-
-<!-- Canvas interactions Modal (hidden container) -->
-<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Export & Qualité -->
-<!-- Canvas Export Modal Overlay -->
-<div id="canvas-export-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-export-modal">
-        <section id="canvas-export-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3 >📤 Export & Qualité</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p>
-                        <strong>📤 Export & Qualité :</strong> Ces paramètres contrôlent le format et la qualité des fichiers exportés depuis le canvas.
-                        Choisissez le format approprié selon vos besoins (PNG pour la transparence, JPG pour la compatibilité, PDF pour les documents).
-                    </p>
-                </aside>
-                <form id="canvas-export-form">
-                    <section>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_export_format">Format d'export par défaut</label></th>
-                                <td>
-                                    <select id="canvas_export_format" name="pdf_builder_canvas_export_format">
-                                        <option value="png" <?php selected(get_canvas_option('canvas_export_format', 'png'), 'png'); ?>>PNG</option>
-                                        <option value="jpg" <?php selected(get_canvas_option('canvas_export_format', 'png'), 'jpg'); ?>>JPG</option>
-                                        <option value="pdf" <?php selected(get_canvas_option('canvas_export_format', 'png'), 'pdf'); ?>>PDF</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_export_quality">Qualité d'export (%)</label></th>
-                                <td>
-                                    <input type="number" id="canvas_export_quality" name="pdf_builder_canvas_export_quality" value="<?php echo intval(get_canvas_option('canvas_export_quality', 90)); ?>" min="1" max="100" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_export_transparent">Fond transparent</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_export_transparent" name="pdf_builder_canvas_export_transparent" value="1" <?php checked(get_canvas_option('canvas_export_transparent', '0'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-apply" data-category="export">Appliquer</button>
-            </footer>
-        </section>
-</div>
 
-
-<!-- Canvas export Modal (hidden container) -->
-<!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Performance -->
-<!-- Canvas Performance Modal Overlay -->
-<div id="canvas-performance-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-performance-modal">
-        <section id="canvas-performance-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3 >⚡ Performance</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
+<!-- Canvas Système Modal Overlay (fusion Performance + Debug) -->
+<div id="canvas-systeme-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-systeme-modal">
+    <section id="canvas-systeme-modal" class="canvas-modal-container">
+        <header class="canvas-modal-header">
+            <h3>⚙️ Système & Performance</h3>
+            <button type="button" class="canvas-modal-close">&times;</button>
+        </header>
+        <main class="canvas-modal-body">
+            <aside class="canvas-modal-info">
+                <p>
+                    <strong>ℹ️ Comment ça marche :</strong> Ces paramètres système contrôlent les performances, la mémoire et les outils de débogage.
+                    Configurez l'optimisation et le monitoring pour une expérience optimale.
+                </p>
+            </aside>
+            <form id="canvas-systeme-form">
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title">⚡ Performance</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
+                            <td>
+                                <select id="canvas_fps_target" name="pdf_builder_canvas_fps_target">
+                                    <option value="30" <?php selected(get_canvas_option('canvas_fps_target', 60), 30); ?>>30 FPS (Économie)</option>
+                                    <option value="60" <?php selected(get_canvas_option('canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
+                                    <option value="120" <?php selected(get_canvas_option('canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
+                                </select>
+                                <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
+                            <td>
+                                <select id="canvas_memory_limit_js" name="pdf_builder_canvas_memory_limit_js">
+                                    <option value="128" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
+                                    <option value="256" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
+                                    <option value="512" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
+                                    <option value="1024" <?php selected(get_canvas_option('canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
+                                </select>
+                                <p class="canvas-modal-description">Mémoire allouée au canvas et aux éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_memory_limit_php">Limite mémoire PHP</label></th>
+                            <td>
+                                <select id="canvas_memory_limit_php" name="pdf_builder_canvas_memory_limit_php">
+                                    <option value="128" <?php selected(get_canvas_option('canvas_memory_limit_php', '256'), '128'); ?>>128 MB</option>
+                                    <option value="256" <?php selected(get_canvas_option('canvas_memory_limit_php', '256'), '256'); ?>>256 MB</option>
+                                    <option value="512" <?php selected(get_canvas_option('canvas_memory_limit_php', '256'), '512'); ?>>512 MB</option>
+                                    <option value="1024" <?php selected(get_canvas_option('canvas_memory_limit_php', '256'), '1024'); ?>>1 GB</option>
+                                </select>
+                                <p class="canvas-modal-description">Mémoire pour génération PDF et traitement</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_response_timeout">Timeout réponses AJAX</label></th>
+                            <td>
+                                <select id="canvas_response_timeout" name="pdf_builder_canvas_response_timeout">
+                                    <option value="10" <?php selected(get_canvas_option('canvas_response_timeout', '30'), '10'); ?>>10 secondes</option>
+                                    <option value="30" <?php selected(get_canvas_option('canvas_response_timeout', '30'), '30'); ?>>30 secondes</option>
+                                    <option value="60" <?php selected(get_canvas_option('canvas_response_timeout', '30'), '60'); ?>>60 secondes</option>
+                                    <option value="120" <?php selected(get_canvas_option('canvas_response_timeout', '30'), '120'); ?>>120 secondes</option>
+                                </select>
+                                <p class="canvas-modal-description">Délai maximum pour les requêtes serveur</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_lazy_loading_editor" value="0">
+                                    <input type="checkbox" id="canvas_lazy_loading_editor" name="pdf_builder_canvas_lazy_loading_editor" value="1" <?php checked(get_canvas_option('canvas_lazy_loading_editor', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_preload_critical" value="0">
+                                    <input type="checkbox" id="canvas_preload_critical" name="pdf_builder_canvas_preload_critical" value="1" <?php checked(get_canvas_option('canvas_preload_critical', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section>
+                    <header>
+                        <h4 class="canvas-modal-section-title spaced">🐛 Debug & Monitoring</h4>
+                    </header>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_debug_enabled" value="0">
+                                    <input type="checkbox" id="canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1" <?php checked(get_canvas_option('canvas_debug_enabled', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Active les logs de débogage détaillés</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_performance_monitoring" value="0">
+                                    <input type="checkbox" id="canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring" value="1" <?php checked(get_canvas_option('canvas_performance_monitoring', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Surveille les métriques de performance</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_canvas_error_reporting" value="0">
+                                    <input type="checkbox" id="canvas_error_reporting" name="pdf_builder_canvas_error_reporting" value="1" <?php checked(get_canvas_option('canvas_error_reporting', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="canvas-modal-description">Rapporte automatiquement les erreurs</p>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+            </form>
+        </main>
+        <footer class="canvas-modal-footer">
+            <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">Appliquer</button>
+        </footer>
+    </section>
+</div>
             <main class="canvas-modal-body">
                 <aside class="canvas-modal-info">
                     <p >
@@ -935,64 +966,7 @@ debug-css-modals.js?ver=1.1.0-1765365773:21 ⚠️ [CSS MODALS DEBUG]: Style inc
 <!-- Canvas performance Modal (hidden container) -->
 <!-- REMOVED: Empty container, content moved to overlay -->
 <!-- Canvas Configuration Modals Debug -->
-<!-- Canvas Debug Modal Overlay -->
-<div id="canvas-debug-modal-overlay" class="canvas-modal-overlay" data-modal="canvas-debug-modal">
-        <section id="canvas-debug-modal" class="canvas-modal-container">
-            <header class="canvas-modal-header">
-                <h3 >🐛 Debug</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </header>
-            <main class="canvas-modal-body">
-                <aside class="canvas-modal-info">
-                    <p>
-                        <strong>🐛 Debug & Monitoring :</strong> Ces outils de débogage vous aident à diagnostiquer les problèmes et à surveiller les performances du plugin PDF Builder.
-                        Utilisez-les uniquement en cas de problème ou pour l'optimisation avancée.
-                    </p>
-                </aside>
-                <form id="canvas-debug-form">
-                    <section>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1" <?php checked(get_canvas_option('canvas_debug_enabled', '0'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring" value="1" <?php checked(get_canvas_option('canvas_performance_monitoring', '0'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_error_reporting" name="pdf_builder_canvas_error_reporting" value="1" <?php checked(get_canvas_option('canvas_error_reporting', '0'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </td>
-                            </tr>
-                        </table>
-                    </section>
-                </form>
-            </main>
-            <footer class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-apply" data-category="debug">Appliquer</button>
-            </footer>
-        </section>
-</div>
 
-
-<!-- Canvas debug Modal (hidden container) -->
-<!-- REMOVED: Empty container, content moved to overlay -->
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <?php
