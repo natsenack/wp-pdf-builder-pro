@@ -1503,44 +1503,63 @@ class AjaxHandler
 
     private function saveGrilleSettings()
     {
+        error_log("[GRILLE SAVE] === DÉBUT saveGrilleSettings ===");
         $updated = 0;
 
         // Guides activés
+        $guides_value = isset($_POST['pdf_builder_canvas_guides_enabled']) ? $_POST['pdf_builder_canvas_guides_enabled'] : 'NOT_SET';
+        error_log("[GRILLE SAVE] guides_enabled received: " . $guides_value);
         if (isset($_POST['pdf_builder_canvas_guides_enabled'])) {
             update_option('pdf_builder_canvas_guides_enabled', '1');
             $updated++;
+            error_log("[GRILLE SAVE] guides_enabled set to 1");
         } else {
             update_option('pdf_builder_canvas_guides_enabled', '0');
             $updated++;
+            error_log("[GRILLE SAVE] guides_enabled set to 0 (not set)");
         }
 
         // Grille activée
+        $grid_value = isset($_POST['pdf_builder_canvas_grid_enabled']) ? $_POST['pdf_builder_canvas_grid_enabled'] : 'NOT_SET';
+        error_log("[GRILLE SAVE] grid_enabled received: " . $grid_value);
         if (isset($_POST['pdf_builder_canvas_grid_enabled'])) {
             update_option('pdf_builder_canvas_grid_enabled', '1');
             $updated++;
+            error_log("[GRILLE SAVE] grid_enabled set to 1");
         } else {
             update_option('pdf_builder_canvas_grid_enabled', '0');
             $updated++;
+            error_log("[GRILLE SAVE] grid_enabled set to 0 (not set)");
         }
 
         // Taille de la grille
+        $size_value = isset($_POST['pdf_builder_canvas_grid_size']) ? $_POST['pdf_builder_canvas_grid_size'] : 'NOT_SET';
+        error_log("[GRILLE SAVE] grid_size received: " . $size_value);
         if (isset($_POST['pdf_builder_canvas_grid_size'])) {
             $size = intval($_POST['pdf_builder_canvas_grid_size']);
             if ($size >= 5 && $size <= 100) {
                 update_option('pdf_builder_canvas_grid_size', $size);
                 $updated++;
+                error_log("[GRILLE SAVE] grid_size set to " . $size);
+            } else {
+                error_log("[GRILLE SAVE] grid_size invalid: " . $size);
             }
         }
 
         // Accrochage à la grille
+        $snap_value = isset($_POST['pdf_builder_canvas_snap_to_grid']) ? $_POST['pdf_builder_canvas_snap_to_grid'] : 'NOT_SET';
+        error_log("[GRILLE SAVE] snap_to_grid received: " . $snap_value);
         if (isset($_POST['pdf_builder_canvas_snap_to_grid'])) {
             update_option('pdf_builder_canvas_snap_to_grid', '1');
             $updated++;
+            error_log("[GRILLE SAVE] snap_to_grid set to 1");
         } else {
             update_option('pdf_builder_canvas_snap_to_grid', '0');
             $updated++;
+            error_log("[GRILLE SAVE] snap_to_grid set to 0 (not set)");
         }
 
+        error_log("[GRILLE SAVE] === FIN saveGrilleSettings - updated: " . $updated . " ===");
         return $updated > 0;
     }
 

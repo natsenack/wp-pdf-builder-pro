@@ -1861,26 +1861,36 @@
 
                     // Fonction pour sauvegarder les paramètres d'une modale
                     function saveModalSettings(category) {
+                        console.log('[JS SAVE] Starting saveModalSettings for category:', category);
                         const modal = document.querySelector(`#canvas-${category}-modal-overlay`);
-                        if (!modal) return;
+                        if (!modal) {
+                            console.error('[JS SAVE] Modal not found for category:', category);
+                            return;
+                        }
 
                         const settings = {
                             action: 'pdf_builder_save_canvas_settings',
-                            nonce: '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>'
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>',
+                            category: category
                         };
 
                         // Collecter les valeurs de la modale
                         const inputs = modal.querySelectorAll('input, select, textarea');
+                        console.log('[JS SAVE] Found', inputs.length, 'inputs in modal');
                         inputs.forEach(input => {
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                 // Le nom est déjà correctement préfixé
                                 if (input.type === 'checkbox') {
                                     settings[input.name] = input.checked ? '1' : '0';
+                                    console.log('[JS SAVE] Checkbox', input.name, 'value:', settings[input.name], '(checked:', input.checked, ')');
                                 } else {
                                     settings[input.name] = input.value;
+                                    console.log('[JS SAVE] Input', input.name, 'value:', settings[input.name]);
                                 }
                             }
                         });
+
+                        console.log('[JS SAVE] Final settings object:', settings);
 
                         // Sauvegarde simple
                         fetch(ajaxurl, {
