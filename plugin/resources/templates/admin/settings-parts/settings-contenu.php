@@ -852,13 +852,13 @@
                             initializeToggleStates();
 
                             // Vérifier que les modals existent
-                            const modalCategories = ['affichage', 'navigation', 'comportement', 'systeme'];
-                            let missingModals = [];
-                            let foundModals = [];
+                            var modalCategories = ['affichage', 'navigation', 'comportement', 'systeme'];
+                            var missingModals = [];
+                            var foundModals = [];
 
                             modalCategories.forEach(function(category) {
-                                const modalId = 'canvas-' + category + '-modal-overlay';
-                                const modal = document.getElementById(modalId);
+                                var modalId = 'canvas-' + category + '-modal-overlay';
+                                var modal = document.getElementById(modalId);
                                 if (!modal) {
                                     missingModals.push(modalId);
                                     console.warn('[PDF Builder] MODALS_INIT - Missing modal: ' + modalId);
@@ -869,7 +869,7 @@
                             });
 
                             // Vérifier que les boutons de configuration existent
-                            const configButtons = document.querySelectorAll('.canvas-configure-btn');
+                            var configButtons = document.querySelectorAll('.canvas-configure-btn');
                             console.log('[PDF Builder] MODALS_INIT - Found ' + configButtons.length + ' configuration buttons');
 
                             if (missingModals.length > 0) {
@@ -912,7 +912,7 @@
                     function applyModalSettings(category) {
                         console.log('[JS APPLY] ===== STARTING applyModalSettings for category:', category);
 
-                        const modal = document.querySelector('#canvas-' + category + '-modal-overlay');
+                        var modal = document.querySelector('#canvas-' + category + '-modal-overlay');
                         if (!modal) {
                             console.error('[JS APPLY] ❌ Modal not found for category:', category);
                             return;
@@ -921,19 +921,19 @@
                         console.log('[JS APPLY] ✅ Modal found, synchronizing values...');
 
                         // Collecter les valeurs de la modale et mettre à jour les champs cachés
-                        const inputs = modal.querySelectorAll('input, select, textarea');
+                        var inputs = modal.querySelectorAll('input, select, textarea');
                         console.log('[JS APPLY] Found', inputs.length, 'input elements in modal');
 
-                        let updatedCount = 0;
+                        var updatedCount = 0;
 
                         inputs.forEach(function(input) {
                             console.log('[JS APPLY] Processing input: ' + (input.name || input.id) + ' (type: ' + input.type + ')');
                             if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
                                 // Trouver le champ caché correspondant dans le formulaire principal
-                                const hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
                                     // Mettre à jour la valeur du champ caché
-                                    const newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+                                    var newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
                                     hiddenField.value = newValue;
                                     updatedCount++;
                                     console.log('[JS APPLY] ✅ Synced: ' + input.name + ' = ' + newValue);
@@ -1130,7 +1130,7 @@
                         try {
                             console.log('[PDF Builder] OPEN_MODAL - Attempting to open: ' + modalId);
 
-                            const modal = document.getElementById(modalId);
+                            var modal = document.getElementById(modalId);
                             if (!modal) {
                                 console.error('[PDF Builder] OPEN_MODAL - Modal element not found: ' + modalId);
                                 alert('Erreur: La modale ' + modalId + ' n\'a pas été trouvée.');
@@ -1170,9 +1170,9 @@
                         console.log('[PDF Builder] TOGGLE_INIT - Initializing toggle states');
 
                         // Parcourir tous les toggles existants
-                        const allToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+                        var allToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
                         allToggles.forEach(function(checkbox) {
-                            const toggleSwitch = checkbox.closest('.toggle-switch');
+                            var toggleSwitch = checkbox.closest('.toggle-switch');
                             if (toggleSwitch) {
                                 if (checkbox.checked) {
                                     toggleSwitch.classList.add('checked');
@@ -1205,9 +1205,9 @@
                             });
 
                             // Forcer la mise à jour des valeurs dans toutes les modales ouvertes
-                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                            var openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
                             openModals.forEach(function(modal) {
-                                const category = modal.id.replace('canvas-', '').replace('-modal-overlay', '');
+                                var category = modal.id.replace('canvas-', '').replace('-modal-overlay', '');
                                 if (category) {
                                     updateModalValues(category);
                                 }
@@ -1321,7 +1321,7 @@
                                 if (field.type === 'checkbox') {
                                     field.checked = value === '1';
                                     // Synchroniser la classe CSS pour les toggles
-                                    const toggleSwitch = field.closest('.toggle-switch');
+                                    var toggleSwitch = field.closest('.toggle-switch');
                                     if (toggleSwitch) {
                                         if (value === '1') {
                                             toggleSwitch.classList.add('checked');
@@ -1375,7 +1375,7 @@
                         }
 
                         // Ajouter les event listeners pour les changements (sans cache localStorage)
-                        const allInputs = modal.querySelectorAll('input, select, textarea');
+                        var allInputs = modal.querySelectorAll('input, select, textarea');
                         allInputs.forEach(function(input) {
                             input.addEventListener('change', function() {
                                 console.log('[PDF Builder] INPUT_CHANGE - ' + input.name + ' changed');
@@ -1401,8 +1401,8 @@
                     // Fonction pour fermer une modale - VERSION RENFORCÉE
                     function closeModal(modalOrId) {
                         try {
-                            let modal;
-                            let modalId;
+                            var modal;
+                            var modalId;
 
                             // Déterminer si c'est un ID ou un élément
                             if (typeof modalOrId === 'string') {
