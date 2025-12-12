@@ -80,6 +80,9 @@
 ?>
 <section id="contenu" class="settings-section contenu-settings" role="tabpanel" aria-labelledby="tab-contenu">
 
+    <!-- Inclusion des modales Canvas -->
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
     <div class="settings-content">
 <?php
     $settings = get_option('pdf_builder_settings', array());
@@ -965,11 +968,6 @@
                     console.log('[PDF Builder] Canvas modals system ready');
                 })();
             </script>
-
-            </script>
-
-            <!-- Inclusion des modales Canvas -->
-            <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
