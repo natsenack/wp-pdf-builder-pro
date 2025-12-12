@@ -21,6 +21,31 @@
     }
     echo "<!-- DEBUG CANVAS VALUES END -->\n";
 
+    // Affichage visible des valeurs pour débogage
+    echo "<div style='background: #f0f0f0; border: 2px solid #ff0000; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;'>";
+    echo "<h3 style='color: #ff0000; margin: 0 0 10px 0;'>🔍 DEBUG: Valeurs Canvas Chargées</h3>";
+    $debug_keys = ['canvas_width', 'canvas_height', 'canvas_bg_color', 'canvas_grid_enabled', 'canvas_border_color'];
+    foreach ($debug_keys as $key) {
+        $value = get_canvas_option_contenu($key, 'NOT_SET');
+        $color = ($value === 'NOT_SET') ? '#ff0000' : '#008000';
+        echo "<div><strong>{$key}:</strong> <span style='color: {$color}; font-weight: bold;'>'{$value}'</span></div>";
+    }
+    echo "</div>\n";
+
+    // Vérification directe de la base de données
+    global $wpdb;
+    echo "<div style='background: #e8f4f8; border: 2px solid #0066cc; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 11px;'>";
+    echo "<h4 style='color: #0066cc; margin: 0 0 10px 0;'>💾 DEBUG: Base de données - Options wp_options</h4>";
+    $canvas_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_canvas_%' ORDER BY option_name");
+    if ($canvas_options) {
+        foreach ($canvas_options as $option) {
+            echo "<div><strong>{$option->option_name}:</strong> '{$option->option_value}'</div>";
+        }
+    } else {
+        echo "<div style='color: #ff0000;'>❌ Aucune option canvas trouvée en base !</div>";
+    }
+    echo "</div>\n";
+
     // Script de débogage pour afficher les valeurs dans la console
     echo "<script>
         console.log('[PDF Builder] Page loaded - Canvas values:');
