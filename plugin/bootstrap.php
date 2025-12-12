@@ -24,15 +24,14 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 
 /**
  * Vérifie si WooCommerce est actif sans déclencher l'autoloading
- * Cette fonction est sûre à appeler tôt dans le cycle de chargement WordPress
+ * Cette fonction est sûre à appeler seulement après que WordPress soit complètement initialisé
  *
  * @return bool True si WooCommerce est actif
  */
 function pdf_builder_is_woocommerce_active() {
-    // Pour éviter complètement tout risque d'autoloading prématuré,
-    // on retourne toujours false pendant le bootstrap
-    // Les vérifications WooCommerce seront faites plus tard dans les hooks appropriés
-    return false;
+    // Cette fonction ne doit être appelée que dans des hooks WordPress appropriés
+    // (init, admin_init, etc.) et jamais pendant le bootstrap
+    return defined('WC_VERSION');
 }
 
 /**
@@ -413,6 +412,11 @@ function pdf_builder_load_core()
                 require_once $manager_path;
             }
         }
+
+        // Charger les utilitaires WooCommerce seulement si WooCommerce est actif
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Utilities.php';
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Order_Utilities.php';
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Product_Utilities.php';
     } else {
         // Si WooCommerce n'est pas encore disponible, programmer un chargement retardé
         add_action('plugins_loaded', function() {
@@ -433,6 +437,11 @@ function pdf_builder_load_core()
                 if (file_exists($woocommerce_data_provider_path) && !class_exists('WooCommerceDataProvider')) {
                     require_once $woocommerce_data_provider_path;
                 }
+
+                // Charger les utilitaires WooCommerce
+                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Utilities.php';
+                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Order_Utilities.php';
+                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/WooCommerce_Product_Utilities.php';
             }
         }, 5); // Priorité 5 pour s'assurer que c'est après WooCommerce
     }
