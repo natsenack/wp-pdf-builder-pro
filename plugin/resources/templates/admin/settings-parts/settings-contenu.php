@@ -1030,7 +1030,6 @@
                 const CANVAS_CONFIG = {
                     MAX_RETRIES: 3,
                     RETRY_DELAY: 1000, // ms
-                    AJAX_TIMEOUT: 30000, // 30 secondes
                     HEALTH_CHECK_INTERVAL: 60000, // 1 minute
                     CACHE_KEY: 'pdf_builder_canvas_backup'
                 };
@@ -1106,128 +1105,6 @@
                             return CanvasValidators.isValidBoolean(value);
                         }
                         return true; // Autres champs acceptés par défaut
-                    }
-                };
-
-                // Health monitoring
-                const CanvasHealth = {
-                    lastSuccess: Date.now(),
-                    failureCount: 0,
-                    isHealthy: true,
-
-                    recordSuccess: () => {
-                        CanvasHealth.lastSuccess = Date.now();
-                        CanvasHealth.failureCount = 0;
-                        CanvasHealth.isHealthy = true;
-                    },
-
-                    recordFailure: () => {
-                        CanvasHealth.failureCount++;
-                        if (CanvasHealth.failureCount >= 3) {
-                            CanvasHealth.isHealthy = false;
-                            console.warn('HEALTH_WARNING: System marked as unhealthy after 3 failures');
-                        }
-                    },
-
-                    checkHealth: () => {
-                        const timeSinceLastSuccess = Date.now() - CanvasHealth.lastSuccess;
-                        return CanvasHealth.isHealthy && timeSinceLastSuccess < 300000; // 5 minutes
-                    }
-                };
-
-                // Métriques de performance
-                const CanvasMetrics = {
-                    saveAttempts: 0,
-                    saveSuccesses: 0,
-                    saveFailures: 0,
-                    averageSaveTime: 0,
-                    lastSaveTime: 0,
-
-                    recordSaveStart: () => {
-                        CanvasMetrics.saveAttempts++;
-                        CanvasMetrics.lastSaveTime = performance.now();
-                    },
-
-                    recordSaveEnd: (success) => {
-                        const duration = performance.now() - CanvasMetrics.lastSaveTime;
-                        CanvasMetrics.averageSaveTime = (CanvasMetrics.averageSaveTime + duration) / 2;
-
-                        if (success) {
-                            CanvasMetrics.saveSuccesses++;
-                        } else {
-                            CanvasMetrics.saveFailures++;
-                        }
-
-                        console.log(`METRICS: Save completed in ${duration.toFixed(2)}ms (avg: ${CanvasMetrics.averageSaveTime.toFixed(2)}ms)`);
-
-                        // Alerte si performance dégradée
-                        if (CanvasMetrics.averageSaveTime > 5000) { // 5 secondes
-                            console.warn('PERFORMANCE_WARNING: Average save time > 5s, possible issues');
-                        }
-                    },
-
-                    getStats: () => {
-                        const successRate = CanvasMetrics.saveAttempts > 0 ?
-                            (CanvasMetrics.saveSuccesses / CanvasMetrics.saveAttempts * 100).toFixed(1) : 0;
-
-                        return {
-                            attempts: CanvasMetrics.saveAttempts,
-                            successes: CanvasMetrics.saveSuccesses,
-                            failures: CanvasMetrics.saveFailures,
-                            successRate: successRate + '%',
-                            averageTime: CanvasMetrics.averageSaveTime.toFixed(2) + 'ms'
-                        };
-                    }
-                };
-                const CanvasRecovery = {
-                    init: () => {
-                        // Health check périodique
-                        setInterval(() => {
-                            CanvasRecovery.performHealthCheck();
-                        }, CANVAS_CONFIG.HEALTH_CHECK_INTERVAL);
-
-                        console.log('RECOVERY_INIT: Auto-recovery system initialized');
-                    },
-
-                    performHealthCheck: () => {
-                        // Vérifier que l'utilisateur est connecté et a les permissions
-                        if (typeof wpApiSettings === 'undefined' || !wpApiSettings.nonce) {
-                            console.warn('HEALTH_CHECK: WordPress API not ready, skipping check');
-                            CanvasHealth.recordFailure();
-                            return;
-                        }
-
-                        // Utiliser le nonce WordPress global au lieu du nonce généré côté PHP
-                        const nonce = wpApiSettings.nonce || '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
-
-                        // Ping simple du serveur
-                        fetch(ajaxurl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: new URLSearchParams({
-                                action: 'pdf_builder_health_check',
-                                nonce: nonce
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                CanvasHealth.recordSuccess();
-                                console.log('HEALTH_CHECK: System is healthy');
-                            } else {
-                                CanvasHealth.recordFailure();
-                                console.warn('HEALTH_CHECK: System reported issues:', data.data);
-                            }
-                        })
-                        .catch(error => {
-                            CanvasHealth.recordFailure();
-                            console.warn('HEALTH_CHECK: Failed to reach server:', error.message);
-                        });
                     }
                 };
 
@@ -1854,50 +1731,24 @@
                                 }
                             });
 
-                            // Faire une requête AJAX pour réinitialiser les options WordPress
-                            const ajaxUrl = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
-                            fetch(ajaxUrl, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                body: new URLSearchParams({
-                                    action: 'pdf_builder_reset_canvas_defaults',
-                                    nonce: '<?php echo wp_create_nonce("reset_canvas_defaults"); ?>'
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    console.log('[PDF Builder] RESET_CANVAS - Server-side reset successful');
+                            // AJAX supprimé - réinitialisation simplifiée côté client uniquement
+                            console.log('[PDF Builder] RESET_CANVAS - Client-side reset completed');
 
-                                    // Fermer toutes les modales ouvertes
-                                    const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
-                                    openModals.forEach(modal => {
-                                        const modalId = modal.id;
-                                        closeModal(modalId);
-                                    });
+                            // Fermer toutes les modales ouvertes
+                            const openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                            openModals.forEach(modal => {
+                                const modalId = modal.id;
+                                closeModal(modalId);
+                            });
 
-                                    // Mettre à jour l'affichage des cartes avec les nouvelles valeurs
-                                    updateCanvasCardsDisplay();
+                            // Mettre à jour l'affichage des cartes avec les nouvelles valeurs
+                            updateCanvasCardsDisplay();
 
-                                    // Notification de succès
-                                    showNotification('success', '✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut.', {
-                                        duration: 6000,
-                                        dismissible: true
-                                    });
-                                } else {
-                                    console.error('[PDF Builder] RESET_CANVAS - Server-side reset failed:', data);
-                                    // Notification d'erreur
-                                    showNotification('error', '❌ Erreur lors de la réinitialisation côté serveur: ' + (data.data?.message || 'Erreur inconnue'), {
-                                        duration: 8000,
-                                        dismissible: true
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('[PDF Builder] RESET_CANVAS - AJAX error:', error);
-                                // Notification d'erreur de connexion
-                                showNotification('error', '❌ Erreur de connexion lors de la réinitialisation.', {
-                                    duration: 8000,
+                            // Notification de succès
+                            showNotification('success', '✅ Tous les paramètres Canvas ont été réinitialisés aux valeurs par défaut (côté client).', {
+                                duration: 6000,
+                                dismissible: true
+                            });
                                     dismissible: true
                                 });
                             });
@@ -2096,60 +1947,7 @@
 
                     console.log('Modal manager initialized');
 
-                    // INITIALISER LES SYSTÈMES DE ROBUSTESSE
-                    CanvasRecovery.init();
-
-                    // Circuit breaker pour éviter les spam de requêtes
-                    let lastSaveAttempt = 0;
-                    const SAVE_COOLDOWN = 2000; // 2 secondes minimum entre sauvegardes
-
-                    // Wrapper pour saveModalSettings avec circuit breaker
-                    const originalSaveModalSettings = saveModalSettings;
-                    saveModalSettings = function(category) {
-                        const now = Date.now();
-                        if (now - lastSaveAttempt < SAVE_COOLDOWN) {
-                            console.warn('CIRCUIT_BREAKER: Save attempt too soon, ignoring');
-                            return;
-                        }
-                        lastSaveAttempt = now;
-
-                        // Vérifier si le système est en mode dégradé
-                        if (!CanvasHealth.checkHealth()) {
-                            console.warn('CIRCUIT_BREAKER: System unhealthy, forcing cache-only mode');
-                            // Ici on pourrait implémenter un mode dégradé
-                        }
-
-                        originalSaveModalSettings(category);
-                    };
-
-                    console.log('ROBUSTNESS_INIT: All safety systems activated');
-
-                    // EXPOSER LES OUTILS DE DIAGNOSTIC GLOBALEMENT
-                    window.CanvasDebug = {
-                        getHealthStatus: () => ({
-                            healthy: CanvasHealth.isHealthy,
-                            lastSuccess: new Date(CanvasHealth.lastSuccess).toLocaleString(),
-                            failureCount: CanvasHealth.failureCount,
-                            timeSinceLastSuccess: Math.round((Date.now() - CanvasHealth.lastSuccess) / 1000) + 's'
-                        }),
-
-                        getMetrics: () => CanvasMetrics.getStats(),
-
-                        forceHealthCheck: () => CanvasRecovery.performHealthCheck(),
-
-                        simulateFailure: () => {
-                            CanvasHealth.recordFailure();
-                            console.log('DEBUG: Simulated failure recorded');
-                        },
-
-                        getSystemStatus: () => ({
-                            health: window.CanvasDebug.getHealthStatus(),
-                            metrics: window.CanvasDebug.getMetrics(),
-                            config: CANVAS_CONFIG
-                        })
-                    };
-
-                    console.log('DEBUG_INIT: Diagnostic tools available via window.CanvasDebug');
+                    console.log('SYSTEM_INIT: Canvas modals system initialized successfully');
                 })();
             </script>
 
