@@ -15,7 +15,7 @@
     function get_canvas_option_contenu($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
         $value = get_option($option_key, $default);
-        error_log("[PDF Builder] PAGE_LOAD - get_canvas_option_contenu - {$key}: '{$value}' (default: '{$default}')");
+        error_log("[PDF Builder] PAGE_LOAD - get_canvas_option_contenu - {$key}: '{$value}' (default: '{$default}') - KEY: {$option_key}");
         return $value;
     }
 
