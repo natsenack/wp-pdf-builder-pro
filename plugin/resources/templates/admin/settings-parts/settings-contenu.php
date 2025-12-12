@@ -831,9 +831,10 @@
 
                     // Valeurs par défaut pour les paramètres Canvas (injectées depuis PHP)
                     <?php
-                    $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
-                    echo "var CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
+                    // $canvas_defaults_json = json_encode($default_canvas_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+                    // echo "var CANVAS_DEFAULT_VALUES = $canvas_defaults_json;";
                     ?>
+                    var CANVAS_DEFAULT_VALUES = {};
 
                     console.log('[PDF Builder] 🚀 MODALS_SYSTEM_v2.1 - Initializing Canvas modals system (FIXED VERSION)');
                     console.log('[PDF Builder] 📅 Date: 2025-12-11 21:35');
@@ -928,7 +929,7 @@
 
                         inputs.forEach(function(input) {
                             console.log('[JS APPLY] Processing input: ' + (input.name || input.id) + ' (type: ' + input.type + ')');
-                            if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
+                            if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
                                 // Trouver le champ caché correspondant dans le formulaire principal
                                 var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
@@ -959,7 +960,7 @@
                         // DEBUG: Vérifier que les champs cachés ont été mis à jour
                         console.log('[JS APPLY] ===== VERIFYING HIDDEN FIELDS =====');
                         inputs.forEach(function(input) {
-                            if (input.name && input.name.startsWith('pdf_builder_canvas_')) {
+                            if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
                                 var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {
                                     console.log('[JS APPLY] VERIFY: ' + input.name + ' -> hidden field value: ' + hiddenField.value);
@@ -1314,7 +1315,7 @@
                                 }
                                 
                                 // Log spécifique pour les toggles de grille
-                                if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].includes(fieldId)) {
+                                if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'].indexOf(fieldId) !== -1) {
                                     console.log('GRID_TOGGLE: Updating ' + fieldId + ' (' + settingKey + ') with value: ' + value + ', field type: ' + field.type);
                                 }
                                 
@@ -1332,7 +1333,7 @@
                                     } else {
                                         console.log('TOGGLE_DEBUG: ' + fieldId + ' - No toggle-switch parent found');
                                     }
-                                    if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts'].includes(fieldId)) {
+                                    if (['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts'].indexOf(fieldId) !== -1) {
                                         console.log('ALL_TOGGLES: Set checkbox ' + fieldId + ' checked to: ' + field.checked + ', toggle class: ' + (toggleSwitch ? toggleSwitch.className : 'no toggle'));
                                     }
                                 } else {
