@@ -1465,7 +1465,8 @@ class AjaxHandler
             error_log("[PDF Builder Debug] Shadow enabled received: " . $received_value . " (old: " . $old_value . ")");
             // Convertir en 1 ou 0
             $new_value_bool = in_array(strtolower($received_value), ['1', 'on', 'true', 'yes']) ? '1' : '0';
-            update_option('pdf_builder_canvas_shadow_enabled', $new_value_bool);
+            $result = update_option('pdf_builder_canvas_shadow_enabled', $new_value_bool);
+            error_log('🔄 [PHP AJAX SAVE] APPARANCE_TOGGLE_SAVE - pdf_builder_canvas_shadow_enabled: ' . $new_value_bool . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
 
             // Synchroniser avec le tableau groupé pdf_builder_canvas_settings
             $canvas_settings = get_option('pdf_builder_canvas_settings', []);
@@ -1481,10 +1482,20 @@ class AjaxHandler
 
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             error_log("[PDF Builder Debug] Shadow enabled updated to: " . $new_value);
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_shadow_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_shadow_enabled DB value: ' . $db_value);
             $updated++;
         } else {
             $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
-            error_log("[PDF Builder Debug] Shadow enabled not set in POST, keeping current value: " . $old_value);
+            error_log("[PDF Builder Debug] Shadow enabled not set in POST, setting to 0 (old: " . $old_value . ")");
+            $result = update_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log('🔄 [PHP AJAX SAVE] APPARANCE_TOGGLE_SAVE - pdf_builder_canvas_shadow_enabled: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_shadow_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_shadow_enabled DB value: ' . $db_value);
             $updated++;
         }
 
@@ -1582,37 +1593,81 @@ class AjaxHandler
 
         // Glisser-déposer activé
         if (isset($_POST['pdf_builder_canvas_drag_enabled'])) {
-            update_option('pdf_builder_canvas_drag_enabled', '1');
+            $value = $_POST['pdf_builder_canvas_drag_enabled'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_drag_enabled', $value);
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_drag_enabled: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_drag_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_drag_enabled DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_drag_enabled', '0');
+            $result = update_option('pdf_builder_canvas_drag_enabled', '0');
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_drag_enabled: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_drag_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_drag_enabled DB value: ' . $db_value);
             $updated++;
         }
 
         // Redimensionnement activé
         if (isset($_POST['pdf_builder_canvas_resize_enabled'])) {
-            update_option('pdf_builder_canvas_resize_enabled', '1');
+            $value = $_POST['pdf_builder_canvas_resize_enabled'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_resize_enabled', $value);
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_resize_enabled: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_resize_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_resize_enabled DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_resize_enabled', '0');
+            $result = update_option('pdf_builder_canvas_resize_enabled', '0');
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_resize_enabled: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_resize_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_resize_enabled DB value: ' . $db_value);
             $updated++;
         }
 
         // Rotation activée
         if (isset($_POST['pdf_builder_canvas_rotate_enabled'])) {
-            update_option('pdf_builder_canvas_rotate_enabled', '1');
+            $value = $_POST['pdf_builder_canvas_rotate_enabled'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_rotate_enabled', $value);
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_rotate_enabled: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_rotate_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_rotate_enabled DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_rotate_enabled', '0');
+            $result = update_option('pdf_builder_canvas_rotate_enabled', '0');
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_rotate_enabled: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_rotate_enabled'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_rotate_enabled DB value: ' . $db_value);
             $updated++;
         }
 
         // Sélection multiple
         if (isset($_POST['pdf_builder_canvas_multi_select'])) {
-            update_option('pdf_builder_canvas_multi_select', '1');
+            $value = $_POST['pdf_builder_canvas_multi_select'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_multi_select', $value);
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_multi_select: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_multi_select'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_multi_select DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_multi_select', '0');
+            $result = update_option('pdf_builder_canvas_multi_select', '0');
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_multi_select: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_multi_select'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_multi_select DB value: ' . $db_value);
             $updated++;
         }
 
@@ -1624,10 +1679,21 @@ class AjaxHandler
 
         // Raccourcis clavier
         if (isset($_POST['pdf_builder_canvas_keyboard_shortcuts'])) {
-            update_option('pdf_builder_canvas_keyboard_shortcuts', '1');
+            $value = $_POST['pdf_builder_canvas_keyboard_shortcuts'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_keyboard_shortcuts', $value);
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_keyboard_shortcuts: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_keyboard_shortcuts'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_keyboard_shortcuts DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_keyboard_shortcuts', '0');
+            $result = update_option('pdf_builder_canvas_keyboard_shortcuts', '0');
+            error_log('🔄 [PHP AJAX SAVE] INTERACTIONS_TOGGLE_SAVE - pdf_builder_canvas_keyboard_shortcuts: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_keyboard_shortcuts'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_keyboard_shortcuts DB value: ' . $db_value);
             $updated++;
         }
 
@@ -1658,10 +1724,21 @@ class AjaxHandler
 
         // Fond transparent
         if (isset($_POST['pdf_builder_canvas_export_transparent'])) {
-            update_option('pdf_builder_canvas_export_transparent', '1');
+            $value = $_POST['pdf_builder_canvas_export_transparent'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_export_transparent', $value);
+            error_log('🔄 [PHP AJAX SAVE] EXPORT_TOGGLE_SAVE - pdf_builder_canvas_export_transparent: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_export_transparent'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_export_transparent DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_export_transparent', '0');
+            $result = update_option('pdf_builder_canvas_export_transparent', '0');
+            error_log('🔄 [PHP AJAX SAVE] EXPORT_TOGGLE_SAVE - pdf_builder_canvas_export_transparent: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_export_transparent'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_export_transparent DB value: ' . $db_value);
             $updated++;
         }
 
@@ -1692,19 +1769,41 @@ class AjaxHandler
 
         // Chargement paresseux éditeur
         if (isset($_POST['pdf_builder_canvas_lazy_loading_editor'])) {
-            update_option('pdf_builder_canvas_lazy_loading_editor', '1');
+            $value = $_POST['pdf_builder_canvas_lazy_loading_editor'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_lazy_loading_editor', $value);
+            error_log('🔄 [PHP AJAX SAVE] PERFORMANCE_TOGGLE_SAVE - pdf_builder_canvas_lazy_loading_editor: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_lazy_loading_editor'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_lazy_loading_editor DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_lazy_loading_editor', '0');
+            $result = update_option('pdf_builder_canvas_lazy_loading_editor', '0');
+            error_log('🔄 [PHP AJAX SAVE] PERFORMANCE_TOGGLE_SAVE - pdf_builder_canvas_lazy_loading_editor: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_lazy_loading_editor'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_lazy_loading_editor DB value: ' . $db_value);
             $updated++;
         }
 
         // Préchargement ressources critiques
         if (isset($_POST['pdf_builder_canvas_preload_critical'])) {
-            update_option('pdf_builder_canvas_preload_critical', '1');
+            $value = $_POST['pdf_builder_canvas_preload_critical'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_preload_critical', $value);
+            error_log('🔄 [PHP AJAX SAVE] PERFORMANCE_TOGGLE_SAVE - pdf_builder_canvas_preload_critical: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_preload_critical'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_preload_critical DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_preload_critical', '0');
+            $result = update_option('pdf_builder_canvas_preload_critical', '0');
+            error_log('🔄 [PHP AJAX SAVE] PERFORMANCE_TOGGLE_SAVE - pdf_builder_canvas_preload_critical: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_preload_critical'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_preload_critical DB value: ' . $db_value);
             $updated++;
         }
 
@@ -1728,10 +1827,21 @@ class AjaxHandler
 
         // Chargement paresseux plugin
         if (isset($_POST['pdf_builder_canvas_lazy_loading_plugin'])) {
-            update_option('pdf_builder_canvas_lazy_loading_plugin', '1');
+            $value = $_POST['pdf_builder_canvas_lazy_loading_plugin'] == '1' ? '1' : '0';
+            $result = update_option('pdf_builder_canvas_lazy_loading_plugin', $value);
+            error_log('🔄 [PHP AJAX SAVE] PERFORMANCE_TOGGLE_SAVE - pdf_builder_canvas_lazy_loading_plugin: ' . $value . ' (update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_lazy_loading_plugin'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_lazy_loading_plugin DB value: ' . $db_value);
             $updated++;
         } else {
-            update_option('pdf_builder_canvas_lazy_loading_plugin', '0');
+            $result = update_option('pdf_builder_canvas_lazy_loading_plugin', '0');
+            error_log('🔄 [PHP AJAX SAVE] PERFORMANCE_TOGGLE_SAVE - pdf_builder_canvas_lazy_loading_plugin: 0 (not set, update_result: ' . ($result ? 'true' : 'false') . ')');
+            // Vérifier immédiatement dans la DB
+            global $wpdb;
+            $db_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'pdf_builder_canvas_lazy_loading_plugin'));
+            error_log('🔍 [PHP AJAX SAVE] DB_VERIFY - pdf_builder_canvas_lazy_loading_plugin DB value: ' . $db_value);
             $updated++;
         }
 
