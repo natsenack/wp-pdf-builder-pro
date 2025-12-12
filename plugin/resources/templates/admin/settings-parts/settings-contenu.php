@@ -1040,14 +1040,10 @@
                     if (typeof attempt === 'undefined') attempt = 0;
                     var maxAttempts = 10;
                     var modalIds = [
-                        'canvas-dimensions-modal-overlay',
-                        'canvas-apparence-modal-overlay',
-                        'canvas-grille-modal-overlay',
-                        'canvas-zoom-modal-overlay',
-                        'canvas-interactions-modal-overlay',
-                        'canvas-export-modal-overlay',
-                        'canvas-performance-modal-overlay',
-                        'canvas-debug-modal-overlay'
+                        'canvas-affichage-modal-overlay',
+                        'canvas-navigation-modal-overlay',
+                        'canvas-comportement-modal-overlay',
+                        'canvas-systeme-modal-overlay'
                     ];
                     var allModalsLoaded = modalIds.every(function(id) {
                         return document.getElementById(id) !== null;
@@ -1156,50 +1152,42 @@
                     console.log('[PDF Builder] UPDATE_MODAL - Modal found, processing category: ' + category);
                     // Mapping des champs selon la catégorie
                     var fieldMappings = {
-                        'dimensions': {
+                        'affichage': {
                             'canvas_width': 'pdf_builder_canvas_width',
                             'canvas_height': 'pdf_builder_canvas_height',
                             'canvas_dpi': 'pdf_builder_canvas_dpi',
-                            'canvas_format': 'pdf_builder_canvas_format'
-                        },
-                        'apparence': {
+                            'canvas_format': 'pdf_builder_canvas_format',
                             'canvas_bg_color': 'pdf_builder_canvas_bg_color',
                             'canvas_border_color': 'pdf_builder_canvas_border_color',
                             'canvas_border_width': 'pdf_builder_canvas_border_width',
                             'canvas_shadow_enabled': 'pdf_builder_canvas_shadow_enabled',
                             'canvas_container_bg_color': 'pdf_builder_canvas_container_bg_color'
                         },
-                        'grille': {
+                        'navigation': {
                             'canvas_grid_enabled': 'pdf_builder_canvas_grid_enabled',
                             'canvas_grid_size': 'pdf_builder_canvas_grid_size',
                             'canvas_guides_enabled': 'pdf_builder_canvas_guides_enabled',
-                            'canvas_snap_to_grid': 'pdf_builder_canvas_snap_to_grid'
-                        },
-                        'zoom': {
+                            'canvas_snap_to_grid': 'pdf_builder_canvas_snap_to_grid',
                             'canvas_zoom_min': 'pdf_builder_canvas_zoom_min',
                             'canvas_zoom_max': 'pdf_builder_canvas_zoom_max',
                             'canvas_zoom_default': 'pdf_builder_canvas_zoom_default',
                             'canvas_zoom_step': 'pdf_builder_canvas_zoom_step'
                         },
-                        'interactions': {
+                        'comportement': {
                             'canvas_drag_enabled': 'pdf_builder_canvas_drag_enabled',
                             'canvas_resize_enabled': 'pdf_builder_canvas_resize_enabled',
                             'canvas_rotate_enabled': 'pdf_builder_canvas_rotate_enabled',
                             'canvas_multi_select': 'pdf_builder_canvas_multi_select',
                             'canvas_selection_mode': 'pdf_builder_canvas_selection_mode',
-                            'canvas_keyboard_shortcuts': 'pdf_builder_canvas_keyboard_shortcuts'
-                        },
-                        'export': {
+                            'canvas_keyboard_shortcuts': 'pdf_builder_canvas_keyboard_shortcuts',
                             'canvas_export_quality': 'pdf_builder_canvas_export_quality',
                             'canvas_export_format': 'pdf_builder_canvas_export_format',
                             'canvas_export_transparent': 'pdf_builder_canvas_export_transparent'
                         },
-                        'performance': {
+                        'systeme': {
                             'canvas_fps_target': 'pdf_builder_canvas_fps_target',
                             'canvas_memory_limit_js': 'pdf_builder_canvas_memory_limit_js',
-                            'canvas_response_timeout': 'pdf_builder_canvas_response_timeout'
-                        },
-                        'debug': {
+                            'canvas_response_timeout': 'pdf_builder_canvas_response_timeout',
                             'canvas_debug_enabled': 'pdf_builder_canvas_debug_enabled',
                             'canvas_performance_monitoring': 'pdf_builder_canvas_performance_monitoring',
                             'canvas_error_reporting': 'pdf_builder_canvas_error_reporting'
