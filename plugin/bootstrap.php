@@ -1775,6 +1775,35 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 });
 
 // ============================================================================
+// ✅ FONCTION DE CHARGEMENT À LA DEMANDE DES MANAGERS WOOCOMMERCE
+// ============================================================================
+
+/**
+ * Charge les managers dépendants de WooCommerce à la demande
+ */
+function pdf_builder_load_woocommerce_managers() {
+    static $woocommerce_managers_loaded = false;
+
+    if ($woocommerce_managers_loaded || !did_action('plugins_loaded') || !class_exists('WooCommerce')) {
+        return;
+    }
+
+    $woocommerce_dependent_managers = array(
+        'PDF_Builder_Status_Manager.php',
+        'PDF_Builder_Variable_Mapper.php'
+    );
+
+    foreach ($woocommerce_dependent_managers as $manager) {
+        $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
+        if (file_exists($manager_path) && !class_exists('PDF_Builder\\Managers\\' . str_replace('.php', '', str_replace('PDF_Builder_', '', $manager)))) {
+            require_once $manager_path;
+        }
+    }
+
+    $woocommerce_managers_loaded = true;
+}
+
+// ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
 // FIN DU BOOTSTRAP
