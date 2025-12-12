@@ -276,6 +276,12 @@ class AdminScriptLoader
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
         ];
 
+        // Ajouter les paramètres canvas
+        if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
+            $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
+            $localize_data['canvasSettings'] = $canvas_manager->get_all_settings();
+        }
+
         // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
 
         // Charger les données du template si template_id est fourni

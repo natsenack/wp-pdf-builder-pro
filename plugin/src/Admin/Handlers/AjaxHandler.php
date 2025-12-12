@@ -1287,15 +1287,13 @@ class AjaxHandler
             }
             error_log('✅ [PHP AJAX GET] Nonce valide');
 
-            // Pour l'instant, retourner des paramètres par défaut
+            // Récupérer les paramètres depuis Canvas_Manager
+            $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
+            $canvas_settings = $canvas_manager->get_all_settings();
+
             $response = [
-                'canvas_settings' => [
-                    'width' => 1123,
-                    'height' => 794,
-                    'unit' => 'mm',
-                    'orientation' => 'landscape'
-                ],
-                'message' => 'Paramètres canvas récupérés (simulation)',
+                'canvas_settings' => $canvas_settings,
+                'message' => 'Paramètres canvas récupérés avec succès',
                 'debug' => [
                     'timestamp' => time(),
                     'user_id' => get_current_user_id(),
