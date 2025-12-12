@@ -842,8 +842,8 @@
                     // Fonction d'initialisation avec retry
                     function initializeModals(retryCount) {
                         if (typeof retryCount === 'undefined') retryCount = 0;
-                        const maxRetries = 5;
-                        const retryDelay = 200; // ms
+                        var maxRetries = 5;
+                        var retryDelay = 200; // ms
 
                         try {
                             console.log('[PDF Builder] MODALS_INIT - Initializing Canvas modals system (attempt ' + (retryCount + 1) + '/' + (maxRetries + 1) + ')');
@@ -1086,7 +1086,7 @@
                     // Appeler l'initialisation quand le DOM est prêt et les modals sont chargées
                     function initWhenReady() {
                         if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', () => waitForModalsAndInitialize(0));
+                            document.addEventListener('DOMContentLoaded', function() { waitForModalsAndInitialize(0); });
                         } else {
                             // DOM déjà chargé, attendre les modals
                             waitForModalsAndInitialize(0);
@@ -1094,9 +1094,10 @@
                     }
 
                     // Fonction pour attendre que les modals soient chargées
-                    function waitForModalsAndInitialize(attempt = 0) {
-                        const maxAttempts = 10;
-                        const modalIds = [
+                    function waitForModalsAndInitialize(attempt) {
+                        if (typeof attempt === 'undefined') attempt = 0;
+                        var maxAttempts = 10;
+                        var modalIds = [
                             'canvas-dimensions-modal-overlay',
                             'canvas-apparence-modal-overlay',
                             'canvas-grille-modal-overlay',
@@ -1114,7 +1115,7 @@
                             initializeModals(0);
                         } else if (attempt < maxAttempts) {
                             console.log('[PDF Builder] MODALS_WAIT - Waiting for modals (attempt ' + (attempt + 1) + '/' + maxAttempts + ')');
-                            setTimeout(() => waitForModalsAndInitialize(attempt + 1), 100);
+                            setTimeout(function() { waitForModalsAndInitialize(attempt + 1); }, 100);
                         } else {
                             console.error('[PDF Builder] MODALS_TIMEOUT - Modals failed to load after maximum attempts');
                             // Essayer quand même d'initialiser avec ce qui est disponible
