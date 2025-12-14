@@ -615,3 +615,4 @@
                     console.log('Modal manager initialized');
 
                     console.log('MODALS_INIT: Canvas modals system initialized successfully');
+                })();

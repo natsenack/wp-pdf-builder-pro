@@ -321,7 +321,7 @@
                         // Notification à l'utilisateur
                         alert('Paramètres restaurés depuis le cache local. Pensez à sauvegarder !');
                     }
-                };
+                })();
 
                 // Gestionnaire des modales Canvas
                 (function() {
@@ -1018,3 +1018,4 @@
                     };
 
                     console.log('DEBUG_INIT: Diagnostic tools available via window.CanvasDebug');
+                })();
