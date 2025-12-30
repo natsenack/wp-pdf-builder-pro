@@ -653,6 +653,15 @@ class PdfBuilderAdmin
      */
     public function getTemplateManager()
     {
+        // S'assurer que le template manager est initialisé
+        if ($this->template_manager === null) {
+            if (class_exists('PDF_Builder\Managers\PdfBuilderTemplateManager')) {
+                $this->template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager($this);
+            } else {
+                // Fallback: utiliser le TemplateManager de l'admin
+                $this->template_manager = new \PDF_Builder\Admin\Managers\TemplateManager($this);
+            }
+        }
         return $this->template_manager;
     }
 
