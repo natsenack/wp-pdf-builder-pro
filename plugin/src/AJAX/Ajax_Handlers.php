@@ -979,9 +979,11 @@ add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canva
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
 /**
  * Initialisation des handlers AJAX unifiés
- * Fonction globale appelée lors de l'action 'init' de WordPress
+ * Fonction supprimée - remplacée par fonction anonyme
  */
-function pdf_builder_init_ajax_handlers() {
+
+// Initialiser les handlers unifiés
+add_action('plugins_loaded', function() {
     // Settings handler - Système unifié principal
     $settings_handler = new \PDF_Builder\AJAX\PDF_Builder_Settings_Ajax_Handler();
     add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
@@ -991,7 +993,4 @@ function pdf_builder_init_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
     add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
     add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
-}
-
-// Initialiser les handlers unifiés
-add_action('plugins_loaded', 'pdf_builder_init_ajax_handlers', 5);
+}, 5);
