@@ -158,6 +158,18 @@ try {
         Write-Host "Erreur lors de la detection des fichiers dist: $($_.Exception.Message)" -ForegroundColor Yellow
     }
 
+    # FORCER l'inclusion des fichiers bundle.js modifiés récemment (dernieres 30 minutes) pour corriger l'editeur
+    try {
+        $recentBundleFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\*.bundle.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-30) } | Select-Object -ExpandProperty FullName
+        $bundleFilesRelative = $recentBundleFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+        if ($bundleFilesRelative.Count -gt 0) {
+            Write-Host "Bundle files recents detectes: $($bundleFilesRelative.Count)" -ForegroundColor Yellow
+            $pluginModified = @($pluginModified) + @($bundleFilesRelative) | Sort-Object -Unique
+        }
+    } catch {
+        Write-Host "Erreur lors de la detection des fichiers bundle: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+
     # Toujours inclure les fichiers vendor (dépendances PHP) - seulement s'ils sont récents
     try {
         # N'inclure que les vendor files modifiés récemment (dernières 24h) pour éviter l'upload massif
