@@ -67,7 +67,6 @@ function pdf_builder_load_core()
     }
 
     // Charger le core maintenant que l'autoloader est prêt
-    pdf_builder_load_core();
     pdf_builder_load_new_classes();
 
     // Charger manuellement le Thumbnail Manager pour s'assurer qu'il est disponible
