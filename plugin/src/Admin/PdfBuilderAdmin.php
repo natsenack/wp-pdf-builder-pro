@@ -987,7 +987,7 @@ class PdfBuilderAdmin
         );
 
         // Éditeur React unique (accessible via lien direct, masqué du menu)
-        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
+        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'read', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
 
         // Masquer le menu de l'éditeur React globalement avec CSS
         add_action('admin_enqueue_scripts', function() {
