@@ -29,7 +29,7 @@ add_action('init', function() {
 
     // Initialiser le planificateur si la classe existe
     if (class_exists('PDF_Builder_Task_Scheduler')) {
-        PDF_Builder_Task_Scheduler::init();
+        PDF_Builder_Task_Scheduler::get_instance()->init();
     }
 });
 

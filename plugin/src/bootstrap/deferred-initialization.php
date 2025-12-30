@@ -92,3 +92,4 @@ if (function_exists('add_action')) {
             new \PDF_Builder\Api\PreviewImageAPI();
         }
     });
+}

@@ -131,7 +131,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-modals-contenu',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/modals-contenu.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . rand(1000, 9999),
+        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . mt_rand(1000, 9999),
         'all'
     );
 
@@ -149,7 +149,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-force-complete-reload',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/force-complete-reload.js',
         array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . rand(100000, 999999),
+        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . mt_rand(100000, 999999),
         true
     );
 
@@ -175,7 +175,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-settings-tabs',
         PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/settings-tabs.js',
         array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
+        PDF_BUILDER_VERSION . '-' . time() . '-' . mt_rand(1000, 9999), // Cache busting très agressif
         false // Chargé dans le header pour une exécution précoce
     );
 
