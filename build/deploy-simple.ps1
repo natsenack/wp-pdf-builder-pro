@@ -87,36 +87,28 @@ try {
     # Essayer de récupérer les fichiers modifiés via git
     try {
         $ErrorActionPreference = "Continue"
-        # Utiliser cmd /c pour éviter les problèmes d'encodage PowerShell
-        $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+        # Utiliser git diff pour détecter tous les fichiers modifiés/deplacés/renommés depuis le dernier commit
+        $statusOutput = cmd /c "cd /d $WorkingDir && git diff --name-status HEAD~1" 2>&1
         $gitExitCode = $LASTEXITCODE
         $ErrorActionPreference = "Stop"
 
         if ($gitExitCode -eq 0) {
             $allModified = $statusOutput | Where-Object { $_ -and $_ -notlike "*warning*" -and $_ -notlike "*fatal*" } | ForEach-Object {
                 $line = $_.ToString().Trim()
-                if ($line -match '^\s*([MADRCU\?\!]{1,2})\s+(.+)$') {
+                if ($line -match '^([MADRCU]{1})\s+(.+)$') {
                     $status = $matches[1]
                     $filePart = $matches[2]
                     
-                    # Pour les renommages (R), extraire le nouveau nom de fichier après "->"
-                    if ($status -like "*R*") {
-                        if ($filePart -match '(.+)\s*->\s*(.+)') {
-                            $file = $matches[2].Trim()
-                        } else {
-                            $file = $filePart
-                        }
-                    } else {
-                        $file = $filePart
-                    }
+                    # Pour les renommages (R), le fichier est déjà le nouveau nom
+                    $file = $filePart.Trim()
                     
                     $file
                 }
             } | Sort-Object -Unique
 
-            Write-Host "Utilisation des fichiers modifies detectes par git ($($allModified.Count) fichiers)" -ForegroundColor Green
+            Write-Host "Utilisation des fichiers modifies detectes par git diff ($($allModified.Count) fichiers)" -ForegroundColor Green
         } else {
-            Write-Host "Git status a retourne le code $gitExitCode, utilisation liste par defaut" -ForegroundColor Yellow
+            Write-Host "Git diff a retourne le code $gitExitCode, utilisation liste par defaut" -ForegroundColor Yellow
             $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
         }
     } catch {
