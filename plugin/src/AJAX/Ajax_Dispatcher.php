@@ -80,13 +80,13 @@ class Ajax_Dispatcher {
 
         // Preview handlers
         $this->handlers['pdf_builder_generate_preview'] = [
-            'handler' => new PdfBuilderPreviewAjax(),
+            'handler' => new PDF_Builder_Preview_Ajax(),
             'method' => 'generatePreview',
             'capability' => 'manage_options'
         ];
 
         $this->handlers['pdf_builder_get_preview_data'] = [
-            'handler' => new PdfBuilderPreviewAjax(),
+            'handler' => new PDF_Builder_Preview_Ajax(),
             'method' => 'get_preview_data',
             'capability' => 'manage_options'
         ];
