@@ -203,19 +203,21 @@ class AdminScriptLoader
 
         $cache_bust = time();
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust . '-' . uniqid();
+        // Forcer le chargement direct pour éviter les systèmes de cache corrompus
+        $no_cache_param = '?nocache=' . $cache_bust . '&v=' . uniqid();
 
         // AJAX throttle manager
-        $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
+        $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js' . $no_cache_param;
         wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
 
         // Notifications system
-        $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js';
+        $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js' . $no_cache_param;
         wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url);
 
         // Notifications CSS
-        $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css';
+        $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css' . $no_cache_param;
         wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url);
 
@@ -261,12 +263,12 @@ class AdminScriptLoader
         ', 'after');
 
         // Wrapper script
-        $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
+        $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js' . $no_cache_param;
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Bundle React
-        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.bundle.js';
+        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.bundle.js' . $no_cache_param;
         
         // Localize script data BEFORE enqueuing
         $localize_data = [

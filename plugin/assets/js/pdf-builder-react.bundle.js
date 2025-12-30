@@ -34,7 +34,7 @@ var _canvas = require("./constants/canvas.ts");
 var _debug = require("./utils/debug.ts");
 var _react = require("react");
 var _client = require("react-dom/client");
-var _globalApi = require("./api/global-api.ts");
+var _globalApi = require("./api/global-api");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2["default"])(o), (0, _possibleConstructorReturn2["default"])(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2["default"])(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 // ============================================================================

@@ -41,7 +41,7 @@ import {
   saveTemplate,
   resetAPI,
   updateCanvasDimensions
-} from './api/global-api.ts';
+} from './api/global-api';
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends Component {
