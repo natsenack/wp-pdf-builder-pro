@@ -1,7 +1,7 @@
 # Déploiement FTP Simple - PDF Builder Pro
 
 ## Description
-Script ultra-simple pour déployer tout le plugin PDF Builder Pro vers un serveur FTP.
+Script ultra-simple pour déployer **uniquement les fichiers modifiés** (détectés via git diff) du plugin PDF Builder Pro vers un serveur FTP.
 
 ## Utilisation
 
@@ -45,6 +45,11 @@ Le script utilise ces paramètres (modifiables dans le script) :
 
 ## Fonctionnalités
 
+### ✅ Détection intelligente des fichiers modifiés
+- Utilise `git diff` pour détecter seulement les fichiers modifiés depuis le dernier commit
+- Évite l'upload massif de tous les fichiers du plugin
+- Déploiement rapide et ciblé
+
 ### ✅ Upload parallèle
 - 4 connexions simultanées en mode normal
 - 8 connexions simultanées en mode rapide
@@ -65,22 +70,35 @@ Le script utilise ces paramètres (modifiables dans le script) :
 - Encodage UTF-8
 - Nettoyage automatique des jobs
 
+## Différence avec le déploiement complet
+
+### Avant (version originale)
+- Déployait **tous les fichiers** du plugin (434 fichiers)
+- Temps d'upload : plusieurs minutes
+- Consommait beaucoup de bande passante
+
+### Maintenant (version optimisée)
+- Déploie **seulement les fichiers modifiés** (1-5 fichiers typiquement)
+- Temps d'upload : quelques secondes
+- Économie de bande passante significative
+
 ## Scripts alternatifs
 
-### Déploiement intelligent (recommandé)
+### Déploiement intelligent avec Git (recommandé pour développement)
 ```powershell
 .\deploy-simple.ps1
 ```
 - Détecte automatiquement les fichiers modifiés via Git
 - Upload sélectif
-- Gestion Git (commit/push/tag)
+- Gestion complète Git (commit/push/tag)
 
-### Déploiement complet
+### Déploiement complet (si nécessaire)
 ```powershell
 .\deploy-all.ps1
 ```
 - Upload tous les fichiers du projet
 - Plus lent mais complet
+- Utile pour déploiements initiaux
 
 ## Dépannage
 

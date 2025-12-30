@@ -132,11 +132,73 @@
         return { results, syntaxErrors };
     }
 
+    // Function to check a specific script by URL
+    window.checkScriptByUrl = function(urlPattern) {
+        console.log(`🔍 Checking scripts matching pattern: ${urlPattern}`);
+        const scripts = document.querySelectorAll('script[src]');
+        let found = false;
+
+        scripts.forEach(script => {
+            if (script.src && script.src.includes(urlPattern)) {
+                console.log(`🎯 Found matching script: ${script.src}`);
+                const result = checkScriptSyntax(script, 'manual-check');
+                if (result && !result.syntaxValid) {
+                    console.error('❌ SYNTAX ERROR FOUND:', result);
+                } else {
+                    console.log('✅ Script syntax OK');
+                }
+                found = true;
+            }
+        });
+
+        if (!found) {
+            console.log(`❓ No scripts found matching pattern: ${urlPattern}`);
+        }
+    };
+
+    // Function to analyze all scripts with detailed logging
+    window.diagnoseAllScripts = function() {
+        console.log('🔍 Running comprehensive script analysis...');
+        const allScripts = document.querySelectorAll('script');
+        console.log(`📊 Total scripts found: ${allScripts.length}`);
+
+        allScripts.forEach((script, index) => {
+            const src = script.src || 'inline';
+            const hasSrc = !!script.src;
+            const contentLength = script.textContent ? script.textContent.length : 0;
+
+            console.log(`Script ${index + 1}: ${src} (${hasSrc ? 'external' : 'inline'}, ${contentLength} chars)`);
+
+            if (hasSrc && src.includes('e821388a4c81a3eb329f7487abf29bfa')) {
+                console.log('🎯 FOUND PROBLEMATIC SCRIPT! Analyzing in detail...');
+                const result = checkScriptSyntax(script, index + 1);
+                if (result && !result.syntaxValid) {
+                    console.error('🚨 CRITICAL ERROR in problematic script:', result);
+                    // Try to identify the problematic line
+                    if (script.textContent) {
+                        const lines = script.textContent.split('\n');
+                        if (lines.length >= 9871) {
+                            const problematicLine = lines[9870]; // 0-based index
+                            console.error('🚨 Line 9871 content:', problematicLine);
+                            console.error('🚨 Characters around error:', problematicLine.substring(0, 50));
+                        }
+                    }
+                }
+            }
+        });
+    };
+
     // Run diagnostic when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', diagnoseScripts);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📋 DOM loaded, starting initial diagnostic...');
+            diagnoseScripts();
+            console.log('🔧 Diagnostic functions available: checkScriptByUrl(), diagnoseAllScripts()');
+        });
     } else {
+        console.log('📋 DOM already loaded, starting diagnostic...');
         diagnoseScripts();
+        console.log('🔧 Diagnostic functions available: checkScriptByUrl(), diagnoseAllScripts()');
     }
 
     // Also run after delays to catch dynamically loaded scripts
@@ -146,8 +208,12 @@
     }, 2000);
 
     setTimeout(() => {
-        console.log('🔄 Running delayed diagnostic (5s)...');
+        console.log('🔄 Running delayed diagnostic (5s) with comprehensive analysis...');
         diagnoseScripts();
+        // Also run the comprehensive analysis
+        setTimeout(() => {
+            window.diagnoseAllScripts();
+        }, 1000);
     }, 5000);
 
 })();
