@@ -1,53 +1,159 @@
-# Système de Sauvegarde Centralisé - PDF Builder Pro
+# 📡 SYSTÈME AJAX UNIFIÉ - PDF Builder Pro
 
-## Vue d'ensemble
+> **Phase 1 Terminée** - Système AJAX centralisé et documenté
 
-Le système de sauvegarde des paramètres est **centralisé et unifié** autour de quelques handlers principaux, avec une séparation claire des responsabilités.
+---
 
-## Architecture
+## 🎯 OBJECTIF
 
-### 1. Handler Principal - Paramètres Généraux
-**Fichier**: `plugin/src/AJAX/Ajax_Handlers.php`
-**Classe**: `PDF_Builder_Settings_Ajax_Handler`
-**Action AJAX**: `wp_ajax_pdf_builder_save_all_settings`
-**Déclencheur**: Bouton flottant de sauvegarde (settings-tabs.js)
+Créer un système AJAX unifié qui élimine la fragmentation et centralise la gestion de tous les endpoints AJAX du plugin PDF Builder Pro.
 
-#### Responsabilités
-- Sauvegarde de tous les paramètres principaux
-- Collecte des données de tous les formulaires de paramètres
-- Validation et sanitisation des données
-- Stockage dans les options WordPress appropriées
+---
 
-#### Stockage
-- `pdf_builder_settings`: Array des paramètres principaux
-- `pdf_builder_canvas_settings`: Array des paramètres canvas et debug
+## 🏗️ ARCHITECTURE
 
-### 2. Handlers Spécialisés
+### Dispatcher Principal
+**Fichier** : `plugin/src/AJAX/Ajax_Dispatcher.php`
+**Pattern** : Singleton
+**Responsabilités** :
+- Routage automatique des requêtes AJAX
+- Validation centralisée (permissions, nonces)
+- Gestion d'erreurs standardisée
+- Logging unifié
 
-#### Templates
-**Fichier**: `plugin/src/AJAX/PDF_Builder_Templates_Ajax.php`
-**Actions**: `pdf_builder_save_template`, `pdf_builder_load_template`, `pdf_builder_delete_template`
-**Stockage**: Table `wp_pdf_builder_templates`
+### Structure des Handlers
+```php
+$handler_config = [
+    'handler' => $instance,           // Instance du handler
+    'method' => 'handle_method',      // Méthode à appeler
+    'capability' => 'manage_options'  // Permission requise
+];
+```
 
-#### Cache et Maintenance
-**Fichier**: `plugin/src/AJAX/cache-handlers.php`
-**Actions**: `pdf_builder_clear_all_cache`, `pdf_builder_optimize_database`, etc.
-**Stockage**: Options spécifiques (`pdf_builder_cache_*`, `pdf_builder_last_maintenance`, etc.)
+---
 
-#### Autres domaines
-- GDPR: `PDF_Builder_GDPR_Manager.php`
-- Licences: Gestionnaire de licences dédié
-- Diagnostics: Outil de diagnostic
+## 📋 ENDPOINTS AJAX DOCUMENTÉS
 
-## Flux de Sauvegarde
+### ⚙️ Paramètres (Settings)
+| Action | Handler | Description |
+|--------|---------|-------------|
+| `pdf_builder_save_all_settings` | `PDF_Builder_Settings_Ajax_Handler::handle` | Sauvegarde tous les paramètres |
+| `pdf_builder_save_template` | `PDF_Builder_Template_Ajax_Handler::handle_save` | Sauvegarde un template |
+| `pdf_builder_load_template` | `PDF_Builder_Template_Ajax_Handler::handle_load` | Charge un template |
+| `pdf_builder_delete_template` | `PDF_Builder_Template_Ajax_Handler::handle_delete` | Supprime un template |
 
-1. **Frontend** (settings-tabs.js)
-   - Bouton flottant cliqué
-   - Collecte des données de tous les formulaires
-   - Envoi via AJAX avec action `pdf_builder_save_all_settings`
+### 🎨 Aperçu (Preview)
+| Action | Handler | Description |
+|--------|---------|-------------|
+| `pdf_builder_generate_preview` | `PdfBuilderPreviewAjax::generatePreview` | Génère l'aperçu PDF |
+| `pdf_builder_get_preview_data` | `PdfBuilderPreviewAjax::get_preview_data` | Récupère les données d'aperçu |
 
-2. **Backend** (Ajax_Handlers.php)
-   - Validation de la requête et nonce
+### 📄 Templates
+| Action | Handler | Description |
+|--------|---------|-------------|
+| `pdf_builder_create_from_predefined` | `PdfBuilderTemplatesAjax::createFromPredefined` | Crée depuis template prédéfini |
+| `pdf_builder_load_predefined_into_editor` | `PdfBuilderTemplatesAjax::loadPredefinedIntoEditor` | Charge template prédéfini |
+| `pdf_builder_load_template_settings` | `PdfBuilderTemplatesAjax::loadTemplateSettings` | Charge paramètres template |
+| `pdf_builder_save_template_settings` | `PdfBuilderTemplatesAjax::saveTemplateSettings` | Sauvegarde paramètres template |
+| `pdf_builder_set_default_template` | `PdfBuilderTemplatesAjax::setDefaultTemplate` | Définit template par défaut |
+| `pdf_builder_delete_template` | `PdfBuilderTemplatesAjax::deleteTemplate` | Supprime template |
+| `pdf_builder_save_order_status_templates` | `PdfBuilderTemplatesAjax::saveOrderStatusTemplates` | Sauvegarde templates par statut |
+
+### 🛠️ Maintenance
+| Action | Handler | Description |
+|--------|---------|-------------|
+| `pdf_builder_clear_cache` | `Ajax_Dispatcher::handle_clear_cache` | Vide le cache |
+| `pdf_builder_clear_all_cache` | `Ajax_Dispatcher::handle_clear_all_cache` | Vide tout le cache |
+| `pdf_builder_optimize_database` | `Ajax_Dispatcher::handle_optimize_database` | Optimise la base de données |
+
+---
+
+## 🔧 UTILISATION
+
+### Pour les Développeurs
+```php
+// Ajouter un nouvel endpoint
+$this->handlers['my_custom_action'] = [
+    'handler' => new My_Custom_Handler(),
+    'method' => 'handle_request',
+    'capability' => 'manage_options'
+];
+```
+
+### Pour les Intégrateurs Frontend
+```javascript
+// Exemple d'appel AJAX
+jQuery.post(ajaxurl, {
+    action: 'pdf_builder_save_all_settings',
+    nonce: pdf_builder_ajax.nonce,
+    settings: settingsData
+}, function(response) {
+    if (response.success) {
+        console.log('Paramètres sauvegardés');
+    }
+});
+```
+
+---
+
+## 📊 RÉPONSES STANDARDISÉES
+
+### Succès
+```json
+{
+    "success": true,
+    "data": {
+        "message": "Opération réussie",
+        "timestamp": 1735320000,
+        "custom_data": "..."
+    }
+}
+```
+
+### Erreur
+```json
+{
+    "success": false,
+    "data": {
+        "message": "Description de l'erreur",
+        "code": 400,
+        "timestamp": 1735320000
+    }
+}
+```
+
+---
+
+## 🔒 SÉCURITÉ
+
+- **Permissions** : Vérifiées automatiquement par le dispatcher
+- **Nonces** : Validés si fournis dans la requête
+- **Sanitisation** : À la charge de chaque handler
+- **Logging** : Erreurs automatiquement loggées en debug mode
+
+---
+
+## 📈 BÉNÉFICES
+
+✅ **Centralisation** : Un seul point d'entrée pour tous les AJAX
+✅ **Maintenance** : Plus facile d'ajouter/modifier des endpoints
+✅ **Débogage** : Logging et erreurs standardisées
+✅ **Sécurité** : Validation automatique des permissions
+✅ **Performance** : Réduction de la duplication de code
+✅ **Évolutivité** : Architecture extensible pour futures fonctionnalités
+
+---
+
+## 🚀 PROCHAINES ÉTAPES
+
+1. **Phase 2** : Refactoring Bootstrap (diviser en modules)
+2. **Tests AJAX** : Créer suite de tests pour tous les endpoints
+3. **Documentation API** : Générer documentation automatique
+4. **Monitoring** : Ajouter métriques de performance AJAX
+
+---
+
+*Document mis à jour le 30 décembre 2025 - Phase 1 terminée*
    - Parsing des données (JSON → array aplati)
    - Validation et sanitisation par type de champ
    - Sauvegarde dans les options WordPress appropriées

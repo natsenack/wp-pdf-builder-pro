@@ -358,8 +358,29 @@ POST /wp-admin/admin-ajax.php
 ├── action=pdf_builder_clear_all_cache
 ├── action=pdf_builder_get_preview_data
 ├── action=pdf_builder_optimize_database
-└── [+ others à identifier]
+├── action=pdf_builder_generate_preview
+├── action=pdf_builder_create_from_predefined
+├── action=pdf_builder_load_predefined_into_editor
+├── action=pdf_builder_load_template_settings
+├── action=pdf_builder_save_template_settings
+├── action=pdf_builder_set_default_template
+├── action=pdf_builder_save_order_status_templates
+└── [+ autres à identifier]
 ```
+
+**✅ RÉALISÉ - Dispatcher AJAX Unifié** :
+- Créé `plugin/src/AJAX/Ajax_Dispatcher.php` (277 lignes)
+- Centralise tous les handlers AJAX existants
+- Implémente le pattern Singleton pour éviter les conflits
+- Standardise les réponses d'erreur et de succès
+- Vérifie automatiquement les permissions et nonces
+- Intègre les handlers existants :
+  - `PDF_Builder_Settings_Ajax_Handler`
+  - `PDF_Builder_Template_Ajax_Handler`
+  - `PdfBuilderPreviewAjax`
+  - `PdfBuilderTemplatesAjax`
+- Chargé automatiquement dans `bootstrap.php`
+- Compatible avec tous les endpoints existants
 
 ---
 
