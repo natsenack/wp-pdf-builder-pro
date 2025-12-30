@@ -251,6 +251,16 @@ class AdminScriptLoader
         ];
         wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
+        // Définir la fonction debugLog globale
+        wp_add_inline_script('pdf-builder-notifications', '
+        // Fonction de debug globale
+        window.debugLog = function(...args) {
+            if (window.pdfBuilderDebugSettings && window.pdfBuilderDebugSettings.javascript) {
+                console.log("[PDF Builder Debug]", ...args);
+            }
+        };
+        ', 'after');
+
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
