@@ -286,7 +286,7 @@ class AdminScriptLoader
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
             // error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
-            $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
+            $existing_template_data = $this->admin->getTemplateManager()->loadTemplateRobust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
                 $localize_data['initialElements'] = $existing_template_data['elements'];
                 $localize_data['existingTemplate'] = $existing_template_data;
