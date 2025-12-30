@@ -224,6 +224,22 @@ function pdf_builder_load_settings_assets($hook) {
         'nonce' => wp_create_nonce('pdf_builder_canvas_settings')
     ));
 
+    // Charger le gestionnaire de performance des assets
+    wp_enqueue_script(
+        'pdf-builder-asset-performance',
+        PDF_BUILDER_PLUGIN_URL . 'assets/js/asset-performance-manager.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true // Chargé dans le footer
+    );
+
+    // Localiser le script avec les données nécessaires
+    wp_localize_script('pdf-builder-asset-performance', 'pdfBuilderAssetPerformance', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_asset_performance'),
+        'pluginUrl' => PDF_BUILDER_PLUGIN_URL
+    ));
+
     error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 

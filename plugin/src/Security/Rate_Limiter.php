@@ -25,7 +25,7 @@ class Rate_Limiter
      */
     public static function checkRateLimit()
     {
-        // Ne vérifier que pour les actions AJAX du PDF Builder
+        // ✅ RATE LIMIT ACTIVÉ - Protection contre les attaques par déni de service
         if (!isset($_REQUEST['action'])) {
             return;
         }
@@ -35,8 +35,36 @@ class Rate_Limiter
             return;
         }
 
-        // ✅ RATE LIMIT DÉSACTIVÉ - laisser passer toutes les requêtes
-        // Les transients ne sont plus utilisés
+        $ip = self::getClientIp();
+        $transient_key = self::TRANSIENT_PREFIX . md5($ip . $action);
+
+        $requests = get_transient($transient_key);
+        if ($requests === false) {
+            $requests = 0;
+        }
+
+        $requests++;
+
+        // Limite plus stricte pour les actions sensibles
+        $sensitive_actions = ['pdf_builder_save_template', 'pdf_builder_delete_template'];
+        $limit = in_array($action, $sensitive_actions) ? 10 : self::LIMIT_PER_MINUTE;
+
+        if ($requests > $limit) {
+            // Log l'incident de sécurité
+            error_log(sprintf(
+                'PDF_BUILDER_SECURITY: Rate limit exceeded for IP %s on action %s (%d requests)',
+                $ip,
+                $action,
+                $requests
+            ));
+
+            // Réponse d'erreur avec code HTTP approprié
+            http_response_code(429);
+            wp_die(__('Trop de requêtes. Veuillez patienter avant de réessayer.', 'pdf-builder'), 429);
+        }
+
+        // Stocker le compteur (expire après 1 minute)
+        set_transient($transient_key, $requests, 60);
     }
 
     /**

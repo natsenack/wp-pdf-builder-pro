@@ -29,6 +29,10 @@ $bootstrap_modules = [
     'ajax-loader.php',           // Chargement des handlers AJAX
     'canvas-defaults.php',       // Paramètres par défaut du canvas
     'admin-styles.php',          // Styles et ressources admin
+    'security-audit.php',        // Audit de sécurité et hardening
+    'input-validation.php',      // Validation d'entrée renforcée
+    'security-logging.php',      // Logs de sécurité et monitoring
+    'asset-compression.php',     // Compression et optimisation des assets
     'ajax-actions.php',          // Actions AJAX pour les paramètres
     'task-scheduler.php'         // Planificateur de tâches
 ];
