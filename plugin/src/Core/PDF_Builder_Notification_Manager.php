@@ -11,7 +11,27 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Classe principale pour la gestion des notifications
+ * Stub class pour compatibilité - système de cache supprimé
+ */
+class PDF_Builder_Notification_Manager {
+
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        // Manager désactivé - cache supprimé
+        // Ne fait rien pour respecter la suppression des systèmes de cache
+    }
+}
+
+/**
+ * Classe principale pour la gestion des notifications - DESACTIVEE
  */
 class PDF_Builder_Notification_Manager_DISABLED {
 
