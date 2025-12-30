@@ -48,6 +48,13 @@ declare global {
     showErrorNotification?: (message: string, duration?: number) => void;
     showWarningNotification?: (message: string, duration?: number) => void;
     showInfoNotification?: (message: string, duration?: number) => void;
+    // Canvas settings
+    pdfBuilderCanvasSettings?: {
+      canvas_width?: number;
+      canvas_height?: number;
+      debug?: boolean;
+      [key: string]: any;
+    };
   }
 }
 

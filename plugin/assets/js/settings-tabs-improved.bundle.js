@@ -380,5 +380,4 @@ return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).p
 /******/ }
 ]);
 });
-//# sourceMappingURL=settings-tabs-improved.bundle.js.map// Force cache bust 2025-12-30 22:35:49
-
+//# sourceMappingURL=settings-tabs-improved.bundle.js.map
