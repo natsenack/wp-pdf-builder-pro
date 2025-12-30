@@ -254,10 +254,13 @@ function pdf_builder_load_bootstrap()
     }
     $bootstrap_loaded = true;
 
-    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (PDF_Builder) - DISABLED
-    // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
-    //     require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-    // }
+    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (PDF_Builder)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/autoloader.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/autoloader.php';
+        if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+            \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+        }
+    }
 
     // Charger la configuration si pas déjà faite
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'config/config.php')) {
@@ -356,6 +359,11 @@ function pdf_builder_load_bootstrap()
         }
     });
     */
+
+    // INITIALISER L'ADMIN SI DANS L'INTERFACE D'ADMINISTRATION
+    if (is_admin() && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
+        \PDF_Builder\Admin\PdfBuilderAdmin::getInstance();
+    }
 }
 
 // ============================================================================
