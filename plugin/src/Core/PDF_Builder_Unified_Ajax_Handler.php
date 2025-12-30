@@ -5,6 +5,26 @@
  * Version: 2.1.3 - Correction erreurs PHP et cron (05/12/2025)
  */
 
+/**
+ * Stub class pour compatibilité - système de cache supprimé
+ */
+class PDF_Builder_Unified_Ajax_Handler {
+
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        // Handler désactivé - cache supprimé
+        // Ne fait rien pour respecter la suppression des systèmes de cache
+    }
+}
+
 class PDF_Builder_Unified_Ajax_Handler_DISABLED {
 
     private static $instance = null;
