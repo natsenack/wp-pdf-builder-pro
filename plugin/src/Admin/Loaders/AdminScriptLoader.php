@@ -188,9 +188,7 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-            // TEMPORAIREMENT DÉSACTIVÉ pour corriger le cache JavaScript
-            // $this->loadReactEditorScripts();
-            error_log('[WP AdminScriptLoader] React editor scripts TEMPORARILY DISABLED for cache fix');
+            $this->loadReactEditorScripts();
         } else {
             // error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
         }
@@ -204,11 +202,11 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s'));
 
         $cache_bust = time();
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust . '-' . uniqid();
 
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
-        wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
+        wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
 
         // Notifications system
