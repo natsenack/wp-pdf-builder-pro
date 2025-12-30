@@ -52,11 +52,6 @@ class SettingsManager_DISABLED
         $this->admin = $admin;
     }
 }
-    {
-        // Hooks pour les paramètres - seulement l'enregistrement, pas la page
-        add_action('admin_init', [$this, 'registerSettings']);
-
-        // Charger les styles pour les pages d'administration
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
 
         // Hook pour vérifier la sauvegarde des paramètres
