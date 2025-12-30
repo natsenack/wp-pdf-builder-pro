@@ -21,6 +21,7 @@ define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'resources/assets/');
+define('PDF_BUILDER_ASSETS_DIR', plugin_dir_path(__FILE__) . 'resources/assets/');
 define('PDF_BUILDER_VERSION', '1.1.0');
 define('PDF_BUILDER_PRO_VERSION', '1.1.0');
 
