@@ -1,10 +1,10 @@
 <?php
 /**
- * PDF Builder Pro - Classe de base pour les handlers AJAX
- * Centralise la validation commune et la gestion d'erreurs
+ * PDF Builder Pro - Classe de base pour les handlers AJAX - DISABLED
+ * Système de cache AJAX supprimé pour simplification
  */
 
-namespace PDF_Builder\AJAX;
+namespace PDF_Builder\AJAX_DISABLED;
 
 // error_log('PDF Builder: [AJAX_HANDLERS.PHP] File loaded at ' . current_time('Y-m-d H:i:s'));
 

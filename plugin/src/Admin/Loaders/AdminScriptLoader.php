@@ -104,13 +104,12 @@ class AdminScriptLoader
                 PDF_BUILDER_PRO_VERSION
             );
 
-            // Définir les paramètres de debug JavaScript UNIQUEMENT pour les notifications
-            $settings = get_option('pdf_builder_settings', array());
+            // Définir les paramètres de debug - valeurs fixes (pas de cache)
             $debug_settings = [
-                'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
-                'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
-                'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
-                'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+                'javascript' => false,
+                'javascript_verbose' => false,
+                'php' => false,
+                'ajax' => false
             ];
             wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
@@ -141,13 +140,12 @@ class AdminScriptLoader
                 'nonce' => wp_create_nonce('pdf_builder_settings')
             ]);
 
-            // Définir les paramètres de debug JavaScript UNIQUEMENT pour settings-tabs
-            $settings = get_option('pdf_builder_settings', array());
+            // Définir les paramètres de debug JavaScript UNIQUEMENT pour settings-tabs - valeurs fixes
             $debug_settings = [
-                'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
-                'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
-                'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
-                'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+                'javascript' => false,
+                'javascript_verbose' => false,
+                'php' => false,
+                'ajax' => false
             ];
             wp_add_inline_script('pdf-builder-settings-tabs', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
         }
@@ -236,13 +234,12 @@ class AdminScriptLoader
             ]
         ]);
 
-        // Définir les paramètres de debug JavaScript UNIQUEMENT pour l'éditeur React
-        $settings = get_option('pdf_builder_settings', array());
+        // Définir les paramètres de debug JavaScript UNIQUEMENT pour l'éditeur React - valeurs fixes
         $debug_settings = [
-            'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
-            'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
-            'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
-            'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+            'javascript' => false,
+            'javascript_verbose' => false,
+            'php' => false,
+            'ajax' => false
         ];
         wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 

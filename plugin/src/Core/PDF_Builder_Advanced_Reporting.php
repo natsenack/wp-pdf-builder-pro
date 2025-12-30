@@ -4,7 +4,7 @@
  * Fournit des rapports détaillés et des analyses d'utilisation
  */
 
-class PDF_Builder_Advanced_Reporting {
+class PDF_Builder_Advanced_Reporting_DISABLED {
     private static $instance = null;
 
     // Types de rapports

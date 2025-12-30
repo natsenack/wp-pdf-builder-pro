@@ -4,7 +4,7 @@
  * Gère les traductions, langues et localisation du contenu
  */
 
-class PDF_Builder_Localization {
+class PDF_Builder_Localization_DISABLED {
     private static $instance = null;
 
     // Domaine de texte

@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer la conformité RGPD
  */
-class PDF_Builder_GDPR_Manager {
+class PDF_Builder_GDPR_Manager_DISABLED {
 
     /**
      * Instance unique (Singleton)

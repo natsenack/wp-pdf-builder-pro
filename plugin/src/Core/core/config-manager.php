@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Config_Manager {
+class PDF_Builder_Config_Manager_DISABLED {
 
     // ==========================================
     // CONFIGURATIONS D'OPTIONS CENTRALISÉES

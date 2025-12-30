@@ -5,7 +5,7 @@
  * Version: 2.1.3 - Correction erreurs PHP et cron (05/12/2025)
  */
 
-class PDF_Builder_Unified_Ajax_Handler {
+class PDF_Builder_Unified_Ajax_Handler_DISABLED {
 
     private static $instance = null;
     private $nonce_manager;

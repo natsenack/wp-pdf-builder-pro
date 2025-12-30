@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale pour la gestion des notifications
  */
-class PDF_Builder_Notification_Manager {
+class PDF_Builder_Notification_Manager_DISABLED {
 
     /**
      * Instance unique de la classe

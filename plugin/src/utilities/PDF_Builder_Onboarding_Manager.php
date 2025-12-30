@@ -15,7 +15,7 @@ use \PDF_Builder_Security_Manager;
 /**
  * Classe pour gérer l'onboarding et les tutoriels
  */
-class PDF_Builder_Onboarding_Manager {
+class PDF_Builder_Onboarding_Manager_DISABLED {
     /**
      * Instance unique (Singleton)
      */

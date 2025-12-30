@@ -12,7 +12,7 @@ use Exception;
 /**
  * Classe responsable de la gestion des paramètres
  */
-class SettingsManager
+class SettingsManager_DISABLED
 {
     /**
      * Instance de la classe principale
