@@ -188,7 +188,9 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-            $this->loadReactEditorScripts();
+            // TEMPORAIREMENT DÉSACTIVÉ pour corriger le cache JavaScript
+            // $this->loadReactEditorScripts();
+            error_log('[WP AdminScriptLoader] React editor scripts TEMPORARILY DISABLED for cache fix');
         } else {
             // error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
         }
