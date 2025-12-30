@@ -563,9 +563,7 @@ window.CanvasPreviewManager = {
                     return {
                         fps_target: settings.fps_target || 60,
                         memory_limit_js: settings.memory_limit_js || 128,
-                        memory_limit_php: settings.memory_limit_php || 256,
-                        lazy_loading_editor: settings.lazy_loading_editor || false,
-                        lazy_loading_plugin: settings.lazy_loading_plugin || false
+                        memory_limit_php: settings.memory_limit_php || 256
                     };
                 case 'apparence':
                     return {

@@ -272,7 +272,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // Canvas bool fields
                 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
                 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
-                'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin',
+                'canvas_export_transparent',
                 'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled'
             ],
             'array_fields' => ['order_status_templates']
@@ -574,9 +574,6 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             'pdf_builder_canvas_canvas_fps_target' => 'canvas_fps_target',
             'pdf_builder_canvas_canvas_memory_limit_js' => 'canvas_memory_limit_js',
             'pdf_builder_canvas_canvas_response_timeout' => 'canvas_response_timeout',
-            'pdf_builder_canvas_canvas_lazy_loading_editor' => 'canvas_lazy_loading_editor',
-            'pdf_builder_canvas_canvas_preload_critical' => 'canvas_preload_critical',
-            'pdf_builder_canvas_canvas_lazy_loading_plugin' => 'canvas_lazy_loading_plugin',
             'pdf_builder_canvas_canvas_debug_enabled' => 'canvas_debug_enabled',
             'pdf_builder_canvas_canvas_performance_monitoring' => 'canvas_performance_monitoring',
             'pdf_builder_canvas_canvas_error_reporting' => 'canvas_error_reporting',
@@ -842,10 +839,6 @@ function pdf_builder_reset_canvas_defaults_handler() {
             'pdf_builder_canvas_memory_limit_php' => '256',
             'pdf_builder_canvas_response_timeout' => '30',
 
-            // Optimisation
-            'pdf_builder_canvas_lazy_loading_editor' => '1',
-            'pdf_builder_canvas_lazy_loading_plugin' => '1',
-            'pdf_builder_canvas_preload_critical' => '1',
 
             // Debug
             'pdf_builder_canvas_debug_enabled' => '0',

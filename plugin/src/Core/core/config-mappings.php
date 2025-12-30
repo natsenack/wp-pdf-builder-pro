@@ -182,11 +182,6 @@ class PDF_Builder_Config_Mappings {
     // ==========================================
 
     private static $performance_config = [
-        'lazy_loading' => [
-            'enabled' => true,
-            'threshold' => 50,
-            'batch_size' => 10
-        ],
 
         'compression' => [
             'enabled' => true,

@@ -47,9 +47,6 @@ class PDF_Builder_Canvas_Mappings {
         'canvas_keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts',
 
         // Performance
-        'canvas_lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
-        'canvas_preload_critical' => 'pdf_builder_canvas_preload_critical',
-        'canvas_lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin',
         'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
         'canvas_memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
         'canvas_memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
@@ -116,9 +113,6 @@ class PDF_Builder_Canvas_Mappings {
         ],
 
         'performance' => [
-            'canvas_lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
-            'canvas_preload_critical' => 'pdf_builder_canvas_preload_critical',
-            'canvas_lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin',
             'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
             'canvas_memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
             'canvas_memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
@@ -159,7 +153,7 @@ class PDF_Builder_Canvas_Mappings {
         'apparence' => ['canvas_shadow_enabled'],
         'grille' => ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_snap_to_elements', 'canvas_show_guides'],
         'interactions' => ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts', 'canvas_show_resize_handles', 'canvas_enable_rotation'],
-        'performance' => ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'],
+        'performance' => [],
         'export' => ['canvas_export_transparent', 'canvas_compress_images', 'canvas_include_metadata', 'canvas_auto_crop', 'canvas_embed_fonts', 'canvas_optimize_for_web'],
     ];
 

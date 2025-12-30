@@ -504,9 +504,6 @@ JS;
             'memory_limit_js' => 'pdf_builder_canvas_canvas_memory_limit_js',
             'memory_limit_php' => 'pdf_builder_canvas_canvas_memory_limit_php',
             'response_timeout' => 'pdf_builder_canvas_response_timeout',
-            'lazy_loading_editor' => 'pdf_builder_canvas_canvas_lazy_loading_editor',
-            'preload_critical' => 'pdf_builder_canvas_canvas_preload_critical',
-            'lazy_loading_plugin' => 'pdf_builder_canvas_canvas_lazy_loading_plugin'
         ];
         
         // Sauvegarder dans les options séparées

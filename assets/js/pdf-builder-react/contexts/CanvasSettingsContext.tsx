@@ -251,9 +251,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       // Historique
       historyUndoLevels: (windowSettings.history_undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
       historyRedoLevels: (windowSettings.history_redo_levels as number) ?? DEFAULT_SETTINGS.historyRedoLevels,
-      // Performance & Lazy Loading
-      lazyLoadingEditor: windowSettings.lazy_loading_editor === true || windowSettings.lazy_loading_editor === '1',
-      lazyLoadingPlugin: windowSettings.lazy_loading_plugin === true || windowSettings.lazy_loading_plugin === '1',
+      // Performance
       debugMode: windowSettings.debug_mode === true || windowSettings.debug_mode === '1',
       memoryLimitJs: (windowSettings.memory_limit_js as number) ?? DEFAULT_SETTINGS.memoryLimitJs,
       
