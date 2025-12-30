@@ -29,10 +29,10 @@ module.exports = {
     'tabs-root-monitor': path.resolve(projectRoot, 'assets/js/tabs-root-monitor.js'),
   },
   output: {
-    path: path.resolve(projectRoot, 'plugin/assets/'),
+    path: path.resolve(projectRoot, 'plugin/resources/assets/'),
     filename: 'js/[name].bundle.js',
     chunkFilename: 'js/[name].[contenthash].js',
-    publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
+    publicPath: '/wp-content/plugins/pdf-builder-pro/resources/assets/',
     library: {
       name: 'PDFBuilder',
       type: 'umd',
