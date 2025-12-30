@@ -1080,6 +1080,11 @@ function pdf_builder_init()
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
     $unified_handler = PDF_Builder_Unified_Ajax_Handler::get_instance();
 
+    // Désactiver le cache des assets pour éviter les conflits
+    if (function_exists('pdf_builder_set_asset_cache')) {
+        pdf_builder_set_asset_cache(false);
+    }
+
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();
 
