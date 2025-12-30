@@ -28,6 +28,10 @@ class PDF_Builder_Notification_Manager {
         // Manager désactivé - cache supprimé
         // Ne fait rien pour respecter la suppression des systèmes de cache
     }
+
+    public function enqueue_scripts() {
+        // Scripts désactivés - système de cache supprimé
+    }
 }
 
 /**
