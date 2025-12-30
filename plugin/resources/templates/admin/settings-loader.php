@@ -32,7 +32,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -41,7 +41,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-tabs',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-tabs.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -50,7 +50,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-developer-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/developer-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -59,7 +59,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-system-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/system-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -68,7 +68,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-general-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/general-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -77,7 +77,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-licence-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/licence-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -86,7 +86,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-pdf-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -95,7 +95,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-templates-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/templates-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -104,7 +104,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-securite-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/securite-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -113,7 +113,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-cron-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/cron-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -122,7 +122,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-contenu-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/contenu-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -140,7 +140,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-force-css-reload',
         PDF_BUILDER_PLUGIN_URL . 'assets/js/force-css-reload.js',
         array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         true
     );
 
@@ -163,7 +163,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-main-settings',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/main-settings.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 
@@ -205,27 +205,11 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-js-syntax-check',
         PDF_BUILDER_PLUGIN_URL . 'assets/js/js-syntax-check.js',
         array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         true // Chargé dans le footer
     );
 
-    // Charger le script de débogage pour le rechargement forcé
-    wp_enqueue_script(
-        'pdf-builder-force-reload-debug',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/force-reload-debug.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
 
-    // Charger le script temp.js pour les modales Canvas
-    wp_enqueue_script(
-        'pdf-builder-temp',
-        PDF_BUILDER_PLUGIN_URL . 'temp.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
 
     // Localiser le script temp.js avec les données AJAX
     wp_localize_script('pdf-builder-temp', 'pdfBuilderCanvasAjax', array(
@@ -238,7 +222,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-asset-performance',
         PDF_BUILDER_PLUGIN_URL . 'assets/js/asset-performance-manager.js',
         array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         true // Chargé dans le footer
     );
 
@@ -264,7 +248,7 @@ function pdf_builder_load_global_admin_assets($hook) {
         'pdf-builder-admin-global',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/admin-global.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION,
         'all'
     );
 }

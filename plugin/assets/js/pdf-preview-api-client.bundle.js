@@ -1,4 +1,3 @@
-"use strict";
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -9,11 +8,9 @@
 	else
 		root["PDFBuilder"] = factory();
 })(self, () => {
-return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).push([[297],{
-
-/***/ 920:
-/***/ (() => {
-
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -491,16 +488,9 @@ debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
 debugLog('📖 Utilisation:');
 debugLog('   - generateEditorPreview(templateData)');
 debugLog('   - generateOrderPreview(templateData, orderId)');
-
-/***/ })
-
-},
-/******/ __webpack_require__ => { // webpackRuntimeModules
-/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(920));
-/******/ __webpack_exports__ = __webpack_exports__["default"];
-/******/ return __webpack_exports__;
-/******/ }
-]);
+__webpack_exports__ = __webpack_exports__["default"];
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
 });
 //# sourceMappingURL=pdf-preview-api-client.bundle.js.map

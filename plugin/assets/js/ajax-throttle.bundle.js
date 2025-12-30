@@ -1,4 +1,3 @@
-"use strict";
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -9,11 +8,9 @@
 	else
 		root["PDFBuilder"] = factory();
 })(self, () => {
-return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).push([[866],{
-
-/***/ 945:
-/***/ (() => {
-
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+var __webpack_exports__ = {};
 
 
 /**
@@ -70,16 +67,9 @@ return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).p
     };
   };
 })();
-
-/***/ })
-
-},
-/******/ __webpack_require__ => { // webpackRuntimeModules
-/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(945));
-/******/ __webpack_exports__ = __webpack_exports__["default"];
-/******/ return __webpack_exports__;
-/******/ }
-]);
+__webpack_exports__ = __webpack_exports__["default"];
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
 });
 //# sourceMappingURL=ajax-throttle.bundle.js.map

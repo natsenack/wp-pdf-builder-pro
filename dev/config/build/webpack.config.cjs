@@ -32,7 +32,7 @@ module.exports = {
   output: {
     path: path.resolve(projectRoot, 'plugin/assets/'),
     filename: 'js/[name].bundle.js',
-    chunkFilename: 'js/[name].[contenthash].js',
+    chunkFilename: 'js/[name].js',
     publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
     library: {
       name: 'PDFBuilder',
@@ -175,25 +175,7 @@ module.exports = {
         extractComments: false,
       }),
     ],
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          priority: 10,
-          reuseExistingChunk: true,
-        },
-        common: {
-          minChunks: 2,
-          priority: 5,
-          reuseExistingChunk: true,
-        },
-      },
-    },
-    runtimeChunk: {
-      name: 'runtime',
-    },
+    splitChunks: false,
   },
   performance: {
     maxEntrypointSize: 512000,

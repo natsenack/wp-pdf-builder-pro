@@ -1,4 +1,3 @@
-"use strict";
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -9,11 +8,9 @@
 	else
 		root["PDFBuilder"] = factory();
 })(self, () => {
-return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).push([[865],{
-
-/***/ 536:
-/***/ (() => {
-
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -772,16 +769,9 @@ window.CanvasPreviewManager = {
   }
 };
 debugLog('✅ CanvasPreviewManager initialisé');
-
-/***/ })
-
-},
-/******/ __webpack_require__ => { // webpackRuntimeModules
-/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(536));
-/******/ __webpack_exports__ = __webpack_exports__["default"];
-/******/ return __webpack_exports__;
-/******/ }
-]);
+__webpack_exports__ = __webpack_exports__["default"];
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
 });
 //# sourceMappingURL=pdf-preview-integration.bundle.js.map
