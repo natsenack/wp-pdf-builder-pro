@@ -3,7 +3,7 @@
  */
 
 // Charger les vraies implémentations des utilitaires
-require('../plugin/resources/assets/js/pdf-builder-utils.js');
+require('../plugin/assets/js/pdf-builder-utils.js');
 
 // Mock des objets globaux WordPress nécessaires
 global.wp = {

@@ -96,11 +96,11 @@ if (!defined('PDF_BUILDER_SRC_DIR')) {
 }
 
 if (!defined('PDF_BUILDER_ASSETS_DIR')) {
-    define('PDF_BUILDER_ASSETS_DIR', PDF_BUILDER_PLUGIN_DIR . 'resources/assets/');
+    define('PDF_BUILDER_ASSETS_DIR', PDF_BUILDER_PLUGIN_DIR . 'assets/');
 }
 
 if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
-    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'resources/assets/');
+    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
 }
 
 if (!defined('PDF_BUILDER_RESOURCES_DIR')) {

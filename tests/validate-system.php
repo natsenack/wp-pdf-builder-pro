@@ -11,9 +11,9 @@ echo "Test 1: File structure validation\n";
 $required_files = [
     '../plugin/resources/templates/admin/settings-parts/settings-main.php',
     '../plugin/pdf-builder-pro.php',
-    '../plugin/resources/assets/js/pdf-builder-wrap.js',
-    '../plugin/resources/assets/js/ajax-throttle.js',
-    '../plugin/resources/assets/js/settings-global-save.js'
+    '../plugin/assets/js/pdf-builder-wrap.js',
+    '../plugin/assets/js/ajax-throttle.js',
+    '../plugin/assets/js/settings-global-save.js'
 ];
 
 $files_exist = 0;
@@ -61,7 +61,7 @@ if (file_exists($main_settings_file)) {
 
 // Test 3: JavaScript validation
 echo "Test 3: JavaScript validation\n";
-$js_file = __DIR__ . '/../plugin/resources/assets/js/settings-global-save.js';
+$js_file = __DIR__ . '/../plugin/assets/js/settings-global-save.js';
 
 if (file_exists($js_file)) {
     $js_content = file_get_contents($js_file);
@@ -186,7 +186,7 @@ if (file_exists($js_file)) {
     }
 
     // Check for AJAX throttling
-    $throttle_file = __DIR__ . '/../plugin/resources/assets/js/ajax-throttle.js';
+    $throttle_file = __DIR__ . '/../plugin/assets/js/ajax-throttle.js';
     if (file_exists($throttle_file)) {
         echo "[PASS] AJAX throttling mechanism exists\n";
     } else {

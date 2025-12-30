@@ -20,7 +20,7 @@ describe('Settings Tabs Navigation', () => {
         `;
 
         // Charger le script
-        require('../plugin/resources/assets/js/settings-tabs.js');
+        require('../plugin/assets/js/settings-tabs.js');
 
         // Simuler l'événement DOMContentLoaded pour initialiser les tabs
         const event = new Event('DOMContentLoaded');
