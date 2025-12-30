@@ -1,0 +1,1883 @@
+/**
+ * JavaScript pour le système d'onboarding de PDF Builder Pro
+ * Version améliorée avec UX/UI avancées
+ */
+
+(function($) {
+    'use strict';
+
+    class PDFBuilderOnboarding {
+        constructor() {
+            this.currentStep = 1;
+            this.selectedTemplate = null;
+            this.selectedMode = null;
+            this.startTime = Date.now();
+            this.interactions = [];
+            this.tooltips = {};
+            this.stepCache = {}; // Cache pour les étapes chargées
+            this.eventsBound = false; // Pour éviter la liaison multiple des événements
+            this.init();
+        }
+
+        init() {
+            this.bindEvents();
+            this.initializeWizard();
+            this.setupKeyboardNavigation();
+            this.trackAnalytics('onboarding_started');
+        }
+
+        bindEvents() {
+            // Éviter la liaison multiple des événements
+            if (this.eventsBound) {
+                return;
+            }
+            this.eventsBound = true;
+
+            // Bouton "Suivant" / "Terminer" - simplifié
+            $(document).on('click', '.complete-step', (e) => {
+                e.preventDefault();
+                this.handleCompleteStep();
+            });
+
+            // Bouton pour ignorer l'étape courante
+            $(document).on('click', '[data-action="skip-step"]', (e) => {
+                e.preventDefault();
+                this.handleSkipStep();
+            });
+
+            // Bouton pour ignorer complètement l'onboarding
+            $(document).on('click', '[data-action="skip-onboarding"]', (e) => {
+                e.preventDefault();
+                this.handleSkipOnboarding();
+            });
+
+            // Bouton précédent
+            $(document).on('click', '.button-previous', (e) => {
+                e.preventDefault();
+                this.goToPreviousStep();
+            });
+
+            // Sélection de template
+            $(document).on('click', '.template-card', (e) => {
+                e.preventDefault();
+                this.selectTemplate($(e.currentTarget));
+            });
+
+            // Sélection du mode freemium
+            $(document).on('click', '.mode-card', (e) => {
+                e.preventDefault();
+                this.selectFreemiumMode($(e.currentTarget));
+            });
+
+            // Bouton pour sauter la configuration WooCommerce
+            $(document).on('click', '.skip-woocommerce', (e) => {
+                e.preventDefault();
+                this.skipWoocommerceSetup();
+            });
+
+            // Nouveaux événements pour l'UX améliorée
+            // Désactivé - on utilise maintenant les tooltips CSS uniquement
+            // $(document).on('mouseenter', '[data-tooltip]', (e) => {
+            //     this.showTooltip($(e.currentTarget));
+            // });
+
+            // $(document).on('mouseleave', '[data-tooltip]', (e) => {
+            //     this.hideTooltip();
+            // });
+
+            $(document).on('click', '.onboarding-help-btn', (e) => {
+                this.showHelpModal();
+            });
+
+            $(document).on('input', '.onboarding-input', (e) => {
+                this.validateInput($(e.currentTarget));
+            });
+        }
+
+        initializeWizard() {
+            // Vérifier si une étape spécifique est demandée via l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const forcedStep = urlParams.get('pdf_onboarding_step');
+
+            // Initialiser l'état du wizard
+            this.currentStep = forcedStep ? parseInt(forcedStep) : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1);
+            // Pour l'étape 2, on force selectedMode à null au départ pour s'assurer que le bouton est désactivé
+            this.selectedMode = (this.currentStep === 2) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_mode || null : null);
+            // Pour l'étape 3, on force selectedTemplate à null au départ pour s'assurer que le bouton est désactivé
+            this.selectedTemplate = (this.currentStep === 3) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null);
+
+            // S'assurer que tous les boutons sont dans un état cohérent
+            this.resetButtonStates();
+
+            // Charger l'étape actuelle via AJAX pour s'assurer que les boutons sont corrects
+            this.loadStep(this.currentStep);
+        }
+
+        /**
+         * Vérifier si l'étape actuelle doit avancer automatiquement
+         */
+        checkAutoAdvance() {
+            // Cette fonction est maintenant gérée dans loadStep pour toutes les étapes
+            // Rien à faire ici pour l'initialisation
+        }
+
+        setupKeyboardNavigation() {
+            $(document).on('keydown', (e) => {
+                if ($('#pdf-builder-onboarding-modal').css('display') === 'none') return;
+
+                switch(e.key) {
+                    case 'ArrowRight':
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        this.navigateStep('next');
+                        break;
+                    case 'ArrowLeft':
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        this.navigateStep('prev');
+                        break;
+                    case 'Enter':
+                        if (!$(e.target).is('input, textarea, select')) {
+                            e.preventDefault();
+                            this.completeCurrentStep();
+                        }
+                        break;
+                    case 'Escape':
+                        e.preventDefault();
+                        this.showExitConfirmation();
+                        break;
+                    case 'h':
+                    case 'H':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            this.showHelpModal();
+                        }
+                        break;
+                }
+            });
+        }
+
+        navigateStep(direction) {
+            const totalSteps = 5;
+            let newStep = this.currentStep;
+
+            if (direction === 'next' && this.currentStep < totalSteps) {
+                newStep = this.currentStep + 1;
+            } else if (direction === 'prev' && this.currentStep > 1) {
+                newStep = this.currentStep - 1;
+            }
+
+            if (newStep !== this.currentStep) {
+                this.goToStep(newStep);
+                this.trackAnalytics('step_navigation', { from: this.currentStep, to: newStep, method: 'keyboard' });
+            }
+        }
+
+        completeCurrentStep() {
+            const $currentBtn = $(`.complete-step[data-step="${this.currentStep}"]`);
+            if ($currentBtn.length && !$currentBtn.prop('disabled')) {
+                $currentBtn.click();
+            }
+        }
+
+        trackAnalytics(event, data = {}) {
+            // Suivre les événements d'analyse (optionnel)
+            
+            // Ici, vous pourriez envoyer les données à Google Analytics, etc.
+            // Pour l'instant, juste logger
+            this.interactions.push({
+                event: event,
+                data: data,
+                timestamp: Date.now()
+            });
+        }
+
+        goToStep(stepNumber) {
+            // Aller à une étape spécifique
+            if (stepNumber >= 1 && stepNumber <= 4) {
+                this.loadStep(stepNumber);
+            }
+        }
+
+        skipOnboarding() {
+            // Sauter l'onboarding
+            if (confirm('Êtes-vous sûr de vouloir sauter l\'assistant de configuration ? Vous pourrez le relancer plus tard depuis les paramètres.')) {
+                // Marquer comme ignoré via AJAX
+                $.ajax({
+                    url: pdfBuilderOnboarding.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_skip_onboarding',
+                        nonce: pdfBuilderOnboarding.nonce
+                    },
+                    success: () => {
+                        this.hideModal();
+                        this.showNotification('Assistant de configuration ignoré. Vous pouvez le relancer depuis les paramètres.', 'info');
+                    },
+                    error: () => {
+                        // Fallback
+                        this.hideModal();
+                    }
+                });
+            }
+        }
+
+        skipWoocommerceSetup() {
+            // Sauter la configuration WooCommerce
+            this.completeStep();
+        }
+
+        showTooltip($element) {
+            // Afficher une info-bulle
+            const tooltipText = $element.data('tooltip');
+            if (tooltipText) {
+                // Créer et afficher l'info-bulle
+                const $tooltip = $('<div class="onboarding-tooltip"></div>').text(tooltipText);
+                $('body').append($tooltip);
+                
+                const offset = $element.offset();
+                $tooltip.css({
+                    top: offset.top - $tooltip.outerHeight() - 10,
+                    left: offset.left + ($element.outerWidth() / 2) - ($tooltip.outerWidth() / 2)
+                });
+                
+                this.tooltips[$element.attr('id') || $element.attr('class')] = $tooltip;
+            }
+        }
+
+        hideTooltip() {
+            // Cacher toutes les info-bulles
+            $('.onboarding-tooltip').remove();
+            this.tooltips = {};
+        }
+
+        showHelpModal() {
+            // Afficher le modal d'aide
+            const helpContent = `
+                <div class="onboarding-help-modal">
+                    <h3>Aide - Assistant de configuration</h3>
+                    <p>Utilisez les flèches gauche/droite pour naviguer entre les étapes.</p>
+                    <p>Appuyez sur Entrée pour valider une étape.</p>
+                    <p>Appuyez sur Échap pour quitter l'assistant.</p>
+                    <p>Ctrl+H pour afficher cette aide.</p>
+                    <button class="button" onclick="$(this).closest('.onboarding-help-modal').remove()">Fermer</button>
+                </div>
+            `;
+            $('body').append(helpContent);
+        }
+
+        validateInput($input) {
+            // Valider un champ de saisie
+            const value = $input.val();
+            const validationType = $input.data('validation');
+            
+            let isValid = true;
+            let errorMessage = '';
+            
+            switch(validationType) {
+                case 'email':
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    isValid = emailRegex.test(value);
+                    errorMessage = isValid ? '' : 'Veuillez entrer une adresse email valide.';
+                    break;
+                case 'required':
+                    isValid = value.trim() !== '';
+                    errorMessage = isValid ? '' : 'Ce champ est obligatoire.';
+                    break;
+                // Ajouter d'autres types de validation si nécessaire
+            }
+            
+            // Afficher ou masquer le message d'erreur
+            const $errorElement = $input.siblings('.validation-error');
+            if (!isValid) {
+                if ($errorElement.length === 0) {
+                    $input.after(`<div class="validation-error">${errorMessage}</div>`);
+                } else {
+                    $errorElement.text(errorMessage);
+                }
+                $input.addClass('invalid');
+            } else {
+                $errorElement.remove();
+                $input.removeClass('invalid');
+            }
+            
+            return isValid;
+        }
+
+        getWoocommerceOptions() {
+            // Récupérer les options WooCommerce sélectionnées
+            const options = {};
+            $('.woocommerce-setup input[type="checkbox"]').each(function() {
+                options[$(this).attr('name')] = $(this).is(':checked');
+            });
+            return options;
+        }
+
+        showCompletionMessage() {
+            // Afficher un message de completion et fermer le modal
+            alert('Configuration terminée ! Vous pouvez maintenant utiliser PDF Builder Pro.');
+            this.hideModal();
+            this.markOnboardingComplete();
+        }
+
+        showExitConfirmation() {
+            if (confirm('Êtes-vous sûr de vouloir quitter l\'assistant de configuration ?\n\nVotre progression sera sauvegardée.')) {
+                this.hideModal();
+                this.trackAnalytics('onboarding_exited', { step: this.currentStep, method: 'escape' });
+            }
+        }
+
+        showModal() {
+            const $modal = $('#pdf-builder-onboarding-modal');
+            // Le modal est déjà affiché via CSS, juste ajouter l'animation
+            const self = this; // Sauvegarder la référence this
+            $modal.fadeIn(400, () => {
+                // Animation d'entrée améliorée
+                $modal.find('.modal-content').addClass('modal-entrance-animation');
+                self.announceStep();
+                self.focusFirstElement();
+            });
+
+            // Overlay click to close (avec confirmation)
+            $modal.on('click', (e) => {
+                if (e.target === $modal[0]) {
+                    this.showExitConfirmation();
+                }
+            });
+        }
+
+        announceStep() {
+            // Annonce pour les lecteurs d'écran
+            const stepTitle = $(`.onboarding-step-content[data-step-id] h2`).text();
+            if (stepTitle) {
+                this.announceToScreenReader(`Étape ${this.currentStep} sur 4: ${stepTitle}`);
+            } else {
+                this.announceToScreenReader(`Étape ${this.currentStep} sur 4`);
+            }
+        }
+
+        announceToScreenReader(message) {
+            // Créer un élément temporaire pour les annonces d'accessibilité
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-10000px';
+            announcement.style.width = '1px';
+            announcement.style.height = '1px';
+            announcement.style.overflow = 'hidden';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            // Supprimer après un délai
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+
+        focusFirstElement() {
+            // Mettre le focus sur le premier élément focusable de l'étape actuelle
+            const $stepContent = $(`.onboarding-step-content[data-step-id="${this.currentStep}"]`);
+            const $focusableElements = $stepContent.find('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if ($focusableElements.length > 0) {
+                $focusableElements.first().focus();
+            } else {
+                // Si aucun élément focusable, mettre le focus sur le titre de l'étape
+                $stepContent.find('h2').attr('tabindex', '-1').focus();
+            }
+        }
+
+        showExitConfirmation() {
+            // Afficher une confirmation avant de quitter l'onboarding
+            if (confirm('Êtes-vous sûr de vouloir quitter l\'assistant de configuration ? Votre progression sera perdue.')) {
+                this.hideModal();
+                // Marquer l'onboarding comme terminé pour éviter de le réafficher
+                this.markOnboardingComplete();
+            }
+        }
+
+        markOnboardingComplete() {
+            // Marquer l'onboarding comme terminé via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_mark_onboarding_complete',
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+
+                    } else {
+                    }
+                },
+                error: (xhr, status, error) => {
+                }
+            });
+        }
+
+        hideModal() {
+            // Cacher le modal avec animation
+            const $modal = $('#pdf-builder-onboarding-modal');
+            $modal.fadeOut(300, () => {
+                // Supprimer l'animation d'entrée
+                $modal.find('.modal-content').removeClass('modal-entrance-animation');
+                // Restaurer le focus à l'élément qui avait le focus avant
+                if (this.previousFocus) {
+                    this.previousFocus.focus();
+                }
+            });
+        }
+
+        updateProgress() {
+            // Mettre à jour l'indicateur de progression
+            const $progressIndicator = $('.onboarding-progress-indicator');
+            const totalSteps = typeof pdfBuilderOnboarding !== 'undefined' && pdfBuilderOnboarding.total_steps 
+                ? pdfBuilderOnboarding.total_steps 
+                : 4;
+            
+            if ($progressIndicator.length > 0) {
+                // Calculer le pourcentage de progression (étape actuelle / nombre total d'étapes)
+                const progressPercent = (this.currentStep / totalSteps) * 100;
+                $progressIndicator.css('width', progressPercent + '%');
+                $progressIndicator.attr('aria-valuenow', this.currentStep);
+                $progressIndicator.attr('aria-valuemax', totalSteps);
+            }
+            // Mettre à jour le texte de progression
+            const $progressText = $('.onboarding-progress-text');
+            if ($progressText.length > 0) {
+                $progressText.text(`Étape ${this.currentStep} sur ${totalSteps}`);
+            }
+        }
+
+        selectTemplate(templateId) {
+            // Sauvegarder le template sélectionné
+            this.selectedTemplate = templateId;
+            
+            // Mettre à jour l'interface utilisateur
+            $('.template-option').removeClass('selected');
+            $(`.template-option[data-template-id="${templateId}"]`).addClass('selected');
+            
+            // Activer le bouton suivant si un template est sélectionné
+            const $nextButton = $('.button-next');
+            if ($nextButton.length > 0) {
+                $nextButton.prop('disabled', false);
+            }
+        }
+
+        completeStep() {
+            // Sauvegarder les données de l'étape actuelle si nécessaire
+            if (this.currentStep === 2 && this.selectedTemplate) {
+                // Sauvegarder la sélection du template
+                this.saveTemplateSelection();
+            }
+            
+            // Passer à l'étape suivante
+            if (this.currentStep < 4) {
+                this.loadStep(this.currentStep + 1);
+            } else {
+                // Onboarding terminé
+                this.finishOnboarding();
+            }
+        }
+
+        // NOUVELLES MÉTHODES SIMPLIFIÉES - Refaites depuis zéro
+
+        handleCompleteStep() {
+
+            // Désactiver le bouton pour éviter les clics multiples
+            const $button = $('.complete-step');
+            const originalText = $button.text();
+            $button.prop('disabled', true).text('Chargement...');
+
+            // Préparer les données selon l'étape
+            let stepAction = 'next';
+            if (this.currentStep === 6) {
+                stepAction = 'finish';
+            }
+
+            // Faire l'appel AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_complete_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: this.currentStep,
+                    step_action: stepAction,
+                    selected_template: this.selectedTemplate,
+                    selected_mode: this.selectedMode,
+                    woocommerce_options: this.getWoocommerceOptions()
+                },
+                success: (response) => {
+                    if (response.success) {
+                        if (response.data.completed) {
+                            // Onboarding terminé
+                            if (response.data.redirect_to) {
+                                // Rediriger vers l'éditeur ou la page spécifiée
+                                window.location.href = response.data.redirect_to;
+                            } else {
+                                // Afficher le message de completion
+                                this.showCompletionMessage();
+                            }
+                        } else if (response.data.redirect_to) {
+                            // Redirection (par exemple vers l'éditeur)
+                            window.location.href = response.data.redirect_to;
+                        } else {
+                            // Passer à l'étape suivante
+                            this.loadStep(response.data.next_step);
+                        }
+                    } else {
+                        // Erreur
+                        this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
+                        $button.prop('disabled', false).text(originalText);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    this.showError('Erreur de connexion');
+                    $button.prop('disabled', false).text(originalText);
+                }
+            });
+        }
+
+        handleSkipStep() {
+            // Désactiver le bouton
+            const $button = $('[data-action="skip-step"]');
+            const originalText = $button.text();
+            $button.prop('disabled', true).text('Ignorer...');
+
+            // Logique selon l'étape
+            if (this.currentStep === 2) {
+                // Étape 2 : passer directement à l'étape 3
+                this.loadStep(3);
+            } else if (this.currentStep === 3) {
+                // Étape 3 : passer à l'étape 4
+                this.loadStep(4);
+            } else {
+                // Autres étapes : passer à la suivante
+                const nextStep = this.currentStep + 1;
+                if (nextStep <= 4) {
+                    this.loadStep(nextStep);
+                } else {
+                    this.showCompletionMessage();
+                }
+            }
+
+            // Réactiver le bouton après un court délai
+            setTimeout(() => {
+                $button.prop('disabled', false).text(originalText);
+            }, 1000);
+        }
+
+        handleSkipOnboarding() {
+
+            if (confirm('Êtes-vous sûr de vouloir ignorer complètement l\'assistant de configuration ?')) {
+                // Désactiver le bouton
+                const $button = $('[data-action="skip-onboarding"]');
+                const originalText = $button.text();
+                $button.prop('disabled', true).text('Ignorer...');
+
+                // Appel AJAX pour marquer comme ignoré
+                $.ajax({
+                    url: pdfBuilderOnboarding.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_skip_onboarding',
+                        nonce: pdfBuilderOnboarding.nonce
+                    },
+                    success: (response) => {
+
+                        this.hideModal();
+                        this.showNotification('Assistant de configuration ignoré', 'info');
+                    },
+                    error: (xhr, status, error) => {
+                        // Fallback : masquer quand même
+                        this.hideModal();
+                    }
+                });
+            }
+        }
+
+        saveTemplateSelection() {
+            // Sauvegarder la sélection du template via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_template_selection',
+                    template_id: this.selectedTemplate,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+
+                    } else {
+                    }
+                },
+                error: (xhr, status, error) => {
+                }
+            });
+        }
+
+        finishOnboarding() {
+            // Finaliser l'onboarding
+
+            // Marquer comme terminé
+            this.markOnboardingComplete();
+            
+            // Cacher le modal
+            this.hideModal();
+            
+            // Rediriger ou afficher un message de succès
+            // Pour l'instant, juste afficher un message
+            alert('Configuration terminée ! Vous pouvez maintenant utiliser PDF Builder Pro.');
+        }
+
+        goToPreviousStep() {
+            const prevStep = this.currentStep - 1;
+            if (prevStep >= 1) {
+                this.loadStep(prevStep);
+            }
+        }
+
+        loadStep(stepNumber) {
+            // Charger une étape spécifique via AJAX
+
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_load_onboarding_step',
+                    step: stepNumber,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+
+                        this.applyStepData(stepNumber, response.data);
+                    } else {
+                    }
+                },
+                error: (xhr, status, error) => {
+                }
+            });
+        }
+
+        /**
+         * Appliquer les données d'une étape chargée
+         */
+        applyStepData(step, data) {
+
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $content = $modal.find('.modal-body .step-content');
+
+            // Pour l'étape 2, réinitialiser selectedMode pour s'assurer que le bouton est désactivé
+            if (step === 2) {
+                this.selectedMode = null;
+            }
+            // Pour l'étape 3, réinitialiser selectedTemplate pour s'assurer que le bouton est désactivé
+            if (step === 3) {
+                this.selectedTemplate = null;
+            }
+
+            // Vérifier les boutons existants avant remplacement
+            const existingButtons = $content.find('.complete-step');
+
+            // Vérifier aussi tous les boutons dans la modal
+            const allButtonsInModal = $modal.find('.complete-step');
+
+            // Mettre à jour le contenu de la modal
+            $content.html(data.content);
+
+            // Vérifier les boutons après remplacement
+            const newButtons = $content.find('.complete-step');
+
+            // Vérifier aussi tous les boutons dans la modal après
+            const allButtonsInModalAfter = $modal.find('.complete-step');
+
+            // Gérer les boutons du footer qui persistent entre les étapes
+            const $footer = $modal.find('.modal-footer');
+            const footerButtons = $footer.find('.complete-step');
+
+            // Supprimer tous les boutons existants du footer
+            footerButtons.remove();
+
+            // Générer tous les boutons nécessaires pour cette étape
+            const footerHtml = this.generateFooterButtons(step, data);
+            $footer.html(footerHtml);
+
+            // Gérer le bouton précédent dans le header
+            this.updatePreviousButton(step);
+
+            // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
+            // this.hideInactiveStepButtons(); // COMMENTÉ - logique simplifiée
+
+            // Mettre à jour l'étape courante
+            this.currentStep = step;
+
+            // Pour l'étape assign_template (4), mettre à jour l'affichage du template sélectionné
+            if (step === 4 && this.selectedTemplate) {
+                const templateNames = {
+                    'invoice': 'Facture',
+                    'quote': 'Devis',
+                    'blank': 'Template Vierge'
+                };
+                const templateName = templateNames[this.selectedTemplate] || this.selectedTemplate;
+                $('#selected-template-name').text(templateName);
+            }
+
+        }
+
+        announceToScreenReader(message) {
+            // Créer un élément temporaire pour l'annonce
+            const $announcer = $('<div>')
+                .attr('aria-live', 'polite')
+                .attr('aria-atomic', 'true')
+                .css({
+                    position: 'absolute',
+                    left: '-10000px',
+                    width: '1px',
+                    height: '1px',
+                    overflow: 'hidden'
+                })
+                .text(message);
+
+            $('body').append($announcer);
+            setTimeout(() => $announcer.remove(), 1000);
+        }
+
+        focusFirstElement() {
+            // Focus sur le premier élément focusable
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $focusable = $modal.find('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])').first();
+            if ($focusable.length) {
+                $focusable.focus();
+            }
+        }
+
+        showTooltip($element) {
+            const tooltipText = $element.data('tooltip');
+            if (!tooltipText) return;
+
+            // Supprimer les tooltips existants
+            $('.onboarding-tooltip').remove();
+
+            const $tooltip = $('<div>')
+                .addClass('onboarding-tooltip')
+                .text(tooltipText)
+                .css({
+                    position: 'fixed',
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    color: 'white',
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    zIndex: 10000,
+                    pointerEvents: 'none',
+                    maxWidth: '200px',
+                    textAlign: 'center'
+                });
+
+            $('body').append($tooltip);
+
+            // Positionner le tooltip
+            const elementRect = $element[0].getBoundingClientRect();
+            const tooltipRect = $tooltip[0].getBoundingClientRect();
+
+            $tooltip.css({
+                left: elementRect.left + (elementRect.width / 2) - (tooltipRect.width / 2),
+                top: elementRect.top - tooltipRect.height - 8
+            });
+
+            // Animation d'entrée
+            $tooltip.fadeIn(200);
+        }
+
+        hideTooltip() {
+            $('.onboarding-tooltip').fadeOut(200, function() {
+                $(this).remove();
+            });
+        }
+
+        showHelpModal() {
+            const helpContent = `
+                <div class="onboarding-help-modal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:10001;max-width:400px;width:90%;">
+                    <h3 style="margin-top:0;color:#1f2937;">🆘 Aide - Raccourcis Clavier</h3>
+                    <ul style="list-style:none;padding:0;">
+                        <li><kbd>→</kbd> <kbd>↓</kbd> Étape suivante</li>
+                        <li><kbd>←</kbd> <kbd>↑</kbd> Étape précédente</li>
+                        <li><kbd>Entrée</kbd> Valider l'étape</li>
+                        <li><kbd>Échap</kbd> Quitter (avec confirmation)</li>
+                        <li><kbd>Ctrl+H</kbd> Afficher cette aide</li>
+                    </ul>
+                    <button onclick="$(this).parent().fadeOut(200,function(){$(this).remove();})" style="background:#007cba;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">Fermer</button>
+                </div>
+            `;
+            $('body').append(helpContent);
+            this.trackAnalytics('help_opened');
+        }
+
+        validateInput($input) {
+            const value = $input.val();
+            const isValid = value && value.length > 0;
+
+            $input.toggleClass('input-valid', isValid);
+            $input.toggleClass('input-invalid', !isValid && $input[0].value !== '');
+
+            // Feedback visuel
+            if (isValid) {
+                this.showValidationFeedback($input, 'success', '✓ Valide');
+            } else if ($input[0].value !== '') {
+                this.showValidationFeedback($input, 'error', '⚠ Champ requis');
+            }
+        }
+
+        showValidationFeedback($input, type, message) {
+            // Supprimer les anciens feedbacks
+            $input.next('.validation-feedback').remove();
+
+            const $feedback = $('<span>')
+                .addClass('validation-feedback')
+                .addClass(type === 'success' ? 'feedback-success' : 'feedback-error')
+                .text(message)
+                .css({
+                    fontSize: '12px',
+                    marginLeft: '8px',
+                    fontWeight: '500'
+                });
+
+            $input.after($feedback);
+
+            // Animation
+            $feedback.fadeIn(200);
+        }
+
+        trackAnalytics(event, data = {}) {
+            // Ajouter à la liste des interactions
+            this.interactions.push({
+                event: event,
+                timestamp: Date.now(),
+                step: this.currentStep,
+                data: data
+            });
+
+            // Limiter à 100 interactions maximum
+            if (this.interactions.length > 100) {
+                this.interactions = this.interactions.slice(-100);
+            }
+
+            // Envoyer à un service d'analytics si disponible
+            if (typeof gtag !== 'undefined') {
+                gtag('event', event, {
+                    event_category: 'onboarding',
+                    event_label: `step_${this.currentStep}`,
+                    custom_data: data
+                });
+            }
+        }
+
+        goToStep(stepNumber) {
+            // Animation de transition améliorée
+            const $currentStep = $('.onboarding-step');
+            const direction = stepNumber > this.currentStep ? 'next' : 'prev';
+
+            $currentStep.addClass(`slide-out-${direction === 'next' ? 'left' : 'right'}`);
+
+            setTimeout(() => {
+                // Simuler le chargement du contenu de la nouvelle étape
+                this.loadStep(stepNumber);
+                $currentStep.removeClass(`slide-out-left slide-out-right`);
+
+                const $newStep = $('.onboarding-step');
+                $newStep.addClass(`slide-in-${direction === 'next' ? 'right' : 'left'}`);
+
+                setTimeout(() => {
+                    $newStep.removeClass('slide-in-left slide-in-right');
+                }, 300);
+
+                this.currentStep = stepNumber;
+                this.updateProgress();
+                this.announceStep();
+                this.trackAnalytics('step_changed', { to: stepNumber });
+            }, 150);
+        }
+
+        hideModal() {
+            const $modal = $('#pdf-builder-onboarding-modal');
+            $modal.fadeOut(300, () => {
+                $modal.remove();
+            });
+        }
+
+        completeStep(step, actionType = 'next') {
+
+            const $button = $(`.complete-step[data-step="${step}"]`);
+
+            // Sauvegarder le texte original
+            const originalText = $button.text();
+            $button.data('original-text', originalText);
+
+            // Désactiver le bouton avec feedback visuel
+            $button.prop('disabled', true);
+
+            // Texte de chargement selon le type d'action
+            const loadingText = actionType === 'finish' ? 'Finalisation...' : 'Chargement...';
+            $button.html('<span class="dashicons dashicons-update spin"></span> ' + loadingText);
+
+            if (typeof pdfBuilderOnboarding === 'undefined') {
+                $button.prop('disabled', false).html(originalText);
+                return;
+            }
+
+            // Ajouter un timeout pour éviter les blocages trop longs
+            const timeoutId = setTimeout(() => {
+                $button.html('<span class="dashicons dashicons-update spin"></span> Traitement...');
+            }, 1000);
+
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                timeout: 10000, // 10 secondes timeout
+                data: {
+                    action: 'pdf_builder_complete_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: step,
+                    step_action: actionType,
+                    selected_template: this.selectedTemplate,
+                    woocommerce_options: this.getWoocommerceOptions()
+                },
+                success: (response) => {
+                    clearTimeout(timeoutId);
+
+                    if (response.success) {
+
+                        // Feedback de succès selon le type d'action
+                        if (actionType === 'finish') {
+                            $button.html('<span class="dashicons dashicons-yes"></span> Terminé !');
+                        } else {
+                            $button.html('<span class="dashicons dashicons-yes"></span> Étape terminée');
+                        }
+
+                        setTimeout(() => {
+                            if (response.data.completed) {
+                                this.showCompletionMessage();
+                            } else if (response.data.redirect_to) {
+                                window.location.href = response.data.redirect_to;
+                            } else {
+                                // Mettre à jour l'étape côté client avant de charger la suivante
+                                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                                    pdfBuilderOnboarding.current_step = response.data.next_step;
+                                }
+                                // Charger l'étape suivante via AJAX au lieu de recharger la page
+                                this.loadStep(response.data.next_step);
+                            }
+                            // Masquer les boutons inactifs après chaque transition
+                            // this.hideInactiveStepButtons(); // COMMENTÉ - logique simplifiée
+                        }, 500);
+                    } else {
+                        // Pour l'étape 2, si pas de template sélectionné, permettre de passer quand même
+                        if (step === 2 && response.data?.message?.includes('template')) {
+
+                            // Simuler un succès et passer à l'étape suivante
+                            $button.html('<span class="dashicons dashicons-yes"></span> Étape ignorée');
+
+                            setTimeout(() => {
+                                const nextStep = 3; // Étape suivante après 2
+                                // Mettre à jour l'étape côté client avant de charger la suivante
+                                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                                    pdfBuilderOnboarding.current_step = nextStep;
+                                }
+                                // Charger l'étape suivante via AJAX
+                                this.loadStep(nextStep);
+                            }, 500);
+                        } else {
+                            // En cas d'erreur normale, réactiver tous les boutons
+                            this.resetButtonStates();
+                            $button.html(originalText);
+                            this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
+                        }
+                    }
+                },
+                error: (xhr, status, error) => {
+                    clearTimeout(timeoutId);
+
+                    // En cas d'erreur AJAX, réactiver tous les boutons
+                    this.resetButtonStates();
+                    $button.html(originalText);
+
+                    if (status === 'timeout') {
+                        this.showError('Délai d\'attente dépassé. Réessayez.');
+                    } else {
+                        this.showError('Erreur de connexion. Vérifiez votre connexion internet.');
+                    }
+                }
+            });
+        }
+
+        getStepAction(step) {
+            switch (step) {
+                case 2:
+                    return this.selectedTemplate ? 'create_template' : null;
+                case 3:
+                    return 'configure_woocommerce';
+                default:
+                    return null;
+            }
+        }
+
+        showError(message) {
+
+            // Afficher un message d'erreur dans le modal
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $body = $modal.find('.modal-body');
+
+            // Supprimer les anciens messages d'erreur
+            $body.find('.error-message').remove();
+
+            // Ajouter le nouveau message d'erreur
+            const $error = $(`
+                <div class="error-message" style="
+                    background: #fef2f2;
+                    border: 1px solid #fecaca;
+                    color: #dc2626;
+                    padding: 12px;
+                    border-radius: 6px;
+                    margin-bottom: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                ">
+                    <span class="dashicons dashicons-warning"></span>
+                    <span>${message}</span>
+                </div>
+            `);
+
+            $('#pdf-builder-onboarding-modal .step-content').prepend($error);
+
+            // Faire défiler vers le message d'erreur
+            $error.get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Supprimer automatiquement après 5 secondes
+            setTimeout(() => {
+                $error.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+        resetButtonStates() {
+
+            // Réactiver tous les boutons et restaurer leur état normal
+            $('.button-previous, .complete-step, [data-action]').each(function() {
+                const $btn = $(this);
+                $btn.prop('disabled', false);
+
+                // Restaurer le texte original si sauvegardé
+                const originalText = $btn.data('original-text');
+                if (originalText) {
+                    $btn.html(originalText);
+                }
+            });
+        }
+
+        selectTemplate($card) {
+            const templateId = $card.data('template');
+
+            // Vérifier si ce template est déjà sélectionné
+            if (this.selectedTemplate === templateId) {
+                // Désélectionner le template
+
+                $('.template-card').removeClass('selected');
+                this.selectedTemplate = null;
+            } else {
+                // Sélectionner le template
+
+                $('.template-card').removeClass('selected');
+                $card.addClass('selected');
+                this.selectedTemplate = templateId;
+            }
+
+            // Sauvegarder la sélection côté serveur
+            this.saveTemplateSelection();
+
+            // Mettre à jour les boutons du footer pour refléter la sélection
+            this.updateFooterButtonsForCurrentStep();
+        }
+
+        selectFreemiumMode($card) {
+            const modeId = $card.data('mode');
+
+            // Sélectionner le mode
+            $('.mode-card').removeClass('selected');
+            $card.addClass('selected');
+            this.selectedMode = modeId;
+
+            // Comportement spécial pour le mode premium
+            if (modeId === 'premium') {
+
+                // Sauvegarder la sélection et marquer l'onboarding comme terminé
+                this.saveFreemiumModeSelectionAndComplete();
+                return; // Arrêter l'exécution
+            }
+
+            // Sauvegarder la sélection côté serveur (pour le mode free)
+            this.saveFreemiumModeSelection();
+
+            // Mettre à jour les boutons du footer pour refléter la sélection
+            this.updateFooterButtonsForCurrentStep();
+        }
+
+        updateFooterButtons(stepData) {
+            const $footer = $('.modal-footer');
+
+            // Mettre à jour le bouton principal
+            const $primaryButton = $footer.find('.complete-step');
+            if ($primaryButton.length > 0) {
+                $primaryButton.text(stepData.action || 'Suivant');
+                $primaryButton.attr('data-action-type', stepData.action_type || 'next');
+
+                // Logique cohérente : désactiver seulement si requires_selection est true
+                const shouldDisable = stepData.requires_selection === true;
+                $primaryButton.prop('disabled', shouldDisable);
+
+            }
+            
+            // Mettre à jour ou créer le bouton secondaire
+            let $secondaryButton = $footer.find('.button-secondary');
+            
+            if (stepData.can_skip) {
+                // L'étape peut être ignorée - afficher le bouton skip-step
+                const skipText = (step === 2) ? 'Ignorer l\'assistant' : (stepData.skip_text || 'Ignorer l\'étape');
+                if ($secondaryButton.length === 0) {
+                    $secondaryButton = $('<button>')
+                        .addClass('button button-secondary')
+                        .attr('data-action', 'skip-step')
+                        .text(skipText);
+                    $footer.prepend($secondaryButton);
+                } else {
+                    $secondaryButton.attr('data-action', 'skip-step').text(skipText);
+                }
+            } else {
+                // L'étape ne peut pas être ignorée - afficher le bouton skip-onboarding
+                const skipText = 'Ignorer l\'assistant';
+                if ($secondaryButton.length === 0) {
+                    $secondaryButton = $('<button>')
+                        .addClass('button button-secondary')
+                        .attr('data-action', 'skip-onboarding')
+                        .text(skipText);
+                    $footer.prepend($secondaryButton);
+                } else {
+                    $secondaryButton.attr('data-action', 'skip-onboarding').text(skipText);
+                }
+            }
+        }
+
+        // ANCIENNE MÉTHODE - COMMENTÉE (remplacée par la méthode simple)
+        /*
+        goToPreviousStep() {
+            if (this.currentStep > 1) {
+                const $button = $('.button-previous');
+                
+                // Désactiver le bouton pendant le chargement
+                $button.prop('disabled', true);
+                const originalHTML = $button.html();
+                $button.html('<span class="dashicons dashicons-update spin"></span>');
+                
+                // Les boutons seront réactivés dans loadStep() après le chargement réussi
+                this.loadStep(this.currentStep - 1);
+            }
+        }
+        */
+
+        // ANCIENNE MÉTHODE - COMMENTÉE (remplacée par handleSkipStep)
+        /*
+        skipCurrentStep() {
+            // Gérer l'ignorance selon l'étape courante
+            if (this.currentStep === 2) {
+                // Pour l'étape 2, passer à l'étape 3 sans sélection de template
+                this.selectedTemplate = null; // Aucun template sélectionné
+                // Mettre à jour côté client immédiatement
+                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                    pdfBuilderOnboarding.current_step = 3;
+                }
+                this.updateServerStep(3); // Mettre à jour côté serveur
+                this.loadStep(3);
+            } else if (this.currentStep === 3) {
+                // Pour l'étape 3, sauter la configuration WooCommerce
+                this.skipWoocommerceSetup();
+            } else {
+                // Pour les autres étapes, passer simplement à la suivante
+                const nextStep = this.currentStep + 1;
+                // Mettre à jour côté client immédiatement
+                if (typeof pdfBuilderOnboarding !== 'undefined') {
+                    pdfBuilderOnboarding.current_step = nextStep;
+                }
+                this.updateServerStep(nextStep);
+                this.loadStep(nextStep);
+            }
+        }
+        */
+
+        loadStepContent(step) {
+            // Cette fonction serait appelée depuis PHP pour charger le contenu dynamique
+            // Pour l'instant, on simule avec les données existantes
+
+        }
+
+        /**
+         * Charger une étape via AJAX
+         */
+        loadStep(step) {
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $content = $modal.find('.modal-body .step-content');
+
+            // Afficher un indicateur de chargement
+            $content.html(`
+                <div class="onboarding-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Chargement de l'étape ${step}...</p>
+                    <div class="loading-progress">
+                        <div class="loading-bar" style="animation: loadingProgress 2s ease-in-out infinite;"></div>
+                    </div>
+                </div>
+            `);
+
+            // Faire la requête AJAX pour charger l'étape
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                timeout: 10000,
+                data: {
+                    action: 'pdf_builder_load_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: step
+                },
+                success: (response) => {
+                    if (response.success) {
+                        // Mettre à jour le contenu de la modal
+                        $content.html(response.data.content);
+
+                        // Mettre à jour l'étape courante
+                        this.currentStep = step;
+
+                        // Mettre à jour la progression
+                        this.updateProgress();
+
+                        // Mettre à jour l'URL sans recharger la page
+                        const currentUrl = new URL(window.location);
+                        currentUrl.searchParams.set('pdf_onboarding_step', step);
+                        window.history.replaceState({}, '', currentUrl.toString());
+
+                        // Mettre à jour la visibilité du bouton précédent
+                        const $prevButton = $('.button-previous');
+                        if (step > 1) {
+                            if ($prevButton.length === 0) {
+                                // Créer le bouton précédent s'il n'existe pas
+                                const $header = $('.modal-header');
+                                $header.prepend(`
+                                    <button class="button button-previous" data-tooltip="Étape précédente">
+                                        <span class="dashicons dashicons-arrow-left-alt"></span>
+                                    </button>
+                                `);
+                            } else {
+                                // S'assurer que le bouton est visible et activé
+                                $prevButton.show().prop('disabled', false);
+                            }
+                        } else {
+                            // Supprimer complètement le bouton précédent pour la première étape
+                            $prevButton.remove();
+                        }
+
+                        // Mettre à jour les boutons du footer selon l'étape
+                        this.applyStepData(step, response.data);
+
+                        // Mise à jour spécifique pour l'étape d'assignation de template
+                        if (step === 4) {
+                            this.updateTemplatePreview();
+                        }
+
+                    } else {
+                        // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
+                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                        this.showError('Erreur lors du chargement de l\'étape. Retour à l\'étape 1.');
+                        // Revenir à l'étape 1 au lieu de recharger la page
+                        setTimeout(() => this.loadStep(1), 2000);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    // En cas d'erreur AJAX, réactiver tous les boutons
+                    $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
+                    this.showError('Erreur de connexion lors du chargement de l\'étape. Retour à l\'étape 1.');
+                    // Revenir à l'étape 1 au lieu de recharger la page
+                    setTimeout(() => this.loadStep(1), 2000);
+                }
+            });
+        }
+
+        updateProgress() {
+            // Le nombre total d'étapes est maintenant dynamique selon les plugins installés
+            // On utilise une valeur par défaut de 6, mais elle sera ajustée si nécessaire
+            const totalSteps = typeof pdfBuilderOnboarding !== 'undefined' && pdfBuilderOnboarding.total_steps 
+                ? pdfBuilderOnboarding.total_steps 
+                : 6;
+            const progress = (Math.min(this.currentStep, totalSteps) / totalSteps) * 100;
+
+            $('.progress-fill').css('width', progress + '%');
+            $('.progress-text').text(`Étape ${this.currentStep} sur ${totalSteps}`);
+
+            // Mettre à jour les indicateurs d'étapes visuelles
+            $('.progress-step').each(function(index) {
+                const stepNumber = index + 1;
+                const $step = $(this);
+
+                $step.removeClass('active completed');
+
+                if (stepNumber < this.currentStep) {
+                    $step.addClass('completed');
+                } else if (stepNumber === this.currentStep) {
+                    $step.addClass('active');
+                }
+            }.bind(this));
+        }
+
+        skipOnboarding() {
+            const confirmMessage = (typeof pdfBuilderOnboarding !== 'undefined' && pdfBuilderOnboarding.strings && pdfBuilderOnboarding.strings.confirm_skip)
+                ? pdfBuilderOnboarding.strings.confirm_skip
+                : 'Êtes-vous sûr de vouloir ignorer l\'assistant de configuration ?';
+
+            if (confirm(confirmMessage)) {
+                if (typeof pdfBuilderOnboarding !== 'undefined' && pdfBuilderOnboarding.ajax_url && pdfBuilderOnboarding.nonce) {
+                    $.ajax({
+                        url: pdfBuilderOnboarding.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_skip_onboarding',
+                            nonce: pdfBuilderOnboarding.nonce
+                        },
+                        success: () => {
+                            this.hideModal();
+                            this.showNotification('Assistant de configuration ignoré. Vous pouvez le relancer depuis les paramètres.', 'info');
+                        }
+                    });
+                } else {
+                    // Fallback si pdfBuilderOnboarding n'est pas défini
+                    this.hideModal();
+                }
+            }
+        }
+
+        showCompletionMessage() {
+            const $modal = $('.pdf-builder-onboarding-modal');
+            const $body = $modal.find('.modal-body');
+
+            $body.html(`
+                <div class="onboarding-completed-message" style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🎉</div>
+                    <h2 style="color: #1d2327; margin-bottom: 16px;">Configuration terminée !</h2>
+                    <p style="color: #666; font-size: 16px; margin-bottom: 30px;">
+                        Votre PDF Builder Pro est maintenant prêt à être utilisé.
+                    </p>
+                    <div style="display: flex; gap: 12px; justify-content: center;">
+                        <a href="/wp-admin/admin.php?page=pdf-builder-templates" class="button button-primary" style="padding: 12px 24px;">
+                            Commencer à créer
+                        </a>
+                        <a href="/wp-admin/admin.php?page=pdf-builder-settings" class="button button-secondary" style="padding: 12px 24px;">
+                            Voir les paramètres
+                        </a>
+                    </div>
+                </div>
+            `);
+
+            // Masquer le footer et ajuster le modal
+            $modal.find('.modal-footer').hide();
+            $modal.find('.modal-header .progress-bar').css('width', '100%');
+            $modal.find('.progress-text').text('Terminé !');
+
+            // Auto-fermer après 3 secondes
+            setTimeout(() => {
+                this.hideModal();
+            }, 3000);
+        }
+
+        showError(message) {
+            this.showNotification(message, 'error');
+        }
+
+        showNotification(message, type = 'info') {
+            // Notifications supprimées - système retiré
+        }
+
+        saveTemplateSelection() {
+            // Sauvegarder la sélection de template via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_template_selection',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    selected_template: this.selectedTemplate
+                },
+                success: (response) => {
+                    if (!response.success) {
+                    }
+                },
+                error: (xhr, status, error) => {
+                }
+            });
+        }
+
+        saveFreemiumModeSelection() {
+            // Sauvegarder la sélection du mode freemium via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_freemium_mode',
+                    selected_mode: this.selectedMode,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (!response.success) {
+                    }
+                },
+                error: (xhr, status, error) => {
+                }
+            });
+        }
+
+        saveFreemiumModeSelectionAndComplete() {
+            // Sauvegarder la sélection du mode freemium et marquer l'onboarding comme terminé
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_freemium_mode',
+                    selected_mode: this.selectedMode,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+
+                        // Marquer l'onboarding comme terminé
+                        $.ajax({
+                            url: pdfBuilderOnboarding.ajax_url,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_mark_onboarding_complete',
+                                nonce: pdfBuilderOnboarding.nonce
+                            },
+                            success: (completeResponse) => {
+                                if (completeResponse.success) {
+
+                                    // Afficher un message de bienvenue premium avant la redirection
+                                    this.showPremiumWelcome();
+                                } else {
+                                    // Rediriger quand même
+                                    window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                                }
+                            },
+                            error: (xhr, status, error) => {
+                                // Rediriger quand même
+                                window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                            }
+                        });
+                    } else {
+                        // Rediriger quand même
+                        window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                    }
+                },
+                error: (xhr, status, error) => {
+                    // Rediriger quand même
+                    window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                }
+            });
+        }
+
+        showPremiumWelcome() {
+            // Vérifier que la modal d'onboarding existe et est visible
+            const $modal = $('#pdf-builder-onboarding-modal');
+            if ($modal.length === 0 || !$modal.is(':visible')) {
+
+                // Rediriger directement sans afficher le message
+                window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                return;
+            }
+
+            // Afficher un message de bienvenue pour les utilisateurs premium
+            const welcomeMessage = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #10b981; margin-bottom: 16px;">🎉 Bienvenue dans PDF Builder Pro Premium !</h3>
+                    <p style="font-size: 16px; margin-bottom: 20px;">
+                        Vous avez choisi la version complète avec toutes les fonctionnalités avancées.
+                    </p>
+                    <div class="premium-features-box">
+                        <strong>🚀 Fonctionnalités Premium activées :</strong>
+                        <ul style="text-align: left; margin-top: 10px;">
+                            <li>• Templates PDF illimités</li>
+                            <li>• Éditeur React avancé</li>
+                            <li>• Support prioritaire</li>
+                            <li>• Variables dynamiques</li>
+                            <li>• Intégration WooCommerce complète</li>
+                        </ul>
+                    </div>
+                    <p style="font-size: 14px; color: #6b7280;">
+                        Redirection vers la page de gestion des licences...
+                    </p>
+                </div>
+            `;
+
+            // Remplacer le contenu de l'étape actuelle dans la modal d'onboarding uniquement
+            $('#pdf-builder-onboarding-modal .step-content').html(welcomeMessage);
+
+            // Masquer les boutons de navigation
+            $('.modal-footer').hide();
+
+            // Rediriger après 3 secondes
+            setTimeout(() => {
+                window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+            }, 3000);
+        }
+
+        trapFocus($container) {
+            const focusableElements = $container.find(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+
+            const firstElement = focusableElements.first();
+            const lastElement = focusableElements.last();
+
+            $container.on('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstElement[0]) {
+                            lastElement.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastElement[0]) {
+                            firstElement.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+
+                if (e.key === 'Escape') {
+                    this.skipOnboarding();
+                }
+            });
+
+            // Focus initial
+            firstElement.focus();
+        }
+
+        updateServerStep(step) {
+            // Mettre à jour l'étape côté serveur
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_update_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: step
+                },
+                success: (response) => {
+                    if (response.success) {
+
+                        // Mettre à jour aussi côté client pour cohérence
+                        if (typeof pdfBuilderOnboarding !== 'undefined') {
+                            pdfBuilderOnboarding.current_step = step;
+                        }
+                    } else {
+                    }
+                },
+                error: (xhr, status, error) => {
+                }
+            });
+        }
+
+        generateStepButton(step) {
+            // Générer le bouton approprié pour l'étape courante
+            const stepData = this.getStepData(step);
+            if (!stepData) return '';
+
+            const buttonText = stepData.action_text || 'Suivant';
+            const buttonClass = stepData.requires_selection ? 'button-secondary' : 'button-primary';
+            // Pour l'étape 2, permettre de continuer même sans sélection (optionnel)
+            const isDisabled = (step === 2) ? false : (stepData.requires_selection && !this.selectedTemplate);
+
+            return `
+                <button class="button ${buttonClass} complete-step"
+                        data-step="${step}"
+                        data-action-type="${stepData.action_type || 'next'}"
+                        ${isDisabled ? 'disabled' : ''}>
+                    ${buttonText}
+                </button>
+            `;
+        }
+
+        generateFooterButtons(step, data) {
+            // Générer tous les boutons du footer pour une étape
+
+            let buttonsHtml = '';
+
+            // Bouton skip (si applicable)
+            if (data.can_skip) {
+                buttonsHtml += `
+                    <button class="button button-secondary" data-action="skip-step">
+                        ${data.skip_text || 'Ignorer'}
+                    </button>
+                `;
+            } else {
+                buttonsHtml += `
+                    <button class="button button-secondary" data-action="skip-onboarding">
+                        Ignorer l'assistant
+                    </button>
+                `;
+            }
+
+            // Bouton principal (suivant/terminer)
+            if (data.action) {
+                const buttonClass = 'button-primary';
+                let shouldDisable = false;
+
+                if (data.requires_selection) {
+                    if (parseInt(step) === 2) {
+                        // Étape 2 : mode freemium - vérifier selectedMode
+                        shouldDisable = !this.selectedMode;
+                    } else if (parseInt(step) === 3) {
+                        // Étape 3 : template - vérifier selectedTemplate
+                        shouldDisable = !this.selectedTemplate;
+                    } else if (parseInt(step) === 4) {
+                        // Étape 4 : assignation template - vérifier selectedTemplate
+                        shouldDisable = !this.selectedTemplate;
+                    }
+                }
+
+                const isDisabled = shouldDisable ? 'disabled' : '';
+
+                buttonsHtml += `
+                    <button class="button ${buttonClass} complete-step"
+                            data-step="${step}"
+                            data-action-type="${data.action_type || 'next'}"
+                            ${isDisabled}>
+                        ${data.action}
+                    </button>
+                `;
+            }
+
+            return buttonsHtml;
+        }
+
+        updatePreviousButton(step) {
+            // Gérer la visibilité du bouton précédent selon l'étape
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $header = $modal.find('.modal-header');
+            const $prevButton = $header.find('.button-previous');
+
+            if (step > 1) {
+                if ($prevButton.length === 0) {
+                    // Créer le bouton précédent s'il n'existe pas
+                    $header.prepend(`
+                        <button class="button button-previous" data-tooltip="Étape précédente">
+                            <span class="dashicons dashicons-arrow-left-alt"></span>
+                        </button>
+                    `);
+
+                } else {
+                    // S'assurer que le bouton est visible et activé
+                    $prevButton.show().prop('disabled', false);
+
+                }
+            } else {
+                // Supprimer le bouton précédent pour la première étape
+                if ($prevButton.length > 0) {
+                    $prevButton.remove();
+
+                }
+            }
+        }
+
+        updateFooterButtonsForCurrentStep() {
+            // Régénérer les boutons du footer pour l'étape actuelle
+            // Cela est nécessaire quand l'état change (par exemple, sélection de template)
+
+            // Simuler les données de l'étape actuelle (on pourrait les récupérer du cache)
+            const stepData = this.getStepData(this.currentStep);
+
+            // Créer un objet data simulé basé sur les données de l'étape
+            const data = {
+                can_skip: stepData.can_skip || false,
+                skip_text: stepData.skip_text || 'Ignorer',
+                action: stepData.action_text,
+                action_type: stepData.action_type,
+                requires_selection: stepData.requires_selection || false
+            };
+
+            // Régénérer les boutons
+            const $footer = $('#pdf-builder-onboarding-modal .modal-footer');
+            const footerHtml = this.generateFooterButtons(this.currentStep, data);
+            $footer.html(footerHtml);
+
+        }
+
+        getStepData(step) {
+            // Données des étapes (devrait correspondre au PHP)
+            const steps = {
+                1: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
+                2: { action_text: 'Suivant', action_type: 'next', requires_selection: true, can_skip: false, skip_text: 'Ignorer l\'assistant' },
+                3: { action_text: 'Suivant', action_type: 'next', requires_selection: true, can_skip: true, skip_text: 'Ignorer l\'étape' },
+                4: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Configurer plus tard' },
+                5: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Ignorer cette étape' },
+                6: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' }
+            };
+            return steps[step];
+        }
+
+        hideInactiveStepButtons() {
+
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const allButtons = $modal.find('.complete-step');
+
+            // Lister tous les boutons avec leur chemin DOM
+            allButtons.each(function(index) {
+                const $btn = $(this);
+                const buttonStep = $btn.data('step');
+                const path = [];
+                let element = this;
+                while (element && element !== $modal[0]) {
+                    const tag = element.tagName.toLowerCase();
+                    const classes = element.className ? '.' + element.className.split(' ').join('.') : '';
+                    const id = element.id ? '#' + element.id : '';
+                    path.unshift(tag + id + classes);
+                    element = element.parentElement;
+                }
+
+            });
+
+            // Masquer tous les boutons qui ne correspondent pas à l'étape courante
+            allButtons.each(function() {
+                const $btn = $(this);
+                const buttonStep = $btn.data('step');
+                if (buttonStep !== this.currentStep) {
+
+                    $btn.hide();
+                } else {
+
+                    $btn.show();
+                }
+            }.bind(this));
+        }
+
+        // Gestionnaire pour l'étape d'assignation de template
+        updateTemplatePreview() {
+            const templateId = this.selectedTemplate;
+            if (!templateId) {
+                $('#selected-template-icon').text('⚠️');
+                $('#selected-template-title').text('Aucun template sélectionné');
+                $('#selected-template-description').text('Veuillez retourner à l\'étape précédente pour choisir un template.');
+
+                // Désactiver les champs de personnalisation
+                $('#template_custom_name, #template_custom_description').prop('disabled', true).val('');
+                $('input[name="assigned_statuses"], input[name="template_actions"]').prop('disabled', true).prop('checked', false);
+
+                return;
+            }
+
+            // Réactiver les champs si un template est sélectionné
+            $('#template_custom_name, #template_custom_description').prop('disabled', false);
+            $('input[name="assigned_statuses"], input[name="template_actions"]').prop('disabled', false);
+
+            const templateInfo = {
+                'invoice': {
+                    icon: '📄',
+                    title: 'Facture',
+                    description: 'Template professionnel avec en-têtes, tableau des articles et calculs automatiques'
+                },
+                'quote': {
+                    icon: '📋',
+                    title: 'Devis',
+                    description: 'Template élégant avec conditions, validité et signature électronique'
+                },
+                'blank': {
+                    icon: '✨',
+                    title: 'Template Vierge',
+                    description: 'Canvas vierge pour créer votre propre design personnalisé'
+                }
+            };
+
+            const info = templateInfo[templateId] || templateInfo['blank'];
+            $('#selected-template-icon').text(info.icon);
+            $('#selected-template-title').text(info.title);
+            $('#selected-template-description').text(info.description);
+
+            // Pré-remplir le nom personnalisé
+            const customName = $('#template_custom_name');
+            if (!customName.val()) {
+                customName.val(info.title);
+            }
+        }
+
+        saveTemplateAssignment() {
+            // Vérifier si un template est sélectionné
+            if (!this.selectedTemplate) {
+                this.showNotification('Veuillez d\'abord sélectionner un template à l\'étape précédente.', 'error');
+
+                // Optionnel : rediriger vers l'étape 3 après un délai
+                setTimeout(() => {
+                    this.goToStep(3);
+                }, 2000);
+
+                return;
+            }
+
+            const assignmentData = {
+                template_id: this.selectedTemplate,
+                custom_name: $('#template_custom_name').val().trim(),
+                custom_description: $('#template_custom_description').val().trim(),
+                assigned_statuses: [],
+                template_actions: []
+            };
+
+            // Récupérer les statuts assignés
+            $('input[name="assigned_statuses"]:checked').each(function() {
+                assignmentData.assigned_statuses.push($(this).val());
+            });
+
+            // Récupérer les actions
+            $('input[name="template_actions"]:checked').each(function() {
+                assignmentData.template_actions.push($(this).val());
+            });
+
+            // Sauvegarder via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_template_assignment',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    assignment_data: JSON.stringify(assignmentData)
+                },
+                success: (response) => {
+                    if (response.success) {
+
+                        this.showNotification('Configuration sauvegardée avec succès !', 'success');
+                    } else {
+                        this.showNotification('Erreur lors de la sauvegarde', 'error');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    this.showNotification('Erreur de communication', 'error');
+                }
+            });
+        }
+
+    }
+
+    // Initialiser quand le DOM est prêt
+    $(document).ready(() => {
+        if ($('#pdf-builder-onboarding-modal').length) {
+            new PDFBuilderOnboarding();
+        }
+    });
+
+})(jQuery);
+

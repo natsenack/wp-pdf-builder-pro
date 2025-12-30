@@ -1,0 +1,9 @@
+# Shared Assets Directory
+
+This directory contains shared/common assets used across the project.
+
+Examples:
+- Common types and interfaces (TypeScript)
+- Utility functions
+- Shared constants
+- Common styles

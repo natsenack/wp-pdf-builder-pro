@@ -493,11 +493,6 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
     }
 
-    // PHASE 1: Charger le dispatcher AJAX unifié
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/Ajax_Dispatcher.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/Ajax_Dispatcher.php';
-    }
-
     // Charger le gestionnaire de modèles prédéfinis
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/predefined-templates-manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/predefined-templates-manager.php';
@@ -1498,17 +1493,6 @@ function pdf_builder_ajax_get_template()
 $ajax_handlers_path = PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/Ajax_Handlers.php';
 if (file_exists($ajax_handlers_path)) {
     require_once $ajax_handlers_path;
-}
-
-// Charger les autres handlers AJAX pour le dispatcher unifié
-$preview_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php';
-if (file_exists($preview_ajax_path)) {
-    require_once $preview_ajax_path;
-}
-
-$templates_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Templates_Ajax.php';
-if (file_exists($templates_ajax_path)) {
-    require_once $templates_ajax_path;
 }
 
 // ============================================================================

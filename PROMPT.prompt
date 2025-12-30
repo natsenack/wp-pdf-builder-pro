@@ -1,0 +1,609 @@
+# 🎯 PROMPT SYSTEM - PDF Builder Pro
+
+> **Utilisation** : Utilise ce fichier directement dans Claude ou ChatGPT pour continuer le développement
+
+---
+
+## 🔄 CONTEXTE DU PROJET
+
+**Projet** : PDF Builder Pro (WordPress Plugin v1.1.0)  
+**Date** : 30 décembre 2025  
+**Statut** : Phase 1 : Unification AJAX (en cours)  
+**Stack** : PHP 7.4+, Vanilla JS, WordPress 5.0+, Canvas 2D API  
+
+### 📊 État Actuel
+- ✅ Migration React → Vanilla JS réussie (-71% bundle)
+- ✅ Canvas 2D fonctionnel, WooCommerce intégré
+- ⚠️ Architecture hybride confuse à nettoyer
+- ⚠️ Système AJAX fragmenté à unifier
+- ⚠️ Bootstrap complexe (1672 lignes) à refactoriser
+
+### 📂 Structure Clé
+```
+wp-pdf-builder-pro/
+├── plugin/src/           ← Backend PHP (namespaced PSR-4)
+│   ├── AJAX/             ← Handlers AJAX (À UNIFIER)
+│   ├── Admin/            ← Pages admin
+│   ├── Canvas/           ← Rendering
+│   ├── Core/             ← Noyau
+│   └── ... (10+ autres modules)
+├── assets/js/            ← Frontend Vanilla JS
+│   ├── pdf-canvas-vanilla.js    (principal)
+│   ├── settings-*.js            (UI)
+│   └── fallbacks/               (React legacy)
+├── docs/                 ← Documentation
+├── tests/                ← Suite tests
+└── plugin/bootstrap.php  ← Entry point (À refactoriser)
+```
+
+### ⚠️ Règles de Production
+**Le dossier `plugin/` est en production** :
+- ✅ Code propre et maintenable uniquement (pas de bricolage)
+- ✅ Garder la suite de tests existante (`tests/`)
+- ❌ Ne pas ajouter de nouveaux tests temporaires ou code de test dans le code de production
+
+---
+
+## 🚀 DÉMARRAGE SÛRE (Sans Rien Casser)
+
+## 🚀 DÉMARRAGE SÛRE (Sans Rien Casser)
+
+### ✅ Ordre d'Opérations SÉCURISÉ
+
+**Règle d'Or** : LIRE avant MODIFIER. TESTER avant de COMMIT.
+
+#### Étape 0 : Préparation (0min - ZÉRO RISQUE)
+```bash
+# 1. Vérifier que tu es sur la bonne branche (dev)
+git status
+git branch          # Doit montrer * dev
+
+# 2. Vérifier qu'aucun fichier n'est modifié
+git status          # Doit être "working tree clean"
+
+# 3. Créer une branche de travail à partir de dev
+git checkout -b cleanup/phase-0-from-dev
+
+# 4. Vérifier que tu es sur ta branche
+git branch          # Doit montrer * cleanup/phase-0-from-dev
+
+# 5. Créer un backup LOCAL (juste au cas où)
+# Copier le dossier plugin/ quelque part en backup
+```
+
+**Note** : Tu travailles sur `dev` (pas `main/master`), c'est bien ! 
+- Push tes commits sur `cleanup/phase-0-from-dev`
+- Crée un Pull Request vers `dev` quand prêt
+
+#### Étape 1 : Audit READ-ONLY (1-2h - ZÉRO MODIFICATION)
+**Objectif** : Juste lire et documenter, pas toucher au code
+```
+1. Lire et DOCUMENTER (ne pas modifier)
+   [ ] Lire package.json
+   [ ] Lire webpack.config.cjs
+   [ ] Lire babel.config.js
+   [ ] Lire plugin/pdf-builder-pro.php
+   [ ] Lire plugin/bootstrap.php
+   
+2. Chercher (sans modifier)
+   [ ] grep -r "import.*react" assets/js/
+   [ ] grep -r "require.*react" plugin/
+   [ ] grep -r "FIXME\|TODO\|DEPRECATED" .
+   
+3. Créer AUDIT_REPORT.md avec trouvailles
+   [ ] Où React est utilisé (ou pas)
+   [ ] Code mort trouvé
+   [ ] Dépendances inutiles
+   [ ] Confusions trouvées
+```
+
+**Comment** :
+- Ne pas toucher à aucun fichier
+- Juste lire et noter
+- Créer un rapport en markdown
+
+#### Étape 2 : Tests de Baseline (30min - ZÉRO MODIFICATION)
+**Objectif** : Enregistrer l'état actuel avant tout changement
+```bash
+# 1. Tester que tout fonctionne NOW
+npm run build      # Doit réussir
+npm test           # Tests doivent passer
+npm audit          # Juste pour voir
+
+# 2. Checker bundle size actuel
+# Regarder le fichier dist/ ou build/
+ls -lah plugin/assets/  # Taille actuelle
+
+# 3. Documenter les résultats
+# Créer BASELINE.md avec résultats
+```
+
+**Pourquoi** : Pour voir si tu casses quelque chose après
+
+#### Étape 3 : Décisions (30min - ZÉRO MODIFICATION)
+**Objectif** : Décider quoi faire basé sur l'audit
+```
+Questions à répondre (basé sur audit) :
+1. React est vraiment inutilisé ? OUI/NON
+2. Combien de code mort ? (5%, 20%, 50%?)
+3. Dépendances à supprimer ? (liste courte/longue?)
+4. Confusions critiques ? (bootstrap, AJAX, fallbacks?)
+5. Quoi faire en premier ? (trier par impact)
+
+Créer DECISIONS.md avec réponses
+```
+
+#### Étape 4 : Préparation des Modifications (30min)
+**Objectif** : Préparer les changes AVANT de les faire
+```
+1. Pour chaque fichier à modifier :
+   [ ] Créer patch avec avant/après
+   [ ] Vérifier aucune dépendance cachée
+   [ ] Estimer impact
+
+2. Créer CHANGES_PLAN.md :
+   [ ] Fichier 1 : changement X (pourquoi, impact, rollback)
+   [ ] Fichier 2 : changement Y (pourquoi, impact, rollback)
+   [ ] ...
+
+3. Prioriser par sécurité :
+   [ ] Changements SAFE (aucun impact)
+   [ ] Changements MEDIUM (impact connu)
+   [ ] Changements RISKY (à tester complètement)
+```
+
+---
+
+### ⚠️ RÈGLES DE SÉCURITÉ
+
+**AVANT chaque modification** :
+```
+1. [ ] Branche actuelle = cleanup/phase-0-from-dev
+2. [ ] Git status = clean
+3. [ ] Tests passent actuellement (npm test, npm run build)
+4. [ ] Nouveau backup créé
+5. [ ] Plan de rollback documenté
+```
+
+**APRÈS chaque modification** :
+```
+1. [ ] npm run build = OK (pas d'erreur)
+2. [ ] npm test = OK (tous les tests passent)
+3. [ ] npm audit = Vérifier (pas de nouvelles vulnérabilités)
+4. [ ] git diff = Revoir les changements
+5. [ ] git commit avec message clair
+6. [ ] git push origin cleanup/phase-0-from-dev
+```
+
+**SI quelque chose casse** :
+```
+# Rollback immédiat (dernière modification)
+git restore [fichier]
+
+# Ou revenir au début de ta branche
+git reset --hard origin/cleanup/phase-0-from-dev
+
+# Ou revenir à dev
+git checkout dev
+git reset --hard origin/dev
+```
+
+---
+
+### 🔄 WORKFLOW SÛRE PAR FICHIER
+
+**Exemple : Supprimer React de package.json**
+
+#### Avant (LIRE)
+```
+1. [ ] Lire package.json au complet
+2. [ ] Chercher où "react" est utilisé
+3. [ ] Vérifier aucun import "react" dans le code
+4. [ ] Documenter : "React en dépendances mais pas utilisé"
+```
+
+#### Décision (PLANIFIER)
+```
+1. [ ] Créer liste des dépendances à supprimer
+2. [ ] Estimer impact (bundle -XXX kb?)
+3. [ ] Documenter : "Why: Vanilla JS = production target"
+4. [ ] Créer plan de test
+```
+
+#### Modification (FAIRE)
+```
+1. [ ] npm test = PASSE avant
+2. [ ] npm run build = OK avant
+3. [ ] Modifier package.json (JUSTE react deps)
+4. [ ] npm install (mettre à jour lock file)
+5. [ ] npm run build = Vérifier OK
+6. [ ] npm test = Vérifier OK
+7. [ ] git diff = Revoir changements
+8. [ ] git commit -m "Remove unused React dependencies"
+```
+
+#### Validation (TESTER)
+```
+1. [ ] Bundle size : npm run build (vérifier réduction)
+2. [ ] Tests : npm test (tous doivent passer)
+3. [ ] Audit : npm audit (vérifier sécurité)
+4. [ ] Manual : tester plugin sur WordPress
+5. [ ] Rollback plan : documenter comment revenir
+```
+
+---
+
+## 🎯 MISSION IMMÉDIATE (Phase 0)
+
+**Objectif** : Nettoyer et stabiliser la base de code avant améliorations
+
+### ✅ Tâches de Phase 0
+
+#### Tâche 1 : Audit des dépendances React
+**Fichier clé** : `package.json`
+**Problème** : React et dépendances listées mais NOT utilisées en production
+**À faire** :
+```
+1. Analyser tous les imports de 'react' dans le codebase
+2. Confirmer que AUCUN code de production ne dépend de React
+3. Lister toutes les dépendances React (react, react-dom, @wordpress/element, etc.)
+4. Créer liste des dépendances à supprimer du package.json
+5. Vérifier que webpack.config.cjs n'utilise pas React en entry
+```
+
+**Output attendu** :
+```json
+{
+  "dépendances_à_supprimer": [
+    "react@^18.2.0",
+    "react-dom@^18.2.0",
+    "@wordpress/element@^6.32.0",
+    "@babel/preset-react@^7.23.3"
+  ],
+  "devDependencies_à_vérifier": [
+    "@babel/preset-react"
+  ],
+  "presets_babel": []
+}
+```
+
+#### Tâche 2 : Audit du code mort
+**Fichiers cibles** : Tout le codebase
+**Problème** : Code commenté, références mortes, fallbacks inutiles
+**À faire** :
+```
+1. Chercher tous les // FIXME, // TODO, /* DEPRECATED */, // COMMENTE...
+2. Chercher les try-catch fallbacks React (pdf_builder_ensure_*, etc.)
+3. Documenter chaque bloc problématique
+4. Décider : supprimer ou garder ?
+```
+
+**Fichiers suspects** :
+- `plugin/pdf-builder-pro.php` (ligne ~41 : plugins_loaded commentée)
+- `plugin/bootstrap.php` (fallbacks multiples)
+- `assets/js/fallbacks/` (réactif legacy)
+- `assets/js/pdf-builder-react-wrapper.js` (React wrapper)
+
+**Output attendu** :
+```
+Code mort trouvé :
+├── pdf-builder-pro.php : 3 blocs commentés
+├── bootstrap.php : 5 fallback functions
+├── assets/js/fallbacks/ : À examiner
+└── [liste détaillée]
+```
+
+#### Tâche 3 : Nettoyage fichiers temporaires
+**À supprimer** :
+```
+[ ] temp.js (racine)
+[ ] test_canvas_options.php (racine)
+```
+
+**À vérifier** :
+```
+[ ] build/backups/ - Nécessaires ?
+[ ] Fichiers .bak, .tmp - Autres endroits ?
+```
+
+#### Tâche 4 : Documentation des problèmes
+**Format** : Créer CLEANUP_ISSUES.md avec structure :
+```markdown
+## Problème : [Titre]
+- Fichier : `chemin/fichier.ext`
+- Ligne(s) : X-Y
+- Sévérité : [CRITIQUE/MOYEN/FAIBLE]
+- Description : ...
+- Solution proposée : ...
+- Effort : [1h / 2-4h / 4-8h]
+```
+
+**Exemple** :
+```markdown
+## Problème : Registration AJAX commentée
+- Fichier : `plugin/pdf-builder-pro.php`
+- Ligne : 41
+- Sévérité : CRITIQUE
+- Description : La ligne `add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5);` 
+  est commentée, ce qui signifie les handlers AJAX ne sont pas enregistrés correctement.
+- Solution : Uncomment et tester que les handlers se chargent
+- Effort : 30min
+```
+
+---
+
+## 🏗️ PHASE 1 : UNIFICATION AJAX (EN COURS)
+
+**Contexte** : Système AJAX fragmenté doit être unifié
+**Fichiers clés** : 
+- `plugin/src/AJAX/Ajax_Handlers.php` (PRINCIPAL)
+- `plugin/src/AJAX/cache-handlers.php`
+- `plugin/src/AJAX/PDF_Builder_Templates_Ajax.php`
+- `docs/AJAX_SYSTEM.md` (architecture documentée)
+
+**Objectif** : 
+1. Créer unified dispatcher AJAX
+2. Centraliser tous les handlers
+3. Standardiser error responses
+4. Documenter tous les endpoints
+
+**Endpoints AJAX à documenter** :
+```
+POST /wp-admin/admin-ajax.php
+├── action=pdf_builder_save_all_settings
+├── action=pdf_builder_save_template
+├── action=pdf_builder_load_template
+├── action=pdf_builder_delete_template
+├── action=pdf_builder_clear_cache
+├── action=pdf_builder_clear_all_cache
+├── action=pdf_builder_get_preview_data
+├── action=pdf_builder_optimize_database
+└── [+ others à identifier]
+```
+
+---
+
+## 🏗️ PHASE 2 : REFACTORING BOOTSTRAP (À VENIR)
+
+**Contexte** : bootstrap.php = 1672 lignes, trop complexe
+**Fichiers clés** :
+- `plugin/bootstrap.php` (À diviser)
+- `plugin/pdf-builder-pro.php` (Point d'entrée)
+
+**Objectif** :
+1. Diviser en modules : loader.php, hooks.php, utilities.php, etc.
+2. Simplifier flux d'initialisation
+3. Supprimer fallbacks complexes
+4. Ajouter logging clair
+
+---
+
+## 📋 CHECKLIST PHASE 0 EN DÉTAIL
+
+### ✅ Audit & Documentation (1-2 jours)
+```
+[ ] Tâche 1 : Analyser dépendances React
+    [ ] Chercher tous les imports 'react'
+    [ ] Analyser webpack config
+    [ ] Lister dépendances à supprimer
+    
+[ ] Tâche 2 : Audit code mort
+    [ ] Scanner // FIXME, // TODO, /* ... */
+    [ ] Documenter fallbacks React
+    [ ] Vérifier test_canvas_options.php
+    
+[ ] Tâche 3 : Nettoyage files
+    [ ] Supprimer temp.js
+    [ ] Supprimer test_canvas_options.php
+    [ ] Archiver ou conserver ?
+    
+[ ] Tâche 4 : Créer CLEANUP_ISSUES.md
+    [ ] Documenter chaque problème
+    [ ] Estimer effort
+    [ ] Proposer solutions
+```
+
+### 🔧 Nettoyage (2-3 jours)
+```
+[ ] Tâche 5 : Supprimer dépendances React
+    [ ] Mettre à jour package.json
+    [ ] Vérifier webpack.config.cjs
+    [ ] Mettre à jour babel.config.js
+    [ ] Tester build : npm run build
+    
+[ ] Tâche 6 : Nettoyer code commenté
+    [ ] plugin/pdf-builder-pro.php
+    [ ] plugin/bootstrap.php
+    [ ] assets/js/**/*.js
+    
+[ ] Tâche 7 : Vérifier sécurité
+    [ ] Audit npm audit
+    [ ] Mettre à jour dépendances critiques
+    [ ] Tester qu'aucune regression
+
+[ ] Tâche 8 : Tests
+    [ ] npm test (les tests doivent passer)
+    [ ] Vérifier build ne plante pas
+    [ ] Tests d'intégration basiques
+```
+
+---
+
+## 🔍 POINTS À VÉRIFIER
+
+### ⚠️ Avant de Supprimer React
+1. **Vérifier aucun import React** :
+   ```bash
+   grep -r "import.*from.*react" --include="*.js" assets/js/
+   grep -r "require.*react" --include="*.js" assets/js/
+   ```
+
+2. **Vérifier webpack config** :
+   - Pas d'entry points React
+   - Pas de loaders React
+   - Pas de plugins React
+
+3. **Vérifier PHP frontend** :
+   - `wp_enqueue_script()` n'inclut pas React builds
+   - Pas de `<script>` tags React manuels
+
+### ⚠️ Avant de Supprimer Fichiers
+1. Vérifier aucune référence à `temp.js` ou `test_canvas_options.php`
+2. Vérifier pas d'imports de ces fichiers
+3. Considérer si à archiver en lieu de supprimer
+
+### ⚠️ Impact sur Autres Systèmes
+- AJAX handlers : Doivent rester fonctionnels
+- Canvas rendering : Ne dépend pas de React
+- WooCommerce : Ne dépend pas de React
+- Settings UI : Vanilla JS uniquement
+
+---
+
+## 📌 NOTES IMPORTANTES
+
+1. **Ne PAS supprimer** :
+   - `assets/js/pdf-builder-react/` - à auditer d'abord
+   - `plugin/src/` - À nettoyer mais pas supprimer
+   - Tests - À compléter, pas supprimer
+
+2. **À documenter** :
+   - Pourquoi React était là (contexte historique)
+   - Quand décision Vanilla JS a été prise
+   - Migrations effectuées
+
+3. **À vérifier après nettoyage** :
+   - Bundle size avec `webpack-bundle-analyzer`
+   - Tests passent : `npm test`
+   - Build fonctionne : `npm run build`
+   - Plugin se charge : Tester sur WordPress
+
+---
+
+## 🚀 PROCHAINES PHASES (Après Phase 0)
+
+### Phase 1 : Unification AJAX (2 semaines)
+- Créer unified dispatcher
+- Centraliser handlers
+- Documenter endpoints
+- Tests AJAX
+
+### Phase 2 : Refactoring Bootstrap (1-2 semaines)
+- Diviser en modules
+- Simplifier loading
+- Logging clair
+- Tests initialization
+
+### Phase 3 : Tests & Sécurité (2 semaines)
+- Compléter tests
+- Security audit
+- CI/CD setup
+- Coverage 80%+
+
+---
+
+## 📞 DÉCISIONS À PRENDRE
+
+1. **React Complètement Supprimé ?**
+   - OUI → Supprimer toutes dépendances
+   - NON → Garder pour fallback ? (risqué)
+   - Recommandation : OUI (Phase 1 complete = Vanilla JS = target)
+
+2. **Fallbacks Complexes ?**
+   - pdf_builder_ensure_* functions → Supprimer
+   - pdf_builder_load_utilities_emergency → Simplifier
+   - Recommandation : Simplifier vers loader unique
+
+3. **Code Commenté ?**
+   - Garder pour historique ? → Non (utiliser git)
+   - Supprimer complètement ? → OUI
+   - Recommandation : Supprimer et utiliser git log
+
+4. **Tests Manuels ?**
+   - Garder manual-test.php ? → Non (utiliser tests auto)
+   - Recommandation : Convertir en tests Jest/PHPUnit
+
+---
+
+## 📚 RESSOURCES
+
+- [ANALYSE_COMPLETE.md](ANALYSE_COMPLETE.md) - Analyse détaillée
+- [APERCU_UNIFIED_ROADMAP.md](docs/APERCU_UNIFIED_ROADMAP.md) - Roadmap phases
+- [AJAX_SYSTEM.md](docs/AJAX_SYSTEM.md) - Architecture AJAX
+- [README.md](README.md) - Structure projet
+
+---
+
+## 💬 INSTRUCTIONS POUR UTILISATION
+
+Quand tu utilises ce prompt :
+
+1. **Fournis un résumé des tâches accomplies** :
+   ```
+   ## Phase 0 - Nettoyage Progress
+   
+   ### ✅ Tâche 1 : Audit Dépendances React
+   **Status** : [NOT_STARTED / IN_PROGRESS / COMPLETED / BLOCKED]
+   **Trouvailles** : [résumé]
+   **Action** : [next steps]
+   ```
+
+2. **Identifie les blockers** :
+   - Si une tâche est bloquée, explique pourquoi
+   - Demande de l'aide ou une décision si nécessaire
+
+3. **Mets à jour le prompt** :
+   - Après chaque session, actualise ce fichier avec les résultats
+   - Mets à jour les checklist
+   - Enregistre les décisions prises
+
+4. **Suis la séquence** :
+   - Ne saute pas les tâches
+   - Valide avant de passer à la suivante
+   - Teste après chaque changement
+
+---
+
+## 🎬 COMMANDES UTILES
+
+```bash
+# Audit dépendances
+npm audit
+grep -r "from 'react'" --include="*.js" assets/
+grep -r "require.*react" --include="*.js" .
+
+# Build & Test
+npm run build
+npm test
+npm run test:coverage
+
+# Code quality
+npm run lint
+webpack-bundle-analyzer
+
+# Git
+git log --oneline
+git diff
+git status
+```
+
+---
+
+## 📊 TRACKING
+
+| Tâche | Status | Date Start | Date End | Notes |
+|-------|--------|-----------|----------|-------|
+| Tâche 1 : Audit React | ⏹️ | - | - | À faire |
+| Tâche 2 : Audit Code Mort | ⏹️ | - | - | À faire |
+| Tâche 3 : Nettoyage Files | ⏹️ | - | - | À faire |
+| Tâche 4 : CLEANUP_ISSUES.md | ⏹️ | - | - | À faire |
+| Tâche 5 : Supprimer React | ⏹️ | - | - | À faire |
+| Tâche 6 : Nettoyer Code | ⏹️ | - | - | À faire |
+| Tâche 7 : Sécurité | ⏹️ | - | - | À faire |
+| Tâche 8 : Tests | ⏹️ | - | - | À faire |
+
+---
+
+**Version** : 1.0  
+**Créé** : 30 décembre 2025  
+**Prêt à** : Utiliser immédiatement dans Claude/ChatGPT
