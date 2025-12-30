@@ -135,10 +135,10 @@ function pdf_builder_load_core()
     /*
     add_action('admin_enqueue_scripts', function() {
         // Charger le CSS des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/css/notifications.css')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'assets/css/notifications.css')) {
             wp_enqueue_style(
                 'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/notifications.css',
+                PDF_BUILDER_PLUGIN_URL . 'assets/css/notifications.css',
                 array(),
                 PDF_BUILDER_VERSION . '-' . time(),
                 'all'
@@ -146,10 +146,10 @@ function pdf_builder_load_core()
         }
 
         // Charger le JavaScript des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/notifications.js')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'assets/js/notifications.js')) {
             wp_enqueue_script(
                 'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/notifications.js',
+                PDF_BUILDER_PLUGIN_URL . 'assets/js/notifications.js',
                 array('jquery'),
                 PDF_BUILDER_VERSION . '-' . time(),
                 true
@@ -337,10 +337,10 @@ function pdf_builder_load_bootstrap()
     /*
     add_action('admin_enqueue_scripts', function() {
         // Charger le CSS des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/css/notifications.css')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'assets/css/notifications.css')) {
             wp_enqueue_style(
                 'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/notifications.css',
+                PDF_BUILDER_PLUGIN_URL . 'assets/css/notifications.css',
                 array(),
                 PDF_BUILDER_VERSION . '-' . time(),
                 'all'
@@ -348,10 +348,10 @@ function pdf_builder_load_bootstrap()
         }
 
         // Charger le JavaScript des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/notifications.js')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'assets/js/notifications.js')) {
             wp_enqueue_script(
                 'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/notifications.js',
+                PDF_BUILDER_PLUGIN_URL . 'assets/js/notifications.js',
                 array('jquery'),
                 PDF_BUILDER_VERSION . '-' . time(),
                 true

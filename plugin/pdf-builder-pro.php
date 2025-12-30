@@ -20,8 +20,8 @@
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'resources/assets/');
-define('PDF_BUILDER_ASSETS_DIR', plugin_dir_path(__FILE__) . 'resources/assets/');
+define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+define('PDF_BUILDER_ASSETS_DIR', plugin_dir_path(__FILE__) . 'assets/');
 define('PDF_BUILDER_VERSION', '1.1.0');
 define('PDF_BUILDER_PRO_VERSION', '1.1.0');
 
@@ -1142,8 +1142,8 @@ function pdf_builder_add_asset_cache_headers()
     // Pour les assets JavaScript
     if (
         isset($_SERVER['REQUEST_URI']) &&
-        (strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/js/') !== false ||
-         strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/css/') !== false)
+        (strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/assets/js/') !== false ||
+         strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/assets/css/') !== false)
     ) {
 // Headers de cache
         header('Cache-Control: public, max-age=' . $cache_time);
