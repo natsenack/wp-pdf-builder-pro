@@ -15,7 +15,7 @@ interface PDFBuilderProps {
   className?: string;
 }
 
-export function PDFBuilder({
+export default function PDFBuilder({
   width: initialWidth = DEFAULT_CANVAS_WIDTH,
   height: initialHeight = DEFAULT_CANVAS_HEIGHT,
   className
