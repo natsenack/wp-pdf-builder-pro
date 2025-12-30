@@ -994,4 +994,4 @@ function pdf_builder_init_ajax_handlers() {
 }
 
 // Initialiser les handlers unifiés
-add_action('init', 'pdf_builder_init_ajax_handlers');
+add_action('plugins_loaded', 'pdf_builder_init_ajax_handlers', 5);
