@@ -158,16 +158,18 @@ try {
         Write-Host "Erreur lors de la detection des fichiers dist: $($_.Exception.Message)" -ForegroundColor Yellow
     }
 
-    # FORCER l'inclusion des fichiers bundle.js modifiés récemment (dernieres 30 minutes) pour corriger l'editeur
+    # FORCER l'inclusion de TOUS les fichiers .bundle.js et .js du dossier assets/js pour l'editeur React
     try {
-        $recentBundleFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\*.bundle.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-30) } | Select-Object -ExpandProperty FullName
-        $bundleFilesRelative = $recentBundleFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-        if ($bundleFilesRelative.Count -gt 0) {
-            Write-Host "Bundle files recents detectes: $($bundleFilesRelative.Count)" -ForegroundColor Yellow
-            $pluginModified = @($pluginModified) + @($bundleFilesRelative) | Sort-Object -Unique
+        $allBundleFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\*.bundle.js" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+        $allJsFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.Name -notlike "*.min.js" -and $_.Name -notlike "js-syntax-check.js" } | Select-Object -ExpandProperty FullName
+        $allAssetsFiles = $allBundleFiles + $allJsFiles
+        $assetsFilesRelative = $allAssetsFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") } | Sort-Object -Unique
+        if ($assetsFilesRelative.Count -gt 0) {
+            Write-Host "Fichiers assets JS detectes: $($assetsFilesRelative.Count)" -ForegroundColor Yellow
+            $pluginModified = @($pluginModified) + @($assetsFilesRelative) | Sort-Object -Unique
         }
     } catch {
-        Write-Host "Erreur lors de la detection des fichiers bundle: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "Erreur lors de la detection des fichiers assets: $($_.Exception.Message)" -ForegroundColor Yellow
     }
 
     # Toujours inclure les fichiers vendor (dépendances PHP) - seulement s'ils sont récents
