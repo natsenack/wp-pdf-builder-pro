@@ -2237,16 +2237,17 @@ function pdf_builder_check_template_limit_handler() {
 }
 
 /**
- * Vérifier l'état des systèmes avancés
+ * Vérifier l'état des systèmes avancés - SIMPLIFIÉ (systèmes de cache supprimés)
  */
 function pdf_builder_check_advanced_systems_status() {
+    // Tous les systèmes avancés ont été désactivés pour supprimer les caches
     $systems_status = array(
-        'intelligent_loader' => class_exists('PDF_Builder_Intelligent_Loader') && PDF_Builder_Intelligent_Loader::get_instance() !== null,
-        'config_manager' => class_exists('PDF_Builder_Config_Manager') && PDF_Builder_Config_Manager::get_instance() !== null,
-        'advanced_logger' => class_exists('PDF_Builder_Advanced_Logger') && PDF_Builder_Advanced_Logger::get_instance() !== null,
-        'security_validator' => class_exists('PDF_Builder_Security_Validator') && PDF_Builder_Security_Validator::get_instance() !== null,
-        'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
-        'diagnostic_tool' => class_exists('PDF_Builder_Diagnostic_Tool') && PDF_Builder_Diagnostic_Tool::get_instance() !== null,
+        'intelligent_loader' => false, // Désactivé - cache supprimé
+        'config_manager' => false, // Désactivé - cache supprimé
+        'advanced_logger' => false, // Désactivé - cache supprimé
+        'security_validator' => class_exists('PDF_Builder_Security_Validator'), // Gardé pour la sécurité
+        'error_handler' => false, // Désactivé - cache supprimé
+        'diagnostic_tool' => false, // Désactivé - cache supprimé
         'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
         'backup_recovery' => class_exists('PDF_Builder_Backup_Recovery') && PDF_Builder_Backup_Recovery::get_instance() !== null,
         'security_monitor' => class_exists('PDF_Builder_Security_Monitor') && PDF_Builder_Security_Monitor::get_instance() !== null,

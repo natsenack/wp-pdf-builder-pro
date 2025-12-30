@@ -5,31 +5,43 @@
  */
 
 class PDF_Builder_Backup_Recovery_System_DISABLED {
-    private static $instance = null;
 
-    // Types de sauvegarde
-    const BACKUP_TYPE_FULL = 'full';
-    const BACKUP_TYPE_INCREMENTAL = 'incremental';
-    const BACKUP_TYPE_CRITICAL = 'critical';
-
-    // Statuts de sauvegarde
-    const STATUS_PENDING = 'pending';
-    const STATUS_RUNNING = 'running';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_FAILED = 'failed';
-
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    /**
+     * Créer une sauvegarde complète - DÉSACTIVÉ
+     */
+    public static function create_full_backup($name = null, $description = null)
+    {
+        // Sauvegarde désactivée - système de cache supprimé
+        return false;
     }
 
-    private function __construct() {
-        $this->init_hooks();
+    /**
+     * Restaurer une sauvegarde - DÉSACTIVÉ
+     */
+    public static function restore_backup($backup_id, $components = [])
+    {
+        // Restauration désactivée - système de cache supprimé
+        return false;
     }
 
-    private function init_hooks() {
+    /**
+     * Obtenir la liste des sauvegardes - DÉSACTIVÉ
+     */
+    public static function get_backup_list()
+    {
+        // Liste désactivée - système de cache supprimé
+        return [];
+    }
+
+    /**
+     * Vérifier l'intégrité du système - DÉSACTIVÉ
+     */
+    public static function check_system_integrity()
+    {
+        // Vérification désactivée - système de cache supprimé
+        return ['status' => 'disabled'];
+    }
+}
         // Sauvegardes automatiques
         add_action('pdf_builder_auto_backup', [$this, 'create_automatic_backup']);
 

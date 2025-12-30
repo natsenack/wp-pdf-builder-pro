@@ -1,9 +1,8 @@
 <?php
 /**
- * Chargeur Intelligent pour PDF Builder Pro
+ * Chargeur Intelligent pour PDF Builder Pro - DISABLED
  *
- * Système de chargement optimisé qui gère le chargement conditionnel
- * des composants selon les besoins et l'état du système.
+ * Système de chargement supprimé pour simplification
  *
  * @package PDF_Builder
  * @subpackage Core
@@ -20,41 +19,28 @@ if (!defined('ABSPATH')) {
 class PDF_Builder_Intelligent_Loader_DISABLED {
 
     /**
-     * Instance unique
+     * Instance unique - DÉSACTIVÉ
      */
     private static $instance = null;
 
     /**
-     * Composants chargés
+     * Initialiser le chargeur - DÉSACTIVÉ
      */
-    private $loaded_components = array();
-
-    /**
-     * Dépendances des composants
-     */
-    private $component_dependencies = array();
-
-    /**
-     * État du système
-     */
-    private $system_state = array();
-
-    /**
-     * Constructeur privé
-     */
-    private function __construct() {
-        $this->init_dependencies();
-        $this->assess_system_state();
-        $this->register_hooks();
+    public static function get_instance()
+    {
+        // Chargeur désactivé - système de cache supprimé
+        return false;
     }
 
     /**
-     * Obtenir l'instance unique
+     * Initialiser - DÉSACTIVÉ
      */
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
+    public function init()
+    {
+        // Chargement intelligent désactivé - système de cache supprimé
+        return false;
+    }
+}
         return self::$instance;
     }
 

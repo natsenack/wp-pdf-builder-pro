@@ -1,51 +1,20 @@
 <?php
 /**
- * PDF Builder Pro - Planificateur de tâches
- * Gère les tâches automatiques et planifiées du plugin
+ * PDF Builder Pro - Planificateur de tâches - DISABLED
+ * Système de planification supprimé pour simplification
  */
 
-// // error_log('PDF Builder: Task Scheduler file loaded');
-
 class PDF_Builder_Task_Scheduler_DISABLED {
-    private static $instance = null;
 
-    // Définition des tâches
-    const TASKS = [
-        'pdf_builder_cache_cleanup' => [
-            'interval' => 'hourly',
-            'callback' => 'cleanup_expired_cache',
-            'description' => 'Nettoie le cache expiré'
-        ],
-        'pdf_builder_log_rotation' => [
-            'interval' => 'daily',
-            'callback' => 'rotate_logs',
-            'description' => 'Effectue la rotation des logs'
-        ],
-        'pdf_builder_performance_cleanup' => [
-            'interval' => 'weekly',
-            'callback' => 'cleanup_performance_data',
-            'description' => 'Nettoie les données de performance anciennes'
-        ],
-        'pdf_builder_security_check' => [
-            'interval' => 'twicedaily',
-            'callback' => 'security_health_check',
-            'description' => 'Vérifie la santé sécurité'
-        ],
-        'pdf_builder_optimize_database' => [
-            'interval' => 'weekly',
-            'callback' => 'optimize_database',
-            'description' => 'Optimise les tables de base de données'
-        ]
-    ];
-
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    /**
+     * Obtenir le statut des tâches - DÉSACTIVÉ
+     */
+    public static function get_tasks_status()
+    {
+        // Planificateur désactivé - système de cache supprimé
+        return ['status' => 'disabled'];
     }
-
-    private function __construct() {
+}
         // // error_log('PDF Builder: Task Scheduler constructor called');
         // init_hooks() will be called later when WordPress is loaded
         // // error_log('PDF Builder: Task Scheduler instance created');

@@ -1,35 +1,38 @@
 <?php
 /**
- * PDF Builder Pro - Système de surveillance de la santé
- * Surveille la santé du système en temps réel et détecte les problèmes
+ * PDF Builder Pro - Système de surveillance de la santé - DISABLED
+ * Système de surveillance supprimé pour simplification
  */
 
 class PDF_Builder_Health_Monitor_DISABLED {
-    private static $instance = null;
 
-    // Seuils de surveillance
-    const CPU_THRESHOLD = 80; // %
-    const MEMORY_THRESHOLD = 85; // %
-    const DISK_THRESHOLD = 90; // %
-    const RESPONSE_TIME_THRESHOLD = 5000; // ms
-    const ERROR_RATE_THRESHOLD = 5; // %
-
-    // Périodes de surveillance
-    const MONITOR_INTERVAL = 300; // 5 minutes
-    const ALERT_COOLDOWN = 3600; // 1 heure
-
-    // Métriques de santé
-    private $health_metrics = [];
-    private $alerts_sent = [];
-
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    /**
+     * Obtenir l'instance - DÉSACTIVÉ
+     */
+    public static function get_instance()
+    {
+        // Surveillance désactivée - système de cache supprimé
+        return false;
     }
 
-    private function __construct() {
+    /**
+     * Obtenir l'état de santé actuel - DÉSACTIVÉ
+     */
+    public static function get_latest_health_status()
+    {
+        // Surveillance désactivée - système de cache supprimé
+        return ['status' => 'disabled'];
+    }
+
+    /**
+     * Effectuer des vérifications de santé - DÉSACTIVÉ
+     */
+    public static function perform_health_checks()
+    {
+        // Vérifications désactivées - système de cache supprimé
+        return ['status' => 'disabled'];
+    }
+}
         $this->init_hooks();
         $this->init_health_checks();
     }

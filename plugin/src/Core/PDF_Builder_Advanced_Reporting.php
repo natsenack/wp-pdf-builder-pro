@@ -1,53 +1,38 @@
 <?php
 /**
- * PDF Builder Pro - Système de reporting et analyse avancé
- * Fournit des rapports détaillés et des analyses d'utilisation
+ * PDF Builder Pro - Système de reporting et analyse avancé - DISABLED
+ * Système désactivé pour supprimer les caches
  */
 
 class PDF_Builder_Advanced_Reporting_DISABLED {
-    private static $instance = null;
 
-    // Types de rapports
-    const REPORT_TYPE_USAGE = 'usage';
-    const REPORT_TYPE_PERFORMANCE = 'performance';
-    const REPORT_TYPE_SECURITY = 'security';
-    const REPORT_TYPE_FINANCIAL = 'financial';
-    const REPORT_TYPE_USER_ACTIVITY = 'user_activity';
-    const REPORT_TYPE_SYSTEM_HEALTH = 'system_health';
-
-    // Périodes de rapport
-    const PERIOD_DAILY = 'daily';
-    const PERIOD_WEEKLY = 'weekly';
-    const PERIOD_MONTHLY = 'monthly';
-    const PERIOD_QUARTERLY = 'quarterly';
-    const PERIOD_YEARLY = 'yearly';
-    const PERIOD_CUSTOM = 'custom';
-
-    // Formats d'export
-    const FORMAT_PDF = 'pdf';
-    const FORMAT_CSV = 'csv';
-    const FORMAT_JSON = 'json';
-    const FORMAT_HTML = 'html';
-    const FORMAT_EXCEL = 'excel';
-
-    // Clés de stockage
-    const OPTION_REPORT_SETTINGS = 'pdf_builder_report_settings';
-    const OPTION_REPORT_DATA = 'pdf_builder_report_data';
-    const OPTION_REPORT_SCHEDULE = 'pdf_builder_report_schedule';
-
-    // Cache des données
-    private $report_settings = [];
-    private $report_data = [];
-    private $report_schedule = [];
-
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    /**
+     * Obtenir l'instance - DÉSACTIVÉ
+     */
+    public static function get_instance()
+    {
+        // Reporting désactivé - système de cache supprimé
+        return false;
     }
 
-    private function __construct() {
+    /**
+     * Générer un rapport - DÉSACTIVÉ
+     */
+    public static function generate_report($type, $period, $format, $filters = [])
+    {
+        // Reporting désactivé - système de cache supprimé
+        return false;
+    }
+
+    /**
+     * Obtenir les rapports disponibles - DÉSACTIVÉ
+     */
+    public static function get_available_reports()
+    {
+        // Reporting désactivé - système de cache supprimé
+        return [];
+    }
+}
         $this->init_hooks();
         $this->load_report_data();
     }

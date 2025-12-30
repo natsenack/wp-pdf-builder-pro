@@ -124,7 +124,7 @@ function pdf_builder_load_core()
         \PDF_Builder\Admin\Canvas_AJAX_Handler::register_hooks();
     }
 
-    // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
+    // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS - STUB (cache supprimé)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
         // Initialiser l'instance
@@ -326,7 +326,7 @@ function pdf_builder_load_bootstrap()
         \PDF_Builder\Admin\Canvas_AJAX_Handler::register_hooks();
     }
 
-    // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
+    // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS - STUB (cache supprimé)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
         // Initialiser l'instance
