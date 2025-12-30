@@ -33,7 +33,6 @@
 
     function error() {
         // Error logging disabled for production
-        }
     }
 
     // Fonction de debug pour vérifier les éléments DOM

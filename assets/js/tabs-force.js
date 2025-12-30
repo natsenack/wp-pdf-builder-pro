@@ -14,6 +14,9 @@
     // Fonction de logging
     function log(message, data = null) {
         // Logging disabled for production
+    }
+
+    // Fonction de switch onglet
     function switchTab(tabId) {
         log('SWITCH vers:', tabId);
         
