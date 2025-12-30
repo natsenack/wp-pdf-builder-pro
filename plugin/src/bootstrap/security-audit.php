@@ -1029,15 +1029,3 @@ function pdf_builder_update_security_settings($settings) {
     $hardener = pdf_builder_get_security_hardener();
     return $hardener->update_security_settings($settings);
 }
-
-/**
- * Log un événement de sécurité personnalisé
- */
-function pdf_builder_log_security_event($event_type, $data = []) {
-    $hardener = pdf_builder_get_security_hardener();
-    // Utiliser la méthode privée via réflexion (hack pour accès)
-    $reflection = new ReflectionClass($hardener);
-    $method = $reflection->getMethod('log_security_event');
-    $method->setAccessible(true);
-    $method->invoke($hardener, $event_type, $data);
-}
