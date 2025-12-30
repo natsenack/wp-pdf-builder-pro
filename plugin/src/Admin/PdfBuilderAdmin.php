@@ -1201,7 +1201,7 @@ class PdfBuilderAdmin
             }
 
             // Listen for React ready event
-            document.addEventListener('pdfBuilderReactLoaded', function() {
+            document.addEventListener('pdfBuilderReactReady', function() {
                 // console.log('[PDF Builder] React loaded event received');
                 loader.initializeReact();
             });
