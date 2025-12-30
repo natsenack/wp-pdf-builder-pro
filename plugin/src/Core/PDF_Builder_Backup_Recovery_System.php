@@ -1,10 +1,10 @@
 <?php
 /**
- * PDF Builder Pro - Système de secours et récupération
- * Gère les sauvegardes d'urgence et la récupération en cas de panne
+ * PDF Builder Pro - Système de secours et récupération DISABLED
+ * Système de sauvegarde supprimé pour simplification
  */
 
-class PDF_Builder_Backup_Recovery_System {
+class PDF_Builder_Backup_Recovery_System_DISABLED {
     private static $instance = null;
 
     // Types de sauvegarde

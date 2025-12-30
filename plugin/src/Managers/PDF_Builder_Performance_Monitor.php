@@ -3,12 +3,12 @@
 namespace PDF_Builder\Managers;
 
 /**
- * Moniteur de Performance - PDF Builder Pro
+ * Moniteur de Performance - PDF Builder Pro DISABLED
  *
- * Track les métriques de performance en production
+ * Système de monitoring supprimé pour simplification
  */
 
-class PdfBuilderPerformanceMonitor
+class PdfBuilderPerformanceMonitor_DISABLED
 {
     private static $metrics = [];
     private static $start_time;

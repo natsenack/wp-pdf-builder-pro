@@ -42,9 +42,7 @@ const compatibilityChecks = {
   fileReader: typeof FileReader !== 'undefined',
   blob: typeof Blob !== 'undefined',
 
-  // APIs de stockage
-  localStorage: typeof localStorage !== 'undefined',
-  sessionStorage: typeof sessionStorage !== 'undefined',
+  // APIs de stockage supprimées (plus de cache dynamique)
 
   // User Agent
   userAgent: navigator.userAgent,

@@ -15,9 +15,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Classe principale du chargeur intelligent
+ * Classe principale du chargeur intelligent - DISABLED
  */
-class PDF_Builder_Intelligent_Loader {
+class PDF_Builder_Intelligent_Loader_DISABLED {
 
     /**
      * Instance unique

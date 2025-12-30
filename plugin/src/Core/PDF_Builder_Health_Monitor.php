@@ -4,7 +4,7 @@
  * Surveille la santé du système en temps réel et détecte les problèmes
  */
 
-class PDF_Builder_Health_Monitor {
+class PDF_Builder_Health_Monitor_DISABLED {
     private static $instance = null;
 
     // Seuils de surveillance

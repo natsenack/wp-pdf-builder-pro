@@ -6,7 +6,7 @@
 
 // // error_log('PDF Builder: Task Scheduler file loaded');
 
-class PDF_Builder_Task_Scheduler {
+class PDF_Builder_Task_Scheduler_DISABLED {
     private static $instance = null;
 
     // Définition des tâches

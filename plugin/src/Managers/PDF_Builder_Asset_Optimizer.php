@@ -7,11 +7,11 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 /**
- * PDF Builder Pro - Asset Optimizer
- * Optimisation et compression des assets (JS, CSS, images)
+ * PDF Builder Pro - Asset Optimizer DISABLED
+ * Système de cache et d'optimisation supprimé pour simplification
  */
 
-class PdfBuilderAssetOptimizer
+class PdfBuilderAssetOptimizer_DISABLED
 {
     /**
      * Instance du main plugin

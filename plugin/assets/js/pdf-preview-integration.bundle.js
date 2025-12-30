@@ -170,13 +170,10 @@ var PDFEditorPreviewIntegration = /*#__PURE__*/function () {
         return data;
       }
 
-      // Fallback: chercher dans le localStorage ou les variables globales
+      // Fallback: chercher dans les variables globales uniquement (pas de cache)
       if (window.pdfEditorTemplate) {
         debugLog('✅ Données récupérées depuis window.pdfEditorTemplate');
         return window.pdfEditorTemplate;
-      }
-      if (localStorage.getItem('pdf-builder-template')) {
-        return JSON.parse(localStorage.getItem('pdf-builder-template'));
       }
 
       // Template par défaut pour les tests
