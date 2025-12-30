@@ -101,28 +101,28 @@ class PdfBuilderAdmin
 
         // Charger manuellement les classes nécessaires si l'autoloader est désactivé
         if (!class_exists('PDF_Builder\Admin\Managers\SettingsManager')) {
-            $settings_manager_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Managers/SettingsManager.php';
+            $settings_manager_file = dirname(dirname(dirname(__FILE__))) . '/src/Admin/Managers/SettingsManager.php';
             if (file_exists($settings_manager_file)) {
                 require_once $settings_manager_file;
             }
         }
 
         if (!class_exists('PDF_Builder\Admin\Handlers\AjaxHandler')) {
-            $ajax_handler_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Handlers/AjaxHandler.php';
+            $ajax_handler_file = dirname(dirname(dirname(__FILE__))) . '/src/Admin/Handlers/AjaxHandler.php';
             if (file_exists($ajax_handler_file)) {
                 require_once $ajax_handler_file;
             }
         }
 
         if (!class_exists('PDF_Builder\Admin\Renderers\HTMLRenderer')) {
-            $html_renderer_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Renderers/HTMLRenderer.php';
+            $html_renderer_file = dirname(dirname(dirname(__FILE__))) . '/src/Admin/Renderers/HTMLRenderer.php';
             if (file_exists($html_renderer_file)) {
                 require_once $html_renderer_file;
             }
         }
 
         if (!class_exists('PDF_Builder\Admin\Processors\TemplateProcessor')) {
-            $template_processor_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Processors/TemplateProcessor.php';
+            $template_processor_file = dirname(dirname(dirname(__FILE__))) . '/src/Admin/Processors/TemplateProcessor.php';
             if (file_exists($template_processor_file)) {
                 require_once $template_processor_file;
             }
@@ -130,14 +130,14 @@ class PdfBuilderAdmin
 
         // Charger manuellement PDFGenerator et Utils si nécessaire
         if (!class_exists('PDF_Builder\Admin\Generators\PDFGenerator')) {
-            $pdf_generator_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Generators/PDFGenerator.php';
+            $pdf_generator_file = dirname(dirname(dirname(__FILE__))) . '/src/Admin/Generators/PDFGenerator.php';
             if (file_exists($pdf_generator_file)) {
                 require_once $pdf_generator_file;
             }
         }
 
         if (!class_exists('PDF_Builder\Admin\Utils\Utils')) {
-            $utils_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Utils/Utils.php';
+            $utils_file = dirname(dirname(dirname(__FILE__))) . '/src/Admin/Utils/Utils.php';
             if (file_exists($utils_file)) {
                 require_once $utils_file;
             }
@@ -220,7 +220,7 @@ class PdfBuilderAdmin
 
         // Initialiser le AdminPageRenderer
         if (!class_exists('\PDF_Builder\Admin\Renderers\AdminPageRenderer')) {
-            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Renderers/AdminPageRenderer.php';
+            require_once dirname(dirname(dirname(__FILE__))) . '/src/Admin/Renderers/AdminPageRenderer.php';
         }
 
         $this->admin_page_renderer = new \PDF_Builder\Admin\Renderers\AdminPageRenderer($this);
@@ -871,10 +871,10 @@ class PdfBuilderAdmin
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
         // Script loading is handled by AdminScriptLoader
-        // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
+        add_action('admin_enqueue_scripts', [$this->script_loader, 'loadAdminScripts'], 20);
 
         // Inclure le gestionnaire de modèles prédéfinis
-        include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/predefined-templates-manager.php';
+        include_once dirname(dirname(dirname(__FILE__))) . '/resources/templates/admin/predefined-templates-manager.php';
 
         // Instancier le gestionnaire de modèles prédéfinis
         // new PDF_Builder_Predefined_Templates_Manager();
@@ -965,7 +965,7 @@ class PdfBuilderAdmin
         self::$menu_added = true;
 
         // Menu principal avec icône distinctive - position remontée
-        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
+        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-media-document', 25);
 
         // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
@@ -1066,7 +1066,7 @@ class PdfBuilderAdmin
                 width: 100%;
                 height: 100%;
                 background: rgba(255, 255, 255, 0.95);
-                display: flex;
+                display: none;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
@@ -1101,7 +1101,7 @@ class PdfBuilderAdmin
 
             <!-- Main React Editor Container -->
             <div id="pdf-builder-editor-container" style="
-                display: none;
+                display: block;
                 background: #fff;
                 border: 1px solid #ccd0d4;
                 border-radius: 8px;

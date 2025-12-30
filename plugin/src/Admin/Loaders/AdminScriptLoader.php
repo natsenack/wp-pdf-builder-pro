@@ -42,6 +42,9 @@ class AdminScriptLoader
 
         // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
 
+        // Define version parameter for cache busting
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
+
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
