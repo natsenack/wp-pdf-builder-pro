@@ -52,11 +52,6 @@ class SettingsManager_DISABLED
         $this->admin = $admin;
     }
 }
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
-
-        // Hook pour vérifier la sauvegarde des paramètres
-        add_action('update_option_pdf_builder_settings', [$this, 'onSettingsUpdated'], 10, 3);
-    }
 
     /**
      * Enregistrer les paramètres WordPress
