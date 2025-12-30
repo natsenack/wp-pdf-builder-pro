@@ -10,7 +10,7 @@ assets/css/dist/
 
 # Cache and temporary files
 cache/
-dev/
+# dev/  ← BUILD CONFIG MUST BE COMMITTED
 
 # Development files
 debug-*.js
