@@ -209,6 +209,15 @@ function pdf_builder_load_settings_assets($hook) {
         true // Chargé dans le footer
     );
 
+    // Charger le script de débogage pour le rechargement forcé
+    wp_enqueue_script(
+        'pdf-builder-force-reload-debug',
+        PDF_BUILDER_PLUGIN_URL . 'assets/js/force-reload-debug.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true // Chargé dans le footer
+    );
+
     // Charger le script temp.js pour les modales Canvas
     wp_enqueue_script(
         'pdf-builder-temp',
