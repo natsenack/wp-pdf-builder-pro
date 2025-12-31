@@ -243,7 +243,22 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, category, isLoad
 ]);
 });
 //# sourceMappingURL=pdf-builder-react.bundle.js.map
-// IMMEDIATE POST-LOAD EXECUTION
-if (typeof window !== 'undefined' && window.pdfBuilderReact) {
-  console.log('🔥 [PDF BUNDLE] POST-LOAD: pdfBuilderReact is available');
-}
+(function() {
+  if (typeof window === 'undefined') return;
+  console.log('🔥 [WEBPACK UMD] Bundle executed, pdfBuilderReact type:', typeof window.pdfBuilderReact);
+  
+  if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+    console.log('🔥 [WEBPACK UMD] Calling initPDFBuilderReact directly...');
+    try {
+      var result = window.pdfBuilderReact.initPDFBuilderReact();
+      console.log('🔥 [WEBPACK UMD] Direct call result:', result);
+    } catch (err) {
+      console.error('🔥 [WEBPACK UMD] Direct call error:', err.message);
+    }
+  } else {
+    console.warn('🔥 [WEBPACK UMD] initPDFBuilderReact not found!', {
+      pdfBuilderReact: !!window.pdfBuilderReact,
+      hasFunction: window.pdfBuilderReact ? typeof window.pdfBuilderReact.initPDFBuilderReact : 'N/A'
+    });
+  }
+})();

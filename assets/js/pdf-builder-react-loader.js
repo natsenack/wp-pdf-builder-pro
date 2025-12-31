@@ -19,13 +19,30 @@
     
     if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
       console.log('✅ [PDF Builder Loader] pdfBuilderReact found! Calling initPDFBuilderReact...');
+      console.log('✅ [PDF Builder Loader] window.React type:', typeof window.React);
+      console.log('✅ [PDF Builder Loader] window.ReactDOM type:', typeof window.ReactDOM);
+      console.log('✅ [PDF Builder Loader] Container element:', document.getElementById('pdf-builder-react-root') ? 'FOUND' : 'NOT FOUND');
+      
       clearInterval(interval);
       
       try {
         var result = window.pdfBuilderReact.initPDFBuilderReact();
-        console.log('✅ [PDF Builder Loader] initPDFBuilderReact called, result:', result);
+        console.log('✅ [PDF Builder Loader] initPDFBuilderReact returned:', result);
+        
+        if (result === false) {
+          console.warn('⚠️ [PDF Builder Loader] initPDFBuilderReact returned false - check bundle logs for details');
+          // Try to capture what's in window to debug
+          console.log('⚠️ [PDF Builder Loader] Available on window:', {
+            React: typeof window.React,
+            ReactDOM: typeof window.ReactDOM,
+            container: !!document.getElementById('pdf-builder-react-root'),
+            editor: !!document.getElementById('pdf-builder-react-editor'),
+            pdfBuilderReact: !!window.pdfBuilderReact
+          });
+        }
       } catch (error) {
-        console.error('❌ [PDF Builder Loader] Error calling initPDFBuilderReact:', error);
+        console.error('❌ [PDF Builder Loader] EXCEPTION:', error.message);
+        console.error('❌ [PDF Builder Loader] Stack:', error.stack);
       }
       return;
     }

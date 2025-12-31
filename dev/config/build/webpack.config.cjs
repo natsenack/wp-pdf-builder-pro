@@ -119,7 +119,7 @@ module.exports = {
     ],
   },
   plugins: [
-    // Custom plugin to inject immediate execution code
+    // Custom plugin to inject immediate execution code after UMD wrapper
     {
       apply: (compiler) => {
         compiler.hooks.emit.tapPromise('ImmediateExecutionPlugin', (compilation) => {
@@ -133,12 +133,27 @@ module.exports = {
               const asset = compilation.assets[bundleKey];
               let source = asset.source().toString();
               
-              // After the UMD wrapper, inject initialization code
+              // After the UMD wrapper completes, IMMEDIATELY call the initialization
               const initCode = `
-// IMMEDIATE POST-LOAD EXECUTION
-if (typeof window !== 'undefined' && window.pdfBuilderReact) {
-  console.log('🔥 [PDF BUNDLE] POST-LOAD: pdfBuilderReact is available');
-}
+(function() {
+  if (typeof window === 'undefined') return;
+  console.log('🔥 [WEBPACK UMD] Bundle executed, pdfBuilderReact type:', typeof window.pdfBuilderReact);
+  
+  if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+    console.log('🔥 [WEBPACK UMD] Calling initPDFBuilderReact directly...');
+    try {
+      var result = window.pdfBuilderReact.initPDFBuilderReact();
+      console.log('🔥 [WEBPACK UMD] Direct call result:', result);
+    } catch (err) {
+      console.error('🔥 [WEBPACK UMD] Direct call error:', err.message);
+    }
+  } else {
+    console.warn('🔥 [WEBPACK UMD] initPDFBuilderReact not found!', {
+      pdfBuilderReact: !!window.pdfBuilderReact,
+      hasFunction: window.pdfBuilderReact ? typeof window.pdfBuilderReact.initPDFBuilderReact : 'N/A'
+    });
+  }
+})();
 `;
               
               source = source + initCode;
