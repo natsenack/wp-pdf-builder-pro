@@ -257,9 +257,9 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-wrap', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js', ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $version, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
-        // Ensure React is loaded globally
-        wp_enqueue_script('react');
-        wp_enqueue_script('react-dom');
+        // Load React from CDN to ensure availability
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.3.1', true);
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.3.1', true);
 
         // Bundle React
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.bundle.js';

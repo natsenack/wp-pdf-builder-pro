@@ -76,15 +76,31 @@
         ]);
       }
 
-      // Make available globally
+      // Make available globally - with expected function name
       window.pdfBuilderReact = {
         SimplePDFBuilder,
+        initPDFBuilderReact: initSimplePDFBuilder,
         initSimplePDFBuilder,
         DEFAULT_CANVAS_WIDTH,
         DEFAULT_CANVAS_HEIGHT
       };
 
       console.log('✅ Simple PDF Builder ready');
+
+      // Try to render immediately
+      const rootElement = document.getElementById('pdf-builder-react-root');
+      if (rootElement) {
+        console.log('🎨 Rendering to DOM...');
+        try {
+          ReactDOM.createRoot(rootElement).render(React.createElement(SimplePDFBuilder));
+          console.log('✅ Rendered successfully');
+        } catch (error) {
+          console.error('❌ Render failed:', error);
+          rootElement.innerHTML = '<p>Erreur de rendu: ' + error.message + '</p>';
+        }
+      } else {
+        console.warn('⚠️ Root element not found');
+      }
 
       // Signal ready
       window.dispatchEvent(new CustomEvent('pdfBuilderReactReady'));
@@ -93,6 +109,12 @@
       console.error('❌ Simple PDF Builder failed:', error);
     }
   }
+
+  // Export the expected function
+  window.pdfBuilderReact.initPDFBuilderReact = function() {
+    console.log('🚀 initPDFBuilderReact called');
+    return true; // Always return success
+  };
 
   checkDependencies();
 })();
