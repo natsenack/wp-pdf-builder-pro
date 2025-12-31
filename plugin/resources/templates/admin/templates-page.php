@@ -33,6 +33,7 @@ function get_available_paper_formats() {
     // Formats disponibles avec leurs dimensions en pixels (pour correspondre aux paramètres d'affichage)
     $all_formats = array(
         'A4' => 'A4 (594 × 1123 px)',
+        'A5' => 'A5 (420 × 595 px)', // Dimensions approximatives en pixels pour A5
         'A3' => 'A3 (840 × 1191 px)',
         'Letter' => 'Letter (612 × 792 px)',
         'Legal' => 'Legal (612 × 1008 px)'
@@ -42,8 +43,8 @@ function get_available_paper_formats() {
     $configured_format = get_option('pdf_builder_canvas_format', 'A4');
     
     // Logique : seuls les formats activés dans les paramètres d'affichage sont disponibles
-    // Actuellement, seul A4 est activé (non disabled) dans settings-modals.php
-    $enabled_formats = array('A4'); // À étendre quand d'autres formats seront activés
+    // Pour le test, on active A4 et A5
+    $enabled_formats = array('A4', 'A5'); // Test avec A5 activé
     
     // Filtrer les formats disponibles
     $available_formats = array();
