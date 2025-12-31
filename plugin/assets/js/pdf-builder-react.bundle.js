@@ -9,9 +9,12 @@
 	else
 		root["pdfBuilderReact"] = factory();
 })(self, () => {
-return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([[763],{
+return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
 
-/***/ 326:
+/***/ "./assets/js/pdf-builder-react/index.js":
+/*!**********************************************!*\
+  !*** ./assets/js/pdf-builder-react/index.js ***!
+  \**********************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -34,34 +37,35 @@ var DEBUG_VERBOSE = true;
 if (DEBUG_VERBOSE) console.log('🚀 PDF Builder React bundle starting execution...');
 function initPDFBuilderReact() {
   console.log('🔧 [PDF Builder] initPDFBuilderReact function called');
-  if (DEBUG_VERBOSE) console.log('✅ initPDFBuilderReact function called');
   try {
+    console.log('🔍 [PDF Builder] Looking for container...');
     // Vérifier si le container existe
     var container = document.getElementById('pdf-builder-react-root');
     console.log('🔍 [PDF Builder] Container element:', container);
-    if (DEBUG_VERBOSE) console.log('🔍 Container element:', container);
     if (!container) {
       console.error('❌ [PDF Builder] Container #pdf-builder-react-root not found');
       return false;
     }
     console.log('✅ [PDF Builder] Container found, checking dependencies...');
-    if (DEBUG_VERBOSE) console.log('✅ Container found, checking dependencies...');
 
     // Vérifier les dépendances
-    console.log('🔧 [PDF Builder] Checking React availability:', (0, _typeof2["default"])(_react["default"]));
+    console.log('🔧 [PDF Builder] Checking React availability:', (0, _typeof2["default"])(_react["default"]), _react["default"]);
     if (typeof _react["default"] === 'undefined') {
       console.error('❌ [PDF Builder] React is not available');
       return false;
     }
-    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', (0, _typeof2["default"])(_client["default"]));
+    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', (0, _typeof2["default"])(_client["default"]), _client["default"]);
     if (typeof _client["default"] === 'undefined') {
       console.error('❌ [PDF Builder] ReactDOM is not available');
       return false;
     }
+    console.log('🔧 [PDF Builder] Checking ReactDOM.createRoot:', (0, _typeof2["default"])(_client["default"].createRoot));
+    if (typeof _client["default"].createRoot === 'undefined') {
+      console.error('❌ [PDF Builder] ReactDOM.createRoot is not available');
+      return false;
+    }
     console.log('✅ [PDF Builder] React dependencies available');
-    if (DEBUG_VERBOSE) console.log('✅ React dependencies available');
     console.log('🎯 [PDF Builder] All dependencies loaded, initializing React...');
-    if (DEBUG_VERBOSE) console.log('🎯 All dependencies loaded, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
     var loadingEl = document.getElementById('pdf-builder-react-loading');
@@ -73,21 +77,22 @@ function initPDFBuilderReact() {
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
     console.log('🎨 [PDF Builder] Creating React root...');
-    if (DEBUG_VERBOSE) console.log('🎨 Creating React root...');
 
     // Créer et rendre l'application React
     var root = _client["default"].createRoot(container);
     console.log('🎨 [PDF Builder] React root created, rendering component...');
-    if (DEBUG_VERBOSE) console.log('🎨 React root created, rendering component...');
-    root.render(_react["default"].createElement('div', {
+    var testElement = _react["default"].createElement('div', {
       style: {
         padding: '20px',
         border: '1px solid green',
-        backgroundColor: 'lightgreen'
+        backgroundColor: 'lightgreen',
+        fontSize: '16px',
+        fontWeight: 'bold'
       }
-    }, '✅ React is working! PDF Builder will load here.'));
+    }, '✅ React is working! PDF Builder will load here.');
+    console.log('🎨 [PDF Builder] Created element:', testElement);
+    root.render(testElement);
     console.log('✅ [PDF Builder] React component rendered successfully');
-    if (DEBUG_VERBOSE) console.log('✅ React component rendered successfully');
     return true;
   } catch (error) {
     console.error('❌ [PDF Builder] Error in initPDFBuilderReact:', error);
@@ -133,7 +138,7 @@ if (DEBUG_VERBOSE) console.log('🎉 PDF Builder React bundle execution complete
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(326));
+/******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/pdf-builder-react/index.js"));
 /******/ return __webpack_exports__;
 /******/ }
 ]);

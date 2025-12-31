@@ -9,9 +9,12 @@
 	else
 		root["pdfBuilderReact"] = factory();
 })(self, () => {
-return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([[866],{
+return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["ajax-throttle"],{
 
-/***/ 945:
+/***/ "./assets/js/ajax-throttle.js":
+/*!************************************!*\
+  !*** ./assets/js/ajax-throttle.js ***!
+  \************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -77,7 +80,7 @@ __webpack_require__.r(__webpack_exports__);
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(945));
+/******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/ajax-throttle.js"));
 /******/ return __webpack_exports__;
 /******/ }
 ]);

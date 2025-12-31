@@ -9,9 +9,12 @@
 	else
 		root["pdfBuilderReact"] = factory();
 })(self, () => {
-return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([[978],{
+return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["settings-global-save"],{
 
-/***/ 913:
+/***/ "./assets/js/settings-global-save.js":
+/*!*******************************************!*\
+  !*** ./assets/js/settings-global-save.js ***!
+  \*******************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -308,7 +311,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(913));
+/******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/settings-global-save.js"));
 /******/ return __webpack_exports__;
 /******/ }
 ]);

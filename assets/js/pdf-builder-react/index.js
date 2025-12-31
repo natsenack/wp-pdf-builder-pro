@@ -15,37 +15,39 @@ if (DEBUG_VERBOSE) console.log('🚀 PDF Builder React bundle starting execution
 
 function initPDFBuilderReact() {
   console.log('🔧 [PDF Builder] initPDFBuilderReact function called');
-  if (DEBUG_VERBOSE) console.log('✅ initPDFBuilderReact function called');
 
   try {
+    console.log('🔍 [PDF Builder] Looking for container...');
     // Vérifier si le container existe
     const container = document.getElementById('pdf-builder-react-root');
     console.log('🔍 [PDF Builder] Container element:', container);
-    if (DEBUG_VERBOSE) console.log('🔍 Container element:', container);
     if (!container) {
       console.error('❌ [PDF Builder] Container #pdf-builder-react-root not found');
       return false;
     }
 
     console.log('✅ [PDF Builder] Container found, checking dependencies...');
-    if (DEBUG_VERBOSE) console.log('✅ Container found, checking dependencies...');
 
     // Vérifier les dépendances
-    console.log('🔧 [PDF Builder] Checking React availability:', typeof React);
+    console.log('🔧 [PDF Builder] Checking React availability:', typeof React, React);
     if (typeof React === 'undefined') {
       console.error('❌ [PDF Builder] React is not available');
       return false;
     }
-    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', typeof ReactDOM);
+    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', typeof ReactDOM, ReactDOM);
     if (typeof ReactDOM === 'undefined') {
       console.error('❌ [PDF Builder] ReactDOM is not available');
       return false;
     }
+    console.log('🔧 [PDF Builder] Checking ReactDOM.createRoot:', typeof ReactDOM.createRoot);
+    if (typeof ReactDOM.createRoot === 'undefined') {
+      console.error('❌ [PDF Builder] ReactDOM.createRoot is not available');
+      return false;
+    }
+
     console.log('✅ [PDF Builder] React dependencies available');
-    if (DEBUG_VERBOSE) console.log('✅ React dependencies available');
 
     console.log('🎯 [PDF Builder] All dependencies loaded, initializing React...');
-    if (DEBUG_VERBOSE) console.log('🎯 All dependencies loaded, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
     const loadingEl = document.getElementById('pdf-builder-react-loading');
@@ -56,16 +58,25 @@ function initPDFBuilderReact() {
     if (editorEl) editorEl.style.display = 'block';
 
     console.log('🎨 [PDF Builder] Creating React root...');
-    if (DEBUG_VERBOSE) console.log('🎨 Creating React root...');
 
     // Créer et rendre l'application React
     const root = ReactDOM.createRoot(container);
     console.log('🎨 [PDF Builder] React root created, rendering component...');
-    if (DEBUG_VERBOSE) console.log('🎨 React root created, rendering component...');
 
-    root.render(React.createElement('div', { style: { padding: '20px', border: '1px solid green', backgroundColor: 'lightgreen' } }, '✅ React is working! PDF Builder will load here.'));
+    const testElement = React.createElement('div', {
+      style: {
+        padding: '20px',
+        border: '1px solid green',
+        backgroundColor: 'lightgreen',
+        fontSize: '16px',
+        fontWeight: 'bold'
+      }
+    }, '✅ React is working! PDF Builder will load here.');
+
+    console.log('🎨 [PDF Builder] Created element:', testElement);
+
+    root.render(testElement);
     console.log('✅ [PDF Builder] React component rendered successfully');
-    if (DEBUG_VERBOSE) console.log('✅ React component rendered successfully');
 
     return true;
 
