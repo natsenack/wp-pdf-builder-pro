@@ -1,33 +1,22 @@
 // ============================================================================
 // PDF Builder React - MAIN BUNDLE
 // Exports initPDFBuilderReact function to window.pdfBuilderReact
-// Pre-init script ensures window.pdfBuilderReact exists before this runs
+// Pre-init script ensures window.pdfBuilderReact and debug array exist first
 // ============================================================================
-
-// FORCE EXECUTION WITH IIFE TO ESCAPE WEBPACK WRAPPER
-(function() {
-  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-  window.pdfBuilderReactDebug.push('BUNDLE_LOADED_START');
-})();
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  // FORCE WINDOW ACCESS WITH IIFE
-  (function() {
-    window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-    window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
-  })();
+  // Debug array already created by pre-init, just push to it
+  window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
   
   try {
-    (function() {
-      window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
-      // Get globals
-      var React = window.React;
-      var ReactDOM = window.ReactDOM;
-      window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
-      // Just return true to test if function works at all
-      window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
-    })();
+    window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
+    // Get globals
+    var React = window.React;
+    var ReactDOM = window.ReactDOM;
+    window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
+    // Just return true to test if function works at all
+    window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
     return true;
     console.log('🔧 [PDF BUNDLE] __webpack_modules__ available:', !!window.__webpack_modules__);
     console.log('🔧 [PDF BUNDLE] __webpack_require__ available:', !!window.__webpack_require__);
@@ -105,9 +94,7 @@ function initPDFBuilderReact() {
     return true;
     
   } catch (error) {
-    (function() {
-      window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
-    })();
+    window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
     console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
     console.error('❌ [PDF BUNDLE] Stack:', error.stack);
     return false;

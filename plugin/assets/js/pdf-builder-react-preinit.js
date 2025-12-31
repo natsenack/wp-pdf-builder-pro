@@ -10,4 +10,9 @@ console.log('🔥 [PDF BUILDER] PRE-INIT: Script injected inline');
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = window.pdfBuilderReact || {};
   console.log('🔥 [PDF BUILDER] PRE-INIT: window.pdfBuilderReact initialized');
+  
+  // Initialize debug array BEFORE bundle loads
+  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+  window.pdfBuilderReactDebug.push('PREINIT_DEBUG_ARRAY_CREATED');
+  console.log('🔥 [PDF BUILDER] PRE-INIT: Debug array initialized');
 }
