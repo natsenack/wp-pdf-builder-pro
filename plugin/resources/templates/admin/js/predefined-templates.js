@@ -439,6 +439,22 @@
     }
 
     /**
+     * Ouvrir la modale des paramètres du template
+     */
+    window.openTemplateSettings = function(templateSlug) {
+        // Cette fonction peut être appelée depuis un onclick HTML
+        // Pour l'instant, on affiche juste un message d'information
+        showSuccessMessage('Fonctionnalité des paramètres de template bientôt disponible pour: ' + templateSlug);
+    };
+
+    /**
+     * Fermer la modale des paramètres du template
+     */
+    window.closeTemplateSettings = function() {
+        $('#template-settings-modal').hide();
+    };
+
+    /**
      * Messages de succès/erreur
      */
     function showSuccessMessage(message) {
