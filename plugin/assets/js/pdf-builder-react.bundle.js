@@ -50,40 +50,57 @@ console.log('🔥 [PDF BUNDLE] ReactDOM global assignment done');
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  console.log('🔧 [PDF BUNDLE] initPDFBuilderReact called');
+  console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
+  console.log('🔧 [PDF BUNDLE] React type:', _typeof(React), 'is function?', typeof React === 'function');
+  console.log('🔧 [PDF BUNDLE] ReactDOM type:', _typeof(ReactDOM), 'has createRoot?', ReactDOM && typeof ReactDOM.createRoot === 'function');
+  console.log('🔧 [PDF BUNDLE] PDFBuilder type:', _typeof(_ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]));
   try {
     // Check for container
     var container = document.getElementById('pdf-builder-react-root');
+    console.log('🔧 [PDF BUNDLE] Container element:', container ? 'FOUND' : 'NOT FOUND', container);
     if (!container) {
-      console.error('❌ [PDF BUNDLE] Container not found');
+      console.error('❌ [PDF BUNDLE] ERROR: Container not found');
       return false;
     }
-    console.log('✅ [PDF BUNDLE] Container found');
+    console.log('✅ [PDF BUNDLE] Container found, type:', container.constructor.name);
 
     // Check React
-    if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
-      console.error('❌ [PDF BUNDLE] React or ReactDOM not available');
+    if (typeof React === 'undefined' || !React) {
+      console.error('❌ [PDF BUNDLE] ERROR: React undefined or null');
       return false;
     }
-    console.log('✅ [PDF BUNDLE] React dependencies OK');
+    if (typeof ReactDOM === 'undefined' || !ReactDOM) {
+      console.error('❌ [PDF BUNDLE] ERROR: ReactDOM undefined or null');
+      return false;
+    }
+    if (typeof ReactDOM.createRoot !== 'function') {
+      console.error('❌ [PDF BUNDLE] ERROR: ReactDOM.createRoot not a function, available methods:', Object.keys(ReactDOM));
+      return false;
+    }
+    console.log('✅ [PDF BUNDLE] React dependencies validated');
+    console.log('✅ [PDF BUNDLE] React.createElement:', _typeof(React.createElement));
 
     // Hide loading, show editor
     var loadingEl = document.getElementById('pdf-builder-react-loading');
     var editorEl = document.getElementById('pdf-builder-react-editor');
+    console.log('🔧 [PDF BUNDLE] Loading element:', loadingEl ? 'found' : 'not found');
+    console.log('🔧 [PDF BUNDLE] Editor element:', editorEl ? 'found' : 'not found');
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
     console.log('🎨 [PDF BUNDLE] Creating React root...');
-
-    // Create root and render
     var root = ReactDOM.createRoot(container);
+    console.log('🎨 [PDF BUNDLE] Root created:', _typeof(root));
+    console.log('🎨 [PDF BUNDLE] Creating element from PDFBuilder component...');
     var element = React.createElement(_ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]);
-    console.log('🎨 [PDF BUNDLE] Rendering component...');
+    console.log('🎨 [PDF BUNDLE] Element created:', element ? 'SUCCESS' : 'FAILED');
+    console.log('🎨 [PDF BUNDLE] Rendering to root...');
     root.render(element);
-    console.log('✅ [PDF BUNDLE] Rendered successfully');
+    console.log('✅ [PDF BUNDLE] Rendered successfully!');
     return true;
   } catch (error) {
-    console.error('❌ [PDF BUNDLE] Error:', error.message);
+    console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
     console.error('❌ [PDF BUNDLE] Stack:', error.stack);
+    console.error('❌ [PDF BUNDLE] Error object:', error);
     return false;
   }
 }
@@ -96,6 +113,8 @@ console.log('🌐 [PDF BUNDLE] Assigning to window.pdfBuilderReact');
 
 // Assign to window IMMEDIATELY
 window.pdfBuilderReact = exports;
+console.log('🔥 [PDF BUNDLE] FINAL STATE: window.pdfBuilderReact =', window.pdfBuilderReact);
+console.log('🔥 [PDF BUNDLE] FINAL STATE: initPDFBuilderReact type =', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
 console.log('✅ [PDF BUNDLE] window.pdfBuilderReact assigned:', _typeof(window.pdfBuilderReact));
 console.log('✅ [PDF BUNDLE] window.pdfBuilderReact.initPDFBuilderReact:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
 
