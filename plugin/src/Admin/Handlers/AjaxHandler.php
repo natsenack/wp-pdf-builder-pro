@@ -63,6 +63,10 @@ class AjaxHandler
         // Action pour régénérer les nonces
         add_action('wp_ajax_pdf_builder_regenerate_nonce', [$this, 'ajaxRegenerateNonce']);
         add_action('wp_ajax_nopriv_pdf_builder_regenerate_nonce', [$this, 'ajaxRegenerateNonce']);
+
+        // Hooks AJAX pour le stockage SQL (remplacement du localStorage)
+        add_action('wp_ajax_pdf_builder_save_user_setting', [$this, 'ajaxSaveUserSetting']);
+        add_action('wp_ajax_pdf_builder_get_user_setting', [$this, 'ajaxGetUserSetting']);
     }
 
     /**
@@ -1826,5 +1830,147 @@ class AjaxHandler
         );
 
         return $result !== false;
+    }
+
+    /**
+     * Sauvegarder un paramètre utilisateur en base de données (remplacement du localStorage)
+     */
+    public function ajaxSaveUserSetting()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in()) {
+                wp_send_json_error('Utilisateur non connecté');
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_user_settings')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            $user_id = get_current_user_id();
+            $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
+            $setting_value = sanitize_text_field($_POST['setting_value'] ?? '');
+
+            if (empty($setting_key)) {
+                wp_send_json_error('Clé de paramètre manquante');
+                return;
+            }
+
+            // Table pour stocker les paramètres utilisateur
+            $table_name = $this->admin->core->db->getTableName('user_settings');
+
+            // Vérifier si la table existe, sinon la créer
+            $this->ensureUserSettingsTable();
+
+            // Insérer ou mettre à jour le paramètre
+            global $wpdb;
+            $result = $wpdb->replace(
+                $table_name,
+                [
+                    'user_id' => $user_id,
+                    'setting_key' => $setting_key,
+                    'setting_value' => $setting_value,
+                    'updated_at' => current_time('mysql')
+                ],
+                ['%d', '%s', '%s', '%s']
+            );
+
+            if ($result === false) {
+                wp_send_json_error('Erreur lors de la sauvegarde du paramètre');
+            } else {
+                wp_send_json_success(['message' => 'Paramètre sauvegardé avec succès']);
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder - Erreur sauvegarde paramètre utilisateur: ' . $e->getMessage());
+            wp_send_json_error('Erreur serveur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Récupérer un paramètre utilisateur depuis la base de données
+     */
+    public function ajaxGetUserSetting()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in()) {
+                wp_send_json_error('Utilisateur non connecté');
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_user_settings')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            $user_id = get_current_user_id();
+            $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
+
+            if (empty($setting_key)) {
+                wp_send_json_error('Clé de paramètre manquante');
+                return;
+            }
+
+            // Table pour stocker les paramètres utilisateur
+            $table_name = $this->admin->core->db->getTableName('user_settings');
+
+            // Vérifier si la table existe
+            $this->ensureUserSettingsTable();
+
+            // Récupérer le paramètre
+            global $wpdb;
+            $setting = $wpdb->get_row($wpdb->prepare(
+                "SELECT setting_value FROM {$table_name} WHERE user_id = %d AND setting_key = %s",
+                $user_id,
+                $setting_key
+            ), ARRAY_A);
+
+            if ($setting) {
+                wp_send_json_success($setting['setting_value']);
+            } else {
+                wp_send_json_success(null);
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder - Erreur récupération paramètre utilisateur: ' . $e->getMessage());
+            wp_send_json_error('Erreur serveur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * S'assurer que la table user_settings existe
+     */
+    private function ensureUserSettingsTable()
+    {
+        $table_name = $this->admin->core->db->getTableName('user_settings');
+
+        global $wpdb;
+
+        // Vérifier si la table existe
+        if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+            // Créer la table
+            $charset_collate = $wpdb->get_charset_collate();
+
+            $sql = "CREATE TABLE {$table_name} (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                user_id bigint(20) unsigned NOT NULL,
+                setting_key varchar(255) NOT NULL,
+                setting_value longtext NOT NULL,
+                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY user_setting (user_id, setting_key),
+                KEY setting_key (setting_key)
+            ) {$charset_collate};";
+
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+
+            error_log('PDF Builder - Table user_settings créée');
+        }
     }
 }

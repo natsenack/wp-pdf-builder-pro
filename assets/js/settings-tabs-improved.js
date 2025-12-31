@@ -166,14 +166,33 @@
                 }
             }, CONFIG.animationDuration + 50);
             
-            // Sauvegarder en localStorage
+            // Sauvegarder en base de données (remplacement du localStorage)
             try {
-                if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem(CONFIG.storageKey, tabId);
-                }
-                log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
+                // Utiliser AJAX pour sauvegarder en base de données
+                const formData = new FormData();
+                formData.append('action', 'pdf_builder_save_user_setting');
+                formData.append('setting_key', CONFIG.storageKey);
+                formData.append('setting_value', tabId);
+                formData.append('nonce', pdfBuilderAjax ? pdfBuilderAjax.nonce : '');
+
+                fetch(ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        log('PDF Builder - Onglet "' + tabId + '" sauvegardé en base de données');
+                    } else {
+                        log('PDF Builder - Erreur sauvegarde base de données:', data.data);
+                    }
+                })
+                .catch(error => {
+                    log('PDF Builder - Erreur AJAX sauvegarde:', error);
+                });
+
             } catch(e) {
-                log('PDF Builder - Impossible de sauvegarder en localStorage:', e.message);
+                log('PDF Builder - Impossible de sauvegarder en base de données:', e.message);
             }
             
             // Déclencher événement personnalisé
@@ -269,14 +288,42 @@
 
     // Obtenir l'onglet sauvegardé
     function getStoredActiveTab() {
+        // Cette fonction doit maintenant être asynchrone car elle utilise AJAX
+        // Pour maintenir la compatibilité, on retourne null et on gère la récupération différemment
+        return null; // La récupération se fait maintenant dans loadStoredActiveTab()
+    }
+
+    // Charger l'onglet sauvegardé depuis la base de données
+    function loadStoredActiveTab(callback) {
         try {
-            if (typeof localStorage !== 'undefined') {
-                return localStorage.getItem(CONFIG.storageKey);
-            }
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_get_user_setting');
+            formData.append('setting_key', CONFIG.storageKey);
+            formData.append('nonce', pdfBuilderAjax ? pdfBuilderAjax.nonce : '');
+
+            fetch(ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data && data.data.value) {
+                    log('PDF Builder - Onglet récupéré depuis base de données:', data.data.value);
+                    if (callback) callback(data.data.value);
+                } else {
+                    log('PDF Builder - Aucun onglet sauvegardé en base de données');
+                    if (callback) callback(null);
+                }
+            })
+            .catch(error => {
+                log('PDF Builder - Erreur AJAX récupération:', error);
+                if (callback) callback(null);
+            });
+
         } catch(e) {
-            // localStorage non disponible
+            log('PDF Builder - Erreur récupération base de données:', e.message);
+            if (callback) callback(null);
         }
-        return null;
     }
 
     // Obtenir l'onglet par défaut
@@ -328,19 +375,20 @@
         // Lier les événements
         bindEvents();
         
-        // Déterminer l'onglet initial
-        const savedTab = getStoredActiveTab();
-        activeTab = (savedTab && document.getElementById(savedTab)) ? savedTab : getDefaultActiveTab();
-        
-        if (activeTab) {
-            log('PDF Builder - Activation de l\'onglet initial:', activeTab);
-            switchTab(activeTab);
-        } else {
-            log('PDF Builder - ERREUR: Aucun onglet par défaut trouvé');
-            return false;
-        }
-        
-        log('PDF Builder - ONGLETS INITIALISÉS AVEC SUCCÈS');
+        // Déterminer l'onglet initial (utilise maintenant AJAX)
+        loadStoredActiveTab(function(savedTab) {
+            activeTab = (savedTab && document.getElementById(savedTab)) ? savedTab : getDefaultActiveTab();
+            
+            if (activeTab) {
+                log('PDF Builder - Activation de l\'onglet initial:', activeTab);
+                switchTab(activeTab);
+            } else {
+                log('PDF Builder - ERREUR: Aucun onglet par défaut trouvé');
+                return false;
+            }
+            
+            log('PDF Builder - ONGLETS INITIALISÉS AVEC SUCCÈS');
+        });
         return true;
     }
 
