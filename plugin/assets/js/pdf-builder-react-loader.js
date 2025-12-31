@@ -17,6 +17,15 @@
     attempt++;
     console.log('🔍 [PDF Builder Loader] Check attempt', attempt + '/' + maxAttempts, '- pdfBuilderReact available?', typeof window.pdfBuilderReact !== 'undefined');
     
+    // Debug: log full window.pdfBuilderReact structure
+    if (typeof window.pdfBuilderReact !== 'undefined') {
+      console.log('🔍 [PDF Builder Loader] window.pdfBuilderReact:', window.pdfBuilderReact);
+      console.log('🔍 [PDF Builder Loader] typeof window.pdfBuilderReact.initPDFBuilderReact:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+      if (typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+        console.log('🔍 [PDF Builder Loader] Function content:', window.pdfBuilderReact.initPDFBuilderReact.toString().substring(0, 200));
+      }
+    }
+    
     if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
       console.log('✅ [PDF Builder Loader] pdfBuilderReact found! Calling initPDFBuilderReact...');
       clearInterval(interval);
@@ -24,6 +33,7 @@
       try {
         var result = window.pdfBuilderReact.initPDFBuilderReact();
         console.log('✅ [PDF Builder Loader] initPDFBuilderReact called, result:', result);
+        console.log('🔍 [PDF Builder Loader] Debug array after call:', window.pdfBuilderReactDebug);
       } catch (error) {
         console.error('❌ [PDF Builder Loader] Error calling initPDFBuilderReact:', error);
       }
