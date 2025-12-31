@@ -1139,11 +1139,15 @@ class PdfBuilderAdmin
                 editor: null,
 
                 init: function() {
+                    console.log('[PDF Builder] 🚀 Initializing PDF Builder loader...');
                     this.element = document.getElementById('pdf-builder-loader');
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
+                    console.log('[PDF Builder] 📍 Loader element found:', !!this.element);
+                    console.log('[PDF Builder] 📍 Editor element found:', !!this.editor);
+
                     if (!this.element || !this.editor) {
-                        // console.error('[PDF Builder] Loader elements not found');
+                        console.error('[PDF Builder] ❌ Loader elements not found');
                         return;
                     }
 
@@ -1159,22 +1163,24 @@ class PdfBuilderAdmin
                 },
 
                 startChecking: function() {
+                    console.log('[PDF Builder] 🔄 Starting React readiness check...');
                     let attempts = 0;
                     const maxAttempts = 60; // 30 seconds at 500ms intervals
 
                     const checkInterval = setInterval(() => {
                         attempts++;
+                        console.log(`[PDF Builder] 🔍 Check attempt ${attempts}/${maxAttempts} - React ready:`, this.isReactReady());
 
                         if (this.isReactReady()) {
                             clearInterval(checkInterval);
-                            // console.log('[PDF Builder] React is ready, initializing...');
+                            console.log('[PDF Builder] ✅ React is ready, initializing...');
                             this.initializeReact();
                             return;
                         }
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            // console.warn('[PDF Builder] React loading timeout - showing editor anyway');
+                            console.warn('[PDF Builder] ⚠️ React loading timeout - showing editor anyway');
                             this.hide(); // Fallback: show editor even if React init fails
                         }
                     }, 500);
@@ -1187,19 +1193,29 @@ class PdfBuilderAdmin
                 },
 
                 initializeReact: function() {
+                    console.log('[PDF Builder] 🔧 Checking if React is ready...');
                     if (this.isReactReady()) {
-                        // console.log('[PDF Builder] Initializing React...');
+                        console.log('[PDF Builder] ✅ Initializing React...');
                         try {
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
-                            // console.log('[PDF Builder] React initialization result:', result);
+                            console.log('[PDF Builder] ✅ React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
                         } catch (error) {
-                            // console.error('[PDF Builder] React initialization failed:', error);
+                            console.error('[PDF Builder] ❌ React initialization failed:', error);
+                            console.error('[PDF Builder] ❌ Error stack:', error.stack);
                             return false;
                         }
+                    } else {
+                        console.error('[PDF Builder] ❌ React not ready for initialization');
+                        console.log('[PDF Builder] ❌ window.pdfBuilderReact exists:', typeof window.pdfBuilderReact !== 'undefined');
+                        console.log('[PDF Builder] ❌ window.pdfBuilderReact value:', window.pdfBuilderReact);
+                        console.log('[PDF Builder] ❌ window.pdfBuilderReact.initPDFBuilderReact exists:', window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function');
+                        if (window.pdfBuilderReact) {
+                            console.log('[PDF Builder] ❌ window.pdfBuilderReact keys:', Object.keys(window.pdfBuilderReact));
+                        }
+                        return false;
                     }
-                    return false;
                 }
             };
 
