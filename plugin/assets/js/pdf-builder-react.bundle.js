@@ -66,6 +66,10 @@ function initPDFBuilderReact() {
     // Check webpack modules count
     var moduleCount = Object.keys(window.__webpack_modules__ || {}).length;
     console.log('🔧 [PDF BUNDLE] Webpack modules count:', moduleCount);
+
+    // Get UI elements safely
+    var loadingEl = document.getElementById('pdf-builder-react-loading');
+    var editorEl = document.getElementById('pdf-builder-react-editor');
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
     console.log('🎨 [PDF BUNDLE] Creating React root...');
