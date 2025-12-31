@@ -9,6 +9,9 @@ var pdfBuilderReact;
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
 /* harmony import */ var _ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/ts/components/PDFBuilder */ "./assets/ts/components/PDFBuilder.tsx");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // ============================================================================
@@ -106,39 +109,26 @@ function initPDFBuilderReact() {
 }
 if (DEBUG_VERBOSE) console.log('📦 Creating exports object...');
 
-// Export default pour webpack
+// Define exports object
 var exports = {
   initPDFBuilderReact: initPDFBuilderReact
 };
-if (DEBUG_VERBOSE) console.log('🌐 Assigning to window...');
+if (DEBUG_VERBOSE) console.log('🌐 Setting up global window.pdfBuilderReact...');
 
-// Wrapper IIFE for immediate execution
-(function () {
-  console.log('🔄 [PDF Builder] IIFE starting at', new Date().toISOString());
-  if (typeof window === 'undefined') {
-    console.warn('⚠️ [PDF Builder] Window not available, skipping global assignment');
-    return;
-  }
-  console.log('🔄 [PDF Builder] About to assign to window.pdfBuilderReact');
-  console.log('🔄 [PDF Builder] exports object:', exports);
-  console.log('🔄 [PDF Builder] exports.initPDFBuilderReact:', _typeof(exports.initPDFBuilderReact));
-
-  // CRITICAL: Assign the exports object directly and immediately
-  window.pdfBuilderReact = exports;
+// Assign to window immediately (synchronously before module finishes)
+window.pdfBuilderReact = exports;
+if (DEBUG_VERBOSE) {
   console.log('🌐 [PDF Builder] Assigned to window.pdfBuilderReact:', window.pdfBuilderReact);
   console.log('🌐 [PDF Builder] window.pdfBuilderReact keys:', Object.keys(window.pdfBuilderReact));
-
-  // Verify immediately
   if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-    console.log('✅ [PDF Builder] initPDFBuilderReact function is available globally');
-    console.log('✅ [PDF Builder] initPDFBuilderReact:', window.pdfBuilderReact.initPDFBuilderReact);
+    console.log('✅ [PDF Builder] initPDFBuilderReact is available globally');
   } else {
-    console.error('❌ [PDF Builder] initPDFBuilderReact function NOT available globally');
-    console.error('❌ [PDF Builder] window.pdfBuilderReact:', window.pdfBuilderReact);
-    console.error('❌ [PDF Builder] typeof window.pdfBuilderReact:', _typeof(window.pdfBuilderReact));
+    console.error('❌ [PDF Builder] initPDFBuilderReact NOT available globally');
   }
-}).call(window);
-if (DEBUG_VERBOSE) console.log('🎉 PDF Builder React bundle execution completed at', new Date().toISOString());
+}
+
+// Export as default for webpack
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (exports);
 
 /***/ }),
 
