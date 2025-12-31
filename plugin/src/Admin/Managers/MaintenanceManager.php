@@ -105,8 +105,8 @@ class MaintenanceManager
             }
         }
 
-        // Vider le cache
-        wp_cache_flush();
+        // Vider le cache (désactivé)
+        // wp_cache_flush();
 
         return [
             'success' => true,

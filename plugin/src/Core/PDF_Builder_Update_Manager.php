@@ -523,14 +523,14 @@ class PDF_Builder_Update_Manager {
      * Nettoie après une mise à jour
      */
     private function cleanup_after_update() {
-        // Vider le cache
-        if (function_exists('wp_cache_flush')) {
-            wp_cache_flush();
-        }
+        // Vider le cache (désactivé)
+        // if (function_exists('wp_cache_flush')) {
+        //     wp_cache_flush();
+        // }
 
-        // Nettoyer les transients
-        global $wpdb;
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        // Nettoyer les transients (désactivé)
+        // global $wpdb;
+        // $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
 
         // Régénérer les règles de réécriture si nécessaire
         flush_rewrite_rules();

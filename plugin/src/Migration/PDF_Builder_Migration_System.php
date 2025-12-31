@@ -263,8 +263,8 @@ class PDF_Builder_Migration_System
      */
     private function clearAllCaches()
     {
-        // Clear WordPress object cache
-        wp_cache_flush();
+        // Clear WordPress object cache (désactivé)
+        // wp_cache_flush();
 
         // Clear any PDF Builder specific caches
         global $wpdb;

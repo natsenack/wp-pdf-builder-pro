@@ -38,7 +38,7 @@ class PdfBuilderDatabaseQueryOptimizer
      */
     private $optimization_config = [
         'enable_prepared_statements' => true,
-        'enable_query_caching' => true,
+        'enable_query_caching' => false, // Cache désactivé
         'enable_index_hints' => true,
         'slow_query_threshold' => 0.5, // secondes
         'max_cache_size' => 100,
