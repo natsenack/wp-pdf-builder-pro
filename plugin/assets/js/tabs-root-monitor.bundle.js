@@ -1,6 +1,15 @@
 "use strict";
-var pdfBuilderReact;
-(self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["tabs-root-monitor"],{
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("pdfBuilderReact", [], factory);
+	else if(typeof exports === 'object')
+		exports["pdfBuilderReact"] = factory();
+	else
+		root["pdfBuilderReact"] = factory();
+})(self, () => {
+return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["tabs-root-monitor"],{
 
 /***/ "./assets/js/tabs-root-monitor.js":
 /*!****************************************!*\
@@ -179,7 +188,8 @@ __webpack_require__.r(__webpack_exports__);
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/tabs-root-monitor.js"));
-/******/ pdfBuilderReact = __webpack_exports__;
+/******/ return __webpack_exports__;
 /******/ }
 ]);
+});
 //# sourceMappingURL=tabs-root-monitor.bundle.js.map

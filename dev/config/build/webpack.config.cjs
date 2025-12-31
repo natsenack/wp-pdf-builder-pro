@@ -36,7 +36,8 @@ module.exports = {
     publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
     library: {
       name: 'pdfBuilderReact',
-      type: 'var',
+      type: 'umd',
+      umdNamedDefine: true,
     },
     clean: false, // Ne pas nettoyer auto, on contrôle
   },

@@ -1,6 +1,15 @@
 "use strict";
-var pdfBuilderReact;
-(self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("pdfBuilderReact", [], factory);
+	else if(typeof exports === 'object')
+		exports["pdfBuilderReact"] = factory();
+	else
+		root["pdfBuilderReact"] = factory();
+})(self, () => {
+return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
 
 /***/ "./assets/js/pdf-builder-react/index.js":
 /*!**********************************************!*\
@@ -247,7 +256,8 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, category, isLoad
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ __webpack_require__.O(0, ["vendors"], () => (__webpack_exec__("./assets/js/pdf-builder-react/index.js")));
 /******/ var __webpack_exports__ = __webpack_require__.O();
-/******/ pdfBuilderReact = __webpack_exports__;
+/******/ return __webpack_exports__;
 /******/ }
 ]);
+});
 //# sourceMappingURL=pdf-builder-react.bundle.js.map
