@@ -1370,13 +1370,7 @@ function pdf_builder_clear_cache_ajax() {
         return;
     }
 
-    // Vider le cache WordPress (désactivé - système de cache supprimé)
-    // wp_cache_flush();
-
-    // Supprimer les transients liés au plugin (désactivé)
-    // global $wpdb;
-    // $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-    // $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+    // Cache system removed - no cache to clear
 
     wp_send_json_success(array(
         'message' => 'Cache vidé avec succès'
@@ -1639,10 +1633,7 @@ function pdf_builder_auto_remove_temp_files() {
  */
 function pdf_builder_auto_clear_cache() {
     try {
-        // Nettoyer le cache principal (désactivé)
-        // if (function_exists('wp_cache_flush')) {
-        //     wp_cache_flush();
-        // }
+        // Cache system removed - no cache to clear
 
         // Nettoyer les caches spécifiques du plugin
         $cache_dirs = [
@@ -2331,10 +2322,7 @@ function pdf_builder_clear_cache_handler() {
         // Nettoyer le cache WordPress (désactivé)
         // wp_cache_flush();
 
-        // Nettoyer les transients (désactivé)
-        // global $wpdb;
-        // $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-        // $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+        // Cache system removed - no cache to clear
 
         wp_send_json_success(array(
             'message' => 'Cache vidé avec succès',

@@ -1334,8 +1334,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        // wp_cache_flush(); // Désactivé - système de cache supprimé
-        // delete_transient('pdf_builder_cache'); // Désactivé
+        // Cache system removed - no cache to clear
 
         wp_send_json_success(['message' => 'Cache vidé avec succès']);
     }

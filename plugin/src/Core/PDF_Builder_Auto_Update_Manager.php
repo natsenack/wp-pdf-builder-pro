@@ -891,13 +891,7 @@ class PDF_Builder_Auto_Update_Manager {
      */
     private function run_post_update_tasks() {
         // Recharger les classes si nécessaire
-        // Nettoyer les caches (désactivé)
-        // if (function_exists('wp_cache_flush')) {
-        //     wp_cache_flush();
-        // }
-
-        // Vider les caches transients (désactivé)
-        // delete_transient('pdf_builder_update_check');
+        // Cache system removed - no cache to clear
     }
 
     /**
