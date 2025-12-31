@@ -375,7 +375,6 @@ class PDF_Builder_Test_Suite {
         // Test des tables du plugin
         $required_tables = [
             $wpdb->prefix . 'pdf_builder_templates',
-            $wpdb->prefix . 'pdf_builder_cache',
             $wpdb->prefix . 'pdf_builder_errors'
         ];
 
@@ -387,11 +386,11 @@ class PDF_Builder_Test_Suite {
         }
 
         // Test d'insertion/récupération
-        $test_table = $wpdb->prefix . 'pdf_builder_cache';
+        $test_table = $wpdb->prefix . 'pdf_builder_templates';
         $test_data = [
-            'cache_key' => 'test_key_' . time(),
-            'cache_value' => json_encode(['test' => 'data']),
-            'expires_at' => date('Y-m-d H:i:s', time() + 3600)
+            'template_name' => 'test_template_' . time(),
+            'template_data' => json_encode(['test' => 'data']),
+            'created_at' => current_time('mysql')
         ];
 
         $insert_result = $wpdb->insert($test_table, $test_data);
@@ -402,8 +401,8 @@ class PDF_Builder_Test_Suite {
 
         if ($insert_result) {
             $retrieved = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $test_table WHERE cache_key = %s",
-                $test_data['cache_key']
+                "SELECT * FROM $test_table WHERE template_name = %s",
+                $test_data['template_name']
             ));
 
             $results['retrieve'] = $this->assert_not_null(
@@ -412,7 +411,7 @@ class PDF_Builder_Test_Suite {
             );
 
             // Nettoyer
-            $wpdb->delete($test_table, ['cache_key' => $test_data['cache_key']]);
+            $wpdb->delete($test_table, ['template_name' => $test_data['template_name']]);
         }
 
         return $this->summarize_test_results($results, 'Tests des opérations de base de données');

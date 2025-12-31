@@ -167,13 +167,6 @@ class PDF_Builder_Ajax_Handler {
      */
     private function save_all_settings() {
         $settings_map = array(
-            // Cache
-            'cache_enabled' => 'pdf_builder_cache_enabled',
-            'cache_ttl' => 'pdf_builder_cache_ttl',
-            'cache_compression' => 'pdf_builder_cache_compression',
-            'cache_auto_cleanup' => 'pdf_builder_cache_auto_cleanup',
-            'cache_max_size' => 'pdf_builder_cache_max_size',
-
             // Maintenance
             'auto_maintenance' => 'pdf_builder_auto_maintenance',
 
@@ -261,17 +254,6 @@ class PDF_Builder_Ajax_Handler {
     }
 
     /**
-     * Gestionnaire pour l'état du cache
-     */
-    private function handle_get_cache_status() {
-        if (!isset($this->systems['cache'])) {
-            throw new Exception('Système de cache non disponible');
-        }
-
-        return $this->systems['cache']->get_status();
-    }
-
-    /**
      * Gestionnaire pour tester le cache
      */
     private function handle_test_cache() {
@@ -280,39 +262,6 @@ class PDF_Builder_Ajax_Handler {
         }
 
         return $this->systems['cache']->run_tests();
-    }
-
-    /**
-     * Gestionnaire pour vider tout le cache
-     */
-    private function handle_clear_all_cache() {
-        if (!isset($this->systems['cache'])) {
-            throw new Exception('Système de cache non disponible');
-        }
-
-        return $this->systems['cache']->clear_all();
-    }
-
-    /**
-     * Gestionnaire pour obtenir les métriques du cache
-     */
-    private function handle_get_cache_metrics() {
-        if (!isset($this->systems['cache'])) {
-            throw new Exception('Système de cache non disponible');
-        }
-
-        return $this->systems['cache']->get_metrics();
-    }
-
-    /**
-     * Gestionnaire pour mettre à jour les métriques du cache
-     */
-    private function handle_update_cache_metrics() {
-        if (!isset($this->systems['cache'])) {
-            throw new Exception('Système de cache non disponible');
-        }
-
-        return $this->systems['cache']->update_metrics();
     }
 
     /**

@@ -11,11 +11,6 @@ class PDF_Builder_Task_Scheduler {
 
     // Définition des tâches
     const TASKS = [
-        'pdf_builder_cache_cleanup' => [
-            'interval' => 'hourly',
-            'callback' => 'cleanup_expired_cache',
-            'description' => 'Nettoie le cache expiré'
-        ],
         'pdf_builder_log_rotation' => [
             'interval' => 'daily',
             'callback' => 'rotate_logs',
@@ -277,7 +272,6 @@ class PDF_Builder_Task_Scheduler {
 
         $tables = [
             $wpdb->prefix . 'pdf_builder_templates',
-            $wpdb->prefix . 'pdf_builder_cache',
             $wpdb->prefix . 'pdf_builder_errors',
             $wpdb->prefix . 'pdf_builder_performance_metrics',
             $wpdb->prefix . 'pdf_builder_performance_issues',

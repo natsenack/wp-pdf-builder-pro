@@ -107,23 +107,6 @@ class AjaxHandlerTest extends TestCase
     }
 
     /**
-     * Test des améliorations de performance AJAX
-     */
-    public function testAjaxPerformanceOptimizations()
-    {
-        // Test cache des réponses
-        $cacheKey = 'test_cache_key';
-        $testData = ['result' => 'cached_data'];
-
-        // Simuler une première requête
-        $_POST = ['action' => 'pdf_builder_test_action', 'cache_key' => $cacheKey];
-        $this->ajaxHandler->handle_ajax_request();
-
-        // La réponse devrait être mise en cache
-        $this->assertTrue(wp_cache_get($cacheKey) !== false);
-    }
-
-    /**
      * Test de la validation améliorée des données
      */
     public function testEnhancedDataValidation()

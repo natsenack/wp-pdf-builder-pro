@@ -138,33 +138,6 @@ class IntegrationTest extends PDF_Builder_AjaxTestCase {
     }
 
     /**
-     * Test de l'intégration avec le cache
-     */
-    public function test_cache_integration() {
-        // Effacer le cache
-        delete_transient('pdf_builder_settings_cache');
-
-        // Première requête - devrait venir de la DB
-        $start_time = microtime(true);
-        $response1 = $this->execute_ajax_action('pdf_builder_load_general');
-        $time1 = microtime(true) - $start_time;
-
-        // Deuxième requête - devrait venir du cache
-        $start_time = microtime(true);
-        $response2 = $this->execute_ajax_action('pdf_builder_load_general');
-        $time2 = microtime(true) - $start_time;
-
-        // Les deux réponses devraient être identiques
-        $this->assertEquals($response1, $response2, 'Cached response should match direct response');
-
-        // La deuxième requête devrait être plus rapide (au moins 10% plus rapide)
-        $this->assertLessThan($time1, $time2 * 1.1, 'Cached request should be faster');
-
-        // Nettoyer
-        delete_transient('pdf_builder_settings_cache');
-    }
-
-    /**
      * Test de sécurité contre les attaques courantes
      */
     public function test_security_hardening() {
@@ -396,35 +369,6 @@ class IntegrationTest extends PDF_Builder_AjaxTestCase {
         // Vérifier que les données de récupération ont été sauvegardées
         $this->assertEquals(800, $this->get_pdf_option('pdf_builder_canvas_width'));
         $this->assertEquals(600, $this->get_pdf_option('pdf_builder_canvas_height'));
-    }
-
-    /**
-     * Test d'intégration cache pour les paramètres canvas
-     */
-    public function test_canvas_cache_integration() {
-        // Activer le cache
-        update_option('pdf_builder_cache_enabled', true);
-
-        $test_data = [
-            'pdf_builder_canvas_width' => 1024,
-            'pdf_builder_canvas_height' => 768
-        ];
-
-        // Sauvegarder avec cache activé
-        $response1 = $this->execute_ajax_action('pdf_builder_save_canvas_settings', $test_data);
-        $this->assertAjaxSuccess($response1);
-
-        // Vérifier immédiatement (devrait venir du cache si implémenté)
-        $cached_response = $this->execute_ajax_action('verify_canvas_settings_consistency', []);
-        $this->assertAjaxSuccess($cached_response);
-
-        if (isset($cached_response['data'])) {
-            $this->assertEquals(1024, $cached_response['data']['pdf_builder_canvas_width']);
-            $this->assertEquals(768, $cached_response['data']['pdf_builder_canvas_height']);
-        }
-
-        // Désactiver le cache
-        update_option('pdf_builder_cache_enabled', false);
     }
 
     /**

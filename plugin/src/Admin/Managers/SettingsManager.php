@@ -174,34 +174,6 @@ class SettingsManager
     }
 
     /**
-     * Champ cache
-     */
-    public function renderCacheField()
-    {
-        $settings = get_option('pdf_builder_settings', []);
-        $enable_cache = $settings['pdf_builder_cache_enabled'] ?? '1';
-        $cache_timeout = $settings['pdf_builder_cache_ttl'] ?? 3600;
-
-        echo '<table class="form-table">';
-        echo '<tr>';
-        echo '<th><label for="pdf_builder_enable_cache">' . __('Activer le cache', 'pdf-builder-pro') . '</label></th>';
-        echo '<td>';
-        echo '<input type="checkbox" id="pdf_builder_enable_cache" name="pdf_builder_enable_cache" value="1" ' . checked($enable_cache, '1', false) . '>';
-        echo '<p class="description">' . __('Améliore les performances en cachant les résultats des requêtes.', 'pdf-builder-pro') . '</p>';
-        echo '</td>';
-        echo '</tr>';
-
-        echo '<tr>';
-        echo '<th><label for="pdf_builder_cache_timeout">' . __('Timeout du cache (secondes)', 'pdf-builder-pro') . '</label></th>';
-        echo '<td>';
-        echo '<input type="number" id="pdf_builder_cache_timeout" name="pdf_builder_cache_timeout" value="' . esc_attr($cache_timeout) . '" min="60" max="86400" step="60">';
-        echo '<p class="description">' . __('Durée avant expiration du cache (3600 = 1 heure).', 'pdf-builder-pro') . '</p>';
-        echo '</td>';
-        echo '</tr>';
-        echo '</table>';
-    }
-
-    /**
      * Champ limites de performance
      */
     public function renderPerformanceLimitsField()
@@ -298,8 +270,6 @@ class SettingsManager
 
             // Paramètres de performance
             $settings = [
-                'pdf_builder_enable_cache' => isset($_POST['enable_cache']) ? '1' : '0',
-                'pdf_builder_cache_timeout' => intval($_POST['cache_timeout'] ?? 3600),
                 'pdf_builder_compression_level' => intval($_POST['compression_level'] ?? 6),
                 'pdf_builder_memory_limit' => intval($_POST['memory_limit'] ?? 256),
                 'pdf_builder_max_execution_time' => intval($_POST['max_execution_time'] ?? 30),
@@ -357,8 +327,6 @@ class SettingsManager
     {
         $settings = get_option('pdf_builder_settings', []);
         return [
-            'enable_cache' => ($settings['pdf_builder_cache_enabled'] ?? '0') === '1',
-            'cache_timeout' => intval($settings['pdf_builder_cache_ttl'] ?? 3600),
             'compression_level' => intval($settings['pdf_builder_compression_level'] ?? 6),
             'memory_limit' => intval($settings['pdf_builder_memory_limit'] ?? 256),
             'max_execution_time' => intval($settings['pdf_builder_max_execution_time'] ?? 30),
@@ -470,17 +438,6 @@ class SettingsManager
         }
         if (isset($input['pdf_builder_company_capital'])) {
             $sanitized['pdf_builder_company_capital'] = sanitize_text_field($input['pdf_builder_company_capital']);
-        }
-
-        // Sanitisation des paramètres système/cache
-        if (isset($input['pdf_builder_cache_enabled'])) {
-            $sanitized['pdf_builder_cache_enabled'] = $input['pdf_builder_cache_enabled'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_cache_compression'])) {
-            $sanitized['pdf_builder_cache_compression'] = $input['pdf_builder_cache_compression'] ? '1' : '0';
-        }
-        if (isset($input['pdf_builder_cache_auto_cleanup'])) {
-            $sanitized['pdf_builder_cache_auto_cleanup'] = $input['pdf_builder_cache_auto_cleanup'] ? '1' : '0';
         }
 
         // Sanitisation des paramètres de sécurité

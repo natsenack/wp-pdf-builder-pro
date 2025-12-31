@@ -67,8 +67,7 @@ class PerformanceTest extends PDF_Builder_AjaxTestCase {
                 'security_timeout' => '30'
             ],
             'advanced' => [
-                'advanced_debug' => '0',
-                'advanced_cache' => '1'
+                'advanced_debug' => '0'
             ]
         ];
 

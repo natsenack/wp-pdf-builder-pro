@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests pour les utilitaires PDF Builder Pro
- * Tests unitaires pour PerformanceMetrics, LocalCache, validateFormData et AjaxCompat
+ * Tests unitaires pour PerformanceMetrics, validateFormData et AjaxCompat
  */
 
 class UtilitiesTest extends PDF_Builder_TestCase {
@@ -25,35 +25,6 @@ class UtilitiesTest extends PDF_Builder_TestCase {
         $this->assertArrayHasKey('test_operation', $metrics);
         $this->assertGreaterThan(0, $metrics['test_operation']['avg_time']);
         $this->assertEquals(1, $metrics['test_operation']['count']);
-    }
-
-    /**
-     * Test du cache local
-     */
-    public function test_local_cache_operations() {
-        // Nettoyer le cache
-        LocalCache::clear();
-
-        $test_data = [
-            'settings' => ['theme' => 'dark', 'lang' => 'fr'],
-            'timestamp' => time(),
-            'array_data' => [1, 2, 3, 'test']
-        ];
-
-        // Test sauvegarde
-        LocalCache::save($test_data);
-        $this->assertTrue(LocalCache::has_data());
-
-        // Test chargement
-        $loaded_data = LocalCache::load();
-        $this->assertEquals($test_data, $loaded_data);
-
-        // Test expiration
-        LocalCache::save($test_data, -1); // Expiration dans le passé
-        $this->assertFalse(LocalCache::has_data());
-
-        // Nettoyer
-        LocalCache::clear();
     }
 
     /**
@@ -146,16 +117,6 @@ class UtilitiesTest extends PDF_Builder_TestCase {
      * Test des performances des utilitaires
      */
     public function test_utilities_performance() {
-        $start_time = microtime(true);
-
-        // Test cache performance
-        for ($i = 0; $i < 100; $i++) {
-            LocalCache::save(['test' => 'data_' . $i]);
-            $data = LocalCache::load();
-        }
-
-        $cache_time = microtime(true) - $start_time;
-
         // Test validation performance
         $start_time = microtime(true);
         $rules = ['field' => ['required' => true, 'type' => 'string']];
@@ -167,7 +128,6 @@ class UtilitiesTest extends PDF_Builder_TestCase {
         $validation_time = microtime(true) - $start_time;
 
         // Les performances devraient être raisonnables
-        $this->assertLessThan(1.0, $cache_time, 'Cache operations should be fast');
         $this->assertLessThan(2.0, $validation_time, 'Validation should be fast');
     }
 }

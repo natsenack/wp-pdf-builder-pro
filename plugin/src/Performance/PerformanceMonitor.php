@@ -144,7 +144,6 @@ class PerformanceMonitor
         return [
             'render_time_ok' => $report['render_performance']['median_render_time'] < 500,
             'memory_usage_ok' => self::$metrics['peak_memory'] < 50 * 1024 * 1024, // 50MB
-            'cache_hit_rate_ok' => ($report['cache_performance']['hit_rate'] ?? 0) > 70,
             'no_slow_renders' => $report['render_performance']['slowest_render'] < 2000,
             'overall_status' => self::getOverallStatus($report)
         ];
@@ -179,7 +178,6 @@ class PerformanceMonitor
         self::$metrics = [
             'render_times' => [],
             'memory_usage' => [],
-            'cache_stats' => [],
             'renderer_calls' => [],
             'start_time' => microtime(true),
             'peak_memory' => memory_get_peak_usage(true)
@@ -236,7 +234,7 @@ class PerformanceMonitor
     private static function getOverallStatus(array $report): string
     {
         $checks = self::checkPerformanceThresholds();
-        if ($checks['render_time_ok'] && $checks['memory_usage_ok'] && $checks['cache_hit_rate_ok'] && $checks['no_slow_renders']) {
+        if ($checks['render_time_ok'] && $checks['memory_usage_ok'] && $checks['no_slow_renders']) {
             return 'excellent';
         }
 

@@ -265,15 +265,6 @@ class PDF_Builder_Migration_System
     {
         // Cache system removed - no cache to clear
 
-        // Clear any PDF Builder specific caches
-        global $wpdb;
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-                $wpdb->esc_like('pdf_builder_cache_') . '%'
-            )
-        );
-
         // Clear transients
         $this->cleanupOldTransients();
     }
