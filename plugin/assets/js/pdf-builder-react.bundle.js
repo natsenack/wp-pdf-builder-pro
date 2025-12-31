@@ -27,12 +27,11 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
+// Import the main PDF Builder component
+
 console.log('🔥 [PDF Builder] BUNDLE EXECUTING - START - TIMESTAMP:', new Date().toISOString());
 console.log('🔥 [PDF Builder] Document ready state:', document.readyState);
 console.log('🔥 [PDF Builder] Window location:', window.location.href);
-
-// Import the main PDF Builder component
-
 console.log('🔥 [PDF Builder] PDFBuilder import completed');
 
 // Use WordPress globals instead of imports
@@ -117,6 +116,12 @@ function initPDFBuilderReact() {
   }
 }
 if (DEBUG_VERBOSE) console.log('📦 Creating exports object...');
+
+// IMMEDIATE EXECUTION - This runs when module loads
+console.log('🔴 [PDF Builder] WEBPACK MODULE LOADED - IMMEDIATE EXECUTION PHASE');
+console.log('🔴 [PDF Builder] Current time:', new Date().toISOString());
+console.log('🔴 [PDF Builder] React available?', typeof window.React !== 'undefined');
+console.log('🔴 [PDF Builder] ReactDOM available?', typeof window.ReactDOM !== 'undefined');
 
 // Define exports object
 var exports = {
