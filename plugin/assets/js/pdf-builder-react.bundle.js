@@ -1,5 +1,19 @@
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
+"use strict";
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["PDFBuilder"] = factory();
+	else
+		root["PDFBuilder"] = factory();
+})(self, () => {
+return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).push([[763],{
+
+/***/ 326:
+/***/ (() => {
+
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -50,7 +64,7 @@ var ErrorBoundary = /*#__PURE__*/function (_React$Component) {
     key: "render",
     value: function render() {
       if (this.state.hasError) {
-        return /*#__PURE__*/_react["default"].createElement('div', {
+        return _react["default"].createElement('div', {
           style: {
             padding: '20px',
             border: '1px solid #ff6b6b',
@@ -59,11 +73,11 @@ var ErrorBoundary = /*#__PURE__*/function (_React$Component) {
             color: '#d63031',
             fontFamily: 'Arial, sans-serif'
           }
-        }, /*#__PURE__*/_react["default"].createElement('h2', null, 'Erreur dans l\'éditeur PDF'), /*#__PURE__*/_react["default"].createElement('p', null, 'Une erreur s\'est produite lors du rendu de l\'éditeur. Veuillez rafraîchir la page.'), /*#__PURE__*/_react["default"].createElement('details', {
+        }, _react["default"].createElement('h2', null, 'Erreur dans l\'éditeur PDF'), _react["default"].createElement('p', null, 'Une erreur s\'est produite lors du rendu de l\'éditeur. Veuillez rafraîchir la page.'), _react["default"].createElement('details', {
           style: {
             whiteSpace: 'pre-wrap'
           }
-        }, /*#__PURE__*/_react["default"].createElement('summary', null, 'Détails de l\'erreur'), this.state.error && this.state.error.toString(), /*#__PURE__*/_react["default"].createElement('br'), this.state.errorInfo && this.state.errorInfo.componentStack));
+        }, _react["default"].createElement('summary', null, 'Détails de l\'erreur'), this.state.error && this.state.error.toString(), _react["default"].createElement('br'), this.state.errorInfo && this.state.errorInfo.componentStack));
       }
       return this.props.children;
     }
@@ -115,7 +129,7 @@ function initPDFBuilderReact() {
     // Créer et rendre l'application React
     var root = _client["default"].createRoot(container);
     if (DEBUG_VERBOSE) (0, _debug.debugLog)('🎨 React root created, rendering component...');
-    root.render(/*#__PURE__*/_react["default"].createElement(ErrorBoundary, null, /*#__PURE__*/_react["default"].createElement(_PDFBuilder.PDFBuilder, {
+    root.render(_react["default"].createElement(ErrorBoundary, null, _react["default"].createElement(_PDFBuilder.PDFBuilder, {
       width: _canvas.DEFAULT_CANVAS_WIDTH,
       height: _canvas.DEFAULT_CANVAS_HEIGHT
     })));
@@ -166,6 +180,16 @@ if (DEBUG_VERBOSE) (0, _debug.debugLog)('🎉 PDF Builder React bundle execution
 // NO MORE EXPORTS - webpack will handle this differently
 // Removed: export default exports;
 // Removed: if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') { module.exports = exports; }
-/******/ })()
-;
+
+/***/ })
+
+},
+/******/ __webpack_require__ => { // webpackRuntimeModules
+/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+/******/ var __webpack_exports__ = (__webpack_exec__(326));
+/******/ __webpack_exports__ = __webpack_exports__["default"];
+/******/ return __webpack_exports__;
+/******/ }
+]);
+});
 //# sourceMappingURL=pdf-builder-react.bundle.js.map
