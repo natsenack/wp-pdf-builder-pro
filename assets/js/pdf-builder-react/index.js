@@ -2,46 +2,7 @@
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
-// Configuration globale des performances
-if (typeof window !== 'undefined') {
-  // Améliorer les performances des event listeners pour éviter les violations
-  const originalAddEventListener = EventTarget.prototype.addEventListener;
-  const originalRemoveEventListener = EventTarget.prototype.removeEventListener;
-
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    // Normaliser les options
-    if (typeof options === 'boolean') {
-      options = { capture: options };
-    } else if (!options) {
-      options = {};
-    }
-
-    // Forcer passive: true par défaut sauf si explicitement défini à false
-    if (!options.hasOwnProperty('passive')) {
-      // Les événements qui nécessitent vraiment preventDefault() peuvent définir passive: false explicitement
-      options.passive = true;
-    }
-
-    return originalAddEventListener.call(this, type, listener, options);
-  };
-
-  // Synchroniser removeEventListener avec la même logique
-  EventTarget.prototype.removeEventListener = function(type, listener, options) {
-    // Normaliser les options pour la cohérence
-    if (typeof options === 'boolean') {
-      options = { capture: options };
-    } else if (!options) {
-      options = {};
-    }
-
-    // Appliquer la même logique passive
-    if (!options.hasOwnProperty('passive')) {
-      options.passive = true;
-    }
-
-    return originalRemoveEventListener.call(this, type, listener, options);
-  };
-}
+// Note: Performance patch is loaded separately as 'pdf-builder-react-performance-patch' entry point
 
 // Import du diagnostic de compatibilité
 import '../fallbacks/browser-compatibility.js';

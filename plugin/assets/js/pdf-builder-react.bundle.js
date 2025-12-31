@@ -16,55 +16,11 @@ var _canvas = require("./constants/canvas.ts");
 var _debug = require("./utils/debug");
 var _globalApi = require("./api/global-api");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2["default"])(o), (0, _possibleConstructorReturn2["default"])(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2["default"])(t).constructor) : o.apply(t, e)); }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-// ============================================================================
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); } // ============================================================================
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
-
-// Configuration globale des performances
-if (typeof window !== 'undefined') {
-  // Améliorer les performances des event listeners pour éviter les violations
-  var originalAddEventListener = EventTarget.prototype.addEventListener;
-  var originalRemoveEventListener = EventTarget.prototype.removeEventListener;
-  EventTarget.prototype.addEventListener = function (type, listener, options) {
-    // Normaliser les options
-    if (typeof options === 'boolean') {
-      options = {
-        capture: options
-      };
-    } else if (!options) {
-      options = {};
-    }
-
-    // Forcer passive: true par défaut sauf si explicitement défini à false
-    if (!options.hasOwnProperty('passive')) {
-      // Les événements qui nécessitent vraiment preventDefault() peuvent définir passive: false explicitement
-      options.passive = true;
-    }
-    return originalAddEventListener.call(this, type, listener, options);
-  };
-
-  // Synchroniser removeEventListener avec la même logique
-  EventTarget.prototype.removeEventListener = function (type, listener, options) {
-    // Normaliser les options pour la cohérence
-    if (typeof options === 'boolean') {
-      options = {
-        capture: options
-      };
-    } else if (!options) {
-      options = {};
-    }
-
-    // Appliquer la même logique passive
-    if (!options.hasOwnProperty('passive')) {
-      options.passive = true;
-    }
-    return originalRemoveEventListener.call(this, type, listener, options);
-  };
-}
-
+// Note: Performance patch is loaded separately as 'pdf-builder-react-performance-patch' entry point
 // Import du diagnostic de compatibilité
-
 // Import des composants React
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 var ErrorBoundary = /*#__PURE__*/function (_React$Component) {

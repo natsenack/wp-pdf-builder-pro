@@ -27,6 +27,7 @@ module.exports = {
     'ajax-throttle': path.resolve(projectRoot, 'assets/js/ajax-throttle.js'),
     'tabs-force': path.resolve(projectRoot, 'assets/js/tabs-force.js'),
     'tabs-root-monitor': path.resolve(projectRoot, 'assets/js/tabs-root-monitor.js'),
+    'pdf-builder-react-performance-patch': path.resolve(projectRoot, 'assets/js/pdf-builder-react/performance-patch.js'),
     'pdf-builder-react': path.resolve(projectRoot, 'assets/js/pdf-builder-react/index.js'),
   },
   output: {

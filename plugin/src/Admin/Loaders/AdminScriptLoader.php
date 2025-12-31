@@ -303,7 +303,12 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
+        // PERFORMANCE PATCH - Load BEFORE React to patch event listeners
+        $performance_patch_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-performance-patch.js';
+        wp_enqueue_script('pdf-builder-performance-patch', $performance_patch_url, [], $cache_bust, false); // Load in header
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-performance-patch: ' . $performance_patch_url);
+
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap', 'pdf-builder-performance-patch'], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
         // Init helper
