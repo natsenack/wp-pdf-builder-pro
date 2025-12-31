@@ -22,15 +22,15 @@ __webpack_require__.r(__webpack_exports__);
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
-var _react = _interopRequireDefault(require("react"));
-var _client = _interopRequireDefault(require("react-dom/client"));
 // ============================================================================
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
 console.log('🚀 [PDF Builder] React bundle loading...');
 
-// Import des composants React
+// Use WordPress globals instead of imports
+var React = window.React;
+var ReactDOM = window.ReactDOM;
 
 // Flag pour afficher les logs d'initialisation détaillés
 var DEBUG_VERBOSE = true;
@@ -49,18 +49,18 @@ function initPDFBuilderReact() {
     console.log('✅ [PDF Builder] Container found, checking dependencies...');
 
     // Vérifier les dépendances
-    console.log('🔧 [PDF Builder] Checking React availability:', (0, _typeof2["default"])(_react["default"]), _react["default"]);
-    if (typeof _react["default"] === 'undefined') {
+    console.log('🔧 [PDF Builder] Checking React availability:', (0, _typeof2["default"])(React), React);
+    if (typeof React === 'undefined') {
       console.error('❌ [PDF Builder] React is not available');
       return false;
     }
-    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', (0, _typeof2["default"])(_client["default"]), _client["default"]);
-    if (typeof _client["default"] === 'undefined') {
+    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', (0, _typeof2["default"])(ReactDOM), ReactDOM);
+    if (typeof ReactDOM === 'undefined') {
       console.error('❌ [PDF Builder] ReactDOM is not available');
       return false;
     }
-    console.log('🔧 [PDF Builder] Checking ReactDOM.createRoot:', (0, _typeof2["default"])(_client["default"].createRoot));
-    if (typeof _client["default"].createRoot === 'undefined') {
+    console.log('🔧 [PDF Builder] Checking ReactDOM.createRoot:', (0, _typeof2["default"])(ReactDOM.createRoot));
+    if (typeof ReactDOM.createRoot === 'undefined') {
       console.error('❌ [PDF Builder] ReactDOM.createRoot is not available');
       return false;
     }
@@ -79,9 +79,9 @@ function initPDFBuilderReact() {
     console.log('🎨 [PDF Builder] Creating React root...');
 
     // Créer et rendre l'application React
-    var root = _client["default"].createRoot(container);
+    var root = ReactDOM.createRoot(container);
     console.log('🎨 [PDF Builder] React root created, rendering component...');
-    var testElement = _react["default"].createElement('div', {
+    var testElement = React.createElement('div', {
       style: {
         padding: '20px',
         border: '1px solid green',

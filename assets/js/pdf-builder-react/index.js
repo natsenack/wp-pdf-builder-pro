@@ -4,9 +4,9 @@
 
 console.log('🚀 [PDF Builder] React bundle loading...');
 
-// Import des composants React
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+// Use WordPress globals instead of imports
+const React = window.React;
+const ReactDOM = window.ReactDOM;
 
 // Flag pour afficher les logs d'initialisation détaillés
 const DEBUG_VERBOSE = true;
