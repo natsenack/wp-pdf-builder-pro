@@ -29,95 +29,24 @@ __webpack_require__.r(__webpack_exports__);
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  // Debug array already created by pre-init, just push to it
   window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
-  try {
-    window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
-    // Get globals
-    var React = window.React;
-    var ReactDOM = window.ReactDOM;
-    window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
-    // Just return true to test if function works at all
-    window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
-    return true;
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-
-    // Check for container
-    // removed by dead control flow
- var container; 
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-
-    // Validate React
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-
-    // Check webpack modules count
-    // removed by dead control flow
- var moduleCount; 
-    // removed by dead control flow
-
-
-    // Get UI elements safely
-    // removed by dead control flow
- var loadingEl; 
-    // removed by dead control flow
- var editorEl; 
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
- var root; 
-
-    // Try to get PDFBuilder from webpack modules if available
-    // removed by dead control flow
- var PDFBuilder; 
-    // removed by dead control flow
- var exp, mod, key; 
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
- var element; 
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-    // removed by dead control flow
-
-  } catch (error) {
-    window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
-    console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
-    console.error('❌ [PDF BUNDLE] Stack:', error.stack);
-    return false;
-  }
+  window.pdfBuilderReactDebug.push('IMMEDIATE_RETURN_TEST');
+  return false;
+  // removed by dead control flow
+ var element, exp, mod, key, PDFBuilder, root, editorEl, loadingEl, moduleCount, container, ReactDOM, React; 
 }
 
 // Force immediate assignment at module level
 // This runs when webpack loads the module, before anything else
-window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+  window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
+}
 window.pdfBuilderReact = window.pdfBuilderReact || {};
 window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
-window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
-console.log('✅ [PDF BUNDLE] Debug log:', window.pdfBuilderReactDebug);
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
+}
 
 // Export for module systems
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (initPDFBuilderReact);

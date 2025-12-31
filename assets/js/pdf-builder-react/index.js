@@ -6,8 +6,9 @@
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  // Debug array already created by pre-init, just push to it
   window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
+  window.pdfBuilderReactDebug.push('IMMEDIATE_RETURN_TEST');
+  return false;
   
   try {
     window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
@@ -103,14 +104,17 @@ function initPDFBuilderReact() {
 
 // Force immediate assignment at module level
 // This runs when webpack loads the module, before anything else
-window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+  window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
+}
 
 window.pdfBuilderReact = window.pdfBuilderReact || {};
 window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
 
-window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
-console.log('✅ [PDF BUNDLE] Debug log:', window.pdfBuilderReactDebug);
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
+}
 
 // Export for module systems
 export default initPDFBuilderReact;
