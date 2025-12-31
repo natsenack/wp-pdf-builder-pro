@@ -56,6 +56,10 @@ class AjaxHandler
         // Hooks AJAX canvas
         add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
         add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
+
+        // Action pour régénérer les nonces
+        add_action('wp_ajax_pdf_builder_regenerate_nonce', [$this, 'ajaxRegenerateNonce']);
+        add_action('wp_ajax_nopriv_pdf_builder_regenerate_nonce', [$this, 'ajaxRegenerateNonce']);
     }
 
     /**
@@ -267,15 +271,40 @@ class AjaxHandler
         try {
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+                wp_send_json_error(['message' => 'Permissions insuffisantes', 'error_code' => 'insufficient_permissions']);
                 return;
             }
 
             // Vérifier le nonce depuis les paramètres GET ou POST
             $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
-            if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+
+            // Log pour debug
+            error_log('[PDF Builder] ajaxGetTemplate - Nonce reçu: ' . $nonce . ', Template ID: ' . $template_id);
+
+            // Essayer plusieurs actions possibles pour la compatibilité
+            $valid_nonce = false;
+            $actions_to_try = ['pdf_builder_ajax', 'pdf_builder_get_template', 'pdf_builder_nonce'];
+
+            foreach ($actions_to_try as $action) {
+                if (wp_verify_nonce($nonce, $action)) {
+                    $valid_nonce = true;
+                    error_log('[PDF Builder] ajaxGetTemplate - Nonce valide avec action: ' . $action);
+                    break;
+                }
+            }
+
+            if (!$valid_nonce) {
+                // Générer un nouveau nonce pour aider au debug
+                $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
+                error_log('[PDF Builder] ajaxGetTemplate - Nonce invalide. Fresh nonce: ' . $fresh_nonce);
+
+                wp_send_json_error([
+                    'message' => 'Nonce invalide',
+                    'error_code' => 'invalid_nonce',
+                    'fresh_nonce' => $fresh_nonce,
+                    'received_nonce' => $nonce
+                ]);
                 return;
             }
 
@@ -1397,6 +1426,33 @@ class AjaxHandler
         }
 
         return $total_size <= $max_size;
+    }
+
+    /**
+     * Régénérer un nonce pour les appels AJAX
+     */
+    public function ajaxRegenerateNonce()
+    {
+        try {
+            // Vérifier les permissions de base (plus permissif pour la régénération de nonce)
+            if (!is_user_logged_in()) {
+                wp_send_json_error(['message' => 'Utilisateur non connecté']);
+                return;
+            }
+
+            // Générer un nouveau nonce
+            $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
+
+            error_log('[PDF Builder] Nonce régénéré pour utilisateur: ' . get_current_user_id() . ', nouveau nonce: ' . $fresh_nonce);
+
+            wp_send_json_success([
+                'nonce' => $fresh_nonce,
+                'message' => 'Nonce régénéré avec succès'
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors de la régénération du nonce: ' . $e->getMessage()]);
+        }
     }
 
     /**

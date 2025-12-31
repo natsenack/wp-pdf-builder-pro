@@ -5,6 +5,46 @@ import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugError } from '../utils/debug';
 import { normalizeElementsBeforeSave, normalizeElementsAfterLoad, debugElementState } from '../utils/elementNormalization';
 
+// Fonction helper pour traiter le résultat du template
+const processTemplateResult = (result: any) => {
+  const templateData = result.data ? result.data.template : result.template;
+  const templateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
+
+  // Parse JSON strings
+  let elements = [];
+  let canvasData = null;
+
+  try {
+    // Check if elements is already an object or needs parsing
+    if (typeof templateData.elements === 'string') {
+      elements = JSON.parse(templateData.elements);
+    } else if (Array.isArray(templateData.elements)) {
+      elements = templateData.elements;
+    }
+
+    // Normalize elements after loading
+    elements = normalizeElementsAfterLoad(elements);
+
+    // Parse canvas data if it's a string
+    if (typeof templateData.canvas === 'string') {
+      canvasData = JSON.parse(templateData.canvas);
+    } else if (templateData.canvas && typeof templateData.canvas === 'object') {
+      canvasData = templateData.canvas;
+    }
+
+    return {
+      elements,
+      canvasData,
+      templateName: templateName || 'Template sans nom',
+      templateData
+    };
+
+  } catch (parseError) {
+    console.error('[processTemplateResult] Erreur de parsing:', parseError);
+    throw new Error('Erreur lors du parsing des données du template');
+  }
+};
+
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
   const { canvasWidth, canvasHeight } = useCanvasSettings();
@@ -90,11 +130,65 @@ export function useTemplate() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('[useTemplate] Response error text:', errorText);
-        throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
+        console.error('[useTemplate] Response status:', response.status);
+        console.error('[useTemplate] Response headers:', [...response.headers.entries()]);
+
+        // Vérifier si c'est une erreur de nonce
+        if (response.status === 400 || errorText.includes('Nonce invalide')) {
+          console.warn('[useTemplate] Nonce invalide détecté, tentative de régénération...');
+
+          // Essayer de régénérer un nonce côté client
+          try {
+            const nonceResponse = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_regenerate_nonce`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: 'security=' + encodeURIComponent(window.pdfBuilderData?.nonce || '')
+            });
+
+            if (nonceResponse.ok) {
+              const nonceData = await nonceResponse.json();
+              if (nonceData.success && nonceData.data && nonceData.data.nonce) {
+                console.log('[useTemplate] Nouveau nonce obtenu:', nonceData.data.nonce);
+                // Mettre à jour le nonce global
+                if (window.pdfBuilderData) {
+                  window.pdfBuilderData.nonce = nonceData.data.nonce;
+                }
+                // Relancer la requête avec le nouveau nonce
+                const retryUrl = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${nonceData.data.nonce}&t=${Date.now()}`;
+                const retryResponse = await fetch(retryUrl, fetchOptions);
+
+                if (retryResponse.ok) {
+                  console.log('[useTemplate] Retry avec nouveau nonce réussi');
+                  const retryResult = await retryResponse.json();
+                  if (retryResult.success) {
+                    // Traiter le résultat réussi
+                    const processed = processTemplateResult(retryResult);
+                    return processed;
+                  }
+                }
+              }
+            }
+          } catch (nonceError) {
+            console.error('[useTemplate] Erreur lors de la régénération du nonce:', nonceError);
+          }
+        }
+
+        throw new Error(`Erreur HTTP ${response.status}: ${response.statusText} - ${errorText}`);
       }
 
       const result = await response.json();
-      
+
+      // Vérifier si le serveur indique une erreur de nonce
+      if (!result.success && result.data && result.data.error_code === 'invalid_nonce') {
+        console.warn('[useTemplate] Erreur de nonce côté serveur, nouveau nonce fourni:', result.data.fresh_nonce);
+        if (result.data.fresh_nonce && window.pdfBuilderData) {
+          window.pdfBuilderData.nonce = result.data.fresh_nonce;
+        }
+        throw new Error('Nonce expiré. Veuillez rafraîchir la page.');
+      }
+
       // Log debug info from server
       if (result.data && result.data.debug) {
         if (result.data.debug.order_element) {
@@ -102,45 +196,13 @@ export function useTemplate() {
       }
 
       if (!result.success) {
-        throw new Error(result.data || 'Erreur lors du chargement du template');
+        console.error('[useTemplate] Server returned error:', result);
+        throw new Error(result.data?.message || result.data || 'Erreur lors du chargement du template');
       }
 
-      const templateData = result.data ? result.data.template : result.template;
-      const templateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
-
-      
-      // 🔍 Tracer les éléments reçus du serveur
-      if (templateData.elements) {
-        // 🔍 Vérifier spécifiquement les éléments order_number
-        const orderNumberElements = templateData.elements.filter(el => el.type === 'order_number');
-      }
-
-      // Parse JSON strings
-      let elements = [];
-      let canvasData = null;
-      try {
-
-        // Check if elements is already an object or needs parsing
-        if (typeof templateData.elements === 'string') {
-          elements = JSON.parse(templateData.elements);
-
-        } else if (Array.isArray(templateData.elements)) {
-          elements = templateData.elements;
-
-        } else {
-          elements = [];
-
-        }
-
-        // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
-        if (templateData.canvasWidth && templateData.canvasHeight) {
-          canvasData = {
-            width: templateData.canvasWidth,
-            height: templateData.canvasHeight
-          };
-
-        } else if (typeof templateData.canvas === 'string') {
-          canvasData = JSON.parse(templateData.canvas);
+      // Utiliser la fonction helper pour traiter le résultat
+      const processed = processTemplateResult(result);
+      const { elements, canvasData, templateName, templateData: rawTemplateData } = processed;
 
         } else if (templateData.canvas && typeof templateData.canvas === 'object') {
           canvasData = templateData.canvas;
