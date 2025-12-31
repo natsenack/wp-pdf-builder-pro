@@ -27,22 +27,29 @@ __webpack_require__.r(__webpack_exports__);
 // Pre-init script ensures window.pdfBuilderReact exists before this runs
 // ============================================================================
 
-// IMMEDIATE LOG BEFORE ANYTHING
-window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-window.pdfBuilderReactDebug.push('BUNDLE_LOADED_START');
+// FORCE EXECUTION WITH IIFE TO ESCAPE WEBPACK WRAPPER
+(function () {
+  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+  window.pdfBuilderReactDebug.push('BUNDLE_LOADED_START');
+})();
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
+  // FORCE WINDOW ACCESS WITH IIFE
+  (function () {
+    window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+    window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
+  })();
   try {
-    window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
-    // Get globals
-    var React = window.React;
-    var ReactDOM = window.ReactDOM;
-    window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
-
-    // Just return true to test if function works at all
-    window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
+    (function () {
+      window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
+      // Get globals
+      var React = window.React;
+      var ReactDOM = window.ReactDOM;
+      window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
+      // Just return true to test if function works at all
+      window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
+    })();
     return true;
     // removed by dead control flow
 
@@ -107,7 +114,9 @@ function initPDFBuilderReact() {
     // removed by dead control flow
 
   } catch (error) {
-    window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
+    (function () {
+      window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
+    })();
     console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
     console.error('❌ [PDF BUNDLE] Stack:', error.stack);
     return false;
