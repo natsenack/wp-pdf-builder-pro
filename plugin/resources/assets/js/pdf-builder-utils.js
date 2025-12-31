@@ -275,6 +275,7 @@
         cache: new Map(),
         lastRequestTime: 0,
         throttleDelay: 100, // 100ms entre requêtes
+        cacheEnabled: true, // Utilise le cache centralisé
 
         /**
          * Réinitialise l'état d'AjaxCompat
@@ -285,18 +286,125 @@
         },
 
         /**
-         * Requête AJAX générique avec retry et cache
+         * Vérifier si le cache AJAX est activé côté serveur
+         */
+        async checkCacheEnabled() {
+            try {
+                const response = await fetch(window.pdfBuilderData?.ajaxUrl + '?action=pdf_builder_cache_status', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    this.cacheEnabled = data.success && data.data?.ajax_cache_enabled;
+                }
+            } catch (error) {
+                console.warn('[AjaxCompat] Erreur vérification cache:', error);
+                this.cacheEnabled = false;
+            }
+        },
+
+        /**
+         * Générer une clé de cache pour une requête AJAX
+         */
+        generateCacheKey(action, data) {
+            return btoa(JSON.stringify({action, data}));
+        },
+
+        /**
+         * Vérifier le cache côté serveur
+         */
+        async getServerCache(action, data) {
+            if (!this.cacheEnabled) {
+                return null;
+            }
+
+            try {
+                const cacheKey = this.generateCacheKey(action, data);
+                const response = await fetch(window.pdfBuilderData?.ajaxUrl + '?action=pdf_builder_get_ajax_cache', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new URLSearchParams({
+                        cache_key: cacheKey,
+                        nonce: window.pdfBuilderData?.nonce || ''
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data?.cached) {
+                        return data.data.value;
+                    }
+                }
+            } catch (error) {
+                console.warn('[AjaxCompat] Erreur cache serveur:', error);
+            }
+
+            return null;
+        },
+
+        /**
+         * Sauvegarder en cache côté serveur
+         */
+        async setServerCache(action, data, result, ttl = null) {
+            if (!this.cacheEnabled) {
+                return;
+            }
+
+            try {
+                const cacheKey = this.generateCacheKey(action, data);
+                const response = await fetch(window.pdfBuilderData?.ajaxUrl + '?action=pdf_builder_set_ajax_cache', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new URLSearchParams({
+                        cache_key: cacheKey,
+                        value: JSON.stringify(result),
+                        ttl: ttl || '',
+                        nonce: window.pdfBuilderData?.nonce || ''
+                    })
+                });
+
+                if (!response.ok) {
+                    console.warn('[AjaxCompat] Erreur sauvegarde cache serveur');
+                }
+            } catch (error) {
+                console.warn('[AjaxCompat] Erreur sauvegarde cache serveur:', error);
+            }
+        },
+
+        /**
+         * Requête AJAX générique avec retry et cache centralisé
          * @param {string} action - Action WordPress
          * @param {Object} data - Données à envoyer
          * @param {Object} options - Options (retries, cache, etc.)
          * @returns {Promise} Promesse de réponse
          */
         request: async function(action, data = {}, options = {}) {
-            const cacheKey = options.cache !== false ? JSON.stringify({action, data}) : null;
+            const useCache = options.cache !== false && this.cacheEnabled;
+            const cacheKey = useCache ? this.generateCacheKey(action, data) : null;
 
-            // Vérifier le cache
+            // Vérifier le cache local d'abord (fallback rapide)
             if (cacheKey && this.cache.has(cacheKey)) {
                 return this.cache.get(cacheKey);
+            }
+
+            // Vérifier le cache serveur si activé
+            if (useCache) {
+                const serverCached = await this.getServerCache(action, data);
+                if (serverCached !== null) {
+                    // Sauvegarder aussi dans le cache local
+                    this.cache.set(cacheKey, serverCached);
+                    return serverCached;
+                }
             }
 
             // Rate limiting
@@ -316,7 +424,13 @@
 
                     // Mettre en cache si demandé
                     if (cacheKey) {
+                        // Cache local (fallback rapide)
                         this.cache.set(cacheKey, result);
+
+                        // Cache serveur si activé
+                        if (this.cacheEnabled) {
+                            this.setServerCache(action, data, result, options.cache_ttl);
+                        }
                     }
 
                     return result;

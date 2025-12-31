@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder Pro - Asset Optimizer
  * Optimisation et compression des assets (JS, CSS, images)
+ * Intégré avec le système de cache centralisé
  */
 
 class PdfBuilderAssetOptimizer
@@ -17,6 +18,11 @@ class PdfBuilderAssetOptimizer
      * Instance du main plugin
      */
     private $main;
+
+    /**
+     * Instance du Cache Manager centralisé
+     */
+    private $cache_manager;
 
     /**
      * Répertoire des assets optimisés
@@ -43,6 +49,7 @@ class PdfBuilderAssetOptimizer
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
+        $this->cache_manager = \PDF_Builder\Managers\PDF_Builder_Cache_Manager::getInstance();
         $this->initializeOptimizer();
     }
 
