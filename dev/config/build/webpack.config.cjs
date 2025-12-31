@@ -37,9 +37,10 @@ module.exports = {
     library: {
       name: 'pdfBuilderReact',
       type: 'umd',
-      umdNamedDefine: true,
+      umdNamedDefine: false,  // Set to false for direct execution
     },
     clean: false, // Ne pas nettoyer auto, on contrôle
+    globalObject: 'typeof self !== "undefined" ? self : this',
   },
   devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
   devServer: {
@@ -118,6 +119,39 @@ module.exports = {
     ],
   },
   plugins: [
+    // Custom plugin to inject immediate execution code
+    {
+      apply: (compiler) => {
+        compiler.hooks.emit.tapPromise('ImmediateExecutionPlugin', (compilation) => {
+          return Promise.resolve().then(() => {
+            // Get the pdf-builder-react.bundle.js file
+            const bundleKey = Object.keys(compilation.assets).find(key => 
+              key.includes('pdf-builder-react.bundle.js') && !key.includes('.map')
+            );
+            
+            if (bundleKey) {
+              const asset = compilation.assets[bundleKey];
+              let source = asset.source().toString();
+              
+              // After the UMD wrapper, inject initialization code
+              const initCode = `
+// IMMEDIATE POST-LOAD EXECUTION
+if (typeof window !== 'undefined' && window.pdfBuilderReact) {
+  console.log('🔥 [PDF BUNDLE] POST-LOAD: pdfBuilderReact is available');
+}
+`;
+              
+              source = source + initCode;
+              compilation.assets[bundleKey] = {
+                source: () => source,
+                size: () => source.length,
+              };
+            }
+          });
+        });
+      }
+    },
+
     new MiniCssExtractPlugin({
       filename: 'css/[name].bundle.css',
       chunkFilename: 'css/[name].[contenthash].css',

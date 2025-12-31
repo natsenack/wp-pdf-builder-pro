@@ -3,13 +3,13 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("pdfBuilderReact", [], factory);
+		define([], factory);
 	else if(typeof exports === 'object')
 		exports["pdfBuilderReact"] = factory();
 	else
 		root["pdfBuilderReact"] = factory();
-})(self, () => {
-return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-preview-integration"],{
+})(typeof self !== "undefined" ? self : this, () => {
+return (Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilderReact"] = Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilderReact"] || []).push([["pdf-preview-integration"],{
 
 /***/ "./assets/js/pdf-preview-integration.js":
 /*!**********************************************!*\

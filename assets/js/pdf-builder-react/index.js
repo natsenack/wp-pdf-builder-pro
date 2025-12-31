@@ -2,19 +2,27 @@
 // PDF Builder React Bundle - Entry Point - IMMEDIATE EXECUTION
 // ============================================================================
 
+// FORCE IMMEDIATE EXECUTION - These run BEFORE module wrapping
+if (typeof window !== 'undefined') {
+  window._pdfBundleStarting = true;
+  console.log('🔥 [PDF BUNDLE] WINDOW CONTEXT AVAILABLE - Starting bootstrap');
+  console.log('🔥 [PDF BUNDLE] React available?', typeof window.React);
+  console.log('🔥 [PDF BUNDLE] ReactDOM available?', typeof window.ReactDOM);
+}
+
 // Import the main PDF Builder component
 import PDFBuilder from '@/ts/components/PDFBuilder';
 
 // THIS CODE RUNS IMMEDIATELY - Not wrapped in a function
-console.log('🔥 [PDF BUNDLE] IMMEDIATE EXECUTION - BOOTSTRAP PHASE');
+console.log('🔥 [PDF BUNDLE] BOOTSTRAP PHASE - After imports');
 console.log('🔥 [PDF BUNDLE] PDFBuilder imported, type:', typeof PDFBuilder);
 
 // Get WordPress globals
 var React = window.React;
 var ReactDOM = window.ReactDOM;
 
-console.log('🔥 [PDF BUNDLE] React available?', typeof React);
-console.log('🔥 [PDF BUNDLE] ReactDOM available?', typeof ReactDOM);
+console.log('🔥 [PDF BUNDLE] React global assignment done');
+console.log('🔥 [PDF BUNDLE] ReactDOM global assignment done');
 
 // Define the initialization function
 function initPDFBuilderReact() {

@@ -3,13 +3,13 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("pdfBuilderReact", [], factory);
+		define([], factory);
 	else if(typeof exports === 'object')
 		exports["pdfBuilderReact"] = factory();
 	else
 		root["pdfBuilderReact"] = factory();
-})(self, () => {
-return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
+})(typeof self !== "undefined" ? self : this, () => {
+return (Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilderReact"] = Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
 
 /***/ "./assets/js/pdf-builder-react/index.js":
 /*!**********************************************!*\
@@ -27,18 +27,26 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 // PDF Builder React Bundle - Entry Point - IMMEDIATE EXECUTION
 // ============================================================================
 
+// FORCE IMMEDIATE EXECUTION - These run BEFORE module wrapping
+if (typeof window !== 'undefined') {
+  window._pdfBundleStarting = true;
+  console.log('🔥 [PDF BUNDLE] WINDOW CONTEXT AVAILABLE - Starting bootstrap');
+  console.log('🔥 [PDF BUNDLE] React available?', _typeof(window.React));
+  console.log('🔥 [PDF BUNDLE] ReactDOM available?', _typeof(window.ReactDOM));
+}
+
 // Import the main PDF Builder component
 
 
 // THIS CODE RUNS IMMEDIATELY - Not wrapped in a function
-console.log('🔥 [PDF BUNDLE] IMMEDIATE EXECUTION - BOOTSTRAP PHASE');
+console.log('🔥 [PDF BUNDLE] BOOTSTRAP PHASE - After imports');
 console.log('🔥 [PDF BUNDLE] PDFBuilder imported, type:', _typeof(_ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]));
 
 // Get WordPress globals
 var React = window.React;
 var ReactDOM = window.ReactDOM;
-console.log('🔥 [PDF BUNDLE] React available?', _typeof(React));
-console.log('🔥 [PDF BUNDLE] ReactDOM available?', _typeof(ReactDOM));
+console.log('🔥 [PDF BUNDLE] React global assignment done');
+console.log('🔥 [PDF BUNDLE] ReactDOM global assignment done');
 
 // Define the initialization function
 function initPDFBuilderReact() {
@@ -216,3 +224,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, category, isLoad
 ]);
 });
 //# sourceMappingURL=pdf-builder-react.bundle.js.map
+// IMMEDIATE POST-LOAD EXECUTION
+if (typeof window !== 'undefined' && window.pdfBuilderReact) {
+  console.log('🔥 [PDF BUNDLE] POST-LOAD: pdfBuilderReact is available');
+}
