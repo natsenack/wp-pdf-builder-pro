@@ -35,7 +35,7 @@ module.exports = {
     chunkFilename: 'js/[name].[contenthash].js',
     publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
     library: {
-      name: 'PDFBuilder',
+      name: 'pdfBuilderReact',
       type: 'umd',
       export: 'default',
     },

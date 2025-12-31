@@ -5,11 +5,11 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["PDFBuilder"] = factory();
+		exports["pdfBuilderReact"] = factory();
 	else
-		root["PDFBuilder"] = factory();
+		root["pdfBuilderReact"] = factory();
 })(self, () => {
-return (self["webpackChunkPDFBuilder"] = self["webpackChunkPDFBuilder"] || []).push([[865],{
+return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([[865],{
 
 /***/ 536:
 /***/ (() => {
