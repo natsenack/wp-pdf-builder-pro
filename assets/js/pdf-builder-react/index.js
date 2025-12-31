@@ -15,6 +15,8 @@ function initPDFBuilderReact() {
     
     console.log('🔧 [PDF BUNDLE] React type:', typeof React);
     console.log('🔧 [PDF BUNDLE] ReactDOM type:', typeof ReactDOM);
+    console.log('🔧 [PDF BUNDLE] __webpack_modules__ available:', !!window.__webpack_modules__);
+    console.log('🔧 [PDF BUNDLE] __webpack_require__ available:', !!window.__webpack_require__);
     
     // Check for container
     var container = document.getElementById('pdf-builder-react-root');
@@ -43,9 +45,9 @@ function initPDFBuilderReact() {
     
     console.log('✅ [PDF BUNDLE] React dependencies validated');
     
-    // Hide loading, show editor
-    var loadingEl = document.getElementById('pdf-builder-react-loading');
-    var editorEl = document.getElementById('pdf-builder-react-editor');
+    // Check webpack modules count
+    var moduleCount = Object.keys(window.__webpack_modules__ || {}).length;
+    console.log('🔧 [PDF BUNDLE] Webpack modules count:', moduleCount);
     
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';

@@ -37,6 +37,8 @@ function initPDFBuilderReact() {
     var ReactDOM = window.ReactDOM;
     console.log('🔧 [PDF BUNDLE] React type:', _typeof(React));
     console.log('🔧 [PDF BUNDLE] ReactDOM type:', _typeof(ReactDOM));
+    console.log('🔧 [PDF BUNDLE] __webpack_modules__ available:', !!window.__webpack_modules__);
+    console.log('🔧 [PDF BUNDLE] __webpack_require__ available:', !!window.__webpack_require__);
 
     // Check for container
     var container = document.getElementById('pdf-builder-react-root');
@@ -61,9 +63,9 @@ function initPDFBuilderReact() {
     }
     console.log('✅ [PDF BUNDLE] React dependencies validated');
 
-    // Hide loading, show editor
-    var loadingEl = document.getElementById('pdf-builder-react-loading');
-    var editorEl = document.getElementById('pdf-builder-react-editor');
+    // Check webpack modules count
+    var moduleCount = Object.keys(window.__webpack_modules__ || {}).length;
+    console.log('🔧 [PDF BUNDLE] Webpack modules count:', moduleCount);
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
     console.log('🎨 [PDF BUNDLE] Creating React root...');
@@ -101,26 +103,16 @@ function initPDFBuilderReact() {
   }
 }
 
-// Immediately assign and execute
-(function () {
-  'use strict';
+// Force immediate assignment at module level
+// This runs when webpack loads the module, before anything else
+window.pdfBuilderReact = window.pdfBuilderReact || {};
+window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
+console.log('✅ [PDF BUNDLE] Module assignment executed');
+console.log('✅ [PDF BUNDLE] window.pdfBuilderReact:', window.pdfBuilderReact);
+console.log('✅ [PDF BUNDLE] initPDFBuilderReact is:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
 
-  // Ensure object exists
-  if (_typeof(window.pdfBuilderReact) !== 'object' || window.pdfBuilderReact === null) {
-    window.pdfBuilderReact = {};
-  }
-
-  // Assign the function
-  window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
-  console.log('✅ [PDF BUNDLE] Successfully assigned initPDFBuilderReact');
-  console.log('✅ [PDF BUNDLE] window.pdfBuilderReact type:', _typeof(window.pdfBuilderReact));
-  console.log('✅ [PDF BUNDLE] initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
-})();
-
-// Export for CommonJS/module systems
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  initPDFBuilderReact: initPDFBuilderReact
-});
+// Export for module systems
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (initPDFBuilderReact);
 
 /***/ })
 
