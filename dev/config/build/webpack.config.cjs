@@ -120,7 +120,8 @@ module.exports = {
     ],
   },
   plugins: [
-    // Custom plugin to fix UMD export and inject immediate execution code
+    // DISABLED: Custom plugin interfered with IIFE execution
+    /*
     {
       apply: (compiler) => {
         compiler.hooks.emit.tapPromise('ImmediateExecutionPlugin', (compilation) => {
@@ -199,6 +200,7 @@ module.exports = {
         });
       }
     },
+    */
 
     new MiniCssExtractPlugin({
       filename: 'css/[name].bundle.css',

@@ -23,18 +23,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // ============================================================================
-// PDF Builder React Bundle - STANDALONE IIFE APPROACH (NO WEBPACK UMD WRAPPING)
+// PDF Builder React - BOOTSTRAP AUTO-EXECUTION
 // ============================================================================
+// This module runs at the module level (in browser), BEFORE the UMD wrapper
+// executes. This ensures window.pdfBuilderReact is assigned before anything
+// tries to use it.
 
-// Immediately invoke function to escape webpack UMD wrapping
-(function () {
-  'use strict';
-
-  if (typeof window === 'undefined') return;
-  console.log('🔥 [PDF BUNDLE] IIFE STARTED - window context available');
-
-  // Define the initialization function IMMEDIATELY (not in module scope)
-  function initPDFBuilderReact() {
+console.log('🔥 [PDF BUNDLE] Module level - START LOADING');
+if (typeof window !== 'undefined') {
+  // Define the initialization function at MODULE SCOPE (will be seen by UMD)
+  var initPDFBuilderReact = function initPDFBuilderReact() {
     console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
     try {
       // Get globals
@@ -74,17 +72,13 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       console.log('🎨 [PDF BUNDLE] Creating React root...');
       var root = ReactDOM.createRoot(container);
 
-      // Import PDFBuilder dynamically or inline
-      // For now, we'll check if it's available in the module cache
-      var PDFBuilder = null;
-
       // Try to get PDFBuilder from webpack modules if available
+      var PDFBuilder = null;
       if (true) {
         for (var key in __webpack_require__.m) {
           var mod = __webpack_require__.m[key];
           if (mod && mod.exports && mod.exports["default"]) {
             var exp = mod.exports["default"];
-            // Check if this looks like PDFBuilder (has render method or is a React component)
             if (typeof exp === 'function' && (exp.$$typeof || exp.prototype)) {
               PDFBuilder = exp;
               console.log('🎨 [PDF BUNDLE] Found PDFBuilder in module cache');
@@ -108,21 +102,26 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       console.error('❌ [PDF BUNDLE] Stack:', error.stack);
       return false;
     }
-  }
+  }; // Assign to window at MODULE SCOPE (browser environment)
+  // This happens BEFORE UMD wrapper returns
+  // We are in browser - execute immediately at module scope
 
-  // Assign to window IMMEDIATELY within IIFE scope
+  console.log('🔥 [PDF BUNDLE] Browser environment detected');
   window.pdfBuilderReact = {
     initPDFBuilderReact: initPDFBuilderReact
   };
-  console.log('🔥 [PDF BUNDLE] IIFE: Assigned to window.pdfBuilderReact');
-  console.log('🔥 [PDF BUNDLE] IIFE: window.pdfBuilderReact type:', _typeof(window.pdfBuilderReact));
-  console.log('🔥 [PDF BUNDLE] IIFE: initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
-})();
+  console.log('🔥 [PDF BUNDLE] Assigned window.pdfBuilderReact at module scope');
+  console.log('🔥 [PDF BUNDLE] Type:', _typeof(window.pdfBuilderReact));
+  console.log('🔥 [PDF BUNDLE] initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+}
 
-// For webpack: this is needed but will be ignored in favor of the IIFE
+// Export for UMD wrapper and CommonJS
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   initPDFBuilderReact: function initPDFBuilderReact() {
-    return window.pdfBuilderReact ? window.pdfBuilderReact.initPDFBuilderReact() : false;
+    if (typeof window !== 'undefined' && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+      return window.pdfBuilderReact.initPDFBuilderReact();
+    }
+    return false;
   }
 });
 
@@ -138,54 +137,3 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 ]);
 });
 //# sourceMappingURL=pdf-builder-react.bundle.js.map
-(function() {
-  if (typeof window === 'undefined') return;
-  
-  // The UMD wrapper creates a factory that returns something
-  // We need to capture it and ensure it's an object with initPDFBuilderReact
-  console.log('🔥 [WEBPACK UMD] Fixing UMD export assignment...');
-  console.log('🔥 [WEBPACK UMD] Current pdfBuilderReact type:', typeof window.pdfBuilderReact);
-  console.log('🔥 [WEBPACK UMD] Current pdfBuilderReact value:', window.pdfBuilderReact);
-  
-  // The webpack module system stores exports in a different way
-  // Try to access the actual module exports
-  if (window.pdfBuilderReact && typeof window.pdfBuilderReact === 'object' && window.pdfBuilderReact.default) {
-    console.log('🔥 [WEBPACK UMD] Found .default property, using it');
-    window.pdfBuilderReact = window.pdfBuilderReact.default;
-  }
-  
-  // If it's still not an object with initPDFBuilderReact, log the full object
-  if (!window.pdfBuilderReact || typeof window.pdfBuilderReact !== 'object' || !window.pdfBuilderReact.initPDFBuilderReact) {
-    console.error('🔥 [WEBPACK UMD] ERROR: pdfBuilderReact is not an object with initPDFBuilderReact!');
-    console.error('🔥 [WEBPACK UMD] Full object:', window.pdfBuilderReact);
-    console.error('🔥 [WEBPACK UMD] Type:', typeof window.pdfBuilderReact);
-    
-    // Try to find it in the module cache if available
-    if (window.__webpack_modules__) {
-      console.log('🔥 [WEBPACK UMD] Webpack modules available, investigating...');
-      Object.keys(window.__webpack_modules__).forEach(function(key) {
-        var mod = window.__webpack_modules__[key];
-        if (mod && mod.exports && mod.exports.initPDFBuilderReact) {
-          console.log('🔥 [WEBPACK UMD] Found initPDFBuilderReact in module', key);
-          window.pdfBuilderReact = mod.exports;
-        }
-      });
-    }
-    return;
-  }
-  
-  console.log('🔥 [WEBPACK UMD] Fixed pdfBuilderReact type:', typeof window.pdfBuilderReact);
-  console.log('🔥 [WEBPACK UMD] initPDFBuilderReact available:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-  
-  // Now call it
-  if (typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-    console.log('🔥 [WEBPACK UMD] Calling initPDFBuilderReact...');
-    try {
-      var result = window.pdfBuilderReact.initPDFBuilderReact();
-      console.log('🔥 [WEBPACK UMD] initPDFBuilderReact result:', result);
-    } catch (err) {
-      console.error('🔥 [WEBPACK UMD] initPDFBuilderReact error:', err.message);
-      console.error('🔥 [WEBPACK UMD] Stack:', err.stack);
-    }
-  }
-})();

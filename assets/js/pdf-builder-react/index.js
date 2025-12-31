@@ -1,16 +1,18 @@
 // ============================================================================
-// PDF Builder React Bundle - STANDALONE IIFE APPROACH (NO WEBPACK UMD WRAPPING)
+// PDF Builder React - BOOTSTRAP AUTO-EXECUTION
 // ============================================================================
+// This module runs at the module level (in browser), BEFORE the UMD wrapper
+// executes. This ensures window.pdfBuilderReact is assigned before anything
+// tries to use it.
 
-// Immediately invoke function to escape webpack UMD wrapping
-(function() {
-  'use strict';
+console.log('🔥 [PDF BUNDLE] Module level - START LOADING');
+
+if (typeof window !== 'undefined') {
+  // We are in browser - execute immediately at module scope
   
-  if (typeof window === 'undefined') return;
+  console.log('🔥 [PDF BUNDLE] Browser environment detected');
   
-  console.log('🔥 [PDF BUNDLE] IIFE STARTED - window context available');
-  
-  // Define the initialization function IMMEDIATELY (not in module scope)
+  // Define the initialization function at MODULE SCOPE (will be seen by UMD)
   function initPDFBuilderReact() {
     console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
     
@@ -59,17 +61,14 @@
       console.log('🎨 [PDF BUNDLE] Creating React root...');
       var root = ReactDOM.createRoot(container);
       
-      // Import PDFBuilder dynamically or inline
-      // For now, we'll check if it's available in the module cache
+      // Try to get PDFBuilder from webpack modules if available
       var PDFBuilder = null;
       
-      // Try to get PDFBuilder from webpack modules if available
       if (typeof __webpack_modules__ !== 'undefined') {
         for (var key in __webpack_modules__) {
           var mod = __webpack_modules__[key];
           if (mod && mod.exports && mod.exports.default) {
             var exp = mod.exports.default;
-            // Check if this looks like PDFBuilder (has render method or is a React component)
             if (typeof exp === 'function' && (exp.$$typeof || exp.prototype)) {
               PDFBuilder = exp;
               console.log('🎨 [PDF BUNDLE] Found PDFBuilder in module cache');
@@ -100,16 +99,23 @@
     }
   }
   
-  // Assign to window IMMEDIATELY within IIFE scope
+  // Assign to window at MODULE SCOPE (browser environment)
+  // This happens BEFORE UMD wrapper returns
   window.pdfBuilderReact = { 
     initPDFBuilderReact: initPDFBuilderReact 
   };
   
-  console.log('🔥 [PDF BUNDLE] IIFE: Assigned to window.pdfBuilderReact');
-  console.log('🔥 [PDF BUNDLE] IIFE: window.pdfBuilderReact type:', typeof window.pdfBuilderReact);
-  console.log('🔥 [PDF BUNDLE] IIFE: initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-  
-})();
+  console.log('🔥 [PDF BUNDLE] Assigned window.pdfBuilderReact at module scope');
+  console.log('🔥 [PDF BUNDLE] Type:', typeof window.pdfBuilderReact);
+  console.log('🔥 [PDF BUNDLE] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+}
 
-// For webpack: this is needed but will be ignored in favor of the IIFE
-export default { initPDFBuilderReact: function() { return window.pdfBuilderReact ? window.pdfBuilderReact.initPDFBuilderReact() : false; } };
+// Export for UMD wrapper and CommonJS
+export default { 
+  initPDFBuilderReact: function() { 
+    if (typeof window !== 'undefined' && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+      return window.pdfBuilderReact.initPDFBuilderReact();
+    }
+    return false;
+  }
+};
