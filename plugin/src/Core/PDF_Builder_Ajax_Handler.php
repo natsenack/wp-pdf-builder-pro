@@ -215,11 +215,6 @@ class PDF_Builder_Ajax_Handler {
      */
     private function sanitize_setting($key, $value) {
         $sanitizers = array(
-            'cache_enabled' => 'intval',
-            'cache_ttl' => 'intval',
-            'cache_compression' => 'intval',
-            'cache_auto_cleanup' => 'intval',
-            'cache_max_size' => 'intval',
             'auto_maintenance' => 'intval',
             'auto_backup' => 'intval',
             'backup_retention' => 'intval',

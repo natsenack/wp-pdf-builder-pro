@@ -45,14 +45,6 @@ describe('PDFPreviewAPI', () => {
             }
         });
         api.displayPreview = jest.fn();
-        api.cachePreview = jest.fn((data) => {
-            const key = data.cache_key || api.generateCacheKey(data);
-            api.cache.set(key, {
-                url: data.image_url,
-                timestamp: Date.now(),
-                context: data.context || 'unknown'
-            });
-        });
     });
 
     afterEach(() => {
@@ -64,7 +56,6 @@ describe('PDFPreviewAPI', () => {
         expect(api.endpoint).toBe('/wp-admin/admin-ajax.php');
         expect(api.nonce).toBe('test-nonce');
         expect(api.isGenerating).toBe(false);
-        expect(api.cache).toBeInstanceOf(Map);
     });
 
     test('should generate editor preview successfully', async () => {
@@ -72,8 +63,7 @@ describe('PDFPreviewAPI', () => {
             success: true,
             data: {
                 image_url: 'http://example.com/preview.png',
-                template_id: 'test-template',
-                cache_key: 'cache123'
+                template_id: 'test-template'
             }
         };
 
@@ -84,7 +74,6 @@ describe('PDFPreviewAPI', () => {
         // Mock des méthodes DOM
         api.showLoadingIndicator = jest.fn();
         api.hideLoadingIndicator = jest.fn();
-        api.cachePreview = jest.fn();
         api.displayPreview = jest.fn();
 
         const templateData = { title: 'Test Template' };
@@ -94,7 +83,6 @@ describe('PDFPreviewAPI', () => {
         expect(mockFetch).toHaveBeenCalledWith('/wp-admin/admin-ajax.php', expect.any(Object));
         expect(api.showLoadingIndicator).toHaveBeenCalled();
         expect(api.hideLoadingIndicator).toHaveBeenCalled();
-        expect(api.cachePreview).toHaveBeenCalledWith(mockResponse.data);
         expect(api.displayPreview).toHaveBeenCalledWith('http://example.com/preview.png', 'editor');
     });
 
@@ -156,8 +144,7 @@ describe('PDFPreviewAPI', () => {
             success: true,
             data: {
                 image_url: 'http://example.com/order-preview.png',
-                template_id: 'order-template',
-                cache_key: 'order123'
+                template_id: 'order-template'
             }
         };
 
@@ -168,12 +155,10 @@ describe('PDFPreviewAPI', () => {
         // Mock des méthodes DOM avant l'appel
         const originalShowLoading = api.showLoadingIndicator;
         const originalHideLoading = api.hideLoadingIndicator;
-        const originalCachePreview = api.cachePreview;
         const originalDisplayPreview = api.displayPreview;
 
         api.showLoadingIndicator = jest.fn();
         api.hideLoadingIndicator = jest.fn();
-        api.cachePreview = jest.fn();
         api.displayPreview = jest.fn();
 
         const templateData = { order: { id: 123 } };
@@ -186,80 +171,7 @@ describe('PDFPreviewAPI', () => {
         // Restaurer les méthodes originales
         api.showLoadingIndicator = originalShowLoading;
         api.hideLoadingIndicator = originalHideLoading;
-        api.cachePreview = originalCachePreview;
         api.displayPreview = originalDisplayPreview;
-    });
-
-    test('should cache preview data', () => {
-        const previewData = {
-            image_url: 'http://example.com/cached.png',
-            template_id: 'cached-template',
-            cache_key: 'cache123'
-        };
-
-        // Mock de la méthode cachePreview si elle n'existe pas encore
-        if (!api.cachePreview) {
-            api.cachePreview = function(data) {
-                const key = data.cache_key || this.generateCacheKey(data);
-                this.cache.set(key, {
-                    url: data.image_url,
-                    timestamp: Date.now(),
-                    context: data.context || 'unknown'
-                });
-            }.bind(api);
-        }
-
-        api.cachePreview(previewData);
-
-        expect(api.cache.has('cache123')).toBe(true);
-        expect(api.cache.get('cache123')).toEqual({
-            url: 'http://example.com/cached.png',
-            timestamp: expect.any(Number),
-            context: 'unknown'
-        });
-    });
-
-    test('should generate cache key', () => {
-        const data = {
-            context: 'editor',
-            order_id: 123,
-            template_data: { title: 'Test' }
-        };
-
-        const cacheKey = api.generateCacheKey(data);
-
-        expect(typeof cacheKey).toBe('string');
-        expect(cacheKey.length).toBeGreaterThan(0);
-    });
-
-    test('should clear old cache entries when limit reached', () => {
-        // Mock de la méthode cachePreview avec logique de limite
-        api.cachePreview = function(data) {
-            const key = data.cache_key || this.generateCacheKey(data);
-            this.cache.set(key, {
-                url: data.image_url,
-                timestamp: Date.now(),
-                context: data.context || 'unknown'
-            });
-
-            // Nettoyer le cache ancien (garder seulement 10 derniers)
-            if (this.cache.size > 10) {
-                const oldestKey = this.cache.keys().next().value;
-                this.cache.delete(oldestKey);
-            }
-        }.bind(api);
-
-        // Remplir le cache au-delà de la limite de 10
-        for (let i = 0; i < 12; i++) {
-            const data = {
-                image_url: `http://example.com/${i}.png`,
-                template_id: `template${i}`,
-                cache_key: `cache${i}`
-            };
-            api.cachePreview(data);
-        }
-
-        expect(api.cache.size).toBe(10); // Devrait être limité à 10
     });
 
     test('should show and hide loading indicator', () => {

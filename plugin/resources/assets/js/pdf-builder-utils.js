@@ -272,7 +272,6 @@
      * Compatibilité AJAX avec gestion d'erreurs
      */
     window.AjaxCompat = {
-        cache: new Map(),
         lastRequestTime: 0,
         throttleDelay: 100, // 100ms entre requêtes
 
@@ -280,25 +279,17 @@
          * Réinitialise l'état d'AjaxCompat
          */
         reset: function() {
-            this.cache.clear();
             this.lastRequestTime = 0;
         },
 
         /**
-         * Requête AJAX générique avec retry et cache
+         * Requête AJAX générique avec retry
          * @param {string} action - Action WordPress
          * @param {Object} data - Données à envoyer
-         * @param {Object} options - Options (retries, cache, etc.)
+         * @param {Object} options - Options (retries, etc.)
          * @returns {Promise} Promesse de réponse
          */
         request: async function(action, data = {}, options = {}) {
-            const cacheKey = options.cache !== false ? JSON.stringify({action, data}) : null;
-
-            // Vérifier le cache
-            if (cacheKey && this.cache.has(cacheKey)) {
-                return this.cache.get(cacheKey);
-            }
-
             // Rate limiting
             const now = Date.now();
             const timeSinceLastRequest = now - this.lastRequestTime;
@@ -313,12 +304,6 @@
             for (let attempt = 0; attempt <= maxRetries; attempt++) {
                 try {
                     const result = await this._executeRequest(action, data);
-
-                    // Mettre en cache si demandé
-                    if (cacheKey) {
-                        this.cache.set(cacheKey, result);
-                    }
-
                     return result;
                 } catch (error) {
                     lastError = error;

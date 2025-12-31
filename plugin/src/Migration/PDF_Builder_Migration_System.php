@@ -75,8 +75,6 @@ class PDF_Builder_Migration_System
     {
         // Initialize default settings
         $default_settings = [
-            'cache_enabled' => false,
-            'cache_ttl' => 3600,
             'developer_enabled' => false,
             'license_test_mode_enabled' => false,
         ];

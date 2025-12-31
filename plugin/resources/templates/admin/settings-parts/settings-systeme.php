@@ -13,9 +13,6 @@
     $next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
 
-    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl);
-    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
-
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
@@ -1068,31 +1065,6 @@
             }
         });
     });
-
-    // Mise à jour dynamique des indicateurs de statut
-    function updateStatusIndicators() {
-        // Mettre à jour le statut du cache
-        const cacheEnabled = document.getElementById('general_cache_enabled').checked;
-        const statusElement = document.getElementById('cache-performance-status');
-        const cacheIndicator = document.querySelector('.cache-enabled-indicator');
-
-        if (statusElement) {
-            statusElement.textContent = cacheEnabled ? 'ACTIF' : 'INACTIF';
-            statusElement.style.backgroundColor = cacheEnabled ? '#28a745' : '#dc3545';
-        }
-
-        if (cacheIndicator) {
-            cacheIndicator.textContent = cacheEnabled ? 'Cache activé' : 'Cache désactivé';
-        }
-    }
-
-    // Écouter les changements sur les toggles du cache
-    document.getElementById('general_cache_enabled').addEventListener('change', updateStatusIndicators);
-    document.getElementById('cache_compression').addEventListener('change', updateStatusIndicators);
-    document.getElementById('cache_auto_cleanup').addEventListener('change', updateStatusIndicators);
-
-    // Initialiser les indicateurs au chargement
-    updateStatusIndicators();
 
 })(jQuery);
 </script>

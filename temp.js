@@ -1,4 +1,4 @@
-                // Force cache clear
+                // Force cache clear - service workers only
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(registrations) {
                         for(let registration of registrations) {
@@ -6,9 +6,6 @@
                         }
                     });
                 }
-                // Clear localStorage and sessionStorage
-                localStorage.clear();
-                sessionStorage.clear();
                 console.log('Cache cleared by PDF Builder');
 
                 // Valeurs par défaut globales pour tous les champs Canvas - SOURCE UNIQUE DE VÉRITÉ
@@ -136,53 +133,7 @@
                     }
                 };
 
-                // Gestionnaire de cache localStorage
-                const CanvasCache = {
-                    save: (data) => {
-                        try {
-                            const cacheData = {
-                                data: data,
-                                timestamp: Date.now(),
-                                version: '1.0'
-                            };
-                            localStorage.setItem(CANVAS_CONFIG.CACHE_KEY, JSON.stringify(cacheData));
-                            console.log('CACHE_SAVE: Canvas settings cached locally');
-                        } catch (e) {
-                            console.warn('CACHE_ERROR: Failed to save to localStorage:', e);
-                        }
-                    },
-
-                    load: () => {
-                        try {
-                            const cached = localStorage.getItem(CANVAS_CONFIG.CACHE_KEY);
-                            if (!cached) return null;
-
-                            const cacheData = JSON.parse(cached);
-                            const age = Date.now() - cacheData.timestamp;
-
-                            if (age > CANVAS_CONFIG.CACHE_TTL) {
-                                console.log('CACHE_EXPIRED: Cache too old, removing');
-                                CanvasCache.clear();
-                                return null;
-                            }
-
-                            console.log('CACHE_LOAD: Loaded cached settings');
-                            return cacheData.data;
-                        } catch (e) {
-                            console.warn('CACHE_ERROR: Failed to load from localStorage:', e);
-                            return null;
-                        }
-                    },
-
-                    clear: () => {
-                        try {
-                            localStorage.removeItem(CANVAS_CONFIG.CACHE_KEY);
-                            console.log('CACHE_CLEAR: Local cache cleared');
-                        } catch (e) {
-                            console.warn('CACHE_ERROR: Failed to clear cache:', e);
-                        }
-                    }
-                };
+                // Cache system removed - using database storage instead
 
                 // Health monitoring
                 const CanvasHealth = {
@@ -992,17 +943,14 @@
                         getMetrics: () => CanvasMetrics.getStats(),
 
                         getCacheStatus: () => {
-                            const cached = CanvasCache.load();
-                            return cached ? {
-                                hasCache: true,
-                                age: Math.round((Date.now() - JSON.parse(localStorage.getItem(CANVAS_CONFIG.CACHE_KEY) || '{}').timestamp || 0) / 1000) + 's',
-                                data: cached
-                            } : { hasCache: false };
+                            return { hasCache: false, message: 'Cache system removed - using database storage' };
                         },
 
                         forceHealthCheck: () => CanvasRecovery.performHealthCheck(),
 
-                        clearCache: () => CanvasCache.clear(),
+                        clearCache: () => {
+                            console.log('Cache system removed - no local cache to clear');
+                        },
 
                         simulateFailure: () => {
                             CanvasHealth.recordFailure();

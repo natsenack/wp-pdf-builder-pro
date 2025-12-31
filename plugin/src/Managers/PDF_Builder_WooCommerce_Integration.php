@@ -1240,15 +1240,8 @@ class PDF_Builder_WooCommerce_Integration
                 return;
             }
 
-            // Récupérer les éléments depuis le cache ou la base de données
-            // ✅ RESPECT DU SETTING CACHE: Only use transient if cache is enabled in settings
-            $cache_key = 'pdf_builder_canvas_elements_' . $template_id;
-            $cache_enabled = !empty(get_option('pdf_builder_settings', [])['cache_enabled']);
+            // Récupérer les éléments depuis la base de données (cache supprimé)
             $canvas_elements = false;
-            
-            if ($cache_enabled) {
-                $canvas_elements = get_transient($cache_key);
-            }
 
             if ($canvas_elements === false) {
                 // Si on a déjà les données du template depuis la table personnalisée, les utiliser

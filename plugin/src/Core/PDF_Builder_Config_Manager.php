@@ -49,9 +49,6 @@ class PDF_Builder_Global_Config_Manager {
             'company_website' => '', // Sera défini plus tard si WordPress est disponible
 
             // Paramètres de performance
-            'cache_enabled' => true,
-            'cache_ttl' => 3600, // 1 heure
-            'cache_cleanup_interval' => 86400, // 24 heures
             'memory_limit' => 256, // MB
             'max_execution_time' => 30, // secondes
 
@@ -90,7 +87,6 @@ class PDF_Builder_Global_Config_Manager {
 
             // Paramètres de base de données
             'db_optimization_enabled' => true,
-            'db_query_cache_enabled' => true,
             'db_connection_pooling' => false,
 
             // Paramètres d'internationalisation

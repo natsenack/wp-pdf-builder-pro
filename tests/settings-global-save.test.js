@@ -18,7 +18,6 @@ describe('PDFBuilderSettingsSaver', () => {
             <div id="pdf-builder-tab-general" class="tab-content">
                 <input type="text" name="pdf_builder_company_name" value="Test Company">
                 <input type="email" name="pdf_builder_company_email" value="test@example.com">
-                <input type="checkbox" name="pdf_builder_cache_enabled" checked>
                 <input type="checkbox" name="pdf_builder_debug_disabled">
                 <input type="number" name="pdf_builder_max_execution_time" value="30">
                 <select name="pdf_builder_theme">
@@ -71,7 +70,6 @@ describe('PDFBuilderSettingsSaver', () => {
         expect(settings).toEqual({
             general_company_name: 'Test Company',
             general_company_email: 'test@example.com',
-            general_cache_enabled: '1',
             general_debug_disabled: '0',
             general_max_execution_time: 30,
             general_theme: 'dark',
@@ -97,7 +95,6 @@ describe('PDFBuilderSettingsSaver', () => {
         expect(allSettings).toEqual({
             general_company_name: 'Test Company',
             general_company_email: 'test@example.com',
-            general_cache_enabled: '1',
             general_debug_disabled: '0',
             general_max_execution_time: 30,
             general_theme: 'dark',
@@ -111,7 +108,6 @@ describe('PDFBuilderSettingsSaver', () => {
     test('should handle checkbox inputs correctly', () => {
         const settings = PDFBuilderSettingsSaver.collectTabSettings('general');
 
-        expect(settings.general_cache_enabled).toBe('1'); // checked
         expect(settings.general_debug_disabled).toBe('0'); // unchecked
     });
 
@@ -145,8 +141,7 @@ describe('PDFBuilderSettingsSaver', () => {
         expect(typeof PDFBuilderSettingsSaver.saveTabSettings).toBe('function');
 
         const settings = {
-            general_company_name: 'Updated Company',
-            general_cache_enabled: '1'
+            general_company_name: 'Updated Company'
         };
 
         // Appeler la méthode et vérifier qu'elle retourne une Promise

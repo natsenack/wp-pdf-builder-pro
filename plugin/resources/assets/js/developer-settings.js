@@ -59,7 +59,6 @@
                 // Tools
                 toolJsLogs: $('#dev-tool-js-logs'),
                 toolSystemInfo: $('#dev-tool-system-info'),
-                toolClearCache: $('#dev-tool-clear-cache'),
                 toolExportSettings: $('#dev-tool-export-settings'),
                 toolPerformance: $('#dev-tool-performance'),
                 toolReset: $('#dev-tool-reset'),
@@ -103,7 +102,6 @@
             // Tool buttons
             this.elements.toolJsLogs.on('click', () => this.showJsLogsModal());
             this.elements.toolSystemInfo.on('click', () => this.showSystemInfoModal());
-            this.elements.toolClearCache.on('click', () => this.clearSystemCache());
             this.elements.toolExportSettings.on('click', () => this.exportSettings());
             this.elements.toolPerformance.on('click', () => this.showPerformanceAnalysis());
             this.elements.toolReset.on('click', () => this.resetDeveloperSettings());
@@ -226,13 +224,6 @@
                 timestamp: new Date(now.getTime() - 5000).toISOString(),
                 source: 'Canvas',
                 message: 'Composant Canvas initialisé avec succès'
-            });
-
-            logs.push({
-                type: 'warn',
-                timestamp: new Date(now.getTime() - 10000).toISOString(),
-                source: 'Cache',
-                message: 'Cache système périmé détecté - nettoyage automatique'
             });
 
             logs.push({
@@ -388,7 +379,6 @@
                     version: 'Pro 2.1.0',
                     dev_mode: this.config.current_values.dev_mode === '1' ? 'Activé' : 'Désactivé',
                     debug_logs: this.config.current_values.debug_enabled === '1' ? 'Activé' : 'Désactivé',
-                    cache_status: 'Opérationnel',
                     last_backup: 'N/A (loaded via AJAX)'
                 }
             };
@@ -412,16 +402,6 @@
             });
 
             this.elements.systemInfoContent.html(html);
-        },
-
-        clearSystemCache: function() {
-            if (confirm('Vider le cache système ? Cette action peut améliorer les performances.')) {
-
-                // Simulate cache clearing
-                setTimeout(() => {
-                    this.showNotification('Cache système vidé avec succès', 'success');
-                }, 1000);
-            }
         },
 
         exportSettings: function() {
@@ -452,7 +432,6 @@
                 js_heap: '67 MB',
                 render_time: '120ms',
                 recommendations: [
-                    'Considérez la mise en cache des images fréquemment utilisées',
                     'Optimisez les sélecteurs CSS complexes',
                     'Réduisez le nombre d\'éléments DOM si possible'
                 ]

@@ -11,7 +11,6 @@ class PDFPreviewAPI {
         this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';
         this.nonce = pdfBuilderAjax?.nonce || '';
         this.isGenerating = false;
-        this.cache = new Map();
         this.currentZoom = 100;
         this.currentRotation = 0;
         this.currentPanX = 0;
@@ -91,7 +90,6 @@ class PDFPreviewAPI {
 
             if (result.success) {
                 
-                this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
@@ -143,7 +141,6 @@ class PDFPreviewAPI {
 
             if (result.success) {
                 
-                this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'metabox', orderId);
                 return result.data;
             } else {
@@ -159,48 +156,6 @@ class PDFPreviewAPI {
             this.isGenerating = false;
             this.hideLoadingIndicator();
         }
-    }
-
-    /**
-     * Met en cache les aperçus générés
-     */
-    cachePreview(data) {
-        const key = data.cache_key || this.generateCacheKey(data);
-        this.cache.set(key, {
-            url: data.image_url,
-            timestamp: Date.now(),
-            context: data.context || 'unknown'
-        });
-
-        // Nettoyer le cache ancien (garder seulement 10 derniers)
-        if (this.cache.size > 10) {
-            const oldestKey = this.cache.keys().next().value;
-            this.cache.delete(oldestKey);
-        }
-    }
-
-    /**
-     * Génère une clé de cache
-     */
-    generateCacheKey(data) {
-        return btoa(JSON.stringify({
-            context: data.context,
-            order_id: data.order_id,
-            template_hash: this.hashString(JSON.stringify(data.template_data))
-        })).slice(0, 32);
-    }
-
-    /**
-     * Hash simple pour les clés de cache
-     */
-    hashString(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convertir en 32 bits
-        }
-        return Math.abs(hash).toString(36);
     }
 
     /**

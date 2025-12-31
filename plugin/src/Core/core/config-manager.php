@@ -52,7 +52,6 @@ class PDF_Builder_Config_Manager {
         'pdf_builder_pdf_quality' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'high'],
         'pdf_builder_pdf_page_size' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'A4'],
         'pdf_builder_pdf_orientation' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'portrait'],
-        'pdf_builder_pdf_cache_enabled' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
         'pdf_builder_pdf_compression' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'medium'],
         'pdf_builder_pdf_metadata_enabled' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
         'pdf_builder_pdf_print_optimized' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],

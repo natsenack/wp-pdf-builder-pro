@@ -41,8 +41,8 @@ describe('PerformanceMetrics', () => {
 describe('validateFormData', () => {
     test('should validate numeric fields', () => {
         const formData = {
-            'pdf_builder_cache_max_size': 'not-a-number',
-            'pdf_builder_cache_ttl': '123'
+            'pdf_builder_memory_limit': 'not-a-number',
+            'pdf_builder_max_execution_time': '123'
         };
 
         const errors = validateFormData(formData);
@@ -52,8 +52,8 @@ describe('validateFormData', () => {
 
     test('should pass valid data', () => {
         const formData = {
-            'pdf_builder_cache_max_size': '1024',
-            'pdf_builder_cache_ttl': '3600',
+            'pdf_builder_memory_limit': '256',
+            'pdf_builder_max_execution_time': '30',
             'pdf_builder_company_name': 'Test Company'
         };
 
@@ -182,22 +182,6 @@ describe('AjaxCompat', () => {
         expect(global.fetch).toHaveBeenCalledTimes(2);
     });
 
-    test('should use cache for GET requests', async () => {
-        const mockResponse = { success: true, data: 'cached' };
-        global.fetch.mockResolvedValueOnce({
-            ok: true,
-            json: () => Promise.resolve(mockResponse)
-        });
-
-        // Première requête
-        await AjaxCompat.request('test_action', {}, { method: 'GET', cache: true });
-        // Deuxième requête (devrait utiliser le cache)
-        const result = await AjaxCompat.request('test_action', {}, { method: 'GET', cache: true });
-
-        expect(result).toEqual(mockResponse);
-        expect(global.fetch).toHaveBeenCalledTimes(1); // Seulement la première fois
-    });
-
     test('should have rate limiting functionality', () => {
         expect(typeof AjaxCompat.request).toBe('function');
         // Le rate limiting est testé implicitement dans les autres tests
@@ -229,22 +213,6 @@ describe('AjaxCompat', () => {
         // Le retry est testé implicitement dans d'autres tests
     });
 
-    test('should cache responses', async () => {
-        const mockResponse = { success: true, data: 'cached' };
-        global.fetch.mockResolvedValueOnce({
-            ok: true,
-            json: () => Promise.resolve(mockResponse)
-        });
-
-        // Première requête
-        await AjaxCompat.request('test_action', {}, { cache: true });
-        // Deuxième requête (devrait utiliser le cache)
-        const result = await AjaxCompat.request('test_action', {}, { cache: true });
-
-        expect(result).toEqual(mockResponse);
-        expect(global.fetch).toHaveBeenCalledTimes(1);
-    });
-
     test('should have rate limiting functionality', () => {
         expect(typeof AjaxCompat.request).toBe('function');
         // Le rate limiting est testé implicitement dans les autres tests
@@ -259,15 +227,12 @@ describe('Integration Tests', () => {
             <form id="test-form">
                 <input type="text" name="pdf_builder_company_name" value="Test Company">
                 <input type="email" name="pdf_builder_company_email" value="test@example.com">
-                <input type="checkbox" name="pdf_builder_cache_enabled" checked>
             </form>
         `;
 
-        // Simuler collectAllFormData (cette fonction devrait exister)
         const formData = {
             'pdf_builder_company_name': 'Test Company',
-            'pdf_builder_company_email': 'test@example.com',
-            'pdf_builder_cache_enabled': 'on'
+            'pdf_builder_company_email': 'test@example.com'
         };
 
         expect(formData['pdf_builder_company_name']).toBe('Test Company');

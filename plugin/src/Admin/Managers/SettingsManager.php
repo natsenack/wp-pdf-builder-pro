@@ -76,14 +76,6 @@ class SettingsManager
         );
 
         add_settings_field(
-            'cache_settings',
-            __('Cache', 'pdf-builder-pro'),
-            [$this, 'renderCacheField'],
-            'pdf_builder_settings',
-            'pdf_builder_performance'
-        );
-
-        add_settings_field(
             'performance_limits',
             __('Limites de Performance', 'pdf-builder-pro'),
             [$this, 'renderPerformanceLimitsField'],

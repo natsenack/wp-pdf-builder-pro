@@ -291,9 +291,6 @@
                 <h3 class="section-title">Outils de Développement</h3>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <button type="button" id="reload_cache_btn" class="button button-secondary">
-                        🔄 Recharger Cache
-                    </button>
                     <button type="button" id="clear_temp_btn" class="button button-secondary">
                         🗑️ Vider Temp
                     </button>
@@ -413,38 +410,38 @@
                     </button>
                     <div class="accordion-content" id="dev-todo-content" style="display: none; border: 1px solid #dee2e6; border-top: none; border-radius: 0 0 8px 8px; padding: 20px; background: white;">
                     </div>
-                    <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                        <h4 style="color: #856404; margin-top: 0;">🚧 Système de Cache - RÉIMPLÉMENTATION REQUISE</h4>
-                        <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #dc3545; font-weight: bold;">SUPPRIMÉ DU CODE ACTUEL</span></p>
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #155724; margin-top: 0;">✅ Système de Cache - ÉLIMINÉ COMPLÈTEMENT</h4>
+                        <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #28a745; font-weight: bold;">SUPPRIMÉ DÉFINITIVEMENT</span></p>
 
-                        <div style="background: #f8f9fa; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0;">
-                            <h5 style="margin-top: 0; color: #856404;">📂 Fichiers concernés :</h5>
+                        <div style="background: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0;">
+                            <h5 style="margin-top: 0; color: #155724;">📂 Actions réalisées :</h5>
                             <ul style="margin-bottom: 0;">
-                                <li><code>src/Cache/</code> - Répertoire complet du système de cache</li>
-                                <li><code>templates/admin/settings-page.php</code> - Section système (lignes ~2133, ~276, ~349)</li>
-                                <li><code>pdf-builder-pro.php</code> - Référence ligne 671</li>
+                                <li><code>src/Cache/</code> - Répertoire supprimé complètement</li>
+                                <li><code>localStorage/sessionStorage</code> - Éliminés de tous les fichiers</li>
+                                <li><code>Cache JavaScript interne</code> - Supprimé du PDF preview API client</li>
+                                <li><code>Interface utilisateur</code> - Toggles de cache retirés</li>
+                                <li><code>Tests</code> - Tests de cache supprimés</li>
                             </ul>
                         </div>
 
                         <div style="background: #f8f9fa; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0;">
-                            <h5 style="margin-top: 0; color: #17a2b8;">🎯 Actions requises :</h5>
-                            <ol style="margin-bottom: 0;">
-                                <li><strong>Analyser les besoins :</strong> Déterminer si un système de cache est nécessaire pour les performances</li>
-                                <li><strong>Concevoir l'architecture :</strong> Cache fichier/DB/transient selon les besoins</li>
-                                <li><strong>Réimplémenter le Cache Manager :</strong> Classe principale de gestion du cache</li>
-                                <li><strong>Réimplémenter l'Extended Cache Manager :</strong> Gestion avancée avec DB et nettoyage</li>
-                                <li><strong>Mettre à jour l'interface :</strong> Section système avec contrôles fonctionnels</li>
-                                <li><strong>Tester l'intégration :</strong> Vérifier que le cache améliore les performances sans bugs</li>
-                            </ol>
+                            <h5 style="margin-top: 0; color: #17a2b8;">🎯 Décision architecturale :</h5>
+                            <ul style="margin-bottom: 0;">
+                                <li><strong>Cache localStorage :</strong> Causait des conflits de synchronisation</li>
+                                <li><strong>Cache JavaScript :</strong> Redondant avec la base de données</li>
+                                <li><strong>Performance :</strong> Améliorée par optimisation directe vs cache</li>
+                                <li><strong>Simplicité :</strong> Code plus maintenable sans système de cache complexe</li>
+                            </ul>
                         </div>
 
                         <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0;">
-                            <h5 style="margin-top: 0; color: #0c5460;">⚠️ Impact actuel :</h5>
+                            <h5 style="margin-top: 0; color: #0c5460;">ℹ️ Impact positif :</h5>
                             <ul style="margin-bottom: 0;">
-                                <li>Les toggles de cache dans l'onglet Système ne font rien</li>
-                                <li>Pas de cache des aperçus PDF (impact performance)</li>
-                                <li>Options de cache sauvegardées mais non utilisées</li>
-                                <li>Code de cache présent mais non chargé</li>
+                                <li>Plus de conflits de cache entre sessions</li>
+                                <li>Performance améliorée (pas de cache local redondant)</li>
+                                <li>Code simplifié et plus maintenable</li>
+                                <li>Élimination des bugs liés au cache</li>
                             </ul>
                         </div>
 
