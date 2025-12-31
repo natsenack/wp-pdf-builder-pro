@@ -318,6 +318,11 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
+        // Loader to initialize the React bundle after it loads
+        $loader_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-loader.js';
+        wp_enqueue_script('pdf-builder-react-loader', $loader_url, ['pdf-builder-react'], $version_param, true);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-loader: ' . $loader_url);
+
         // Init helper - COMMENTED OUT as initialization is handled in the React bundle
         // $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
         // wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
