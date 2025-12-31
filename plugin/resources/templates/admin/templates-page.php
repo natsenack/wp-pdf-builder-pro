@@ -43,8 +43,8 @@ function get_available_paper_formats() {
     $configured_format = get_option('pdf_builder_canvas_format', 'A4');
     
     // Logique : seuls les formats activés dans les paramètres d'affichage sont disponibles
-    // Pour le test, on active A4 et A5
-    $enabled_formats = array('A4', 'A5'); // Test avec A5 activé
+    // Retour à la configuration normale : seul A4 est activé
+    $enabled_formats = array('A4');
     
     // Filtrer les formats disponibles
     $available_formats = array();
