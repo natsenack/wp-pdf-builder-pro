@@ -4,20 +4,25 @@
 // Pre-init script ensures window.pdfBuilderReact exists before this runs
 // ============================================================================
 
+// IMMEDIATE LOG BEFORE ANYTHING
+window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+window.pdfBuilderReactDebug.push('BUNDLE_LOADED_START');
+
 // Define the initialization function
 function initPDFBuilderReact() {
-  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-  window.pdfBuilderReactDebug.push('FUNCTION_CALLED');
+  window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
   
   try {
+    window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
     // Get globals
     var React = window.React;
     var ReactDOM = window.ReactDOM;
     
-    window.pdfBuilderReactDebug.push('REACT_VARS_GET: React=' + (typeof React) + ', ReactDOM=' + (typeof ReactDOM));
+    window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
     
-    console.log('🔧 [PDF BUNDLE] React type:', typeof React);
-    console.log('🔧 [PDF BUNDLE] ReactDOM type:', typeof ReactDOM);
+    // Just return true to test if function works at all
+    window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
+    return true;
     console.log('🔧 [PDF BUNDLE] __webpack_modules__ available:', !!window.__webpack_modules__);
     console.log('🔧 [PDF BUNDLE] __webpack_require__ available:', !!window.__webpack_require__);
     

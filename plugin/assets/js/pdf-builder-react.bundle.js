@@ -21,87 +21,91 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // ============================================================================
 // PDF Builder React - MAIN BUNDLE
 // Exports initPDFBuilderReact function to window.pdfBuilderReact
 // Pre-init script ensures window.pdfBuilderReact exists before this runs
 // ============================================================================
 
+// IMMEDIATE LOG BEFORE ANYTHING
+window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+window.pdfBuilderReactDebug.push('BUNDLE_LOADED_START');
+
 // Define the initialization function
 function initPDFBuilderReact() {
-  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
-  window.pdfBuilderReactDebug.push('FUNCTION_CALLED');
+  window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
   try {
+    window.pdfBuilderReactDebug.push('FUNCTION_IN_TRY_BLOCK');
     // Get globals
     var React = window.React;
     var ReactDOM = window.ReactDOM;
-    window.pdfBuilderReactDebug.push('REACT_VARS_GET: React=' + _typeof(React) + ', ReactDOM=' + _typeof(ReactDOM));
-    console.log('🔧 [PDF BUNDLE] React type:', _typeof(React));
-    console.log('🔧 [PDF BUNDLE] ReactDOM type:', _typeof(ReactDOM));
-    console.log('🔧 [PDF BUNDLE] __webpack_modules__ available:', !!window.__webpack_modules__);
-    console.log('🔧 [PDF BUNDLE] __webpack_require__ available:', !!window.__webpack_require__);
+    window.pdfBuilderReactDebug.push('FUNCTION_AFTER_GLOBALS');
+
+    // Just return true to test if function works at all
+    window.pdfBuilderReactDebug.push('FUNCTION_RETURNING_TRUE');
+    return true;
+    // removed by dead control flow
+
+    // removed by dead control flow
+
 
     // Check for container
-    var container = document.getElementById('pdf-builder-react-root');
-    console.log('🔧 [PDF BUNDLE] Container element:', container ? 'FOUND' : 'NOT FOUND');
-    if (!container) {
-      console.error('❌ [PDF BUNDLE] ERROR: Container not found');
-      return false;
-    }
+    // removed by dead control flow
+ var container; 
+    // removed by dead control flow
+
+    // removed by dead control flow
+
 
     // Validate React
-    if (typeof React === 'undefined' || !React) {
-      console.error('❌ [PDF BUNDLE] ERROR: React undefined or null');
-      return false;
-    }
-    if (typeof ReactDOM === 'undefined' || !ReactDOM) {
-      console.error('❌ [PDF BUNDLE] ERROR: ReactDOM undefined or null');
-      return false;
-    }
-    if (typeof ReactDOM.createRoot !== 'function') {
-      console.error('❌ [PDF BUNDLE] ERROR: ReactDOM.createRoot not a function');
-      return false;
-    }
-    console.log('✅ [PDF BUNDLE] React dependencies validated');
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+
 
     // Check webpack modules count
-    var moduleCount = Object.keys(window.__webpack_modules__ || {}).length;
-    console.log('🔧 [PDF BUNDLE] Webpack modules count:', moduleCount);
+    // removed by dead control flow
+ var moduleCount; 
+    // removed by dead control flow
+
 
     // Get UI elements safely
-    var loadingEl = document.getElementById('pdf-builder-react-loading');
-    var editorEl = document.getElementById('pdf-builder-react-editor');
-    if (loadingEl) loadingEl.style.display = 'none';
-    if (editorEl) editorEl.style.display = 'block';
-    console.log('🎨 [PDF BUNDLE] Creating React root...');
-    var root = ReactDOM.createRoot(container);
+    // removed by dead control flow
+ var loadingEl; 
+    // removed by dead control flow
+ var editorEl; 
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+ var root; 
 
     // Try to get PDFBuilder from webpack modules if available
-    var PDFBuilder = null;
-    if (true) {
-      for (var key in __webpack_require__.m) {
-        var mod = __webpack_require__.m[key];
-        if (mod && mod.exports && mod.exports["default"]) {
-          var exp = mod.exports["default"];
-          if (typeof exp === 'function' && (exp.$$typeof || exp.prototype)) {
-            PDFBuilder = exp;
-            console.log('🎨 [PDF BUNDLE] Found PDFBuilder in module cache');
-            break;
-          }
-        }
-      }
-    }
-    if (!PDFBuilder) {
-      console.error('❌ [PDF BUNDLE] ERROR: PDFBuilder component not found');
-      return false;
-    }
-    console.log('🎨 [PDF BUNDLE] Creating element from PDFBuilder component...');
-    var element = React.createElement(PDFBuilder);
-    console.log('🎨 [PDF BUNDLE] Rendering to root...');
-    root.render(element);
-    console.log('✅ [PDF BUNDLE] Rendered successfully!');
-    return true;
+    // removed by dead control flow
+ var PDFBuilder; 
+    // removed by dead control flow
+ var exp, mod, key; 
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+ var element; 
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+
+    // removed by dead control flow
+
   } catch (error) {
     window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
     console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
