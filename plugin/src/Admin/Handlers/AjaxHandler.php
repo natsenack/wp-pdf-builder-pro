@@ -46,6 +46,8 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
         add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
+        add_action('wp_ajax_pdf_builder_get_template_settings', [$this, 'ajaxGetTemplateSettings']);
+        add_action('wp_ajax_pdf_builder_save_template_settings', [$this, 'ajaxSaveTemplateSettings']);
 
         // Hooks AJAX de maintenance
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajaxCheckDatabase']);
@@ -1618,5 +1620,179 @@ class AjaxHandler
             error_log('[PDF Builder] Error in ajaxGetCanvasSettings: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Internal server error']);
         }
+    }
+
+    /**
+     * Récupérer les paramètres d'un template prédéfini
+     */
+    public function ajaxGetTemplateSettings()
+    {
+        // Vérifier la permission
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(['message' => 'Permission denied']);
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+
+        $slug = sanitize_text_field($_POST['slug'] ?? '');
+
+        if (empty($slug)) {
+            wp_send_json_error(['message' => 'Template slug is required']);
+            return;
+        }
+
+        try {
+            // Charger le template depuis la base de données ou les fichiers
+            $templateData = $this->loadPredefinedTemplate($slug);
+
+            if (!$templateData) {
+                wp_send_json_error(['message' => 'Template not found']);
+                return;
+            }
+
+            wp_send_json_success($templateData);
+
+        } catch (\Exception $e) {
+            error_log('PDF Builder - Error loading template settings: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Error loading template settings']);
+        }
+    }
+
+    /**
+     * Sauvegarder les paramètres d'un template prédéfini
+     */
+    public function ajaxSaveTemplateSettings()
+    {
+        // Vérifier la permission
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(['message' => 'Permission denied']);
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+
+        $slug = sanitize_text_field($_POST['slug'] ?? '');
+        $name = sanitize_text_field($_POST['name'] ?? '');
+        $description = sanitize_textarea_field($_POST['description'] ?? '');
+        $is_public = isset($_POST['is_public']) ? (bool)$_POST['is_public'] : false;
+        $paper_size = sanitize_text_field($_POST['paper_size'] ?? 'A4');
+        $orientation = sanitize_text_field($_POST['orientation'] ?? 'portrait');
+        $category = sanitize_text_field($_POST['category'] ?? 'facture');
+
+        if (empty($slug) || empty($name)) {
+            wp_send_json_error(['message' => 'Template slug and name are required']);
+            return;
+        }
+
+        try {
+            // Sauvegarder les paramètres du template
+            $result = $this->savePredefinedTemplateSettings($slug, [
+                'name' => $name,
+                'description' => $description,
+                'is_public' => $is_public,
+                'paper_size' => $paper_size,
+                'orientation' => $orientation,
+                'category' => $category
+            ]);
+
+            if ($result) {
+                wp_send_json_success(['message' => 'Template settings saved successfully']);
+            } else {
+                wp_send_json_error(['message' => 'Failed to save template settings']);
+            }
+
+        } catch (\Exception $e) {
+            error_log('PDF Builder - Error saving template settings: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Error saving template settings']);
+        }
+    }
+
+    /**
+     * Charger un template prédéfini depuis la base de données
+     */
+    private function loadPredefinedTemplate($slug)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'pdf_builder_predefined_templates';
+
+        $template = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$table_name} WHERE slug = %s",
+            $slug
+        ), ARRAY_A);
+
+        if (!$template) {
+            return false;
+        }
+
+        // Décoder le JSON des métadonnées
+        $metadata = json_decode($template['metadata'], true) ?: [];
+
+        return [
+            'slug' => $template['slug'],
+            'name' => $template['name'],
+            'description' => $template['description'],
+            'category' => $metadata['category'] ?? 'facture',
+            'is_public' => (bool)($metadata['is_public'] ?? false),
+            'paper_size' => $metadata['paper_size'] ?? 'A4',
+            'orientation' => $metadata['orientation'] ?? 'portrait',
+            'icon' => $metadata['icon'] ?? '📄',
+            'is_premium' => (bool)($metadata['is_premium'] ?? false)
+        ];
+    }
+
+    /**
+     * Sauvegarder les paramètres d'un template prédéfini
+     */
+    private function savePredefinedTemplateSettings($slug, $settings)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'pdf_builder_predefined_templates';
+
+        // Récupérer les métadonnées actuelles
+        $template = $wpdb->get_row($wpdb->prepare(
+            "SELECT metadata FROM {$table_name} WHERE slug = %s",
+            $slug
+        ), ARRAY_A);
+
+        if (!$template) {
+            return false;
+        }
+
+        $metadata = json_decode($template['metadata'], true) ?: [];
+
+        // Mettre à jour les métadonnées avec les nouveaux paramètres
+        $metadata = array_merge($metadata, [
+            'category' => $settings['category'],
+            'is_public' => $settings['is_public'],
+            'paper_size' => $settings['paper_size'],
+            'orientation' => $settings['orientation']
+        ]);
+
+        // Mettre à jour la base de données
+        $result = $wpdb->update(
+            $table_name,
+            [
+                'name' => $settings['name'],
+                'description' => $settings['description'],
+                'metadata' => wp_json_encode($metadata),
+                'updated_at' => current_time('mysql')
+            ],
+            ['slug' => $slug],
+            ['%s', '%s', '%s', '%s'],
+            ['%s']
+        );
+
+        return $result !== false;
     }
 }

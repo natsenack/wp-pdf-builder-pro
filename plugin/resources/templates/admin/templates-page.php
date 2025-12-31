@@ -368,7 +368,10 @@ var pdfBuilderAjax = {
                                             <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à utiliser</span>
                                             <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Personnalisable</span>
                                         </div>
-                                        <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Charger dans l'Éditeur</button>
+                                        <div style="display: flex; gap: 8px;">
+                                            <button class="button button-primary" style="flex: 1; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Charger dans l'Éditeur</button>
+                                            <button class="button button-secondary" style="border-radius: 6px; padding: 8px 12px;" onclick="openTemplateSettings('<?php echo esc_attr($template['slug']); ?>')" title="Paramètres du template">⚙️</button>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -675,16 +678,52 @@ document.addEventListener('click', function(e) {
 
 // Fonction globale pour ouvrir les paramètres du template
 window.openTemplateSettings = function(templateSlug) {
-    // Cette fonction peut être appelée depuis un onclick HTML
-    // Pour l'instant, on affiche juste un message d'information
-    console.log('📋 Fonction openTemplateSettings appelée pour template:', templateSlug);
+    console.log('📋 Ouverture des paramètres du template:', templateSlug);
 
-    // Afficher un message informatif à l'utilisateur
-    if (typeof showSuccessMessage === 'function') {
-        showSuccessMessage('Fonctionnalité des paramètres de template bientôt disponible pour: ' + templateSlug);
-    } else {
-        alert('Fonctionnalité des paramètres de template bientôt disponible pour: ' + templateSlug);
+    // Ouvrir la modale
+    const modal = document.getElementById('template-settings-modal');
+    if (!modal) {
+        console.error('Modale template-settings-modal non trouvée');
+        return;
     }
+
+    // Mettre à jour le titre
+    const titleElement = document.getElementById('template-settings-title');
+    if (titleElement) {
+        titleElement.textContent = '⚙️ Paramètres du Template: ' + templateSlug;
+    }
+
+    // Charger les données du template (AJAX)
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            action: 'pdf_builder_get_template_settings',
+            slug: templateSlug,
+            nonce: pdfBuilderTemplatesNonce || pdfBuilderAjax?.nonce || ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Peupler les champs du formulaire
+            populateTemplateSettingsForm(data.data);
+            modal.style.display = 'flex';
+        } else {
+            console.error('Erreur lors du chargement des paramètres:', data.data);
+            if (typeof showErrorMessage === 'function') {
+                showErrorMessage(data.data?.message || 'Erreur lors du chargement des paramètres');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage('Erreur de connexion lors du chargement des paramètres');
+        }
+    });
 };
 
 // Fonction pour fermer la modale des paramètres du template
@@ -693,6 +732,75 @@ window.closeTemplateSettings = function() {
     if (modal) {
         modal.style.display = 'none';
     }
+};
+
+// Fonction pour peupler le formulaire avec les données du template
+function populateTemplateSettingsForm(data) {
+    document.getElementById('template-name-input').value = data.name || '';
+    document.getElementById('template-description-input').value = data.description || '';
+    document.getElementById('template-public').checked = data.is_public || false;
+    document.getElementById('template-paper-size').value = data.paper_size || 'A4';
+    document.getElementById('template-orientation').value = data.orientation || 'portrait';
+    document.getElementById('template-category').value = data.category || 'facture';
+
+    // Stocker le slug actuel pour la sauvegarde
+    window.currentTemplateSlug = data.slug;
+}
+
+// Fonction pour sauvegarder les paramètres du template
+window.saveTemplateSettings = function() {
+    const formData = {
+        slug: window.currentTemplateSlug,
+        name: document.getElementById('template-name-input').value.trim(),
+        description: document.getElementById('template-description-input').value.trim(),
+        is_public: document.getElementById('template-public').checked,
+        paper_size: document.getElementById('template-paper-size').value,
+        orientation: document.getElementById('template-orientation').value,
+        category: document.getElementById('template-category').value
+    };
+
+    // Validation basique
+    if (!formData.name) {
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage('Le nom du template est obligatoire');
+        }
+        return;
+    }
+
+    // Sauvegarde via AJAX
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            action: 'pdf_builder_save_template_settings',
+            ...formData,
+            nonce: pdfBuilderTemplatesNonce || pdfBuilderAjax?.nonce || ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (typeof showSuccessMessage === 'function') {
+                showSuccessMessage('Paramètres du template sauvegardés avec succès !');
+            }
+            closeTemplateSettings();
+            // Recharger la page pour voir les changements
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            console.error('Erreur lors de la sauvegarde:', data.data);
+            if (typeof showErrorMessage === 'function') {
+                showErrorMessage(data.data?.message || 'Erreur lors de la sauvegarde');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage('Erreur de connexion lors de la sauvegarde');
+        }
+    });
 };
 </script> 
  
