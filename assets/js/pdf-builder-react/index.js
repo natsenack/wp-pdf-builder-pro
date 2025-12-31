@@ -173,6 +173,7 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 
 // Wrapper IIFE for immediate execution
 (function() {
+  console.log('🔄 [PDF Builder] IIFE starting...');
   if (typeof window === 'undefined') {
     console.warn('⚠️ [PDF Builder] Window not available, skipping global assignment');
     return;
