@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class PDF_Builder_Preview_Ajax
+class PdfBuilderPreviewAjax
 {
     public function __construct()
     {

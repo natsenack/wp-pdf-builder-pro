@@ -34,14 +34,14 @@ class PDF_Builder_Config_Mappings {
     private static $paths_config = [
         'plugin_dir' => '',
         'plugin_url' => '',
-        'assets_dir' => 'assets/',
-        'assets_url' => 'assets/',
-        'css_dir' => 'assets/css/',
-        'css_url' => 'assets/css/',
-        'js_dir' => 'assets/js/',
-        'js_url' => 'assets/js/',
-        'images_dir' => 'assets/images/',
-        'images_url' => 'assets/images/',
+        'assets_dir' => 'resources/assets/',
+        'assets_url' => 'resources/assets/',
+        'css_dir' => 'resources/assets/css/',
+        'css_url' => 'resources/assets/css/',
+        'js_dir' => 'resources/assets/js/',
+        'js_url' => 'resources/assets/js/',
+        'images_dir' => 'resources/assets/images/',
+        'images_url' => 'resources/assets/images/',
         'templates_dir' => 'resources/templates/',
         'templates_url' => 'resources/templates/',
         'languages_dir' => 'resources/languages/',
@@ -182,6 +182,11 @@ class PDF_Builder_Config_Mappings {
     // ==========================================
 
     private static $performance_config = [
+        'lazy_loading' => [
+            'enabled' => true,
+            'threshold' => 50,
+            'batch_size' => 10
+        ],
 
         'compression' => [
             'enabled' => true,

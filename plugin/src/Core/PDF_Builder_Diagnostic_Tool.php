@@ -290,7 +290,7 @@ class PDF_Builder_Diagnostic_Tool {
     private function check_file_permissions() {
         $paths = [
             PDF_BUILDER_PLUGIN_DIR => 'Dossier plugin',
-            PDF_BUILDER_PLUGIN_DIR . 'assets/' => 'Dossier assets',
+            PDF_BUILDER_PLUGIN_DIR . 'resources/assets/' => 'Dossier assets',
             PDF_BUILDER_PLUGIN_DIR . 'src/' => 'Dossier src',
             PDF_BUILDER_PLUGIN_DIR . 'resources/templates/' => 'Dossier resources/templates',
             WP_CONTENT_DIR . '/uploads/pdf-builder/' => 'Dossier uploads PDF',

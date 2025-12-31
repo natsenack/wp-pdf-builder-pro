@@ -208,7 +208,7 @@ var pdfBuilderAjax = {
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
 
-                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; cursor: default; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
@@ -260,11 +260,10 @@ var pdfBuilderAjax = {
                     }
                     echo '</div>';
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';
-                    $edit_url = admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id);
-                    echo '<a href="' . esc_url($edit_url) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px; position: relative; z-index: 10;" onclick="event.stopPropagation(); return true;" title="Éditer ce template">✏️</a>';
-                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px; position: relative; z-index: 10;" onclick="event.stopPropagation(); ' . esc_js($button_action) . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px; position: relative; z-index: 10;" onclick="event.stopPropagation(); duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
-                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px; position: relative; z-index: 10;" onclick="event.stopPropagation(); confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
+                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
+                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
+                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
+                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
@@ -536,21 +535,6 @@ var pdfBuilderAjax = {
     font-weight: bold !important;
 }
 
-/* Assurer que les boutons dans les cartes de templates sont cliquables */
-.template-card a.button,
-.template-card button.button {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 10;
-}
-
-.template-card a.button:hover,
-.template-card button.button:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
-}
-
 
 </style>
 
@@ -688,197 +672,5 @@ document.addEventListener('click', function(e) {
         e.target.closest('.modal-overlay').style.display = 'none';
     }
 });
-
-// Fonctions pour gérer les paramètres des templates
-let currentTemplateId = null;
-
-function openTemplateSettings(templateId, templateName) {
-    currentTemplateId = templateId;
-
-    // Mettre à jour le titre de la modale
-    document.getElementById('template-settings-title').textContent = '⚙️ Paramètres du Template: ' + templateName;
-
-    // Ouvrir la modale
-    document.getElementById('template-settings-modal').style.display = 'flex';
-
-    // Charger les paramètres actuels du template
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_load_template_settings',
-            'template_id': templateId,
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remplir les champs avec les données actuelles
-            document.getElementById('template-name-input').value = data.data.name || '';
-            document.getElementById('template-description-input').value = data.data.description || '';
-            document.getElementById('template-public').checked = data.data.is_public || false;
-            document.getElementById('template-paper-size').value = data.data.paper_size || 'A4';
-            document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
-            document.getElementById('template-category').value = data.data.category || 'autre';
-        } else {
-            console.error('Erreur chargement paramètres:', data.data);
-            alert('Erreur lors du chargement des paramètres du template.');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur AJAX:', error);
-        alert('Erreur de communication avec le serveur.');
-    });
-}
-
-function closeTemplateSettings() {
-    document.getElementById('template-settings-modal').style.display = 'none';
-    currentTemplateId = null;
-}
-
-function saveTemplateSettings() {
-    if (!currentTemplateId) {
-        alert('Erreur: ID du template manquant.');
-        return;
-    }
-
-    const settings = {
-        name: document.getElementById('template-name-input').value,
-        description: document.getElementById('template-description-input').value,
-        is_public: document.getElementById('template-public').checked,
-        paper_size: document.getElementById('template-paper-size').value,
-        orientation: document.getElementById('template-orientation').value,
-        category: document.getElementById('template-category').value
-    };
-
-    // Sauvegarder les paramètres
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_save_template_settings',
-            'template_id': currentTemplateId,
-            'settings': JSON.stringify(settings),
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Paramètres sauvegardés avec succès!');
-            closeTemplateSettings();
-            // Recharger la page pour voir les changements
-            location.reload();
-        } else {
-            console.error('Erreur sauvegarde:', data.data);
-            alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur AJAX:', error);
-        alert('Erreur de communication avec le serveur.');
-    });
-}
-
-// Fonctions pour gérer les templates (dupliquer, supprimer, etc.)
-function duplicateTemplate(templateId, templateName) {
-    if (confirm('Voulez-vous vraiment dupliquer le template "' + templateName + '" ?')) {
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_duplicate_template',
-                'template_id': templateId,
-                'nonce': pdfBuilderTemplatesNonce
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Template dupliqué avec succès!');
-                location.reload();
-            } else {
-                alert('Erreur lors de la duplication: ' + (data.data || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            console.error('Erreur AJAX:', error);
-            alert('Erreur de communication avec le serveur.');
-        });
-    }
-}
-
-function confirmDeleteTemplate(templateId, templateName) {
-    if (confirm('ATTENTION: Cette action est irréversible!\n\nVoulez-vous vraiment supprimer le template "' + templateName + '" ?')) {
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_delete_template',
-                'template_id': templateId,
-                'nonce': pdfBuilderTemplatesNonce
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Template supprimé avec succès!');
-                location.reload();
-            } else {
-                alert('Erreur lors de la suppression: ' + (data.data || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            console.error('Erreur AJAX:', error);
-            alert('Erreur de communication avec le serveur.');
-        });
-    }
-}
-
-function toggleDefaultTemplate(templateId, category, templateName) {
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_toggle_default_template',
-            'template_id': templateId,
-            'category': category,
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Template par défaut modifié avec succès!');
-            location.reload();
-        } else {
-            alert('Erreur: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur AJAX:', error);
-        alert('Erreur de communication avec le serveur.');
-    });
-}
-
-function selectPredefinedTemplate(slug) {
-    if (confirm('Voulez-vous charger ce modèle prédéfini dans l\'éditeur? Votre travail actuel sera perdu.')) {
-        window.location.href = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(slug);
-    }
-}
-
-function closeTemplateGallery() {
-    document.getElementById('template-gallery-modal').style.display = 'none';
-}
-</script>
+</script> 
+ 

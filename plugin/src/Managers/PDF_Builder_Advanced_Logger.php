@@ -4,7 +4,7 @@
  * Système structuré et configurable pour le logging
  */
 
-class PDF_Builder_Logger_DISABLED {
+class PDF_Builder_Logger {
     private static $instance = null;
     private $log_level;
     private $log_file;

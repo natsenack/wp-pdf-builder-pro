@@ -4,7 +4,7 @@
  * Gère les traductions, langues et localisation du contenu
  */
 
-class PDF_Builder_Localization_DISABLED {
+class PDF_Builder_Localization {
     private static $instance = null;
 
     // Domaine de texte
@@ -539,3 +539,62 @@ class PDF_Builder_Localization_DISABLED {
         }
     }
 }
+
+// Fonctions globales de traduction
+function pdf_builder_translate($text, $context = '', $domain = null) {
+    return PDF_Builder_Localization::get_instance()->translate_text($text, $context, $domain);
+}
+
+function pdf_builder_translate_plural($single, $plural, $number, $context = '', $domain = null) {
+    return PDF_Builder_Localization::get_instance()->translate_plural($single, $plural, $number, $context, $domain);
+}
+
+function pdf_builder_get_supported_languages() {
+    return PDF_Builder_Localization::get_instance()->get_supported_languages();
+}
+
+function pdf_builder_format_date($timestamp, $format = null) {
+    return PDF_Builder_Localization::get_instance()->format_date($timestamp, $format);
+}
+
+function pdf_builder_format_time($timestamp, $format = null) {
+    return PDF_Builder_Localization::get_instance()->format_time($timestamp, $format);
+}
+
+function pdf_builder_format_number($number, $decimals = 0) {
+    return PDF_Builder_Localization::get_instance()->format_number($number, $decimals);
+}
+
+function pdf_builder_format_currency($amount, $currency = 'USD') {
+    return PDF_Builder_Localization::get_instance()->format_currency($amount, $currency);
+}
+
+function pdf_builder_get_text_direction() {
+    return PDF_Builder_Localization::get_instance()->get_text_direction();
+}
+
+function pdf_builder_get_js_translations() {
+    return PDF_Builder_Localization::get_instance()->get_js_translations();
+}
+
+function pdf_builder_change_locale($locale) {
+    return PDF_Builder_Localization::get_instance()->change_user_locale($locale);
+}
+
+// Alias pour la compatibilité
+function __pdf_builder($text, $context = '') {
+    return pdf_builder_translate($text, $context);
+}
+
+function _e_pdf_builder($text, $context = '') {
+    echo pdf_builder_translate($text, $context);
+}
+
+function _n_pdf_builder($single, $plural, $number, $context = '') {
+    return pdf_builder_translate_plural($single, $plural, $number, $context);
+}
+
+// Initialiser le système de localisation
+add_action('plugins_loaded', function() {
+    PDF_Builder_Localization::get_instance();
+});

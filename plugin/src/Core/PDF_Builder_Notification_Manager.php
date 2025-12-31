@@ -11,33 +11,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Stub class pour compatibilité - système de cache supprimé
+ * Classe principale pour la gestion des notifications
  */
 class PDF_Builder_Notification_Manager {
-
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        // Manager désactivé - cache supprimé
-        // Ne fait rien pour respecter la suppression des systèmes de cache
-    }
-
-    public function enqueue_scripts() {
-        // Scripts désactivés - système de cache supprimé
-    }
-}
-
-/**
- * Classe principale pour la gestion des notifications - DESACTIVEE
- */
-class PDF_Builder_Notification_Manager_DISABLED {
 
     /**
      * Instance unique de la classe
@@ -118,14 +94,14 @@ class PDF_Builder_Notification_Manager_DISABLED {
 
         wp_enqueue_style(
             'pdf-builder-notifications',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/notifications.css',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/css/notifications.css',
             [],
             '1.0.0'
         );
 
         wp_enqueue_script(
             'pdf-builder-notifications',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/notifications.js',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/js/notifications.js',
             ['jquery'],
             '1.0.0-' . time(),
             false

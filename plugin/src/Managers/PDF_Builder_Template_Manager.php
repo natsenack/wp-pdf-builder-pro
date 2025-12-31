@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  * Version: 1.0.4 - Fixed data handling for camelCase and JSON, cache bypass V3
  */
 
-class PdfBuilderTemplateManager_DISABLED
+class PdfBuilderTemplateManager
 {
     /**
      * Instance du main plugin

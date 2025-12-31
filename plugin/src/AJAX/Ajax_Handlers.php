@@ -1,10 +1,8 @@
 <?php
 /**
- * PDF Builder Pro - Classe de base pour les handlers AJAX - DISABLED
- * Système de cache AJAX supprimé pour simplification
+ * PDF Builder Pro - Classe de base pour les handlers AJAX
+ * Centralise la validation commune et la gestion d'erreurs
  */
-
-namespace PDF_Builder\AJAX_DISABLED;
 
 // error_log('PDF Builder: [AJAX_HANDLERS.PHP] File loaded at ' . current_time('Y-m-d H:i:s'));
 
@@ -272,7 +270,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // Canvas bool fields
                 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
                 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
-                'canvas_export_transparent',
+                'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin',
                 'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled'
             ],
             'array_fields' => ['order_status_templates']
@@ -574,6 +572,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             'pdf_builder_canvas_canvas_fps_target' => 'canvas_fps_target',
             'pdf_builder_canvas_canvas_memory_limit_js' => 'canvas_memory_limit_js',
             'pdf_builder_canvas_canvas_response_timeout' => 'canvas_response_timeout',
+            'pdf_builder_canvas_canvas_lazy_loading_editor' => 'canvas_lazy_loading_editor',
+            'pdf_builder_canvas_canvas_preload_critical' => 'canvas_preload_critical',
+            'pdf_builder_canvas_canvas_lazy_loading_plugin' => 'canvas_lazy_loading_plugin',
             'pdf_builder_canvas_canvas_debug_enabled' => 'canvas_debug_enabled',
             'pdf_builder_canvas_canvas_performance_monitoring' => 'canvas_performance_monitoring',
             'pdf_builder_canvas_canvas_error_reporting' => 'canvas_error_reporting',
@@ -713,6 +714,20 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
  *    - Gèrent leurs domaines spécifiques (cache, maintenance, etc.)
  *    - Stockage: Leurs propres options WordPress
  */
+function pdf_builder_init_ajax_handlers() {
+    // Settings handler - Système unifié principal
+    $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
+    add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
+
+    // Template handler - Gestion des templates
+    $template_handler = new PDF_Builder_Template_Ajax_Handler();
+    add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
+    add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
+    add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
+}
+
+// Initialiser les handlers unifiés
+add_action('init', 'pdf_builder_init_ajax_handlers');
 
 /**
  * AJAX Handler pour récupérer les rôles autorisés
@@ -839,6 +854,10 @@ function pdf_builder_reset_canvas_defaults_handler() {
             'pdf_builder_canvas_memory_limit_php' => '256',
             'pdf_builder_canvas_response_timeout' => '30',
 
+            // Optimisation
+            'pdf_builder_canvas_lazy_loading_editor' => '1',
+            'pdf_builder_canvas_lazy_loading_plugin' => '1',
+            'pdf_builder_canvas_preload_critical' => '1',
 
             // Debug
             'pdf_builder_canvas_debug_enabled' => '0',
@@ -970,20 +989,3 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
-/**
- * Initialisation des handlers AJAX unifiés
- * Fonction supprimée - remplacée par fonction anonyme
- */
-
-// Initialiser les handlers unifiés
-add_action('plugins_loaded', function() {
-    // Settings handler - Système unifié principal
-    $settings_handler = new \PDF_Builder\AJAX\PDF_Builder_Settings_Ajax_Handler();
-    add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
-
-    // Template handler - Gestion des templates
-    $template_handler = new \PDF_Builder\AJAX\PDF_Builder_Template_Ajax_Handler();
-    add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
-    add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
-    add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
-}, 5);

@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class PdfBuilderRateLimiter_DISABLED
+class PdfBuilderRateLimiter
 {
     /**
      * Limites par défaut

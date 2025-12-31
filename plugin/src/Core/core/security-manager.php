@@ -5,7 +5,7 @@
  * Centralizes security-related operations like nonce verification
  */
 
-class PDF_Builder_Security_Manager_DISABLED {
+class PDF_Builder_Security_Manager {
 
     /**
      * Verify nonce and handle errors

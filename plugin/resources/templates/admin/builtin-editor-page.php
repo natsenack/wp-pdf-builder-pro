@@ -64,8 +64,8 @@ function pdf_builder_builtin_templates_list_page()
 {
 
     // Enqueue les scripts et styles nécessaires
-    wp_enqueue_script('pdf-builder-builtin-editor', plugins_url('assets/js/builtin-editor.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
-    wp_enqueue_style('pdf-builder-builtin-editor', plugins_url('assets/css/builtin-editor.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.1.0');
+    wp_enqueue_script('pdf-builder-builtin-editor', plugins_url('resources/assets/js/builtin-editor.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
+    wp_enqueue_style('pdf-builder-builtin-editor', plugins_url('resources/assets/css/builtin-editor.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.1.0');
 // Localiser le script
     wp_localize_script('pdf-builder-builtin-editor', 'pdfBuilderBuiltinEditor', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
@@ -327,4 +327,3 @@ function pdf_builder_ajax_save_builtin_from_react()
 
     wp_send_json_error('Système builtin supprimé');
 }
-

@@ -62,6 +62,9 @@
         'pdf_builder_canvas_fps_target' => '60',
         'pdf_builder_canvas_memory_limit_js' => '50',
         'pdf_builder_canvas_response_timeout' => '5000',
+        'pdf_builder_canvas_lazy_loading_editor' => '1',
+        'pdf_builder_canvas_preload_critical' => '1',
+        'pdf_builder_canvas_lazy_loading_plugin' => '1',
         'pdf_builder_canvas_debug_enabled' => '0',
         'pdf_builder_canvas_performance_monitoring' => '0',
         'pdf_builder_canvas_error_reporting' => '0',
@@ -153,6 +156,9 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_fps_target]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_fps_target', '60')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_js]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_response_timeout]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_response_timeout', '5000')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_lazy_loading_editor]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_lazy_loading_editor', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_preload_critical]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_preload_critical', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_lazy_loading_plugin]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_debug_enabled]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_debug_enabled', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_performance_monitoring]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_performance_monitoring', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_error_reporting]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_error_reporting', '0')); ?>">
@@ -444,7 +450,7 @@
             </style>
             <?php
                 $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-                $css_url = plugins_url('assets/css/modals-contenu.css', $plugin_dir . '/pdf-builder-pro.php');
+                $css_url = plugins_url('resources/assets/css/modals-contenu.css', $plugin_dir . '/pdf-builder-pro.php');
                 wp_enqueue_style('pdf-builder-modals-contenu', $css_url, array(), '1.0.0');
             ?>
 
@@ -620,5 +626,4 @@
             </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
-
 

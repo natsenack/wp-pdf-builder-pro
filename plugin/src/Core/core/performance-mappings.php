@@ -119,6 +119,12 @@ class PDF_Builder_Performance_Mappings {
     // ==========================================
 
     private static $optimization_strategies = [
+        'lazy_loading' => [
+            'enabled' => true,
+            'threshold' => 50, // éléments
+            'batch_size' => 10,
+            'delay' => 100 // millisecondes
+        ],
 
         'virtualization' => [
             'enabled' => true,
@@ -408,6 +414,10 @@ class PDF_Builder_Performance_Mappings {
 
         // Vérifier les conditions d'activation basées sur les métriques
         switch ($optimization_type) {
+            case 'lazy_loading':
+                return isset($current_metrics['elements_count']) &&
+                       $current_metrics['elements_count'] > ($strategy['threshold'] ?? 50);
+
             case 'virtualization':
                 return isset($current_metrics['dom_nodes']) &&
                        $current_metrics['dom_nodes'] > ($strategy['container_height'] ?? 600) / ($strategy['item_height'] ?? 40);

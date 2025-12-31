@@ -7,11 +7,11 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 /**
- * PDF Builder Pro - Asset Optimizer DISABLED
- * Système de cache et d'optimisation supprimé pour simplification
+ * PDF Builder Pro - Asset Optimizer
+ * Optimisation et compression des assets (JS, CSS, images)
  */
 
-class PdfBuilderAssetOptimizer_DISABLED
+class PdfBuilderAssetOptimizer
 {
     /**
      * Instance du main plugin
@@ -526,7 +526,7 @@ class PdfBuilderAssetOptimizer_DISABLED
         $js_files = [];
 
         // Assets du plugin
-        $assets_js = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/assets/js/*.js');
+        $assets_js = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/resources/assets/js/*.js');
         if ($assets_js) {
             $js_files = array_merge($js_files, $assets_js);
         }
@@ -548,7 +548,7 @@ class PdfBuilderAssetOptimizer_DISABLED
         $css_files = [];
 
         // Assets CSS
-        $assets_css = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/assets/css/*.css');
+        $assets_css = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/resources/assets/css/*.css');
         if ($assets_css) {
             $css_files = array_merge($css_files, $assets_css);
         }
@@ -564,7 +564,7 @@ class PdfBuilderAssetOptimizer_DISABLED
         $image_files = [];
 
         // Images dans assets
-        $assets_images = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/assets/images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        $assets_images = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/resources/assets/images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
         if ($assets_images) {
             $image_files = array_merge($image_files, $assets_images);
         }

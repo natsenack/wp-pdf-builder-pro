@@ -15,7 +15,7 @@ use \PDF_Builder_Security_Manager;
 /**
  * Classe pour gérer l'onboarding et les tutoriels
  */
-class PDF_Builder_Onboarding_Manager_DISABLED {
+class PDF_Builder_Onboarding_Manager {
     /**
      * Instance unique (Singleton)
      */
@@ -104,8 +104,8 @@ class PDF_Builder_Onboarding_Manager_DISABLED {
             return;
         }
         // Enqueue les scripts et styles d'onboarding
-        wp_enqueue_script('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_style('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/onboarding.css', [], PDF_BUILDER_PRO_VERSION);
+        wp_enqueue_script('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_style('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/css/onboarding.css', [], PDF_BUILDER_PRO_VERSION);
         // Localize le script avec les données AJAX
         wp_localize_script('pdf-builder-onboarding', 'pdfBuilderOnboarding', [
             'ajax_url' => admin_url('admin-ajax.php'),

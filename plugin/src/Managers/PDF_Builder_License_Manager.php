@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 
 
-class PdfBuilderLicenseManager_DISABLED
+class PdfBuilderLicenseManager
 {
     /**
      * Instance unique

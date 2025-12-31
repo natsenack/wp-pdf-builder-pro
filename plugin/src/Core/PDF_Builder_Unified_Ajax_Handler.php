@@ -5,27 +5,7 @@
  * Version: 2.1.3 - Correction erreurs PHP et cron (05/12/2025)
  */
 
-/**
- * Stub class pour compatibilité - système de cache supprimé
- */
 class PDF_Builder_Unified_Ajax_Handler {
-
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        // Handler désactivé - cache supprimé
-        // Ne fait rien pour respecter la suppression des systèmes de cache
-    }
-}
-
-class PDF_Builder_Unified_Ajax_Handler_DISABLED {
 
     private static $instance = null;
     private $nonce_manager;
@@ -242,6 +222,9 @@ class PDF_Builder_Unified_Ajax_Handler_DISABLED {
                 'pdf_builder_canvas_fps_target',
                 'pdf_builder_canvas_memory_limit_js',
                 'pdf_builder_canvas_response_timeout',
+                'pdf_builder_canvas_lazy_loading_editor',
+                'pdf_builder_canvas_preload_critical',
+                'pdf_builder_canvas_lazy_loading_plugin',
                 'pdf_builder_canvas_debug_enabled',
                 'pdf_builder_canvas_performance_monitoring',
                 'pdf_builder_canvas_error_reporting',
@@ -406,6 +389,7 @@ class PDF_Builder_Unified_Ajax_Handler_DISABLED {
                     'canvas_fps_target' => get_option('pdf_builder_canvas_canvas_fps_target', 60),
                     'canvas_memory_limit_js' => get_option('pdf_builder_canvas_canvas_memory_limit_js', 50),
                     'canvas_memory_limit_php' => get_option('pdf_builder_canvas_canvas_memory_limit_php', 256),
+                    'canvas_lazy_loading_editor' => get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1'),
                     'canvas_performance_monitoring' => get_option('pdf_builder_canvas_canvas_performance_monitoring', '0'),
                     'canvas_error_reporting' => get_option('pdf_builder_canvas_canvas_error_reporting', '0'),
 
@@ -523,6 +507,7 @@ class PDF_Builder_Unified_Ajax_Handler_DISABLED {
                     'canvas_memory_limit_php' => get_option('pdf_builder_canvas_canvas_memory_limit_php', 256),
 
                     // Canvas debug
+                    'canvas_lazy_loading_editor' => get_option('pdf_builder_canvas_canvas_lazy_loading_editor', '1'),
                     'canvas_performance_monitoring' => get_option('pdf_builder_canvas_canvas_performance_monitoring', '0'),
                     'canvas_error_reporting' => get_option('pdf_builder_canvas_canvas_error_reporting', '0'),
 
@@ -685,7 +670,7 @@ class PDF_Builder_Unified_Ajax_Handler_DISABLED {
                 // Canvas bool fields
                 'pdf_builder_canvas_canvas_grid_enabled', 'pdf_builder_canvas_canvas_snap_to_grid', 'pdf_builder_canvas_canvas_guides_enabled', 'pdf_builder_canvas_canvas_drag_enabled',
                 'pdf_builder_canvas_canvas_resize_enabled', 'pdf_builder_canvas_canvas_rotate_enabled', 'pdf_builder_canvas_canvas_multi_select', 'pdf_builder_canvas_canvas_keyboard_shortcuts',
-                'pdf_builder_canvas_canvas_export_transparent',
+                'pdf_builder_canvas_canvas_export_transparent', 'pdf_builder_canvas_canvas_lazy_loading_editor', 'pdf_builder_canvas_canvas_preload_critical', 'pdf_builder_canvas_canvas_lazy_loading_plugin',
                 'pdf_builder_canvas_canvas_debug_enabled', 'pdf_builder_canvas_canvas_performance_monitoring', 'pdf_builder_canvas_canvas_error_reporting', 'pdf_builder_canvas_canvas_shadow_enabled',
                 // Additional toggles from templates
                 'pdf_builder_license_test_mode', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
@@ -1029,6 +1014,8 @@ class PDF_Builder_Unified_Ajax_Handler_DISABLED {
             'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
             'cache_expiry' => intval($_POST['cache_expiry']),
             'compression_enabled' => isset($_POST['compression_enabled']) ? '1' : '0',
+            'lazy_loading' => isset($_POST['lazy_loading']) ? '1' : '0',
+            'preload_resources' => isset($_POST['preload_resources']) ? '1' : '0',
         ];
 
         foreach ($settings as $key => $value) {
