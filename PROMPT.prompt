@@ -321,6 +321,26 @@ if (!current_user_can('manage_options')) {
 }
 ```
 
+### Stockage Client Interdit
+```javascript
+// 🚫 STRICTEMENT INTERDIT : localStorage, sessionStorage
+// Ces APIs ne doivent JAMAIS être utilisées dans ce projet
+
+// INTERDIT ❌
+localStorage.setItem('pdf_builder_settings', data);
+sessionStorage.setItem('temp_data', value);
+indexedDB.open('pdf_builder_db');
+
+// AUTORISÉ ✅
+// Utiliser uniquement les options WordPress
+update_option('pdf_builder_settings', $data);
+
+// Ou le système de cache centralisé
+PDF_Builder_Cache_Manager::set('key', $value, 'group');
+```
+
+**Raison :** Le localStorage/sessionStorage n'est pas sécurisé côté serveur et peut être manipulé par les utilisateurs. Toutes les données doivent être stockées côté serveur via l'API WordPress.
+
 ### Échappement des Sorties
 ```php
 // PHP
@@ -333,6 +353,18 @@ wp_localize_script('script', 'pdfBuilderData', [
     'ajaxUrl' => esc_url(admin_url('admin-ajax.php')),
     'nonce' => wp_create_nonce('pdf_builder_ajax')
 ]);
+```
+
+### JavaScript/React
+```javascript
+// ❌ INTERDIT : Ne pas utiliser localStorage
+// localStorage.setItem('key', 'value'); // INTERDIT !
+
+// ✅ CORRECT : Utiliser les options WordPress ou AJAX
+wp_localize_script('script', 'pdfBuilderData', $data);
+
+// ✅ CORRECT : Utiliser le système de cache centralisé côté serveur
+PDF_Builder_Cache_Manager::set('key', $value);
 ```
 
 ## 🎯 Bonnes Pratiques
@@ -461,6 +493,7 @@ error_log('[PDF Builder] PDF generated in ' . round($duration, 3) . 's');
 - ❌ Commiter des mots de passe ou clés API
 - ❌ Supprimer les vérifications de sécurité
 - ❌ Utiliser des requêtes SQL non préparées
+- ❌ Utiliser le localStorage du navigateur
 
 ### 🔧 Commandes de Maintenance
 ```bash

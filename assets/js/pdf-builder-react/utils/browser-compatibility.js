@@ -35,9 +35,9 @@ const compatibilityChecks = {
   fileReader: typeof FileReader !== 'undefined',
   blob: typeof Blob !== 'undefined',
 
-  // APIs de stockage
-  localStorage: typeof localStorage !== 'undefined',
-  sessionStorage: typeof sessionStorage !== 'undefined',
+  // APIs de stockage - INTERDITS (utiliser uniquement les options WordPress)
+  // localStorage: typeof localStorage !== 'undefined', // INTERDIT
+  // sessionStorage: typeof sessionStorage !== 'undefined', // INTERDIT
 
   // User Agent
   userAgent: navigator.userAgent,

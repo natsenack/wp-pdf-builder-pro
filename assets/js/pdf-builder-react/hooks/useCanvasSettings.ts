@@ -60,11 +60,6 @@ export const useCanvasSettings = () => {
         const cleanup1 = createOptimizedEventListener(window, 'canvasSettingsUpdated', handleSettingsUpdate);
         const cleanup2 = createOptimizedEventListener(window, 'storage', handleStorageChange);
 
-        // Check if settings were updated while this tab was closed
-        if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
-            fetchSettings();
-        }
-
         return () => {
             cleanup1();
             cleanup2();
