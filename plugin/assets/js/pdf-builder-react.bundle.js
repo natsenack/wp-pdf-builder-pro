@@ -152,10 +152,13 @@ function initPDFBuilderReact() {
     var root = _client["default"].createRoot(container);
     console.log('🎨 [PDF Builder] React root created, rendering component...');
     if (DEBUG_VERBOSE) (0, _debug.debugLog)('🎨 React root created, rendering component...');
-    root.render(_react["default"].createElement(ErrorBoundary, null, _react["default"].createElement(_PDFBuilder.PDFBuilder, {
-      width: _canvas.DEFAULT_CANVAS_WIDTH,
-      height: _canvas.DEFAULT_CANVAS_HEIGHT
-    })));
+    root.render(_react["default"].createElement('div', {
+      style: {
+        padding: '20px',
+        border: '1px solid green',
+        backgroundColor: 'lightgreen'
+      }
+    }, '✅ React is working! PDF Builder will load here.'));
     console.log('✅ [PDF Builder] React component rendered successfully');
     if (DEBUG_VERBOSE) (0, _debug.debugLog)('✅ React component rendered successfully');
     return true;
