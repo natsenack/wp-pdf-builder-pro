@@ -1,4 +1,5 @@
 "use strict";
+var pdfBuilderReact;
 (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-preview-api-client"],{
 
 /***/ "./assets/js/pdf-preview-api-client.js":
@@ -493,7 +494,7 @@ debugLog('   - generateOrderPreview(templateData, orderId)');
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/pdf-preview-api-client.js"));
-/******/ window.pdfBuilderReact = __webpack_exports__;
+/******/ pdfBuilderReact = __webpack_exports__;
 /******/ }
 ]);
 //# sourceMappingURL=pdf-preview-api-client.bundle.js.map

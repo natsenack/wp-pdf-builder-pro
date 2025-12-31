@@ -1,4 +1,5 @@
 "use strict";
+var pdfBuilderReact;
 (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-preview-integration"],{
 
 /***/ "./assets/js/pdf-preview-integration.js":
@@ -766,7 +767,7 @@ debugLog('✅ CanvasPreviewManager initialisé');
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/pdf-preview-integration.js"));
-/******/ window.pdfBuilderReact = __webpack_exports__;
+/******/ pdfBuilderReact = __webpack_exports__;
 /******/ }
 ]);
 //# sourceMappingURL=pdf-preview-integration.bundle.js.map

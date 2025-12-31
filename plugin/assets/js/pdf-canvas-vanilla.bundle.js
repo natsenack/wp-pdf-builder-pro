@@ -1,612 +1,6 @@
 "use strict";
+var pdfBuilderReact;
 (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-canvas-vanilla"],{
-
-/***/ "./assets/js/pdf-canvas-optimizer.js":
-/*!*******************************************!*\
-  !*** ./assets/js/pdf-canvas-optimizer.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PDFCanvasPerformanceOptimizer: () => (/* binding */ PDFCanvasPerformanceOptimizer)
-/* harmony export */ });
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-/**
- * PDF Canvas Performance Optimizer
- * Optimise les performances du canvas pour une meilleure expérience utilisateur
- */
-
-var PDFCanvasPerformanceOptimizer = /*#__PURE__*/function () {
-  function PDFCanvasPerformanceOptimizer(canvas) {
-    _classCallCheck(this, PDFCanvasPerformanceOptimizer);
-    this.canvas = canvas;
-    this.metrics = {
-      fps: 0,
-      frameTime: 0,
-      renderTime: 0,
-      memoryUsage: 0,
-      elementCount: 0
-    };
-    this.lastFrameTime = performance.now();
-    this.frameCount = 0;
-    this.fpsUpdateInterval = 1000; // Mise à jour FPS chaque seconde
-    this.lastFpsUpdate = performance.now();
-
-    // Paramètres d'optimisation
-    this.settings = {
-      targetFps: 60,
-      maxElements: 1000,
-      lazyLoadThreshold: 50,
-      memoryLimit: 128 * 1024 * 1024,
-      // 128MB
-      enableProfiling: false
-    };
-
-    // Cache pour les calculs coûteux
-    this.cache = new Map();
-
-    // Gestionnaire de lazy loading
-    this.lazyLoader = new LazyLoader(this);
-
-    // Moniteur de performance
-    this.performanceMonitor = new PerformanceMonitor(this);
-    this.init();
-  }
-  return _createClass(PDFCanvasPerformanceOptimizer, [{
-    key: "init",
-    value: function init() {
-      // Démarrer le monitoring
-      this.performanceMonitor.start();
-
-      // Configurer les optimisations
-      this.setupOptimizations();
-      console.log('[PDFCanvas] Performance Optimizer initialized');
-    }
-  }, {
-    key: "setupOptimizations",
-    value: function setupOptimizations() {
-      // Optimisation du rendu
-      this.optimizeRendering();
-
-      // Optimisation mémoire
-      this.optimizeMemory();
-
-      // Lazy loading des éléments
-      this.setupLazyLoading();
-    }
-  }, {
-    key: "optimizeRendering",
-    value: function optimizeRendering() {
-      // Utiliser requestAnimationFrame pour un rendu fluide
-      this.useRequestAnimationFrame();
-
-      // Optimiser le rendu des éléments hors écran
-      this.optimizeOffscreenRendering();
-
-      // Utiliser des layers pour améliorer les performances
-      this.setupLayerOptimization();
-    }
-  }, {
-    key: "optimizeMemory",
-    value: function optimizeMemory() {
-      // Nettoyer le cache régulièrement
-      this.setupCacheCleanup();
-
-      // Optimiser la gestion des événements
-      this.optimizeEventHandling();
-
-      // Monitorer l'utilisation mémoire
-      this.setupMemoryMonitoring();
-    }
-  }, {
-    key: "setupLazyLoading",
-    value: function setupLazyLoading() {
-      // Charger les éléments visibles en priorité
-      this.lazyLoader.enable();
-
-      // Précharger les éléments proches
-      this.setupPreloading();
-    }
-
-    // === MONITORING DES PERFORMANCES ===
-  }, {
-    key: "updateMetrics",
-    value: function updateMetrics() {
-      var now = performance.now();
-      this.frameCount++;
-
-      // Calculer le FPS
-      if (now - this.lastFpsUpdate >= this.fpsUpdateInterval) {
-        this.metrics.fps = Math.round(this.frameCount * 1000 / (now - this.lastFpsUpdate));
-        this.frameCount = 0;
-        this.lastFpsUpdate = now;
-
-        // Avertir si FPS trop bas
-        if (this.metrics.fps < 30) {
-          console.warn("[PDFCanvas] Low FPS detected: ".concat(this.metrics.fps));
-          this.handleLowPerformance();
-        }
-      }
-
-      // Mesurer le temps de rendu
-      this.metrics.renderTime = now - this.lastFrameTime;
-      this.lastFrameTime = now;
-
-      // Compter les éléments
-      this.metrics.elementCount = this.canvas.elements.size;
-
-      // Mesurer utilisation mémoire (estimation)
-      this.metrics.memoryUsage = this.estimateMemoryUsage();
-    }
-  }, {
-    key: "estimateMemoryUsage",
-    value: function estimateMemoryUsage() {
-      // Estimation simple basée sur le nombre d'éléments
-      var baseMemory = 1024 * 1024; // 1MB base
-      var elementMemory = this.metrics.elementCount * 2048; // ~2KB par élément
-      return baseMemory + elementMemory;
-    }
-  }, {
-    key: "handleLowPerformance",
-    value: function handleLowPerformance() {
-      // Réduire la qualité du rendu
-      this.reduceRenderQuality();
-
-      // Désactiver les animations coûteuses
-      this.disableExpensiveAnimations();
-
-      // Activer le lazy loading plus agressif
-      this.lazyLoader.aggressiveMode = true;
-    }
-
-    // === OPTIMISATIONS DE RENDU ===
-  }, {
-    key: "useRequestAnimationFrame",
-    value: function useRequestAnimationFrame() {
-      var _this = this;
-      // Remplacer les setInterval par requestAnimationFrame
-      if (this.canvas.renderLoop) {
-        clearInterval(this.canvas.renderLoop);
-      }
-      var _render = function render() {
-        _this.canvas.render();
-        _this.updateMetrics();
-        requestAnimationFrame(_render);
-      };
-      requestAnimationFrame(_render);
-    }
-  }, {
-    key: "optimizeOffscreenRendering",
-    value: function optimizeOffscreenRendering() {
-      var _this2 = this;
-      // Ne rendre que les éléments visibles
-      this.canvas.shouldRenderElement = function (element) {
-        return _this2.isElementVisible(element);
-      };
-    }
-  }, {
-    key: "isElementVisible",
-    value: function isElementVisible(element) {
-      var canvasRect = this.canvas.canvas.getBoundingClientRect();
-      var elementBounds = element.getBounds();
-
-      // Vérifier si l'élément intersecte la zone visible
-      return !(elementBounds.right < 0 || elementBounds.left > canvasRect.width || elementBounds.bottom < 0 || elementBounds.top > canvasRect.height);
-    }
-  }, {
-    key: "setupLayerOptimization",
-    value: function setupLayerOptimization() {
-      // Créer des layers pour différents types d'éléments
-      this.layers = {
-        background: new OffscreenCanvas(1, 1),
-        elements: new OffscreenCanvas(1, 1),
-        overlay: new OffscreenCanvas(1, 1)
-      };
-      this.resizeLayers();
-    }
-  }, {
-    key: "resizeLayers",
-    value: function resizeLayers() {
-      var _this$canvas$canvas = this.canvas.canvas,
-        width = _this$canvas$canvas.width,
-        height = _this$canvas$canvas.height;
-      Object.values(this.layers).forEach(function (layer) {
-        if (layer.width !== width || layer.height !== height) {
-          layer.width = width;
-          layer.height = height;
-        }
-      });
-    }
-
-    // === OPTIMISATIONS MÉMOIRE ===
-  }, {
-    key: "setupCacheCleanup",
-    value: function setupCacheCleanup() {
-      var _this3 = this;
-      // Nettoyer le cache toutes les 30 secondes
-      setInterval(function () {
-        _this3.cleanupCache();
-      }, 30000);
-    }
-  }, {
-    key: "cleanupCache",
-    value: function cleanupCache() {
-      var maxAge = 5 * 60 * 1000; // 5 minutes
-      var now = Date.now();
-      var _iterator = _createForOfIteratorHelper(this.cache.entries()),
-        _step;
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var _ref = _step.value;
-          var _ref2 = _slicedToArray(_ref, 2);
-          var key = _ref2[0];
-          var entry = _ref2[1];
-          if (now - entry.timestamp > maxAge) {
-            this.cache["delete"](key);
-          }
-        }
-
-        // Forcer le garbage collector si disponible
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-      if (window.gc) {
-        window.gc();
-      }
-    }
-  }, {
-    key: "optimizeEventHandling",
-    value: function optimizeEventHandling() {
-      // Utiliser l'event delegation
-      this.setupEventDelegation();
-
-      // Debouncer pour les événements fréquents
-      this.setupEventDebouncing();
-    }
-  }, {
-    key: "setupEventDelegation",
-    value: function setupEventDelegation() {
-      var _this4 = this;
-      // Attacher les événements au container plutôt qu'aux éléments individuels
-      var container = this.canvas.canvas.parentElement;
-      if (container) {
-        container.addEventListener('click', function (e) {
-          _this4.handleDelegatedEvent('click', e);
-        });
-        container.addEventListener('mousemove', function (e) {
-          _this4.handleDelegatedEvent('mousemove', e);
-        });
-      }
-    }
-  }, {
-    key: "handleDelegatedEvent",
-    value: function handleDelegatedEvent(type, event) {
-      // Trouver l'élément cible et déclencher l'événement approprié
-      var element = this.canvas.findElementAt(event.offsetX, event.offsetY);
-      if (element) {
-        this.canvas.eventManager.triggerElementEvent(type, element, event);
-      }
-    }
-  }, {
-    key: "setupEventDebouncing",
-    value: function setupEventDebouncing() {
-      var _this5 = this;
-      this.debouncedEvents = new Map();
-
-      // Debouncer pour les événements de zoom et scroll
-      this.debounce('zoom', function () {
-        return _this5.handleZoomEvent();
-      }, 16); // ~60fps
-      this.debounce('scroll', function () {
-        return _this5.handleScrollEvent();
-      }, 16);
-    }
-  }, {
-    key: "debounce",
-    value: function debounce(eventType, callback, delay) {
-      var timeoutId;
-      this.debouncedEvents.set(eventType, function () {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(callback, delay);
-      });
-    }
-  }, {
-    key: "setupMemoryMonitoring",
-    value: function setupMemoryMonitoring() {
-      var _this6 = this;
-      // Monitorer l'utilisation mémoire
-      if ('memory' in performance) {
-        setInterval(function () {
-          var memInfo = performance.memory;
-          console.log("[PDFCanvas] Memory: ".concat(Math.round(memInfo.usedJSHeapSize / 1024 / 1024), "MB used"));
-          if (memInfo.usedJSHeapSize > _this6.settings.memoryLimit) {
-            console.warn('[PDFCanvas] High memory usage detected');
-            _this6.handleHighMemoryUsage();
-          }
-        }, 10000); // Toutes les 10 secondes
-      }
-    }
-  }, {
-    key: "handleHighMemoryUsage",
-    value: function handleHighMemoryUsage() {
-      // Forcer le nettoyage
-      this.cleanupCache();
-
-      // Réduire le nombre d'éléments en cache
-      this.reduceCacheSize();
-
-      // Demander à l'utilisateur de sauvegarder
-      this.canvas.emit('memory-warning');
-    }
-
-    // === LAZY LOADING ===
-  }, {
-    key: "setupPreloading",
-    value: function setupPreloading() {
-      var _this7 = this;
-      // Précharger les éléments proches de la zone visible
-      this.preloadDistance = 200; // pixels
-
-      this.canvas.on('viewport-change', function () {
-        _this7.preloadNearbyElements();
-      });
-    }
-  }, {
-    key: "preloadNearbyElements",
-    value: function preloadNearbyElements() {
-      var _this8 = this;
-      var viewport = this.canvas.getViewportBounds();
-      this.canvas.elements.forEach(function (element) {
-        if (_this8.isElementNearViewport(element, viewport)) {
-          _this8.lazyLoader.loadElement(element);
-        }
-      });
-    }
-  }, {
-    key: "isElementNearViewport",
-    value: function isElementNearViewport(element, viewport) {
-      var bounds = element.getBounds();
-      var distance = Math.max(Math.abs(bounds.left - viewport.left), Math.abs(bounds.right - viewport.right), Math.abs(bounds.top - viewport.top), Math.abs(bounds.bottom - viewport.bottom));
-      return distance <= this.preloadDistance;
-    }
-
-    // === UTILITAIRES ===
-  }, {
-    key: "reduceRenderQuality",
-    value: function reduceRenderQuality() {
-      var _this9 = this;
-      // Réduire la résolution du canvas temporairement
-      var originalWidth = this.canvas.canvas.width;
-      var originalHeight = this.canvas.canvas.height;
-      this.canvas.canvas.width = originalWidth * 0.5;
-      this.canvas.canvas.height = originalHeight * 0.5;
-
-      // Restaurer après 5 secondes de bonnes performances
-      setTimeout(function () {
-        _this9.canvas.canvas.width = originalWidth;
-        _this9.canvas.canvas.height = originalHeight;
-      }, 5000);
-    }
-  }, {
-    key: "disableExpensiveAnimations",
-    value: function disableExpensiveAnimations() {
-      // Désactiver les animations coûteuses
-      this.canvas.settings.animations = false;
-      this.canvas.settings.transitions = false;
-    }
-  }, {
-    key: "reduceCacheSize",
-    value: function reduceCacheSize() {
-      var _this0 = this;
-      // Garder seulement les éléments les plus récents
-      var maxCacheSize = 50;
-      if (this.cache.size > maxCacheSize) {
-        var entries = Array.from(this.cache.entries());
-        entries.sort(function (a, b) {
-          return b[1].timestamp - a[1].timestamp;
-        });
-
-        // Supprimer les entrées les plus anciennes
-        var toDelete = entries.slice(maxCacheSize);
-        toDelete.forEach(function (_ref3) {
-          var _ref4 = _slicedToArray(_ref3, 1),
-            key = _ref4[0];
-          return _this0.cache["delete"](key);
-        });
-      }
-    }
-
-    // === API PUBLIQUE ===
-  }, {
-    key: "getMetrics",
-    value: function getMetrics() {
-      return _objectSpread({}, this.metrics);
-    }
-  }, {
-    key: "enableProfiling",
-    value: function enableProfiling() {
-      this.settings.enableProfiling = true;
-      console.log('[PDFCanvas] Performance profiling enabled');
-    }
-  }, {
-    key: "disableProfiling",
-    value: function disableProfiling() {
-      this.settings.enableProfiling = false;
-      console.log('[PDFCanvas] Performance profiling disabled');
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      this.performanceMonitor.stop();
-      this.lazyLoader.disable();
-      this.cache.clear();
-    }
-  }]);
-}();
-
-// === CLASSES UTILITAIRES ===
-var LazyLoader = /*#__PURE__*/function () {
-  function LazyLoader(optimizer) {
-    _classCallCheck(this, LazyLoader);
-    this.optimizer = optimizer;
-    this.enabled = false;
-    this.aggressiveMode = false;
-    this.loadedElements = new Set();
-  }
-  return _createClass(LazyLoader, [{
-    key: "enable",
-    value: function enable() {
-      this.enabled = true;
-      console.log('[LazyLoader] Enabled');
-    }
-  }, {
-    key: "disable",
-    value: function disable() {
-      this.enabled = false;
-      console.log('[LazyLoader] Disabled');
-    }
-  }, {
-    key: "loadElement",
-    value: function loadElement(element) {
-      var _this1 = this;
-      if (!this.enabled || this.loadedElements.has(element.id)) {
-        return;
-      }
-
-      // Simuler le chargement lazy
-      if (this.aggressiveMode) {
-        // Mode agressif : charger immédiatement
-        this.doLoadElement(element);
-      } else {
-        // Mode normal : charger avec un délai
-        setTimeout(function () {
-          _this1.doLoadElement(element);
-        }, Math.random() * 100); // Délai aléatoire pour éviter les pics
-      }
-    }
-  }, {
-    key: "doLoadElement",
-    value: function doLoadElement(element) {
-      // Marquer comme chargé
-      this.loadedElements.add(element.id);
-
-      // Notifer le canvas que l'élément est prêt
-      this.optimizer.canvas.emit('element-loaded', element);
-    }
-  }]);
-}();
-var PerformanceMonitor = /*#__PURE__*/function () {
-  function PerformanceMonitor(optimizer) {
-    _classCallCheck(this, PerformanceMonitor);
-    this.optimizer = optimizer;
-    this.intervalId = null;
-    this.samples = [];
-    this.maxSamples = 100;
-  }
-  return _createClass(PerformanceMonitor, [{
-    key: "start",
-    value: function start() {
-      var _this10 = this;
-      this.intervalId = setInterval(function () {
-        _this10.collectSample();
-      }, 1000); // Échantillon chaque seconde
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      if (this.intervalId) {
-        clearInterval(this.intervalId);
-        this.intervalId = null;
-      }
-    }
-  }, {
-    key: "collectSample",
-    value: function collectSample() {
-      var sample = {
-        timestamp: Date.now(),
-        fps: this.optimizer.metrics.fps,
-        renderTime: this.optimizer.metrics.renderTime,
-        memoryUsage: this.optimizer.metrics.memoryUsage,
-        elementCount: this.optimizer.metrics.elementCount
-      };
-      this.samples.push(sample);
-
-      // Garder seulement les échantillons récents
-      if (this.samples.length > this.maxSamples) {
-        this.samples.shift();
-      }
-
-      // Analyser les tendances
-      this.analyzeTrends();
-    }
-  }, {
-    key: "analyzeTrends",
-    value: function analyzeTrends() {
-      if (this.samples.length < 10) return;
-      var recent = this.samples.slice(-10);
-      var avgFps = recent.reduce(function (sum, s) {
-        return sum + s.fps;
-      }, 0) / recent.length;
-      var avgRenderTime = recent.reduce(function (sum, s) {
-        return sum + s.renderTime;
-      }, 0) / recent.length;
-
-      // Détecter les problèmes de performance
-      if (avgFps < 30) {
-        console.warn("[PerformanceMonitor] Average FPS too low: ".concat(avgFps.toFixed(1)));
-      }
-      if (avgRenderTime > 33) {
-        // > 30fps
-        console.warn("[PerformanceMonitor] Average render time too high: ".concat(avgRenderTime.toFixed(1), "ms"));
-      }
-    }
-  }, {
-    key: "getStats",
-    value: function getStats() {
-      if (this.samples.length === 0) return null;
-      var recent = this.samples.slice(-10);
-      return {
-        avgFps: recent.reduce(function (sum, s) {
-          return sum + s.fps;
-        }, 0) / recent.length,
-        avgRenderTime: recent.reduce(function (sum, s) {
-          return sum + s.renderTime;
-        }, 0) / recent.length,
-        minFps: Math.min.apply(Math, _toConsumableArray(recent.map(function (s) {
-          return s.fps;
-        }))),
-        maxFps: Math.max.apply(Math, _toConsumableArray(recent.map(function (s) {
-          return s.fps;
-        }))),
-        sampleCount: this.samples.length
-      };
-    }
-  }]);
-}();
-
-/***/ }),
 
 /***/ "./assets/js/pdf-canvas-vanilla.js":
 /*!*****************************************!*\
@@ -619,18 +13,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PDFCanvasVanilla: () => (/* binding */ PDFCanvasVanilla),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-elements.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-woocommerce.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-customization.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-renderer.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-events.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-render-utils.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-selection.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-properties.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-layers.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-export.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-/* harmony import */ var _pdf_canvas_optimizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pdf-canvas-optimizer.js */ "./assets/js/pdf-canvas-optimizer.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
@@ -645,6 +27,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -656,17 +39,111 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  * Intègre les utilitaires migrés pour la gestion des éléments
  */
 
+// import { ELEMENT_PROPERTY_RESTRICTIONS, ELEMENT_TYPE_MAPPING, isPropertyAllowed, getPropertyDefault, validateProperty, fixInvalidProperty } from './pdf-canvas-elements.js';
+// import { WooCommerceElementsManager, wooCommerceElementsManager } from './pdf-canvas-woocommerce.js';
+// import { ElementCustomizationService, elementCustomizationService } from './pdf-canvas-customization.js';
+// import { PDFCanvasRenderer } from './pdf-canvas-renderer.js';
+// import { PDFCanvasEventManager } from './pdf-canvas-events.js';
+// import { PDFCanvasRenderUtils } from './pdf-canvas-render-utils.js';
+// import { PDFCanvasSelectionManager } from './pdf-canvas-selection.js';
+// import { PDFCanvasPropertiesManager } from './pdf-canvas-properties.js';
+// import { PDFCanvasLayersManager } from './pdf-canvas-layers.js';
+// import { PDFCanvasExportManager } from './pdf-canvas-export.js';
+// import { PDFCanvasPerformanceOptimizer } from './pdf-canvas-optimizer.js';
 
-
-
-
-
-
-
-
-
-
-
+// Stubs pour éviter les erreurs
+var ELEMENT_PROPERTY_RESTRICTIONS = {};
+var ELEMENT_TYPE_MAPPING = {};
+var isPropertyAllowed = function isPropertyAllowed() {
+  return true;
+};
+var getPropertyDefault = function getPropertyDefault() {
+  return null;
+};
+var validateProperty = function validateProperty() {
+  return true;
+};
+var fixInvalidProperty = function fixInvalidProperty() {};
+var wooCommerceElementsManager = {
+  init: function init() {},
+  addElement: function addElement() {}
+};
+var elementCustomizationService = {
+  init: function init() {},
+  customize: function customize() {}
+};
+var PDFCanvasRenderer = /*#__PURE__*/function () {
+  function PDFCanvasRenderer() {
+    _classCallCheck(this, PDFCanvasRenderer);
+  }
+  return _createClass(PDFCanvasRenderer, [{
+    key: "render",
+    value: function render() {}
+  }]);
+}();
+var PDFCanvasEventManager = /*#__PURE__*/function () {
+  function PDFCanvasEventManager() {
+    _classCallCheck(this, PDFCanvasEventManager);
+  }
+  return _createClass(PDFCanvasEventManager, [{
+    key: "init",
+    value: function init() {}
+  }]);
+}();
+var PDFCanvasRenderUtils = /*#__PURE__*/function () {
+  function PDFCanvasRenderUtils() {
+    _classCallCheck(this, PDFCanvasRenderUtils);
+  }
+  return _createClass(PDFCanvasRenderUtils, null, [{
+    key: "render",
+    value: function render() {}
+  }]);
+}();
+var PDFCanvasSelectionManager = /*#__PURE__*/function () {
+  function PDFCanvasSelectionManager() {
+    _classCallCheck(this, PDFCanvasSelectionManager);
+  }
+  return _createClass(PDFCanvasSelectionManager, [{
+    key: "init",
+    value: function init() {}
+  }]);
+}();
+var PDFCanvasPropertiesManager = /*#__PURE__*/function () {
+  function PDFCanvasPropertiesManager() {
+    _classCallCheck(this, PDFCanvasPropertiesManager);
+  }
+  return _createClass(PDFCanvasPropertiesManager, [{
+    key: "init",
+    value: function init() {}
+  }]);
+}();
+var PDFCanvasLayersManager = /*#__PURE__*/function () {
+  function PDFCanvasLayersManager() {
+    _classCallCheck(this, PDFCanvasLayersManager);
+  }
+  return _createClass(PDFCanvasLayersManager, [{
+    key: "init",
+    value: function init() {}
+  }]);
+}();
+var PDFCanvasExportManager = /*#__PURE__*/function () {
+  function PDFCanvasExportManager() {
+    _classCallCheck(this, PDFCanvasExportManager);
+  }
+  return _createClass(PDFCanvasExportManager, [{
+    key: "export",
+    value: function _export() {}
+  }]);
+}();
+var PDFCanvasPerformanceOptimizer = /*#__PURE__*/function () {
+  function PDFCanvasPerformanceOptimizer() {
+    _classCallCheck(this, PDFCanvasPerformanceOptimizer);
+  }
+  return _createClass(PDFCanvasPerformanceOptimizer, [{
+    key: "optimize",
+    value: function optimize() {}
+  }]);
+}();
 var PDFCanvasVanilla = /*#__PURE__*/function () {
   function PDFCanvasVanilla(containerId) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -693,17 +170,17 @@ var PDFCanvasVanilla = /*#__PURE__*/function () {
     this.eventListeners = new Map();
 
     // Services intégrés
-    this.wooCommerceManager = Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-woocommerce.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
-    this.customizationService = Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-customization.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+    this.wooCommerceManager = wooCommerceElementsManager;
+    this.customizationService = elementCustomizationService;
 
     // Gestionnaires spécialisés
-    this.renderer = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-renderer.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this);
-    this.eventManager = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-events.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this);
-    this.selectionManager = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-selection.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this);
-    this.propertiesManager = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-properties.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this);
-    this.layersManager = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-layers.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this);
-    this.exportManager = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-export.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this);
-    this.performanceOptimizer = new _pdf_canvas_optimizer_js__WEBPACK_IMPORTED_MODULE_1__.PDFCanvasPerformanceOptimizer(this);
+    this.renderer = new PDFCanvasRenderer(this);
+    this.eventManager = new PDFCanvasEventManager(this);
+    this.selectionManager = new PDFCanvasSelectionManager(this);
+    this.propertiesManager = new PDFCanvasPropertiesManager(this);
+    this.layersManager = new PDFCanvasLayersManager(this);
+    this.exportManager = new PDFCanvasExportManager(this);
+    this.performanceOptimizer = new PDFCanvasPerformanceOptimizer(this);
 
     // État d'interaction
     this.mode = 'select'; // select, draw, text, etc.
@@ -1162,7 +639,7 @@ var PDFCanvasVanilla = /*#__PURE__*/function () {
       var validatedValue = this.customizationService.validateProperty(property, value);
 
       // Vérifier les restrictions
-      if (!Object(function webpackMissingModule() { var e = new Error("Cannot find module './pdf-canvas-elements.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(element.type, property)) {
+      if (!isPropertyAllowed(element.type, property)) {
         console.warn("Property \"".concat(property, "\" not allowed for element type \"").concat(element.type, "\""));
         return false;
       }
@@ -1720,7 +1197,7 @@ window.pdfBuilderPro = {
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/pdf-canvas-vanilla.js"));
-/******/ window.pdfBuilderReact = __webpack_exports__;
+/******/ pdfBuilderReact = __webpack_exports__;
 /******/ }
 ]);
 //# sourceMappingURL=pdf-canvas-vanilla.bundle.js.map
