@@ -26,11 +26,15 @@ var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
-console.log('🚀 [PDF Builder] React bundle loading...');
+console.log('� [PDF Builder] BUNDLE EXECUTING - START');
 
 // Use WordPress globals instead of imports
 var React = window.React;
 var ReactDOM = window.ReactDOM;
+console.log('🔥 [PDF Builder] React globals:', {
+  React: (0, _typeof2["default"])(React),
+  ReactDOM: (0, _typeof2["default"])(ReactDOM)
+});
 
 // Flag pour afficher les logs d'initialisation détaillés
 var DEBUG_VERBOSE = true;

@@ -2,11 +2,13 @@
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
-console.log('🚀 [PDF Builder] React bundle loading...');
+console.log('� [PDF Builder] BUNDLE EXECUTING - START');
 
 // Use WordPress globals instead of imports
 const React = window.React;
 const ReactDOM = window.ReactDOM;
+
+console.log('🔥 [PDF Builder] React globals:', { React: typeof React, ReactDOM: typeof ReactDOM });
 
 // Flag pour afficher les logs d'initialisation détaillés
 const DEBUG_VERBOSE = true;
