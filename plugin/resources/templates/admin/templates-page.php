@@ -28,6 +28,39 @@ if (!class_exists('PDF_Builder\TemplateDefaults')) {
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
+// Fonction pour récupérer les formats de papier disponibles depuis les paramètres d'affichage
+function get_available_paper_formats() {
+    // Formats disponibles avec leurs dimensions en pixels (pour correspondre aux paramètres d'affichage)
+    $all_formats = array(
+        'A4' => 'A4 (594 × 1123 px)',
+        'A3' => 'A3 (840 × 1191 px)',
+        'Letter' => 'Letter (612 × 792 px)',
+        'Legal' => 'Legal (612 × 1008 px)'
+    );
+    
+    // Récupérer le format configuré dans les paramètres d'affichage
+    $configured_format = get_option('pdf_builder_canvas_format', 'A4');
+    
+    // Logique : seuls les formats activés dans les paramètres d'affichage sont disponibles
+    // Actuellement, seul A4 est activé (non disabled) dans settings-modals.php
+    $enabled_formats = array('A4'); // À étendre quand d'autres formats seront activés
+    
+    // Filtrer les formats disponibles
+    $available_formats = array();
+    foreach ($enabled_formats as $format) {
+        if (isset($all_formats[$format])) {
+            $available_formats[$format] = $all_formats[$format];
+        }
+    }
+    
+    // S'assurer qu'il y a au moins un format disponible (fallback vers A4)
+    if (empty($available_formats)) {
+        $available_formats['A4'] = $all_formats['A4'];
+    }
+    
+    return $available_formats;
+}
+
 // Vérifications freemium
 $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
@@ -405,10 +438,12 @@ var pdfBuilderAjax = {
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">Format de papier</label>
                             <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="A4">A4 (594 × 1123 px)</option>
-                                <option value="A3">A3 (840 × 1191 px)</option>
-                                <option value="Letter">Letter (612 × 792 px)</option>
-                                <option value="Legal">Legal (612 × 1008 px)</option>
+                                <?php
+                                $available_formats = get_available_paper_formats();
+                                foreach ($available_formats as $value => $label) {
+                                    echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
+                                }
+                                ?>
                             </select>
                         </div>
 
