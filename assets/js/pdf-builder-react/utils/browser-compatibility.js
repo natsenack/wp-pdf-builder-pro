@@ -76,17 +76,18 @@ try {
 
 // Fonction utilitaire pour créer des event listeners optimisés
 export const createOptimizedEventListener = (element, event, handler, options = {}) => {
-  const defaultOptions = {
-    passive: passiveSupported && !['touchstart', 'touchmove', 'wheel'].includes(event),
+  // Les options par défaut sont maintenant gérées globalement
+  // Seulement ajouter les options spécifiques si nécessaire
+  const eventOptions = {
     capture: false,
     ...options
   };
 
-  element.addEventListener(event, handler, defaultOptions);
+  element.addEventListener(event, handler, eventOptions);
 
   // Retourner une fonction de nettoyage
   return () => {
-    element.removeEventListener(event, handler, defaultOptions);
+    element.removeEventListener(event, handler, eventOptions);
   };
 };
 

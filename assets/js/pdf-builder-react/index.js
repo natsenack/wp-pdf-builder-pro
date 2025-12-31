@@ -6,21 +6,40 @@
 if (typeof window !== 'undefined') {
   // Améliorer les performances des event listeners pour éviter les violations
   const originalAddEventListener = EventTarget.prototype.addEventListener;
+  const originalRemoveEventListener = EventTarget.prototype.removeEventListener;
+
   EventTarget.prototype.addEventListener = function(type, listener, options) {
-    // Pour les événements qui bloquent le scroll, utiliser passive par défaut si supporté
+    // Normaliser les options
     if (typeof options === 'boolean') {
       options = { capture: options };
     } else if (!options) {
       options = {};
     }
 
-    // Utiliser passive pour les événements non-bloquants par défaut
-    if (!options.hasOwnProperty('passive') &&
-        ['touchstart', 'touchmove', 'wheel', 'scroll'].includes(type) === false) {
+    // Forcer passive: true par défaut sauf si explicitement défini à false
+    if (!options.hasOwnProperty('passive')) {
+      // Les événements qui nécessitent vraiment preventDefault() peuvent définir passive: false explicitement
       options.passive = true;
     }
 
     return originalAddEventListener.call(this, type, listener, options);
+  };
+
+  // Synchroniser removeEventListener avec la même logique
+  EventTarget.prototype.removeEventListener = function(type, listener, options) {
+    // Normaliser les options pour la cohérence
+    if (typeof options === 'boolean') {
+      options = { capture: options };
+    } else if (!options) {
+      options = {};
+    }
+
+    // Appliquer la même logique passive
+    if (!options.hasOwnProperty('passive')) {
+      options.passive = true;
+    }
+
+    return originalRemoveEventListener.call(this, type, listener, options);
   };
 }
 
