@@ -27,19 +27,19 @@ module.exports = {
     'ajax-throttle': path.resolve(projectRoot, 'assets/js/ajax-throttle.js'),
     'tabs-force': path.resolve(projectRoot, 'assets/js/tabs-force.js'),
     'tabs-root-monitor': path.resolve(projectRoot, 'assets/js/tabs-root-monitor.js'),
-    'pdf-builder-react-performance-patch': path.resolve(projectRoot, 'assets/js/pdf-builder-react/performance-patch.js'),
     'pdf-builder-react': path.resolve(projectRoot, 'assets/js/pdf-builder-react/index.js'),
   },
   output: {
     path: path.resolve(projectRoot, 'plugin/assets/'),
     filename: 'js/[name].bundle.js',
-    chunkFilename: 'js/[name].js',
+    chunkFilename: 'js/[name].[contenthash].js',
     publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
+    library: {
+      name: 'PDFBuilder',
+      type: 'umd',
+      export: 'default',
+    },
     clean: false, // Ne pas nettoyer auto, on contrôle
-  },
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
   },
   devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
   devServer: {
@@ -58,7 +58,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+            presets: ['@babel/preset-env'],
             plugins: ['@babel/plugin-transform-runtime'],
           },
         },
@@ -145,11 +145,6 @@ module.exports = {
       }),
     ] : []),
   ],
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM',
-    'react-dom/client': 'ReactDOM',
-  },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
@@ -180,8 +175,25 @@ module.exports = {
         extractComments: false,
       }),
     ],
-    splitChunks: false,
-    runtimeChunk: false,
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          priority: 10,
+          reuseExistingChunk: true,
+        },
+        common: {
+          minChunks: 2,
+          priority: 5,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+    runtimeChunk: {
+      name: 'runtime',
+    },
   },
   performance: {
     maxEntrypointSize: 512000,

@@ -1647,7 +1647,30 @@ class AjaxHandler
         }
 
         try {
-            // Charger le template depuis la base de données ou les fichiers
+            // Essayer d'abord de charger comme template prédéfini depuis TemplateDefaults
+            if (class_exists('PDF_Builder\TemplateDefaults')) {
+                $templateData = \PDF_Builder\TemplateDefaults::get_template_by_slug($slug);
+
+                if ($templateData) {
+                    // Pour les templates prédéfinis, retourner des données adaptées pour le modal
+                    $settingsData = [
+                        'slug' => $slug,
+                        'name' => $templateData['name'],
+                        'description' => $templateData['description'],
+                        'category' => $templateData['category'],
+                        'is_public' => false, // Les templates prédéfinis ne sont pas modifiables
+                        'paper_size' => 'A4',
+                        'orientation' => 'portrait',
+                        'is_predefined' => true,
+                        'is_editable' => false
+                    ];
+
+                    wp_send_json_success($settingsData);
+                    return;
+                }
+            }
+
+            // Si ce n'est pas un template prédéfini, essayer de charger depuis la base de données
             $templateData = $this->loadPredefinedTemplate($slug);
 
             if (!$templateData) {
@@ -1694,6 +1717,15 @@ class AjaxHandler
         }
 
         try {
+            // Vérifier si c'est un template prédéfini (non modifiable)
+            if (class_exists('PDF_Builder\TemplateDefaults')) {
+                $predefinedTemplate = \PDF_Builder\TemplateDefaults::get_template_by_slug($slug);
+                if ($predefinedTemplate) {
+                    wp_send_json_error(['message' => 'Cannot modify predefined templates']);
+                    return;
+                }
+            }
+
             // Sauvegarder les paramètres du template
             $result = $this->savePredefinedTemplateSettings($slug, [
                 'name' => $name,

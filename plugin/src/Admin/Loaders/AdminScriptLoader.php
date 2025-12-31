@@ -42,6 +42,9 @@ class AdminScriptLoader
 
         // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
 
+        // Define version parameter for cache busting
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
+
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
@@ -185,7 +188,6 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-            // error_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']);
             $this->loadReactEditorScripts();
         } else {
             // error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
@@ -200,11 +202,11 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s'));
 
         $cache_bust = time();
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust . '-' . uniqid();
 
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
-        wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
+        wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
 
         // Notifications system
@@ -248,13 +250,23 @@ class AdminScriptLoader
         ];
         wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
+        // Définir la fonction debugLog globale
+        wp_add_inline_script('pdf-builder-notifications', '
+        // Fonction de debug globale
+        window.debugLog = function(...args) {
+            if (window.pdfBuilderDebugSettings && window.pdfBuilderDebugSettings.javascript) {
+                console.log("[PDF Builder Debug]", ...args);
+            }
+        };
+        ', 'after');
+
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Bundle React
-        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
+        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.bundle.js';
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
@@ -268,7 +280,7 @@ class AdminScriptLoader
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
-            $canvas_settings = $canvas_manager->get_all_settings();
+            $canvas_settings = $canvas_manager->getAllSettings();
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
@@ -283,7 +295,7 @@ class AdminScriptLoader
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
             // error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
-            $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
+            $existing_template_data = $this->admin->getTemplateManager()->loadTemplateRobust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
                 $localize_data['initialElements'] = $existing_template_data['elements'];
                 $localize_data['existingTemplate'] = $existing_template_data;
@@ -303,17 +315,12 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        // PERFORMANCE PATCH - Load BEFORE React to patch event listeners
-        $performance_patch_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-performance-patch.js';
-        wp_enqueue_script('pdf-builder-performance-patch', $performance_patch_url, [], $cache_bust, false); // Load in header
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-performance-patch: ' . $performance_patch_url);
-
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap', 'pdf-builder-performance-patch'], $version_param, true);
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
-        // Init helper
-        $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
-        wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
+        // Init helper - COMMENTED OUT as initialization is handled in the React bundle
+        // $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
+        // wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 
         // Scripts de l'API Preview

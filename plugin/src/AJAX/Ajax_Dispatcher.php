@@ -273,34 +273,5 @@ class Ajax_Dispatcher {
     }
 }
 
-/**
- * Stub classes pour les handlers désactivés (cache supprimé)
- * Ces classes ne font rien mais permettent au dispatcher de fonctionner
- */
-
-class PDF_Builder_Settings_Ajax_Handler {
-    public function handle() {
-        // Handler désactivé - cache supprimé
-        wp_send_json_error(['message' => 'Settings handler disabled - cache removed']);
-    }
-}
-
-class PDF_Builder_Template_Ajax_Handler {
-    public function handle_save() {
-        // Handler désactivé - cache supprimé
-        wp_send_json_error(['message' => 'Template save handler disabled - cache removed']);
-    }
-
-    public function handle_load() {
-        // Handler désactivé - cache supprimé
-        wp_send_json_error(['message' => 'Template load handler disabled - cache removed']);
-    }
-
-    public function handle_delete() {
-        // Handler désactivé - cache supprimé
-        wp_send_json_error(['message' => 'Template delete handler disabled - cache removed']);
-    }
-}
-
 // Initialiser le dispatcher
 Ajax_Dispatcher::get_instance();

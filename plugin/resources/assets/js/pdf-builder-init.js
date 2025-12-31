@@ -26,7 +26,7 @@
         
         // Log periodically
         if (checkCount === 1 || checkCount % 25 === 0) {
-            ');
+            debugLog(`🔄 [pdf-builder-init] Checking for pdfBuilderReact... (${checkCount}/${MAX_CHECKS})`);
         }
         
         // Keep checking
@@ -35,8 +35,8 @@
         } else {
             // console.error('❌ [pdf-builder-init] TIMEOUT: pdfBuilderReact not found after ' + MAX_CHECKS + ' attempts');
             // Try one more time with diagnostic info
-
-            .filter(k => k.includes('pdf') || k.includes('Builder')).slice(0, 10));
+            console.error('❌ [pdf-builder-init] TIMEOUT: pdfBuilderReact not found after ' + MAX_CHECKS + ' attempts');
+            console.log('Available window keys:', Object.keys(window).filter(k => k.includes('pdf') || k.includes('Builder')).slice(0, 10));
         }
     }
     

@@ -260,7 +260,8 @@ var pdfBuilderAjax = {
                     }
                     echo '</div>';
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
+                    $edit_url = admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id);
+                    echo '<a href="' . $edit_url . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
                     echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
@@ -368,10 +369,7 @@ var pdfBuilderAjax = {
                                             <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à utiliser</span>
                                             <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Personnalisable</span>
                                         </div>
-                                        <div style="display: flex; gap: 8px;">
-                                            <button class="button button-primary" style="flex: 1; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Charger dans l'Éditeur</button>
-                                            <button class="button button-secondary" style="border-radius: 6px; padding: 8px 12px;" onclick="openTemplateSettings('<?php echo esc_attr($template['slug']); ?>')" title="Paramètres du template">⚙️</button>
-                                        </div>
+                                        <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Charger dans l'Éditeur</button>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -676,131 +674,196 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Fonction globale pour ouvrir les paramètres du template
-window.openTemplateSettings = function(templateSlug) {
-    console.log('📋 Ouverture des paramètres du template:', templateSlug);
+// Fonctions pour gérer les paramètres des templates
+let currentTemplateId = null;
+
+function openTemplateSettings(templateId, templateName) {
+    currentTemplateId = templateId;
+
+    // Mettre à jour le titre de la modale
+    document.getElementById('template-settings-title').textContent = '⚙️ Paramètres du Template: ' + templateName;
 
     // Ouvrir la modale
-    const modal = document.getElementById('template-settings-modal');
-    if (!modal) {
-        console.error('Modale template-settings-modal non trouvée');
-        return;
-    }
+    document.getElementById('template-settings-modal').style.display = 'flex';
 
-    // Mettre à jour le titre
-    const titleElement = document.getElementById('template-settings-title');
-    if (titleElement) {
-        titleElement.textContent = '⚙️ Paramètres du Template: ' + templateSlug;
-    }
-
-    // Charger les données du template (AJAX)
+    // Charger les paramètres actuels du template
     fetch(ajaxurl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            action: 'pdf_builder_get_template_settings',
-            slug: templateSlug,
-            nonce: pdfBuilderTemplatesNonce || pdfBuilderAjax?.nonce || ''
+            'action': 'pdf_builder_load_template_settings',
+            'template_id': templateId,
+            'nonce': pdfBuilderTemplatesNonce
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Peupler les champs du formulaire
-            populateTemplateSettingsForm(data.data);
-            modal.style.display = 'flex';
+            // Remplir les champs avec les données actuelles
+            document.getElementById('template-name-input').value = data.data.name || '';
+            document.getElementById('template-description-input').value = data.data.description || '';
+            document.getElementById('template-public').checked = data.data.is_public || false;
+            document.getElementById('template-paper-size').value = data.data.paper_size || 'A4';
+            document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
+            document.getElementById('template-category').value = data.data.category || 'autre';
         } else {
-            console.error('Erreur lors du chargement des paramètres:', data.data);
-            if (typeof showErrorMessage === 'function') {
-                showErrorMessage(data.data?.message || 'Erreur lors du chargement des paramètres');
-            }
+            console.error('Erreur chargement paramètres:', data.data);
+            alert('Erreur lors du chargement des paramètres du template.');
         }
     })
     .catch(error => {
         console.error('Erreur AJAX:', error);
-        if (typeof showErrorMessage === 'function') {
-            showErrorMessage('Erreur de connexion lors du chargement des paramètres');
-        }
+        alert('Erreur de communication avec le serveur.');
     });
-};
-
-// Fonction pour fermer la modale des paramètres du template
-window.closeTemplateSettings = function() {
-    const modal = document.getElementById('template-settings-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-};
-
-// Fonction pour peupler le formulaire avec les données du template
-function populateTemplateSettingsForm(data) {
-    document.getElementById('template-name-input').value = data.name || '';
-    document.getElementById('template-description-input').value = data.description || '';
-    document.getElementById('template-public').checked = data.is_public || false;
-    document.getElementById('template-paper-size').value = data.paper_size || 'A4';
-    document.getElementById('template-orientation').value = data.orientation || 'portrait';
-    document.getElementById('template-category').value = data.category || 'facture';
-
-    // Stocker le slug actuel pour la sauvegarde
-    window.currentTemplateSlug = data.slug;
 }
 
-// Fonction pour sauvegarder les paramètres du template
-window.saveTemplateSettings = function() {
-    const formData = {
-        slug: window.currentTemplateSlug,
-        name: document.getElementById('template-name-input').value.trim(),
-        description: document.getElementById('template-description-input').value.trim(),
+function closeTemplateSettings() {
+    document.getElementById('template-settings-modal').style.display = 'none';
+    currentTemplateId = null;
+}
+
+function saveTemplateSettings() {
+    if (!currentTemplateId) {
+        alert('Erreur: ID du template manquant.');
+        return;
+    }
+
+    const settings = {
+        name: document.getElementById('template-name-input').value,
+        description: document.getElementById('template-description-input').value,
         is_public: document.getElementById('template-public').checked,
         paper_size: document.getElementById('template-paper-size').value,
         orientation: document.getElementById('template-orientation').value,
         category: document.getElementById('template-category').value
     };
 
-    // Validation basique
-    if (!formData.name) {
-        if (typeof showErrorMessage === 'function') {
-            showErrorMessage('Le nom du template est obligatoire');
-        }
-        return;
-    }
-
-    // Sauvegarde via AJAX
+    // Sauvegarder les paramètres
     fetch(ajaxurl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            action: 'pdf_builder_save_template_settings',
-            ...formData,
-            nonce: pdfBuilderTemplatesNonce || pdfBuilderAjax?.nonce || ''
+            'action': 'pdf_builder_save_template_settings',
+            'template_id': currentTemplateId,
+            'settings': JSON.stringify(settings),
+            'nonce': pdfBuilderTemplatesNonce
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            if (typeof showSuccessMessage === 'function') {
-                showSuccessMessage('Paramètres du template sauvegardés avec succès !');
-            }
+            alert('Paramètres sauvegardés avec succès!');
             closeTemplateSettings();
             // Recharger la page pour voir les changements
-            setTimeout(() => location.reload(), 1500);
+            location.reload();
         } else {
-            console.error('Erreur lors de la sauvegarde:', data.data);
-            if (typeof showErrorMessage === 'function') {
-                showErrorMessage(data.data?.message || 'Erreur lors de la sauvegarde');
-            }
+            console.error('Erreur sauvegarde:', data.data);
+            alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
         }
     })
     .catch(error => {
         console.error('Erreur AJAX:', error);
-        if (typeof showErrorMessage === 'function') {
-            showErrorMessage('Erreur de connexion lors de la sauvegarde');
-        }
+        alert('Erreur de communication avec le serveur.');
     });
-};
-</script> 
- 
+}
+
+// Fonctions pour gérer les templates (dupliquer, supprimer, etc.)
+function duplicateTemplate(templateId, templateName) {
+    if (confirm('Voulez-vous vraiment dupliquer le template "' + templateName + '" ?')) {
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_duplicate_template',
+                'template_id': templateId,
+                'nonce': pdfBuilderTemplatesNonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Template dupliqué avec succès!');
+                location.reload();
+            } else {
+                alert('Erreur lors de la duplication: ' + (data.data || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            alert('Erreur de communication avec le serveur.');
+        });
+    }
+}
+
+function confirmDeleteTemplate(templateId, templateName) {
+    if (confirm('ATTENTION: Cette action est irréversible!\n\nVoulez-vous vraiment supprimer le template "' + templateName + '" ?')) {
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_delete_template',
+                'template_id': templateId,
+                'nonce': pdfBuilderTemplatesNonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Template supprimé avec succès!');
+                location.reload();
+            } else {
+                alert('Erreur lors de la suppression: ' + (data.data || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            alert('Erreur de communication avec le serveur.');
+        });
+    }
+}
+
+function toggleDefaultTemplate(templateId, category, templateName) {
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_toggle_default_template',
+            'template_id': templateId,
+            'category': category,
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Template par défaut modifié avec succès!');
+            location.reload();
+        } else {
+            alert('Erreur: ' + (data.data || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        alert('Erreur de communication avec le serveur.');
+    });
+}
+
+function selectPredefinedTemplate(slug) {
+    if (confirm('Voulez-vous charger ce modèle prédéfini dans l\'éditeur? Votre travail actuel sera perdu.')) {
+        window.location.href = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(slug);
+    }
+}
+
+function closeTemplateGallery() {
+    document.getElementById('template-gallery-modal').style.display = 'none';
+}
+</script>

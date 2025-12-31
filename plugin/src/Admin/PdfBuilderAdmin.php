@@ -371,7 +371,13 @@ class PdfBuilderAdmin
             'pdf_builder_templates'
         );
 
-        // Cache des templates supprimé
+        add_settings_field(
+            'template_cache_enabled',
+            __('Cache des templates activé', 'pdf-builder-pro'),
+            array($this, 'template_cache_enabled_field_callback'),
+            'pdf_builder_templates',
+            'pdf_builder_templates'
+        );
 
         // Section Développeur
         add_settings_section(
@@ -608,8 +614,16 @@ class PdfBuilderAdmin
     }
 
     /**
-     * Cache des templates supprimé - plus de cache dynamique
+     * Callback pour le champ cache des templates
      */
+    public function template_cache_enabled_field_callback()
+    {
+        $settings = get_option('pdf_builder_settings', array());
+        $value = isset($settings['template_cache_enabled']) ? $settings['template_cache_enabled'] : '1';
+        echo '<input type="checkbox" name="pdf_builder_settings[template_cache_enabled]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<label>Activer le cache des templates</label>';
+        echo '<p class="description">Améliore les performances en mettant en cache les templates compilés.</p>';
+    }
 
     /**
      * Callback pour le champ mode debug développeur
@@ -1201,7 +1215,7 @@ class PdfBuilderAdmin
             }
 
             // Listen for React ready event
-            document.addEventListener('pdfBuilderReactReady', function() {
+            document.addEventListener('pdfBuilderReactLoaded', function() {
                 // console.log('[PDF Builder] React loaded event received');
                 loader.initializeReact();
             });

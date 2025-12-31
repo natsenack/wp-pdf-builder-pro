@@ -166,7 +166,15 @@
                 }
             }, CONFIG.animationDuration + 50);
             
-            // Cache supprimé - pas de sauvegarde locale
+            // Sauvegarder en localStorage
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem(CONFIG.storageKey, tabId);
+                }
+                log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
+            } catch(e) {
+                log('PDF Builder - Impossible de sauvegarder en localStorage:', e.message);
+            }
             
             // Déclencher événement personnalisé
             if (typeof document !== 'undefined' && document.dispatchEvent) {
@@ -259,9 +267,15 @@
         }
     }
 
-    // Obtenir l'onglet sauvegardé - cache supprimé
+    // Obtenir l'onglet sauvegardé
     function getStoredActiveTab() {
-        // Pas de cache - toujours retourner null
+        try {
+            if (typeof localStorage !== 'undefined') {
+                return localStorage.getItem(CONFIG.storageKey);
+            }
+        } catch(e) {
+            // localStorage non disponible
+        }
         return null;
     }
 

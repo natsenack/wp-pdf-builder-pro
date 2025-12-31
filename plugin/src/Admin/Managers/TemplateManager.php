@@ -335,6 +335,47 @@ class TemplateManager
     }
 
     /**
+     * Charger un template de manière robuste (pour l'initialisation de l'éditeur)
+     */
+    public function loadTemplateRobust($template_id)
+    {
+        try {
+            $template_id = intval($template_id);
+            
+            if (!$template_id) {
+                return false;
+            }
+
+            $template_data = get_post_meta($template_id, '_pdf_template_data', true);
+            
+            if (!$template_data) {
+                return false;
+            }
+
+            // Assurer que c'est un array
+            if (!is_array($template_data)) {
+                $template_data = json_decode($template_data, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    return false;
+                }
+            }
+
+            // Ajouter les informations du post
+            $post = get_post($template_id);
+            if ($post) {
+                $template_data['name'] = $post->post_title;
+                $template_data['id'] = $template_id;
+            }
+
+            return $template_data;
+
+        } catch (Exception $e) {
+            $this->debug_log('Erreur lors du chargement robuste du template: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Obtenir tous les templates
      */
     public function getAllTemplates($type = null)

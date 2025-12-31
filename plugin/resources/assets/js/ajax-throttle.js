@@ -4,9 +4,7 @@
  */
 
 // Debug functions
-
-    return false;
-}
+// (Debug functions would go here if needed)
 
 (function() {
     'use strict';
@@ -60,6 +58,7 @@
         };
     };
 
-    ');
+    // Log initialization
+    debugLog('🚀 [ajax-throttle] AJAX throttle initialized');
 })();
 

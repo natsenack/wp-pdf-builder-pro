@@ -158,20 +158,6 @@ try {
         Write-Host "Erreur lors de la detection des fichiers dist: $($_.Exception.Message)" -ForegroundColor Yellow
     }
 
-    # FORCER l'inclusion de TOUS les fichiers .bundle.js et .js du dossier assets/js pour l'editeur React
-    try {
-        $allBundleFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\*.bundle.js" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
-        $allJsFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.Name -notlike "*.min.js" -and $_.Name -notlike "js-syntax-check.js" } | Select-Object -ExpandProperty FullName
-        $allAssetsFiles = $allBundleFiles + $allJsFiles
-        $assetsFilesRelative = $allAssetsFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") } | Sort-Object -Unique
-        if ($assetsFilesRelative.Count -gt 0) {
-            Write-Host "Fichiers assets JS detectes: $($assetsFilesRelative.Count)" -ForegroundColor Yellow
-            $pluginModified = @($pluginModified) + @($assetsFilesRelative) | Sort-Object -Unique
-        }
-    } catch {
-        Write-Host "Erreur lors de la detection des fichiers assets: $($_.Exception.Message)" -ForegroundColor Yellow
-    }
-
     # Toujours inclure les fichiers vendor (dépendances PHP) - seulement s'ils sont récents
     try {
         # N'inclure que les vendor files modifiés récemment (dernières 24h) pour éviter l'upload massif

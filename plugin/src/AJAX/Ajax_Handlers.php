@@ -4,6 +4,8 @@
  * Centralise la validation commune et la gestion d'erreurs
  */
 
+namespace PDF_Builder\AJAX;
+
 // error_log('PDF Builder: [AJAX_HANDLERS.PHP] File loaded at ' . current_time('Y-m-d H:i:s'));
 
 /**
@@ -714,20 +716,6 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
  *    - Gèrent leurs domaines spécifiques (cache, maintenance, etc.)
  *    - Stockage: Leurs propres options WordPress
  */
-function pdf_builder_init_ajax_handlers() {
-    // Settings handler - Système unifié principal
-    $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
-    add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
-
-    // Template handler - Gestion des templates
-    $template_handler = new PDF_Builder_Template_Ajax_Handler();
-    add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
-    add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
-    add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
-}
-
-// Initialiser les handlers unifiés
-add_action('init', 'pdf_builder_init_ajax_handlers');
 
 /**
  * AJAX Handler pour récupérer les rôles autorisés
@@ -989,3 +977,20 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
+/**
+ * Initialisation des handlers AJAX unifiés
+ * Fonction supprimée - remplacée par fonction anonyme
+ */
+
+// Initialiser les handlers unifiés
+add_action('plugins_loaded', function() {
+    // Settings handler - Système unifié principal
+    $settings_handler = new \PDF_Builder\AJAX\PDF_Builder_Settings_Ajax_Handler();
+    add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
+
+    // Template handler - Gestion des templates
+    $template_handler = new \PDF_Builder\AJAX\PDF_Builder_Template_Ajax_Handler();
+    add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
+    add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
+    add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
+}, 5);

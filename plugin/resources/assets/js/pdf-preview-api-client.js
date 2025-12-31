@@ -39,11 +39,9 @@ class PDFPreviewAPI {
      * Génère un aperçu depuis l'éditeur (données fictives)
      */
     async generateEditorPreview(templateData, options = {}) {
-        
-        :', isDebugEnabled());
+        debugLog('🎨 [JS] generateEditorPreview called:', isDebugEnabled());
 
         if (this.isGenerating) {
-            
             return null;
         }
 
@@ -821,7 +819,7 @@ class PDFPreviewAPI {
             const dragDuration = performance.now() - this.dragStartTime;
             if (dragDuration > 10) { // Seulement pour les drags significatifs (>10ms)
                 const fps = 1000 / dragDuration;
-                }ms (${fps.toFixed(1)}fps)`);
+                debugLog(`🎨 [JS] Drag performance: ${dragDuration.toFixed(1)}ms (${fps.toFixed(1)}fps)`);
             }
         }
     }
@@ -949,8 +947,5 @@ window.generateEditorPreview = (templateData, options) => {
 window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
-
-');
-');
 
 

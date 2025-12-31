@@ -72,6 +72,9 @@ function pdf_builder_initialize_canvas_defaults() {
         'pdf_builder_canvas_fps_target' => 60,
         'pdf_builder_canvas_memory_limit_js' => 128,
         'pdf_builder_canvas_memory_limit_php' => 256,
+        'pdf_builder_canvas_lazy_loading_editor' => '1',
+        'pdf_builder_canvas_preload_critical' => '1',
+        'pdf_builder_canvas_lazy_loading_plugin' => '1',
 
         // Debug
         'pdf_builder_canvas_debug_enabled' => '0',

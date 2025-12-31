@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder Pro - Asset Optimizer
  * Optimisation et compression des assets (JS, CSS, images)
- * Intégré avec le système de cache centralisé
  */
 
 class PdfBuilderAssetOptimizer
@@ -18,11 +17,6 @@ class PdfBuilderAssetOptimizer
      * Instance du main plugin
      */
     private $main;
-
-    /**
-     * Instance du Cache Manager centralisé
-     */
-    private $cache_manager;
 
     /**
      * Répertoire des assets optimisés
@@ -49,7 +43,6 @@ class PdfBuilderAssetOptimizer
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->cache_manager = \PDF_Builder\Managers\PDF_Builder_Cache_Manager::getInstance();
         $this->initializeOptimizer();
     }
 
@@ -533,7 +526,7 @@ class PdfBuilderAssetOptimizer
         $js_files = [];
 
         // Assets du plugin
-        $assets_js = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/resources/assets/js/*.js');
+        $assets_js = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/assets/js/*.js');
         if ($assets_js) {
             $js_files = array_merge($js_files, $assets_js);
         }
@@ -555,7 +548,7 @@ class PdfBuilderAssetOptimizer
         $css_files = [];
 
         // Assets CSS
-        $assets_css = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/resources/assets/css/*.css');
+        $assets_css = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/assets/css/*.css');
         if ($assets_css) {
             $css_files = array_merge($css_files, $assets_css);
         }
@@ -571,7 +564,7 @@ class PdfBuilderAssetOptimizer
         $image_files = [];
 
         // Images dans assets
-        $assets_images = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/resources/assets/images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        $assets_images = glob(WP_PLUGIN_DIR . '/wp-pdf-builder-pro/assets/images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
         if ($assets_images) {
             $image_files = array_merge($image_files, $assets_images);
         }
