@@ -14,25 +14,32 @@ export const useCanvasSettings = () => {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+                const pdfBuilderData = (window as any).pdfBuilderData;
+                const ajaxUrl = pdfBuilderData?.ajaxUrl || (window as any).ajaxurl || '/wp-admin/admin-ajax.php';
+                const nonce = pdfBuilderData?.nonce || '';
+
+                const response = await fetch(ajaxUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        action: 'pdf_builder_get_canvas_settings'
+                        action: 'pdf_builder_get_canvas_settings',
+                        nonce: nonce
                     })
                 });
 
-                const data = await response.json();
-                if (data.success && data.data) {
-                    window.pdfBuilderCanvasSettings = {
-                        ...window.pdfBuilderCanvasSettings,
-                        ...data.data
-                    };
-                    setSettings(window.pdfBuilderCanvasSettings);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        window.pdfBuilderCanvasSettings = {
+                            ...window.pdfBuilderCanvasSettings,
+                            ...data.data
+                        };
+                        setSettings(window.pdfBuilderCanvasSettings);
+                    }
                 } else {
-                    console.warn('REACT: Invalid AJAX response:', data);
+                    console.warn('REACT: Canvas settings fetch failed:', response.status);
                 }
             } catch (error) {
                 console.warn('REACT: Failed to fetch updated settings:', error);
