@@ -643,8 +643,7 @@ class PdfBuilderCore
         // Traiter les paramètres comme dans le code original
         $settings = [
             'debug_mode' => isset($_POST['debug_mode']),
-            'cache_enabled' => isset($_POST['cache_enabled']),
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            // REMOVED: cache_enabled, cache_ttl - cache system removed
             'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
             'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
             'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),

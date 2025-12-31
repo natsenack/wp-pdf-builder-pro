@@ -758,11 +758,7 @@ class PdfBuilderAdmin
 
             case 'systeme':
                 // Paramètres système
-                $settings['pdf_builder_cache_enabled'] = isset($_POST['pdf_builder_cache_enabled']) ? '1' : '0';
-                $settings['pdf_builder_cache_compression'] = isset($_POST['pdf_builder_cache_compression']) ? '1' : '0';
-                $settings['pdf_builder_cache_auto_cleanup'] = isset($_POST['pdf_builder_cache_auto_cleanup']) ? '1' : '0';
-                $settings['pdf_builder_cache_max_size'] = intval($_POST['pdf_builder_cache_max_size'] ?? 100);
-                $settings['pdf_builder_cache_ttl'] = intval($_POST['pdf_builder_cache_ttl'] ?? 3600);
+                // REMOVED: Cache settings - cache system removed
                 $settings['pdf_builder_performance_auto_optimization'] = isset($_POST['pdf_builder_performance_auto_optimization']) ? '1' : '0';
                 $settings['pdf_builder_systeme_auto_maintenance'] = isset($_POST['pdf_builder_systeme_auto_maintenance']) ? '1' : '0';
                 break;

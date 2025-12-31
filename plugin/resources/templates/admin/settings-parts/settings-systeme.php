@@ -7,20 +7,15 @@
     error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
 
     // Préparer toutes les variables nécessaires
-    $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
-    $cache_compression = $settings['pdf_builder_cache_compression'] ?? '1';
-    $cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? '1';
-    $cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
-    $cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
+    // REMOVED: Cache variables - cache system removed
     $performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
     $auto_maintenance = $settings['pdf_builder_systeme_auto_maintenance'] ?? '0';
     $last_maintenance = $settings['pdf_builder_last_maintenance'] ?? 'Jamais';
     $next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
-    $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
+    // REMOVED: cache_last_cleanup - cache system removed
 
-    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl);
-    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
+    // REMOVED: Cache debug logging - cache system removed
 
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();

@@ -41,8 +41,8 @@ describe('PerformanceMetrics', () => {
 describe('validateFormData', () => {
     test('should validate numeric fields', () => {
         const formData = {
-            'pdf_builder_cache_max_size': 'not-a-number',
-            'pdf_builder_cache_ttl': '123'
+            'pdf_builder_max_execution_time': 'not-a-number',
+            'pdf_builder_memory_limit': '256'
         };
 
         const errors = validateFormData(formData);
@@ -52,8 +52,9 @@ describe('validateFormData', () => {
 
     test('should pass valid data', () => {
         const formData = {
-            'pdf_builder_cache_max_size': '1024',
-            'pdf_builder_cache_ttl': '3600',
+            // REMOVED: cache fields - cache system removed
+            'pdf_builder_max_execution_time': '300',
+            'pdf_builder_memory_limit': '256',
             'pdf_builder_company_name': 'Test Company'
         };
 

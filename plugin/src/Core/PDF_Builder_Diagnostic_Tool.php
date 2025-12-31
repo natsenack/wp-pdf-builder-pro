@@ -442,9 +442,7 @@ class PDF_Builder_Diagnostic_Tool {
 
         // Notification email removed from config
 
-        if (!$config['cache_enabled']) {
-            $issues[] = 'Cache désactivé - impact sur les performances';
-        }
+        // REMOVED: Cache check - cache system removed
 
         if ($config['memory_limit'] > 512) {
             $issues[] = 'Limite mémoire élevée détectée';

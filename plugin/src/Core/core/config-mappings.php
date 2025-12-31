@@ -508,11 +508,7 @@ class PDF_Builder_Config_Mappings {
                 }
                 break;
 
-            case 'cache':
-                if (!isset($config['enabled'])) {
-                    $errors[] = 'Cache enabled flag is missing';
-                }
-                break;
+            // REMOVED: cache validation - cache system removed
         }
 
         return [

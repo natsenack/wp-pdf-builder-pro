@@ -215,8 +215,7 @@
 
         // Validation des champs numériques
         const numericFields = [
-            'pdf_builder_cache_max_size',
-            'pdf_builder_cache_ttl',
+            // REMOVED: cache fields - cache system removed
             'pdf_builder_max_execution_time',
             'pdf_builder_memory_limit'
         ];
