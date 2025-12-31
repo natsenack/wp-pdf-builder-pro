@@ -101,18 +101,21 @@ function initPDFBuilderReact() {
   }
 }
 
-// Assign to window.pdfBuilderReact
-// The pre-init script ensures this object already exists, so we just add the function
-if (_typeof(window.pdfBuilderReact) === 'object') {
+// Immediately assign and execute
+(function () {
+  'use strict';
+
+  // Ensure object exists
+  if (_typeof(window.pdfBuilderReact) !== 'object' || window.pdfBuilderReact === null) {
+    window.pdfBuilderReact = {};
+  }
+
+  // Assign the function
   window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
-  console.log('✅ [PDF BUNDLE] Successfully assigned initPDFBuilderReact to window.pdfBuilderReact');
-} else {
-  // Fallback if pre-init didn't run
-  window.pdfBuilderReact = {
-    initPDFBuilderReact: initPDFBuilderReact
-  };
-  console.log('⚠️ [PDF BUNDLE] FALLBACK: Created window.pdfBuilderReact (pre-init may not have run)');
-}
+  console.log('✅ [PDF BUNDLE] Successfully assigned initPDFBuilderReact');
+  console.log('✅ [PDF BUNDLE] window.pdfBuilderReact type:', _typeof(window.pdfBuilderReact));
+  console.log('✅ [PDF BUNDLE] initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+})();
 
 // Export for CommonJS/module systems
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
