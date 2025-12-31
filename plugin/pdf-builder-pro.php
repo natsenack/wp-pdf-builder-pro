@@ -21,8 +21,15 @@ define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
-define('PDF_BUILDER_VERSION', '1.1.0');
-define('PDF_BUILDER_PRO_VERSION', '1.1.0');
+
+// ✅ VERSION DYNAMIQUE - Force cache busting à chaque changement de fichier
+// Calcule un hash basé sur le timestamp de modification du plugin
+// Élimine le cache statique sans changer la logique d'enqueue
+$plugin_version_base = '1.1.0';
+$plugin_file_mtime = filemtime(__FILE__);
+$plugin_cache_bust = md5($plugin_file_mtime);
+define('PDF_BUILDER_VERSION', $plugin_version_base . '-' . substr($plugin_cache_bust, 0, 8));
+define('PDF_BUILDER_PRO_VERSION', $plugin_version_base . '-' . substr($plugin_cache_bust, 0, 8));
 
 // Premium features constant (set to false for free version)
 if (!defined('PDF_BUILDER_PREMIUM')) {
