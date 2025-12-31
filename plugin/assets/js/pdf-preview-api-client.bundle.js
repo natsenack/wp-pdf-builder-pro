@@ -1,14 +1,4 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["PDFBuilder"] = factory();
-	else
-		root["PDFBuilder"] = factory();
-})(self, () => {
-return /******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 var __webpack_exports__ = {};
 
@@ -488,9 +478,7 @@ debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
 debugLog('📖 Utilisation:');
 debugLog('   - generateEditorPreview(templateData)');
 debugLog('   - generateOrderPreview(templateData, orderId)');
-__webpack_exports__ = __webpack_exports__["default"];
-/******/ 	return __webpack_exports__;
+window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
-});
 //# sourceMappingURL=pdf-preview-api-client.bundle.js.map

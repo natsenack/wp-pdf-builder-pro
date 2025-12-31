@@ -36,7 +36,7 @@ module.exports = {
     publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
     library: {
       name: 'PDFBuilder',
-      type: 'umd',
+      type: 'window',
       export: 'default',
     },
     clean: false, // Ne pas nettoyer auto, on contrôle
@@ -145,6 +145,11 @@ module.exports = {
       }),
     ] : []),
   ],
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+    'react-dom/client': 'ReactDOM',
+  },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
@@ -176,6 +181,7 @@ module.exports = {
       }),
     ],
     splitChunks: false,
+    runtimeChunk: false,
   },
   performance: {
     maxEntrypointSize: 512000,

@@ -1,14 +1,4 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["PDFBuilder"] = factory();
-	else
-		root["PDFBuilder"] = factory();
-})(self, () => {
-return /******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 var __webpack_exports__ = {};
 
@@ -176,9 +166,7 @@ var __webpack_exports__ = {};
   };
   logRoot('tabs-root-monitor initialized (DEBUG=' + DEBUG + ')');
 })();
-__webpack_exports__ = __webpack_exports__["default"];
-/******/ 	return __webpack_exports__;
+window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
-});
 //# sourceMappingURL=tabs-root-monitor.bundle.js.map

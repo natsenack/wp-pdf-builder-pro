@@ -257,9 +257,13 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-wrap', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js', ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $version, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
+        // Ensure React is loaded globally
+        wp_enqueue_script('react');
+        wp_enqueue_script('react-dom');
+
         // Bundle React
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.bundle.js';
-        
+
         // Localize script data BEFORE enqueuing
         $localize_data = [
             'ajaxUrl' => admin_url('admin-ajax.php'),
