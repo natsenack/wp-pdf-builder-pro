@@ -312,6 +312,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/settings-global-save.js"));
+/******/ __webpack_exports__ = __webpack_exports__["default"];
 /******/ return __webpack_exports__;
 /******/ }
 ]);

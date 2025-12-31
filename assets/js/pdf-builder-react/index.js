@@ -4,6 +4,14 @@
 // Pre-init script ensures window.pdfBuilderReact and debug array exist first
 // ============================================================================
 
+// IIFE to execute module-level code immediately
+(function() {
+  if (typeof window !== 'undefined') {
+    window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+    window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
+  }
+})();
+
 // Define the initialization function
 function initPDFBuilderReact() {
   window.pdfBuilderReactDebug.push('FUNCTION_CALLED_STARTED');
@@ -113,6 +121,14 @@ window.pdfBuilderReact = window.pdfBuilderReact || {};
 window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
 
 if (typeof window !== 'undefined') {
+  window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
+}
+
+// Export as default so webpack exports it to window.pdfBuilderReact
+export default {
+  initPDFBuilderReact: initPDFBuilderReact,
+  __esModule: true
+};
   window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
 }
 
