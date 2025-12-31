@@ -360,21 +360,6 @@ class PDF_Builder_Database_Updater {
             ) $charset_collate
         ");
 
-        // Table des caches
-        $wpdb->query("
-            CREATE TABLE {$wpdb->prefix}pdf_builder_cache (
-                cache_key varchar(255) NOT NULL,
-                cache_value longtext,
-                cache_group varchar(100) DEFAULT 'default',
-                expires_at datetime NULL,
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (cache_key),
-                KEY cache_group (cache_group),
-                KEY expires_at (expires_at)
-            ) $charset_collate
-        ");
-
         // Table des tâches planifiées
         $wpdb->query("
             CREATE TABLE {$wpdb->prefix}pdf_builder_tasks (
@@ -407,7 +392,6 @@ class PDF_Builder_Database_Updater {
         $tables = [
             'pdf_builder_config',
             'pdf_builder_logs',
-            'pdf_builder_cache',
             'pdf_builder_tasks'
         ];
 
@@ -584,7 +568,6 @@ class PDF_Builder_Database_Updater {
         // Ajouter des index pour améliorer les performances
         $indexes = [
             "ALTER TABLE {$wpdb->prefix}pdf_builder_logs ADD INDEX idx_level_created (level, created_at)",
-            "ALTER TABLE {$wpdb->prefix}pdf_builder_cache ADD INDEX idx_group_expires (cache_group, expires_at)",
             "ALTER TABLE {$wpdb->prefix}pdf_builder_tasks ADD INDEX idx_status_priority (status, priority)",
             "ALTER TABLE {$wpdb->prefix}pdf_builder_metrics ADD INDEX idx_type_timestamp (type, timestamp)",
             "ALTER TABLE {$wpdb->prefix}pdf_builder_metrics_aggregated ADD INDEX idx_period_date (period, date)",
@@ -600,7 +583,6 @@ class PDF_Builder_Database_Updater {
         $tables = [
             'pdf_builder_config',
             'pdf_builder_logs',
-            'pdf_builder_cache',
             'pdf_builder_tasks',
             'pdf_builder_metrics',
             'pdf_builder_metrics_aggregated',
@@ -636,7 +618,6 @@ class PDF_Builder_Database_Updater {
         $required_tables = [
             'pdf_builder_config',
             'pdf_builder_logs',
-            'pdf_builder_cache',
             'pdf_builder_tasks',
             'pdf_builder_metrics',
             'pdf_builder_metrics_aggregated',

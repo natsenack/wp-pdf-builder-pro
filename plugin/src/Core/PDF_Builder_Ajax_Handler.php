@@ -283,17 +283,6 @@ class PDF_Builder_Ajax_Handler {
     }
 
     /**
-     * Gestionnaire pour tester l'intégration du cache
-     */
-    private function handle_test_cache_integration() {
-        if (!isset($this->systems['cache'])) {
-            throw new Exception('Système de cache non disponible');
-        }
-
-        return $this->systems['cache']->test_integration();
-    }
-
-    /**
      * Gestionnaire pour vider tout le cache
      */
     private function handle_clear_all_cache() {
