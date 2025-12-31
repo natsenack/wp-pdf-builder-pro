@@ -79,7 +79,10 @@
       // Make available globally - with expected function name
       window.pdfBuilderReact = {
         SimplePDFBuilder,
-        initPDFBuilderReact: initSimplePDFBuilder,
+        initPDFBuilderReact: function() {
+          console.log('🚀 [DEBUG] initPDFBuilderReact called');
+          return true; // Always return success - React is already initialized
+        },
         initSimplePDFBuilder,
         DEFAULT_CANVAS_WIDTH,
         DEFAULT_CANVAS_HEIGHT
@@ -124,12 +127,6 @@
       console.error('❌ Simple PDF Builder failed:', error);
     }
   }
-
-  // Export the expected function
-  window.pdfBuilderReact.initPDFBuilderReact = function() {
-    console.log('🚀 [DEBUG] initPDFBuilderReact called');
-    return true; // Always return success
-  };
 
   console.log('🔄 [DEBUG] Starting dependency check...');
   checkDependencies();
