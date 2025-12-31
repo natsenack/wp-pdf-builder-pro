@@ -315,7 +315,12 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
+        // PRE-INIT: Enqueue pre-initialization script BEFORE the bundle
+        // This ensures window.pdfBuilderReact is initialized before webpack UMD wrapper runs
+        $preinit_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-preinit.js';
+        wp_enqueue_script('pdf-builder-react-preinit', $preinit_url, ['pdf-builder-wrap'], $version_param, true);
+        
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-preinit'], $version_param, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
         // Loader to initialize the React bundle after it loads
