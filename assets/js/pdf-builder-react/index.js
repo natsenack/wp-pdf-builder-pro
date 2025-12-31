@@ -12,7 +12,6 @@ import '../fallbacks/browser-compatibility.js';
 // Import des composants React
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { PDFBuilder } from './PDFBuilder.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
 import { debugLog, debugError } from './utils/debug';
 import { 
@@ -25,53 +24,6 @@ import {
   saveTemplate,
   resetAPI
 } from './api/global-api';
-
-// Composant ErrorBoundary pour capturer les erreurs de rendu
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
-  }
-
-  static getDerivedStateFromError(_error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    debugError('❌ React Error Boundary caught an error:', error);
-    debugError('❌ Error Info:', errorInfo);
-    this.setState({
-      error: error,
-      errorInfo: errorInfo
-    });
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return React.createElement('div', {
-        style: {
-          padding: '20px',
-          border: '1px solid #ff6b6b',
-          borderRadius: '5px',
-          backgroundColor: '#ffe6e6',
-          color: '#d63031',
-          fontFamily: 'Arial, sans-serif'
-        }
-      }, 
-        React.createElement('h2', null, 'Erreur dans l\'éditeur PDF'),
-        React.createElement('p', null, 'Une erreur s\'est produite lors du rendu de l\'éditeur. Veuillez rafraîchir la page.'),
-        React.createElement('details', { style: { whiteSpace: 'pre-wrap' } },
-          React.createElement('summary', null, 'Détails de l\'erreur'),
-          this.state.error && this.state.error.toString(),
-          React.createElement('br'),
-          this.state.errorInfo && this.state.errorInfo.componentStack
-        )
-      );
-    }
-
-    return this.props.children;
-  }
-}
 
 // État de l'application
 // let currentTemplate = null;
