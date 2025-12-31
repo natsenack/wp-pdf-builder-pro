@@ -19,224 +19,119 @@ return (Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilde
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   initPDFBuilderReact: () => (/* binding */ initPDFBuilderReact)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/ts/components/PDFBuilder */ "./assets/ts/components/PDFBuilder.tsx");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // ============================================================================
-// PDF Builder React Bundle - Entry Point - IMMEDIATE EXECUTION
+// PDF Builder React Bundle - STANDALONE IIFE APPROACH (NO WEBPACK UMD WRAPPING)
 // ============================================================================
 
-// FORCE IMMEDIATE EXECUTION - These run BEFORE module wrapping
-if (typeof window !== 'undefined') {
-  window._pdfBundleStarting = true;
-  console.log('🔥 [PDF BUNDLE] WINDOW CONTEXT AVAILABLE - Starting bootstrap');
-  console.log('🔥 [PDF BUNDLE] React available?', _typeof(window.React));
-  console.log('🔥 [PDF BUNDLE] ReactDOM available?', _typeof(window.ReactDOM));
-}
+// Immediately invoke function to escape webpack UMD wrapping
+(function () {
+  'use strict';
 
-// Import the main PDF Builder component
+  if (typeof window === 'undefined') return;
+  console.log('🔥 [PDF BUNDLE] IIFE STARTED - window context available');
 
+  // Define the initialization function IMMEDIATELY (not in module scope)
+  function initPDFBuilderReact() {
+    console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
+    try {
+      // Get globals
+      var React = window.React;
+      var ReactDOM = window.ReactDOM;
+      console.log('🔧 [PDF BUNDLE] React type:', _typeof(React));
+      console.log('🔧 [PDF BUNDLE] ReactDOM type:', _typeof(ReactDOM));
 
-// THIS CODE RUNS IMMEDIATELY - Not wrapped in a function
-console.log('🔥 [PDF BUNDLE] BOOTSTRAP PHASE - After imports');
-console.log('🔥 [PDF BUNDLE] PDFBuilder imported, type:', _typeof(_ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]));
+      // Check for container
+      var container = document.getElementById('pdf-builder-react-root');
+      console.log('🔧 [PDF BUNDLE] Container element:', container ? 'FOUND' : 'NOT FOUND');
+      if (!container) {
+        console.error('❌ [PDF BUNDLE] ERROR: Container not found');
+        return false;
+      }
 
-// Get WordPress globals
-var React = window.React;
-var ReactDOM = window.ReactDOM;
-console.log('🔥 [PDF BUNDLE] React global assignment done');
-console.log('🔥 [PDF BUNDLE] ReactDOM global assignment done');
+      // Validate React
+      if (typeof React === 'undefined' || !React) {
+        console.error('❌ [PDF BUNDLE] ERROR: React undefined or null');
+        return false;
+      }
+      if (typeof ReactDOM === 'undefined' || !ReactDOM) {
+        console.error('❌ [PDF BUNDLE] ERROR: ReactDOM undefined or null');
+        return false;
+      }
+      if (typeof ReactDOM.createRoot !== 'function') {
+        console.error('❌ [PDF BUNDLE] ERROR: ReactDOM.createRoot not a function');
+        return false;
+      }
+      console.log('✅ [PDF BUNDLE] React dependencies validated');
 
-// Define the initialization function
-function initPDFBuilderReact() {
-  console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
-  console.log('🔧 [PDF BUNDLE] React type:', _typeof(React), 'is function?', typeof React === 'function');
-  console.log('🔧 [PDF BUNDLE] ReactDOM type:', _typeof(ReactDOM), 'has createRoot?', ReactDOM && typeof ReactDOM.createRoot === 'function');
-  console.log('🔧 [PDF BUNDLE] PDFBuilder type:', _typeof(_ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]));
-  try {
-    // Check for container
-    var container = document.getElementById('pdf-builder-react-root');
-    console.log('🔧 [PDF BUNDLE] Container element:', container ? 'FOUND' : 'NOT FOUND', container);
-    if (!container) {
-      console.error('❌ [PDF BUNDLE] ERROR: Container not found');
+      // Hide loading, show editor
+      var loadingEl = document.getElementById('pdf-builder-react-loading');
+      var editorEl = document.getElementById('pdf-builder-react-editor');
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (editorEl) editorEl.style.display = 'block';
+      console.log('🎨 [PDF BUNDLE] Creating React root...');
+      var root = ReactDOM.createRoot(container);
+
+      // Import PDFBuilder dynamically or inline
+      // For now, we'll check if it's available in the module cache
+      var PDFBuilder = null;
+
+      // Try to get PDFBuilder from webpack modules if available
+      if (true) {
+        for (var key in __webpack_require__.m) {
+          var mod = __webpack_require__.m[key];
+          if (mod && mod.exports && mod.exports["default"]) {
+            var exp = mod.exports["default"];
+            // Check if this looks like PDFBuilder (has render method or is a React component)
+            if (typeof exp === 'function' && (exp.$$typeof || exp.prototype)) {
+              PDFBuilder = exp;
+              console.log('🎨 [PDF BUNDLE] Found PDFBuilder in module cache');
+              break;
+            }
+          }
+        }
+      }
+      if (!PDFBuilder) {
+        console.error('❌ [PDF BUNDLE] ERROR: PDFBuilder component not found');
+        return false;
+      }
+      console.log('🎨 [PDF BUNDLE] Creating element from PDFBuilder component...');
+      var element = React.createElement(PDFBuilder);
+      console.log('🎨 [PDF BUNDLE] Rendering to root...');
+      root.render(element);
+      console.log('✅ [PDF BUNDLE] Rendered successfully!');
+      return true;
+    } catch (error) {
+      console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
+      console.error('❌ [PDF BUNDLE] Stack:', error.stack);
       return false;
     }
-    console.log('✅ [PDF BUNDLE] Container found, type:', container.constructor.name);
-
-    // Check React
-    if (typeof React === 'undefined' || !React) {
-      console.error('❌ [PDF BUNDLE] ERROR: React undefined or null');
-      return false;
-    }
-    if (typeof ReactDOM === 'undefined' || !ReactDOM) {
-      console.error('❌ [PDF BUNDLE] ERROR: ReactDOM undefined or null');
-      return false;
-    }
-    if (typeof ReactDOM.createRoot !== 'function') {
-      console.error('❌ [PDF BUNDLE] ERROR: ReactDOM.createRoot not a function, available methods:', Object.keys(ReactDOM));
-      return false;
-    }
-    console.log('✅ [PDF BUNDLE] React dependencies validated');
-    console.log('✅ [PDF BUNDLE] React.createElement:', _typeof(React.createElement));
-
-    // Hide loading, show editor
-    var loadingEl = document.getElementById('pdf-builder-react-loading');
-    var editorEl = document.getElementById('pdf-builder-react-editor');
-    console.log('🔧 [PDF BUNDLE] Loading element:', loadingEl ? 'found' : 'not found');
-    console.log('🔧 [PDF BUNDLE] Editor element:', editorEl ? 'found' : 'not found');
-    if (loadingEl) loadingEl.style.display = 'none';
-    if (editorEl) editorEl.style.display = 'block';
-    console.log('🎨 [PDF BUNDLE] Creating React root...');
-    var root = ReactDOM.createRoot(container);
-    console.log('🎨 [PDF BUNDLE] Root created:', _typeof(root));
-    console.log('🎨 [PDF BUNDLE] Creating element from PDFBuilder component...');
-    var element = React.createElement(_ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]);
-    console.log('🎨 [PDF BUNDLE] Element created:', element ? 'SUCCESS' : 'FAILED');
-    console.log('🎨 [PDF BUNDLE] Rendering to root...');
-    root.render(element);
-    console.log('✅ [PDF BUNDLE] Rendered successfully!');
-    return true;
-  } catch (error) {
-    console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
-    console.error('❌ [PDF BUNDLE] Stack:', error.stack);
-    console.error('❌ [PDF BUNDLE] Error object:', error);
-    return false;
   }
-}
 
-// PRE-ASSIGN to window BEFORE webpack wrapper (this gets overwritten by UMD but we override it later)
-if (typeof window !== 'undefined') {
+  // Assign to window IMMEDIATELY within IIFE scope
   window.pdfBuilderReact = {
     initPDFBuilderReact: initPDFBuilderReact
   };
-  console.log('🌐 [PDF BUNDLE] Pre-assigned to window.pdfBuilderReact:', _typeof(window.pdfBuilderReact));
-}
+  console.log('🔥 [PDF BUNDLE] IIFE: Assigned to window.pdfBuilderReact');
+  console.log('🔥 [PDF BUNDLE] IIFE: window.pdfBuilderReact type:', _typeof(window.pdfBuilderReact));
+  console.log('🔥 [PDF BUNDLE] IIFE: initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+})();
 
-// Export for webpack UMD (but this will be ignored by our plugin)
+// For webpack: this is needed but will be ignored in favor of the IIFE
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  initPDFBuilderReact: initPDFBuilderReact
+  initPDFBuilderReact: function initPDFBuilderReact() {
+    return window.pdfBuilderReact ? window.pdfBuilderReact.initPDFBuilderReact() : false;
+  }
 });
-
-
-/***/ }),
-
-/***/ "./assets/ts/components/PDFBuilder.tsx":
-/*!*********************************************!*\
-  !*** ./assets/ts/components/PDFBuilder.tsx ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _ts_components_TemplateSelector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/ts/components/TemplateSelector */ "./assets/ts/components/TemplateSelector.tsx");
-
-
-
-/**
- * Main PDF Builder component
- */
-const PDFBuilder = () => {
-    return ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: "pdf-builder-container", children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: "pdf-builder-header", children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("h1", { children: "PDF Builder Pro" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "Cr\u00E9ez vos templates PDF personnalis\u00E9s" })] }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("div", { className: "pdf-builder-content", children: (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_ts_components_TemplateSelector__WEBPACK_IMPORTED_MODULE_2__["default"], { onTemplateSelect: (template) => {
-                        console.log('Template selected:', template);
-                        // TODO: Implement template selection logic
-                    } }) })] }));
-};
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PDFBuilder);
-
-
-/***/ }),
-
-/***/ "./assets/ts/components/TemplateSelector.tsx":
-/*!***************************************************!*\
-  !*** ./assets/ts/components/TemplateSelector.tsx ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-
-
-/**
- * Composant pour sélectionner un template PDF
- * Exemple d'utilisation de la structure TypeScript
- */
-const TemplateSelector = ({ selectedTemplate, onTemplateSelect, category, isLoading = false, className = '', ...props }) => {
-    const [templates, setTemplates] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
-    const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
-    // Chargement des templates
-    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-        const loadTemplates = async () => {
-            var _a;
-            try {
-                setError(null);
-                // Exemple d'appel AJAX WordPress
-                const response = await fetch(window.ajaxurl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        action: 'pdf_builder_get_templates',
-                        category: category || '',
-                        nonce: window.pdfBuilderPro.nonce,
-                    }),
-                }).then(res => res.json());
-                if (response.success) {
-                    setTemplates(response.data);
-                }
-                else {
-                    setError(((_a = response.data) === null || _a === void 0 ? void 0 : _a.message) || 'Erreur lors du chargement des templates');
-                }
-            }
-            catch (err) {
-                setError('Erreur de connexion');
-                console.error('Erreur lors du chargement des templates:', err);
-            }
-        };
-        loadTemplates();
-    }, [category]);
-    // Gestionnaire de sélection
-    const handleTemplateSelect = (template) => {
-        onTemplateSelect(template);
-    };
-    // Rendu en cas d'erreur
-    if (error) {
-        return ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("div", { className: `template-selector error ${className}`, ...props, children: (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: "error-message", children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: error }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("button", { type: "button", onClick: () => window.location.reload(), className: "button button-secondary", children: "R\u00E9essayer" })] }) }));
-    }
-    // Rendu en cours de chargement
-    if (isLoading) {
-        return ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("div", { className: `template-selector loading ${className}`, ...props, children: (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: "loading-spinner", children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("span", { className: "dashicons dashicons-update spin" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "Chargement des templates..." })] }) }));
-    }
-    // Rendu normal
-    return ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: `template-selector ${className}`, ...props, children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("h3", { children: "S\u00E9lectionner un template" }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("div", { className: "template-grid", children: templates.map((template) => ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: `template-card ${(selectedTemplate === null || selectedTemplate === void 0 ? void 0 : selectedTemplate.id) === template.id ? 'selected' : ''}`, onClick: () => handleTemplateSelect(template), role: "button", tabIndex: 0, onKeyDown: (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleTemplateSelect(template);
-                        }
-                    }, children: [template.thumbnail && ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("img", { src: template.thumbnail, alt: template.name, className: "template-thumbnail" })), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", { className: "template-info", children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("h4", { children: template.name }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: template.description }), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("span", { className: "template-category", children: template.category })] }), template.isDefault && ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("span", { className: "template-badge default", children: "Par d\u00E9faut" }))] }, template.id))) }), templates.length === 0 && ((0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("div", { className: "no-templates", children: (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("p", { children: "Aucun template disponible" }) }))] }));
-};
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TemplateSelector);
-
 
 /***/ })
 
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ __webpack_require__.O(0, ["vendors"], () => (__webpack_exec__("./assets/js/pdf-builder-react/index.js")));
-/******/ var __webpack_exports__ = __webpack_require__.O();
+/******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/pdf-builder-react/index.js"));
 /******/ __webpack_exports__ = __webpack_exports__["default"];
 /******/ return __webpack_exports__;
 /******/ }
