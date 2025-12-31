@@ -101,9 +101,9 @@ function initPDFBuilderReact() {
   } catch (error) {
     console.error('❌ [PDF Builder] Error in initPDFBuilderReact:', error);
     console.error('❌ [PDF Builder] Error stack:', error.stack);
-    var _container = document.getElementById('pdf-builder-react-root');
-    if (_container) {
-      _container.innerHTML = '<p>❌ Erreur lors du rendu React: ' + error.message + '</p><pre>' + error.stack + '</pre>';
+    var container = document.getElementById('pdf-builder-react-root');
+    if (container) {
+      container.innerHTML = '<p>❌ Erreur lors du rendu React: ' + error.message + '</p><pre>' + error.stack + '</pre>';
     }
     return false;
   }

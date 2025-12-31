@@ -5,13 +5,13 @@
 console.log('� [PDF Builder] BUNDLE EXECUTING - START');
 
 // Use WordPress globals instead of imports
-const React = window.React;
-const ReactDOM = window.ReactDOM;
+var React = window.React;
+var ReactDOM = window.ReactDOM;
 
 console.log('🔥 [PDF Builder] React globals:', { React: typeof React, ReactDOM: typeof ReactDOM });
 
 // Flag pour afficher les logs d'initialisation détaillés
-const DEBUG_VERBOSE = true;
+var DEBUG_VERBOSE = true;
 
 if (DEBUG_VERBOSE) console.log('🚀 PDF Builder React bundle starting execution...');
 
@@ -21,7 +21,7 @@ function initPDFBuilderReact() {
   try {
     console.log('🔍 [PDF Builder] Looking for container...');
     // Vérifier si le container existe
-    const container = document.getElementById('pdf-builder-react-root');
+    var container = document.getElementById('pdf-builder-react-root');
     console.log('🔍 [PDF Builder] Container element:', container);
     if (!container) {
       console.error('❌ [PDF Builder] Container #pdf-builder-react-root not found');
@@ -52,8 +52,8 @@ function initPDFBuilderReact() {
     console.log('🎯 [PDF Builder] All dependencies loaded, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
-    const loadingEl = document.getElementById('pdf-builder-react-loading');
-    const editorEl = document.getElementById('pdf-builder-react-editor');
+    var loadingEl = document.getElementById('pdf-builder-react-loading');
+    var editorEl = document.getElementById('pdf-builder-react-editor');
 
     console.log('🎨 [PDF Builder] Hiding loading, showing editor:', { loadingEl, editorEl });
     if (loadingEl) loadingEl.style.display = 'none';
@@ -62,10 +62,10 @@ function initPDFBuilderReact() {
     console.log('🎨 [PDF Builder] Creating React root...');
 
     // Créer et rendre l'application React
-    const root = ReactDOM.createRoot(container);
+    var root = ReactDOM.createRoot(container);
     console.log('🎨 [PDF Builder] React root created, rendering component...');
 
-    const testElement = React.createElement('div', {
+    var testElement = React.createElement('div', {
       style: {
         padding: '20px',
         border: '1px solid green',
@@ -85,7 +85,7 @@ function initPDFBuilderReact() {
   } catch (error) {
     console.error('❌ [PDF Builder] Error in initPDFBuilderReact:', error);
     console.error('❌ [PDF Builder] Error stack:', error.stack);
-    const container = document.getElementById('pdf-builder-react-root');
+    var container = document.getElementById('pdf-builder-react-root');
     if (container) {
       container.innerHTML = '<p>❌ Erreur lors du rendu React: ' + error.message + '</p><pre>' + error.stack + '</pre>';
     }
@@ -96,7 +96,7 @@ function initPDFBuilderReact() {
 if (DEBUG_VERBOSE) console.log('📦 Creating exports object...');
 
 // Export default pour webpack
-const exports = {
+var exports = {
   initPDFBuilderReact
 };
 
