@@ -1,15 +1,5 @@
 "use strict";
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["pdfBuilderReact"] = factory();
-	else
-		root["pdfBuilderReact"] = factory();
-})(self, () => {
-return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
+(self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([["pdf-builder-react"],{
 
 /***/ "./assets/js/pdf-builder-react/index.js":
 /*!**********************************************!*\
@@ -151,8 +141,7 @@ if (DEBUG_VERBOSE) console.log('🎉 PDF Builder React bundle execution complete
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__("./assets/js/pdf-builder-react/index.js"));
-/******/ return __webpack_exports__;
+/******/ window.pdfBuilderReact = __webpack_exports__;
 /******/ }
 ]);
-});
 //# sourceMappingURL=pdf-builder-react.bundle.js.map
