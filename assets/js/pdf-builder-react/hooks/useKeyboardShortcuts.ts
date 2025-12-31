@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSetting } from './useCanvasSettings';
+import { createOptimizedEventListener } from '../utils/browser-compatibility';
 
 /**
  * Hook pour gérer les raccourcis clavier du canvas
@@ -139,12 +140,10 @@ export const useKeyboardShortcuts = () => {
     if (!keyboardShortcutsEnabled) return;
 
     // Ajouter l'écouteur d'événements
-    document.addEventListener('keydown', handleKeyDown);
+    const cleanup = createOptimizedEventListener(document, 'keydown', handleKeyDown);
 
     // Nettoyer l'écouteur
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    return cleanup;
   }, [handleKeyDown, keyboardShortcutsEnabled]);
 
   // Retourner des informations sur l'état des raccourcis

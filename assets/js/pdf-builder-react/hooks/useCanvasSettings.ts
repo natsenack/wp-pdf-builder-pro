@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { createOptimizedEventListener } from '../utils/browser-compatibility';
 
 /**
  * Hook pour accéder aux paramètres du canvas
@@ -56,8 +57,8 @@ export const useCanvasSettings = () => {
             }
         };
 
-        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-        window.addEventListener('storage', handleStorageChange);
+        const cleanup1 = createOptimizedEventListener(window, 'canvasSettingsUpdated', handleSettingsUpdate);
+        const cleanup2 = createOptimizedEventListener(window, 'storage', handleStorageChange);
 
         // Check if settings were updated while this tab was closed
         if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
@@ -65,8 +66,8 @@ export const useCanvasSettings = () => {
         }
 
         return () => {
-            window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-            window.removeEventListener('storage', handleStorageChange);
+            cleanup1();
+            cleanup2();
         };
     }, []);
 

@@ -2,6 +2,28 @@
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
 
+// Configuration globale des performances
+if (typeof window !== 'undefined') {
+  // Améliorer les performances des event listeners pour éviter les violations
+  const originalAddEventListener = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    // Pour les événements qui bloquent le scroll, utiliser passive par défaut si supporté
+    if (typeof options === 'boolean') {
+      options = { capture: options };
+    } else if (!options) {
+      options = {};
+    }
+
+    // Utiliser passive pour les événements non-bloquants par défaut
+    if (!options.hasOwnProperty('passive') &&
+        ['touchstart', 'touchmove', 'wheel', 'scroll'].includes(type) === false) {
+      options.passive = true;
+    }
+
+    return originalAddEventListener.call(this, type, listener, options);
+  };
+}
+
 // Import du diagnostic de compatibilité
 import '../fallbacks/browser-compatibility.js';
 

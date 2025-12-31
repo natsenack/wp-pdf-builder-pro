@@ -63,13 +63,32 @@ if (problematicAPIs.length > 0) {
 }
 
 // Test des Event Listeners passifs
+let passiveSupported = false;
 try {
   const testElement = document.createElement('div');
-  testElement.addEventListener('test', () => {}, { passive: true, capture: false });
-
+  const options = Object.defineProperty({}, 'passive', {
+    get: function() { passiveSupported = true; return true; }
+  });
+  testElement.addEventListener('test', () => {}, options);
 } catch (e) {
   console.error('❌ Event Listeners passifs NON supportés:', e);
 }
+
+// Fonction utilitaire pour créer des event listeners optimisés
+export const createOptimizedEventListener = (element, event, handler, options = {}) => {
+  const defaultOptions = {
+    passive: passiveSupported && !['touchstart', 'touchmove', 'wheel'].includes(event),
+    capture: false,
+    ...options
+  };
+
+  element.addEventListener(event, handler, defaultOptions);
+
+  // Retourner une fonction de nettoyage
+  return () => {
+    element.removeEventListener(event, handler, defaultOptions);
+  };
+};
 
 // Test de fetch API
 if (typeof fetch !== 'undefined') {
