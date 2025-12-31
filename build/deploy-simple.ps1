@@ -1,23 +1,15 @@
 # Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
 # NOTE: Mode 'test' retiré — ce script effectue désormais le déploiement réel FTP par défaut.
 #commande possible - a lire absolument
-# Usage: .\deploy-simple.ps1 [-Rebuild]
-#        .\deploy-simple.ps1 -Rebuild -Mode plugin
-#        .\deploy-simple.ps1 -Rebuild -FastMode
-#
-# Paramètres:
-#   -Rebuild    : Force le rebuild des assets JavaScript avant déploiement
-#   -Mode       : Mode de déploiement (plugin uniquement)
-#   -FastMode   : Mode rapide (désactive les tests de connexion)
-#   -SkipConnectionTest : Saute le test de connexion FTP
+# Usage: .\deploy-simple.ps1
+#.\build\deploy-simple.ps1
 
 param(
     [Parameter(Mandatory=$false)]
     [ValidateSet("plugin")]
     [string]$Mode = "plugin",
     [switch]$SkipConnectionTest,
-    [switch]$FastMode,
-    [switch]$Rebuild
+    [switch]$FastMode
 )
 
 $ErrorActionPreference = "Stop"
@@ -34,78 +26,6 @@ $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
 $WorkingDir = "I:\wp-pdf-builder-pro"
-
-# Fonction pour rebuild les assets JavaScript
-function Rebuild-Assets {
-    Write-Host "   Rebuild des assets JavaScript..." -ForegroundColor Cyan
-    
-    try {
-        Push-Location $WorkingDir
-        
-        # Vérifier si npm est disponible
-        if (Get-Command npm -ErrorAction SilentlyContinue) {
-            Write-Host "   Exécution de npm run build..." -ForegroundColor Gray
-            
-            # Essayer npm run build d'abord
-            $buildResult = & npm run build 2>&1
-            $buildExitCode = $LASTEXITCODE
-            
-            if ($buildExitCode -eq 0) {
-                Write-Host "   ✅ Build réussi avec npm" -ForegroundColor Green
-                return $true
-            } else {
-                Write-Host "   ⚠️  npm build échoué, tentative avec webpack direct..." -ForegroundColor Yellow
-                
-                # Essayer webpack directement si npm échoue
-                if (Get-Command npx -ErrorAction SilentlyContinue) {
-                    $webpackResult = & npx webpack --mode=production 2>&1
-                    $webpackExitCode = $LASTEXITCODE
-                    
-                    if ($webpackExitCode -eq 0) {
-                        Write-Host "   ✅ Build réussi avec webpack direct" -ForegroundColor Green
-                        return $true
-                    }
-                }
-            }
-        }
-        
-        # Si tout échoue, essayer de remplacer localStorage manuellement dans les fichiers dist
-        Write-Host "   🔧 Build tools non disponibles, remplacement manuel localStorage..." -ForegroundColor Yellow
-        
-        $distFiles = Get-ChildItem "plugin/assets/js/dist/*.js" -ErrorAction SilentlyContinue
-        $modified = $false
-        
-        foreach ($file in $distFiles) {
-            $content = Get-Content $file -Raw -ErrorAction SilentlyContinue
-            
-            if ($content -and ($content -match 'localStorage\.')) {
-                # Remplacer les références localStorage
-                $newContent = $content -replace 'localStorage\.setItem\("pdf_builder_active_tab",a\)', '// localStorage removed - using AJAX'
-                $newContent = $newContent -replace 'localStorage\.getItem\("pdf_builder_active_tab"\)', 'null // localStorage removed - using AJAX'
-                
-                if ($newContent -ne $content) {
-                    Set-Content $file $newContent -NoNewline -ErrorAction SilentlyContinue
-                    $modified = $true
-                    Write-Host "   📝 Modifié: $($file.Name)" -ForegroundColor Gray
-                }
-            }
-        }
-        
-        if ($modified) {
-            Write-Host "   ✅ Remplacement manuel terminé" -ForegroundColor Green
-            return $true
-        } else {
-            Write-Host "   ℹ️  Aucun remplacement nécessaire" -ForegroundColor Gray
-            return $true
-        }
-        
-    } catch {
-        Write-Host "   ❌ Erreur lors du rebuild: $($_.Exception.Message)" -ForegroundColor Red
-        return $false
-    } finally {
-        Pop-Location
-    }
-}
 
 # Fonction pour générer un message de commit intelligent
 function Get-SmartCommitMessage {
@@ -155,13 +75,52 @@ Write-Host ("=" * 60) -ForegroundColor White
 
 Write-Host "`n1 Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
 
-if ($Rebuild) {
-    $buildSuccess = Rebuild-Assets
-    if (-not $buildSuccess) {
-        Write-Host "   ⚠️  Rebuild échoué, mais continuation du déploiement..." -ForegroundColor Yellow
+# REBUILD DES ASSETS JAVASCRIPT/TYPESCRIPT
+Write-Host "   Rebuild des assets en cours..." -ForegroundColor Yellow
+
+try {
+    Push-Location $WorkingDir
+
+    # Vérifier si Node.js est installé
+    $nodeVersion = & node --version 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Node.js n'est pas installé ou n'est pas dans le PATH"
     }
-} else {
-    Write-Host "   Compilation skippee (utiliser -Rebuild pour forcer)" -ForegroundColor Yellow
+    Write-Host "   ✅ Node.js détecté: $nodeVersion" -ForegroundColor Green
+
+    # Vérifier si les dépendances sont installées
+    if (!(Test-Path "node_modules")) {
+        Write-Host "   📦 Installation des dépendances npm..." -ForegroundColor Yellow
+        & npm install
+        if ($LASTEXITCODE -ne 0) {
+            throw "Échec de l'installation des dépendances npm"
+        }
+        Write-Host "   ✅ Dépendances installées" -ForegroundColor Green
+    }
+
+    # Nettoyer les anciens builds
+    Write-Host "   🧹 Nettoyage des anciens builds..." -ForegroundColor Yellow
+    if (Test-Path "plugin/assets/js/dist") {
+        Remove-Item "plugin/assets/js/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path "plugin/assets/css/dist") {
+        Remove-Item "plugin/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    # Build des assets
+    Write-Host "   🔨 Build des assets JavaScript/TypeScript..." -ForegroundColor Yellow
+    & npm run build
+    if ($LASTEXITCODE -ne 0) {
+        throw "Échec du build des assets"
+    }
+
+    Write-Host "   ✅ Assets rebuild avec succès" -ForegroundColor Green
+
+    Pop-Location
+} catch {
+    Write-Host "   ❌ Erreur lors du rebuild: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "   🔄 Continuation avec les assets existants..." -ForegroundColor Yellow
+    Pop-Location
 }
 
 # 2 LISTER LES FICHIERS MODIFIES
