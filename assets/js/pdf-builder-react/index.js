@@ -129,8 +129,4 @@ export default {
   initPDFBuilderReact: initPDFBuilderReact,
   __esModule: true
 };
-  window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
-}
 
-// Export for module systems
-export default initPDFBuilderReact;
