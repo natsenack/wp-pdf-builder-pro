@@ -38,7 +38,8 @@ module.exports = {
       name: 'pdfBuilderReact',
       type: 'umd',
       umdNamedDefine: false,  // Set to false for direct execution
-      export: 'default',  // Explicitly use the default export
+      // REMOVED: export: 'default' - This was forcing a stub export
+      // Let webpack export the full module, not just the default
     },
     clean: false, // Ne pas nettoyer auto, on contrôle
     globalObject: 'typeof self !== "undefined" ? self : this',
