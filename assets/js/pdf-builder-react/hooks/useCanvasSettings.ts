@@ -64,29 +64,16 @@ export const useCanvasSettings = () => {
             }
         };
 
-        const handleStorageChange = async (event: StorageEvent) => {
-            if (event.key === 'pdfBuilderSettingsUpdated' && isMounted) {
-                await fetchSettings();
-            }
-        };
-
         // Ne fetch que si les settings ne sont pas déjà chargés
         if (!window.pdfBuilderCanvasSettings) {
             fetchSettings();
         }
 
-        // Check if settings were updated while this tab was closed
-        if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
-            fetchSettings();
-        }
-
         window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-        window.addEventListener('storage', handleStorageChange);
 
         return () => {
             isMounted = false;
             window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-            window.removeEventListener('storage', handleStorageChange);
         };
     }, []); // Dépendances vides pour un seul appel au montage
 

@@ -8,10 +8,8 @@
 // Fonction pour récupérer les dimensions depuis les paramètres WordPress
 export const getCanvasDimensions = () => {
   // Récupérer les dimensions depuis les paramètres sauvegardés
-  const width = window.pdfBuilderCanvasSettings?.default_canvas_width ||
-                parseInt(localStorage.getItem('pdf_builder_canvas_width') || '794');
-  const height = window.pdfBuilderCanvasSettings?.default_canvas_height ||
-                 parseInt(localStorage.getItem('pdf_builder_canvas_height') || '1123');
+  const width = window.pdfBuilderCanvasSettings?.default_canvas_width || 794;
+  const height = window.pdfBuilderCanvasSettings?.default_canvas_height || 1123;
 
   return {
     width: Math.max(100, Math.min(3000, width)), // Limiter entre 100px et 3000px

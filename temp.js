@@ -64,7 +64,7 @@
                 // Feature flags pour contrôle granulaire
                 const CANVAS_FEATURES = {
                     ENABLE_VALIDATION: true,
-                    ENABLE_CACHE: true,
+                    ENABLE_CACHE: false, // Désactivé - cache déplacé en base de données
                     ENABLE_RETRY: true,
                     ENABLE_HEALTH_CHECK: true,
                     ENABLE_METRICS: true,

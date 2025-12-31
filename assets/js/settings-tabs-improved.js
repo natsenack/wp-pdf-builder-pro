@@ -167,15 +167,8 @@
                 }
             }, CONFIG.animationDuration + 50);
             
-            // Sauvegarder en localStorage
-            try {
-                if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem(CONFIG.storageKey, tabId);
-                }
-                log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
-            } catch(e) {
-                log('PDF Builder - Impossible de sauvegarder en localStorage:', e.message);
-            }
+            // Sauvegarder l'onglet actif via AJAX (remplace localStorage)
+            saveActiveTabToDatabase(tabId);
             
             // Déclencher événement personnalisé
             if (typeof document !== 'undefined' && document.dispatchEvent) {
@@ -268,16 +261,60 @@
         }
     }
 
-    // Obtenir l'onglet sauvegardé
-    function getStoredActiveTab() {
-        try {
-            if (typeof localStorage !== 'undefined') {
-                return localStorage.getItem(CONFIG.storageKey);
-            }
-        } catch(e) {
-            // localStorage non disponible
+    // Obtenir l'onglet sauvegardé (via AJAX depuis la base de données)
+    function getStoredActiveTab(callback) {
+        // Faire une requête AJAX pour récupérer l'onglet actif
+        if (typeof jQuery !== 'undefined') {
+            jQuery.ajax({
+                url: window.ajaxurl || '/wp-admin/admin-ajax.php',
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_get_active_tab',
+                    nonce: typeof window.pdfBuilderData !== 'undefined' ? window.pdfBuilderData.nonce : ''
+                },
+                success: function(response) {
+                    if (response.success && response.data && response.data.active_tab) {
+                        log('PDF Builder - Onglet actif récupéré depuis DB:', response.data.active_tab);
+                        if (callback) callback(response.data.active_tab);
+                    } else {
+                        log('PDF Builder - Aucun onglet actif trouvé en DB');
+                        if (callback) callback(null);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    log('PDF Builder - Erreur récupération onglet actif:', error);
+                    if (callback) callback(null);
+                }
+            });
+        } else {
+            // Fallback si jQuery n'est pas disponible
+            if (callback) callback(null);
         }
-        return null;
+    }
+
+    // Sauvegarder l'onglet actif via AJAX
+    function saveActiveTabToDatabase(tabId) {
+        if (typeof jQuery !== 'undefined') {
+            jQuery.ajax({
+                url: window.ajaxurl || '/wp-admin/admin-ajax.php',
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_active_tab',
+                    active_tab: tabId,
+                    nonce: typeof window.pdfBuilderData !== 'undefined' ? window.pdfBuilderData.nonce : ''
+                },
+                success: function(response) {
+                    if (response.success) {
+                        log('PDF Builder - Onglet "' + tabId + '" sauvegardé en base de données');
+                    } else {
+                        log('PDF Builder - Erreur sauvegarde onglet:', response.data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    log('PDF Builder - Erreur AJAX sauvegarde onglet:', error);
+                }
+            });
+        }
     }
 
     // Obtenir l'onglet par défaut
@@ -329,20 +366,21 @@
         // Lier les événements
         bindEvents();
         
-        // Déterminer l'onglet initial
-        const savedTab = getStoredActiveTab();
-        activeTab = (savedTab && document.getElementById(savedTab)) ? savedTab : getDefaultActiveTab();
-        
-        if (activeTab) {
-            log('PDF Builder - Activation de l\'onglet initial:', activeTab);
-            switchTab(activeTab);
-        } else {
-            log('PDF Builder - ERREUR: Aucun onglet par défaut trouvé');
-            return false;
-        }
-        
-        log('PDF Builder - ONGLETS INITIALISÉS AVEC SUCCÈS');
-        return true;
+        // Déterminer l'onglet initial (asynchrone)
+        getStoredActiveTab(function(savedTab) {
+            activeTab = (savedTab && document.getElementById(savedTab)) ? savedTab : getDefaultActiveTab();
+            
+            if (activeTab) {
+                log('PDF Builder - Activation de l\'onglet initial:', activeTab);
+                switchTab(activeTab);
+            } else {
+                log('PDF Builder - ERREUR: Aucun onglet par défaut trouvé');
+                return false;
+            }
+            
+            log('PDF Builder - ONGLETS INITIALISÉS AVEC SUCCÈS');
+            return true;
+        });
     }
 
     // Démarrage quand le DOM est prêt
