@@ -1,19 +1,20 @@
 // ============================================================================
-// PDF Builder React - BOOTSTRAP AUTO-EXECUTION
+// PDF Builder React - IMMEDIATE IIFE EXECUTION (BEFORE WEBPACK)
 // ============================================================================
-// This module runs at the module level (in browser), BEFORE the UMD wrapper
-// executes. This ensures window.pdfBuilderReact is assigned before anything
-// tries to use it.
+// Using IIFE wrapped in CommonJS check to execute IMMEDIATELY
+// This bypasses ES6 module parsing and webpack UMD factory wrapping
 
-console.log('🔥 [PDF BUNDLE] Module level - START LOADING');
-
-if (typeof window !== 'undefined') {
-  // We are in browser - execute immediately at module scope
+(function executeImmediately() {
+  'use strict';
   
-  console.log('🔥 [PDF BUNDLE] Browser environment detected');
+  if (typeof window === 'undefined') {
+    return; // CommonJS environment, skip
+  }
   
-  // Define the initialization function at MODULE SCOPE (will be seen by UMD)
-  function initPDFBuilderReact() {
+  console.log('🔥 [PDF BUNDLE] IIFE EXECUTED IMMEDIATELY');
+  
+  // Define initialization function
+  window._pdfInitFunction = function initPDFBuilderReact() {
     console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
     
     try {
@@ -97,25 +98,20 @@ if (typeof window !== 'undefined') {
       console.error('❌ [PDF BUNDLE] Stack:', error.stack);
       return false;
     }
-  }
-  
-  // Assign to window at MODULE SCOPE (browser environment)
-  // This happens BEFORE UMD wrapper returns
-  window.pdfBuilderReact = { 
-    initPDFBuilderReact: initPDFBuilderReact 
   };
   
-  console.log('🔥 [PDF BUNDLE] Assigned window.pdfBuilderReact at module scope');
-  console.log('🔥 [PDF BUNDLE] Type:', typeof window.pdfBuilderReact);
-  console.log('🔥 [PDF BUNDLE] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-}
+  // Assign to window IMMEDIATELY within IIFE
+  window.pdfBuilderReact = { 
+    initPDFBuilderReact: window._pdfInitFunction 
+  };
+  
+  console.log('🔥 [PDF BUNDLE] IIFE: Assigned window.pdfBuilderReact');
+  console.log('🔥 [PDF BUNDLE] IIFE: Type:', typeof window.pdfBuilderReact);
+  console.log('🔥 [PDF BUNDLE] IIFE: initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+  
+})();
 
-// Export for UMD wrapper and CommonJS
-export default { 
-  initPDFBuilderReact: function() { 
-    if (typeof window !== 'undefined' && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-      return window.pdfBuilderReact.initPDFBuilderReact();
-    }
-    return false;
-  }
-};
+// For module system - return a dummy export
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { initPDFBuilderReact: function() { return false; } };
+}

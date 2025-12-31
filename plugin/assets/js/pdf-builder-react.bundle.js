@@ -18,21 +18,23 @@ return (Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilde
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // ============================================================================
-// PDF Builder React - BOOTSTRAP AUTO-EXECUTION
+// PDF Builder React - IMMEDIATE IIFE EXECUTION (BEFORE WEBPACK)
 // ============================================================================
-// This module runs at the module level (in browser), BEFORE the UMD wrapper
-// executes. This ensures window.pdfBuilderReact is assigned before anything
-// tries to use it.
+// Using IIFE wrapped in CommonJS check to execute IMMEDIATELY
+// This bypasses ES6 module parsing and webpack UMD factory wrapping
 
-console.log('🔥 [PDF BUNDLE] Module level - START LOADING');
-if (typeof window !== 'undefined') {
-  // Define the initialization function at MODULE SCOPE (will be seen by UMD)
-  var initPDFBuilderReact = function initPDFBuilderReact() {
+(function executeImmediately() {
+  'use strict';
+
+  if (typeof window === 'undefined') {
+    return; // CommonJS environment, skip
+  }
+  console.log('🔥 [PDF BUNDLE] IIFE EXECUTED IMMEDIATELY');
+
+  // Define initialization function
+  window._pdfInitFunction = function initPDFBuilderReact() {
     console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
     try {
       // Get globals
@@ -102,28 +104,25 @@ if (typeof window !== 'undefined') {
       console.error('❌ [PDF BUNDLE] Stack:', error.stack);
       return false;
     }
-  }; // Assign to window at MODULE SCOPE (browser environment)
-  // This happens BEFORE UMD wrapper returns
-  // We are in browser - execute immediately at module scope
-
-  console.log('🔥 [PDF BUNDLE] Browser environment detected');
-  window.pdfBuilderReact = {
-    initPDFBuilderReact: initPDFBuilderReact
   };
-  console.log('🔥 [PDF BUNDLE] Assigned window.pdfBuilderReact at module scope');
-  console.log('🔥 [PDF BUNDLE] Type:', _typeof(window.pdfBuilderReact));
-  console.log('🔥 [PDF BUNDLE] initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
-}
 
-// Export for UMD wrapper and CommonJS
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  initPDFBuilderReact: function initPDFBuilderReact() {
-    if (typeof window !== 'undefined' && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-      return window.pdfBuilderReact.initPDFBuilderReact();
+  // Assign to window IMMEDIATELY within IIFE
+  window.pdfBuilderReact = {
+    initPDFBuilderReact: window._pdfInitFunction
+  };
+  console.log('🔥 [PDF BUNDLE] IIFE: Assigned window.pdfBuilderReact');
+  console.log('🔥 [PDF BUNDLE] IIFE: Type:', _typeof(window.pdfBuilderReact));
+  console.log('🔥 [PDF BUNDLE] IIFE: initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+})();
+
+// For module system - return a dummy export
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    initPDFBuilderReact: function initPDFBuilderReact() {
+      return false;
     }
-    return false;
-  }
-});
+  };
+}
 
 /***/ })
 
