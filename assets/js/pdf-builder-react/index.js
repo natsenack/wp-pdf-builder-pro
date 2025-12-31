@@ -91,19 +91,21 @@ function initPDFBuilderReact() {
   }
 }
 
-// Export for external use
-var exports = { initPDFBuilderReact };
+// Create export object
+var pdfBuilderExports = { initPDFBuilderReact: initPDFBuilderReact };
 
-console.log('🌐 [PDF BUNDLE] Assigning to window.pdfBuilderReact');
+console.log('🌐 [PDF BUNDLE] Created export object:', pdfBuilderExports);
+console.log('🌐 [PDF BUNDLE] initPDFBuilderReact in exports?', 'initPDFBuilderReact' in pdfBuilderExports);
 
-// Assign to window IMMEDIATELY
-window.pdfBuilderReact = exports;
+// Assign to window IMMEDIATELY - with diagnostic
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = pdfBuilderExports;
+  console.log('🌐 [PDF BUNDLE] Assigned to window.pdfBuilderReact');
+  console.log('🌐 [PDF BUNDLE] window.pdfBuilderReact type:', typeof window.pdfBuilderReact);
+  console.log('🌐 [PDF BUNDLE] window.pdfBuilderReact.initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+  console.log('🌐 [PDF BUNDLE] Full window.pdfBuilderReact:', window.pdfBuilderReact);
+}
 
-console.log('🔥 [PDF BUNDLE] FINAL STATE: window.pdfBuilderReact =', window.pdfBuilderReact);
-console.log('🔥 [PDF BUNDLE] FINAL STATE: initPDFBuilderReact type =', typeof window.pdfBuilderReact.initPDFBuilderReact);
-
-console.log('✅ [PDF BUNDLE] window.pdfBuilderReact assigned:', typeof window.pdfBuilderReact);
-console.log('✅ [PDF BUNDLE] window.pdfBuilderReact.initPDFBuilderReact:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-
-// Export as default for webpack
-export default exports;
+// Export as default AND named export for webpack compatibility
+export default pdfBuilderExports;
+export { initPDFBuilderReact };

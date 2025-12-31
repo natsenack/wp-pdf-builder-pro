@@ -19,7 +19,8 @@ return (Object(typeof self !== "undefined" ? self : this)["webpackChunkpdfBuilde
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   initPDFBuilderReact: () => (/* binding */ initPDFBuilderReact)
 /* harmony export */ });
 /* harmony import */ var _ts_components_PDFBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/ts/components/PDFBuilder */ "./assets/ts/components/PDFBuilder.tsx");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -105,21 +106,25 @@ function initPDFBuilderReact() {
   }
 }
 
-// Export for external use
-var exports = {
+// Create export object
+var pdfBuilderExports = {
   initPDFBuilderReact: initPDFBuilderReact
 };
-console.log('🌐 [PDF BUNDLE] Assigning to window.pdfBuilderReact');
+console.log('🌐 [PDF BUNDLE] Created export object:', pdfBuilderExports);
+console.log('🌐 [PDF BUNDLE] initPDFBuilderReact in exports?', 'initPDFBuilderReact' in pdfBuilderExports);
 
-// Assign to window IMMEDIATELY
-window.pdfBuilderReact = exports;
-console.log('🔥 [PDF BUNDLE] FINAL STATE: window.pdfBuilderReact =', window.pdfBuilderReact);
-console.log('🔥 [PDF BUNDLE] FINAL STATE: initPDFBuilderReact type =', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
-console.log('✅ [PDF BUNDLE] window.pdfBuilderReact assigned:', _typeof(window.pdfBuilderReact));
-console.log('✅ [PDF BUNDLE] window.pdfBuilderReact.initPDFBuilderReact:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+// Assign to window IMMEDIATELY - with diagnostic
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = pdfBuilderExports;
+  console.log('🌐 [PDF BUNDLE] Assigned to window.pdfBuilderReact');
+  console.log('🌐 [PDF BUNDLE] window.pdfBuilderReact type:', _typeof(window.pdfBuilderReact));
+  console.log('🌐 [PDF BUNDLE] window.pdfBuilderReact.initPDFBuilderReact type:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+  console.log('🌐 [PDF BUNDLE] Full window.pdfBuilderReact:', window.pdfBuilderReact);
+}
 
-// Export as default for webpack
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (exports);
+// Export as default AND named export for webpack compatibility
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (pdfBuilderExports);
+
 
 /***/ }),
 
@@ -238,6 +243,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, category, isLoad
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ __webpack_require__.O(0, ["vendors"], () => (__webpack_exec__("./assets/js/pdf-builder-react/index.js")));
 /******/ var __webpack_exports__ = __webpack_require__.O();
+/******/ __webpack_exports__ = __webpack_exports__["default"];
 /******/ return __webpack_exports__;
 /******/ }
 ]);
