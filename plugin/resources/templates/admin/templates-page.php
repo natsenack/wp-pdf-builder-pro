@@ -403,13 +403,6 @@ var pdfBuilderAjax = {
                         <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
 
                         <div style="margin-bottom: 15px;">
-                            <label style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; cursor: pointer;">
-                                <input type="checkbox" id="template-public" style="margin-right: 8px;">
-                                <span>Template public (visible par tous les utilisateurs)</span>
-                            </label>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">Format de papier</label>
                             <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
                                 <option value="A4">A4 (594 × 1123 px)</option>
@@ -704,7 +697,6 @@ function openTemplateSettings(templateId, templateName) {
             // Remplir les champs avec les données actuelles
             document.getElementById('template-name-input').value = data.data.name || '';
             document.getElementById('template-description-input').value = data.data.description || '';
-            document.getElementById('template-public').checked = data.data.is_public || false;
             document.getElementById('template-paper-size').value = data.data.paper_size || 'A4';
             document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
             document.getElementById('template-category').value = data.data.category || 'autre';
@@ -733,7 +725,6 @@ function saveTemplateSettings() {
     const settings = {
         name: document.getElementById('template-name-input').value,
         description: document.getElementById('template-description-input').value,
-        is_public: document.getElementById('template-public').checked,
         paper_size: document.getElementById('template-paper-size').value,
         orientation: document.getElementById('template-orientation').value,
         category: document.getElementById('template-category').value
