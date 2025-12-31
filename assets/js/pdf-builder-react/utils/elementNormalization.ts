@@ -3,8 +3,15 @@
  * C'est LE système central qui garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
  */
 
-import { debugWarn, debugError } from './debug';
-import type { Element } from '../types/elements';
+export interface Element {
+  [key: string]: unknown;
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 /**
  * FONCTION CRITIQUE: Normalise les éléments sans perdre AUCUNE propriété personnalisée
@@ -16,13 +23,13 @@ import type { Element } from '../types/elements';
  */
 export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
   if (!Array.isArray(elements)) {
-    debugWarn('❌ [NORMALIZE] Elements n\'est pas un array:', typeof elements);
+    console.warn('❌ [NORMALIZE] Elements n\'est pas un array:', typeof elements);
     return [];
   }
 
   return elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
-      debugWarn(`❌ [NORMALIZE] Element ${idx} invalide:`, el);
+      console.warn(`❌ [NORMALIZE] Element ${idx} invalide:`, el);
       return {} as Element;
     }
 
@@ -49,13 +56,13 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
  */
 export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
   if (!Array.isArray(elements)) {
-    debugWarn('❌ [SAVE NORMALIZE] Elements n\'est pas un array');
+    console.warn('❌ [SAVE NORMALIZE] Elements n\'est pas un array');
     return [];
   }
 
   return elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
-      debugWarn(`❌ [SAVE NORMALIZE] Element ${idx} invalide`);
+      console.warn(`❌ [SAVE NORMALIZE] Element ${idx} invalide`);
       return {} as Element;
     }
 
@@ -82,11 +89,6 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
       const value = normalized[key];
       const type = typeof value;
 
-      // DEBUG: Log des propriétés spéciales
-      if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
-        // console.log(`[NORMALIZE] Propriété spéciale détectée: ${key} (type: ${type}) =`, value);
-      }
-
       // Garder: string, number, boolean, null, undefined
       // Garder: objects simples et arrays
       // REJETER: functions, symbols, dates (sauf si sérialisées)
@@ -104,11 +106,8 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
           JSON.stringify(value);
           serializable[key] = value;
         } catch {
-          debugWarn(`⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`, value);
+          console.warn(`⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`, value);
         }
-      } else {
-        // Propriétés rejetées (functions, etc.)
-        debugWarn(`⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`);
       }
     });
 
@@ -132,7 +131,7 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
     const missing = required.filter(key => !(key in el));
 
     if (missing.length > 0) {
-      debugError(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(', ')}`);
+      console.error(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(', ')}`);
       allValid = false;
     }
 
@@ -155,4 +154,3 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
 export function debugElementState(elements: Element[], label: string): void {
   // Debug function - logs removed for production
 }
-

@@ -2,13 +2,12 @@
 declare global {
   interface Window {
     pdfBuilderData?: {
-      templateId?: string | number | null;
+      templateId?: string | null;
       isEditing?: boolean;
       ajaxUrl?: string;
       nonce?: string;
       auto_save_interval?: number;
       existingTemplate?: unknown;
-      hasExistingData?: boolean;
     };
     pdfBuilderNonce?: string;
     pdfBuilderReactData?: {
@@ -20,9 +19,11 @@ declare global {
       };
       auto_save_interval?: number;
     };
-    pdfBuilderCanvasSettings?: Record<string, unknown>;
+    pdfBuilderCanvasSettings?: Record<string, unknown> | {
+      auto_save_interval?: number;
+      auto_save_enabled?: boolean;
+    };
   }
 }
 
 export {};
-

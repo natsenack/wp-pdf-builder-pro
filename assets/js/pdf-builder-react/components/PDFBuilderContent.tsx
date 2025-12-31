@@ -1,25 +1,14 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { Canvas } from './canvas/Canvas';
-import { Toolbar } from './toolbar/Toolbar';
-import { PropertiesPanel } from './properties/PropertiesPanel';
-import { Header } from './header/Header';
-import { ElementLibrary } from './element-library/ElementLibrary';
-import { useTemplate } from '../hooks/useTemplate';
-import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas';
-import { injectResponsiveUtils } from '../utils/responsive';
-import { useIsMobile, useIsTablet } from '../hooks/useResponsive';
-import { debugLog, debugError } from '../utils/debug';
-
-// Déclaration des types pour les fonctions de notification globales
-declare global {
-  interface Window {
-    showSuccessNotification?: (message: string, duration?: number) => void;
-    showErrorNotification?: (message: string, duration?: number) => void;
-    showWarningNotification?: (message: string, duration?: number) => void;
-    showInfoNotification?: (message: string, duration?: number) => void;
-  }
-}
+import { Canvas } from './canvas/Canvas.tsx';
+import { Toolbar } from './toolbar/Toolbar.tsx';
+import { PropertiesPanel } from './properties/PropertiesPanel.tsx';
+import { Header } from './header/Header.tsx';
+import { ElementLibrary } from './element-library/ElementLibrary.tsx';
+import { SaveIndicator } from './ui/SaveIndicatorSimple.tsx';
+import { useTemplate } from '../hooks/useTemplate.ts';
+import { useAutoSave } from '../hooks/useAutoSave.ts';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
 
 // ✅ Add spin animation
 const spinStyles = `
@@ -47,23 +36,13 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   height = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderContentProps) {
-  debugLog('🏗️ PDFBuilderContent: Component initialized with props:', { width, height, className });
-
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
-  const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
-
-  debugLog('📱 PDFBuilderContent: Initial state set:', { isHeaderFixed, isPropertiesPanelOpen, manualSaveSuccess });
-
-  // Hooks responsives
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-
-  debugLog('📱 PDFBuilderContent: Responsive hooks:', { isMobile, isTablet });
 
   const {
     templateName,
     templateDescription,
+    templateTags,
     canvasWidth,
     canvasHeight,
     marginTop,
@@ -81,87 +60,47 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     updateTemplateSettings
   } = useTemplate();
 
-  debugLog('📋 PDFBuilderContent: useTemplate hook values:', {
-    templateName,
-    templateDescription,
-    canvasWidth,
-    canvasHeight,
-    marginTop,
-    marginBottom,
-    showGuides,
-    snapToGrid,
-    isNewTemplate,
-    isModified,
-    isSaving,
-    isLoading,
-    isEditingExistingTemplate
-  });
+  // Hook pour la sauvegarde automatique
+  const {
+    state: autoSaveState,
+    lastSavedAt,
+    error: autoSaveError,
+    saveNow: retryAutoSave,
+    triggerSave,
+    progress
+  } = useAutoSave();
 
   // Hook pour les paramètres du canvas
   const canvasSettings = useCanvasSettings();
 
-  debugLog('🎨 PDFBuilderContent: Canvas settings:', canvasSettings);
-
-  // Injection des utilitaires responsives
-  useEffect(() => {
-    debugLog('🔧 PDFBuilderContent: Injecting responsive utils');
-    injectResponsiveUtils();
-    debugLog('✅ PDFBuilderContent: Responsive utils injected');
-  }, []);
-
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {
-    debugLog('📜 PDFBuilderContent: Setting up scroll handler');
-
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const newIsHeaderFixed = scrollTop > 100;
-      debugLog('📜 PDFBuilderContent: Scroll detected, scrollTop:', scrollTop, 'isHeaderFixed:', newIsHeaderFixed);
-      setIsHeaderFixed(newIsHeaderFixed);
+      setIsHeaderFixed(scrollTop > 100);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    debugLog('✅ PDFBuilderContent: Scroll handler added');
-
-    return () => {
-      debugLog('🧹 PDFBuilderContent: Cleaning up scroll handler');
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Wrapper pour sauvegarder
+  // Wrapper pour sauvegarder avec auto-save
   const saveTemplateWithAutoSave = useCallback(async () => {
-    debugLog('💾 PDFBuilderContent: Manual save initiated');
-
-    try {
-      // Effectuer la sauvegarde manuelle
-      debugLog('🔄 PDFBuilderContent: Calling saveTemplate...');
-      await saveTemplate();
-      debugLog('✅ PDFBuilderContent: Manual save successful');
-      debugLog('[PDF_BUILDER] Manual save successful');
-
-      // Afficher une notification de succès
-      if (typeof window !== 'undefined' && window.showSuccessNotification) {
-        debugLog('🔔 PDFBuilderContent: Showing success notification');
-        window.showSuccessNotification('Template sauvegardé avec succès !');
-      }
-
-    } catch (manualSaveError) {
-      debugError('❌ PDFBuilderContent: Manual save failed:', manualSaveError);
-      debugError('[PDF_BUILDER] Manual save failed:', manualSaveError);
-
-      // Afficher une notification d'erreur
-      if (typeof window !== 'undefined' && window.showErrorNotification) {
-        debugLog('🔔 PDFBuilderContent: Showing error notification');
-        window.showErrorNotification('Erreur lors de la sauvegarde du template');
-      }
-
-      throw manualSaveError; // Re-throw pour que l'UI montre l'erreur
-    }
-  }, [saveTemplate]);
+    triggerSave(); // Déclenche l'auto-save
+    await saveTemplate(); // Et la sauvegarde manuelle
+  }, [saveTemplate, triggerSave]);
 
   return (
     <>
+      {/* SaveIndicator - affiché dans le coin supérieur droit */}
+      <SaveIndicator
+        state={autoSaveState}
+        lastSavedAt={lastSavedAt}
+        error={autoSaveError}
+        onRetry={retryAutoSave}
+        progress={progress}
+        showProgressBar={autoSaveState === 'saving'}
+      />
 
       <div
         className={`pdf-builder ${className || ''}`}
@@ -183,14 +122,16 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         <Header
           templateName={templateName || ''}
           templateDescription={templateDescription || ''}
+          templateTags={templateTags || []}
           canvasWidth={canvasWidth || 794}
           canvasHeight={canvasHeight || 1123}
+          marginTop={marginTop || 20}
+          marginBottom={marginBottom || 20}
           showGuides={showGuides || true}
           snapToGrid={snapToGrid || false}
           isNewTemplate={isNewTemplate}
           isModified={isModified}
           isSaving={isSaving}
-          isLoading={isLoading}
           isEditingExistingTemplate={isEditingExistingTemplate}
           onSave={saveTemplateWithAutoSave}
           onPreview={previewTemplate}
@@ -225,7 +166,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 paddingBottom: '20px'
               }}
             >
-              {/* Indicateur de dimensions avec format et DPI */}
+              {/* Indicateur de dimensions A4 */}
               <div
                 style={{
                   position: 'absolute',
@@ -240,34 +181,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                   zIndex: 10
                 }}
               >
-                {(() => {
-                  const format = (window as any).pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
-                  const dpi = (window as any).pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
-                  const orientation = (window as any).pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait';
-                  const paperFormats = (window as any).pdfBuilderPaperFormats || {
-                    'A4': { width: 210, height: 297 },
-                    'A3': { width: 297, height: 420 },
-                    'A5': { width: 148, height: 210 },
-                    'Letter': { width: 215.9, height: 279.4 },
-                    'Legal': { width: 215.9, height: 355.6 },
-                    'Tabloid': { width: 279.4, height: 431.8 }
-                  };
-
-                  // Récupérer les dimensions en mm
-                  const dimsMM = paperFormats[format] || paperFormats['A4'];
-
-                  // Calculer les dimensions en pixels avec le DPI actuel
-                  const pixelsPerMM = dpi / 25.4;
-                  let widthPx = Math.round(dimsMM.width * pixelsPerMM);
-                  let heightPx = Math.round(dimsMM.height * pixelsPerMM);
-
-                  // Inverser si orientation paysage
-                  if (orientation === 'landscape') {
-                    [widthPx, heightPx] = [heightPx, widthPx];
-                  }
-
-                  return `${format}: ${widthPx}×${heightPx}px (${dpi} DPI)`;
-                })()}
+                A4: {width}×{height}px
               </div>
               
               {/* ✅ Loading spinner overlay */}
@@ -307,21 +221,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               )}
               
               {/* ✅ ONLY render Canvas when template is loaded OR it's a new template */}
-              {!isLoading && (
-                <>
-                  {debugLog('🎨 PDFBuilderContent: Rendering Canvas component')}
-                  <Canvas width={width} height={height} />
-                </>
-              )}
+              {!isLoading && <Canvas width={width} height={height} />}
             </div>
 
             {/* Bouton toggle pour le panneau de propriétés */}
             <button
-              onClick={() => {
-                debugLog('🔘 PDFBuilderContent: Properties panel toggle clicked, current state:', isPropertiesPanelOpen);
-                setIsPropertiesPanelOpen(!isPropertiesPanelOpen);
-                debugLog('🔄 PDFBuilderContent: Properties panel state changed to:', !isPropertiesPanelOpen);
-              }}
+              onClick={() => setIsPropertiesPanelOpen(!isPropertiesPanelOpen)}
               style={{
                 position: 'absolute',
                 top: '50%',
@@ -371,4 +276,3 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     </>
   );
 });
-

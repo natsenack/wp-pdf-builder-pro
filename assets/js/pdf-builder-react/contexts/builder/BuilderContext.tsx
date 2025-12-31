@@ -1,5 +1,5 @@
-import { createContext, useContext, useReducer, ReactNode, useEffect, useRef, Dispatch } from 'react';
-import { useCanvasSettings } from '../CanvasSettingsContext';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { useCanvasSettings } from '../CanvasSettingsContext.tsx';
 import {
   BuilderState,
   BuilderAction,
@@ -10,7 +10,7 @@ import {
   BuilderMode,
   HistoryState
 } from '../../types/elements';
-import { debugError, debugWarn } from '../../utils/debug';
+import { debugError } from '../../utils/debug';
 
 // Type pour les propriétés des éléments product_table
 interface ProductTableProperties {
@@ -178,18 +178,15 @@ const initialHistoryState: HistoryState = {
       isLoading: true // ✅ Start as loading
     },
     previewMode: 'editor',
-    history: {
-      past: [],
-      present: null as any, // Évite la récursion infinie
-      future: [],
-      canUndo: false,
-      canRedo: false
-    }
+    history: {} as HistoryState // Sera défini récursivement
   } as BuilderState,
   future: [],
   canUndo: false,
   canRedo: false
 };
+
+// Correction de la récursion
+initialHistoryState.present.history = initialHistoryState;
 
 const initialState: BuilderState = {
   elements: [],
@@ -202,7 +199,6 @@ const initialState: BuilderState = {
     isModified: false,
     isSaving: false,
     isLoading: true, // ✅ Start as loading until template is fetched
-    name: 'Nouveau template',
     description: '',
     tags: [],
     canvasWidth: 794,  // A4 width in PX (plus large)
@@ -432,15 +428,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         }
       };
 
-    case 'SET_TEMPLATE_LOADING':
-      return {
-        ...state,
-        template: {
-          ...state.template,
-          isLoading: action.payload
-        }
-      };
-
     case 'TOGGLE_GUIDES':
       return {
         ...state,
@@ -554,7 +541,7 @@ function calculateSelectionBounds(selectedIds: string[], elements: Element[]) {
 // Contexte
 interface BuilderContextType {
   state: BuilderState;
-  dispatch: Dispatch<BuilderAction>;
+  dispatch: React.Dispatch<BuilderAction>;
   // Actions helpers
   addElement: (element: Element) => void;
   updateElement: (id: string, updates: Partial<Element>) => void;
@@ -588,17 +575,12 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   const [state, dispatch] = useReducer(builderReducer, mergedInitialState);
   const canvasSettings = useCanvasSettings();
 
-  // ✅ CORRECTION: Flags pour éviter les boucles infinies
-  const zoomInitializedRef = useRef(false);
-  const gridInitializedRef = useRef(false);
-
   // Appliquer les paramètres de zoom depuis Canvas Settings au démarrage
   useEffect(() => {
     // Appliquer le zoom par défaut depuis les paramètres UNIQUEMENT au démarrage
     // Le zoom initial du state est 100, donc appliquer seulement si différent et prêt
     const initialZoom = 100; // Valeur initiale du state
-    if (canvasSettings.isReady && canvasSettings.zoomDefault !== initialZoom && !zoomInitializedRef.current) {
-      zoomInitializedRef.current = true;
+    if (canvasSettings.isReady && canvasSettings.zoomDefault !== initialZoom) {
       dispatch({
         type: 'SET_CANVAS',
         payload: {
@@ -606,12 +588,10 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         }
       });
     }
-  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, canvasSettings.isReady]);
+  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, canvasSettings.isReady]); // Retiré state.canvas.zoom
 
   // Synchroniser les paramètres de grille depuis CanvasSettingsContext (uniquement à l'initialisation)
   useEffect(() => {
-    if (!canvasSettings.isReady || gridInitializedRef.current) return;
-
     const updates: Partial<CanvasState> = {};
 
     // Ne synchroniser que si c'est la première fois ou si les paramètres ont changé dans les settings
@@ -631,10 +611,9 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
 
     if (Object.keys(updates).length > 0) {
-      gridInitializedRef.current = true;
       dispatch({ type: 'SET_CANVAS', payload: updates });
     }
-  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled, canvasSettings.isReady, state.canvas.gridSize, state.canvas.showGrid, state.canvas.snapToGrid]);
+  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled]); // Retirer les dépendances d'état pour éviter la boucle
 
   // ✅ DISABLED: Template loading is now EXCLUSIVELY handled by useTemplate hook
   // which reads template_id from URL/localized data and calls AJAX GET
@@ -653,11 +632,11 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
           payload: templateData
         });
       } else {
-        debugWarn('[BuilderContext] No template data in event detail');
+        console.warn('[BuilderContext] No template data in event detail');
       }
     };
 
-    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener, { passive: true });
+    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     return () => {
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     };
@@ -805,4 +784,3 @@ export function useCanvas() {
 
 export { BuilderContext };
 // Pas d'export de conversion MM/PX - on utilise que PX
-

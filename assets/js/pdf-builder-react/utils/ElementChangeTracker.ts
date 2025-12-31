@@ -303,4 +303,3 @@ Change Breakdown:
 
 // Export singleton instance
 export const elementChangeTracker = new ElementChangeTracker();
-

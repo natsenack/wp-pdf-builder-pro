@@ -123,29 +123,6 @@ export function resetAPI() {
 }
 
 /**
- * Met à jour les dimensions du canvas
- */
-export function updateCanvasDimensions(width: number, height: number) {
-  try {
-    // Mettre à jour l'objet window global
-    if (!window.pdfBuilderCanvasSettings) {
-      window.pdfBuilderCanvasSettings = {};
-    }
-    window.pdfBuilderCanvasSettings.canvas_width = width;
-    window.pdfBuilderCanvasSettings.canvas_height = height;
-
-    // Dispatcher un événement pour notifier le contexte React
-    const event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
-    window.dispatchEvent(event);
-
-    return true;
-  } catch (error) {
-    debugError('[Global API] Error updating canvas dimensions', error);
-    return false;
-  }
-}
-
-/**
  * Interface de l'API globale
  */
 export interface GlobalAPI {
@@ -157,7 +134,4 @@ export interface GlobalAPI {
   exportTemplate: typeof exportTemplate;
   saveTemplate: typeof saveTemplate;
   resetAPI: typeof resetAPI;
-  updateCanvasDimensions: typeof updateCanvasDimensions;
 }
-
-

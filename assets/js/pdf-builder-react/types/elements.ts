@@ -238,9 +238,7 @@ export type BuilderAction =
   | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string; lastSaved?: Date } }
   | { type: 'SET_TEMPLATE_MODIFIED'; payload: boolean }
   | { type: 'SET_TEMPLATE_SAVING'; payload: boolean }
-  | { type: 'SET_TEMPLATE_LOADING'; payload: boolean }
   | { type: 'UPDATE_TEMPLATE_SETTINGS'; payload: Partial<TemplateState> }
-  | { type: 'TOGGLE_GUIDES' }
   | { type: 'LOAD_TEMPLATE'; payload: { id?: string; name?: string; elements?: Element[]; lastSaved?: Date } }
   | { type: 'NEW_TEMPLATE' };
 
@@ -461,32 +459,27 @@ export interface ImageElementProperties {
 }
 
 export interface OrderNumberElementProperties {
-  // Propriétés d'affichage
-  showHeaders?: boolean;
-  showBackground?: boolean;
-  showBorders?: boolean;
-  showLabel?: boolean;
-  showDate?: boolean;
-  // Propriétés de mise en page
-  textAlign?: 'left' | 'center' | 'right';
-  contentAlign?: 'left' | 'center' | 'right';
-  labelPosition?: 'above' | 'left' | 'right' | 'below';
-  labelText?: string;
-  // Propriétés de police générales (fallback)
   fontSize?: number;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
-  // Propriétés de police pour les en-têtes (label)
-  headerFontSize?: number;
-  headerFontFamily?: string;
-  headerFontWeight?: string;
-  headerFontStyle?: string;
-  // Propriétés de police pour le corps (numéro et date)
-  bodyFontSize?: number;
-  bodyFontFamily?: string;
-  bodyFontWeight?: string;
-  bodyFontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textColor?: string;
+  backgroundColor?: string;
+  showBackground?: boolean;
+  prefix?: string;
+  suffix?: string;
+  padding?: number;
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  showOrderDate?: boolean;
+  dateFormat?: string;
+  // Propriétés de police pour le label
+  labelFontSize?: number;
+  labelFontFamily?: string;
+  labelFontWeight?: string;
+  labelFontStyle?: string;
   // Propriétés de police pour le numéro
   numberFontSize?: number;
   numberFontFamily?: string;
@@ -497,21 +490,12 @@ export interface OrderNumberElementProperties {
   dateFontFamily?: string;
   dateFontWeight?: string;
   dateFontStyle?: string;
-  // Propriétés de couleur
-  textColor?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  headerTextColor?: string;
-  // Propriétés de style
-  borderWidth?: number;
-  borderRadius?: number;
-  padding?: number;
-  theme?: string;
-  // Propriétés spécifiques à l'ordre
-  prefix?: string;
-  suffix?: string;
-  showOrderDate?: boolean;
-  dateFormat?: string;
+  // Propriétés d'affichage et de mise en page
+  contentAlign?: 'left' | 'center' | 'right';
+  showLabel?: boolean;
+  showDate?: boolean;
+  labelPosition?: 'above' | 'left' | 'right' | 'below';
+  labelText?: string;
 }
 
 export interface MentionsElementProperties {
@@ -638,4 +622,3 @@ export interface DocumentTypeElement extends BaseElement {
   textAlign?: string;
   textColor?: string;
 }
-

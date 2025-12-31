@@ -1,3 +1,4 @@
+import React from 'react';
 import { CompanyLogoElement } from '../../types/elements';
 
 // Déclaration des types WordPress pour TypeScript
@@ -410,4 +411,3 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
     </>
   );
 }
-

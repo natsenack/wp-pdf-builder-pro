@@ -1,6 +1,4 @@
-import { DragEvent } from 'react';
-import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
-import { ResponsiveContainer } from '../ui/Responsive';
+import React from 'react';
 
 // Définition des éléments WooCommerce (migration depuis l'ancien éditeur)
 const WOOCOMMERCE_ELEMENTS = [
@@ -170,7 +168,7 @@ const WOOCOMMERCE_ELEMENTS = [
     }
   },
   {
-    type: 'order-number',
+    type: 'order_number',
     label: 'Numéro de Commande',
     icon: '🔢',
     description: 'Référence de commande avec date',
@@ -381,16 +379,13 @@ interface ElementLibraryProps {
 }
 
 export function ElementLibrary({ onElementSelect, className }: ElementLibraryProps) {
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-
   const handleElementClick = (elementType: string) => {
     if (onElementSelect) {
       onElementSelect(elementType);
     }
   };
 
-  const handleDragStart = (e: DragEvent, element: Record<string, unknown>) => {
+  const handleDragStart = (e: React.DragEvent, element: Record<string, unknown>) => {
     // Stocker les données de l'élément dans le transfert
     e.dataTransfer.setData('application/json', JSON.stringify({
       type: element.type,
@@ -400,59 +395,66 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
     e.dataTransfer.effectAllowed = 'copy';
   };
 
-  const handleDragEnd = (_e: DragEvent) => {
+  const handleDragEnd = (_e: React.DragEvent) => {
     // Drag terminé
   };
 
   return (
-    <ResponsiveContainer
-      className={`pdf-element-library ${className || ''}`}
-      mobileClass="element-library-mobile"
-      tabletClass="element-library-tablet"
-      desktopClass="element-library-desktop"
-    >
+    <div className={`pdf-element-library ${className || ''}`} style={{
+      width: '280px',
+      height: '100%',
+      backgroundColor: '#f8f9fa',
+      borderRight: '1px solid #e9ecef',
+      display: '-webkit-box',
+      display: '-webkit-flex',
+      display: '-moz-box',
+      display: '-ms-flexbox',
+      display: 'flex',
+      WebkitBoxOrient: 'vertical',
+      WebkitBoxDirection: 'normal',
+      WebkitFlexDirection: 'column',
+      MozBoxOrient: 'vertical',
+      MozBoxDirection: 'normal',
+      msFlexDirection: 'column',
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }}>
+      {/* Header de la sidebar */}
       <div style={{
-        width: isMobile ? '100%' : isTablet ? '240px' : '280px',
-        height: '100%',
-        backgroundColor: '#f8f9fa',
-        borderRight: isMobile ? 'none' : '1px solid #e9ecef',
-        borderBottom: isMobile ? '1px solid #e9ecef' : 'none',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
+        padding: '16px',
+        borderBottom: '1px solid #e9ecef',
+        backgroundColor: '#ffffff'
       }}>
-        {/* Header de la sidebar */}
-        <div style={{
-          padding: isMobile ? '12px' : '16px',
-          borderBottom: '1px solid #e9ecef',
-          backgroundColor: '#ffffff'
+        <h3 style={{
+          margin: 0,
+          fontSize: '16px',
+          fontWeight: '600',
+          color: '#495057'
         }}>
-          <h3 style={{
-            margin: 0,
-            fontSize: isMobile ? '14px' : '16px',
-            fontWeight: '600',
-            color: '#495057'
-          }}>
-            📦 Éléments WooCommerce
-          </h3>
-          <p style={{
-            margin: '4px 0 0 0',
-            fontSize: isMobile ? '11px' : '12px',
-            color: '#6c757d',
-            display: isMobile ? 'none' : 'block'
-          }}>
-            Glissez les éléments sur le canvas
-          </p>
-        </div>
+          📦 Éléments WooCommerce
+        </h3>
+        <p style={{
+          margin: '4px 0 0 0',
+          fontSize: '12px',
+          color: '#6c757d'
+        }}>
+          Glissez les éléments sur le canvas
+        </p>
+      </div>
 
-        {/* Liste des éléments */}
+      {/* Liste des éléments */}
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        padding: '8px'
+      }}>
         <div style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: isMobile ? '12px' : '8px'
-        }}>
-        <div style={{
+          display: '-webkit-grid',
+          display: '-moz-grid',
+          display: '-ms-grid',
           display: 'grid',
+          WebkitGap: '8px',
+          MozGap: '8px',
           gap: '8px'
         }}>
           {WOOCOMMERCE_ELEMENTS.map((element) => (
@@ -466,21 +468,46 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
                 padding: '12px',
                 backgroundColor: '#ffffff',
                 border: '1px solid #dee2e6',
+                WebkitBorderRadius: '6px',
+                MozBorderRadius: '6px',
+                msBorderRadius: '6px',
+                OBorderRadius: '6px',
                 borderRadius: '6px',
                 cursor: 'grab',
+                WebkitTransition: 'all 0.2s ease',
+                MozTransition: 'all 0.2s ease',
+                OTransition: 'all 0.2s ease',
                 transition: 'all 0.2s ease',
+                display: '-webkit-box',
+                display: '-webkit-flex',
+                display: '-moz-box',
+                display: '-ms-flexbox',
                 display: 'flex',
+                WebkitBoxAlign: 'center',
+                WebkitAlignItems: 'center',
+                MozBoxAlign: 'center',
+                msFlexAlign: 'center',
                 alignItems: 'center',
+                WebkitGap: '12px',
+                MozGap: '12px',
                 gap: '12px',
                 userSelect: 'none'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#007acc';
+                e.currentTarget.style.WebkitBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
+                e.currentTarget.style.MozBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
+                e.currentTarget.style.msBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
+                e.currentTarget.style.OBoxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
                 e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 122, 204, 0.1)';
                 e.currentTarget.style.cursor = 'grabbing';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = '#dee2e6';
+                e.currentTarget.style.WebkitBoxShadow = 'none';
+                e.currentTarget.style.MozBoxShadow = 'none';
+                e.currentTarget.style.msBoxShadow = 'none';
+                e.currentTarget.style.OBoxShadow = 'none';
                 e.currentTarget.style.boxShadow = 'none';
                 e.currentTarget.style.cursor = 'grab';
               }}
@@ -490,10 +517,26 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
                 fontSize: '20px',
                 width: '32px',
                 height: '32px',
+                display: '-webkit-box',
+                display: '-webkit-flex',
+                display: '-moz-box',
+                display: '-ms-flexbox',
                 display: 'flex',
+                WebkitBoxAlign: 'center',
+                WebkitAlignItems: 'center',
+                MozBoxAlign: 'center',
+                msFlexAlign: 'center',
                 alignItems: 'center',
+                WebkitBoxPack: 'center',
+                WebkitJustifyContent: 'center',
+                MozBoxPack: 'center',
+                msFlexPack: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#f8f9fa',
+                WebkitBorderRadius: '4px',
+                MozBorderRadius: '4px',
+                msBorderRadius: '4px',
+                OBorderRadius: '4px',
                 borderRadius: '4px'
               }}>
                 {element.icon}
@@ -534,8 +577,5 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
         Cliquez sur un élément pour l&apos;ajouter
       </div>
     </div>
-    </ResponsiveContainer>
   );
 }
-
-

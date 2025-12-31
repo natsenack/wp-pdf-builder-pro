@@ -1,4 +1,4 @@
-import { useState, FC } from 'react';
+import React, { useState } from 'react';
 import './SaveTooltip.css';
 
 export interface SaveTooltipProps {
@@ -9,7 +9,7 @@ export interface SaveTooltipProps {
   onSaveNow?: () => void;
 }
 
-export const SaveTooltip: FC<SaveTooltipProps> = ({
+export const SaveTooltip: React.FC<SaveTooltipProps> = ({
   state,
   lastSavedAt,
   error,
@@ -98,4 +98,3 @@ export const SaveTooltip: FC<SaveTooltipProps> = ({
 };
 
 export default SaveTooltip;
-

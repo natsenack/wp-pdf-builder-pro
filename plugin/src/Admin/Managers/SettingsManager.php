@@ -30,10 +30,10 @@ class SettingsManager {
     public function getSettings() {
         // Récupération désactivée - système de cache supprimé
         return [];
+        }
     }
-}
 
-/**
+    /**
  * Classe responsable de la gestion des paramètres - DISABLED
  */
 class SettingsManager_DISABLED

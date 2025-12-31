@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Element } from '../types/elements';
-import { debugError, debugSave, debugLog } from '../utils/debug';
+import { debugError, debugSave } from '../utils/debug';
 
 /**
  * Hook simplifié pour auto-save
@@ -41,23 +41,11 @@ export function useSaveStateV2({
   templateId,
   elements,
   nonce,
-  autoSaveInterval = 300000, // 5 minutes par défaut (300000 ms)
+  autoSaveInterval = 5000,
   onSaveStart,
   onSaveSuccess,
   onSaveError
 }: UseSaveStateV2Options): UseSaveStateV2Return {
-
-  // DEBUG: Logs détaillés
-  debugLog('[PDF Builder] useSaveStateV2 appelée avec:', {
-    templateId,
-    elementsCount: elements?.length || 0,
-    nonce: nonce ? 'DEFINED' : 'UNDEFINED',
-    autoSaveInterval,
-    hasOnSaveStart: !!onSaveStart,
-    hasOnSaveSuccess: !!onSaveSuccess,
-    hasOnSaveError: !!onSaveError
-  });
-
   // État
   const [state, setState] = useState<SaveState>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
@@ -116,25 +104,11 @@ export function useSaveStateV2({
    * Effectue l'auto-save
    */
   const performSave = useCallback(async () => {
-    debugLog('[PDF Builder] useSaveStateV2 - performSave() appelée !');
-
-    if (!templateId || inProgressRef.current) {
-      debugLog('[PDF Builder] useSaveStateV2 - performSave annulée:', {
-        templateId: !!templateId,
-        inProgress: inProgressRef.current
-      });
-      return;
-    }
-
+    if (!templateId || inProgressRef.current) return;
+    
     inProgressRef.current = true;
     const now = Date.now();
     lastSaveTimeRef.current = now;
-
-    debugLog('[PDF Builder] useSaveStateV2 - Début sauvegarde:', {
-      templateId,
-      elementsCount: elements.length,
-      timestamp: now
-    });
 
     debugSave('[SAVE V2] Début de la sauvegarde manuelle', { templateId, elementsCount: elements.length });
 
@@ -180,62 +154,27 @@ export function useSaveStateV2({
       }
 
       // Faire la requête
+
       const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-      debugLog('[PDF Builder] useSaveStateV2 - URL AJAX:', ajaxUrl);
-
-      const templateStructure = {
-        elements: cleanElements,
-        canvasWidth: 794, // Default A4 width in pixels
-        canvasHeight: 1123, // Default A4 height in pixels
-        version: '1.0'
-      };
-
-      const requestBody = new URLSearchParams({
-        'action': 'pdf_builder_save_template',
-        'nonce': nonce,
-        'template_id': templateId.toString(),
-        'template_data': JSON.stringify(templateStructure),
-        'template_name': `Template ${templateId.toString()}`
-      });
-
-      debugLog('[PDF Builder] useSaveStateV2 - Corps de la requête:', {
-        action: 'pdf_builder_save_template',
-        nonce: nonce ? 'DEFINED' : 'UNDEFINED',
-        template_id: templateId.toString(),
-        template_data_length: JSON.stringify(templateStructure).length,
-        template_name: `Template ${templateId.toString()}`
-      });
-
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'X-Requested-With': 'XMLHttpRequest'
         },
-        body: requestBody
-      });
-
-      debugLog('[PDF Builder] useSaveStateV2 - Réponse HTTP:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        headers: Object.fromEntries(response.headers.entries())
+        body: new URLSearchParams({
+          'action': 'pdf_builder_auto_save_template',
+          'nonce': nonce,
+          'template_id': templateId.toString(),
+          'elements': JSON.stringify(cleanElements)
+        })
       });
 
       if (!response.ok) {
-        debugError('[PDF Builder] useSaveStateV2 - Erreur HTTP:', response.status, response.statusText);
-        // Try to get error response body
-        try {
-          const errorText = await response.text();
-          debugError('[PDF Builder] useSaveStateV2 - Corps erreur HTTP:', errorText);
-        } catch (e) {
-          debugError('[PDF Builder] useSaveStateV2 - Impossible de lire le corps erreur:', e);
-        }
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
-      debugLog('[PDF Builder] useSaveStateV2 - Données JSON reçues:', data);
 
       if (data.data?.elements_saved) {
         debugSave('[SAVE V2] Réponse serveur - éléments sauvegardés:', data.data.elements_saved.length);
@@ -342,26 +281,11 @@ export function useSaveStateV2({
    */
   useEffect(() => {
     const currentHash = getElementsHash(elements);
-    debugLog('[PDF Builder] useSaveStateV2 - Détection changements:', {
-      currentHash: currentHash.substring(0, 20) + '...',
-      previousHash: elementsHashRef.current ? elementsHashRef.current.substring(0, 20) + '...' : 'null',
-      hashChanged: currentHash !== elementsHashRef.current,
-      elementsCount: elements.length,
-      state,
-      templateId,
-      nonce: nonce ? 'DEFINED' : 'UNDEFINED'
-    });
 
     // Si les éléments n'ont pas changé, ne rien faire
     if (currentHash === elementsHashRef.current) {
-      debugLog('[PDF Builder] useSaveStateV2 - Pas de changement détecté, pas d\'auto-save');
       return;
     }
-
-    debugLog('[PDF Builder] useSaveStateV2 - Changement détecté, préparation auto-save');
-
-    // Mettre à jour le hash
-    elementsHashRef.current = currentHash;
 
 
 
@@ -377,26 +301,13 @@ export function useSaveStateV2({
 
     // Attendre 3 secondes d'inactivité avant de sauvegarder
     autoSaveTimeoutRef.current = setTimeout(() => {
-      debugLog('[PDF Builder] useSaveStateV2 - 3 secondes écoulées, vérification auto-save');
-
       // Ne rien faire si l'auto-save est désactivé (autoSaveInterval === 0)
       if (autoSaveInterval === 0) {
-        debugLog('[PDF Builder] useSaveStateV2 - Auto-save désactivé (interval = 0)');
         return;
       }
-
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
-      debugLog('[PDF Builder] useSaveStateV2 - Vérification timing:', {
-        timeSinceLastSave,
-        autoSaveInterval,
-        shouldSave: timeSinceLastSave >= autoSaveInterval
-      });
-
       if (timeSinceLastSave >= autoSaveInterval) {
-        debugLog('[PDF Builder] useSaveStateV2 - Déclenchement auto-save !');
         performSave();
-      } else {
-        debugLog('[PDF Builder] useSaveStateV2 - Pas encore temps de sauvegarder');
       }
     }, 3000);
 
@@ -435,4 +346,3 @@ export function useSaveStateV2({
     progress
   };
 }
-

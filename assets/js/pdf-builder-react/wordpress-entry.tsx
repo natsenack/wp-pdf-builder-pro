@@ -3,12 +3,10 @@
  * Ce fichier est chargé par WordPress pour initialiser l'éditeur React
  */
 
-// DEBUG: Log when script starts loading
-debugLog('🔧 DEBUG: pdf-builder-react.js script started loading');
-
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
-import { debugError, debugWarn, debugLog } from './utils/debug';
+import { debugError, debugWarn } from './utils/debug';
 import {
   registerEditorInstance,
   loadTemplate,
@@ -23,37 +21,13 @@ import {
 // Fonction d'initialisation appelée par WordPress
 declare global {
   interface Window {
-    pdfBuilderReactInitData: {
+    pdfBuilderReactData: {
       nonce: string;
       ajaxUrl: string;
       strings: {
         loading: string;
         error: string;
       };
-    };
-    initPDFBuilderReact: typeof initPDFBuilderReact;
-    pdfBuilderReact: {
-      initPDFBuilderReact: typeof initPDFBuilderReact;
-      loadTemplate: typeof loadTemplate;
-      getEditorState: typeof getEditorState;
-      setEditorState: typeof setEditorState;
-      getCurrentTemplate: typeof getCurrentTemplate;
-      exportTemplate: typeof exportTemplate;
-      saveTemplate: typeof saveTemplate;
-      registerEditorInstance: typeof registerEditorInstance;
-      resetAPI: typeof resetAPI;
-    };
-    // Notification functions
-    showSuccessNotification?: (message: string, duration?: number) => void;
-    showErrorNotification?: (message: string, duration?: number) => void;
-    showWarningNotification?: (message: string, duration?: number) => void;
-    showInfoNotification?: (message: string, duration?: number) => void;
-    // Canvas settings
-    pdfBuilderCanvasSettings?: {
-      canvas_width?: number;
-      canvas_height?: number;
-      debug?: boolean;
-      [key: string]: any;
     };
   }
 }
@@ -76,8 +50,8 @@ export function initPDFBuilderReact() {
   container.setAttribute('data-react-initialized', 'true');
 
   // Masquer le loading et afficher l'éditeur
-  const loadingEl = document.getElementById('pdf-builder-loader');
-  const editorEl = document.getElementById('pdf-builder-editor-container');
+  const loadingEl = document.getElementById('pdf-builder-react-loading');
+  const editorEl = document.getElementById('pdf-builder-react-editor');
 
   if (loadingEl) loadingEl.style.display = 'none';
   if (editorEl) editorEl.style.display = 'block';
@@ -115,15 +89,27 @@ export function initPDFBuilderReact() {
 }
 
 // Déclarer l'interface globale pour TypeScript
-// (Déjà déclarée plus haut)
+declare global {
+  interface Window {
+    initPDFBuilderReact: typeof initPDFBuilderReact;
+    pdfBuilderReact: {
+      loadTemplate: typeof loadTemplate;
+      getEditorState: typeof getEditorState;
+      setEditorState: typeof setEditorState;
+      getCurrentTemplate: typeof getCurrentTemplate;
+      exportTemplate: typeof exportTemplate;
+      saveTemplate: typeof saveTemplate;
+      registerEditorInstance: typeof registerEditorInstance;
+      resetAPI: typeof resetAPI;
+    };
+  }
+}
 
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
 window.initPDFBuilderReact = initPDFBuilderReact;
 
 // Exporter l'API complète pour WordPress
-debugLog('🔧 DEBUG: About to assign window.pdfBuilderReact');
 window.pdfBuilderReact = {
-  initPDFBuilderReact,
   loadTemplate,
   getEditorState,
   setEditorState,
@@ -133,5 +119,3 @@ window.pdfBuilderReact = {
   registerEditorInstance,
   resetAPI
 };
-debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
-

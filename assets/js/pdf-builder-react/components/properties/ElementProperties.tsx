@@ -1,3 +1,4 @@
+import React from 'react';
 import { Element } from '../../types/elements';
 
 interface ElementPropertiesProps {
@@ -430,4 +431,3 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
     </>
   );
 }
-

@@ -1,3 +1,4 @@
+import React from 'react';
 import { DocumentTypeElement } from '../../types/elements';
 
 // Composant Toggle personnalisé
@@ -93,7 +94,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
         ].map(tab => (
           <button
             key={tab.key}
-            onClick={() => setDocumentCurrentTab(tab.key as 'fonctionnalites' | 'personnalisation' | 'positionnement')}
+            onClick={() => setDocumentCurrentTab(tab.key)}
             style={{
               padding: '8px 16px',
               border: 'none',
@@ -255,7 +256,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               </h4>
               <input
                 type="color"
-                value={element.backgroundColor as string || '#e5e7eb'}
+                value={element.backgroundColor || '#e5e7eb'}
                 onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
                 style={{
                   width: '100%',
@@ -358,4 +359,3 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
     </div>
   );
 }
-

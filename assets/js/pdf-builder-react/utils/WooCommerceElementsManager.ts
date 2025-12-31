@@ -339,4 +339,3 @@ export class WooCommerceElementsManager {
 
 // Instance singleton
 export const wooCommerceManager = new WooCommerceElementsManager();
-

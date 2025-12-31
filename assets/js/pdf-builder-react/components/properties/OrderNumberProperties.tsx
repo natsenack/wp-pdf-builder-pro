@@ -1,49 +1,5 @@
-import { useState, ReactNode } from 'react';
+import React from 'react';
 import { OrderNumberElement } from '../../types/elements';
-
-// Composant Accordion personnalisé
-const Accordion = ({ title, children, defaultOpen = false }: {
-  title: string;
-  children: ReactNode;
-  defaultOpen?: boolean;
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  return (
-    <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          padding: '12px',
-          backgroundColor: '#f8f9fa',
-          cursor: 'pointer',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderBottom: isOpen ? '1px solid #e9ecef' : 'none'
-        }}
-      >
-        <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
-          {title}
-        </h4>
-        <span style={{
-          fontSize: '12px',
-          color: '#6c757d',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 0.2s ease'
-        }}>
-          ▼
-        </span>
-      </div>
-
-      {isOpen && (
-        <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
-          {children}
-        </div>
-      )}
-    </div>
-  );
-};
 
 // Composant Toggle personnalisé
 const Toggle = ({ checked, onChange, label, description }: {
@@ -190,44 +146,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
       {/* Onglet Fonctionnalités */}
       {currentTab === 'fonctionnalites' && (
         <>
-          {/* Section Structure de l'information */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#333',
-              marginBottom: '8px',
-              padding: '4px 8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '3px',
-              border: '1px solid #e9ecef'
-            }}>
-              Structure des informations
-            </div>
-            <div style={{ paddingLeft: '8px' }}>
-              <Toggle
-                checked={element.showHeaders !== false}
-                onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
-                label="Afficher les en-têtes"
-                description="Affiche les titres des sections"
-              />
-
-              <Toggle
-                checked={element.showBackground !== false}
-                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
-                label="Afficher le fond"
-                description="Affiche un fond coloré derrière le numéro de commande"
-              />
-
-              <Toggle
-                checked={element.showBorders !== false}
-                onChange={(checked) => onChange(element.id, 'showBorders', checked)}
-                label="Afficher les bordures"
-                description="Affiche les bordures autour des sections"
-              />
-            </div>
-          </div>
-
           {/* Section Éléments principaux */}
           <div style={{ marginBottom: '16px' }}>
             <div style={{
@@ -244,13 +162,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
             <div style={{ paddingLeft: '8px' }}>
               <Toggle
-                checked={element.showLabel !== false}
-                onChange={(checked) => onChange(element.id, 'showLabel', checked)}
-                label="Afficher le libellé"
-                description="Affiche un texte devant le numéro de commande"
-              />
-
-              <Toggle
                 checked={element.showDate !== false}
                 onChange={(checked) => onChange(element.id, 'showDate', checked)}
                 label="Afficher la date"
@@ -259,23 +170,54 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
           </div>
 
-          {/* Section Configuration du libellé */}
-          {element.showLabel !== false && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                color: '#333',
-                marginBottom: '8px',
-                padding: '4px 8px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '3px',
-                border: '1px solid #e9ecef'
-              }}>
-                Configuration du libellé
-              </div>
-              <div style={{ paddingLeft: '8px' }}>
-                <div style={{ marginBottom: '12px' }}>
+          {/* Section Affichage du fond */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Affichage du fond
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showBackground !== false}
+                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+                label="Afficher le fond"
+                description="Affiche un fond coloré derrière le numéro de commande"
+              />
+            </div>
+          </div>
+
+          {/* Section Libellé personnalisé */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#333',
+              marginBottom: '8px',
+              padding: '4px 8px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '3px',
+              border: '1px solid #e9ecef'
+            }}>
+              Libellé personnalisé
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showLabel !== false}
+                onChange={(checked) => onChange(element.id, 'showLabel', checked)}
+                label="Afficher le libellé"
+                description="Affiche un texte devant le numéro"
+              />
+
+              {element.showLabel !== false && (
+                <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                     Texte du libellé
                   </label>
@@ -296,8 +238,10 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     Texte affiché avant le numéro de commande
                   </div>
                 </div>
+              )}
 
-                <div style={{ marginBottom: '12px' }}>
+              {element.showLabel !== false && (
+                <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                     Position du libellé
                   </label>
@@ -318,54 +262,33 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     <option value="below">En-dessous du numéro</option>
                   </select>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {/* Section Format de date */}
-          {element.showDate !== false && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                color: '#333',
-                marginBottom: '8px',
-                padding: '4px 8px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '3px',
-                border: '1px solid #e9ecef'
-              }}>
-                Format de date
-              </div>
-              <div style={{ paddingLeft: '8px' }}>
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                    Format d&apos;affichage
-                  </label>
-                  <select
-                    value={String(element.dateFormat || 'DD/MM/YYYY')}
-                    onChange={(e) => onChange(element.id, 'dateFormat', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '6px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      fontSize: '12px'
-                    }}
-                  >
-                    <option value="DD/MM/YYYY">JJ/MM/AAAA (31/12/2024)</option>
-                    <option value="MM/DD/YYYY">MM/JJ/AAAA (12/31/2024)</option>
-                    <option value="DD-MM-YYYY">JJ-MM-AAAA (31-12-2024)</option>
-                    <option value="YYYY-MM-DD">AAAA-MM-JJ (2024-12-31)</option>
-                    <option value="DD MMM YYYY">JJ MMM AAAA (31 déc. 2024)</option>
-                  </select>
-                  <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-                    Format d&apos;affichage de la date de commande
-                  </div>
+              <div style={{ marginBottom: '12px', marginLeft: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Alignement du contenu
+                </label>
+                <select
+                  value={element.contentAlign || 'left'}
+                  onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '6px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    fontSize: '12px'
+                  }}
+                >
+                  <option value="left">Aligner à gauche</option>
+                  <option value="center">Centrer</option>
+                  <option value="right">Aligner à droite</option>
+                </select>
+                <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                  Positionne tout le contenu (libellé, numéro, date) dans l&apos;élément
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
           <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef' }}>
             <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
@@ -382,609 +305,95 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
       {/* Onglet Personnalisation */}
       {currentTab === 'personnalisation' && (
         <>
-          {/* Accordéon Thèmes prédéfinis */}
-          <Accordion title="Thèmes prédéfinis" defaultOpen={true}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '8px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              padding: '4px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '4px',
-              backgroundColor: '#fafafa'
-            }}>
-              {[
-                {
-                  id: 'clean',
-                  name: 'Propre',
-                  preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #f3f4f6',
-                      borderRadius: '4px',
-                      backgroundColor: '#ffffff',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '1px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '2px',
-                        backgroundColor: '#f9fafb'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '2px',
-                        backgroundColor: '#ffffff'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '2px',
-                        backgroundColor: '#f9fafb'
-                      }}></div>
-                    </div>
-                  ),
-                  styles: {
-                    backgroundColor: '#ffffff',
-                    borderColor: '#f3f4f6',
-                    textColor: '#374151',
-                    headerTextColor: '#111827',
-                    showHeaders: true,
-                    showBackground: true,
-                    showBorders: true
-                  }
-                },
-                {
-                  id: 'subtle',
-                  name: 'Discret',
-                  preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #f1f5f9',
-                      borderRadius: '6px',
-                      backgroundColor: '#fafbfc',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#e2e8f0',
-                        borderRadius: '1px'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#fafbfc',
-                        borderRadius: '1px'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#e2e8f0',
-                        borderRadius: '1px'
-                      }}></div>
-                    </div>
-                  ),
-                  styles: {
-                    backgroundColor: '#fafbfc',
-                    borderColor: '#f1f5f9',
-                    textColor: '#475569',
-                    headerTextColor: '#334155',
-                    showHeaders: true,
-                    showBackground: true,
-                    showBorders: true
-                  }
-                },
-                {
-                  id: 'elegant',
-                  name: 'Élégant',
-                  preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '2px solid #f3e8ff',
-                      borderRadius: '8px',
-                      backgroundColor: '#fefefe',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#f3e8ff',
-                        borderRadius: '2px'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#fefefe',
-                        borderRadius: '2px'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#f3e8ff',
-                        borderRadius: '2px'
-                      }}></div>
-                    </div>
-                  ),
-                  styles: {
-                    backgroundColor: '#fefefe',
-                    borderColor: '#f3e8ff',
-                    textColor: '#6b21a8',
-                    headerTextColor: '#581c87',
-                    showHeaders: true,
-                    showBackground: true,
-                    showBorders: true
-                  }
-                },
-                {
-                  id: 'corporate',
-                  name: 'Corporate',
-                  preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0px',
-                      backgroundColor: '#ffffff',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#f3f4f6'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#ffffff'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#f3f4f6'
-                      }}></div>
-                    </div>
-                  ),
-                  styles: {
-                    backgroundColor: '#ffffff',
-                    borderColor: '#e5e7eb',
-                    textColor: '#374151',
-                    headerTextColor: '#111827',
-                    showHeaders: true,
-                    showBackground: false,
-                    showBorders: true
-                  }
-                },
-                {
-                  id: 'minimal',
-                  name: 'Minimal',
-                  preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: 'none',
-                      borderRadius: '0px',
-                      backgroundColor: 'transparent',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '1px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '1px',
-                        backgroundColor: '#e5e7eb'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '1px',
-                        backgroundColor: 'transparent'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '1px',
-                        backgroundColor: '#e5e7eb'
-                      }}></div>
-                    </div>
-                  ),
-                  styles: {
-                    backgroundColor: 'transparent',
-                    borderColor: 'transparent',
-                    textColor: '#6b7280',
-                    headerTextColor: '#374151',
-                    showHeaders: false,
-                    showBackground: false,
-                    showBorders: false
-                  }
-                }
-              ].map(theme => (
-                <button
-                  key={theme.id}
-                  onClick={() => {
-                    // Appliquer toutes les propriétés du thème
-                    Object.entries(theme.styles).forEach(([property, value]) => {
-                      onChange(element.id, property, value);
-                    });
-                  }}
-                  style={{
-                    padding: '6px',
-                    border: '2px solid transparent',
-                    borderRadius: '6px',
-                    backgroundColor: '#ffffff',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                    minHeight: '70px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#007bff';
-                    e.currentTarget.style.backgroundColor = '#f8f9fa';
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'transparent';
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                  title={`Appliquer le thème ${theme.name}`}
-                >
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    textAlign: 'center',
-                    lineHeight: '1.2'
-                  }}>
-                    {theme.name}
-                  </div>
-                  {theme.preview}
-                </button>
-              ))}
-            </div>
-          </Accordion>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+              Taille du texte
+            </label>
+            <select
+              value={element.fontSize || '14'}
+              onChange={(e) => onChange(element.id, 'fontSize', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="12">Petit (12px)</option>
+              <option value="14">Normal (14px)</option>
+              <option value="16">Moyen (16px)</option>
+              <option value="18">Grand (18px)</option>
+              <option value="20">Très grand (20px)</option>
+            </select>
+          </div>
 
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Police
+            </label>
+            <select
+              value={element.fontFamily || 'Arial'}
+              onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Calibri">Calibri</option>
+            </select>
+          </div>
 
-          {/* Accordéon Police du libellé */}
-          {element.showLabel !== false && element.showHeaders !== false && (
-            <Accordion title="Police du libellé" defaultOpen={false}>
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Taille de police
-                </label>
-                <input
-                  type="number"
-                  min="8"
-                  max="32"
-                  value={element.headerFontSize as number || (Number(element.fontSize) || 14) + 2}
-                  onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 16)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}
-                />
-              </div>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Style du texte
+            </label>
+            <select
+              value={element.fontStyle || 'normal'}
+              onChange={(e) => onChange(element.id, 'fontStyle', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="normal">Normal</option>
+              <option value="italic">Italique</option>
+            </select>
+          </div>
 
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Famille de police
-                </label>
-                <select
-                  value={String(element.headerFontFamily || element.fontFamily || 'Arial')}
-                  onChange={(e) => onChange(element.id, 'headerFontFamily', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}
-                >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Verdana">Verdana</option>
-                  <option value="Tahoma">Tahoma</option>
-                  <option value="Trebuchet MS">Trebuchet MS</option>
-                  <option value="Calibri">Calibri</option>
-                  <option value="Cambria">Cambria</option>
-                  <option value="Segoe UI">Segoe UI</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Épaisseur de police
-                </label>
-                <select
-                  value={element.headerFontWeight || element.fontWeight || 'bold'}
-                  onChange={(e) => onChange(element.id, 'headerFontWeight', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}
-                >
-                  <option value="normal">Normal (400)</option>
-                  <option value="bold">Gras (700)</option>
-                  <option value="lighter">Fin (300)</option>
-                  <option value="bolder">Très gras (900)</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Style de police
-                </label>
-                <select
-                  value={element.headerFontStyle || element.fontStyle || 'normal'}
-                  onChange={(e) => onChange(element.id, 'headerFontStyle', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}
-                >
-                  <option value="normal">Normal</option>
-                  <option value="italic">Italique</option>
-                  <option value="oblique">Oblique</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '0' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Couleur de police
-                </label>
-                <input
-                  type="color"
-                  value={(element.headerTextColor as string) || element.textColor || '#111827'}
-                  onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '32px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px'
-                  }}
-                />
-              </div>
-            </Accordion>
-          )}
-
-          {/* Accordéon Police du numéro et de la date */}
-          <Accordion title="Police du numéro et de la date" defaultOpen={false}>
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police du numéro
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="24"
-                value={element.numberFontSize || element.bodyFontSize || element.fontSize || 14}
-                onChange={(e) => onChange(element.id, 'numberFontSize', parseInt(e.target.value) || 14)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police de la date
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="24"
-                value={element.dateFontSize || (Number(element.bodyFontSize || element.fontSize) || 14) - 2}
-                onChange={(e) => onChange(element.id, 'dateFontSize', parseInt(e.target.value) || 12)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Famille de police
-              </label>
-              <select
-                value={element.bodyFontFamily || element.fontFamily || 'Arial'}
-                onChange={(e) => onChange(element.id, 'bodyFontFamily', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              >
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Tahoma">Tahoma</option>
-                <option value="Trebuchet MS">Trebuchet MS</option>
-                <option value="Calibri">Calibri</option>
-                <option value="Cambria">Cambria</option>
-                <option value="Segoe UI">Segoe UI</option>
-              </select>
-            </div>
-
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Épaisseur de police
-              </label>
-              <select
-                value={element.bodyFontWeight || element.fontWeight || 'normal'}
-                onChange={(e) => onChange(element.id, 'bodyFontWeight', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              >
-                <option value="normal">Normal (400)</option>
-                <option value="bold">Gras (700)</option>
-                <option value="lighter">Fin (300)</option>
-                <option value="bolder">Très gras (900)</option>
-              </select>
-            </div>
-
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Style de police
-              </label>
-              <select
-                value={element.bodyFontStyle || element.fontStyle || 'normal'}
-                onChange={(e) => onChange(element.id, 'bodyFontStyle', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              >
-                <option value="normal">Normal</option>
-                <option value="italic">Italique</option>
-                <option value="oblique">Oblique</option>
-              </select>
-            </div>
-
-            <div style={{ marginBottom: '0' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur de police
-              </label>
-              <input
-                type="color"
-                value={element.textColor || '#374151'}
-                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
-          </Accordion>
-
-          {/* Accordéon Couleurs */}
-          <Accordion title="Couleurs" defaultOpen={false}>
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur du texte du libellé
-              </label>
-              <input
-                type="color"
-                value={(element.headerTextColor as string) || element.textColor || '#111827'}
-                onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur du texte du numéro
-              </label>
-              <input
-                type="color"
-                value={element.textColor || '#374151'}
-                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
-
-            {element.showBackground !== false && (
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+          {/* Section Couleur de fond - visible seulement si showBackground est activé */}
+          {element.showBackground !== false && (
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
                   Couleur de fond
                 </label>
                 <input
                   type="color"
-                  value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
+                  value={element.backgroundColor || '#e5e7eb'}
                   onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
                   style={{
                     width: '100%',
-                    height: '32px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px'
+                    height: '40px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
                   }}
                 />
               </div>
-            )}
-
-            <div style={{ marginBottom: '0' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur des bordures
-              </label>
-              <input
-                type="color"
-                value={element.borderColor || '#e5e7eb'}
-                onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
             </div>
-          </Accordion>
+          )}
         </>
       )}
 
@@ -992,7 +401,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
       {currentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Position X
             </label>
             <input
@@ -1001,16 +410,16 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
-                padding: '4px 8px',
+                padding: '6px',
                 border: '1px solid #ccc',
-                borderRadius: '3px',
+                borderRadius: '4px',
                 fontSize: '12px'
               }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Position Y
             </label>
             <input
@@ -1019,16 +428,16 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
               style={{
                 width: '100%',
-                padding: '4px 8px',
+                padding: '6px',
                 border: '1px solid #ccc',
-                borderRadius: '3px',
+                borderRadius: '4px',
                 fontSize: '12px'
               }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Largeur
             </label>
             <input
@@ -1037,16 +446,16 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 200)}
               style={{
                 width: '100%',
-                padding: '4px 8px',
+                padding: '6px',
                 border: '1px solid #ccc',
-                borderRadius: '3px',
+                borderRadius: '4px',
                 fontSize: '12px'
               }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Hauteur
             </label>
             <input
@@ -1055,58 +464,15 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 40)}
               style={{
                 width: '100%',
-                padding: '4px 8px',
+                padding: '6px',
                 border: '1px solid #ccc',
-                borderRadius: '3px',
+                borderRadius: '4px',
                 fontSize: '12px'
               }}
             />
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Alignement du contenu
-            </label>
-            <select
-              value={element.contentAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="left">Aligner à gauche</option>
-              <option value="center">Centrer</option>
-              <option value="right">Aligner à droite</option>
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Alignement horizontal
-            </label>
-            <select
-              value={element.textAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-            >
-              <option value="left">Gauche</option>
-              <option value="center">Centre</option>
-              <option value="right">Droite</option>
-            </select>
           </div>
         </>
       )}
     </>
   );
 }
-

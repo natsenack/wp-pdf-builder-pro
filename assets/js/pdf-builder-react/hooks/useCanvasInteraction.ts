@@ -1,8 +1,7 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
-import { useBuilder } from '../contexts/builder/BuilderContext';
-import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
+import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { Element } from '../types/elements';
-import { debugLog, debugError, debugWarn } from '../utils/debug';
 
 // Déclaration des APIs globales du navigateur
 declare const requestAnimationFrame: (callback: () => void) => number;
@@ -24,9 +23,10 @@ interface UseCanvasInteractionProps {
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
-  
-  // Déterminer le mode de sélection effectif : si sélection multiple désactivée, forcer le mode 'click'
-  const selectionMode = canvasSettings.selectionMultiSelectEnabled ? canvasSettings.canvasSelectionMode : 'click';
+  const selectionMode = canvasSettings.canvasSelectionMode;
+
+  // Debug: Log selection mode
+  console.log('🔍 useCanvasInteraction - selectionMode:', selectionMode);
 
   // État pour déclencher le re-rendu du canvas pendant la sélection
   const [selectionUpdateTrigger, setSelectionUpdateTrigger] = useState(0);
@@ -145,8 +145,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
     };
 
-    document.addEventListener('mousemove', globalMouseMoveRef.current, { passive: false });
-    document.addEventListener('mouseup', globalMouseUpRef.current, { passive: false });
+    document.addEventListener('mousemove', globalMouseMoveRef.current);
+    document.addEventListener('mouseup', globalMouseUpRef.current);
   }, [canvasRef, state.canvas.zoom, state.canvas.pan, state.elements, selectionMode, dispatch]);
 
   const stopGlobalSelectionListeners = useCallback(() => {
@@ -518,12 +518,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   }, [dispatch, state.canvas.snapToGrid, state.canvas.gridSize]);
 
-  // ✅ Syncer la ref avec l'état Redux (correction: éviter la dépendance sur state entier)
+  // ✅ Syncer la ref avec l'état Redux (fallback au cas où dispatch arrive avant)
   useEffect(() => {
     selectedElementsRef.current = state.selection.selectedElements;
     // ✅ CORRECTION 5: Garder un snapshot du state courant
     lastKnownStateRef.current = state;
-  }, [state.selection.selectedElements, state.elements, state.canvas]); // Dépendances spécifiques au lieu de state entier
+  }, [state.selection.selectedElements, state]);
 
   // ✅ CORRECTION 4: Fonction helper pour vérifier que rect est valide
   const validateCanvasRect = (rect: { width: number; height: number; left: number; top: number; right: number; bottom: number }): boolean => {
@@ -590,16 +590,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // Gestionnaire de mouse down pour commencer le drag ou resize
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      debugLog('[CanvasInteraction] Mouse down ignored - canvas ref null');
-      return;
-    }
+    if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
     
     // ✅ CORRECTION 4: Vérifier que rect est valide avant de l'utiliser
     if (!validateCanvasRect(rect)) {
-      debugLog('[CanvasInteraction] Mouse down ignored - invalid canvas rect');
       return;
     }
 
@@ -615,8 +611,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
     const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
 
-    debugLog(`[CanvasInteraction] Mouse down at canvas coords (${x.toFixed(1)}, ${y.toFixed(1)}), zoom: ${zoomScale}, pan: (${state.canvas.pan.x.toFixed(1)}, ${state.canvas.pan.y.toFixed(1)})`);
-
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
     // Note: On cherche du dernier vers le premier pour sélectionner l'élément rendu au-dessus
     const clickedElement = [...state.elements].reverse().find(el => {
@@ -626,7 +620,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // Si on a cliqué sur un élément
     if (clickedElement) {
-      debugLog(`[CanvasInteraction] Clicked element: ${clickedElement.type} (${clickedElement.id})`);
       // ✅ Utiliser state.selection directement (plus fiable que ref)
       const isAlreadySelected = state.selection.selectedElements.includes(clickedElement.id);
       
@@ -634,7 +627,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       const isMultiSelect = canvasSettings.selectionMultiSelectEnabled && event.ctrlKey;
       
       if (isMultiSelect) {
-        debugLog(`[CanvasInteraction] Multi-select mode - ${isAlreadySelected ? 'removing' : 'adding'} element ${clickedElement.id}`);
         // ✅ Mode sélection multiple
         if (isAlreadySelected) {
           // Retirer l'élément de la sélection
@@ -650,7 +642,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       } else {
         // ✅ Mode sélection simple (comportement actuel)
         if (!isAlreadySelected) {
-          debugLog(`[CanvasInteraction] Selecting element ${clickedElement.id}`);
           dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
           // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
           isDraggingRef.current = true;
@@ -663,7 +654,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
 
         // ✅ L'élément est déjà sélectionné - préparer le drag
-        debugLog(`[CanvasInteraction] Starting drag for ${state.selection.selectedElements.length} selected elements`);
         isDraggingRef.current = true;
         // Stocker les positions de départ de tous les éléments sélectionnés
         const startPositions: Record<string, { x: number; y: number }> = {};
@@ -684,7 +674,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Vérifier si on clique sur une poignée de redimensionnement
     const resizeHandle = getResizeHandleAtPosition(x, y, state.selection.selectedElements, state.elements);
     if (resizeHandle) {
-      debugLog(`[CanvasInteraction] Starting resize - element: ${resizeHandle.elementId}, handle: ${resizeHandle.handle}`);
       isResizingRef.current = true;
       resizeHandleRef.current = resizeHandle.handle;
       selectedElementRef.current = resizeHandle.elementId;
@@ -714,7 +703,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Vérifier si on est sur la poignée de rotation
         const distance = Math.sqrt((x - centerX) ** 2 + (y - rotationHandleY) ** 2);
         if (distance <= rotationHandleSize / 2) {
-          debugLog(`[CanvasInteraction] Starting rotation for ${state.selection.selectedElements.length} elements`);
           isRotatingRef.current = true;
           rotationMouseStartRef.current = { x, y };
           
@@ -736,7 +724,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // ✅ Sinon on a cliqué sur le vide - gérer selon le mode de sélection
     if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
-      debugLog(`[CanvasInteraction] Starting ${selectionMode} selection at (${x.toFixed(1)}, ${y.toFixed(1)})`);
       // Commencer une nouvelle sélection
       isSelectingRef.current = true;
       selectionStartRef.current = { x, y };
@@ -752,7 +739,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     } else {
       // Mode clic simple - désélectionner
       if (state.selection.selectedElements.length > 0) {
-        debugLog(`[CanvasInteraction] Clearing selection (${state.selection.selectedElements.length} elements)`);
         dispatch({ type: 'CLEAR_SELECTION' });
         selectedElementRef.current = null;
       }
@@ -761,8 +747,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // Gestionnaire de mouse up pour terminer le drag ou resize
   const handleMouseUp = useCallback(() => {
-    debugLog(`[CanvasInteraction] Mouse up - ending interactions (dragging: ${isDraggingRef.current}, resizing: ${isResizingRef.current}, rotating: ${isRotatingRef.current}, selecting: ${isSelectingRef.current})`);
-    
     // Annuler tout RAF en cours et effectuer un dernier update si nécessaire
     if (rafIdRef.current !== null) {
       cancelAnimationFrame(rafIdRef.current);
@@ -815,21 +799,17 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         selectedElementIds = state.elements
           .filter(element => isElementInLasso(element, selectionPointsRef.current))
           .map(element => element.id);
-        debugLog(`[CanvasInteraction] Lasso selection completed - ${selectedElementIds.length} elements selected`);
       } else if (selectionMode === 'rectangle' && selectionRectRef.current.width > 0 && selectionRectRef.current.height > 0) {
         // Sélection rectangle : vérifier quels éléments intersectent le rectangle
         selectedElementIds = state.elements
           .filter(element => isElementInRectangle(element, selectionRectRef.current))
           .map(element => element.id);
-        debugLog(`[CanvasInteraction] Rectangle selection completed - ${selectedElementIds.length} elements selected`);
       }
 
       // Appliquer la sélection
       if (selectedElementIds.length > 0) {
-        debugLog(`[CanvasInteraction] Applying selection: ${selectedElementIds.join(', ')}`);
         dispatch({ type: 'SET_SELECTION', payload: selectedElementIds });
       } else {
-        debugLog(`[CanvasInteraction] No elements selected - clearing selection`);
         dispatch({ type: 'CLEAR_SELECTION' });
       }
 
@@ -1040,9 +1020,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const canvasRelativeX = event.clientX - rect.left;
     const canvasRelativeY = event.clientY - rect.top;
     const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
-    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
-    
-    // Mettre à jour le curseur
+    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;    // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
     updateCursor(cursor);
 
@@ -1077,8 +1055,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         rafIdRef.current = requestAnimationFrame(performDragUpdate);
       }
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
-      debugLog(`[CanvasInteraction] Resizing element ${selectedElementRef.current} with handle ${resizeHandleRef.current} at (${x.toFixed(1)}, ${y.toFixed(1)})`);
-      
       // ✅ BALANCED: Preserve essential properties without overkill
       const lastState = lastKnownStateRef.current;
       const element = lastState.elements.find(el => el.id === selectedElementRef.current);
@@ -1105,8 +1081,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     } else if (isRotatingRef.current && state.selection.selectedElements.length > 0) {
-      debugLog(`[CanvasInteraction] Rotating ${state.selection.selectedElements.length} elements at mouse position (${x.toFixed(1)}, ${y.toFixed(1)})`);
-      
       // ✅ OPTIMISATION FLUIDITÉ: Pour la rotation, passer les coordonnées actuelles de la souris
       // performRotationUpdate calculera la rotation pour tous les éléments
       pendingRotationUpdateRef.current = { x, y };
@@ -1214,4 +1188,3 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
   };
 };
-

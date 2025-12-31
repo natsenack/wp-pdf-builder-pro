@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React from 'react';
 
 export interface SaveIndicatorProps {
   state: 'idle' | 'saving' | 'saved' | 'error';
@@ -13,7 +13,7 @@ export interface SaveIndicatorProps {
  * SaveIndicator Simple et Robuste
  * Affiche UNE notification simple en haut à droite
  */
-export const SaveIndicator: FC<SaveIndicatorProps> = ({
+export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   state,
   lastSavedAt: _lastSavedAt,
   error,
@@ -30,7 +30,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
   const colors: Record<string, { bg: string; text: string; border: string }> = {
     saving: { bg: '#2196F3', text: '#fff', border: '#1976D2' },
     saved: { bg: '#4CAF50', text: '#fff', border: '#388E3C' },
-    error: { bg: '#FF9800', text: '#fff', border: '#F57C00' } // Orange au lieu de rouge
+    error: { bg: '#F44336', text: '#fff', border: '#D32F2F' }
   };
 
   const color = colors[state];
@@ -43,8 +43,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
       case 'saved':
         return 'Sauvegardé ✓';
       case 'error':
-        // Message moins alarmant pour les erreurs d'auto-save
-        return 'Auto-save temporairement indisponible';
+        return `Erreur: ${error || 'inconnue'}`;
       default:
         return '';
     }
@@ -59,22 +58,33 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         padding: '14px 20px',
         WebkitBorderRadius: '6px',
         MozBorderRadius: '6px',
+        msBorderRadius: '6px',
+        OBorderRadius: '6px',
         borderRadius: '6px',
         background: color.bg,
         border: `2px solid ${color.border}`,
         WebkitBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
         MozBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        msBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        OBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
         fontSize: '14px',
         fontWeight: 'bold',
         fontFamily: 'Arial, sans-serif',
         color: color.text,
         zIndex: 999999,
+        display: '-webkit-box',
+        display: '-webkit-flex',
+        display: '-moz-box',
+        display: '-ms-flexbox',
         display: 'flex',
         WebkitBoxAlign: 'center',
         WebkitAlignItems: 'center',
         MozBoxAlign: 'center',
+        msFlexAlign: 'center',
         alignItems: 'center',
+        WebkitGap: '12px',
+        MozGap: '12px',
         gap: '12px',
         minWidth: '200px',
         animation: state === 'saving' ? 'pulse 2s infinite' : 'slideIn 0.3s ease-out'
@@ -99,6 +109,8 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
             color: '#fff',
             WebkitBorderRadius: '3px',
             MozBorderRadius: '3px',
+            msBorderRadius: '3px',
+            OBorderRadius: '3px',
             borderRadius: '3px',
             cursor: 'pointer',
             fontSize: '12px',
@@ -154,4 +166,3 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
 };
 
 export default SaveIndicator;
-

@@ -1,10 +1,11 @@
 import { useBuilder } from '../contexts/builder/BuilderContext';
-import { SaveState } from './useSaveStateV2';
-import { debugError, debugLog } from '../utils/debug';
+import { useSaveStateV2, SaveState } from './useSaveStateV2';
+import { debugError } from '../utils/debug';
 
 /**
- * Hook useAutoSave - DÉSACTIVÉ
- * Le système d'auto-save a été supprimé
+ * Hook useAutoSave
+ * Enveloppe useSaveState pour l'intégration avec BuilderContext
+ * Expose l'état de sauvegarde automatique
  */
 
 export interface UseAutoSaveReturn {
@@ -16,31 +17,68 @@ export interface UseAutoSaveReturn {
   triggerSave: () => void;
   clearError: () => void;
   progress: number;
-  isEnabled: boolean;
 }
 
 export function useAutoSave(): UseAutoSaveReturn {
-  // Auto-save désactivé - retourner un état fixe
-  debugLog('[PDF Builder] useAutoSave - Auto-save is DISABLED');
+  const { state, dispatch } = useBuilder();
+
+  // Récupérer le nonce
+  const nonce =
+    window.pdfBuilderData?.nonce ||
+    window.pdfBuilderNonce ||
+    window.pdfBuilderReactData?.nonce ||
+    '';
+
+  // Récupérer l'intervalle de sauvegarde auto depuis les settings
+  // Par défaut: 30 secondes si paramètre non défini
+  const autoSaveIntervalSetting = (window.pdfBuilderCanvasSettings as { auto_save_interval?: number })?.auto_save_interval ||
+    window.pdfBuilderData?.auto_save_interval ||
+    (window.pdfBuilderReactData as { auto_save_interval?: number })?.auto_save_interval ||
+    30; // 30 secondes par défaut
+  
+  const autoSaveInterval = Math.max(10, autoSaveIntervalSetting) * 1000; // Convertir en ms, min 10s
+
+  // Vérifier si l'auto-save est activé dans les settings
+  // Doit être explicitement TRUE pour être activé
+  const autoSaveEnabled = 
+    (window.pdfBuilderCanvasSettings as { auto_save_enabled?: boolean })?.auto_save_enabled === true;
+
+  // Utiliser useSaveStateV2
+  const {
+    state: saveState,
+    isSaving,
+    lastSavedAt,
+    error,
+    saveNow,
+    triggerSave,
+    clearError,
+    progress
+  } = useSaveStateV2({
+    templateId: state.template.id as number | undefined,
+    elements: state.elements,
+    nonce,
+    autoSaveInterval: autoSaveEnabled ? autoSaveInterval : 0, // 0 désactive l'auto-save
+    onSaveStart: () => {
+
+    },
+    onSaveSuccess: (savedAt: string) => {
+
+      // ✅ Mettre à jour l'état pour indiquer que le template n'est plus modifié
+      dispatch({ type: 'SET_TEMPLATE_MODIFIED', payload: false });
+    },
+    onSaveError: (error: string) => {
+      debugError(`[AUTO SAVE] Erreur: ${error}`);
+    }
+  });
 
   return {
-    state: 'idle' as SaveState,
-    isSaving: false,
-    lastSavedAt: null,
-    error: null,
-    saveNow: async () => {
-      // Ne fait rien - auto-save désactivé
-      debugLog('[PDF Builder] useAutoSave - saveNow called but auto-save is disabled');
-    },
-    triggerSave: () => {
-      // Ne fait rien - auto-save désactivé
-      debugLog('[PDF Builder] useAutoSave - triggerSave called but auto-save is disabled');
-    },
-    clearError: () => {
-      // Ne fait rien - auto-save désactivé
-    },
-    progress: 0,
-    isEnabled: false
+    state: saveState,
+    isSaving,
+    lastSavedAt,
+    error,
+    saveNow,
+    triggerSave,
+    clearError,
+    progress
   };
 }
-

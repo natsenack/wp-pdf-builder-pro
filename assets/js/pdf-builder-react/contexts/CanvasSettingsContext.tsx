@@ -1,21 +1,8 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react';
-import { debugError } from '../utils/debug';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 declare global {
   interface Window {
-    pdfBuilderCanvasSettings?: any;
-    pdfBuilderAjax?: {
-      nonce: string;
-      url: string;
-      ajax_url: string;
-    };
-    pdfBuilderData?: {
-      nonce: string;
-      ajaxUrl: string;
-      templateId?: string | number;
-      existingTemplate?: any;
-      hasExistingData?: boolean;
-    };
+    pdfBuilderCanvasSettings?: Record<string, unknown>;
   }
 }
 
@@ -74,6 +61,8 @@ export interface CanvasSettingsContextType {
   // Historique
   historyUndoLevels: number;
   historyRedoLevels: number;
+  historyAutoSaveEnabled: boolean;
+  historyAutoSaveInterval: number;
   
   // Performance & Lazy Loading
   lazyLoadingEditor: boolean;
@@ -94,7 +83,7 @@ export interface CanvasSettingsContextType {
 const CanvasSettingsContext = createContext<CanvasSettingsContextType | undefined>(undefined);
 
 // Valeurs par défaut
-const DEFAULT_SETTINGS: Omit<CanvasSettingsContextType, 'updateGridSettings' | 'saveGridSettings'> = {
+const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   canvasWidth: 210,
   canvasHeight: 297,
   canvasUnit: 'mm',
@@ -142,6 +131,8 @@ const DEFAULT_SETTINGS: Omit<CanvasSettingsContextType, 'updateGridSettings' | '
   
   historyUndoLevels: 50,
   historyRedoLevels: 50,
+  historyAutoSaveEnabled: true,
+  historyAutoSaveInterval: 30000,
   
   // Performance & Lazy Loading
   lazyLoadingEditor: true,
@@ -152,6 +143,7 @@ const DEFAULT_SETTINGS: Omit<CanvasSettingsContextType, 'updateGridSettings' | '
   isLoading: true,
   isReady: false,
   error: null,
+  
   refreshSettings: () => {}
 };
 
@@ -161,26 +153,24 @@ interface CanvasSettingsProviderProps {
 
 function loadSettingsFromWindowObj(): CanvasSettingsContextType {
   try {
-    const windowSettings = window.pdfBuilderData?.canvasSettings || window.pdfBuilderCanvasSettings;
+    const windowSettings = window.pdfBuilderCanvasSettings;
     
     // Debug: Check if window settings exist - FORCE LOG
-    
-    
+    console.log('=== PDF BUILDER DEBUG ===');
+    console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
     if (typeof window !== 'undefined' && window.pdfBuilderCanvasSettings) {
-      
-      
+      console.log('window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
+      console.log('canvas_selection_mode in window settings:', window.pdfBuilderCanvasSettings.canvas_selection_mode);
     } else {
-      
+      console.log('window.pdfBuilderCanvasSettings is undefined or null');
     }
     
     if (!windowSettings) {
-      
+      console.log('🔍 No window settings found, using defaults');
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
-        isReady: true,
-        updateGridSettings: () => {},
-        saveGridSettings: async () => {}
+        isReady: true
       };
     }
 
@@ -251,48 +241,45 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       // Historique
       historyUndoLevels: (windowSettings.history_undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
       historyRedoLevels: (windowSettings.history_redo_levels as number) ?? DEFAULT_SETTINGS.historyRedoLevels,
-      // Performance
+      historyAutoSaveEnabled: windowSettings.history_auto_save_enabled === true || windowSettings.history_auto_save_enabled === '1',
+      historyAutoSaveInterval: (windowSettings.history_auto_save_interval as number) ?? DEFAULT_SETTINGS.historyAutoSaveInterval,
+      
+      // Performance & Lazy Loading
+      lazyLoadingEditor: windowSettings.lazy_loading_editor === true || windowSettings.lazy_loading_editor === '1',
+      lazyLoadingPlugin: windowSettings.lazy_loading_plugin === true || windowSettings.lazy_loading_plugin === '1',
       debugMode: windowSettings.debug_mode === true || windowSettings.debug_mode === '1',
       memoryLimitJs: (windowSettings.memory_limit_js as number) ?? DEFAULT_SETTINGS.memoryLimitJs,
       
       isLoading: false,
       isReady: true,
       error: null,
-      refreshSettings: () => {},
-      updateGridSettings: () => {},
-      saveGridSettings: async () => {}
+      
+      refreshSettings: () => {}
     };
 
-    
-    
+    console.log('🔍 Mapped settings:', newSettings);
     return newSettings;
   } catch (_err) {
     const errorMsg = _err instanceof Error ? _err.message : 'Unknown error';
-    
+    console.log('🔍 Error loading settings:', errorMsg);
     return {
       ...DEFAULT_SETTINGS,
       isLoading: false,
       isReady: false,
       error: errorMsg,
-      refreshSettings: () => {},
-      updateGridSettings: () => {},
-      saveGridSettings: async () => {}
+      refreshSettings: () => {}
     };
   }
 }
 
 export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps) {
   const [settings, setSettings] = useState<CanvasSettingsContextType>(() => {
-    
+    console.log('🔍 CanvasSettingsProvider initializing...');
     // Try to load from window object first
     const windowSettings = loadSettingsFromWindowObj();
-    
+    console.log('🔍 Initial settings loaded:', windowSettings.canvasSelectionMode);
     return windowSettings;
   });
-
-  // ✅ CORRECTION: Flag pour éviter les boucles infinies lors des mises à jour d'événements
-  const isUpdatingFromEventRef = useRef(false);
-  const hasInitializedRef = useRef(false);
 
   // Function to refresh settings from window object
   const handleRefresh = () => {
@@ -300,11 +287,8 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     setSettings(windowSettings);
   };
 
-  // Load settings from server on mount - simplified - ONLY ONCE
+  // Load settings from server on mount - simplified
   useEffect(() => {
-    if (hasInitializedRef.current) return; // Éviter les doublons au montage
-    hasInitializedRef.current = true;
-    
     // For now, just use window settings - AJAX calls can be added later if needed
     const windowSettings = loadSettingsFromWindowObj();
     setSettings(windowSettings);
@@ -313,47 +297,50 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Listen for settings update events
   useEffect(() => {
     const handleSettingsUpdate = () => {
-      if (isUpdatingFromEventRef.current) return; // Éviter les boucles infinies
-      
-      isUpdatingFromEventRef.current = true;
-      
       const windowSettings = loadSettingsFromWindowObj();
       setSettings(windowSettings);
-      
-      // Reset flag after a short delay
-      setTimeout(() => {
-        isUpdatingFromEventRef.current = false;
-      }, 100);
     };
-    window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate, { passive: true });
-    return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
+    window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+    return () => window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+  }, []);
+
+  // Écouter les événements custom pour les mises à jour
+  useEffect(() => {
+    const handleCustomUpdate = () => {
+      handleRefresh();
+    };
+    
+    window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleCustomUpdate);
+
+    return () => {
+      window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleCustomUpdate);
+    };
   }, []);
 
   // Synchronisation automatique : si gridShow est désactivé, désactiver gridSnapEnabled et gridSize
-  // Commenté pour éviter les boucles infinies de rendu
-  // useEffect(() => {
-  //   if (!settings.gridShow) {
-  //     let needsUpdate = false;
-  //     const updates: Partial<CanvasSettingsContextType> = {};
+  useEffect(() => {
+    if (!settings.gridShow) {
+      let needsUpdate = false;
+      const updates: Partial<CanvasSettingsContextType> = {};
 
-  //     if (settings.gridSnapEnabled) {
-  //       updates.gridSnapEnabled = false;
-  //       needsUpdate = true;
-  //     }
+      if (settings.gridSnapEnabled) {
+        updates.gridSnapEnabled = false;
+        needsUpdate = true;
+      }
 
-  //     if (settings.gridSize !== 0) {
-  //       updates.gridSize = 0;
-  //       needsUpdate = true;
-  //     }
+      if (settings.gridSize !== 0) {
+        updates.gridSize = 0;
+        needsUpdate = true;
+      }
 
-  //     if (needsUpdate) {
-  //       setSettings(prev => ({
-  //         ...prev,
-  //         ...updates
-  //       }));
-  //     }
-  //   }
-  // }, [settings.gridShow, settings.gridSnapEnabled, settings.gridSize]);
+      if (needsUpdate) {
+        setSettings(prev => ({
+          ...prev,
+          ...updates
+        }));
+      }
+    }
+  }, [settings.gridShow, settings.gridSnapEnabled, settings.gridSize]);
 
   // Ajouter la fonction refreshSettings au contexte final
   const contextValue: CanvasSettingsContextType = {
@@ -361,7 +348,39 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     updateGridSettings: (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
       setSettings(prev => ({ ...prev, ...newSettings }));
     },
+    saveGridSettings: async (gridSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
+      try {
+        const syncedSettings = {
+          show_grid: gridSettings.gridShow,
+          grid_size: gridSettings.gridSize,
+          snap_to_grid: gridSettings.gridSnapEnabled
+        };
 
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_save_canvas_settings');
+        formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+        formData.append('settings', JSON.stringify(syncedSettings));
+
+        const response = await fetch(window.pdfBuilderAjax?.url || '/wp-admin/admin-ajax.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            // Mettre à jour l'état local
+            setSettings(prev => ({ ...prev, ...gridSettings }));
+          } else {
+            console.error('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
+          }
+        } else {
+          console.error('Erreur HTTP lors de la sauvegarde des paramètres de grille');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde des paramètres de grille:', error);
+      }
+    },
     saveGridSettings: async (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
       try {
         // Appliquer la synchronisation automatique
@@ -401,13 +420,13 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             // Mettre à jour l'état local
             setSettings(prev => ({ ...prev, ...syncedSettings }));
           } else {
-            debugError('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
+            console.error('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
           }
         } else {
-          debugError('Erreur HTTP lors de la sauvegarde des paramètres de grille');
+          console.error('Erreur HTTP lors de la sauvegarde des paramètres de grille');
         }
       } catch (error) {
-        debugError('Erreur lors de la sauvegarde des paramètres de grille:', error);
+        console.error('Erreur lors de la sauvegarde des paramètres de grille:', error);
       }
     },
     refreshSettings: handleRefresh

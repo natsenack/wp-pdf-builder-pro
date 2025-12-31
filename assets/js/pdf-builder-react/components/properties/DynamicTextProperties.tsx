@@ -1,3 +1,4 @@
+import React from 'react';
 import { DynamicTextElement } from '../../types/elements';
 
 // Composant Toggle personnalisé
@@ -844,4 +845,3 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     </>
   );
 }
-

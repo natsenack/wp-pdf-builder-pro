@@ -1,3 +1,4 @@
+import React from 'react';
 import { Element } from '../../types/elements';
 
 interface ExtendedElement extends Element {
@@ -420,4 +421,3 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
     </>
   );
 }
-

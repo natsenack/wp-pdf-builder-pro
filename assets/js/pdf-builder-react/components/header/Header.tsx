@@ -3,7 +3,6 @@ import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { usePreview } from '../../hooks/usePreview';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
-import { debugLog, debugError } from '../../utils/debug';
 
 // Extension de Window pour l'API Preview
 declare global {
@@ -18,14 +17,16 @@ declare global {
 interface HeaderProps {
   templateName: string;
   templateDescription: string;
+  templateTags: string[];
   canvasWidth: number;
   canvasHeight: number;
+  marginTop: number;
+  marginBottom: number;
   showGuides: boolean;
   snapToGrid: boolean;
   isNewTemplate: boolean;
   isModified: boolean;
   isSaving: boolean;
-  isLoading: boolean;
   isEditingExistingTemplate: boolean;
   onSave: () => void;
   onPreview: () => void;
@@ -36,14 +37,16 @@ interface HeaderProps {
 export const Header = memo(function Header({
   templateName,
   templateDescription,
+  templateTags,
   canvasWidth,
   canvasHeight,
+  marginTop,
+  marginBottom,
   showGuides,
   snapToGrid,
   isNewTemplate,
   isModified,
   isSaving,
-  isLoading,
   isEditingExistingTemplate,
   onSave,
   onPreview: _onPreview,
@@ -53,7 +56,6 @@ export const Header = memo(function Header({
   // Use deferred values for frequently changing props to prevent cascading re-renders
   const deferredIsModified = useDeferredValue(isModified);
   const deferredIsSaving = useDeferredValue(isSaving);
-  const deferredIsLoading = useDeferredValue(isLoading);
   const deferredIsEditingExistingTemplate = useDeferredValue(isEditingExistingTemplate);
     // Debug logging
   useEffect(() => {
@@ -70,10 +72,14 @@ export const Header = memo(function Header({
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
+  const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
+  const [editedMarginTop, setEditedMarginTop] = useState(marginTop);
+  const [editedMarginBottom, setEditedMarginBottom] = useState(marginBottom);
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
+  const [newTag, setNewTag] = useState('');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
@@ -92,18 +98,8 @@ export const Header = memo(function Header({
 
   // Debug logging
   useEffect(() => {
-    debugLog('🔄 [PDF Builder] État bouton Enregistrer mis à jour', {
-      templateName,
-      buttonState: {
-        disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
-        isSaving: deferredIsSaving,
-        isModified: deferredIsModified,
-        isLoading: deferredIsLoading,
-        canSave: !deferredIsSaving && deferredIsModified && !deferredIsLoading
-      },
-      timestamp: new Date().toISOString()
-    });
-  }, [deferredIsSaving, deferredIsModified, deferredIsLoading, templateName]);
+
+  }, []);
 
   useEffect(() => {
 
@@ -119,12 +115,24 @@ export const Header = memo(function Header({
   }, [templateDescription]);
 
   useEffect(() => {
+    setEditedTemplateTags(templateTags);
+  }, [templateTags]);
+
+  useEffect(() => {
     setEditedCanvasWidth(canvasWidth);
   }, [canvasWidth]);
 
   useEffect(() => {
     setEditedCanvasHeight(canvasHeight);
   }, [canvasHeight]);
+
+  useEffect(() => {
+    setEditedMarginTop(marginTop);
+  }, [marginTop]);
+
+  useEffect(() => {
+    setEditedMarginBottom(marginBottom);
+  }, [marginBottom]);
 
   useEffect(() => {
     setEditedShowGuides(showGuides);
@@ -172,7 +180,7 @@ export const Header = memo(function Header({
     };
 
     if (showPredefinedTemplates) {
-      document.addEventListener('mousedown', handleClickOutside, { passive: true });
+      document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showPredefinedTemplates]);
@@ -462,19 +470,40 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
+
             openPreviewModal();
           }}
-          onMouseEnter={() => setHoveredButton('preview')}
+          onMouseEnter={() => setHoveredButton('preview-image')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? 'none' : 'auto'
           }}
-          title="Générer un aperçu du PDF (Image ou PDF)"
+          title="Générer un aperçu image du PDF"
         >
-          <span>👁️</span>
-          <span>Aperçu</span>
+          <span>📸</span>
+          <span>Aperçu Image</span>
+        </button>
+
+        <button
+          onClick={() => {
+
+            // Pour PDF, définir le format et ouvrir directement
+            setPreviewFormat('pdf');
+            openPreviewModal();
+          }}
+          onMouseEnter={() => setHoveredButton('preview-pdf')}
+          onMouseLeave={() => setHoveredButton(null)}
+          style={{
+            ...secondaryButtonStyles,
+            opacity: isSaving ? 0.6 : 1,
+            pointerEvents: isSaving ? 'none' : 'auto'
+          }}
+          title="Ouvrir le PDF dans un nouvel onglet"
+        >
+          <span>📄</span>
+          <span>Aperçu PDF</span>
         </button>
 
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
@@ -511,132 +540,21 @@ export const Header = memo(function Header({
 
         <button
           onClick={async () => {
-            const startTime = performance.now();
-            debugLog('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
-              templateName,
-              isModified: deferredIsModified,
-              isSaving: deferredIsSaving,
-              isLoading: deferredIsLoading,
-              timestamp: new Date().toISOString(),
-              // Informations détaillées sur le canvas
-              canvasInfo: {
-                width: canvasWidth,
-                height: canvasHeight,
-                showGuides,
-                snapToGrid
-              },
-              // Informations sur les éléments
-              elementsInfo: {
-                totalElements: state.elements?.length || 0,
-                elementTypes: state.elements?.reduce((acc: Record<string, number>, el) => {
-                  acc[el.type] = (acc[el.type] || 0) + 1;
-                  return acc;
-                }, {}) || {}
-              },
-              // État du builder
-              builderState: {
-                template: state.template ? {
-                  name: state.template.name,
-                  description: state.template.description,
-                  hasBackground: !!state.canvas.backgroundColor
-                } : null,
-                selectedElement: state.selection.selectedElements[0] || null,
-                zoom: state.canvas.zoom || 1
-              },
-              // Paramètres canvas
-              canvasSettings: {
-                guidesEnabled: canvasSettings.guidesEnabled,
-                memoryLimit: canvasSettings.memoryLimitJs
-              }
-            });
-
             try {
-              debugLog('⏳ [PDF Builder] Début de la sauvegarde...');
               await onSave();
-              const endTime = performance.now();
-              const saveDuration = endTime - startTime;
-
-              debugLog('✅ [PDF Builder] Sauvegarde réussie', {
-                templateName,
-                timestamp: new Date().toISOString(),
-                duration: `${saveDuration.toFixed(2)}ms`,
-                performance: {
-                  saveTime: saveDuration,
-                  elementsCount: state.elements?.length || 0,
-                  templateSize: JSON.stringify(state.template).length,
-                  elementsSize: JSON.stringify(state.elements).length
-                },
-                // Vérification post-sauvegarde
-                postSaveState: {
-                  isModified: false, // Devrait être false après sauvegarde
-                  isSaving: false
-                }
-              });
-
-              // Log des métriques de performance
-              debugLog('📊 [PDF Builder] Métriques de sauvegarde', {
-                duration: saveDuration,
-                avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
-                memoryUsage: (performance as any).memory ? {
-                  used: (performance as any).memory.usedJSHeapSize,
-                  total: (performance as any).memory.totalJSHeapSize,
-                  limit: (performance as any).memory.jsHeapSizeLimit
-                } : 'N/A'
-              });
-
             } catch (error) {
-              const endTime = performance.now();
-              const failedDuration = endTime - startTime;
-
-              debugError('❌ [PDF Builder] Erreur lors de la sauvegarde:', {
-                error: error instanceof Error ? {
-                  message: error.message,
-                  stack: error.stack,
-                  name: error.name
-                } : error,
-                templateName,
-                timestamp: new Date().toISOString(),
-                duration: `${failedDuration.toFixed(2)}ms`,
-                context: {
-                  isModified: deferredIsModified,
-                  isSaving: deferredIsSaving,
-                  elementsCount: state.elements?.length || 0
-                }
-              });
               alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
             }
           }}
-          disabled={deferredIsSaving || !deferredIsModified || deferredIsLoading}
-          onMouseEnter={() => {
-            debugLog('👆 [PDF Builder] Souris sur bouton Enregistrer', {
-              templateName,
-              buttonState: {
-                disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
-                isSaving: deferredIsSaving,
-                isModified: deferredIsModified,
-                isLoading: deferredIsLoading
-              },
-              timestamp: new Date().toISOString()
-            });
-            setHoveredButton('save');
-          }}
-          onMouseLeave={() => {
-            debugLog('👋 [PDF Builder] Souris quitte bouton Enregistrer', {
-              templateName,
-              timestamp: new Date().toISOString()
-            });
-            setHoveredButton(null);
-          }}
+          disabled={deferredIsSaving || !deferredIsModified}
+          onMouseEnter={() => setHoveredButton('save')}
+          onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...primaryButtonStyles,
-            opacity: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 0.6 : 1,
-            pointerEvents: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 'none' : 'auto'
+            opacity: (deferredIsSaving || !deferredIsModified) ? 0.6 : 1,
+            pointerEvents: (deferredIsSaving || !deferredIsModified) ? 'none' : 'auto'
           }}
-          title={
-            deferredIsLoading ? 'Chargement du template...' :
-            deferredIsModified ? (deferredIsEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') :
-            'Aucune modification'
-          }
+          title={deferredIsModified ? (deferredIsEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') : 'Aucune modification'}
         >
           <span>{deferredIsSaving ? '⟳' : '💾'}</span>
           <span>{deferredIsSaving ? 'Enregistrement...' : (deferredIsEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
@@ -735,6 +653,91 @@ export const Header = memo(function Header({
                 />
               </div>
 
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                  Étiquettes (Tags)
+                </label>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  {editedTemplateTags.map((tag, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '4px 8px',
+                        backgroundColor: '#e3f2fd',
+                        color: '#1565c0',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {tag}
+                      <button
+                        onClick={() => setEditedTemplateTags(editedTemplateTags.filter((_, i) => i !== index))}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#1565c0',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          padding: '0',
+                          lineHeight: '1'
+                        }}
+                        title="Supprimer cette étiquette"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newTag.trim()) {
+                        e.preventDefault();
+                        setEditedTemplateTags([...editedTemplateTags, newTag.trim()]);
+                        setNewTag('');
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                    placeholder="Ajouter une étiquette..."
+                  />
+                  <button
+                    onClick={() => {
+                      if (newTag.trim()) {
+                        setEditedTemplateTags([...editedTemplateTags, newTag.trim()]);
+                        setNewTag('');
+                      }
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #007bff',
+                      borderRadius: '4px',
+                      backgroundColor: '#007bff',
+                      color: '#ffffff',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Ajouter
+                  </button>
+                </div>
+                <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                  Appuyez sur Entrée ou cliquez sur &quot;Ajouter&quot; pour ajouter une étiquette
+                </div>
+              </div>
+
               <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px', marginTop: '16px' }}>
                 <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
                   Paramètres avancés
@@ -789,6 +792,41 @@ export const Header = memo(function Header({
                     </div>
                   </div>
 
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                      Marge supérieure (px)
+                    </label>
+                    <input
+                      type="number"
+                      value={editedMarginTop}
+                      onChange={(e) => setEditedMarginTop(Number(e.target.value))}
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                      Marge inférieure (px)
+                    </label>
+                    <input
+                      type="number"
+                      value={editedMarginBottom}
+                      onChange={(e) => setEditedMarginBottom(Number(e.target.value))}
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ marginTop: '12px' }}>
@@ -906,6 +944,9 @@ export const Header = memo(function Header({
                     onUpdateTemplateSettings({
                       name: editedTemplateName,
                       description: editedTemplateDescription,
+                      tags: editedTemplateTags,
+                      marginTop: editedMarginTop,
+                      marginBottom: editedMarginBottom,
                       showGuides: editedShowGuides,
                       snapToGrid: editedSnapToGrid
                     });
@@ -1283,5 +1324,3 @@ export const Header = memo(function Header({
     </div>
   );
 });
-
-

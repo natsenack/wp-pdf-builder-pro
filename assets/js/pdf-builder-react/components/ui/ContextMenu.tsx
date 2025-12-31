@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo, useState, useLayoutEffect, FC } from 'react';
+import React, { useEffect, useRef, useMemo, useState, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import './ContextMenu.css';
 
@@ -21,7 +21,7 @@ interface ContextMenuProps {
   isVisible: boolean;
 }
 
-export const ContextMenu: FC<ContextMenuProps> = ({
+export const ContextMenu: React.FC<ContextMenuProps> = ({
   items,
   position,
   onClose,
@@ -158,9 +158,9 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 
     // Délai minimal pour permettre au menu de se rendre
     const timer = setTimeout(() => {
-      document.addEventListener('mousedown', handleClickOutside, { passive: true });
-      document.addEventListener('contextmenu', handleContextMenu, { passive: true });
-      document.addEventListener('keydown', handleEscape, { passive: true });
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('contextmenu', handleContextMenu);
+      document.addEventListener('keydown', handleEscape);
     }, 50);
 
     return () => {
@@ -215,9 +215,13 @@ export const ContextMenu: FC<ContextMenuProps> = ({
         border: '1px solid #e2e8f0',
         WebkitBorderRadius: '8px',
         MozBorderRadius: '8px',
+        msBorderRadius: '8px',
+        OBorderRadius: '8px',
         borderRadius: '8px',
         WebkitBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
         MozBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
+        msBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
+        OBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
         minWidth: '120px',
         maxWidth: '160px',
@@ -329,4 +333,3 @@ export const ContextMenu: FC<ContextMenuProps> = ({
     document.body
   );
 };
-

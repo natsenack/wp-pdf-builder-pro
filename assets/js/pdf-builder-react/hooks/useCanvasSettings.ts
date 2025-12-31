@@ -1,5 +1,4 @@
 import { useMemo, useState, useEffect } from 'react';
-import { debugWarn } from '../utils/debug';
 
 /**
  * Hook pour accéder aux paramètres du canvas
@@ -10,34 +9,22 @@ import { debugWarn } from '../utils/debug';
  */
 export const useCanvasSettings = () => {
     const [settings, setSettings] = useState(() => window.pdfBuilderCanvasSettings || getDefaultCanvasSettings());
-    const [isLoading, setIsLoading] = useState(false);
 
     // Écouter les changements de paramètres
     useEffect(() => {
-        let isMounted = true;
-
         const fetchSettings = async () => {
-            if (isLoading) return; // Éviter les appels multiples
-
             try {
-                setIsLoading(true);
-                const ajaxUrl = window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-
-                const response = await fetch(ajaxUrl, {
+                const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        action: 'pdf_builder_get_canvas_settings',
-                        nonce: window.pdfBuilderData?.nonce || ''
+                        action: 'pdf_builder_get_canvas_settings'
                     })
                 });
 
-                if (!isMounted) return;
-
                 const data = await response.json();
-
                 if (data.success && data.data) {
                     window.pdfBuilderCanvasSettings = {
                         ...window.pdfBuilderCanvasSettings,
@@ -45,40 +32,36 @@ export const useCanvasSettings = () => {
                     };
                     setSettings(window.pdfBuilderCanvasSettings);
                 } else {
-                    debugWarn('REACT: Invalid AJAX response:', data);
+                    console.warn('REACT: Invalid AJAX response:', data);
                 }
             } catch (error) {
-                if (isMounted) {
-                    debugWarn('REACT: Failed to fetch updated settings:', error);
-                }
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
+                console.warn('REACT: Failed to fetch updated settings:', error);
             }
         };
 
         const handleSettingsUpdate = () => {
-            if (isMounted) {
-                setSettings(window.pdfBuilderCanvasSettings);
+            setSettings(window.pdfBuilderCanvasSettings);
+        };
+
+        const handleStorageChange = async (event: StorageEvent) => {
+            if (event.key === 'pdfBuilderSettingsUpdated') {
+                await fetchSettings();
             }
         };
 
+        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+        window.addEventListener('storage', handleStorageChange);
 
-        // Ne fetch que si les settings ne sont pas déjà chargés
-        if (!window.pdfBuilderCanvasSettings) {
+        // Check if settings were updated while this tab was closed
+        if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
             fetchSettings();
         }
 
-        // Cache supprimé - pas de vérification des mises à jour
-
-        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-
         return () => {
-            isMounted = false;
             window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+            window.removeEventListener('storage', handleStorageChange);
         };
-    }, []); // Dépendances vides pour un seul appel au montage
+    }, []);
 
     return settings;
 };
@@ -204,6 +187,9 @@ export const useHistorySettings = () => {
     return useMemo(() => ({
         undoLevels: settings.undo_levels || 50,
         redoLevels: settings.redo_levels || 50,
+        autoSave: settings.auto_save_enabled || true,
+        autoSaveInterval: settings.auto_save_interval || 30,
+        autoSaveVersions: settings.auto_save_versions || 10,
     }), [settings]);
 };
 
@@ -261,7 +247,7 @@ export const getDefaultCanvasSettings = () => ({
     limit_fps: true,
     max_fps: 60,
     auto_save_enabled: true,
-    auto_save_interval: 5, // 5 minutes par défaut (comme PHP)
+    auto_save_interval: 30,
     auto_save_versions: 10,
     undo_levels: 50,
     redo_levels: 50,
@@ -269,4 +255,3 @@ export const getDefaultCanvasSettings = () => ({
     debug_mode: false,
     show_fps: false,
 });
-

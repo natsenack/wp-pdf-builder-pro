@@ -1,7 +1,5 @@
 import React, { useState, useMemo, useCallback, memo } from 'react';
-import { useBuilder } from '../../contexts/builder/BuilderContext';
-import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
-import { ResponsiveContainer } from '../ui/Responsive';
+import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { ProductTableProperties } from './ProductTableProperties';
 import { CustomerInfoProperties } from './CustomerInfoProperties';
 import { CompanyInfoProperties } from './CompanyInfoProperties';
@@ -24,9 +22,6 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
   const { state, updateElement, removeElement } = useBuilder();
   const [activeTab, setActiveTab] = useState<{ [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }>({});
 
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-
   // Optimisation: mémoriser les éléments sélectionnés
   const selectedElements = useMemo(() =>
     state.elements.filter(el => state.selection.selectedElements.includes(el.id)),
@@ -46,49 +41,22 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
 
   if (selectedElements.length === 0) {
     return (
-      <ResponsiveContainer
-        className={`pdf-builder-properties ${className || ''}`}
-        mobileClass="properties-panel-mobile"
-        tabletClass="properties-panel-tablet"
-        desktopClass="properties-panel-desktop"
-      >
-        <div style={{
-          padding: isMobile ? '8px' : '12px',
-          backgroundColor: '#f9f9f9',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          minHeight: isMobile ? '150px' : '200px',
-          maxHeight: isMobile ? 'calc(50vh - 16px)' : 'calc(100vh - 32px)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontSize: isMobile ? '24px' : '32px',
-            marginBottom: '8px',
-            opacity: 0.5
-          }}>
-            🎯
-          </div>
-          <div style={{
-            fontSize: isMobile ? '12px' : '14px',
-            color: '#666',
-            fontWeight: '500'
-          }}>
-            {isMobile ? 'Sélectionnez un élément' : 'Sélectionnez un élément pour modifier ses propriétés'}
-          </div>
-          <div style={{
-            fontSize: isMobile ? '10px' : '12px',
-            color: '#999',
-            marginTop: '4px',
-            display: isMobile ? 'none' : 'block'
-          }}>
-            Cliquez sur un élément du canvas pour commencer
-          </div>
-        </div>
-      </ResponsiveContainer>
+      <div className={`pdf-builder-properties ${className || ''}`} style={{
+        padding: '12px',
+        backgroundColor: '#f9f9f9',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        minHeight: '200px',
+        maxHeight: 'calc(100vh - 32px)',
+        overflowY: 'auto'
+      }}>
+        <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold' }}>
+          Propriétés
+        </h4>
+        <p style={{ color: '#999', fontSize: '14px', margin: '0' }}>
+          Sélectionnez un élément pour voir ses propriétés
+        </p>
+      </div>
     );
   }
 
@@ -369,4 +337,3 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
     </div>
   );
 });
-

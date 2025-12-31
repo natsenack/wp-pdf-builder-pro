@@ -1,3 +1,4 @@
+import React from 'react';
 import { MentionsElement } from '../../types/elements';
 
 // Composant Toggle personnalisé
@@ -1004,4 +1005,3 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
     </>
   );
 }
-

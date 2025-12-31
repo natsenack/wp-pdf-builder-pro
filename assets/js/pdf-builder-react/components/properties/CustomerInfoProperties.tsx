@@ -1,10 +1,10 @@
-import { useState, ReactNode } from 'react';
+import React, { useState } from 'react';
 import { CustomerInfoElement } from '../../types/elements';
 
 // Composant Accordion personnalisé
 const Accordion = ({ title, children, defaultOpen = false }: {
   title: string;
-  children: ReactNode;
+  children: React.ReactNode;
   defaultOpen?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -1092,4 +1092,3 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
     </>
   );
 }
-

@@ -1,6 +1,7 @@
-import { BaseElement } from '../../types/elements';
+import React from 'react';
+import { Element } from '../../types/elements';
 
-interface ExtendedElement extends BaseElement {
+interface ExtendedElement extends Element {
   strokeColor?: string;
   strokeWidth?: number;
 }
@@ -241,4 +242,3 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
     </>
   );
 }
-
