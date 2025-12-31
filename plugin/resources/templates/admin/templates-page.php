@@ -672,5 +672,27 @@ document.addEventListener('click', function(e) {
         e.target.closest('.modal-overlay').style.display = 'none';
     }
 });
+
+// Fonction globale pour ouvrir les paramètres du template
+window.openTemplateSettings = function(templateSlug) {
+    // Cette fonction peut être appelée depuis un onclick HTML
+    // Pour l'instant, on affiche juste un message d'information
+    console.log('📋 Fonction openTemplateSettings appelée pour template:', templateSlug);
+
+    // Afficher un message informatif à l'utilisateur
+    if (typeof showSuccessMessage === 'function') {
+        showSuccessMessage('Fonctionnalité des paramètres de template bientôt disponible pour: ' + templateSlug);
+    } else {
+        alert('Fonctionnalité des paramètres de template bientôt disponible pour: ' + templateSlug);
+    }
+};
+
+// Fonction pour fermer la modale des paramètres du template
+window.closeTemplateSettings = function() {
+    const modal = document.getElementById('template-settings-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
 </script> 
  
