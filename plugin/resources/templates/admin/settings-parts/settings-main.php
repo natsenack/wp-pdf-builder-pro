@@ -110,11 +110,6 @@
                 <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
             </a>
 
-            <a href="?page=pdf-builder-settings&tab=cache" class="nav-tab<?php echo $current_tab === 'cache' ? ' nav-tab-active' : ''; ?>">
-                <span class="tab-icon">🗄️</span>
-                <span class="tab-text"><?php _e('Cache', 'pdf-builder-pro'); ?></span>
-            </a>
-
             <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab<?php echo $current_tab === 'securite' ? ' nav-tab-active' : ''; ?>">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
@@ -156,10 +151,6 @@
 
             case 'systeme':
                 include __DIR__ . '/settings-systeme.php';
-                break;
-
-            case 'cache':
-                include __DIR__ . '/settings-cache.php';
                 break;
 
             case 'securite':

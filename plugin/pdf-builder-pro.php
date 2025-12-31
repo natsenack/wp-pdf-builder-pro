@@ -642,13 +642,7 @@ function pdf_builder_register_ajax_handlers() {
 
     // REMOVED: Duplicate settings handlers - now handled by unified AJAX system
 
-    // Handlers de cache - maintenant gérés par le système de cache intelligent
-    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
-    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
-    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_ajax');
-    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_cache_ajax');
-    add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_update_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
+    // REMOVED: Cache handlers - cache system removed
 
     // Handlers de maintenance - maintenant gérés par les systèmes appropriés
     add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_ajax_handler_dispatch');
@@ -912,24 +906,7 @@ function pdf_builder_ajax_handler_dispatch() {
             case 'pdf_builder_get_fresh_nonce':
                 pdf_builder_get_fresh_nonce_ajax();
                 break;
-            case 'pdf_builder_get_cache_status':
-                pdf_builder_get_cache_status_ajax();
-                break;
-            case 'pdf_builder_test_cache':
-                pdf_builder_test_cache_ajax();
-                break;
-            case 'pdf_builder_test_cache_integration':
-                pdf_builder_test_cache_ajax();
-                break;
-            case 'pdf_builder_clear_all_cache':
-                pdf_builder_clear_cache_handler();
-                break;
-            case 'pdf_builder_get_cache_metrics':
-                pdf_builder_get_cache_metrics_handler();
-                break;
-            case 'pdf_builder_update_cache_metrics':
-                pdf_builder_update_cache_metrics_handler();
-                break;
+            // REMOVED: Cache handlers - cache system removed
             case 'pdf_builder_optimize_database':
                 pdf_builder_optimize_database_handler();
                 break;
@@ -1241,99 +1218,6 @@ function pdf_builder_handle_pdf_downloads()
 
 
 /**
- * AJAX handler pour récupérer l'état du cache
- */
-function pdf_builder_get_cache_status_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    $cache_enabled = get_option('pdf_builder_cache_enabled', '0');
-
-    wp_send_json_success(array(
-        'cache_enabled' => $cache_enabled
-    ));
-}
-
-/**
- * AJAX handler pour tester le système de cache
- */
-function pdf_builder_test_cache_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    $test_key = sanitize_text_field($_POST['test_key']);
-    $test_value = sanitize_text_field($_POST['test_value']);
-
-    $results = array(
-        'cache_available' => false,
-        'transient_test' => false,
-        'cache_status' => 'Cache non testé'
-    );
-
-    // Test 1: Vérifier la disponibilité des fonctions de cache
-    if (function_exists('wp_cache_flush')) {
-        $results['cache_available'] = true;
-    }
-
-    // Test 2: Tester les transients WordPress
-    $transient_test_key = 'pdf_builder_test_' . time();
-    $transient_test_value = 'test_value_' . rand(1000, 9999);
-
-    // Définir un transient
-    $set_result = set_transient($transient_test_key, $transient_test_value, 300); // 5 minutes
-
-    if ($set_result) {
-        // Récupérer le transient
-        $get_result = get_transient($transient_test_key);
-
-        if ($get_result === $transient_test_value) {
-            $results['transient_test'] = true;
-            $results['cache_status'] = 'Transients WordPress opérationnels';
-
-            // Nettoyer le test
-            delete_transient($transient_test_key);
-        } else {
-            $results['cache_status'] = 'Erreur lors de la récupération du transient';
-        }
-    } else {
-        $results['cache_status'] = 'Impossible de définir un transient';
-    }
-
-    // Test 3: Vérifier les options de cache du plugin
-    $cache_enabled = get_option('pdf_builder_cache_enabled', false);
-    if ($cache_enabled) {
-        $results['cache_status'] .= ' | Cache du plugin activé';
-    } else {
-        $results['cache_status'] .= ' | Cache du plugin désactivé';
-    }
-
-    wp_send_json_success(array(
-        'message' => 'Test du cache terminé',
-        'cache_status' => $results['cache_status'],
-        'transient_working' => $results['transient_test'],
-        'cache_available' => $results['cache_available']
-    ));
-}
-
-/**
  * AJAX handler pour obtenir un nouveau nonce frais
  */
 function pdf_builder_get_fresh_nonce_ajax() {
@@ -1351,29 +1235,6 @@ function pdf_builder_get_fresh_nonce_ajax() {
     wp_send_json_success(array(
         'nonce' => $fresh_nonce,
         'generated_at' => current_time('timestamp')
-    ));
-}
-
-/**
- * AJAX handler pour vider le cache
- */
-function pdf_builder_clear_cache_ajax() {
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Vider le cache WordPress
-    wp_cache_flush();
-
-    // Supprimer les transients liés au plugin
-    global $wpdb;
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
-
-    wp_send_json_success(array(
-        'message' => 'Cache vidé avec succès'
     ));
 }
 

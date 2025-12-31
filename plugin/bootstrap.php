@@ -32,7 +32,7 @@ $bootstrap_modules = [
     'security-audit.php',        // Audit de sécurité et hardening
     'input-validation.php',      // Validation d'entrée renforcée
     'security-logging.php',      // Logs de sécurité et monitoring
-    'asset-compression.php',     // Compression et optimisation des assets
+    // 'asset-compression.php',     // Compression et optimisation des assets - DÉSACTIVÉ
     'ajax-actions.php',          // Actions AJAX pour les paramètres
     'task-scheduler.php'         // Planificateur de tâches
 ];

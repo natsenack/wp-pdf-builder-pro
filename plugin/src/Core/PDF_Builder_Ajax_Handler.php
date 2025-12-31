@@ -204,7 +204,7 @@ class PDF_Builder_Ajax_Handler {
      */
     private function save_tab_settings($tab) {
         $handlers = array(
-            'cache' => 'save_cache_settings',
+            // 'cache' => 'save_cache_settings', // REMOVED: Cache system removed
             'maintenance' => 'save_maintenance_settings',
             'sauvegarde' => 'save_backup_settings',
             'securite' => 'save_security_settings',
@@ -576,21 +576,7 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Méthodes privées pour les sauvegardes de paramètres par onglet
      */
-    private function save_cache_settings() {
-        $settings = array(
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
-            'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
-            'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
-        );
-
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
-        }
-
-        return count($settings);
-    }
+    // REMOVED: save_cache_settings - cache system removed
 
     private function save_maintenance_settings() {
         $settings = array(

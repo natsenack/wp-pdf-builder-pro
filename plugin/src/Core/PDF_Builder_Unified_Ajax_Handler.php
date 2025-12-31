@@ -322,12 +322,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'company_rcs' => $settings['pdf_builder_company_rcs'] ?? '',
                     'company_capital' => $settings['pdf_builder_company_capital'] ?? '',
 
-                    // Cache
-                    'cache_enabled' => $settings['pdf_builder_cache_enabled'] ?? '0',
-                    'cache_ttl' => $settings['pdf_builder_cache_ttl'] ?? 3600,
-                    'cache_compression' => $settings['pdf_builder_cache_compression'] ?? '1',
-                    'cache_auto_cleanup' => $settings['pdf_builder_cache_auto_cleanup'] ?? '1',
-                    'cache_max_size' => $settings['pdf_builder_cache_max_size'] ?? 100,
+                    // REMOVED: Cache settings - cache system removed
 
                     // Système
                     'auto_maintenance' => $settings['pdf_builder_auto_maintenance'] ?? '1',

@@ -255,14 +255,15 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
             ],
             'int_fields' => [
-                'cache_max_size', 'cache_ttl',
+                // REMOVED: cache_max_size, cache_ttl - cache system removed
                 // Canvas int fields
                 'zoom_min', 'zoom_max', 'zoom_default', 'zoom_step', 'canvas_grid_size', 'canvas_export_quality',
                 'canvas_fps_target', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_dpi',
                 'canvas_width', 'canvas_height', 'canvas_border_width'
             ],
             'bool_fields' => [
-                'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
+                // REMOVED: pdf_builder_cache_enabled, cache_compression, cache_auto_cleanup - cache system removed
+                'performance_auto_optimization',
                 'systeme_auto_maintenance', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
                 // Debug fields - AJOUTÉ POUR CORRIGER LE TOGGLE DEBUG JAVASCRIPT
