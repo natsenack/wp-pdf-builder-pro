@@ -53,7 +53,10 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        exclude: [
+          /node_modules/,
+          /pdf-builder-react/  // Exclude React bundle from Babel processing
+        ],
         use: {
           loader: 'babel-loader',
           options: {
@@ -67,22 +70,7 @@ module.exports = {
                 forceAllTransforms: true
               }]
             ],
-            plugins: [
-              // Force ES5 compatible code without runtime helpers
-              '@babel/plugin-transform-arrow-functions',
-              '@babel/plugin-transform-block-scoped-functions',
-              '@babel/plugin-transform-block-scoping',
-              '@babel/plugin-transform-classes',
-              '@babel/plugin-transform-computed-properties',
-              '@babel/plugin-transform-destructuring',
-              '@babel/plugin-transform-for-of',
-              '@babel/plugin-transform-function-name',
-              '@babel/plugin-transform-literals',
-              '@babel/plugin-transform-parameters',
-              '@babel/plugin-transform-shorthand-properties',
-              '@babel/plugin-transform-spread',
-              '@babel/plugin-transform-template-literals'
-            ],
+            plugins: []
           },
         },
       },
