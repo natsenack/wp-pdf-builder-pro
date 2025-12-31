@@ -22,18 +22,23 @@ export interface UseAutoSaveReturn {
 export function useAutoSave(): UseAutoSaveReturn {
   const { state, dispatch } = useBuilder();
 
+  // Fonction utilitaire pour accéder en sécurité aux données
+  const getSafeData = (obj: any, key: string, defaultValue: any = null) => {
+    if (typeof window === 'undefined' || !obj) return defaultValue;
+    return obj[key] || defaultValue;
+  };
+
   // Récupérer le nonce
-  const nonce =
-    window.pdfBuilderData?.nonce ||
-    window.pdfBuilderNonce ||
-    window.pdfBuilderReactData?.nonce ||
+  const nonce = getSafeData(window.pdfBuilderData, 'nonce') ||
+    getSafeData(window, 'pdfBuilderNonce') ||
+    getSafeData(window.pdfBuilderReactData, 'nonce') ||
     '';
 
   // Récupérer l'intervalle de sauvegarde auto depuis les settings
   // Par défaut: 30 secondes si paramètre non défini
-  const autoSaveIntervalSetting = (window.pdfBuilderCanvasSettings as { auto_save_interval?: number })?.auto_save_interval ||
-    window.pdfBuilderData?.auto_save_interval ||
-    (window.pdfBuilderReactData as { auto_save_interval?: number })?.auto_save_interval ||
+  const autoSaveIntervalSetting = getSafeData(window.pdfBuilderCanvasSettings, 'auto_save_interval') ||
+    getSafeData(window.pdfBuilderData, 'auto_save_interval') ||
+    getSafeData(window.pdfBuilderReactData, 'auto_save_interval') ||
     30; // 30 secondes par défaut
   
   const autoSaveInterval = Math.max(10, autoSaveIntervalSetting) * 1000; // Convertir en ms, min 10s

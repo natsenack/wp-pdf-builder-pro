@@ -1,0 +1,504 @@
+# PDF Builder Pro - Guide de Développement et Production
+
+## 📋 Vue d'ensemble
+
+**PDF Builder Pro** est un plugin WordPress ultra-performant pour la génération de PDF avec une architecture modulaire avancée. Il comprend un éditeur React, des intégrations WooCommerce, et un système de cache unifié.
+
+## 🏗️ Architecture du Plugin
+
+### Structure Principale
+
+```
+wp-pdf-builder-pro/
+├── plugin/                          # Noyau du plugin
+│   ├── pdf-builder-pro.php         # Point d'entrée principal
+│   ├── bootstrap.php               # Chargement différé des fonctionnalités
+│   ├── composer.json               # Dépendances PHP
+│   ├── vendor/                     # Librairies externes (DomPDF, etc.)
+│   ├── src/                        # Code source PHP
+│   ├── assets/                     # Assets compilés (JS/CSS)
+│   └── resources/                  # Templates et assets statiques
+├── assets/                         # Assets source (TypeScript/React)
+├── build/                          # Scripts de déploiement
+├── docs/                           # Documentation
+└── tests/                          # Tests unitaires et d'intégration
+```
+
+### Architecture Modulaire
+
+#### 1. **Couche Admin** (`src/Admin/`)
+- **PdfBuilderAdmin** : Classe principale d'administration
+- **SettingsManager** : Gestion des paramètres
+- **AjaxHandler** : Gestion des appels AJAX
+- **TemplateManager** : Gestion des templates
+- **Permissions/Validation** : Utilitaires sécurité
+
+#### 2. **Couche Core** (`src/Core/`)
+- **PDF_Builder_Core** : Noyau central
+- **PDF_Builder_Ajax_Handler** : Handler AJAX unifié
+- **PDF_Builder_Cache_Manager** : Système de cache centralisé
+- **PDF_Builder_Task_Scheduler** : Planificateur de tâches
+- **PDF_Builder_Health_Monitor** : Monitoring système
+
+#### 3. **Managers Spécialisés** (`src/Managers/`)
+- **PDF_Builder_Template_Manager** : Gestion templates
+- **PDF_Builder_PDF_Generator** : Génération PDF
+- **PDF_Builder_Asset_Optimizer** : Optimisation assets
+- **PDF_Builder_Cache_Manager** : Cache unifié
+- **PDF_Builder_WooCommerce_Integration** : Intégration WooCommerce
+
+#### 4. **Couche Frontend** (`assets/`)
+- **React Components** : Éditeur visuel
+- **TypeScript** : Logique métier
+- **Canvas API** : Rendu des éléments
+- **AjaxCompat** : Communication client/serveur
+
+## 🚀 Fonctions Principales
+
+### Éditeur PDF (React)
+```javascript
+// Initialisation de l'éditeur
+window.initPDFBuilderReact(container, options);
+
+// Gestion du canvas
+const canvas = new Canvas(width, height);
+canvas.addElement(element);
+canvas.render();
+
+// Gestion des templates
+useTemplate().loadTemplate(templateId);
+useTemplate().saveTemplate(data);
+```
+
+### Génération PDF
+```php
+// Génération depuis canvas
+$pdfGenerator = new PDF_Builder_PDF_Generator();
+$pdf = $pdfGenerator->generateFromCanvas($canvasData);
+
+// Génération depuis template
+$templateManager = new PDF_Builder_Template_Manager();
+$pdf = $templateManager->generatePDF($templateId, $data);
+```
+
+### Cache Unifié
+```php
+// Utilisation du cache centralisé
+$cache = PDF_Builder_Cache_Manager::getInstance();
+$cache->set('key', 'value', 'transient', 3600);
+$value = $cache->get('key', 'transient');
+
+// Cache spécialisé
+$cache->setAssetCache('style.css', $css, 'css');
+$cache->setAjaxCache('action', $params, $result);
+```
+
+### Intégration WooCommerce
+```php
+// Génération automatique de factures
+$wcIntegration = new PDF_Builder_WooCommerce_Integration();
+$wcIntegration->generateOrderPDF($orderId, $templateId);
+
+// Gestion des statuts de commande
+$wcIntegration->handleOrderStatusChange($orderId, $newStatus);
+```
+
+### API REST
+```php
+// Endpoints disponibles
+GET  /wp-json/pdf-builder/v1/templates
+POST /wp-json/pdf-builder/v1/templates
+GET  /wp-json/pdf-builder/v1/preview/{template_id}
+POST /wp-json/pdf-builder/v1/generate
+```
+
+## ⚙️ Configuration et Paramètres
+
+### Paramètres WordPress (`wp_options`)
+```php
+'pdf_builder_settings' => [
+    // Cache
+    'pdf_builder_cache_enabled' => true,
+    'pdf_builder_cache_ttl' => 3600,
+    'pdf_builder_asset_cache_enabled' => true,
+
+    // Templates
+    'pdf_builder_default_template' => 'facture',
+    'pdf_builder_template_limit' => 50,
+
+    // PDF
+    'pdf_builder_pdf_quality' => 85,
+    'pdf_builder_pdf_compression' => true,
+
+    // Sécurité
+    'pdf_builder_enable_debug' => false,
+    'pdf_builder_file_validation' => true,
+
+    // Performance
+    'pdf_builder_memory_limit' => 256,
+    'pdf_builder_max_execution_time' => 30
+]
+```
+
+### Constantes du Plugin
+```php
+define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
+define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
+define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('PDF_BUILDER_VERSION', '1.1.0');
+define('PDF_BUILDER_PREMIUM', false); // Version gratuite
+```
+
+## 🗃️ Base de Données
+
+### Tables Créées
+```sql
+-- Templates utilisateur
+wp_pdf_builder_templates (
+    id, name, template_data, user_id,
+    is_default, created_at, updated_at
+)
+
+-- Logs du système
+wp_pdf_builder_logs (
+    id, log_message, created_at
+)
+
+-- Intégration WooCommerce
+wp_pdf_builder_orders (
+    id, order_id, template_id, pdf_path, created_at
+)
+```
+
+### Transients WordPress
+```php
+// Cache du plugin
+'pdf_builder_cache_*'          // Cache général
+'pdf_builder_ajax_*'           // Cache AJAX
+'pdf_builder_asset_*'          // Cache assets
+'pdf_builder_rate_limit_*'     // Limitation taux
+```
+
+## 🔧 Actions et Filtres WordPress
+
+### Actions
+```php
+// Initialisation
+add_action('plugins_loaded', 'pdf_builder_init');
+add_action('init', 'pdf_builder_register_post_types');
+
+// Admin
+add_action('admin_menu', 'pdf_builder_add_menu');
+add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_assets');
+
+// AJAX
+add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_save');
+add_action('wp_ajax_pdf_builder_generate_pdf', 'pdf_builder_ajax_generate');
+
+// WooCommerce
+add_action('woocommerce_order_status_changed', 'pdf_builder_order_status_changed');
+```
+
+### Filtres
+```php
+// Templates
+apply_filters('pdf_builder_available_templates', $templates);
+apply_filters('pdf_builder_template_data', $data, $template_id);
+
+// PDF Generation
+apply_filters('pdf_builder_pdf_options', $options);
+apply_filters('pdf_builder_pdf_content', $content, $data);
+
+// Assets
+apply_filters('pdf_builder_enqueue_scripts', $scripts);
+apply_filters('pdf_builder_enqueue_styles', $styles);
+```
+
+## 🌐 API JavaScript
+
+### Fonctions Globales
+```javascript
+// Cache
+window.pdfBuilderCheckCSS()          // Vérifier cache CSS
+window.pdfBuilderCheckJSCache()      // Vérifier cache JS
+window.pdfBuilderEmergencyFix()      // Correction d'urgence
+
+// Éditeur
+window.initPDFBuilderReact()         // Initialiser l'éditeur React
+window.pdfBuilderForceReload()       // Forcer rechargement
+
+// Debug
+window.canvasMemoryDebug.getCacheStats() // Stats cache canvas
+```
+
+### Classes JavaScript
+```javascript
+// Gestion AJAX
+window.AjaxCompat.request(action, data, options)
+
+// Gestion canvas
+const canvas = new Canvas(width, height);
+canvas.addElement(element);
+canvas.exportToPDF();
+
+// Gestion templates
+useTemplate().loadTemplate(id);
+useTemplate().saveTemplate(data);
+```
+
+## 📦 Déploiement et Production
+
+### Scripts de Build
+```bash
+# Compilation des assets
+npm run build          # Production
+npm run dev           # Développement
+npm run watch         # Surveillance
+
+# Tests
+npm run test          # Tests unitaires
+npm run test:coverage # Tests avec couverture
+```
+
+### Déploiement FTP
+```powershell
+# Test (simulation)
+.\build\deploy-simple.ps1
+
+# Production (recommandé)
+.\build\deploy-simple.ps1
+
+# Déploiement complet
+.\build\deploy-all.ps1
+```
+
+### Variables d'Environnement
+
+#### Production
+```php
+// Configuration production
+define('WP_DEBUG', false);
+define('WP_DEBUG_LOG', false);
+define('PDF_BUILDER_PRODUCTION', true);
+error_reporting(0);
+```
+
+#### Développement
+```php
+// Configuration développement
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('PDF_BUILDER_DEVELOPMENT', true);
+error_reporting(E_ALL);
+```
+
+## 🔒 Règles de Sécurité
+
+### Validation des Données
+```php
+// Toujours utiliser les fonctions WordPress
+$safe_value = sanitize_text_field($_POST['field']);
+$safe_email = sanitize_email($_POST['email']);
+$safe_html = wp_kses($_POST['html'], $allowed_tags);
+```
+
+### Nonces WordPress
+```php
+// Génération
+$nonce = wp_create_nonce('pdf_builder_action');
+
+// Vérification
+if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_action')) {
+    wp_die('Nonce invalide');
+}
+```
+
+### Permissions
+```php
+// Vérification des droits
+if (!current_user_can('manage_options')) {
+    wp_die('Accès refusé');
+}
+```
+
+### Échappement des Sorties
+```php
+// PHP
+echo esc_html($variable);
+echo esc_url($url);
+echo esc_attr($attribute);
+
+// JavaScript
+wp_localize_script('script', 'pdfBuilderData', [
+    'ajaxUrl' => esc_url(admin_url('admin-ajax.php')),
+    'nonce' => wp_create_nonce('pdf_builder_ajax')
+]);
+```
+
+## 🎯 Bonnes Pratiques
+
+### PHP
+```php
+// Utiliser les classes du plugin
+use PDF_Builder\Managers\PDF_Builder_Cache_Manager;
+use PDF_Builder\Admin\PdfBuilderAdmin;
+
+// Singleton pattern
+$cache = PDF_Builder_Cache_Manager::getInstance();
+
+// Gestion d'erreurs
+try {
+    // Code
+} catch (Exception $e) {
+    error_log('PDF Builder Error: ' . $e->getMessage());
+    wp_send_json_error('Erreur serveur');
+}
+```
+
+### JavaScript
+```javascript
+// Async/await pour les appels AJAX
+async function loadTemplate(templateId) {
+    try {
+        const response = await AjaxCompat.request('get_template', {id: templateId});
+        if (response.success) {
+            // Traiter la réponse
+        }
+    } catch (error) {
+        console.error('Erreur chargement template:', error);
+    }
+}
+
+// Gestion mémoire canvas
+const imageCache = useRef(new Map());
+cleanupImageCache(); // Nettoyage automatique
+```
+
+### Base de Données
+```php
+// Préparer les requêtes
+global $wpdb;
+$table = $wpdb->prefix . 'pdf_builder_templates';
+
+$query = $wpdb->prepare(
+    "SELECT * FROM $table WHERE id = %d AND user_id = %d",
+    $template_id,
+    get_current_user_id()
+);
+
+$result = $wpdb->get_row($query);
+```
+
+## 🧪 Tests
+
+### Tests PHP (PHPUnit)
+```bash
+# Exécuter tous les tests
+./vendor/bin/phpunit
+
+# Tests spécifiques
+./vendor/bin/phpunit tests/AjaxHandlerTest.php
+```
+
+### Tests JavaScript (Jest)
+```bash
+# Tests unitaires
+npm run test
+
+# Tests avec couverture
+npm run test:coverage
+
+# Tests canvas spécifiques
+npm run test:canvas
+```
+
+## 📊 Monitoring et Logs
+
+### Logs PHP
+```php
+// Log d'information
+error_log('[PDF Builder] Template loaded: ' . $template_id);
+
+// Log de debug (uniquement en développement)
+if (WP_DEBUG) {
+    error_log('[PDF Builder Debug] Canvas data: ' . print_r($canvas_data, true));
+}
+```
+
+### Logs JavaScript
+```javascript
+// Logs console
+console.log('[PDF Builder] Canvas rendered in', duration, 'ms');
+
+// Logs d'erreur
+console.error('[PDF Builder] Failed to load template:', error);
+```
+
+### Métriques Performance
+```php
+// Temps d'exécution
+$start_time = microtime(true);
+// ... code ...
+$duration = microtime(true) - $start_time;
+error_log('[PDF Builder] PDF generated in ' . round($duration, 3) . 's');
+```
+
+## 🚨 Règles de Production
+
+### ✅ DO
+- ✅ Tester toujours en développement avant production
+- ✅ Utiliser les scripts de déploiement (`deploy-simple.ps1`)
+- ✅ Vérifier les logs après déploiement
+- ✅ Sauvegarder la base de données avant les changements majeurs
+- ✅ Utiliser les nonces WordPress pour la sécurité
+- ✅ Valider et échapper toutes les données utilisateur
+- ✅ Utiliser le cache centralisé pour les performances
+
+### ❌ DON'T
+- ❌ Modifier directement les fichiers en production
+- ❌ Désactiver les logs d'erreur en production
+- ❌ Utiliser `var_dump()` ou `print_r()` en production
+- ❌ Commiter des mots de passe ou clés API
+- ❌ Supprimer les vérifications de sécurité
+- ❌ Utiliser des requêtes SQL non préparées
+
+### 🔧 Commandes de Maintenance
+```bash
+# Vider tous les caches
+wp eval "PDF_Builder_Cache_Manager::clearCache();"
+
+# Régénérer les assets
+npm run build && deploy-simple.ps1
+
+# Vérifier l'intégrité
+wp pdf-builder check-integrity
+
+# Nettoyer les transients expirés
+wp eval "global \$wpdb; \$wpdb->query(\"DELETE FROM {\$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'\");"
+```
+
+## 📚 Ressources Utiles
+
+### Fichiers de Configuration
+- `build/deploy-simple.ps1` - Script de déploiement
+- `webpack.config.cjs` - Configuration build
+- `composer.json` - Dépendances PHP
+- `package.json` - Dépendances JS
+
+### Documentation
+- `docs/CACHE_SYSTEM.md` - Système de cache
+- `docs/API_REFERENCE.md` - Référence API
+- `CHANGELOG.md` - Historique des versions
+
+### Points d'Entrée
+- `pdf-builder-pro.php` - Plugin principal
+- `bootstrap.php` - Chargement initial
+- `src/Admin/PdfBuilderAdmin.php` - Interface admin
+- `assets/js/pdf-builder-react/index.js` - Éditeur React
+
+---
+
+**Version du Plugin** : 1.1.0
+**Dernière mise à jour** : Décembre 2025
+**Auteur** : Natsenack
+**Compatibilité** : WordPress 5.0+, PHP 7.4+

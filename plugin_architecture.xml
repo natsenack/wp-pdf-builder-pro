@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PDF Builder Pro - Architecture Schema (Draw.io compatible) -->
+<mxfile host="app.diagrams.net" modified="2025-12-31T10:00:00.000Z" agent="Mozilla/5.0" version="15.8.7">
+  <diagram id="diagram1" name="Plugin Architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Plugin Container -->
+        <mxCell id="plugin_container" value="PDF Builder Pro Plugin&#xa;Architecture Overview" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="800" height="600" as="geometry"/>
+        </mxCell>
+
+        <!-- WordPress Core -->
+        <mxCell id="wordpress_core" value="🟢 WordPress Core&#xa;• Hooks System&#xa;• Database (wp_*)&#xa;• AJAX System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#4CAF50;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Bootstrap Layer -->
+        <mxCell id="bootstrap" value="🟠 Bootstrap Layer&#xa;• bootstrap.php&#xa;• Auto-loading&#xa;• Dependency Injection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#FF9800;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="250" y="40" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Admin Layer -->
+        <mxCell id="admin_layer" value="🔵 Admin Layer (src/Admin/)&#xa;• PdfBuilderAdmin&#xa;• SettingsManager&#xa;• AjaxHandler&#xa;• TemplateManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#2196F3;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="170" width="180" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Core Layer -->
+        <mxCell id="core_layer" value="🟣 Core Layer (src/Core/)&#xa;• Cache Manager&#xa;• Task Scheduler&#xa;• Health Monitor&#xa;• Ajax Handler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#9C27B0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="250" y="170" width="180" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Managers Layer -->
+        <mxCell id="managers_layer" value="🟠 Managers Layer (src/Managers/)&#xa;• Template Manager&#xa;• PDF Generator&#xa;• Asset Optimizer&#xa;• WooCommerce Integration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#F57C00;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="390" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Frontend Layer -->
+        <mxCell id="frontend_layer" value="🟢 Frontend Layer (assets/)&#xa;• React Components&#xa;• Canvas Editor&#xa;• AjaxCompat&#xa;• TypeScript Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#4CAF50;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="470" y="170" width="180" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Build System -->
+        <mxCell id="build_system" value="🟡 Build System (build/)&#xa;• npm/webpack&#xa;• Asset compilation&#xa;• deploy-simple.ps1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#E91E63;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="320" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Database -->
+        <mxCell id="database" value="🗃️ Database&#xa;• wp_pdf_builder_* tables&#xa;• Templates&#xa;• Settings&#xa;• Transients" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9fbe7;strokeColor=#8BC34A;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="480" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- File System -->
+        <mxCell id="filesystem" value="📁 File System&#xa;• wp-content/uploads/&#xa;• PDF files&#xa;• Cache files&#xa;• Images" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9fbe7;strokeColor=#8BC34A;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="480" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- External Services -->
+        <mxCell id="external_services" value="🔗 External Services&#xa;• DomPDF Library&#xa;• FTP Server&#xa;• WooCommerce API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#FF9800;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="480" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Data Flow Arrows -->
+        <!-- WordPress to Bootstrap -->
+        <mxCell id="wp_to_bootstrap" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="wordpress_core" target="bootstrap">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bootstrap to Admin -->
+        <mxCell id="bootstrap_to_admin" value="1. Plugin Init" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="bootstrap" target="admin_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bootstrap to Core -->
+        <mxCell id="bootstrap_to_core" value="" style="endArrow=classic;html=1;exitX=0.7;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="bootstrap" target="core_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Admin to Managers -->
+        <mxCell id="admin_to_managers" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1" source="admin_layer" target="managers_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Core to Managers -->
+        <mxCell id="core_to_managers" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="core_layer" target="managers_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Managers to Frontend -->
+        <mxCell id="managers_to_frontend" value="" style="endArrow=classic;html=1;exitX=0.75;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1" source="managers_layer" target="frontend_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Frontend to Build -->
+        <mxCell id="frontend_to_build" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="frontend_layer" target="build_system">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- AJAX Flow -->
+        <mxCell id="ajax_flow" value="2. AJAX Calls" style="endArrow=classic;html=1;dashed=1;strokeColor=#FF5722;exitX=0.7;exitY=0.5;entryX=0.3;entryY=0.8;" edge="1" parent="1" source="frontend_layer" target="admin_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Cache Flow -->
+        <mxCell id="cache_flow" value="3. Cache Operations" style="endArrow=classic;html=1;dashed=1;strokeColor=#9C27B0;exitX=0.6;exitY=0.8;entryX=0.4;entryY=0.2;" edge="1" parent="1" source="core_layer" target="database">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Data Processing -->
+        <mxCell id="data_processing" value="4. Data Processing" style="endArrow=classic;html=1;dashed=1;strokeColor=#4CAF50;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="managers_layer" target="database">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- File Operations -->
+        <mxCell id="file_operations" value="5. File Operations" style="endArrow=classic;html=1;dashed=1;strokeColor=#FF9800;exitX=0.7;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="managers_layer" target="filesystem">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- PDF Generation -->
+        <mxCell id="pdf_generation" value="6. PDF Generation" style="endArrow=classic;html=1;dashed=1;strokeColor=#3F51B5;exitX=0.8;exitY=0.7;entryX=0.2;entryY=0.3;" edge="1" parent="1" source="managers_layer" target="external_services">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-25" y="-25" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="📋 LÉGENDE&#xa;&#xa;🔵 Admin : Interface administration&#xa;🟣 Core : Logique métier centrale&#xa;🟠 Managers : Gestionnaires spécialisés&#xa;🟢 Frontend : Éditeur React/TypeScript&#xa;&#xa;Flèches continues : Flux principal&#xa;Flèches pointillées : Flux secondaires&#xa;&#xa;1-6 : Étapes du processus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="40" width="220" height="150" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

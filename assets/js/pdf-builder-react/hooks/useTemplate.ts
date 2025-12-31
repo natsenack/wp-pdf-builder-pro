@@ -5,6 +5,15 @@ import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugError } from '../utils/debug';
 import { normalizeElementsBeforeSave, normalizeElementsAfterLoad, debugElementState } from '../utils/elementNormalization';
 
+// Fonction utilitaire pour accéder en sécurité à window.pdfBuilderData
+const getPdfBuilderData = () => {
+  if (typeof window === 'undefined' || !window.pdfBuilderData) {
+    console.warn('[useTemplate] window.pdfBuilderData is not available');
+    return null;
+  }
+  return window.pdfBuilderData;
+};
+
 // Fonction helper pour traiter le résultat du template
 const processTemplateResult = (result: any) => {
   const templateData = result.data ? result.data.template : result.template;
@@ -51,10 +60,9 @@ export function useTemplate() {
 
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = useCallback((): string | null => {
-    // Priorité 1: Utiliser le templateId des données PHP localisées
-    if (window.pdfBuilderData?.templateId) {
-
-      return window.pdfBuilderData.templateId.toString();
+    const pdfBuilderData = getPdfBuilderData();
+    if (pdfBuilderData && pdfBuilderData.templateId) {
+      return pdfBuilderData.templateId.toString();
     }
     
     // Priorité 2: Utiliser le paramètre URL (pour compatibilité)
@@ -123,7 +131,11 @@ export function useTemplate() {
         fetchOptions.mode = 'cors';
       }
 
-      const url = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`;
+      const pdfBuilderData = getPdfBuilderData();
+      if (!pdfBuilderData || !pdfBuilderData.ajaxUrl) {
+        throw new Error('Configuration PDF Builder manquante - ajaxUrl non disponible');
+      }
+      const url = `${pdfBuilderData.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${pdfBuilderData.nonce || ''}&t=${cacheBreaker}`;
 
       const response = await fetch(url, fetchOptions);
 
@@ -139,12 +151,16 @@ export function useTemplate() {
 
           // Essayer de régénérer un nonce côté client
           try {
-            const nonceResponse = await fetch(`${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_regenerate_nonce`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: 'security=' + encodeURIComponent(window.pdfBuilderData?.nonce || '')
+            const pdfBuilderData = getPdfBuilderData();
+            if (!pdfBuilderData || !pdfBuilderData.ajaxUrl) {
+              throw new Error('Configuration PDF Builder manquante pour régénération du nonce');
+            }
+            const nonceResponse = await fetch(`${pdfBuilderData.ajaxUrl}?action=pdf_builder_regenerate_nonce`, {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/x-www-form-urlencoded',
+                 },
+                 body: 'security=' + encodeURIComponent(pdfBuilderData.nonce || '')
             });
 
             if (nonceResponse.ok) {
@@ -156,7 +172,11 @@ export function useTemplate() {
                   window.pdfBuilderData.nonce = nonceData.data.nonce;
                 }
                 // Relancer la requête avec le nouveau nonce
-                const retryUrl = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${nonceData.data.nonce}&t=${Date.now()}`;
+                const pdfBuilderData = getPdfBuilderData();
+                if (!pdfBuilderData || !pdfBuilderData.ajaxUrl) {
+                  throw new Error('Configuration PDF Builder manquante pour retry');
+                }
+                const retryUrl = `${pdfBuilderData.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${nonceData.data.nonce}&t=${Date.now()}`;
                 const retryResponse = await fetch(retryUrl, fetchOptions);
 
                 if (retryResponse.ok) {
@@ -321,7 +341,7 @@ export function useTemplate() {
         stack: error.stack,
         name: error.name,
         templateId: templateId,
-        ajaxUrl: window.pdfBuilderData?.ajaxUrl,
+        ajaxUrl: getPdfBuilderData()?.ajaxUrl,
         userAgent: navigator.userAgent
       });
 
@@ -344,7 +364,11 @@ export function useTemplate() {
             cache: 'reload'
           };
 
-          const fallbackUrl = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&fallback=1&t=${Date.now()}`;
+          const pdfBuilderData = getPdfBuilderData();
+          if (!pdfBuilderData || !pdfBuilderData.ajaxUrl) {
+            throw new Error('Configuration PDF Builder manquante pour fallback');
+          }
+          const fallbackUrl = `${pdfBuilderData.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${pdfBuilderData.nonce || ''}&fallback=1&t=${Date.now()}`;
 
           const fallbackResponse = await fetch(fallbackUrl, fallbackOptions);
 
@@ -415,9 +439,13 @@ export function useTemplate() {
       formData.append('template_id', templateId);
       formData.append('template_name', state.template.name || 'Template sans nom');
       formData.append('template_data', JSON.stringify(templateData));
-      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+      const pdfBuilderData = getPdfBuilderData();
+      if (!pdfBuilderData || !pdfBuilderData.ajaxUrl) {
+        throw new Error('Configuration PDF Builder manquante pour sauvegarde');
+      }
+      formData.append('nonce', pdfBuilderData.nonce || '');
 
-      const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
+      const response = await fetch(pdfBuilderData.ajaxUrl, {
         method: 'POST',
         body: formData
       });
