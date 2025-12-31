@@ -45,6 +45,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
+        add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
 
         // Hooks AJAX de maintenance
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajaxCheckDatabase']);
@@ -1574,6 +1575,48 @@ class AjaxHandler
         } else {
             // Texte standard
             return sanitize_text_field($value);
+        }
+    }
+
+    /**
+     * AJAX handler pour récupérer les paramètres du canvas
+     */
+    public function ajaxGetCanvasSettings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => 'Permission denied']);
+                return;
+            }
+
+            // Vérifier le nonce
+            $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+                wp_send_json_error(['message' => 'Invalid nonce']);
+                return;
+            }
+
+            // Récupérer les paramètres depuis les options WordPress
+            $settings = get_option('pdf_builder_settings', []);
+
+            // Paramètres spécifiques au canvas
+            $canvas_settings = [
+                'pdf_builder_canvas_width' => isset($settings['pdf_builder_canvas_width']) ? (int)$settings['pdf_builder_canvas_width'] : 210,
+                'pdf_builder_canvas_height' => isset($settings['pdf_builder_canvas_height']) ? (int)$settings['pdf_builder_canvas_height'] : 297,
+                'pdf_builder_canvas_unit' => isset($settings['pdf_builder_canvas_unit']) ? $settings['pdf_builder_canvas_unit'] : 'mm',
+                'pdf_builder_canvas_orientation' => isset($settings['pdf_builder_canvas_orientation']) ? $settings['pdf_builder_canvas_orientation'] : 'portrait',
+                'pdf_builder_canvas_background_color' => isset($settings['pdf_builder_canvas_background_color']) ? $settings['pdf_builder_canvas_background_color'] : '#ffffff',
+                'pdf_builder_snap_to_grid' => isset($settings['pdf_builder_snap_to_grid']) ? $settings['pdf_builder_snap_to_grid'] : '1',
+                'pdf_builder_show_guides' => isset($settings['pdf_builder_show_guides']) ? $settings['pdf_builder_show_guides'] : '1',
+                'pdf_builder_grid_size' => isset($settings['pdf_builder_grid_size']) ? (int)$settings['pdf_builder_grid_size'] : 10,
+            ];
+
+            wp_send_json_success($canvas_settings);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] Error in ajaxGetCanvasSettings: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Internal server error']);
         }
     }
 }
