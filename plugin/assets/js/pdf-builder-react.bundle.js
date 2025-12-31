@@ -18,10 +18,7 @@ return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // ============================================================================
 // PDF Builder React Bundle - Entry Point
 // ============================================================================
@@ -32,8 +29,8 @@ console.log('� [PDF Builder] BUNDLE EXECUTING - START');
 var React = window.React;
 var ReactDOM = window.ReactDOM;
 console.log('🔥 [PDF Builder] React globals:', {
-  React: (0, _typeof2["default"])(React),
-  ReactDOM: (0, _typeof2["default"])(ReactDOM)
+  React: _typeof(React),
+  ReactDOM: _typeof(ReactDOM)
 });
 
 // Flag pour afficher les logs d'initialisation détaillés
@@ -53,17 +50,17 @@ function initPDFBuilderReact() {
     console.log('✅ [PDF Builder] Container found, checking dependencies...');
 
     // Vérifier les dépendances
-    console.log('🔧 [PDF Builder] Checking React availability:', (0, _typeof2["default"])(React), React);
+    console.log('🔧 [PDF Builder] Checking React availability:', _typeof(React), React);
     if (typeof React === 'undefined') {
       console.error('❌ [PDF Builder] React is not available');
       return false;
     }
-    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', (0, _typeof2["default"])(ReactDOM), ReactDOM);
+    console.log('🔧 [PDF Builder] Checking ReactDOM availability:', _typeof(ReactDOM), ReactDOM);
     if (typeof ReactDOM === 'undefined') {
       console.error('❌ [PDF Builder] ReactDOM is not available');
       return false;
     }
-    console.log('🔧 [PDF Builder] Checking ReactDOM.createRoot:', (0, _typeof2["default"])(ReactDOM.createRoot));
+    console.log('🔧 [PDF Builder] Checking ReactDOM.createRoot:', _typeof(ReactDOM.createRoot));
     if (typeof ReactDOM.createRoot === 'undefined') {
       console.error('❌ [PDF Builder] ReactDOM.createRoot is not available');
       return false;
@@ -111,7 +108,7 @@ function initPDFBuilderReact() {
 if (DEBUG_VERBOSE) console.log('📦 Creating exports object...');
 
 // Export default pour webpack
-var _exports = {
+var exports = {
   initPDFBuilderReact: initPDFBuilderReact
 };
 if (DEBUG_VERBOSE) console.log('🌐 Assigning to window...');
@@ -125,7 +122,7 @@ if (DEBUG_VERBOSE) console.log('🌐 Assigning to window...');
   }
 
   // CRITICAL: Assign the exports object directly and immediately
-  window.pdfBuilderReact = _exports;
+  window.pdfBuilderReact = exports;
   console.log('🌐 [PDF Builder] Assigned to window.pdfBuilderReact:', window.pdfBuilderReact);
 
   // Verify immediately

@@ -18,13 +18,16 @@ return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /**
  * PDF Builder Pro - Preview API Client
  * Intégration complète de l'API Preview 1.4
@@ -52,7 +55,7 @@ function debugWarn() {
 var PDFPreviewAPI = /*#__PURE__*/function () {
   function PDFPreviewAPI() {
     var _pdfBuilderAjax;
-    (0, _classCallCheck2["default"])(this, PDFPreviewAPI);
+    _classCallCheck(this, PDFPreviewAPI);
     this.endpoint = pdfBuilderAjax.ajaxurl;
     this.nonce = ((_pdfBuilderAjax = pdfBuilderAjax) === null || _pdfBuilderAjax === void 0 ? void 0 : _pdfBuilderAjax.nonce) || '';
     this.isGenerating = false;
@@ -62,30 +65,30 @@ var PDFPreviewAPI = /*#__PURE__*/function () {
   /**
    * Génère un aperçu depuis l'éditeur (données fictives)
    */
-  return (0, _createClass2["default"])(PDFPreviewAPI, [{
+  return _createClass(PDFPreviewAPI, [{
     key: "generateEditorPreview",
     value: (function () {
-      var _generateEditorPreview = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(templateData) {
+      var _generateEditorPreview = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(templateData) {
         var options,
           formData,
           response,
           result,
           _args = arguments,
           _t;
-        return _regenerator["default"].wrap(function (_context) {
-          while (1) switch (_context.prev = _context.next) {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.p = _context.n) {
             case 0:
               options = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
               if (!this.isGenerating) {
-                _context.next = 1;
+                _context.n = 1;
                 break;
               }
               debugWarn('⚠️ Génération déjà en cours...');
-              return _context.abrupt("return", null);
+              return _context.a(2, null);
             case 1:
               this.isGenerating = true;
               this.showLoadingIndicator();
-              _context.prev = 2;
+              _context.p = 2;
               formData = new FormData();
               formData.append('action', 'wp_pdf_preview_image');
               formData.append('nonce', this.nonce);
@@ -94,46 +97,45 @@ var PDFPreviewAPI = /*#__PURE__*/function () {
               formData.append('quality', options.quality || 150);
               formData.append('format', options.format || 'png');
               debugLog('📤 Envoi requête preview éditeur...');
-              _context.next = 3;
+              _context.n = 3;
               return fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
               });
             case 3:
-              response = _context.sent;
-              _context.next = 4;
+              response = _context.v;
+              _context.n = 4;
               return response.json();
             case 4:
-              result = _context.sent;
+              result = _context.v;
               if (!result.success) {
-                _context.next = 5;
+                _context.n = 5;
                 break;
               }
               debugLog('✅ Aperçu éditeur généré:', result.data);
               this.cachePreview(result.data);
               this.displayPreview(result.data.image_url, 'editor');
-              return _context.abrupt("return", result.data);
+              return _context.a(2, result.data);
             case 5:
               debugError('❌ Erreur génération éditeur:', result.data);
               this.showError('Erreur lors de la génération de l\'aperçu');
-              return _context.abrupt("return", null);
+              return _context.a(2, null);
             case 6:
-              _context.next = 8;
+              _context.n = 8;
               break;
             case 7:
-              _context.prev = 7;
-              _t = _context["catch"](2);
+              _context.p = 7;
+              _t = _context.v;
               debugError('❌ Erreur réseau:', _t);
               this.showError('Erreur de connexion');
-              return _context.abrupt("return", null);
+              return _context.a(2, null);
             case 8:
-              _context.prev = 8;
+              _context.p = 8;
               this.isGenerating = false;
               this.hideLoadingIndicator();
-              return _context.finish(8);
+              return _context.f(8);
             case 9:
-            case "end":
-              return _context.stop();
+              return _context.a(2);
           }
         }, _callee, this, [[2, 7, 8, 9]]);
       }));
@@ -149,27 +151,27 @@ var PDFPreviewAPI = /*#__PURE__*/function () {
   }, {
     key: "generateOrderPreview",
     value: (function () {
-      var _generateOrderPreview = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee2(templateData, orderId) {
+      var _generateOrderPreview = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(templateData, orderId) {
         var options,
           formData,
           response,
           result,
           _args2 = arguments,
           _t2;
-        return _regenerator["default"].wrap(function (_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
             case 0:
               options = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
               if (!this.isGenerating) {
-                _context2.next = 1;
+                _context2.n = 1;
                 break;
               }
               debugWarn('⚠️ Génération déjà en cours...');
-              return _context2.abrupt("return", null);
+              return _context2.a(2, null);
             case 1:
               this.isGenerating = true;
               this.showLoadingIndicator();
-              _context2.prev = 2;
+              _context2.p = 2;
               formData = new FormData();
               formData.append('action', 'wp_pdf_preview_image');
               formData.append('nonce', this.nonce);
@@ -179,46 +181,45 @@ var PDFPreviewAPI = /*#__PURE__*/function () {
               formData.append('quality', options.quality || 150);
               formData.append('format', options.format || 'png');
               debugLog('📤 Envoi requête preview commande...', orderId);
-              _context2.next = 3;
+              _context2.n = 3;
               return fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
               });
             case 3:
-              response = _context2.sent;
-              _context2.next = 4;
+              response = _context2.v;
+              _context2.n = 4;
               return response.json();
             case 4:
-              result = _context2.sent;
+              result = _context2.v;
               if (!result.success) {
-                _context2.next = 5;
+                _context2.n = 5;
                 break;
               }
               debugLog('✅ Aperçu commande généré:', result.data);
               this.cachePreview(result.data);
               this.displayPreview(result.data.image_url, 'metabox', orderId);
-              return _context2.abrupt("return", result.data);
+              return _context2.a(2, result.data);
             case 5:
               debugError('❌ Erreur génération commande:', result.data);
               this.showError('Erreur lors de la génération de l\'aperçu de commande');
-              return _context2.abrupt("return", null);
+              return _context2.a(2, null);
             case 6:
-              _context2.next = 8;
+              _context2.n = 8;
               break;
             case 7:
-              _context2.prev = 7;
-              _t2 = _context2["catch"](2);
+              _context2.p = 7;
+              _t2 = _context2.v;
               debugError('❌ Erreur réseau:', _t2);
               this.showError('Erreur de connexion');
-              return _context2.abrupt("return", null);
+              return _context2.a(2, null);
             case 8:
-              _context2.prev = 8;
+              _context2.p = 8;
               this.isGenerating = false;
               this.hideLoadingIndicator();
-              return _context2.finish(8);
+              return _context2.f(8);
             case 9:
-            case "end":
-              return _context2.stop();
+              return _context2.a(2);
           }
         }, _callee2, this, [[2, 7, 8, 9]]);
       }));
