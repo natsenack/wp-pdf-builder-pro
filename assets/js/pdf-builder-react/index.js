@@ -91,21 +91,13 @@ function initPDFBuilderReact() {
   }
 }
 
-// Immediately assign and execute
-(function() {
-  'use strict';
-  
-  // Ensure object exists
-  if (typeof window.pdfBuilderReact !== 'object' || window.pdfBuilderReact === null) {
-    window.pdfBuilderReact = {};
-  }
-  
-  // Assign the function
-  window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
-  console.log('✅ [PDF BUNDLE] Successfully assigned initPDFBuilderReact');
-  console.log('✅ [PDF BUNDLE] window.pdfBuilderReact type:', typeof window.pdfBuilderReact);
-  console.log('✅ [PDF BUNDLE] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
-})();
+// Force immediate assignment at module level
+// This runs when webpack loads the module, before anything else
+window.pdfBuilderReact = window.pdfBuilderReact || {};
+window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
+console.log('✅ [PDF BUNDLE] Module assignment executed');
+console.log('✅ [PDF BUNDLE] window.pdfBuilderReact:', window.pdfBuilderReact);
+console.log('✅ [PDF BUNDLE] initPDFBuilderReact is:', typeof window.pdfBuilderReact.initPDFBuilderReact);
 
-// Export for CommonJS/module systems
-export default { initPDFBuilderReact: initPDFBuilderReact };
+// Export for module systems
+export default initPDFBuilderReact;
