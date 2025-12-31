@@ -996,28 +996,34 @@ if ($Mode -eq "plugin" -and -not $IsTestMode) {
     Write-Host "`n1️⃣  ÉTAPE 1 : COMPILATION DES ASSETS" -ForegroundColor Magenta
     Write-Host "-" * 40
 
-    # Vérifier si package.json existe
-    if (Test-Path "package.json") {
-        Write-Host "🔨 Exécution de 'npm run build'..." -ForegroundColor Yellow
-        try {
-            # Changer vers la racine du projet pour npm
-            Push-Location (Split-Path $PSScriptRoot -Parent)
-            $buildResult = & npm run build 2>&1
-            Pop-Location
+    # Vérifier si les assets sont déjà compilés
+    $distPath = Join-Path $PSScriptRoot "..\plugin\assets\js\dist"
+    if (Test-Path $distPath) {
+        $distFiles = Get-ChildItem $distPath -File
+        if ($distFiles.Count -gt 0) {
+            Write-Host "✅ Assets déjà compilés, compilation ignorée" -ForegroundColor Green
+        } else {
+            Write-Host "🔨 Exécution de 'npm run build'..." -ForegroundColor Yellow
+            try {
+                # Changer vers la racine du projet pour npm
+                Push-Location (Split-Path $PSScriptRoot -Parent)
+                $buildResult = & npm run build 2>&1
+                Pop-Location
 
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ Compilation réussie !" -ForegroundColor Green
-            } else {
-                Write-Host "❌ Erreur de compilation :" -ForegroundColor Red
-                Write-Host $buildResult -ForegroundColor Red
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "✅ Compilation réussie !" -ForegroundColor Green
+                } else {
+                    Write-Host "❌ Erreur de compilation :" -ForegroundColor Red
+                    Write-Host $buildResult -ForegroundColor Red
+                    exit 1
+                }
+            } catch {
+                Write-Host "❌ Erreur lors de la compilation : $($_.Exception.Message)" -ForegroundColor Red
                 exit 1
             }
-        } catch {
-            Write-Host "❌ Erreur lors de la compilation : $($_.Exception.Message)" -ForegroundColor Red
-            exit 1
         }
     } else {
-        Write-Host "⚠️ package.json non trouvé, compilation ignorée" -ForegroundColor Yellow
+        Write-Host "⚠️ Dossier dist non trouvé, compilation ignorée" -ForegroundColor Yellow
     }
     Write-Host ""
 }
