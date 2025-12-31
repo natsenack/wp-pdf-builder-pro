@@ -120,7 +120,7 @@ module.exports = {
     ],
   },
   plugins: [
-    // Custom plugin to inject immediate execution code after UMD wrapper
+    // Custom plugin to fix UMD export and inject immediate execution code
     {
       apply: (compiler) => {
         compiler.hooks.emit.tapPromise('ImmediateExecutionPlugin', (compilation) => {
@@ -134,30 +134,62 @@ module.exports = {
               const asset = compilation.assets[bundleKey];
               let source = asset.source().toString();
               
-              // After the UMD wrapper completes, IMMEDIATELY call the initialization
-              const initCode = `
+              // After the UMD wrapper, FORCE the correct assignment
+              const fixCode = `
 (function() {
   if (typeof window === 'undefined') return;
-  console.log('🔥 [WEBPACK UMD] Bundle executed, pdfBuilderReact type:', typeof window.pdfBuilderReact);
   
-  if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-    console.log('🔥 [WEBPACK UMD] Calling initPDFBuilderReact directly...');
+  // The UMD wrapper creates a factory that returns something
+  // We need to capture it and ensure it's an object with initPDFBuilderReact
+  console.log('🔥 [WEBPACK UMD] Fixing UMD export assignment...');
+  console.log('🔥 [WEBPACK UMD] Current pdfBuilderReact type:', typeof window.pdfBuilderReact);
+  console.log('🔥 [WEBPACK UMD] Current pdfBuilderReact value:', window.pdfBuilderReact);
+  
+  // The webpack module system stores exports in a different way
+  // Try to access the actual module exports
+  if (window.pdfBuilderReact && typeof window.pdfBuilderReact === 'object' && window.pdfBuilderReact.default) {
+    console.log('🔥 [WEBPACK UMD] Found .default property, using it');
+    window.pdfBuilderReact = window.pdfBuilderReact.default;
+  }
+  
+  // If it's still not an object with initPDFBuilderReact, log the full object
+  if (!window.pdfBuilderReact || typeof window.pdfBuilderReact !== 'object' || !window.pdfBuilderReact.initPDFBuilderReact) {
+    console.error('🔥 [WEBPACK UMD] ERROR: pdfBuilderReact is not an object with initPDFBuilderReact!');
+    console.error('🔥 [WEBPACK UMD] Full object:', window.pdfBuilderReact);
+    console.error('🔥 [WEBPACK UMD] Type:', typeof window.pdfBuilderReact);
+    
+    // Try to find it in the module cache if available
+    if (window.__webpack_modules__) {
+      console.log('🔥 [WEBPACK UMD] Webpack modules available, investigating...');
+      Object.keys(window.__webpack_modules__).forEach(function(key) {
+        var mod = window.__webpack_modules__[key];
+        if (mod && mod.exports && mod.exports.initPDFBuilderReact) {
+          console.log('🔥 [WEBPACK UMD] Found initPDFBuilderReact in module', key);
+          window.pdfBuilderReact = mod.exports;
+        }
+      });
+    }
+    return;
+  }
+  
+  console.log('🔥 [WEBPACK UMD] Fixed pdfBuilderReact type:', typeof window.pdfBuilderReact);
+  console.log('🔥 [WEBPACK UMD] initPDFBuilderReact available:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+  
+  // Now call it
+  if (typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+    console.log('🔥 [WEBPACK UMD] Calling initPDFBuilderReact...');
     try {
       var result = window.pdfBuilderReact.initPDFBuilderReact();
-      console.log('🔥 [WEBPACK UMD] Direct call result:', result);
+      console.log('🔥 [WEBPACK UMD] initPDFBuilderReact result:', result);
     } catch (err) {
-      console.error('🔥 [WEBPACK UMD] Direct call error:', err.message);
+      console.error('🔥 [WEBPACK UMD] initPDFBuilderReact error:', err.message);
+      console.error('🔥 [WEBPACK UMD] Stack:', err.stack);
     }
-  } else {
-    console.warn('🔥 [WEBPACK UMD] initPDFBuilderReact not found!', {
-      pdfBuilderReact: !!window.pdfBuilderReact,
-      hasFunction: window.pdfBuilderReact ? typeof window.pdfBuilderReact.initPDFBuilderReact : 'N/A'
-    });
   }
 })();
 `;
               
-              source = source + initCode;
+              source = source + fixCode;
               compilation.assets[bundleKey] = {
                 source: () => source,
                 size: () => source.length,
