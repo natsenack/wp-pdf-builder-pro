@@ -12,8 +12,9 @@
 return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"] || []).push([[669],{
 
 /***/ 228:
-/***/ (() => {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.r(__webpack_exports__);
 
 
 (function () {
@@ -186,7 +187,6 @@ return (self["webpackChunkpdfBuilderReact"] = self["webpackChunkpdfBuilderReact"
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
 /******/ var __webpack_exports__ = (__webpack_exec__(228));
-/******/ __webpack_exports__ = __webpack_exports__["default"];
 /******/ return __webpack_exports__;
 /******/ }
 ]);

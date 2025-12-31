@@ -37,7 +37,6 @@ module.exports = {
     library: {
       name: 'pdfBuilderReact',
       type: 'umd',
-      export: 'default',
     },
     clean: false, // Ne pas nettoyer auto, on contrôle
   },
