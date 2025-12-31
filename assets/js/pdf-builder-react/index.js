@@ -3,7 +3,8 @@
 // ============================================================================
 
 console.log('� [PDF Builder] BUNDLE EXECUTING - START');
-
+// Import the main PDF Builder component
+import PDFBuilder from '@/ts/components/PDFBuilder';
 // Use WordPress globals instead of imports
 var React = window.React;
 var ReactDOM = window.ReactDOM;
@@ -63,22 +64,14 @@ function initPDFBuilderReact() {
 
     // Créer et rendre l'application React
     var root = ReactDOM.createRoot(container);
-    console.log('🎨 [PDF Builder] React root created, rendering component...');
+    console.log('🎨 [PDF Builder] React root created, rendering PDF Builder component...');
 
-    var testElement = React.createElement('div', {
-      style: {
-        padding: '20px',
-        border: '1px solid green',
-        backgroundColor: 'lightgreen',
-        fontSize: '16px',
-        fontWeight: 'bold'
-      }
-    }, '✅ React is working! PDF Builder will load here.');
+    var pdfBuilderElement = React.createElement(PDFBuilder);
 
-    console.log('🎨 [PDF Builder] Created element:', testElement);
+    console.log('🎨 [PDF Builder] Created PDF Builder element:', pdfBuilderElement);
 
-    root.render(testElement);
-    console.log('✅ [PDF Builder] React component rendered successfully');
+    root.render(pdfBuilderElement);
+    console.log('✅ [PDF Builder] PDF Builder component rendered successfully');
 
     return true;
 

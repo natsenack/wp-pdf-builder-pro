@@ -27,6 +27,7 @@ module.exports = {
     'ajax-throttle': path.resolve(projectRoot, 'assets/js/ajax-throttle.js'),
     'tabs-force': path.resolve(projectRoot, 'assets/js/tabs-force.js'),
     'tabs-root-monitor': path.resolve(projectRoot, 'assets/js/tabs-root-monitor.js'),
+    'pdf-builder-react': path.resolve(projectRoot, 'assets/js/pdf-builder-react/index.js'),
   },
   output: {
     path: path.resolve(projectRoot, 'plugin/assets/'),
@@ -141,10 +142,6 @@ module.exports = {
           globOptions: {
             ignore: ['**/*.ts'],
           },
-        },
-        {
-          from: path.resolve(projectRoot, 'assets/js/pdf-builder-react/index.js'),
-          to: path.resolve(projectRoot, 'plugin/assets/js/pdf-builder-react.bundle.js'),
         },
       ],
     }),
