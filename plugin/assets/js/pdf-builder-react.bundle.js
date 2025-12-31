@@ -30,11 +30,13 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
+  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+  window.pdfBuilderReactDebug.push('FUNCTION_CALLED');
   try {
     // Get globals
     var React = window.React;
     var ReactDOM = window.ReactDOM;
+    window.pdfBuilderReactDebug.push('REACT_VARS_GET: React=' + _typeof(React) + ', ReactDOM=' + _typeof(ReactDOM));
     console.log('🔧 [PDF BUNDLE] React type:', _typeof(React));
     console.log('🔧 [PDF BUNDLE] ReactDOM type:', _typeof(ReactDOM));
     console.log('🔧 [PDF BUNDLE] __webpack_modules__ available:', !!window.__webpack_modules__);
@@ -101,6 +103,7 @@ function initPDFBuilderReact() {
     console.log('✅ [PDF BUNDLE] Rendered successfully!');
     return true;
   } catch (error) {
+    window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
     console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
     console.error('❌ [PDF BUNDLE] Stack:', error.stack);
     return false;
@@ -109,11 +112,12 @@ function initPDFBuilderReact() {
 
 // Force immediate assignment at module level
 // This runs when webpack loads the module, before anything else
+window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
 window.pdfBuilderReact = window.pdfBuilderReact || {};
 window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
-console.log('✅ [PDF BUNDLE] Module assignment executed');
-console.log('✅ [PDF BUNDLE] window.pdfBuilderReact:', window.pdfBuilderReact);
-console.log('✅ [PDF BUNDLE] initPDFBuilderReact is:', _typeof(window.pdfBuilderReact.initPDFBuilderReact));
+window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
+console.log('✅ [PDF BUNDLE] Debug log:', window.pdfBuilderReactDebug);
 
 // Export for module systems
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (initPDFBuilderReact);

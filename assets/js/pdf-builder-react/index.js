@@ -6,12 +6,15 @@
 
 // Define the initialization function
 function initPDFBuilderReact() {
-  console.log('🔧 [PDF BUNDLE] initPDFBuilderReact CALLED');
+  window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+  window.pdfBuilderReactDebug.push('FUNCTION_CALLED');
   
   try {
     // Get globals
     var React = window.React;
     var ReactDOM = window.ReactDOM;
+    
+    window.pdfBuilderReactDebug.push('REACT_VARS_GET: React=' + (typeof React) + ', ReactDOM=' + (typeof ReactDOM));
     
     console.log('🔧 [PDF BUNDLE] React type:', typeof React);
     console.log('🔧 [PDF BUNDLE] ReactDOM type:', typeof ReactDOM);
@@ -91,6 +94,7 @@ function initPDFBuilderReact() {
     return true;
     
   } catch (error) {
+    window.pdfBuilderReactDebug.push('ERROR: ' + error.message);
     console.error('❌ [PDF BUNDLE] EXCEPTION:', error.message);
     console.error('❌ [PDF BUNDLE] Stack:', error.stack);
     return false;
@@ -99,11 +103,14 @@ function initPDFBuilderReact() {
 
 // Force immediate assignment at module level
 // This runs when webpack loads the module, before anything else
+window.pdfBuilderReactDebug = window.pdfBuilderReactDebug || [];
+window.pdfBuilderReactDebug.push('MODULE_LEVEL_EXECUTION');
+
 window.pdfBuilderReact = window.pdfBuilderReact || {};
 window.pdfBuilderReact.initPDFBuilderReact = initPDFBuilderReact;
-console.log('✅ [PDF BUNDLE] Module assignment executed');
-console.log('✅ [PDF BUNDLE] window.pdfBuilderReact:', window.pdfBuilderReact);
-console.log('✅ [PDF BUNDLE] initPDFBuilderReact is:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+
+window.pdfBuilderReactDebug.push('FUNCTION_ASSIGNED');
+console.log('✅ [PDF BUNDLE] Debug log:', window.pdfBuilderReactDebug);
 
 // Export for module systems
 export default initPDFBuilderReact;
