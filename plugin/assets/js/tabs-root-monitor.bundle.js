@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 (function () {
@@ -166,7 +165,6 @@ var __webpack_exports__ = {};
   };
   logRoot('tabs-root-monitor initialized (DEBUG=' + DEBUG + ')');
 })();
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=tabs-root-monitor.bundle.js.map

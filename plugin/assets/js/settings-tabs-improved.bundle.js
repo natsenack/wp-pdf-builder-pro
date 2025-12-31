@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 /**
@@ -341,7 +340,6 @@ var __webpack_exports__ = {};
   }
   log('PDF Builder - Script settings-tabs-improved.js chargé');
 })();
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=settings-tabs-improved.bundle.js.map

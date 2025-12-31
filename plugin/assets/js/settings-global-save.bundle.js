@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -288,7 +287,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     window.PDFBuilderSettingsSaver.init();
   });
 })(jQuery);
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=settings-global-save.bundle.js.map

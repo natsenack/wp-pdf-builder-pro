@@ -218,5 +218,5 @@ if (typeof window !== 'undefined') {
   console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
 }
 
-// No complex exports - let webpack UMD handle it with the assignment above
-export default exports;
+// Remove export to avoid webpack module issues
+// export default exports;

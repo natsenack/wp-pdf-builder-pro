@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -754,7 +753,6 @@ window.CanvasPreviewManager = {
   }
 };
 debugLog('✅ CanvasPreviewManager initialisé');
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=pdf-preview-integration.bundle.js.map

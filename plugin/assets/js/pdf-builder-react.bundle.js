@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 795:
+/***/ 206:
 /***/ ((module) => {
 
-module.exports = window["ReactDOM"];
+module.exports = ReactDOM;
 
 /***/ })
 
@@ -95,14 +95,9 @@ module.exports = window["ReactDOM"];
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
@@ -302,7 +297,7 @@ function _initPDFBuilderReact() {
           console.log('🎯 [initPDFBuilderReact] Calling ReactDOM.render()...');
           // For fallback, we need to import render from react-dom
           _context.next = 5;
-          return Promise.resolve(/* import() */).then(__webpack_require__.t.bind(__webpack_require__, 795, 19));
+          return Promise.resolve(/* import() */).then(__webpack_require__.t.bind(__webpack_require__, 206, 19));
         case 5:
           _yield$import = _context.sent;
           render = _yield$import.render;
@@ -354,9 +349,8 @@ if (typeof window !== 'undefined') {
   console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
 }
 
-// No complex exports - let webpack UMD handle it with the assignment above
-var _default = exports["default"] = _exports;
-window.PDFBuilder = __webpack_exports__["default"];
+// Remove export to avoid webpack module issues
+// export default exports;
 /******/ })()
 ;
 //# sourceMappingURL=pdf-builder-react.bundle.js.map

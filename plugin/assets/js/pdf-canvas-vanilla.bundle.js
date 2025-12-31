@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -1077,7 +1076,6 @@ window.pdfBuilderInitVanilla = function (containerId) {
 window.pdfBuilderPro = {
   init: window.pdfBuilderInitVanilla
 };
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=pdf-canvas-vanilla.bundle.js.map

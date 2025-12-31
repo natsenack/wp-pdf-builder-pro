@@ -34,11 +34,6 @@ module.exports = {
     filename: 'js/[name].bundle.js',
     chunkFilename: 'js/[name].js',
     publicPath: '/wp-content/plugins/pdf-builder-pro/assets/',
-    library: {
-      name: 'PDFBuilder',
-      type: 'window',
-      export: 'default',
-    },
     clean: false, // Ne pas nettoyer auto, on contrôle
   },
   devtool: isProduction ? 'source-map' : 'cheap-module-source-map',

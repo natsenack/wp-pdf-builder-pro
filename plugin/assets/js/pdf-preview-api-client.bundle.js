@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -478,7 +477,6 @@ debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
 debugLog('📖 Utilisation:');
 debugLog('   - generateEditorPreview(templateData)');
 debugLog('   - generateOrderPreview(templateData, orderId)');
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=pdf-preview-api-client.bundle.js.map

@@ -1,6 +1,5 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-var __webpack_exports__ = {};
 
 
 /**
@@ -163,7 +162,6 @@ var __webpack_exports__ = {};
     config: CONFIG
   };
 })();
-window.PDFBuilder = __webpack_exports__["default"];
 /******/ })()
 ;
 //# sourceMappingURL=tabs-force.bundle.js.map
