@@ -7,18 +7,29 @@ jQuery(document).ready(function($) {
     'use strict';
 
     // Debug: vérifier que le script se charge
-    console.log('PDF Builder Deactivation: Script loaded', pdf_builder_deactivation);
+    console.log('PDF Builder Deactivation: Script loaded');
+    console.log('PDF Builder Deactivation: pdf_builder_deactivation object:', pdf_builder_deactivation);
+    console.log('PDF Builder Deactivation: jQuery version:', $.fn.jquery);
 
     var modal = $('#pdf-builder-deactivation-modal');
     var deactivateLink = null;
     var selectedReason = null;
 
-    // Intercept deactivate link clicks - utiliser un sélecteur plus général
-    $(document).on('click', 'a[href*="action=deactivate"][href*="plugin=' + pdf_builder_deactivation.plugin_slug + '"]', function(e) {
-        console.log('PDF Builder Deactivation: Deactivate link clicked', this);
-        e.preventDefault();
-        deactivateLink = $(this);
-        showDeactivationModal();
+    // Debug: vérifier que le modal existe
+    console.log('PDF Builder Deactivation: Modal element found:', modal.length);
+
+    // Intercept deactivate link clicks - utiliser un sélecteur plus général et plus robuste
+    $(document).on('click', 'a[href*="action=deactivate"]', function(e) {
+        var href = $(this).attr('href');
+        console.log('PDF Builder Deactivation: Link clicked, href:', href);
+
+        // Vérifier si c'est notre plugin
+        if (href && href.indexOf('wp-pdf-builder-pro') !== -1) {
+            console.log('PDF Builder Deactivation: Our plugin deactivate link clicked');
+            e.preventDefault();
+            deactivateLink = $(this);
+            showDeactivationModal();
+        }
     });
 
     // Close modal events
