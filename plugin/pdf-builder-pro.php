@@ -2025,6 +2025,9 @@ function pdf_builder_save_template_handler() {
             // Supprimer les caractères de contrôle
             $cleaned_json = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $cleaned_json);
 
+            // Supprimer les virgules trailing (avant } ou ])
+            $cleaned_json = preg_replace('/,(\s*[}\]])/', '$1', $cleaned_json);
+
             // Essayer de décoder le JSON nettoyé
             $decoded_data = json_decode($cleaned_json, true);
             if (json_last_error() === JSON_ERROR_NONE) {
