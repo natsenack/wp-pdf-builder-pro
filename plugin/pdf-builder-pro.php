@@ -2034,6 +2034,9 @@ function pdf_builder_save_template_handler() {
                 error_log('[PDF Builder SAVE] ✅ JSON décodé après nettoyage des caractères de contrôle');
             } else {
                 error_log('[PDF Builder SAVE] ❌ Échec même après nettoyage: ' . json_last_error_msg());
+                error_log('[PDF Builder SAVE] JSON après nettoyage (début): ' . substr($cleaned_json, 0, 500));
+                error_log('[PDF Builder SAVE] JSON après nettoyage (autour pos 773): ' . substr($cleaned_json, 700, 100));
+                error_log('[PDF Builder SAVE] JSON après nettoyage (fin): ' . substr($cleaned_json, -500));
 
                 // Analyser le JSON pour trouver l'erreur exacte
                 $json_analysis = analyze_json_error($cleaned_json);
