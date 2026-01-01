@@ -1880,6 +1880,76 @@ function pdf_builder_auto_clear_cache() {
 }
 
 /**
+ * Analyse une erreur JSON pour trouver la position exacte du problème
+ */
+function analyze_json_error($json_string) {
+    $max_length = 1000; // Limiter la longueur pour les logs
+    $truncated = strlen($json_string) > $max_length;
+
+    if ($truncated) {
+        $json_string = substr($json_string, 0, $max_length) . '...';
+    }
+
+    // Essayer de parser le JSON caractère par caractère pour trouver l'erreur
+    $depth = 0;
+    $in_string = false;
+    $escape_next = false;
+    $last_valid_pos = 0;
+
+    for ($i = 0; $i < strlen($json_string); $i++) {
+        $char = $json_string[$i];
+
+        if ($escape_next) {
+            $escape_next = false;
+            continue;
+        }
+
+        if ($char === '\\') {
+            $escape_next = true;
+            continue;
+        }
+
+        if ($in_string) {
+            if ($char === '"') {
+                $in_string = false;
+            }
+            continue;
+        }
+
+        if ($char === '"') {
+            $in_string = true;
+            continue;
+        }
+
+        if ($char === '{' || $char === '[') {
+            $depth++;
+            $last_valid_pos = $i;
+        } elseif ($char === '}' || $char === ']') {
+            $depth--;
+            if ($depth < 0) {
+                return "Erreur de structure à la position $i (caractère '$char') - profondeur négative";
+            }
+            $last_valid_pos = $i;
+        } elseif ($char === ',') {
+            // Vérifier si on est dans un objet ou un tableau
+            if ($depth === 0) {
+                return "Virgule inattendue à la position $i";
+            }
+        }
+    }
+
+    if ($depth > 0) {
+        return "Structure JSON incomplète - profondeur finale: $depth, dernière position valide: $last_valid_pos";
+    }
+
+    if ($truncated) {
+        return "JSON tronqué dans les logs - analyser le JSON complet côté frontend";
+    }
+
+    return "Erreur JSON inconnue - structure semble correcte";
+}
+
+/**
  * AJAX handler for saving templates (React frontend)
  */
 function pdf_builder_save_template_handler() {
@@ -1961,7 +2031,12 @@ function pdf_builder_save_template_handler() {
                 error_log('[PDF Builder SAVE] ✅ JSON décodé après nettoyage des caractères de contrôle');
             } else {
                 error_log('[PDF Builder SAVE] ❌ Échec même après nettoyage: ' . json_last_error_msg());
-                wp_send_json_error('Données JSON invalides: ' . $json_error);
+
+                // Analyser le JSON pour trouver l'erreur exacte
+                $json_analysis = $this->analyze_json_error($cleaned_json);
+                error_log('[PDF Builder SAVE] Analyse JSON: ' . $json_analysis);
+
+                wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
                 return;
             }
         }
