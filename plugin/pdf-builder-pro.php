@@ -1590,8 +1590,8 @@ function pdf_builder_save_template_handler() {
         // Decode and validate JSON
         $decoded_data = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
-            // error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
+            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
+            error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
             wp_send_json_error('Données JSON invalides');
             return;
         }
