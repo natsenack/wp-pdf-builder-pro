@@ -140,10 +140,9 @@ Write-Host "`n2 Detection des fichiers modifies..." -ForegroundColor Magenta
 try {
     Push-Location $WorkingDir
 
-    # Essayer de récupérer les fichiers modifiés via git
+    # Récupérer les fichiers modifiés via git
     try {
         $ErrorActionPreference = "Continue"
-        # Utiliser cmd /c pour éviter les problèmes d'encodage PowerShell
         $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
         $gitExitCode = $LASTEXITCODE
         $ErrorActionPreference = "Stop"
@@ -155,7 +154,6 @@ try {
                     $status = $matches[1]
                     $filePart = $matches[2]
                     
-                    # Pour les renommages (R), extraire le nouveau nom de fichier après "->"
                     if ($status -like "*R*") {
                         if ($filePart -match '(.+)\s*->\s*(.+)') {
                             $file = $matches[2].Trim()
@@ -170,88 +168,71 @@ try {
                 }
             } | Sort-Object -Unique
 
-            Write-Host "Utilisation des fichiers modifies detectes par git ($($allModified.Count) fichiers)" -ForegroundColor Green
+            if ($allModified.Count -gt 0) {
+                Write-Host "Fichiers detectes par git ($($allModified.Count) fichiers):" -ForegroundColor Green
+                $allModified | ForEach-Object { Write-Host "   $_" -ForegroundColor Gray }
+            }
         } else {
-            Write-Host "Git status a retourne le code $gitExitCode, utilisation liste par defaut" -ForegroundColor Yellow
-            $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
+            Write-Host "Git status a retourne une erreur" -ForegroundColor Yellow
+            $allModified = @()
         }
     } catch {
-        Write-Host "Erreur git: $($_.Exception.Message), utilisation liste par defaut" -ForegroundColor Yellow
-        $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
+        Write-Host "Erreur git: $($_.Exception.Message)" -ForegroundColor Yellow
+        $allModified = @()
     }
-    # Inclure: plugin/*, build/*, mais EXCLURE les fichiers sources TypeScript (assets/js/src)
-    # Les fichiers sources TypeScript ne doivent pas être en production, seulement les fichiers compilés
+
+    # Filtrer pour inclure SEULEMENT les fichiers plugin/
     try {
         $pluginModified = $allModified | Where-Object {
             try {
                 $filePath = $_
+                # Inclure tout ce qui commence par "plugin/"
                 $isPlugin = ($filePath -like "plugin/*")
+                
+                # Exclure les fichiers sources TypeScript bruts
                 $isNotExcluded = ($filePath -notlike "assets/js/src/*" -and
                                 $filePath -notlike "assets/ts/*" -and
-                                $filePath -notlike "assets/shared/*" -and
-                                $filePath -notlike "assets/config/*" -and
-                                $filePath -notlike "plugin/config/*" -and
-                                $filePath -notlike "plugin/docs/*" -and
-                                # TEMPORAIRE - NE PAS SUPPRIMER SANS AUTORISATION EXPLICITE
-                                # Exclusions TypeScript pour la phase alpha - à retirer seulement quand demandé
                                 $filePath -notlike "*.ts" -and
                                 $filePath -notlike "*.tsx")
-                $exists = $false
-                if ($isPlugin -and $isNotExcluded) {
-                    try {
-                        $exists = Test-Path "$WorkingDir\$filePath" -ErrorAction Stop
-                    } catch {
-                        # Si Test-Path échoue, considérer que le fichier n'existe pas
-                        $exists = $false
-                    }
-                }
-                return $isPlugin -and $isNotExcluded -and $exists
+                
+                return $isPlugin -and $isNotExcluded
             } catch {
                 return $false
             }
         }
     } catch {
-        Write-Host "Erreur lors du filtrage des fichiers: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "Erreur lors du filtrage: $($_.Exception.Message)" -ForegroundColor Yellow
         $pluginModified = @()
-    }    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
-    try {
-        $distFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\dist\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
-        $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-        $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
-    } catch {
-        Write-Host "Erreur lors de la detection des fichiers dist: $($_.Exception.Message)" -ForegroundColor Yellow
     }
 
-    # Toujours inclure les fichiers vendor (dépendances PHP) - seulement s'ils sont récents
+    # IMPORTANT: Ajouter les fichiers dist qui viennent d'être compilés (timestamped récemment)
+    Write-Host "   Detection des fichiers dist compiles..." -ForegroundColor Yellow
     try {
-        # N'inclure que les vendor files modifiés récemment (dernières 24h) pour éviter l'upload massif
-        $recentVendorFiles = Get-ChildItem "$WorkingDir\plugin\vendor\*" -Recurse -File -ErrorAction SilentlyContinue | Where-Object {
-            $_.LastWriteTime -gt (Get-Date).AddHours(-24)
-        } | Select-Object -ExpandProperty FullName
-        $vendorFilesRelative = $recentVendorFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-        if ($vendorFilesRelative.Count -gt 0) {
-            Write-Host "Vendor files recents detectes: $($vendorFilesRelative.Count)" -ForegroundColor Yellow
-            $pluginModified = @($pluginModified) + @($vendorFilesRelative) | Sort-Object -Unique
+        $buildTime = (Get-Date).AddMinutes(-3)  # Dernières 3 minutes
+        $distFiles = Get-ChildItem "$WorkingDir\plugin\resources\assets\js\dist\*" -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt $buildTime }
+        if ($distFiles.Count -gt 0) {
+            $distFilesRelative = $distFiles | ForEach-Object { $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/") }
+            Write-Host "   Fichiers dist trouves: $($distFiles.Count)" -ForegroundColor Cyan
+            $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
         }
     } catch {
-        Write-Host "Erreur lors de la detection des fichiers vendor: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "   Erreur detection dist: $($_.Exception.Message)" -ForegroundColor Yellow
     }
     
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
-        Write-Host "   (Tous les fichiers sont a jour)" -ForegroundColor Gray
         Pop-Location
         exit 0
     }
     
-    Write-Host "Fichiers modifies detects: $($pluginModified.Count)" -ForegroundColor Cyan
+    Write-Host "Total fichiers a deployer: $($pluginModified.Count)" -ForegroundColor Cyan
     $pluginModified | ForEach-Object {
         Write-Host "   - $_" -ForegroundColor White
     }
     
     Pop-Location
 } catch {
-    Write-Host "Erreur git: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Erreur: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 
