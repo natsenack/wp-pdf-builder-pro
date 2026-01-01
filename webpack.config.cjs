@@ -16,9 +16,8 @@ module.exports = {
     path: path.resolve(__dirname, 'assets/js/dist'),
     filename: '[name].js',
     clean: true,
-    library: {
-      type: 'umd'
-    }
+    library: 'pdfBuilderReact',
+    libraryTarget: 'var'
   },
   module: {
     rules: [
@@ -72,5 +71,6 @@ module.exports = {
     'react': 'React',
     'react-dom': 'ReactDOM',
     'jquery': 'jQuery'
-  }
+  },
+  externalsType: 'window'
 };

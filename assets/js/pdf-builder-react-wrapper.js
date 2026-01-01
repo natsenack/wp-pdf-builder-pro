@@ -1,34 +1,78 @@
 /**
  * PDF Builder React - Webpack Bundle Wrapper
- * Ensures the module is properly assigned to window when loaded
- * This file acts as the true webpack entry point that exports everything to window
+ * This file is the webpack entry point that will be assigned to pdfBuilderReact variable
  */
 
-// Import the actual React module
-import * as pdfBuilderReactModule from './pdf-builder-react/index.js';
+// Le module principal sera chargé séparément et assigné à window.pdfBuilderReact
+// Ce wrapper sert juste de point d'entrée webpack
 
-// Extract the default export - it's already an object with all functions
-const moduleExports = pdfBuilderReactModule.default || pdfBuilderReactModule;
+// Fonctions de fallback au cas où le module principal n'est pas encore chargé
+const fallbackFunctions = {
+  initPDFBuilderReact: () => {
+    console.warn('PDF Builder React not yet loaded - initPDFBuilderReact called');
+    return Promise.resolve();
+  },
+  loadTemplate: (templateData) => {
+    console.warn('PDF Builder React not yet loaded - loadTemplate called', templateData);
+    return Promise.resolve();
+  },
+  getEditorState: () => {
+    console.warn('PDF Builder React not yet loaded - getEditorState called');
+    return null;
+  },
+  setEditorState: (state) => {
+    console.warn('PDF Builder React not yet loaded - setEditorState called', state);
+  },
+  getCurrentTemplate: () => {
+    console.warn('PDF Builder React not yet loaded - getCurrentTemplate called');
+    return null;
+  },
+  exportTemplate: () => {
+    console.warn('PDF Builder React not yet loaded - exportTemplate called');
+    return Promise.resolve(null);
+  },
+  saveTemplate: (template) => {
+    console.warn('PDF Builder React not yet loaded - saveTemplate called', template);
+    return Promise.resolve(null);
+  },
+  registerEditorInstance: (instance) => {
+    console.warn('PDF Builder React not yet loaded - registerEditorInstance called', instance);
+  },
+  resetAPI: () => {
+    console.warn('PDF Builder React not yet loaded - resetAPI called');
+  },
+  updateCanvasDimensions: (dimensions) => {
+    console.warn('PDF Builder React not yet loaded - updateCanvasDimensions called', dimensions);
+  },
+  _isWebpackBundle: true
+};
 
-// Export each property individually so webpack creates a plain object
-export const initPDFBuilderReact = moduleExports.initPDFBuilderReact;
-export const loadTemplate = moduleExports.loadTemplate;
-export const getEditorState = moduleExports.getEditorState;
-export const setEditorState = moduleExports.setEditorState;
-export const getCurrentTemplate = moduleExports.getCurrentTemplate;
-export const exportTemplate = moduleExports.exportTemplate;
-export const saveTemplate = moduleExports.saveTemplate;
-export const registerEditorInstance = moduleExports.registerEditorInstance;
-export const resetAPI = moduleExports.resetAPI;
-export const updateCanvasDimensions = moduleExports.updateCanvasDimensions;
-export const _isWebpackBundle = true;
+// Utiliser les fonctions du module principal si disponible, sinon les fallbacks
+const getModuleExports = () => {
+  if (typeof window !== 'undefined' && window.pdfBuilderReact) {
+    return window.pdfBuilderReact;
+  }
+  return fallbackFunctions;
+};
 
-// Also signal when loaded
+// Créer l'objet qui sera assigné par webpack
+const pdfBuilderReact = {
+  initPDFBuilderReact: (...args) => getModuleExports().initPDFBuilderReact(...args),
+  loadTemplate: (...args) => getModuleExports().loadTemplate(...args),
+  getEditorState: (...args) => getModuleExports().getEditorState(...args),
+  setEditorState: (...args) => getModuleExports().setEditorState(...args),
+  getCurrentTemplate: (...args) => getModuleExports().getCurrentTemplate(...args),
+  exportTemplate: (...args) => getModuleExports().exportTemplate(...args),
+  saveTemplate: (...args) => getModuleExports().saveTemplate(...args),
+  registerEditorInstance: (...args) => getModuleExports().registerEditorInstance(...args),
+  resetAPI: (...args) => getModuleExports().resetAPI(...args),
+  updateCanvasDimensions: (...args) => getModuleExports().updateCanvasDimensions(...args),
+  _isWebpackBundle: true
+};
+
+// Signal when loaded
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   try {
-    // Assigner manuellement à window pour s'assurer que c'est disponible
-    window.pdfBuilderReact = moduleExports;
-
     const event = new Event('pdfBuilderReactLoaded');
     document.dispatchEvent(event);
   } catch (e) {
@@ -36,5 +80,5 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   }
 }
 
-// Export default as well for compatibility
-export default moduleExports;
+// Export pour webpack (sera assigné à la variable globale pdfBuilderReact)
+module.exports = pdfBuilderReact;
