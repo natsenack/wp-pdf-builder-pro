@@ -459,7 +459,11 @@ class PdfBuilderTemplateManager
                     }
 
                     // Sauvegarder les données du template dans les métadonnées
-                    \update_post_meta($template_id, '_pdf_template_data', $template_data);
+                    $template_data_json = \wp_json_encode($template_data);
+                    if ($template_data_json === false) {
+                        throw new \Exception('Erreur lors de l\'encodage JSON des données du template');
+                    }
+                    \update_post_meta($template_id, '_pdf_template_data', $template_data_json);
                     
                     // Log what was actually saved (only in debug mode)
                     if (self::isDebugMode()) {
