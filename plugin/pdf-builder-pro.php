@@ -2204,9 +2204,9 @@ function pdf_builder_load_template_handler() {
             return;
         }
 
-        $template_data = json_decode($template['template_data'], true);
+        $template_data = json_decode($template['template_data'], true, 512, JSON_INVALID_UTF8_IGNORE);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('[PDF Builder LOAD] Erreur JSON lors du décodage: ' . json_last_error_msg());
+            error_log('[PDF Builder LOAD] Erreur JSON lors du décodage: ' . json_last_error_msg() . ' (code: ' . json_last_error() . ')');
             error_log('[PDF Builder LOAD] Données brutes (début): ' . substr($template['template_data'], 0, 200));
             error_log('[PDF Builder LOAD] Données brutes (fin): ' . substr($template['template_data'], -200));
 
@@ -2217,7 +2217,7 @@ function pdf_builder_load_template_handler() {
             if (strpos($cleaned_data, '{\\"') === 0 || strpos($cleaned_data, '[\\"') === 0) {
                 error_log('[PDF Builder LOAD] Tentative de décodage double JSON');
                 $cleaned_data = stripslashes($cleaned_data);
-                $template_data = json_decode($cleaned_data, true);
+                $template_data = json_decode($cleaned_data, true, 512, JSON_INVALID_UTF8_IGNORE);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     error_log('[PDF Builder LOAD] ✅ JSON décodé après nettoyage des slashes');
                 } else {

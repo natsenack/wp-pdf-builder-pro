@@ -341,7 +341,7 @@ class TemplateManager
 
             // Décoder les données JSON si elles sont stockées en JSON
             if (is_string($template_data)) {
-                $decoded_data = json_decode($template_data, true);
+                $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     $template_data = $decoded_data;
                 }
