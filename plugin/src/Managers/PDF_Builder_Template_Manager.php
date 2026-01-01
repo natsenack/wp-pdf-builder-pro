@@ -90,54 +90,20 @@ class PdfBuilderTemplateManager
      */
     public function ajaxSaveTemplateV3()
     {
-        // Fonction helper pour vérifier si le mode debug est activé
-        $isDebugMode = function() {
-            return self::isDebugMode();
-        };
-
-        // Fonction utilitaire pour les logs conditionnels
-        $debugLog = function($message) use ($isDebugMode) {
-            if ($isDebugMode()) {
-                // // error_log('PDF Builder Save: ' . $message);
-            }
-        };
-
-        // Log avant le try pour capturer les erreurs fatales
-        // $debugLog('ajaxSaveTemplateV3 method called');
-
         try {
-            // Log pour debug - TEMPORAIRE
-            // $debugLog('ajaxSaveTemplateV3 started');
-            // $debugLog('REQUEST: ' . print_r($_REQUEST, true));
-            // $debugLog('POST keys: ' . implode(', ', array_keys($_POST)));
-            // $debugLog('SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
-
-            // Write to uploads directory for guaranteed access (only in debug mode)
-            if (self::isDebugMode()) {
-                $upload_dir = wp_upload_dir();
-                $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
-            }
-
-            // Vérification des permissions
+            // Vérifications de base
             if (!\current_user_can('manage_options')) {
-                // $debugLog('Permission check failed');
                 \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
-            // $debugLog('Permission check passed');
 
-            // Vérification du nonce - TEMPORAIREMENT DÉSACTIVÉ POUR DÉVELOPPEMENT
+            // Vérifier le nonce - TEMPORAIREMENT DÉSACTIVÉ POUR DÉVELOPPEMENT
             $nonce_valid = true; // Toujours accepter pour le développement
-            // $debugLog('Nonce validation bypassed for development');
 
             if (!$nonce_valid) {
-                // $debugLog('Nonce validation failed');
                 \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
-            // $debugLog('Nonce validation passed');
 
             // Récupération et nettoyage des données
             // $debugLog('Starting data processing');            // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
