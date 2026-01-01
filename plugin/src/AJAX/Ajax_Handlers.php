@@ -260,7 +260,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'canvas_width', 'canvas_height', 'canvas_border_width'
             ],
             'bool_fields' => [
-                'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
+                'performance_auto_optimization',
                 'systeme_auto_maintenance', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
                 // Debug fields - AJOUTÉ POUR CORRIGER LE TOGGLE DEBUG JAVASCRIPT
@@ -981,6 +981,71 @@ function pdf_builder_verify_canvas_settings_consistency_handler() {
     }
 }
 
+/**
+ * Handler AJAX pour sauvegarder l'onglet actif de l'utilisateur
+ */
+function pdf_builder_save_active_tab_handler() {
+    try {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+            wp_send_json_error('Nonce invalide');
+            return;
+        }
+
+        // Récupérer l'onglet actif
+        $active_tab = isset($_POST['active_tab']) ? sanitize_text_field($_POST['active_tab']) : '';
+
+        if (empty($active_tab)) {
+            wp_send_json_error('Onglet actif manquant');
+            return;
+        }
+
+        // Sauvegarder dans les user meta
+        $user_id = get_current_user_id();
+        update_user_meta($user_id, 'pdf_builder_active_tab', $active_tab);
+
+        wp_send_json_success(array(
+            'message' => 'Onglet actif sauvegardé',
+            'active_tab' => $active_tab
+        ));
+
+    } catch (Exception $e) {
+        error_log('PDF Builder: [SAVE ACTIVE TAB] Error: ' . $e->getMessage());
+        wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Handler AJAX pour récupérer l'onglet actif de l'utilisateur
+ */
+function pdf_builder_get_active_tab_handler() {
+    try {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Récupérer depuis les user meta
+        $user_id = get_current_user_id();
+        $active_tab = get_user_meta($user_id, 'pdf_builder_active_tab', true);
+
+        wp_send_json_success(array(
+            'active_tab' => $active_tab ?: null
+        ));
+
+    } catch (Exception $e) {
+        error_log('PDF Builder: [GET ACTIVE TAB] Error: ' . $e->getMessage());
+        wp_send_json_error('Erreur lors de la récupération: ' . $e->getMessage());
+    }
+}
+
 // error_log('PDF Builder: [AJAX REGISTRATION] Registering pdf_builder_test_roles action');
 add_action('wp_ajax_pdf_builder_test_roles', 'pdf_builder_test_roles_handler');
 
@@ -989,3 +1054,7 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
+
+// Actions pour la gestion des onglets actifs
+add_action('wp_ajax_pdf_builder_save_active_tab', 'pdf_builder_save_active_tab_handler');
+add_action('wp_ajax_pdf_builder_get_active_tab', 'pdf_builder_get_active_tab_handler');

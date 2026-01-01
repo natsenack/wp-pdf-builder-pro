@@ -28,7 +28,6 @@ class PdfBuilderDatabaseQueryOptimizer
      */
     private $query_stats = [
         'executed' => 0,
-        'cached' => 0,
         'optimized' => 0,
         'slow_queries' => []
     ];
@@ -38,10 +37,8 @@ class PdfBuilderDatabaseQueryOptimizer
      */
     private $optimization_config = [
         'enable_prepared_statements' => true,
-        'enable_query_caching' => true,
         'enable_index_hints' => true,
         'slow_query_threshold' => 0.5, // secondes
-        'max_cache_size' => 100,
         'auto_explain' => false
     ];
 
@@ -143,31 +140,10 @@ class PdfBuilderDatabaseQueryOptimizer
     }
 
     /**
-     * Initialiser le cache des requêtes
-     */
-    private function initializeQueryCache()
-    {
-        if (!wp_cache_get('pdf_builder_query_cache')) {
-            wp_cache_set('pdf_builder_query_cache', [], '', 3600);
-        }
-    }
-
-    /**
      * Récupérer les données de commande optimisées
      */
     public function getOptimizedOrderData($order_id)
     {
-        $cache_key = 'order_data_' . $order_id;
-
-        // Vérifier le cache
-        if ($this->optimization_config['enable_query_caching']) {
-            $cached = wp_cache_get($cache_key, 'pdf_builder_query_cache');
-            if ($cached !== false) {
-                $this->query_stats['cached']++;
-                return $cached;
-            }
-        }
-
         // Utiliser les requêtes préparées
         global $wpdb;
 
@@ -193,10 +169,7 @@ class PdfBuilderDatabaseQueryOptimizer
                 'customer' => $customer_data
             ];
 
-            // Mettre en cache
-            if ($this->optimization_config['enable_query_caching']) {
-                wp_cache_set($cache_key, $result, 'pdf_builder_query_cache', 1800); // 30 minutes
-            }
+            return $result;
 
             $this->query_stats['executed']++;
             return $result;
@@ -212,17 +185,6 @@ class PdfBuilderDatabaseQueryOptimizer
     {
         if (empty($product_ids)) {
             return [];
-        }
-
-        $cache_key = 'product_data_' . md5(serialize($product_ids));
-
-        // Vérifier le cache
-        if ($this->optimization_config['enable_query_caching']) {
-            $cached = wp_cache_get($cache_key, 'pdf_builder_query_cache');
-            if ($cached !== false) {
-                $this->query_stats['cached']++;
-                return $cached;
-            }
         }
 
         global $wpdb;
@@ -267,10 +229,7 @@ class PdfBuilderDatabaseQueryOptimizer
             }
         }
 
-        // Mettre en cache
-        if ($this->optimization_config['enable_query_caching']) {
-            wp_cache_set($cache_key, $products, 'pdf_builder_query_cache', 3600); // 1 heure
-        }
+        return $products;
 
         $this->query_stats['executed']++;
         return $products;
@@ -478,30 +437,6 @@ class PdfBuilderDatabaseQueryOptimizer
             'cache_info' => $this->getCacheInfo(),
             'slow_queries_analysis' => $this->analyzeSlowQueries()
         ];
-    }
-
-    /**
-     * Obtenir les informations du cache
-     */
-    private function getCacheInfo()
-    {
-        $cache = wp_cache_get('pdf_builder_query_cache');
-        return [
-            'cache_enabled' => $this->optimization_config['enable_query_caching'],
-            'cache_size' => is_array($cache) ? count($cache) : 0,
-            'max_cache_size' => $this->optimization_config['max_cache_size']
-        ];
-    }
-
-    /**
-     * Nettoyer le cache des requêtes
-     */
-    public function clearQueryCache()
-    {
-        wp_cache_delete('pdf_builder_query_cache');
-        $this->initializeQueryCache();
-
-        PDF_Builder_Logger::get_instance()->info('Cache des requêtes nettoyé', ['context' => 'db_optimizer']);
     }
 
     /**

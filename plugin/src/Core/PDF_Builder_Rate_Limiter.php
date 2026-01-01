@@ -174,7 +174,7 @@ class PdfBuilderRateLimiter
      */
     private static function buildCacheKey($action, $identifier)
     {
-        return 'pdf_rate_' . $action . '_' . md5($identifier);
+        return 'pdf_security_rate_' . $action . '_' . md5($identifier);
     }
 
     /**

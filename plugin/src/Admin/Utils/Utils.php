@@ -52,8 +52,7 @@ class Utils
         $result1 = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like('_transient_pdf_builder_') . '%'));
         $result2 = $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like('_transient_timeout_pdf_builder_') . '%'));
 
-        // Nettoyer le cache des objets WordPress
-        wp_cache_flush();
+        // Cache system removed - no cache to clear
 
         // Supprimer les fichiers temporaires si ils existent
         $upload_dir = wp_upload_dir();

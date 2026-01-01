@@ -26,13 +26,6 @@ class PDF_Builder_Config_Manager {
         'pdf_builder_company_rcs' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => ''],
         'pdf_builder_company_capital' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => ''],
 
-        // Cache
-        'pdf_builder_cache_enabled' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
-        'pdf_builder_cache_compression' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => false],
-        'pdf_builder_cache_auto_cleanup' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
-        'pdf_builder_cache_max_size' => ['type' => 'int', 'sanitize' => 'intval', 'default' => 100],
-        'pdf_builder_cache_ttl' => ['type' => 'int', 'sanitize' => 'intval', 'default' => 3600],
-
         // Maintenance
         'pdf_builder_auto_maintenance' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
         'pdf_builder_performance_auto_optimization' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
@@ -59,7 +52,6 @@ class PDF_Builder_Config_Manager {
         'pdf_builder_pdf_quality' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'high'],
         'pdf_builder_pdf_page_size' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'A4'],
         'pdf_builder_pdf_orientation' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'portrait'],
-        'pdf_builder_pdf_cache_enabled' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
         'pdf_builder_pdf_compression' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'medium'],
         'pdf_builder_pdf_metadata_enabled' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
         'pdf_builder_pdf_print_optimized' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => true],
@@ -233,7 +225,7 @@ class PDF_Builder_Config_Manager {
         ];
 
         // Vérifier que les configurations essentielles sont présentes
-        $essential_configs = ['pdf_builder_cache_enabled', 'pdf_builder_debug_mode'];
+        $essential_configs = ['pdf_builder_debug_mode'];
         foreach ($essential_configs as $config) {
             if (!isset(self::$option_configs[$config])) {
                 $health['issues'][] = "Configuration manquante: {$config}";

@@ -105,8 +105,7 @@ class MaintenanceManager
             }
         }
 
-        // Vider le cache
-        wp_cache_flush();
+        // Cache system removed - no cache to clear
 
         return [
             'success' => true,

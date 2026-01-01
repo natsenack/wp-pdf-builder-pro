@@ -72,3 +72,23 @@ coverage/
 
 # GitHub (local development)
 /.github/
+
+# ========== PRODUCTION PLUGIN CLEANUP ==========
+# Ne jamais commiter les fichiers de dev/test/doc dans le dossier plugin/
+plugin/docs/
+plugin/*.md
+plugin/.github/
+plugin/tests/
+plugin/vendor/.github/
+plugin/vendor/*/tests/
+plugin/vendor/*/test/
+plugin/vendor/*/.github/
+plugin/vendor/*/docs/
+plugin/composer.json
+plugin/composer.lock
+plugin/package.json
+plugin/package-lock.json
+plugin/tsconfig.json
+plugin/webpack.config.*
+plugin/.venv/
+plugin/node_modules/

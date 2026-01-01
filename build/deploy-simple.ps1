@@ -75,127 +75,112 @@ Write-Host ("=" * 60) -ForegroundColor White
 
 Write-Host "`n1 Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
 
-# TEMPORAIREMENT DÉSACTIVÉ POUR DÉPLOIEMENT PHP SEULEMENT
-Write-Host "   Compilation skippee (changements PHP seulement)" -ForegroundColor Yellow
-
-# 2 LISTER LES FICHIERS MODIFIES
-Write-Host "`n2 Detection des fichiers modifies..." -ForegroundColor Magenta
+# REBUILD DES ASSETS JAVASCRIPT/TYPESCRIPT
+Write-Host "   Rebuild des assets en cours..." -ForegroundColor Yellow
 
 try {
     Push-Location $WorkingDir
 
-    # Essayer de récupérer les fichiers modifiés via git
-    try {
-        $ErrorActionPreference = "Continue"
-        # Utiliser cmd /c pour éviter les problèmes d'encodage PowerShell
-        $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
-        $gitExitCode = $LASTEXITCODE
-        $ErrorActionPreference = "Stop"
-
-        if ($gitExitCode -eq 0) {
-            $allModified = $statusOutput | Where-Object { $_ -and $_ -notlike "*warning*" -and $_ -notlike "*fatal*" } | ForEach-Object {
-                $line = $_.ToString().Trim()
-                if ($line -match '^\s*([MADRCU\?\!]{1,2})\s+(.+)$') {
-                    $status = $matches[1]
-                    $filePart = $matches[2]
-                    
-                    # Pour les renommages (R), extraire le nouveau nom de fichier après "->"
-                    if ($status -like "*R*") {
-                        if ($filePart -match '(.+)\s*->\s*(.+)') {
-                            $file = $matches[2].Trim()
-                        } else {
-                            $file = $filePart
-                        }
-                    } else {
-                        $file = $filePart
-                    }
-                    
-                    $file
-                }
-            } | Sort-Object -Unique
-
-            Write-Host "Utilisation des fichiers modifies detectes par git ($($allModified.Count) fichiers)" -ForegroundColor Green
-        } else {
-            Write-Host "Git status a retourne le code $gitExitCode, utilisation liste par defaut" -ForegroundColor Yellow
-            $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
-        }
-    } catch {
-        Write-Host "Erreur git: $($_.Exception.Message), utilisation liste par defaut" -ForegroundColor Yellow
-        $allModified = @("build/deploy-simple.ps1", "plugin/src/Managers/PdfBuilderPreviewGenerator.php")
+    # Vérifier si Node.js est installé
+    $nodeVersion = & node --version 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Node.js n'est pas installé ou n'est pas dans le PATH"
     }
-    # Inclure: plugin/*, build/*, mais EXCLURE les fichiers sources TypeScript (assets/js/src)
-    # Les fichiers sources TypeScript ne doivent pas être en production, seulement les fichiers compilés
-    try {
-        $pluginModified = $allModified | Where-Object {
-            try {
-                $filePath = $_
-                $isPlugin = ($filePath -like "plugin/*")
-                $isNotExcluded = ($filePath -notlike "assets/js/src/*" -and
-                                $filePath -notlike "assets/ts/*" -and
-                                $filePath -notlike "assets/shared/*" -and
-                                $filePath -notlike "assets/config/*" -and
-                                $filePath -notlike "plugin/config/*" -and
-                                $filePath -notlike "plugin/docs/*" -and
-                                # TEMPORAIRE - NE PAS SUPPRIMER SANS AUTORISATION EXPLICITE
-                                # Exclusions TypeScript pour la phase alpha - à retirer seulement quand demandé
-                                $filePath -notlike "*.ts" -and
-                                $filePath -notlike "*.tsx")
-                $exists = $false
-                if ($isPlugin -and $isNotExcluded) {
-                    try {
-                        $exists = Test-Path "$WorkingDir\$filePath" -ErrorAction Stop
-                    } catch {
-                        # Si Test-Path échoue, considérer que le fichier n'existe pas
-                        $exists = $false
-                    }
-                }
-                return $isPlugin -and $isNotExcluded -and $exists
-            } catch {
-                return $false
-            }
+    Write-Host "   ✅ Node.js détecté: $nodeVersion" -ForegroundColor Green
+
+    # Vérifier si les dépendances sont installées
+    if (!(Test-Path "node_modules")) {
+        Write-Host "   📦 Installation des dépendances npm..." -ForegroundColor Yellow
+        & npm install
+        if ($LASTEXITCODE -ne 0) {
+            throw "Échec de l'installation des dépendances npm"
         }
-    } catch {
-        Write-Host "Erreur lors du filtrage des fichiers: $($_.Exception.Message)" -ForegroundColor Yellow
-        $pluginModified = @()
-    }    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
-    try {
-        $distFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\dist\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
-        $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-        $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
-    } catch {
-        Write-Host "Erreur lors de la detection des fichiers dist: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "   ✅ Dépendances installées" -ForegroundColor Green
     }
 
-    # Toujours inclure les fichiers vendor (dépendances PHP) - seulement s'ils sont récents
-    try {
-        # N'inclure que les vendor files modifiés récemment (dernières 24h) pour éviter l'upload massif
-        $recentVendorFiles = Get-ChildItem "$WorkingDir\plugin\vendor\*" -Recurse -File -ErrorAction SilentlyContinue | Where-Object {
-            $_.LastWriteTime -gt (Get-Date).AddHours(-24)
-        } | Select-Object -ExpandProperty FullName
-        $vendorFilesRelative = $recentVendorFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-        if ($vendorFilesRelative.Count -gt 0) {
-            Write-Host "Vendor files recents detectes: $($vendorFilesRelative.Count)" -ForegroundColor Yellow
-            $pluginModified = @($pluginModified) + @($vendorFilesRelative) | Sort-Object -Unique
-        }
-    } catch {
-        Write-Host "Erreur lors de la detection des fichiers vendor: $($_.Exception.Message)" -ForegroundColor Yellow
+    # Nettoyer les anciens builds
+    Write-Host "   🧹 Nettoyage des anciens builds..." -ForegroundColor Yellow
+    if (Test-Path "plugin/resources/assets/js/dist") {
+        Remove-Item "plugin/resources/assets/js/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path "plugin/resources/assets/css/dist") {
+        Remove-Item "plugin/resources/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    # Build des assets
+    Write-Host "   🔨 Build des assets JavaScript/TypeScript..." -ForegroundColor Yellow
+    $ErrorActionPreference = "Continue"
+    & npm run build 2>&1 | Where-Object { $_ -notlike "*baseline*" }
+    $ErrorActionPreference = "Stop"
+    
+    # Vérifier que les fichiers sont bien générés
+    if (-not (Test-Path "assets/js/dist")) {
+        throw "Le dossier assets/js/dist n'a pas été créé par webpack"
+    }
+    Write_Host "   ✅ Build terminé" -ForegroundColor Green
+
+    # Copier les assets compilés
+    Write-Host "   📋 Copie des assets vers plugin..." -ForegroundColor Yellow
+    if (Test-Path "assets/js/dist") {
+        New-Item -ItemType Directory -Path "plugin/resources/assets/js/dist" -Force -ErrorAction SilentlyContinue | Out-Null
+        Copy-Item "assets/js/dist/*" "plugin/resources/assets/js/dist/" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path "assets/css/dist") {
+        New-Item -ItemType Directory -Path "plugin/resources/assets/css/dist" -Force -ErrorAction SilentlyContinue | Out-Null
+        Copy-Item "assets/css/dist/*" "plugin/resources/assets/css/dist/" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host "   ✅ Assets copiés" -ForegroundColor Green
+    
+    # Copier les fichiers PHP modifiés
+    Write-Host "   📋 Copie des fichiers PHP modifiés..." -ForegroundColor Yellow
+    if (Test-Path "plugin/src" -and (Get-ChildItem "plugin/src" -Recurse -Include "*.php" -ErrorAction SilentlyContinue).Count -gt 0) {
+        Copy-Item "plugin/src/*" "plugin/src/" -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Host "   ✅ Fichiers PHP vérifiés" -ForegroundColor Green
+    }
+
+    Pop-Location
+} catch {
+    Write-Host "   ❌ Erreur lors du rebuild: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "   🔄 Continuation avec les assets existants..." -ForegroundColor Yellow
+    Pop-Location
+}
+
+# 2 LISTER LES FICHIERS MODIFIES
+Write-Host "`n2 Verification des fichiers à déployer..." -ForegroundColor Magenta
+
+try {
+    $jsFiles = @()
+    $phpFiles = @()
+    
+    # Déterminer les fichiers JS à déployer
+    $distDir = "$WorkingDir\plugin\resources\assets\js\dist"
+    if (Test-Path $distDir) {
+        $jsFiles = @(Get-ChildItem "$distDir\*.js" -ErrorAction SilentlyContinue -File)
     }
     
-    if ($pluginModified.Count -eq 0) {
-        Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
-        Write-Host "   (Tous les fichiers sont a jour)" -ForegroundColor Gray
-        Pop-Location
+    # Déterminer les fichiers PHP modifiés
+    $srcDir = "$WorkingDir\plugin\src"
+    if (Test-Path $srcDir) {
+        $phpFiles = @(Get-ChildItem "$srcDir\*.php" -Recurse -ErrorAction SilentlyContinue -File)
+    }
+    
+    $allFiles = @($jsFiles) + @($phpFiles) | Where-Object { $_ }
+    
+    if ($allFiles.Count -eq 0) {
+        Write-Host "Aucun fichier à déployer (JS ou PHP)" -ForegroundColor Yellow
         exit 0
     }
     
-    Write-Host "Fichiers modifies detects: $($pluginModified.Count)" -ForegroundColor Cyan
-    $pluginModified | ForEach-Object {
-        Write-Host "   - $_" -ForegroundColor White
+    Write-Host "✅ Fichiers à déployer: $($allFiles.Count)" -ForegroundColor Green
+    Write-Host "   Fichiers JS: $($jsFiles.Count)" -ForegroundColor Cyan
+    Write-Host "   Fichiers PHP: $($phpFiles.Count)" -ForegroundColor Cyan
+    
+    $pluginModified = $allFiles | ForEach-Object {
+        $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
     }
     
-    Pop-Location
 } catch {
-    Write-Host "Erreur git: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Erreur: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 

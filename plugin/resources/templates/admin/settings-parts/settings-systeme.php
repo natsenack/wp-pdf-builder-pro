@@ -7,54 +7,14 @@
     error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
 
     // Préparer toutes les variables nécessaires
-    $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
-    $cache_compression = $settings['pdf_builder_cache_compression'] ?? '1';
-    $cache_auto_cleanup = $settings['pdf_builder_cache_auto_cleanup'] ?? '1';
-    $cache_max_size = intval($settings['pdf_builder_cache_max_size'] ?? 100);
-    $cache_ttl = intval($settings['pdf_builder_cache_ttl'] ?? 3600);
     $performance_auto_optimization = $settings['pdf_builder_performance_auto_optimization'] ?? '0';
     $auto_maintenance = $settings['pdf_builder_systeme_auto_maintenance'] ?? '0';
     $last_maintenance = $settings['pdf_builder_last_maintenance'] ?? 'Jamais';
     $next_maintenance = $settings['pdf_builder_next_maintenance'] ?? 'Non planifiée';
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
-    $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
-
-    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl);
-    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
 
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
-
-    // Calculer les métriques de cache
-    $cache_file_count = 0;
-    $cache_dirs = [
-        (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/cache/wp-pdf-builder-previews/',
-        (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
-    ];
-
-    foreach ($cache_dirs as $dir) {
-        if (is_dir($dir) && is_readable($dir)) {
-            try {
-                $files = glob($dir . '/*');
-                if ($files) {
-                    $cache_file_count += count($files);
-                }
-            } catch (Exception $e) {
-                // Ignorer les erreurs
-            }
-        }
-    }
-
-    // Calculer les transients
-    $transient_count = 0;
-    if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
-        global $wpdb;
-        try {
-            $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-        } catch (Exception $e) {
-            $transient_count = 0;
-        }
-    }
 
     // Calculer le nombre de sauvegardes
     $backup_count = 0;
@@ -80,133 +40,6 @@
 ?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
-                <!-- Section Cache et Performance -->
-                <section id="systeme" class="system-cache-section">
-                    <header>
-                        <h3>
-                            <span>
-                                📋 Cache & Performance - ⚠️ En attente d'implémentation
-                                <span class="cache-performance-status" id="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
-                            </span>
-                        </h3>
-                    </header>
-
-                    <div class="system-section-content">
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_enabled]" value="0">
-                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_settings[pdf_builder_cache_enabled]" value="1" <?php checked($cache_enabled, '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="description">Améliore les performances en mettant en cache les données</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="cache_compression">Compression du cache</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_compression]" value="0">
-                                        <input type="checkbox" id="cache_compression" name="pdf_builder_settings[pdf_builder_cache_compression]" value="1" <?php checked($cache_compression, '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_auto_cleanup]" value="0">
-                                        <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_settings[pdf_builder_cache_auto_cleanup]" value="1" <?php checked($cache_auto_cleanup, '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
-                                <td>
-                                    <input type="number" id="cache_max_size" name="pdf_builder_settings[pdf_builder_cache_max_size]" value="<?php echo $cache_max_size; ?>" min="10" max="1000" step="10" />
-                                    <p class="description">Taille maximale du dossier cache en mégaoctets</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
-                                <td>
-                                    <input type="number" id="cache_ttl" name="pdf_builder_settings[pdf_builder_cache_ttl]" value="<?php echo $cache_ttl; ?>" min="0" max="86400" />
-                                    <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="hidden" name="pdf_builder_settings[pdf_builder_performance_auto_optimization]" value="0">
-                                        <input type="checkbox" id="performance_auto_optimization" name="pdf_builder_settings[pdf_builder_performance_auto_optimization]" value="1" <?php checked($performance_auto_optimization, '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Test du système</th>
-                                <td>
-                                    <button type="button" id="test-cache-btn" class="button button-secondary system-btn">
-                                        🧪 Tester l'intégration du cache
-                                    </button>
-                                    <span id="cache-test-results"></span>
-                                    <div id="cache-test-output"></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Vider le cache</th>
-                                <td>
-                                    <button type="button" id="clear-cache-general-btn" class="button button-secondary system-btn danger">
-                                        🗑️ Vider tout le cache
-                                    </button>
-                                    <span id="clear-cache-general-results"></span>
-                                    <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <!-- Informations sur l'état du cache -->
-                        <article class="cache-status-info">
-                            <header>
-                                <h4>📊 État du système de cache</h4>
-                            </header>
-                            <div class="metric-grid">
-                                <div class="cache-metric-card" data-metric="size" style="pointer-events: none; cursor: default;">
-                                    <div class="metric-value">
-                                        <span id="cache-size-display"><?php echo $cache_file_count; ?> fichiers</span>
-                                    </div>
-                                    <div class="metric-label">Taille du cache</div>
-                                </div>
-                                <div class="cache-metric-card" data-metric="transients" style="pointer-events: none; cursor: default;">
-                                    <div class="metric-value">
-                                        <?php echo intval($transient_count); ?>
-                                    </div>
-                                    <div class="metric-label">Transients actifs</div>
-                                </div>
-                                <div class="cache-metric-card systeme-cache-status" data-metric="status" style="pointer-events: none; cursor: default;">
-                                    <div class="cache-enabled-indicator metric-value">
-                                    <?php echo $cache_enabled ? 'Cache activé' : 'Cache désactivé'; ?>
-                                    </div>
-                                    <div class="metric-label">État du cache</div>
-                                </div>
-                                <div class="cache-metric-card" data-metric="cleanup" style="pointer-events: none; cursor: default;">
-                                    <div class="metric-value">
-                                        <?php echo $cache_last_cleanup; ?>
-                                    </div>
-                                    <div class="metric-label">Dernier nettoyage</div>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </section>
                 <!-- Section Maintenance -->
                 <section id="systeme" class="system-maintenance-section">
                     <h3>
@@ -1232,31 +1065,6 @@
             }
         });
     });
-
-    // Mise à jour dynamique des indicateurs de statut
-    function updateStatusIndicators() {
-        // Mettre à jour le statut du cache
-        const cacheEnabled = document.getElementById('general_cache_enabled').checked;
-        const statusElement = document.getElementById('cache-performance-status');
-        const cacheIndicator = document.querySelector('.cache-enabled-indicator');
-
-        if (statusElement) {
-            statusElement.textContent = cacheEnabled ? 'ACTIF' : 'INACTIF';
-            statusElement.style.backgroundColor = cacheEnabled ? '#28a745' : '#dc3545';
-        }
-
-        if (cacheIndicator) {
-            cacheIndicator.textContent = cacheEnabled ? 'Cache activé' : 'Cache désactivé';
-        }
-    }
-
-    // Écouter les changements sur les toggles du cache
-    document.getElementById('general_cache_enabled').addEventListener('change', updateStatusIndicators);
-    document.getElementById('cache_compression').addEventListener('change', updateStatusIndicators);
-    document.getElementById('cache_auto_cleanup').addEventListener('change', updateStatusIndicators);
-
-    // Initialiser les indicateurs au chargement
-    updateStatusIndicators();
 
 })(jQuery);
 </script>

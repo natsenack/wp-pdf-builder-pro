@@ -8,7 +8,6 @@
  * - Temps de rendu par renderer
  * - Utilisation mémoire
  * - FPS et taux de rafraîchissement
- * - Statistiques de cache
  */
 
 namespace PDF_Builder\Performance;
@@ -26,7 +25,6 @@ class PerformanceMonitor
     private static $metrics = [
         'render_times' => [],
         'memory_usage' => [],
-        'cache_stats' => [],
         'renderer_calls' => [],
         'start_time' => null,
         'peak_memory' => 0
@@ -102,18 +100,6 @@ class PerformanceMonitor
     }
 
     /**
-     * Mesure les performances du cache
-     *
-     * @param array $cacheMetrics Métriques du cache
-     */
-    public static function recordCacheStats(array $cacheMetrics): void
-    {
-        self::$metrics['cache_stats'][] = array_merge($cacheMetrics, [
-            'timestamp' => time()
-        ]);
-    }
-
-    /**
      * Obtient un rapport de performance complet
      *
      * @return array Rapport détaillé
@@ -137,7 +123,6 @@ class PerformanceMonitor
                 'renders_under_500ms' => count(array_filter(self::$metrics['render_times'], fn($r) => $r['time'] < 500))
             ],
             'renderer_breakdown' => self::$metrics['renderer_calls'],
-            'cache_performance' => end(self::$metrics['cache_stats']) ?: [],
             'recent_renders' => array_slice(array_reverse(self::$metrics['render_times']), 0, 10),
             'system_info' => [
                 'php_version' => PHP_VERSION,
@@ -159,7 +144,6 @@ class PerformanceMonitor
         return [
             'render_time_ok' => $report['render_performance']['median_render_time'] < 500,
             'memory_usage_ok' => self::$metrics['peak_memory'] < 50 * 1024 * 1024, // 50MB
-            'cache_hit_rate_ok' => ($report['cache_performance']['hit_rate'] ?? 0) > 70,
             'no_slow_renders' => $report['render_performance']['slowest_render'] < 2000,
             'overall_status' => self::getOverallStatus($report)
         ];
@@ -194,7 +178,6 @@ class PerformanceMonitor
         self::$metrics = [
             'render_times' => [],
             'memory_usage' => [],
-            'cache_stats' => [],
             'renderer_calls' => [],
             'start_time' => microtime(true),
             'peak_memory' => memory_get_peak_usage(true)
@@ -251,7 +234,7 @@ class PerformanceMonitor
     private static function getOverallStatus(array $report): string
     {
         $checks = self::checkPerformanceThresholds();
-        if ($checks['render_time_ok'] && $checks['memory_usage_ok'] && $checks['cache_hit_rate_ok'] && $checks['no_slow_renders']) {
+        if ($checks['render_time_ok'] && $checks['memory_usage_ok'] && $checks['no_slow_renders']) {
             return 'excellent';
         }
 

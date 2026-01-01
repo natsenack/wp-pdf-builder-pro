@@ -86,7 +86,6 @@ class PDF_Builder_Intelligent_Loader {
             'is_cron' => defined('DOING_CRON') && DOING_CRON,
             'is_rest' => defined('REST_REQUEST') && REST_REQUEST,
             'user_can_manage' => current_user_can('manage_options'),
-            'cache_enabled' => get_option('pdf_builder_cache_enabled', '0') === '1',
             'logging_enabled' => get_option('pdf_builder_enable_logging', '0') === '1',
             'analytics_enabled' => get_option('pdf_builder_analytics_enabled', '0') === '1',
             'memory_limit_ok' => $this->check_memory_limit(),

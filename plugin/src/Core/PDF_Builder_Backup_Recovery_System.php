@@ -360,7 +360,6 @@ class PDF_Builder_Backup_Recovery_System {
 
         return [
             $wpdb->prefix . 'pdf_builder_templates',
-            $wpdb->prefix . 'pdf_builder_cache',
             $wpdb->prefix . 'pdf_builder_errors',
             $wpdb->prefix . 'pdf_builder_performance_metrics',
             $wpdb->prefix . 'pdf_builder_performance_issues',

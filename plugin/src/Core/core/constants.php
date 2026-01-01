@@ -128,10 +128,6 @@ if (!defined('PDF_BUILDER_PRO_UPLOADS_DIR')) {
     define('PDF_BUILDER_PRO_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
 }
 
-if (!defined('PDF_BUILDER_CACHE_DIR')) {
-    define('PDF_BUILDER_CACHE_DIR', PDF_BUILDER_UPLOAD_DIR . 'cache/');
-}
-
 if (!defined('PDF_BUILDER_LOGS_DIR')) {
     define('PDF_BUILDER_LOGS_DIR', PDF_BUILDER_UPLOAD_DIR . 'logs/');
 }
@@ -183,11 +179,6 @@ if (!defined('PDF_BUILDER_NONCE_LIFETIME')) {
 if (!defined('PDF_BUILDER_SESSION_TIMEOUT')) {
     define('PDF_BUILDER_SESSION_TIMEOUT', 30 * 60);
 // 30 minutes
-}
-
-if (!defined('PDF_BUILDER_CACHE_LIFETIME')) {
-    define('PDF_BUILDER_CACHE_LIFETIME', 60 * 60);
-// 1 heure
 }
 
 // Limites de taux (requêtes par minute)

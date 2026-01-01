@@ -60,8 +60,7 @@ class PDF_Builder_Config_Mappings {
             'templates' => 'pdf_builder_templates',
             'elements' => 'pdf_builder_elements',
             'settings' => 'pdf_builder_settings',
-            'logs' => 'pdf_builder_logs',
-            'cache' => 'pdf_builder_cache'
+            'logs' => 'pdf_builder_logs'
         ],
 
         'table_prefix' => 'pdf_builder_',
@@ -111,36 +110,6 @@ class PDF_Builder_Config_Mappings {
             'upload' => 60,
             'export' => 120,
             'preview' => 15
-        ]
-    ];
-
-    // ==========================================
-    // CONFIGURATIONS DE CACHE
-    // ==========================================
-
-    private static $cache_config = [
-        'enabled' => true,
-        'ttl' => [
-            'template' => 3600,     // 1 heure
-            'settings' => 1800,     // 30 minutes
-            'fonts' => 86400,       // 24 heures
-            'preview' => 300,       // 5 minutes
-            'export' => 7200        // 2 heures
-        ],
-
-        'drivers' => [
-            'file' => 'PDF_Builder_Cache_File',
-            'database' => 'PDF_Builder_Cache_Database',
-            'redis' => 'PDF_Builder_Cache_Redis',
-            'memcached' => 'PDF_Builder_Cache_Memcached'
-        ],
-
-        'default_driver' => 'file',
-
-        'file_cache' => [
-            'path' => WP_CONTENT_DIR . '/cache/pdf-builder/',
-            'max_size' => '100M',
-            'cleanup_interval' => 3600
         ]
     ];
 

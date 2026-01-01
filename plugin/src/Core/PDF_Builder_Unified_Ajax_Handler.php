@@ -38,12 +38,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
         // add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
 
-        // Actions de cache
-        add_action('wp_ajax_pdf_builder_get_cache_metrics', [$this, 'handle_get_cache_metrics']);
-        add_action('wp_ajax_pdf_builder_test_cache_integration', [$this, 'handle_test_cache_integration']);
-        add_action('wp_ajax_pdf_builder_clear_all_cache', [$this, 'handle_clear_cache']);
-        add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'handle_clear_cache']);
-
         // Actions de maintenance
         add_action('wp_ajax_pdf_builder_optimize_database', [$this, 'handle_optimize_database']);
         add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'handle_remove_temp_files']);
@@ -322,13 +316,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'company_rcs' => $settings['pdf_builder_company_rcs'] ?? '',
                     'company_capital' => $settings['pdf_builder_company_capital'] ?? '',
 
-                    // Cache
-                    'cache_enabled' => $settings['pdf_builder_cache_enabled'] ?? '0',
-                    'cache_ttl' => $settings['pdf_builder_cache_ttl'] ?? 3600,
-                    'cache_compression' => $settings['pdf_builder_cache_compression'] ?? '1',
-                    'cache_auto_cleanup' => $settings['pdf_builder_cache_auto_cleanup'] ?? '1',
-                    'cache_max_size' => $settings['pdf_builder_cache_max_size'] ?? 100,
-
                     // Système
                     'auto_maintenance' => $settings['pdf_builder_auto_maintenance'] ?? '1',
                     'backup_retention' => $settings['pdf_builder_backup_retention'] ?? 30,
@@ -411,11 +398,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'company_vat' => get_option('pdf_builder_company_vat', ''),
                     'company_rcs' => get_option('pdf_builder_company_rcs', ''),
                     'company_capital' => get_option('pdf_builder_company_capital', ''),
-                    'cache_enabled' => get_option('pdf_builder_cache_enabled', '0'),
-                    'cache_ttl' => get_option('pdf_builder_cache_ttl', 3600),
-                    'cache_compression' => get_option('pdf_builder_cache_compression', '1'),
-                    'cache_auto_cleanup' => get_option('pdf_builder_cache_auto_cleanup', '1'),
-                    'cache_max_size' => get_option('pdf_builder_cache_max_size', 100),
                     'pdf_quality' => get_option('pdf_builder_pdf_quality', 'high'),
                     'default_format' => get_option('pdf_builder_default_format', 'A4'),
                     'default_orientation' => get_option('pdf_builder_default_orientation', 'portrait'),
@@ -434,11 +416,6 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             case 'systeme':
                 $saved_options = [
-                    'cache_enabled' => get_option('pdf_builder_cache_enabled', '0'),
-                    'cache_compression' => get_option('pdf_builder_cache_compression', '1'),
-                    'cache_auto_cleanup' => get_option('pdf_builder_cache_auto_cleanup', '1'),
-                    'cache_max_size' => get_option('pdf_builder_cache_max_size', 100),
-                    'cache_ttl' => get_option('pdf_builder_cache_ttl', 3600),
                     'auto_maintenance' => get_option('pdf_builder_auto_maintenance', '1'),
                     'auto_backup' => get_option('pdf_builder_auto_backup', '1'),
                     'auto_backup_frequency' => get_option('pdf_builder_auto_backup_frequency', 'daily'),
@@ -645,20 +622,19 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_license_activated_at', 'pdf_builder_license_test_key', 'pdf_builder_license_test_key_expires',
                 'pdf_builder_license_reminder_email',
                 // System text fields
-                'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup', 'pdf_builder_cache_last_cleanup',
+                'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup',
                 // Canvas text fields
                 'pdf_builder_canvas_canvas_bg_color', 'pdf_builder_canvas_canvas_border_color', 'pdf_builder_canvas_canvas_container_bg_color', 'pdf_builder_canvas_canvas_selection_mode', 'pdf_builder_canvas_canvas_export_format',
                 'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_default_canvas_unit', 'pdf_builder_canvas_canvas_format'
             ],
             'int_fields' => [
-                'pdf_builder_cache_max_size', 'pdf_builder_cache_ttl',
                 // Canvas int fields
                 'pdf_builder_zoom_min', 'pdf_builder_zoom_max', 'pdf_builder_zoom_default', 'pdf_builder_zoom_step', 'pdf_builder_canvas_canvas_grid_size', 'pdf_builder_canvas_canvas_export_quality',
                 'pdf_builder_canvas_canvas_fps_target', 'pdf_builder_canvas_canvas_memory_limit_js', 'pdf_builder_canvas_canvas_memory_limit_php', 'pdf_builder_canvas_canvas_dpi',
                 'pdf_builder_canvas_canvas_width', 'pdf_builder_canvas_canvas_height', 'pdf_builder_canvas_canvas_border_width', 'pdf_builder_canvas_max_size', 'pdf_builder_canvas_quality'
             ],
             'bool_fields' => [
-                'pdf_builder_cache_enabled', 'pdf_builder_cache_compression', 'pdf_builder_cache_auto_cleanup', 'pdf_builder_performance_auto_optimization',
+                'pdf_builder_performance_auto_optimization',
                 'pdf_builder_systeme_auto_maintenance', 'pdf_builder_template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
                 // License bool fields
@@ -940,7 +916,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             'templates-status-form' => 'pdf_builder_templates_',
             'general-form' => 'pdf_builder_',
             'licence-container' => 'pdf_builder_license_',
-            'cache-status-form' => 'pdf_builder_cache_',
             'canvas-dimensions-form' => 'pdf_builder_canvas_dimensions_',
             'zoom-form' => 'pdf_builder_zoom_',
             'canvas-apparence-form' => 'pdf_builder_canvas_appearance_',
@@ -981,11 +956,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_general_settings() {
         $settings = [
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-            'cache_ttl' => intval($_POST['cache_ttl']),
-            'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
-            'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
-            'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
             'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
             'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
             'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
@@ -1011,8 +981,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_performance_settings() {
         $settings = [
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-            'cache_expiry' => intval($_POST['cache_expiry']),
             'compression_enabled' => isset($_POST['compression_enabled']) ? '1' : '0',
             'lazy_loading' => isset($_POST['lazy_loading']) ? '1' : '0',
             'preload_resources' => isset($_POST['preload_resources']) ? '1' : '0',
@@ -1162,7 +1130,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
 
                 update_option($key, $sanitized_value);
-                wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
                 $saved_count++;
 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -1268,65 +1235,6 @@ class PDF_Builder_Unified_Ajax_Handler {
     }
 
     /**
-     * Handler pour tester l'intégration du cache
-     */
-    public function handle_test_cache_integration() {
-        if (!$this->nonce_manager->validate_ajax_request('test_cache_integration')) {
-            return;
-        }
-
-        try {
-            // Test 1: Vérifier si le cache WordPress fonctionne
-            $test_key = 'pdf_builder_cache_test_' . time();
-            $test_value = 'test_value_' . rand(1000, 9999);
-
-            wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
-            $retrieved_value = wp_cache_get($test_key, 'pdf_builder');
-
-            $cache_wp_ok = ($retrieved_value === $test_value);
-
-            // Nettoyer le test
-            wp_cache_delete($test_key, 'pdf_builder');
-
-            // Test 2: Vérifier les transients
-            $transient_key = 'pdf_builder_test_transient';
-            $transient_value = 'transient_test_' . rand(1000, 9999);
-
-            set_transient($transient_key, $transient_value, 300);
-            $transient_retrieved = get_transient($transient_key);
-
-            $transient_ok = ($transient_retrieved === $transient_value);
-
-            // Nettoyer
-            delete_transient($transient_key);
-
-            // Test 3: Vérifier les options
-            $option_test = get_option('pdf_builder_settings', []);
-            $options_ok = is_array($option_test);
-
-            // Résultats
-            $results = [
-                'cache_wordpress' => $cache_wp_ok ? '✅ Fonctionnel' : '❌ Défaillant',
-                'transients' => $transient_ok ? '✅ Fonctionnel' : '❌ Défaillant',
-                'options' => $options_ok ? '✅ Fonctionnel' : '❌ Défaillant'
-            ];
-
-            $all_ok = $cache_wp_ok && $transient_ok && $options_ok;
-
-            wp_send_json_success([
-                'message' => $all_ok ? '✅ Test d\'intégration du cache réussi' : '⚠️ Certains tests ont échoué',
-                'results' => $results,
-                'status' => $all_ok ? 'success' : 'warning'
-            ]);
-
-        } catch (Exception $e) {
-            wp_send_json_error([
-                'message' => '❌ Erreur lors du test du cache: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
      * Handler pour vider le cache
      */
     public function handle_clear_cache() {
@@ -1334,8 +1242,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        wp_cache_flush();
-        delete_transient('pdf_builder_cache');
+        // Cache system removed - no cache to clear
 
         wp_send_json_success(['message' => 'Cache vidé avec succès']);
     }
@@ -2179,7 +2086,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                  ],
                  'plugin' => [
                      'version' => get_option('pdf_builder_version', 'Unknown'),
-                     'cache_enabled' => get_option('pdf_builder_cache_enabled', '0') === '1',
                      'developer_mode' => get_option('pdf_builder_developer_enabled', '0') === '1',
                      'license_status' => get_option('pdf_builder_license_status', 'inactive')
                  ]

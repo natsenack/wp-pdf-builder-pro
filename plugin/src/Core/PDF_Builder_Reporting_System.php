@@ -57,7 +57,6 @@ class PDF_Builder_Reporting_System {
             'usage_statistics' => $this->get_usage_statistics(),
             'security_status' => $this->get_security_status(),
             'database_health' => $this->get_database_health(),
-            'cache_status' => $this->get_cache_status(),
         );
     }
 
@@ -407,18 +406,6 @@ class PDF_Builder_Reporting_System {
         );
     }
 
-    private function get_cache_status() {
-        $cache_metrics = get_option('pdf_builder_cache_metrics', array());
-
-        return array(
-            'enabled' => get_option('pdf_builder_cache_enabled', '0') === '1',
-            'size' => $cache_metrics['size'] ?? 0,
-            'hit_ratio' => $this->calculate_hit_ratio($cache_metrics),
-            'compression_enabled' => get_option('pdf_builder_cache_compression', '0') === '1',
-            'last_cleanup' => $cache_metrics['last_cleanup'] ?? 0,
-        );
-    }
-
     /**
      * Méthodes utilitaires
      */
@@ -457,21 +444,6 @@ class PDF_Builder_Reporting_System {
             return 0;
         }
         return round(array_sum($response_times) / count($response_times), 3);
-    }
-
-    private function get_cache_hit_ratio() {
-        $metrics = get_option('pdf_builder_cache_metrics', array());
-        $hits = $metrics['hits'] ?? 0;
-        $misses = $metrics['misses'] ?? 0;
-        $total = $hits + $misses;
-        return $total > 0 ? round(($hits / $total) * 100, 2) : 0;
-    }
-
-    private function calculate_hit_ratio($metrics) {
-        $hits = $metrics['hits'] ?? 0;
-        $misses = $metrics['misses'] ?? 0;
-        $total = $hits + $misses;
-        return $total > 0 ? round(($hits / $total) * 100, 2) : 0;
     }
 
     private function get_database_size() {

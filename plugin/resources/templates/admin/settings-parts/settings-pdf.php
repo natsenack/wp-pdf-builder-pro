@@ -45,19 +45,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                 </select>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row"><label for="pdf_builder_pdf_cache_enabled">Cache activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_pdf_cache_enabled]" value="0">
-                                    <input type="checkbox" id="pdf_builder_pdf_cache_enabled" name="pdf_builder_settings[pdf_builder_pdf_cache_enabled]" value="1" <?php checked($settings['pdf_builder_pdf_cache_enabled'] ?? '0', '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Améliorer les performances en mettant en cache les PDF</p>
-                            </td>
-                        </tr>
                         <script>
-                            // PDF Cache toggle functionality
                             (function() {
                                 const pdfCacheInput = document.getElementById('pdf_builder_pdf_cache_enabled');
                                 const pdfCacheLabel = pdfCacheInput ? pdfCacheInput.closest('label') : null;
@@ -76,18 +64,8 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                         pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
                                     });
                                     
-                                    // Handle label clicks (prevent double toggle)
-                                    pdfCacheLabel.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        if (pdfCacheInput.dataset.sliderClicked) {
-                                            delete pdfCacheInput.dataset.sliderClicked;
-                                            return;
-                                        }
-                                        pdfCacheInput.checked = !pdfCacheInput.checked;
-                                        pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                    });
-                                }
-                            })();
+                        </script>
+                    </table>
                         </script>
                     </table>
                 </section>

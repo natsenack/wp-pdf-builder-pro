@@ -231,7 +231,6 @@ if (!defined('ABSPATH')) {
                         <li>Configuration React</li>
                         <li>Paramètres de performance</li>
                         <li>Gestion des rôles</li>
-                        <li>Cache intelligent</li>
                         <li>Logs détaillés</li>
                         <li>Actions de maintenance</li>
                     </ul>
@@ -276,7 +275,6 @@ if (!defined('ABSPATH')) {
                         <li>Validation stricte des données</li>
                         <li>Protection CSRF et nonces</li>
                         <li>Sanitisation automatique</li>
-                        <li>Cache optimisé</li>
                         <li>Compression GZIP</li>
                         <li>Monitoring des ressources</li>
                         <li>Logs de sécurité détaillés</li>

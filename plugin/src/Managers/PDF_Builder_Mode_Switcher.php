@@ -306,7 +306,6 @@ class PdfBuilderModeSwitcher
             'current_mode' => $this->currentMode,
             'has_provider' => $this->currentProvider !== null,
             'has_renderer' => $this->renderer !== null,
-            'cache_enabled' => true,
         ];
     }
 

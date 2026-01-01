@@ -44,6 +44,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
+        add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
 
         // Hooks AJAX de maintenance
@@ -212,25 +213,30 @@ class AjaxHandler
      */
     public function ajaxLoadTemplate()
     {
-        // error_log('[PDF Builder] ajaxLoadTemplate called - START');
+        error_log('[PDF Builder] ajaxLoadTemplate called - START');
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
+        error_log('[PDF Builder] ajaxLoadTemplate - Template manager disponible: ' . ($template_manager ? 'OUI' : 'NON'));
+        
         if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+            error_log('[PDF Builder] ajaxLoadTemplate - Délégation au template manager');
             $template_manager->ajaxLoadTemplate();
             return;
         }
 
+        error_log('[PDF Builder] ajaxLoadTemplate - Utilisation fallback');
         // Implémentation de secours
         try {
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                error_log('[PDF Builder] ajaxLoadTemplate - Permissions insuffisantes');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_template_nonce')) {
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -274,7 +280,7 @@ class AjaxHandler
             // Vérifier le nonce depuis les paramètres GET ou POST
             $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
-            if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+            if (!wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -334,6 +340,41 @@ class AjaxHandler
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Récupérer les paramètres du canvas (pour l'éditeur React)
+     */
+    public function ajaxGetCanvasSettings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_template_nonce')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Récupérer les paramètres du canvas
+            if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
+                $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
+                $settings = $canvas_manager->getSettings(); // Use the correct method name
+                wp_send_json_success([
+                    'data' => $settings,
+                    'message' => 'Paramètres du canvas récupérés avec succès'
+                ]);
+            } else {
+                wp_send_json_error('Gestionnaire de canvas non disponible');
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la récupération des paramètres: ' . $e->getMessage());
         }
     }
 
@@ -1362,7 +1403,7 @@ class AjaxHandler
     private function checkRateLimit()
     {
         $user_id = get_current_user_id();
-        $transient_key = 'pdf_builder_rate_limit_' . $user_id;
+        $transient_key = 'pdf_builder_security_rate_limit_' . $user_id;
         $attempts = get_transient($transient_key);
 
         if ($attempts === false) {

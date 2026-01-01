@@ -176,16 +176,6 @@ class PDF_Builder_Update_Manager {
 
         $charset_collate = $wpdb->get_charset_collate();
 
-        // Table de cache
-        $table_cache = $wpdb->prefix . 'pdf_builder_cache';
-        $sql_cache = "CREATE TABLE $table_cache (
-            cache_key varchar(191) NOT NULL,
-            cache_value longtext NOT NULL,
-            expires bigint(20) NOT NULL,
-            PRIMARY KEY (cache_key),
-            KEY expires (expires)
-        ) $charset_collate;";
-
         // Table des erreurs
         $table_errors = $wpdb->prefix . 'pdf_builder_errors';
         $sql_errors = "CREATE TABLE $table_errors (
@@ -326,9 +316,6 @@ class PDF_Builder_Update_Manager {
             $wpdb->prefix . 'pdf_builder_templates' => [
                 'ADD INDEX idx_user_created (user_id, created_at)',
                 'ADD INDEX idx_name (name(50))'
-            ],
-            $wpdb->prefix . 'pdf_builder_cache' => [
-                'ADD INDEX idx_expires_key (expires, cache_key(50))'
             ],
             $wpdb->prefix . 'pdf_builder_errors' => [
                 'ADD INDEX idx_level_created (level, created_at)',
@@ -523,14 +510,7 @@ class PDF_Builder_Update_Manager {
      * Nettoie après une mise à jour
      */
     private function cleanup_after_update() {
-        // Vider le cache
-        if (function_exists('wp_cache_flush')) {
-            wp_cache_flush();
-        }
-
-        // Nettoyer les transients
-        global $wpdb;
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        // Cache system removed - no cache to clear
 
         // Régénérer les règles de réécriture si nécessaire
         flush_rewrite_rules();

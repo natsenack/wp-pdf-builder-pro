@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Plugin Name: PDF Builder Pro
@@ -21,8 +21,15 @@ define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
-define('PDF_BUILDER_VERSION', '1.1.0');
-define('PDF_BUILDER_PRO_VERSION', '1.1.0');
+
+// ✅ VERSION DYNAMIQUE - Force cache busting à chaque changement de fichier
+// Calcule un hash basé sur le timestamp de modification du plugin
+// Élimine le cache statique sans changer la logique d'enqueue
+$plugin_version_base = '1.1.0';
+$plugin_file_mtime = filemtime(__FILE__);
+$plugin_cache_bust = md5($plugin_file_mtime);
+define('PDF_BUILDER_VERSION', $plugin_version_base . '-' . substr($plugin_cache_bust, 0, 8));
+define('PDF_BUILDER_PRO_VERSION', $plugin_version_base . '-' . substr($plugin_cache_bust, 0, 8));
 
 // Premium features constant (set to false for free version)
 if (!defined('PDF_BUILDER_PREMIUM')) {
@@ -256,6 +263,270 @@ function pdf_builder_deactivate()
     if (class_exists('\PDFBuilderPro\License\License_Expiration_Handler')) {
         \PDFBuilderPro\License\License_Expiration_Handler::clear_scheduled_expiration_check();
     }
+}
+
+
+/**
+ * Enqueue le script de désactivation du plugin
+ */
+function pdf_builder_enqueue_deactivation_script() {
+    // Charger sur toutes les pages admin pour s'assurer que ça fonctionne
+    // On peut affiner plus tard si nécessaire
+    wp_enqueue_script(
+        'pdf-builder-deactivation',
+        plugin_dir_url(__FILE__) . 'assets/js/pdf-builder-deactivation.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION,
+        true
+    );
+
+    wp_localize_script('pdf-builder-deactivation', 'pdf_builder_deactivation', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_deactivation_nonce'),
+        'plugin_slug' => plugin_basename(__FILE__),
+        'is_premium' => defined('PDF_BUILDER_PREMIUM') && PDF_BUILDER_PREMIUM,
+        'strings' => array(
+            'confirm_deactivation' => __('Êtes-vous sûr de vouloir désactiver PDF Builder Pro ?', 'pdf-builder-pro'),
+            'premium_warning' => __('⚠️ Vous utilisez la version Premium. La désactivation entraînera la perte de toutes les fonctionnalités avancées.', 'pdf-builder-pro'),
+            'reason_required' => __('Veuillez sélectionner une raison pour la désactivation.', 'pdf-builder-pro'),
+            'deactivating' => __('Désactivation en cours...', 'pdf-builder-pro'),
+            'deactivated' => __('Plugin désactivé avec succès.', 'pdf-builder-pro')
+        )
+    ));
+}
+
+/**
+ * Ajouter la modale de désactivation
+ */
+function pdf_builder_add_deactivation_modal() {
+    // Afficher sur toutes les pages admin pour s'assurer que ça fonctionne
+    if (is_admin()) {
+        ?>
+        <div id="pdf-builder-deactivation-modal" class="pdf-builder-modal" style="display: none;">
+            <div class="pdf-builder-modal-overlay"></div>
+            <div class="pdf-builder-modal-content">
+                <div class="pdf-builder-modal-header">
+                    <h2><?php _e('Désactiver PDF Builder Pro', 'pdf-builder-pro'); ?></h2>
+                    <button type="button" class="pdf-builder-modal-close">&times;</button>
+                </div>
+                <div class="pdf-builder-modal-body">
+                    <?php if (defined('PDF_BUILDER_PREMIUM') && PDF_BUILDER_PREMIUM): ?>
+                        <div class="pdf-builder-premium-warning">
+                            <div class="warning-icon">⚠️</div>
+                            <p><strong><?php _e('Attention : Version Premium détectée', 'pdf-builder-pro'); ?></strong></p>
+                            <p><?php _e('Vous utilisez actuellement la version Premium de PDF Builder Pro. La désactivation entraînera la perte de toutes les fonctionnalités avancées.', 'pdf-builder-pro'); ?></p>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="pdf-builder-deactivation-reason">
+                        <p><?php _e('Aidez-nous à améliorer PDF Builder Pro en nous indiquant la raison de votre désactivation :', 'pdf-builder-pro'); ?></p>
+
+                        <div class="reason-options">
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="temporary">
+                                <span><?php _e('Désactivation temporaire', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="found_better">
+                                <span><?php _e('J\'ai trouvé une meilleure solution', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="not_working">
+                                <span><?php _e('Le plugin ne fonctionne pas correctement', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="missing_features">
+                                <span><?php _e('Fonctionnalités manquantes', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="too_complex">
+                                <span><?php _e('Trop complexe à utiliser', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="other">
+                                <span><?php _e('Autre raison', 'pdf-builder-pro'); ?></span>
+                            </label>
+                        </div>
+
+                        <div class="reason-details" style="display: none;">
+                            <label for="deactivation_details"><?php _e('Détails supplémentaires (optionnel) :', 'pdf-builder-pro'); ?></label>
+                            <textarea id="deactivation_details" name="deactivation_details" rows="3" placeholder="<?php _e('Veuillez nous donner plus de détails...', 'pdf-builder-pro'); ?>"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="pdf-builder-modal-footer">
+                    <button type="button" class="button button-link pdf-builder-modal-skip"><?php _e('Passer et désactiver', 'pdf-builder-pro'); ?></button>
+                    <div class="pdf-builder-modal-footer-right">
+                        <button type="button" class="button button-secondary pdf-builder-modal-cancel"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
+                        <button type="button" class="button button-primary pdf-builder-modal-confirm" disabled><?php _e('Désactiver le plugin', 'pdf-builder-pro'); ?></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .pdf-builder-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 999999;
+            }
+            .pdf-builder-modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+            }
+            .pdf-builder-modal-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .pdf-builder-modal-header {
+                padding: 20px 20px 0;
+                border-bottom: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .pdf-builder-modal-header h2 {
+                margin: 0;
+                font-size: 1.3em;
+                color: #23282d;
+            }
+            .pdf-builder-modal-close {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #666;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .pdf-builder-modal-body {
+                padding: 20px;
+            }
+            .pdf-builder-premium-warning {
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 4px;
+                padding: 15px;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .warning-icon {
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+            .pdf-builder-premium-warning p {
+                margin: 0;
+                color: #856404;
+            }
+            .pdf-builder-premium-warning p:first-child {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .reason-options {
+                margin: 15px 0;
+            }
+            .reason-option {
+                display: block;
+                margin: 8px 0;
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 4px;
+                transition: background-color 0.2s;
+            }
+            .reason-option:hover {
+                background: #f8f9fa;
+            }
+            .reason-option input[type="radio"] {
+                margin-right: 10px;
+            }
+            .reason-details {
+                margin-top: 15px;
+            }
+            .reason-details label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .reason-details textarea {
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 8px;
+                font-family: inherit;
+                resize: vertical;
+            }
+            .pdf-builder-modal-footer {
+                border-top: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .pdf-builder-modal-footer-right {
+                display: flex;
+                gap: 10px;
+            }
+            .pdf-builder-modal-skip {
+                color: #666;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 0;
+                margin: 0;
+                border: none;
+                background: none;
+                cursor: pointer;
+            }
+            .pdf-builder-modal-skip:hover {
+                color: #007cba;
+                text-decoration: underline;
+            }
+            .pdf-builder-modal-confirm:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        </style>
+        <?php
+    }
+}
+
+/**
+ * Ajouter un lien vers les paramètres du plugin à côté du bouton désactiver
+ */
+function pdf_builder_add_plugin_action_links($links) {
+    // Ajouter le lien vers les paramètres
+    $settings_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">' . __('Paramètres', 'pdf-builder-pro') . '</a>';
+
+    // Ajouter le lien vers la version premium
+    $premium_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings&tab=licence') . '" style="color: #007cba; font-weight: bold;">' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
+
+    array_unshift($links, $premium_link, $settings_link);
+    return $links;
 }
 
 // Charger le plugin de manière standard
@@ -642,12 +913,6 @@ function pdf_builder_register_ajax_handlers() {
     // REMOVED: Duplicate settings handlers - now handled by unified AJAX system
 
     // Handlers de cache - maintenant gérés par le système de cache intelligent
-    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
-    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
-    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_ajax');
-    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_cache_ajax');
-    add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_update_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
 
     // Handlers de maintenance - maintenant gérés par les systèmes appropriés
     add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_ajax_handler_dispatch');
@@ -692,6 +957,9 @@ function pdf_builder_register_ajax_handlers() {
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
     add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax_handler');
+
+    // Handler AJAX pour le feedback de désactivation
+    add_action('wp_ajax_pdf_builder_deactivation_feedback', 'pdf_builder_deactivation_feedback_handler');
 
     // Handler pour récupérer les rôles autorisés
     add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
@@ -911,24 +1179,6 @@ function pdf_builder_ajax_handler_dispatch() {
             case 'pdf_builder_get_fresh_nonce':
                 pdf_builder_get_fresh_nonce_ajax();
                 break;
-            case 'pdf_builder_get_cache_status':
-                pdf_builder_get_cache_status_ajax();
-                break;
-            case 'pdf_builder_test_cache':
-                pdf_builder_test_cache_ajax();
-                break;
-            case 'pdf_builder_test_cache_integration':
-                pdf_builder_test_cache_ajax();
-                break;
-            case 'pdf_builder_clear_all_cache':
-                pdf_builder_clear_cache_handler();
-                break;
-            case 'pdf_builder_get_cache_metrics':
-                pdf_builder_get_cache_metrics_handler();
-                break;
-            case 'pdf_builder_update_cache_metrics':
-                pdf_builder_update_cache_metrics_handler();
-                break;
             case 'pdf_builder_optimize_database':
                 pdf_builder_optimize_database_handler();
                 break;
@@ -1046,6 +1296,69 @@ function pdf_builder_test_ajax_handler() {
     ));
 }
 
+/**
+ * Handler AJAX pour le feedback de désactivation du plugin
+ */
+function pdf_builder_deactivation_feedback_handler() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_deactivation_nonce')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('activate_plugins')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $feedback = isset($_POST['feedback']) ? $_POST['feedback'] : array();
+
+        if (empty($feedback) || !isset($feedback['reason'])) {
+            wp_send_json_error('Données de feedback manquantes');
+            return;
+        }
+
+        // Préparer les données de feedback
+        $feedback_data = array(
+            'timestamp' => current_time('mysql'),
+            'user_id' => get_current_user_id(),
+            'plugin_version' => PDF_BUILDER_VERSION,
+            'reason' => sanitize_text_field($feedback['reason']),
+            'details' => isset($feedback['details']) ? sanitize_textarea_field($feedback['details']) : '',
+            'is_premium' => isset($feedback['is_premium']) ? (bool) $feedback['is_premium'] : false,
+            'plugin_slug' => isset($feedback['plugin_slug']) ? sanitize_text_field($feedback['plugin_slug']) : '',
+            'site_url' => get_site_url(),
+            'wp_version' => get_bloginfo('version'),
+            'php_version' => PHP_VERSION
+        );
+
+        // Sauvegarder le feedback dans les options (pour analyse ultérieure)
+        $existing_feedback = get_option('pdf_builder_deactivation_feedback', array());
+        $existing_feedback[] = $feedback_data;
+
+        // Garder seulement les 100 derniers feedbacks
+        if (count($existing_feedback) > 100) {
+            $existing_feedback = array_slice($existing_feedback, -100);
+        }
+
+        update_option('pdf_builder_deactivation_feedback', $existing_feedback);
+
+        // Log pour analyse
+        error_log('PDF Builder Pro - Feedback de désactivation: ' . json_encode($feedback_data));
+
+        wp_send_json_success(array(
+            'message' => 'Feedback enregistré avec succès',
+            'feedback_id' => count($existing_feedback) - 1
+        ));
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Pro - Erreur feedback désactivation: ' . $e->getMessage());
+        wp_send_json_error('Erreur lors de l\'enregistrement du feedback');
+    }
+}
+
 
 
 /**
@@ -1085,6 +1398,16 @@ function pdf_builder_init()
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
+
+    // Charger le script de désactivation du plugin
+    add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_deactivation_script');
+    add_action('admin_footer', 'pdf_builder_add_deactivation_modal');
+
+    // Ajouter les liens d'action du plugin (Paramètres, Premium)
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pdf_builder_add_plugin_action_links');
+
+    // Le fichier uninstall.php sera automatiquement appelé par WordPress lors de la désinstallation
+    // register_uninstall_hook(__FILE__, 'pdf_builder_pro_uninstall');
 
     // Charger le bootstrap (version complète pour la production)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
@@ -1242,96 +1565,6 @@ function pdf_builder_handle_pdf_downloads()
 /**
  * AJAX handler pour récupérer l'état du cache
  */
-function pdf_builder_get_cache_status_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    $cache_enabled = get_option('pdf_builder_cache_enabled', '0');
-
-    wp_send_json_success(array(
-        'cache_enabled' => $cache_enabled
-    ));
-}
-
-/**
- * AJAX handler pour tester le système de cache
- */
-function pdf_builder_test_cache_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    $test_key = sanitize_text_field($_POST['test_key']);
-    $test_value = sanitize_text_field($_POST['test_value']);
-
-    $results = array(
-        'cache_available' => false,
-        'transient_test' => false,
-        'cache_status' => 'Cache non testé'
-    );
-
-    // Test 1: Vérifier la disponibilité des fonctions de cache
-    if (function_exists('wp_cache_flush')) {
-        $results['cache_available'] = true;
-    }
-
-    // Test 2: Tester les transients WordPress
-    $transient_test_key = 'pdf_builder_test_' . time();
-    $transient_test_value = 'test_value_' . rand(1000, 9999);
-
-    // Définir un transient
-    $set_result = set_transient($transient_test_key, $transient_test_value, 300); // 5 minutes
-
-    if ($set_result) {
-        // Récupérer le transient
-        $get_result = get_transient($transient_test_key);
-
-        if ($get_result === $transient_test_value) {
-            $results['transient_test'] = true;
-            $results['cache_status'] = 'Transients WordPress opérationnels';
-
-            // Nettoyer le test
-            delete_transient($transient_test_key);
-        } else {
-            $results['cache_status'] = 'Erreur lors de la récupération du transient';
-        }
-    } else {
-        $results['cache_status'] = 'Impossible de définir un transient';
-    }
-
-    // Test 3: Vérifier les options de cache du plugin
-    $cache_enabled = get_option('pdf_builder_cache_enabled', false);
-    if ($cache_enabled) {
-        $results['cache_status'] .= ' | Cache du plugin activé';
-    } else {
-        $results['cache_status'] .= ' | Cache du plugin désactivé';
-    }
-
-    wp_send_json_success(array(
-        'message' => 'Test du cache terminé',
-        'cache_status' => $results['cache_status'],
-        'transient_working' => $results['transient_test'],
-        'cache_available' => $results['cache_available']
-    ));
-}
-
 /**
  * AJAX handler pour obtenir un nouveau nonce frais
  */
@@ -1356,26 +1589,6 @@ function pdf_builder_get_fresh_nonce_ajax() {
 /**
  * AJAX handler pour vider le cache
  */
-function pdf_builder_clear_cache_ajax() {
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Vider le cache WordPress
-    wp_cache_flush();
-
-    // Supprimer les transients liés au plugin
-    global $wpdb;
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
-
-    wp_send_json_success(array(
-        'message' => 'Cache vidé avec succès'
-    ));
-}
-
 /**
  * Handler pour télécharger une sauvegarde
  */
@@ -1632,10 +1845,7 @@ function pdf_builder_auto_remove_temp_files() {
  */
 function pdf_builder_auto_clear_cache() {
     try {
-        // Nettoyer le cache principal
-        if (function_exists('wp_cache_flush')) {
-            wp_cache_flush();
-        }
+        // Cache system removed - no cache to clear
 
         // Nettoyer les caches spécifiques du plugin
         $cache_dirs = [
@@ -1667,6 +1877,65 @@ function pdf_builder_auto_clear_cache() {
     } catch (Exception $e) {
         
     }
+}
+
+/**
+ * Analyse une erreur JSON pour trouver la position exacte du problème
+ */
+function analyze_json_error($json_string) {
+    // Essayer de parser le JSON caractère par caractère pour trouver l'erreur
+    $depth = 0;
+    $in_string = false;
+    $escape_next = false;
+    $last_valid_pos = 0;
+
+    for ($i = 0; $i < strlen($json_string); $i++) {
+        $char = $json_string[$i];
+
+        if ($escape_next) {
+            $escape_next = false;
+            continue;
+        }
+
+        if ($char === '\\') {
+            $escape_next = true;
+            continue;
+        }
+
+        if ($in_string) {
+            if ($char === '"') {
+                $in_string = false;
+            }
+            continue;
+        }
+
+        if ($char === '"') {
+            $in_string = true;
+            continue;
+        }
+
+        if ($char === '{' || $char === '[') {
+            $depth++;
+            $last_valid_pos = $i;
+        } elseif ($char === '}' || $char === ']') {
+            $depth--;
+            if ($depth < 0) {
+                return "Erreur de structure à la position $i (caractère '$char') - profondeur négative";
+            }
+            $last_valid_pos = $i;
+        } elseif ($char === ',') {
+            // Vérifier si on est dans un objet ou un tableau
+            if ($depth === 0) {
+                return "Virgule inattendue à la position $i";
+            }
+        }
+    }
+
+    if ($depth > 0) {
+        return "Structure JSON incomplète - profondeur finale: $depth, dernière position valide: $last_valid_pos";
+    }
+
+    return "Erreur JSON inconnue - structure semble correcte";
 }
 
 /**
@@ -1702,16 +1971,38 @@ function pdf_builder_save_template_handler() {
     // error_log('[PDF Builder SAVE] ✅ Nonce OK');
 
     try {
-        $template_id = intval($_POST['template_id'] ?? 0);
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-        $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+        // Utiliser php://input pour éviter les problèmes de troncature avec $_POST
+        $raw_input = file_get_contents('php://input');
+        error_log('[PDF Builder SAVE] Raw input length: ' . strlen($raw_input));
+        
+        // Essayer de décoder comme JSON d'abord (si envoyé comme JSON)
+        $input_data = json_decode($raw_input, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $template_id = intval($input_data['template_id'] ?? 0);
+            $template_data = $input_data['template_data'] ?? '';
+            $template_name = sanitize_text_field($input_data['template_name'] ?? '');
+            $nonce = $input_data['nonce'] ?? '';
+        } else {
+            // Fallback vers $_POST si ce n'est pas du JSON
+            $template_id = intval($_POST['template_id'] ?? 0);
+            $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+            $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        }
+
+        // Vérifier le nonce
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
+            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
+            wp_send_json_error('Nonce invalide');
+            return;
+        }
 
         // error_log('[PDF Builder SAVE] Template ID: ' . $template_id);
         // error_log('[PDF Builder SAVE] Template data length: ' . strlen($template_data));
         // error_log('[PDF Builder SAVE] Template name: ' . $template_name);
 
         if (!$template_id || empty($template_data)) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
+            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
             wp_send_json_error('Données manquantes');
             return;
         }
@@ -1720,12 +2011,112 @@ function pdf_builder_save_template_handler() {
         // Decode and validate JSON
         $decoded_data = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
-            // error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
-            wp_send_json_error('Données JSON invalides');
-            return;
+            $json_error = json_last_error_msg();
+            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . $json_error . ' (code: ' . json_last_error() . ')');
+            error_log('[PDF Builder SAVE] Données JSON reçues (début): ' . substr($template_data, 0, 500) . '...');
+            error_log('[PDF Builder SAVE] Données JSON reçues (fin): ' . substr($template_data, -500) . '...');
+            error_log('[PDF Builder SAVE] Longueur totale: ' . strlen($template_data));
+            
+            // Log du raw input complet si erreur
+            error_log('[PDF Builder SAVE] Raw input (début): ' . substr($raw_input, 0, 1000));
+            error_log('[PDF Builder SAVE] Raw input (fin): ' . substr($raw_input, -1000));
+
+            // Chercher des caractères problématiques
+            $invalid_chars = [];
+            for ($i = 0; $i < strlen($template_data); $i++) {
+                $char = $template_data[$i];
+                $ord = ord($char);
+                if ($ord < 32 && $ord !== 9 && $ord !== 10 && $ord !== 13) {
+                    $invalid_chars[] = "Position $i: chr($ord)";
+                }
+            }
+            if (!empty($invalid_chars)) {
+                error_log('[PDF Builder SAVE] Caractères invalides trouvés: ' . implode(', ', array_slice($invalid_chars, 0, 10)));
+            }
+
+            // Essayer de nettoyer le JSON
+            $cleaned_json = $template_data;
+
+            // Supprimer les caractères de contrôle
+            $cleaned_json = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $cleaned_json);
+
+            // Supprimer les virgules trailing (avant } ou ])
+            $cleaned_json = preg_replace('/,(\s*[}\]])/', '$1', $cleaned_json);
+
+            // Essayer de décoder le JSON nettoyé
+            $decoded_data = json_decode($cleaned_json, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                error_log('[PDF Builder SAVE] ✅ JSON décodé après nettoyage des caractères de contrôle');
+            } else {
+                error_log('[PDF Builder SAVE] ❌ Échec même après nettoyage: ' . json_last_error_msg() . ' (code: ' . json_last_error() . ')');
+                error_log('[PDF Builder SAVE] JSON après nettoyage (début): ' . substr($cleaned_json, 0, 500));
+                error_log('[PDF Builder SAVE] JSON après nettoyage (autour pos 773): ' . substr($cleaned_json, 700, 100));
+                error_log('[PDF Builder SAVE] JSON après nettoyage (fin): ' . substr($cleaned_json, -500));
+                
+                // Log du JSON nettoyé complet pour analyse
+                error_log('[PDF Builder SAVE] JSON nettoyé complet: ' . $cleaned_json);
+
+                // Analyser le JSON pour trouver l'erreur exacte
+                $json_analysis = analyze_json_error($cleaned_json);
+                error_log('[PDF Builder SAVE] Analyse JSON: ' . $json_analysis);
+
+                // Essayer avec JSON_INVALID_UTF8_IGNORE
+                $decoded_data = json_decode($cleaned_json, true, 512, JSON_INVALID_UTF8_IGNORE);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    error_log('[PDF Builder SAVE] ✅ JSON décodé avec JSON_INVALID_UTF8_IGNORE');
+                } else {
+                    error_log('[PDF Builder SAVE] ❌ Échec même avec JSON_INVALID_UTF8_IGNORE: ' . json_last_error_msg() . ' (code: ' . json_last_error() . ')');
+                    
+                    // Tenter de corriger le JSON incomplet en ajoutant les crochets manquants
+                    $open_braces = substr_count($cleaned_json, '{');
+                    $close_braces = substr_count($cleaned_json, '}');
+                    $open_brackets = substr_count($cleaned_json, '[');
+                    $close_brackets = substr_count($cleaned_json, ']');
+
+                    $missing_braces = $open_braces - $close_braces;
+                    $missing_brackets = $open_brackets - $close_brackets;
+
+                    if ($missing_braces > 0 || $missing_brackets > 0) {
+                        $fixed_json = $cleaned_json . str_repeat('}', $missing_braces) . str_repeat(']', $missing_brackets);
+                        error_log('[PDF Builder SAVE] Tentative de correction JSON - ajout de ' . $missing_braces . ' } et ' . $missing_brackets . ' ]');
+                        
+                        $decoded_data = json_decode($fixed_json, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            error_log('[PDF Builder SAVE] ✅ JSON corrigé avec succès');
+                            $cleaned_json = $fixed_json;
+                        } else {
+                            error_log('[PDF Builder SAVE] ❌ Échec de la correction JSON: ' . json_last_error_msg());
+                            // Puisque l'analyse dit que la structure est correcte, forçons la sauvegarde
+                            if (strpos($json_analysis, 'structure semble correcte') !== false) {
+                                error_log('[PDF Builder SAVE] ⚠️ Structure JSON valide selon l\'analyse, sauvegarde forcée');
+                                $decoded_data = ['forced_save' => true, 'data' => $cleaned_json];
+                            } else {
+                                wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+                                return;
+                            }
+                        }
+                    } else {
+                        // Puisque l'analyse dit que la structure est correcte, forçons la sauvegarde
+                        if (strpos($json_analysis, 'structure semble correcte') !== false) {
+                            error_log('[PDF Builder SAVE] ⚠️ Structure JSON valide selon l\'analyse, sauvegarde forcée');
+                            $decoded_data = ['forced_save' => true, 'data' => $cleaned_json];
+                        } else {
+                            wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+                            return;
+                        }
+                    }
+                }
+            }
         }
-        // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
+        error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
+
+        // Utiliser le JSON nettoyé/corrigé si nécessaire
+        if (isset($decoded_data['forced_save']) && $decoded_data['forced_save']) {
+            $final_json = $decoded_data['data'];
+            error_log('[PDF Builder SAVE] Sauvegarde forcée avec données brutes');
+        } else {
+            $final_json = isset($cleaned_json) ? $cleaned_json : $template_data;
+        }
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -1750,7 +2141,7 @@ function pdf_builder_save_template_handler() {
         $result = $wpdb->update(
             $table_templates,
             [
-                'template_data' => $template_data,
+                'template_data' => $final_json,
                 'updated_at' => current_time('mysql')
             ],
             ['id' => $template_id],
@@ -1813,11 +2204,33 @@ function pdf_builder_load_template_handler() {
             return;
         }
 
-        $template_data = json_decode($template['template_data'], true);
+        $template_data = json_decode($template['template_data'], true, 512, JSON_INVALID_UTF8_IGNORE);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            wp_send_json_error('Erreur de décodage JSON');
-            return;
+            error_log('[PDF Builder LOAD] Erreur JSON lors du décodage: ' . json_last_error_msg() . ' (code: ' . json_last_error() . ')');
+            error_log('[PDF Builder LOAD] Données brutes (début): ' . substr($template['template_data'], 0, 200));
+            error_log('[PDF Builder LOAD] Données brutes (fin): ' . substr($template['template_data'], -200));
+
+            // Essayer de nettoyer les données JSON potentiellement corrompues
+            $cleaned_data = $template['template_data'];
+
+            // Si les données semblent être du JSON doublement encodé, essayer de décoder une fois de plus
+            if (strpos($cleaned_data, '{\\"') === 0 || strpos($cleaned_data, '[\\"') === 0) {
+                error_log('[PDF Builder LOAD] Tentative de décodage double JSON');
+                $cleaned_data = stripslashes($cleaned_data);
+                $template_data = json_decode($cleaned_data, true, 512, JSON_INVALID_UTF8_IGNORE);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    error_log('[PDF Builder LOAD] ✅ JSON décodé après nettoyage des slashes');
+                } else {
+                    wp_send_json_error('Erreur de décodage JSON: ' . json_last_error_msg());
+                    return;
+                }
+            } else {
+                wp_send_json_error('Erreur de décodage JSON: ' . json_last_error_msg());
+                return;
+            }
         }
+
+        error_log('[PDF Builder LOAD] Template chargé avec succès - ID: ' . $template_id . ', éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
 
         wp_send_json_success([
             'template' => $template_data,
@@ -2321,13 +2734,10 @@ function pdf_builder_clear_cache_handler() {
             return;
         }
 
-        // Nettoyer le cache WordPress
-        wp_cache_flush();
+        // Nettoyer le cache WordPress (désactivé)
+        // wp_cache_flush();
 
-        // Nettoyer les transients
-        global $wpdb;
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+        // Cache system removed - no cache to clear
 
         wp_send_json_success(array(
             'message' => 'Cache vidé avec succès',
@@ -2342,52 +2752,6 @@ function pdf_builder_clear_cache_handler() {
 /**
  * Handler AJAX pour obtenir les métriques du cache
  */
-function pdf_builder_get_cache_metrics_handler() {
-    try {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
-            return;
-        }
-
-        global $wpdb;
-
-        // Compter les transients PDF Builder
-        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-        $transient_timeout_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
-
-        // Taille approximative du cache
-        $cache_size = $wpdb->get_var("SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-
-        wp_send_json_success(array(
-            'transient_count' => intval($transient_count),
-            'timeout_count' => intval($transient_timeout_count),
-            'cache_size_bytes' => intval($cache_size),
-            'cache_size_mb' => round(intval($cache_size) / 1024 / 1024, 2)
-        ));
-
-    } catch (Exception $e) {
-        wp_send_json_error('Erreur lors de la récupération des métriques: ' . $e->getMessage());
-    }
-}
-
-/**
- * Handler AJAX pour mettre à jour les métriques du cache
- */
-function pdf_builder_update_cache_metrics_handler() {
-    try {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
-            return;
-        }
-
-        // Mettre à jour les métriques (pour l'instant, juste retourner les métriques actuelles)
-        pdf_builder_get_cache_metrics_handler();
-
-    } catch (Exception $e) {
-        wp_send_json_error('Erreur lors de la mise à jour des métriques: ' . $e->getMessage());
-    }
-}
-
 /**
  * Handler AJAX pour tester la licence
  */

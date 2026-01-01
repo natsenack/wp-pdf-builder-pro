@@ -203,7 +203,6 @@ class PDF_Builder_Diagnostic_Tool {
 
         $tables = [
             'pdf_builder_templates',
-            'pdf_builder_cache',
             'pdf_builder_errors',
             'pdf_builder_performance_metrics',
             'pdf_builder_performance_issues',

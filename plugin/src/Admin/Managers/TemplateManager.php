@@ -186,7 +186,17 @@ class TemplateManager
             $template_data = json_decode($json_data, true);
 
             if (json_last_error() === JSON_ERROR_NONE) {
-                update_post_meta($post_id, '_pdf_template_data', $template_data);
+                $template_data_json = wp_json_encode($template_data);
+                if ($template_data_json !== false) {
+                    update_post_meta($post_id, '_pdf_template_data', $template_data_json);
+                } else {
+                    add_settings_error(
+                        'pdf_template_data',
+                        'json_encode_error',
+                        __('Erreur lors de l\'encodage JSON des données du template.', 'pdf-builder-pro'),
+                        'error'
+                    );
+                }
             } else {
                 // Erreur JSON - sauvegarder quand même pour correction
                 update_post_meta($post_id, '_pdf_template_data', $json_data);
@@ -250,12 +260,18 @@ class TemplateManager
             }
 
             // Créer ou mettre à jour le post template
+            $template_data_json = wp_json_encode($template_data);
+            if ($template_data_json === false) {
+                wp_send_json_error('Erreur lors de l\'encodage JSON des données du template');
+                return;
+            }
+
             $post_data = [
                 'post_title' => $template_name,
                 'post_type' => 'pdf_template',
                 'post_status' => 'publish',
                 'meta_input' => [
-                    '_pdf_template_data' => $template_data,
+                    '_pdf_template_data' => $template_data_json,
                     '_pdf_template_type' => 'custom',
                 ]
             ];
@@ -301,7 +317,7 @@ class TemplateManager
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_template_nonce')) {
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -321,6 +337,15 @@ class TemplateManager
                 // $this->debug_log('Template data not found for ID: ' . $template_id);
                 wp_send_json_error('Template introuvable');
                 return;
+            }
+
+            // Décoder les données JSON si elles sont stockées en JSON
+            if (is_string($template_data)) {
+                $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $template_data = $decoded_data;
+                }
+                // Si le décodage échoue, garder les données telles quelles (compatibilité legacy)
             }
 
             // $this->debug_log('Template loaded successfully, data size: ' . strlen(json_encode($template_data)));
@@ -359,13 +384,24 @@ class TemplateManager
         $result = [];
 
         foreach ($templates as $template) {
+            $template_data_raw = get_post_meta($template->ID, '_pdf_template_data', true);
+            
+            // Décoder les données JSON si nécessaire
+            $template_data = $template_data_raw;
+            if (is_string($template_data_raw)) {
+                $decoded = json_decode($template_data_raw, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $template_data = $decoded;
+                }
+            }
+
             $result[] = [
                 'id' => $template->ID,
                 'name' => $template->post_title,
                 'type' => get_post_meta($template->ID, '_pdf_template_type', true),
                 'is_default' => get_post_meta($template->ID, '_pdf_template_default', true) === '1',
                 'categories' => get_post_meta($template->ID, '_pdf_template_categories', true),
-                'data' => get_post_meta($template->ID, '_pdf_template_data', true),
+                'data' => $template_data,
             ];
         }
 
@@ -405,10 +441,22 @@ class TemplateManager
         }
 
         $template = $templates[0];
+        
+        $template_data_raw = get_post_meta($template->ID, '_pdf_template_data', true);
+        
+        // Décoder les données JSON si nécessaire
+        $template_data = $template_data_raw;
+        if (is_string($template_data_raw)) {
+            $decoded = json_decode($template_data_raw, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $template_data = $decoded;
+            }
+        }
+        
         return [
             'id' => $template->ID,
             'name' => $template->post_title,
-            'data' => get_post_meta($template->ID, '_pdf_template_data', true),
+            'data' => $template_data,
         ];
     }
 
