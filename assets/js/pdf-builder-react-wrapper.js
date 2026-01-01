@@ -1,6 +1,7 @@
 /**
  * PDF Builder React - Webpack Bundle Wrapper
  * This file is the webpack entry point that will be assigned to pdfBuilderReact variable
+ * Version: 1.1.0-fix
  */
 
 // Le module principal sera chargé séparément et assigné à window.pdfBuilderReact
