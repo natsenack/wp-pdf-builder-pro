@@ -15,7 +15,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'assets/js/dist'),
     filename: '[name].js',
-    clean: true
+    clean: true,
+    library: {
+      type: 'umd'
+    }
   },
   module: {
     rules: [
