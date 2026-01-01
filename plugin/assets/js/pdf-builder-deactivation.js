@@ -6,12 +6,16 @@
 jQuery(document).ready(function($) {
     'use strict';
 
+    // Debug: vérifier que le script se charge
+    console.log('PDF Builder Deactivation: Script loaded', pdf_builder_deactivation);
+
     var modal = $('#pdf-builder-deactivation-modal');
     var deactivateLink = null;
     var selectedReason = null;
 
-    // Intercept deactivate link clicks
-    $(document).on('click', 'a[href*="action=deactivate&plugin=' + pdf_builder_deactivation.plugin_slug + '"]', function(e) {
+    // Intercept deactivate link clicks - utiliser un sélecteur plus général
+    $(document).on('click', 'a[href*="action=deactivate"][href*="plugin=' + pdf_builder_deactivation.plugin_slug + '"]', function(e) {
+        console.log('PDF Builder Deactivation: Deactivate link clicked', this);
         e.preventDefault();
         deactivateLink = $(this);
         showDeactivationModal();

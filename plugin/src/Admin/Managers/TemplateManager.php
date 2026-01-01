@@ -186,7 +186,17 @@ class TemplateManager
             $template_data = json_decode($json_data, true);
 
             if (json_last_error() === JSON_ERROR_NONE) {
-                update_post_meta($post_id, '_pdf_template_data', $template_data);
+                $template_data_json = wp_json_encode($template_data);
+                if ($template_data_json !== false) {
+                    update_post_meta($post_id, '_pdf_template_data', $template_data_json);
+                } else {
+                    add_settings_error(
+                        'pdf_template_data',
+                        'json_encode_error',
+                        __('Erreur lors de l\'encodage JSON des données du template.', 'pdf-builder-pro'),
+                        'error'
+                    );
+                }
             } else {
                 // Erreur JSON - sauvegarder quand même pour correction
                 update_post_meta($post_id, '_pdf_template_data', $json_data);
@@ -250,12 +260,18 @@ class TemplateManager
             }
 
             // Créer ou mettre à jour le post template
+            $template_data_json = wp_json_encode($template_data);
+            if ($template_data_json === false) {
+                wp_send_json_error('Erreur lors de l\'encodage JSON des données du template');
+                return;
+            }
+
             $post_data = [
                 'post_title' => $template_name,
                 'post_type' => 'pdf_template',
                 'post_status' => 'publish',
                 'meta_input' => [
-                    '_pdf_template_data' => $template_data,
+                    '_pdf_template_data' => $template_data_json,
                     '_pdf_template_type' => 'custom',
                 ]
             ];

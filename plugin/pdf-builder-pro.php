@@ -270,39 +270,37 @@ function pdf_builder_deactivate()
  * Enqueue le script de désactivation du plugin
  */
 function pdf_builder_enqueue_deactivation_script() {
-    // Charger seulement sur la page des plugins
-    $screen = get_current_screen();
-    if ($screen && $screen->id === 'plugins') {
-        wp_enqueue_script(
-            'pdf-builder-deactivation',
-            plugin_dir_url(__FILE__) . 'assets/js/pdf-builder-deactivation.js',
-            array('jquery'),
-            PDF_BUILDER_VERSION,
-            true
-        );
+    // Charger sur toutes les pages admin pour s'assurer que ça fonctionne
+    // On peut affiner plus tard si nécessaire
+    wp_enqueue_script(
+        'pdf-builder-deactivation',
+        plugin_dir_url(__FILE__) . 'assets/js/pdf-builder-deactivation.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION,
+        true
+    );
 
-        wp_localize_script('pdf-builder-deactivation', 'pdf_builder_deactivation', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_deactivation_nonce'),
-            'plugin_slug' => plugin_basename(__FILE__),
-            'is_premium' => defined('PDF_BUILDER_PREMIUM') && PDF_BUILDER_PREMIUM,
-            'strings' => array(
-                'confirm_deactivation' => __('Êtes-vous sûr de vouloir désactiver PDF Builder Pro ?', 'pdf-builder-pro'),
-                'premium_warning' => __('⚠️ Vous utilisez la version Premium. La désactivation entraînera la perte de toutes les fonctionnalités avancées.', 'pdf-builder-pro'),
-                'reason_required' => __('Veuillez sélectionner une raison pour la désactivation.', 'pdf-builder-pro'),
-                'deactivating' => __('Désactivation en cours...', 'pdf-builder-pro'),
-                'deactivated' => __('Plugin désactivé avec succès.', 'pdf-builder-pro')
-            )
-        ));
-    }
+    wp_localize_script('pdf-builder-deactivation', 'pdf_builder_deactivation', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_deactivation_nonce'),
+        'plugin_slug' => plugin_basename(__FILE__),
+        'is_premium' => defined('PDF_BUILDER_PREMIUM') && PDF_BUILDER_PREMIUM,
+        'strings' => array(
+            'confirm_deactivation' => __('Êtes-vous sûr de vouloir désactiver PDF Builder Pro ?', 'pdf-builder-pro'),
+            'premium_warning' => __('⚠️ Vous utilisez la version Premium. La désactivation entraînera la perte de toutes les fonctionnalités avancées.', 'pdf-builder-pro'),
+            'reason_required' => __('Veuillez sélectionner une raison pour la désactivation.', 'pdf-builder-pro'),
+            'deactivating' => __('Désactivation en cours...', 'pdf-builder-pro'),
+            'deactivated' => __('Plugin désactivé avec succès.', 'pdf-builder-pro')
+        )
+    ));
 }
 
 /**
  * Ajouter la modale de désactivation
  */
 function pdf_builder_add_deactivation_modal() {
-    $screen = get_current_screen();
-    if ($screen && $screen->id === 'plugins') {
+    // Afficher sur toutes les pages admin pour s'assurer que ça fonctionne
+    if (is_admin()) {
         ?>
         <div id="pdf-builder-deactivation-modal" class="pdf-builder-modal" style="display: none;">
             <div class="pdf-builder-modal-overlay"></div>
@@ -531,7 +529,6 @@ function pdf_builder_add_plugin_action_links($links) {
     array_unshift($links, $premium_link, $settings_link);
     return $links;
 }
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pdf_builder_add_plugin_action_links');
 
 // Charger le plugin de manière standard
 if (function_exists('add_action')) {
@@ -1406,6 +1403,9 @@ function pdf_builder_init()
     // Charger le script de désactivation du plugin
     add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_deactivation_script');
     add_action('admin_footer', 'pdf_builder_add_deactivation_modal');
+
+    // Ajouter les liens d'action du plugin (Paramètres, Premium)
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pdf_builder_add_plugin_action_links');
 
     // Le fichier uninstall.php sera automatiquement appelé par WordPress lors de la désinstallation
     // register_uninstall_hook(__FILE__, 'pdf_builder_pro_uninstall');
