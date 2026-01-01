@@ -80,5 +80,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   }
 }
 
-// Export pour webpack (sera assigné à la variable globale pdfBuilderReact)
-module.exports = pdfBuilderReact;
+// Assign to global window object for webpack library target
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = pdfBuilderReact;
+}
