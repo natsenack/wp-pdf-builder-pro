@@ -512,6 +512,22 @@ function pdf_builder_add_plugin_action_links($links) {
 }
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pdf_builder_add_plugin_action_links');
 
+/**
+ * Modifier le lien de désactivation pour ajouter une classe identifiable
+ */
+function pdf_builder_modify_deactivate_link($actions, $plugin_file, $plugin_data, $context) {
+    if ($plugin_file === plugin_basename(__FILE__) && isset($actions['deactivate'])) {
+        // Ajouter une classe au lien de désactivation pour l'identifier facilement
+        $actions['deactivate'] = str_replace(
+            '<a href=',
+            '<a class="pdf-builder-deactivate-link" href=',
+            $actions['deactivate']
+        );
+    }
+    return $actions;
+}
+add_filter('plugin_action_links', 'pdf_builder_modify_deactivate_link', 10, 4);
+
 // Charger le plugin de manière standard
 if (function_exists('add_action')) {
     add_action('plugins_loaded', 'pdf_builder_init', 1); // Priorité 1 pour charger l'autoloader en premier
