@@ -213,19 +213,24 @@ class AjaxHandler
      */
     public function ajaxLoadTemplate()
     {
-        // error_log('[PDF Builder] ajaxLoadTemplate called - START');
+        error_log('[PDF Builder] ajaxLoadTemplate called - START');
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
+        error_log('[PDF Builder] ajaxLoadTemplate - Template manager disponible: ' . ($template_manager ? 'OUI' : 'NON'));
+        
         if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+            error_log('[PDF Builder] ajaxLoadTemplate - Délégation au template manager');
             $template_manager->ajaxLoadTemplate();
             return;
         }
 
+        error_log('[PDF Builder] ajaxLoadTemplate - Utilisation fallback');
         // Implémentation de secours
         try {
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                error_log('[PDF Builder] ajaxLoadTemplate - Permissions insuffisantes');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
