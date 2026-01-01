@@ -100,11 +100,11 @@ try {
 
     # Nettoyer les anciens builds
     Write-Host "   🧹 Nettoyage des anciens builds..." -ForegroundColor Yellow
-    if (Test-Path "plugin/assets/js/dist") {
-        Remove-Item "plugin/assets/js/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
+    if (Test-Path "plugin/resources/assets/js/dist") {
+        Remove-Item "plugin/resources/assets/js/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
     }
-    if (Test-Path "plugin/assets/css/dist") {
-        Remove-Item "plugin/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
+    if (Test-Path "plugin/resources/assets/css/dist") {
+        Remove-Item "plugin/resources/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     # Build des assets
@@ -118,10 +118,12 @@ try {
     # Copier les assets compilés
     Write-Host "   📋 Copie des assets vers plugin..." -ForegroundColor Yellow
     if (Test-Path "assets/js/dist") {
-        Copy-Item "assets/js/dist/*" "plugin/resources/assets/js/" -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Path "plugin/resources/assets/js/dist" -Force -ErrorAction SilentlyContinue | Out-Null
+        Copy-Item "assets/js/dist/*" "plugin/resources/assets/js/dist/" -Recurse -Force -ErrorAction SilentlyContinue
     }
     if (Test-Path "assets/css/dist") {
-        Copy-Item "assets/css/dist/*" "plugin/resources/assets/css/" -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Path "plugin/resources/assets/css/dist" -Force -ErrorAction SilentlyContinue | Out-Null
+        Copy-Item "assets/css/dist/*" "plugin/resources/assets/css/dist/" -Recurse -Force -ErrorAction SilentlyContinue
     }
     Write-Host "   ✅ Assets copiés" -ForegroundColor Green
 
