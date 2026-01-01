@@ -265,6 +265,238 @@ function pdf_builder_deactivate()
     }
 }
 
+
+/**
+ * Enqueue le script de désactivation du plugin
+ */
+function pdf_builder_enqueue_deactivation_script() {
+    // Charger seulement sur la page des plugins
+    $screen = get_current_screen();
+    if ($screen && $screen->id === 'plugins') {
+        wp_enqueue_script(
+            'pdf-builder-deactivation',
+            plugin_dir_url(__FILE__) . 'assets/js/pdf-builder-deactivation.js',
+            array('jquery'),
+            PDF_BUILDER_VERSION,
+            true
+        );
+
+        wp_localize_script('pdf-builder-deactivation', 'pdf_builder_deactivation', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_deactivation_nonce'),
+            'plugin_slug' => plugin_basename(__FILE__),
+            'is_premium' => defined('PDF_BUILDER_PREMIUM') && PDF_BUILDER_PREMIUM,
+            'strings' => array(
+                'confirm_deactivation' => __('Êtes-vous sûr de vouloir désactiver PDF Builder Pro ?', 'pdf-builder-pro'),
+                'premium_warning' => __('⚠️ Vous utilisez la version Premium. La désactivation entraînera la perte de toutes les fonctionnalités avancées.', 'pdf-builder-pro'),
+                'reason_required' => __('Veuillez sélectionner une raison pour la désactivation.', 'pdf-builder-pro'),
+                'deactivating' => __('Désactivation en cours...', 'pdf-builder-pro'),
+                'deactivated' => __('Plugin désactivé avec succès.', 'pdf-builder-pro')
+            )
+        ));
+    }
+}
+
+/**
+ * Ajouter la modale de désactivation
+ */
+function pdf_builder_add_deactivation_modal() {
+    $screen = get_current_screen();
+    if ($screen && $screen->id === 'plugins') {
+        ?>
+        <div id="pdf-builder-deactivation-modal" class="pdf-builder-modal" style="display: none;">
+            <div class="pdf-builder-modal-overlay"></div>
+            <div class="pdf-builder-modal-content">
+                <div class="pdf-builder-modal-header">
+                    <h2><?php _e('Désactiver PDF Builder Pro', 'pdf-builder-pro'); ?></h2>
+                    <button type="button" class="pdf-builder-modal-close">&times;</button>
+                </div>
+                <div class="pdf-builder-modal-body">
+                    <?php if (defined('PDF_BUILDER_PREMIUM') && PDF_BUILDER_PREMIUM): ?>
+                        <div class="pdf-builder-premium-warning">
+                            <div class="warning-icon">⚠️</div>
+                            <p><strong><?php _e('Attention : Version Premium détectée', 'pdf-builder-pro'); ?></strong></p>
+                            <p><?php _e('Vous utilisez actuellement la version Premium de PDF Builder Pro. La désactivation entraînera la perte de toutes les fonctionnalités avancées.', 'pdf-builder-pro'); ?></p>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="pdf-builder-deactivation-reason">
+                        <p><?php _e('Aidez-nous à améliorer PDF Builder Pro en nous indiquant la raison de votre désactivation :', 'pdf-builder-pro'); ?></p>
+
+                        <div class="reason-options">
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="temporary">
+                                <span><?php _e('Désactivation temporaire', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="found_better">
+                                <span><?php _e('J\'ai trouvé une meilleure solution', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="not_working">
+                                <span><?php _e('Le plugin ne fonctionne pas correctement', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="missing_features">
+                                <span><?php _e('Fonctionnalités manquantes', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="too_complex">
+                                <span><?php _e('Trop complexe à utiliser', 'pdf-builder-pro'); ?></span>
+                            </label>
+
+                            <label class="reason-option">
+                                <input type="radio" name="deactivation_reason" value="other">
+                                <span><?php _e('Autre raison', 'pdf-builder-pro'); ?></span>
+                            </label>
+                        </div>
+
+                        <div class="reason-details" style="display: none;">
+                            <label for="deactivation_details"><?php _e('Détails supplémentaires (optionnel) :', 'pdf-builder-pro'); ?></label>
+                            <textarea id="deactivation_details" name="deactivation_details" rows="3" placeholder="<?php _e('Veuillez nous donner plus de détails...', 'pdf-builder-pro'); ?>"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="pdf-builder-modal-footer">
+                    <button type="button" class="button button-secondary pdf-builder-modal-cancel"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
+                    <button type="button" class="button button-primary pdf-builder-modal-confirm" disabled><?php _e('Désactiver le plugin', 'pdf-builder-pro'); ?></button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .pdf-builder-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 999999;
+            }
+            .pdf-builder-modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+            }
+            .pdf-builder-modal-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .pdf-builder-modal-header {
+                padding: 20px 20px 0;
+                border-bottom: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .pdf-builder-modal-header h2 {
+                margin: 0;
+                font-size: 1.3em;
+                color: #23282d;
+            }
+            .pdf-builder-modal-close {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #666;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .pdf-builder-modal-body {
+                padding: 20px;
+            }
+            .pdf-builder-premium-warning {
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 4px;
+                padding: 15px;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .warning-icon {
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+            .pdf-builder-premium-warning p {
+                margin: 0;
+                color: #856404;
+            }
+            .pdf-builder-premium-warning p:first-child {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .reason-options {
+                margin: 15px 0;
+            }
+            .reason-option {
+                display: block;
+                margin: 8px 0;
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 4px;
+                transition: background-color 0.2s;
+            }
+            .reason-option:hover {
+                background: #f8f9fa;
+            }
+            .reason-option input[type="radio"] {
+                margin-right: 10px;
+            }
+            .reason-details {
+                margin-top: 15px;
+            }
+            .reason-details label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .reason-details textarea {
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 8px;
+                font-family: inherit;
+                resize: vertical;
+            }
+            .pdf-builder-modal-footer {
+                padding: 0 20px 20px;
+                border-top: 1px solid #ddd;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+            .pdf-builder-modal-confirm:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        </style>
+        <?php
+    }
+}
+
 /**
  * Ajouter un lien vers les paramètres du plugin à côté du bouton désactiver
  */
@@ -709,6 +941,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
     add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax_handler');
 
+    // Handler AJAX pour le feedback de désactivation
+    add_action('wp_ajax_pdf_builder_deactivation_feedback', 'pdf_builder_deactivation_feedback_handler');
+
     // Handler pour récupérer les rôles autorisés
     add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 
@@ -1044,6 +1279,69 @@ function pdf_builder_test_ajax_handler() {
     ));
 }
 
+/**
+ * Handler AJAX pour le feedback de désactivation du plugin
+ */
+function pdf_builder_deactivation_feedback_handler() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_deactivation_nonce')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('activate_plugins')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $feedback = isset($_POST['feedback']) ? $_POST['feedback'] : array();
+
+        if (empty($feedback) || !isset($feedback['reason'])) {
+            wp_send_json_error('Données de feedback manquantes');
+            return;
+        }
+
+        // Préparer les données de feedback
+        $feedback_data = array(
+            'timestamp' => current_time('mysql'),
+            'user_id' => get_current_user_id(),
+            'plugin_version' => PDF_BUILDER_VERSION,
+            'reason' => sanitize_text_field($feedback['reason']),
+            'details' => isset($feedback['details']) ? sanitize_textarea_field($feedback['details']) : '',
+            'is_premium' => isset($feedback['is_premium']) ? (bool) $feedback['is_premium'] : false,
+            'plugin_slug' => isset($feedback['plugin_slug']) ? sanitize_text_field($feedback['plugin_slug']) : '',
+            'site_url' => get_site_url(),
+            'wp_version' => get_bloginfo('version'),
+            'php_version' => PHP_VERSION
+        );
+
+        // Sauvegarder le feedback dans les options (pour analyse ultérieure)
+        $existing_feedback = get_option('pdf_builder_deactivation_feedback', array());
+        $existing_feedback[] = $feedback_data;
+
+        // Garder seulement les 100 derniers feedbacks
+        if (count($existing_feedback) > 100) {
+            $existing_feedback = array_slice($existing_feedback, -100);
+        }
+
+        update_option('pdf_builder_deactivation_feedback', $existing_feedback);
+
+        // Log pour analyse
+        error_log('PDF Builder Pro - Feedback de désactivation: ' . json_encode($feedback_data));
+
+        wp_send_json_success(array(
+            'message' => 'Feedback enregistré avec succès',
+            'feedback_id' => count($existing_feedback) - 1
+        ));
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Pro - Erreur feedback désactivation: ' . $e->getMessage());
+        wp_send_json_error('Erreur lors de l\'enregistrement du feedback');
+    }
+}
+
 
 
 /**
@@ -1083,6 +1381,13 @@ function pdf_builder_init()
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
+
+    // Charger le script de désactivation du plugin
+    add_action('admin_enqueue_scripts', 'pdf_builder_enqueue_deactivation_script');
+    add_action('admin_footer', 'pdf_builder_add_deactivation_modal');
+
+    // Le fichier uninstall.php sera automatiquement appelé par WordPress lors de la désinstallation
+    // register_uninstall_hook(__FILE__, 'pdf_builder_pro_uninstall');
 
     // Charger le bootstrap (version complète pour la production)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
