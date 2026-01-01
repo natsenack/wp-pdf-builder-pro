@@ -29,7 +29,6 @@ module.exports = {
       {
         test: /\.js$/,
         include: [
-          /pdf-builder-react-wrapper\.js$/,
           /pdf-builder-wrap\.js$/
         ],
         use: {
