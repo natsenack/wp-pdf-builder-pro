@@ -2033,7 +2033,7 @@ function pdf_builder_save_template_handler() {
                 error_log('[PDF Builder SAVE] ❌ Échec même après nettoyage: ' . json_last_error_msg());
 
                 // Analyser le JSON pour trouver l'erreur exacte
-                $json_analysis = $this->analyze_json_error($cleaned_json);
+                $json_analysis = analyze_json_error($cleaned_json);
                 error_log('[PDF Builder SAVE] Analyse JSON: ' . $json_analysis);
 
                 wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
