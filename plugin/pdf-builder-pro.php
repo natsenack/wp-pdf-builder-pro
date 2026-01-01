@@ -362,8 +362,11 @@ function pdf_builder_add_deactivation_modal() {
                     </div>
                 </div>
                 <div class="pdf-builder-modal-footer">
-                    <button type="button" class="button button-secondary pdf-builder-modal-cancel"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
-                    <button type="button" class="button button-primary pdf-builder-modal-confirm" disabled><?php _e('Désactiver le plugin', 'pdf-builder-pro'); ?></button>
+                    <button type="button" class="button button-link pdf-builder-modal-skip"><?php _e('Passer et désactiver', 'pdf-builder-pro'); ?></button>
+                    <div class="pdf-builder-modal-footer-right">
+                        <button type="button" class="button button-secondary pdf-builder-modal-cancel"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
+                        <button type="button" class="button button-primary pdf-builder-modal-confirm" disabled><?php _e('Désactiver le plugin', 'pdf-builder-pro'); ?></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -485,8 +488,26 @@ function pdf_builder_add_deactivation_modal() {
                 padding: 0 20px 20px;
                 border-top: 1px solid #ddd;
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .pdf-builder-modal-footer-right {
+                display: flex;
                 gap: 10px;
+            }
+            .pdf-builder-modal-skip {
+                color: #666;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 0;
+                margin: 0;
+                border: none;
+                background: none;
+                cursor: pointer;
+            }
+            .pdf-builder-modal-skip:hover {
+                color: #007cba;
+                text-decoration: underline;
             }
             .pdf-builder-modal-confirm:disabled {
                 opacity: 0.5;
@@ -511,22 +532,6 @@ function pdf_builder_add_plugin_action_links($links) {
     return $links;
 }
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pdf_builder_add_plugin_action_links');
-
-/**
- * Modifier le lien de désactivation pour ajouter une classe identifiable
- */
-function pdf_builder_modify_deactivate_link($actions, $plugin_file, $plugin_data, $context) {
-    if ($plugin_file === plugin_basename(__FILE__) && isset($actions['deactivate'])) {
-        // Ajouter une classe au lien de désactivation pour l'identifier facilement
-        $actions['deactivate'] = str_replace(
-            '<a href=',
-            '<a class="pdf-builder-deactivate-link" href=',
-            $actions['deactivate']
-        );
-    }
-    return $actions;
-}
-add_filter('plugin_action_links', 'pdf_builder_modify_deactivate_link', 10, 4);
 
 // Charger le plugin de manière standard
 if (function_exists('add_action')) {

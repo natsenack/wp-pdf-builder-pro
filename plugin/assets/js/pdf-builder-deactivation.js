@@ -6,17 +6,12 @@
 jQuery(document).ready(function($) {
     'use strict';
 
-    // Debug: Check if script is loaded
-    console.log('PDF Builder Deactivation: Script loaded');
-    console.log('PDF Builder Deactivation: Plugin slug:', pdf_builder_deactivation ? pdf_builder_deactivation.plugin_slug : 'NOT SET');
-
     var modal = $('#pdf-builder-deactivation-modal');
     var deactivateLink = null;
     var selectedReason = null;
 
-    // Intercept deactivate link clicks - Use specific class
-    $(document).on('click', 'a.pdf-builder-deactivate-link', function(e) {
-        console.log('PDF Builder Deactivation: Deactivate link clicked');
+    // Intercept deactivate link clicks
+    $(document).on('click', 'a[href*="action=deactivate&plugin=' + pdf_builder_deactivation.plugin_slug + '"]', function(e) {
         e.preventDefault();
         deactivateLink = $(this);
         showDeactivationModal();
@@ -37,6 +32,40 @@ jQuery(document).ready(function($) {
             $('.reason-details').slideDown();
         } else {
             $('.reason-details').slideUp();
+        }
+    });
+
+    // Skip and deactivate (without feedback)
+    $(document).on('click', '.pdf-builder-modal-skip', function() {
+        // Proceed with deactivation without feedback
+        if (deactivateLink) {
+            // Send minimal feedback (just that user skipped)
+            var feedbackData = {
+                reason: 'skipped',
+                details: '',
+                is_premium: pdf_builder_deactivation.is_premium,
+                plugin_slug: pdf_builder_deactivation.plugin_slug
+            };
+
+            // Try to send feedback but don't wait for response
+            $.ajax({
+                url: pdf_builder_deactivation.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_deactivation_feedback',
+                    nonce: pdf_builder_deactivation.nonce,
+                    feedback: feedbackData
+                },
+                timeout: 2000, // 2 second timeout
+                success: function() {
+                    // Feedback sent successfully, proceed with deactivation
+                    window.location.href = deactivateLink.attr('href');
+                },
+                error: function() {
+                    // Feedback failed or timed out, still proceed with deactivation
+                    window.location.href = deactivateLink.attr('href');
+                }
+            });
         }
     });
 
