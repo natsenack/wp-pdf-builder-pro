@@ -161,7 +161,25 @@ try {
     # Déterminer les fichiers PHP modifiés
     $srcDir = "$WorkingDir\plugin\src"
     if (Test-Path $srcDir) {
-        $phpFiles = @(Get-ChildItem "$srcDir\*.php" -Recurse -ErrorAction SilentlyContinue -File)
+        # Obtenir les fichiers modifiés via git
+        $modifiedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only" 2>&1
+        $stagedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only --cached" 2>&1
+        
+        $allModified = ($modifiedFiles + $stagedFiles) | Where-Object { $_ -and $_.Trim() -ne "" } | Select-Object -Unique
+        
+        $phpFiles = @()
+        foreach ($file in $allModified) {
+            $fullPath = Join-Path $WorkingDir $file
+            if ($file -like "plugin/src/*.php" -and (Test-Path $fullPath)) {
+                $phpFiles += Get-Item $fullPath
+            }
+        }
+        
+        # Si aucun fichier modifié, utiliser tous les PHP (pour les nouveaux déploiements)
+        if ($phpFiles.Count -eq 0) {
+            Write-Host "   Aucun fichier PHP modifié détecté, utilisation de tous les fichiers PHP" -ForegroundColor Yellow
+            $phpFiles = @(Get-ChildItem "$srcDir\*.php" -Recurse -ErrorAction SilentlyContinue -File)
+        }
     }
     
     $allFiles = @($jsFiles) + @($phpFiles) | Where-Object { $_ }
