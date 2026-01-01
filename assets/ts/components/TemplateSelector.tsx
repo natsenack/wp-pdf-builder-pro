@@ -57,8 +57,37 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   }, [category]);
 
   // Gestionnaire de sélection
-  const handleTemplateSelect = (template: PDFTemplate) => {
-    onTemplateSelect(template);
+  const handleTemplateSelect = async (template: PDFTemplate) => {
+    try {
+      setError(null);
+
+      // Charger les données complètes du template via AJAX
+      const response: AjaxResponse<{ template: any; message: string }> = await fetch(window.ajaxurl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'pdf_builder_load_template',
+          template_id: template.id.toString(),
+          nonce: window.pdfBuilderPro.nonce,
+        }),
+      }).then(res => res.json());
+
+      if (response.success && response.data?.template) {
+        // Fusionner les métadonnées avec les données complètes
+        const completeTemplate = {
+          ...template,
+          ...response.data.template,
+        };
+        onTemplateSelect(completeTemplate);
+      } else {
+        setError(response.data?.message || 'Erreur lors du chargement du template');
+      }
+    } catch (err) {
+      setError('Erreur de connexion lors du chargement du template');
+      console.error('Erreur lors du chargement du template:', err);
+    }
   };
 
   // Rendu en cas d'erreur

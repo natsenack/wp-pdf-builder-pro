@@ -211,6 +211,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           {/* Zone centrale avec le canvas */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
             <div
+              className="pdf-builder-canvas-container"
               style={{
                 flex: 1,
                 display: 'flex',

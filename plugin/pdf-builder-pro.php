@@ -2872,3 +2872,5 @@ function pdf_builder_view_logs_handler() {
     }
 }
 
+#   D e p l o y   t r i g g e r  
+ 
