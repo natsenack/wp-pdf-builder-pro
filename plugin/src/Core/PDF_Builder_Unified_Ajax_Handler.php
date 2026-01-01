@@ -1130,7 +1130,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
 
                 update_option($key, $sanitized_value);
-                wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
                 $saved_count++;
 
                 if (defined('WP_DEBUG') && WP_DEBUG) {

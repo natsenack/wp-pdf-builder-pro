@@ -25,7 +25,7 @@ Le système de cache problématique a été entièrement supprimé du PDF Builde
 - **Exception:** Rate limiting (sécurité) toujours actif
 - **Impact:** Cache de performance optionnel uniquement
 
-### ✅ Conservé - Cache de sécurité
+### ✅ Conservé - Sécurité - Rate Limiting
 - **Rate limiting:** Transients WordPress pour protection anti-abus
 - **Impact:** Sécurité maintenue sans affecter les performances
 
@@ -39,7 +39,10 @@ Le système de cache problématique a été entièrement supprimé du PDF Builde
 | **sessionStorage** | ✅ ÉLIMINÉ | Nettoyage supprimé |
 | **Cache JS interne** | ✅ DÉSACTIVÉ | Flag désactivé |
 | **Transients WP** | 🟡 CONDITIONNEL | Désactivé par défaut |
-| **Cache sécurité** | ✅ ACTIF | Rate limiting maintenu |
+| **Sécurité - Rate Limiting** | ✅ ACTIF | Rate limiting maintenu |
+| **Cache éléments canvas** | ❌ SUPPRIMÉ | Éliminé du code |
+| **Cache options WP** | ❌ SUPPRIMÉ | Éliminé du code |
+| **Transients de test** | ❌ SUPPRIMÉ | Éliminé du code |
 | **Cache HTTP** | ✅ CONTRÔLÉ | Headers configurables |
 
 ---

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style type="text/css">
+      <![CDATA[
+        .component {
+          fill: #f8f8f8;
+          stroke: #007acc;
+          stroke-width: 2;
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+        }
+        .arrow {
+          stroke: #007acc;
+          stroke-width: 2;
+          fill: none;
+          marker-end: url(#arrowhead);
+        }
+        .title {
+          font-family: Arial, sans-serif;
+          font-size: 24px;
+          font-weight: bold;
+          fill: #333;
+        }
+        .subtitle {
+          font-family: Arial, sans-serif;
+          font-size: 18px;
+          fill: #666;
+        }
+      ]]>
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#007acc"/>
+    </marker>
+  </defs>
+
+  <!-- Titre -->
+  <text x="600" y="50" text-anchor="middle" class="title">WP PDF Builder Pro Architecture</text>
+
+  <!-- Sous-titre -->
+  <text x="600" y="80" text-anchor="middle" class="subtitle">Overview of Components and Interactions</text>
+
+  <!-- Composants Principaux -->
+  <rect x="100" y="120" width="200" height="100" rx="10" ry="10" class="component"/>
+  <text x="200" y="160" text-anchor="middle" font-weight="bold">PDFBuilder</text>
+  <text x="200" y="180" text-anchor="middle">Main Component</text>
+  <text x="200" y="200" text-anchor="middle">Initializes the PDF Builder</text>
+
+  <rect x="400" y="120" width="200" height="100" rx="10" ry="10" class="component"/>
+  <text x="500" y="160" text-anchor="middle" font-weight="bold">PDFBuilderContent</text>
+  <text x="500" y="180" text-anchor="middle">Content Management</text>
+  <text x="500" y="200" text-anchor="middle">Manages Header, Toolbar, Canvas</text>
+
+  <rect x="700" y="120" width="200" height="100" rx="10" ry="10" class="component"/>
+  <text x="800" y="160" text-anchor="middle" font-weight="bold">Canvas</text>
+  <text x="800" y="180" text-anchor="middle">Drawing Area</text>
+  <text x="800" y="200" text-anchor="middle">Handles User Interactions</text>
+
+  <rect x="1000" y="120" width="200" height="100" rx="10" ry="10" class="component"/>
+  <text x="1100" y="160" text-anchor="middle" font-weight="bold">PropertiesPanel</text>
+  <text x="1100" y="180" text-anchor="middle">Element Properties</text>
+  <text x="1100" y="200" text-anchor="middle">Displays Selected Element Properties</text>
+
+  <!-- Toolbar -->
+  <rect x="400" y="250" width="200" height="80" rx="10" ry="10" class="component"/>
+  <text x="500" y="290" text-anchor="middle" font-weight="bold">Toolbar</text>
+  <text x="500" y="310" text-anchor="middle">User Actions</text>
+
+  <!-- ElementLibrary -->
+  <rect x="100" y="250" width="200" height="80" rx="10" ry="10" class="component"/>
+  <text x="200" y="290" text-anchor="middle" font-weight="bold">ElementLibrary</text>
+  <text x="200" y="310" text-anchor="middle">WooCommerce Elements</text>
+
+  <!-- BuilderContext -->
+  <rect x="100" y="400" width="200" height="80" rx="10" ry="10" class="component"/>
+  <text x="200" y="440" text-anchor="middle" font-weight="bold">BuilderContext</text>
+  <text x="200" y="460" text-anchor="middle">Global State Management</text>
+
+  <!-- CanvasSettingsContext -->
+  <rect x="400" y="400" width="200" height="80" rx="10" ry="10" class="component"/>
+  <text x="500" y="440" text-anchor="middle" font-weight="bold">CanvasSettingsContext</text>
+  <text x="500" y="460" text-anchor="middle">Canvas Settings Management</text>
+
+  <!-- useTemplate -->
+  <rect x="700" y="400" width="200" height="80" rx="10" ry="10" class="component"/>
+  <text x="800" y="440" text-anchor="middle" font-weight="bold">useTemplate</text>
+  <text x="800" y="460" text-anchor="middle">Template Management</text>
+
+  <!-- useCanvasSettings -->
+  <rect x="1000" y="400" width="200" height="80" rx="10" ry="10" class="component"/>
+  <text x="1100" y="440" text-anchor="middle" font-weight="bold">useCanvasSettings</text>
+  <text x="1100" y="460" text-anchor="middle">Canvas Settings Management</text>
+
+  <!-- Flèches pour les interactions -->
+  <path d="M 300 170 L 400 170" class="arrow"/>
+  <path d="M 600 170 L 700 170" class="arrow"/>
+  <path d="M 900 170 L 1000 170" class="arrow"/>
+  <path d="M 500 210 L 500 250" class="arrow"/>
+  <path d="M 200 210 L 200 250" class="arrow"/>
+  <path d="M 500 330 L 500 400" class="arrow"/>
+  <path d="M 200 330 L 200 400" class="arrow"/>
+  <path d="M 500 480 L 500 500" class="arrow"/>
+  <path d="M 800 480 L 800 500" class="arrow"/>
+  <path d="M 1100 480 L 1100 500" class="arrow"/>
+
+  <!-- Légende -->
+  <rect x="100" y="600" width="1000" height="100" rx="10" ry="10" fill="none" stroke="#007acc" stroke-width="2"/>
+  <text x="150" y="630" font-weight="bold">Legend:</text>
+  <text x="150" y="650">- PDFBuilder: Main component that initializes the PDF Builder.</text>
+  <text x="150" y="670">- PDFBuilderContent: Manages the content of the PDF Builder.</text>
+  <text x="150" y="690">- Canvas: Drawing area for creating PDF templates.</text>
+  <text x="150" y="710">- PropertiesPanel: Displays properties of selected elements.</text>
+  <text x="150" y="730">- Toolbar: Provides user actions like undo, redo, and grid management.</text>
+  <text x="150" y="750">- ElementLibrary: Provides WooCommerce elements to add to the canvas.</text>
+  <text x="150" y="770">- BuilderContext: Manages the global state of the builder.</text>
+  <text x="150" y="790">- CanvasSettingsContext: Manages canvas settings.</text>
+  <text x="150" y="810">- useTemplate: Manages templates, including saving and previewing.</text>
+  <text x="150" y="830">- useCanvasSettings: Manages canvas settings.</text>
+
+  <!-- Note -->
+  <text x="600" y="750" text-anchor="middle" font-style="italic">This diagram illustrates the main components and their interactions in the WP PDF Builder Pro project.</text>
+</svg>

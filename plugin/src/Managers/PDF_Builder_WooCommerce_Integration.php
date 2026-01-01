@@ -1273,11 +1273,6 @@ class PDF_Builder_WooCommerce_Integration
 
                 // Validation et nettoyage des données
                 $canvas_elements = $this->validateAndCleanCanvasElements($canvas_elements);
-
-                // ✅ RESPECT DU SETTING CACHE: Only cache if cache is enabled in settings
-                if ($cache_enabled) {
-                    set_transient($cache_key, $canvas_elements, 5 * MINUTE_IN_SECONDS);
-                }
             }
 
             wp_send_json_success(

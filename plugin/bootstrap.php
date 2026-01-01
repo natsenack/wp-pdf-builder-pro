@@ -563,7 +563,7 @@ function pdf_builder_load_core()
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
             $localize_data = [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_ajax'),
+                'nonce' => wp_create_nonce('pdf_builder_save_template_nonce'),
                 'version' => PDF_BUILDER_VERSION,
                 'templateId' => $template_id,
                 'isEdit' => $template_id > 0,

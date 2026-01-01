@@ -10,7 +10,7 @@ namespace PDF_Builder\Security;
 class Rate_Limiter
 {
     const LIMIT_PER_MINUTE = 100;
-    const TRANSIENT_PREFIX = 'pdf_builder_rate_limit_';
+    const TRANSIENT_PREFIX = 'pdf_builder_security_rate_limit_';
 
     /**
      * Initialise le gestionnaire de rate limiting

@@ -1362,7 +1362,7 @@ class AjaxHandler
     private function checkRateLimit()
     {
         $user_id = get_current_user_id();
-        $transient_key = 'pdf_builder_rate_limit_' . $user_id;
+        $transient_key = 'pdf_builder_security_rate_limit_' . $user_id;
         $attempts = get_transient($transient_key);
 
         if ($attempts === false) {

@@ -259,7 +259,7 @@ class AdminScriptLoader
         // Localize script data BEFORE enqueuing
         $localize_data = [
             'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_templates'),
+            'nonce' => wp_create_nonce('pdf_builder_save_template_nonce'),
             'version' => PDF_BUILDER_PRO_VERSION,
             'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0,
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
