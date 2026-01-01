@@ -265,6 +265,21 @@ function pdf_builder_deactivate()
     }
 }
 
+/**
+ * Ajouter un lien vers les paramètres du plugin à côté du bouton désactiver
+ */
+function pdf_builder_add_plugin_action_links($links) {
+    // Ajouter le lien vers les paramètres
+    $settings_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">' . __('Paramètres', 'pdf-builder-pro') . '</a>';
+
+    // Ajouter le lien vers la version premium
+    $premium_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings&tab=license') . '" style="color: #007cba; font-weight: bold;">' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
+
+    array_unshift($links, $premium_link, $settings_link);
+    return $links;
+}
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'pdf_builder_add_plugin_action_links');
+
 // Charger le plugin de manière standard
 if (function_exists('add_action')) {
     add_action('plugins_loaded', 'pdf_builder_init', 1); // Priorité 1 pour charger l'autoloader en premier
