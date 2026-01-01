@@ -107,9 +107,23 @@ try {
         Remove-Item "plugin/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
     }
 
-    # Build des assets - TEMPORAIREMENT DESACTIVE
-    Write-Host "   ⏭️  Build des assets JavaScript/TypeScript ignoré (webpack désactivé)" -ForegroundColor Yellow
-    Write-Host "   🔄 Utilisation des assets existants..." -ForegroundColor Cyan
+    # Build des assets
+    Write-Host "   🔨 Build des assets JavaScript/TypeScript..." -ForegroundColor Yellow
+    & npm run build
+    if ($LASTEXITCODE -ne 0) {
+        throw "Échec du build webpack"
+    }
+    Write-Host "   ✅ Build terminé" -ForegroundColor Green
+
+    # Copier les assets compilés
+    Write-Host "   📋 Copie des assets vers plugin..." -ForegroundColor Yellow
+    if (Test-Path "assets/js/dist") {
+        Copy-Item "assets/js/dist/*" "plugin/resources/assets/js/" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path "assets/css/dist") {
+        Copy-Item "assets/css/dist/*" "plugin/resources/assets/css/" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host "   ✅ Assets copiés" -ForegroundColor Green
 
     Pop-Location
 } catch {

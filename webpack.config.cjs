@@ -17,7 +17,7 @@ module.exports = {
     filename: '[name].js',
     clean: true,
     library: 'pdfBuilderReact',
-    libraryTarget: 'var'
+    libraryTarget: 'window'
   },
   module: {
     rules: [

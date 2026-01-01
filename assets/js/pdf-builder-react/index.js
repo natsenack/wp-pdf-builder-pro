@@ -8,7 +8,7 @@ console.log('🎯 [BUNDLE START] pdf-builder-react/index.js file loaded and exec
 import '../fallbacks/browser-compatibility.js';
 
 // Imports synchrones légers
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT, getCanvasDimensions } from './constants/canvas.ts';
+import { getCanvasDimensions } from './constants/canvas.ts';
 import { debugLog, debugError } from './utils/debug.ts';
 
 // Import React pour les composants
@@ -50,7 +50,7 @@ class ErrorBoundary extends Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(_error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -195,10 +195,28 @@ async function initPDFBuilderReact() {
   }
 }
 
-if (DEBUG_VERBOSE) debugLog('📦 Creating exports object...');
+if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 
-// Export default pour webpack
-const exports = {
+// ✅ CRITICAL: Assign to window SYNCHRONOUSLY
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = {
+    initPDFBuilderReact,
+    loadTemplate,
+    getEditorState,
+    setEditorState,
+    getCurrentTemplate,
+    exportTemplate,
+    saveTemplate,
+    registerEditorInstance,
+    resetAPI,
+    updateCanvasDimensions,
+    _isWebpackBundle: true
+  };
+  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
+}
+
+// No complex exports - let webpack UMD handle it with the assignment above
+export default {
   initPDFBuilderReact,
   loadTemplate,
   getEditorState,
@@ -211,14 +229,3 @@ const exports = {
   updateCanvasDimensions,
   _isWebpackBundle: true
 };
-
-if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
-
-// ✅ CRITICAL: Assign to window SYNCHRONOUSLY
-if (typeof window !== 'undefined') {
-  window.pdfBuilderReact = exports;
-  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
-}
-
-// No complex exports - let webpack UMD handle it with the assignment above
-export default exports;
