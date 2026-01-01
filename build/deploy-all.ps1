@@ -56,61 +56,28 @@ if (-not $SkipCompilation) {
 Write-Host "`n2️⃣  COLLECTE DES FICHIERS" -ForegroundColor Yellow
 Write-Host "-" * 30
 
-# Exclusions pour optimiser le déploiement
-$excludePatterns = @(
-    "node_modules",              # NPM dependencies
-    ".git",                      # Git files
-    ".vscode",                   # VS Code config
-    "*.log",                     # Log files
-    "temp/",                     # Temp folder
-    "*.tmp",                     # Temp files
-    "build/backups",             # Backups locaux
-    "build/logs",                # Logs locaux
-    ".gitignore",                # Git config
-    ".env",                      # Environment files
-    "package-lock.json",         # NPM lock
-    "composer.lock",             # Composer lock
-    "README.md",                 # Readme
-    "CHANGELOG.md",              # Changelog
-    "*.md",                      # Documentation
-    "docs/",                     # Dossier documentation
-    "assets/ts",                 # TypeScript sources
-    "assets/shared",             # TypeScript shared
-    "assets/config",             # TypeScript config
-    "vendor/fonts",              # Polices dupliquées
-    "languages/*.po",            # Source translations
-    "languages/*.pot",           # Translation templates
-    "*.afm",                     # Font metrics
-    "*.ufm",                     # Font metrics
-    "*.ttf",                     # TrueType fonts
-    "fix-*.php",                 # Temp fix scripts
-    "temp.js",                   # Temp files
-    "test-*.php",                # Test files
-    "*.test.js",                 # Test files
-    "SampleDataProvider.php",    # Sample data
-    "*.ts",                      # TypeScript files
-    "*.tsx"                      # TypeScript React files
-)
-
 Write-Host "📂 Collecte des fichiers depuis : $PluginPath" -ForegroundColor White
 $allFiles = Get-ChildItem -Path $PluginPath -Recurse -File
 Write-Host "📊 Fichiers totaux trouvés : $($allFiles.Count)" -ForegroundColor White
 
-# Appliquer les exclusions
-$filesToDeploy = $allFiles | Where-Object {
-    $include = $true
-    foreach ($pattern in $excludePatterns) {
-        if ($_.FullName -like "*$pattern*") {
-            $include = $false
-            break
-        }
-    }
-    $include
-}
+# AUCUNE EXCLUSION - Tout le contenu du dossier plugin doit être déployé
+$filesToDeploy = $allFiles
 
 $totalSize = ($filesToDeploy | Measure-Object -Property Length -Sum).Sum
-Write-Host "📈 Fichiers après exclusions : $($filesToDeploy.Count)" -ForegroundColor Green
+Write-Host "📈 Fichiers à déployer : $($filesToDeploy.Count)" -ForegroundColor Green
 Write-Host "💾 Taille totale : $([math]::Round($totalSize / 1MB, 2)) MB" -ForegroundColor Green
+
+# DEBUG : Vérifier si settings-loader.php est dans la liste
+$settingsLoader = $filesToDeploy | Where-Object { $_.Name -eq "settings-loader.php" }
+if ($settingsLoader) {
+    Write-Host "🔍 DEBUG : settings-loader.php trouvé : $($settingsLoader.FullName)" -ForegroundColor Cyan
+} else {
+    Write-Host "🔍 DEBUG : settings-loader.php NON trouvé dans la liste des fichiers à déployer" -ForegroundColor Yellow
+    # Lister quelques fichiers de resources/templates/admin pour debug
+    $adminTemplates = $filesToDeploy | Where-Object { $_.FullName -like "*resources\templates\admin*" }
+    Write-Host "🔍 DEBUG : Fichiers dans resources/templates/admin :" -ForegroundColor Yellow
+    $adminTemplates | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Yellow }
+}
 
 # 3. DÉPLOIEMENT FTP
 if (-not $SkipFTP) {
@@ -122,25 +89,6 @@ if (-not $SkipFTP) {
         $ftpUri = "ftp://$FtpHost"
         Write-Host "🔌 Connexion à $ftpUri..." -ForegroundColor White
 
-        # Fonction pour créer un répertoire FTP
-        function Create-FTPDirectory {
-            param([string]$ftpPath)
-
-            try {
-                $ftpRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$ftpPath")
-                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-                $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
-                $ftpRequest.UseBinary = $true
-                $ftpRequest.KeepAlive = $false
-                $ftpRequest.Timeout = 30000  # 30 secondes timeout
-
-                $response = $ftpRequest.GetResponse()
-                $response.Close()
-            } catch {
-                # Le répertoire existe probablement déjà, c'est normal
-            }
-        }
-
         # Collecter tous les répertoires à créer
         $directories = $filesToDeploy | ForEach-Object {
             $relativePath = $_.FullName -replace [regex]::Escape($PluginPath), ""
@@ -148,16 +96,58 @@ if (-not $SkipFTP) {
             if ($directory -and $directory -ne "") { $directory }
         } | Select-Object -Unique | Sort-Object
 
-        Write-Host "🏗️  Création de la structure de répertoires..." -ForegroundColor White
-        foreach ($dir in $directories) {
-            $ftpDir = "$FtpBasePath$dir".Replace("\", "/")
-            Create-FTPDirectory -ftpPath $ftpDir
+        Write-Host "🏗️  Création de la structure de répertoires ($($directories.Count) répertoires)..." -ForegroundColor White
+
+        # OPTIMISATION : Créer les répertoires en parallèle
+        $dirBatchSize = 10  # Nombre de répertoires à créer simultanément
+        $createdDirs = 0
+
+        for ($i = 0; $i -lt $directories.Count; $i += $dirBatchSize) {
+            $dirBatch = $directories[$i..([math]::Min($i + $dirBatchSize - 1, $directories.Count - 1))]
+
+            # Créer les répertoires en parallèle
+            $dirJobs = @()
+            foreach ($dir in $dirBatch) {
+                $ftpDir = "$FtpBasePath$dir".Replace("\", "/")
+
+                $job = Start-Job -ScriptBlock {
+                    param($ftpPath, $ftpUri, $ftpUser, $ftpPass)
+
+                    try {
+                        $ftpRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$ftpPath")
+                        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+                        $ftpRequest.UseBinary = $true
+                        $ftpRequest.KeepAlive = $false
+                        $ftpRequest.Timeout = 30000
+
+                        $response = $ftpRequest.GetResponse()
+                        $response.Close()
+                        return @{Success = $true; Path = $ftpPath}
+                    } catch {
+                        # Le répertoire existe probablement déjà, c'est normal
+                        return @{Success = $true; Path = $ftpPath}  # Considérer comme succès
+                    }
+                } -ArgumentList $ftpDir, $ftpUri, $FtpUser, $FtpPass
+
+                $dirJobs += $job
+            }
+
+            # Attendre la fin des jobs de création de répertoires
+            $completedDirJobs = $dirJobs | Wait-Job
+            $dirResults = $completedDirJobs | Receive-Job
+            $createdDirs += $dirResults.Count
+
+            # Nettoyer les jobs
+            $dirJobs | Remove-Job
         }
+
+        Write-Host "📁 $createdDirs répertoires préparés" -ForegroundColor Gray
 
         # OPTIMISATION : Upload en parallèle par lots
         Write-Host "📤 Upload des fichiers (optimisé)..." -ForegroundColor White
 
-        $batchSize = 15  # Nombre de fichiers à uploader simultanément
+        $batchSize = 25  # Nombre de fichiers à uploader simultanément (augmenté pour plus de parallélisme)
         $uploadedCount = 0
         $failedCount = 0
         $totalFiles = $filesToDeploy.Count
