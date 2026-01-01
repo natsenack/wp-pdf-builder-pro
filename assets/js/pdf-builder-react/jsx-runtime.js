@@ -13,11 +13,13 @@ if (!React) {
 
 console.log('✅ [jsx-runtime] React JSX runtime loaded from window.React');
 
-// Export the JSX functions
-module.exports = {
+// Export the JSX functions using ES module syntax
+export const jsx = React.createElement;
+export const jsxs = React.createElement;
+export const Fragment = React.Fragment;
+
+export default {
   jsx: React.createElement,
   jsxs: React.createElement,
   Fragment: React.Fragment
 };
-
-module.exports.default = module.exports;

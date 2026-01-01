@@ -56,35 +56,35 @@ const ReactProxy = new Proxy(React, {
   }
 });
 
-// Export the proxy as default
-module.exports = ReactProxy;
-module.exports.default = ReactProxy;
+// Export the proxy - must use ES module syntax for webpack browser bundle
+export default ReactProxy;
 
-// Also export hooks explicitly for named imports
-module.exports.useState = React.useState;
-module.exports.useEffect = React.useEffect;
-module.exports.useRef = React.useRef;
-module.exports.useCallback = React.useCallback;
-module.exports.useMemo = React.useMemo;
-module.exports.useContext = React.useContext;
-module.exports.useReducer = React.useReducer;
-module.exports.useLayoutEffect = React.useLayoutEffect;
-module.exports.useId = React.useId;
-module.exports.useTransition = React.useTransition;
-module.exports.useDeferredValue = React.useDeferredValue;
-module.exports.useImperativeHandle = React.useImperativeHandle;
-module.exports.useDebugValue = React.useDebugValue;
-module.exports.useSyncExternalStore = React.useSyncExternalStore;
-
-// Core APIs
-module.exports.createElement = React.createElement;
-module.exports.Fragment = React.Fragment;
-module.exports.createContext = React.createContext;
-module.exports.memo = React.memo;
+// Also export hooks explicitly for named imports (ES module syntax)
+export const { 
+  useState, 
+  useEffect, 
+  useRef, 
+  useCallback, 
+  useMemo, 
+  useContext, 
+  useReducer, 
+  useLayoutEffect, 
+  useId, 
+  useTransition, 
+  useDeferredValue, 
+  useImperativeHandle, 
+  useDebugValue, 
+  useSyncExternalStore,
+  // Core APIs
+  createElement,
+  Fragment,
+  createContext,
+  memo
+} = React;
 
 // Log what was exported
-console.log('✅ [react-shim-wrapper] Module exports set:', {
-  useState: typeof module.exports.useState,
-  useRef: typeof module.exports.useRef,
-  createElement: typeof module.exports.createElement
+console.log('✅ [react-shim-wrapper] ES Module exports configured:', {
+  useState: typeof useState,
+  useRef: typeof useRef,
+  createElement: typeof createElement
 });
