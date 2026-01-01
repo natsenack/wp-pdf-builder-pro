@@ -25,6 +25,33 @@ export function registerEditorInstance(instance: unknown) {
 export async function loadTemplate(templateData: any) {
 
   try {
+    // Si templateData est un objet avec un ID mais pas de données complètes, charger via AJAX
+    if (templateData && typeof templateData === 'object' && templateData.id && !templateData.elements) {
+      console.log('[Global API] Template data incomplete, loading via AJAX...', templateData);
+
+      const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'pdf_builder_load_template',
+          template_id: templateData.id.toString(),
+          nonce: (window as any).pdfBuilderPro?.nonce || ''
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data?.template) {
+        console.log('[Global API] Template loaded successfully via AJAX');
+        templateData = { ...templateData, ...result.data.template };
+      } else {
+        console.error('[Global API] Failed to load template via AJAX:', result);
+        throw new Error(result.data?.message || 'Failed to load template');
+      }
+    }
+
     currentTemplate = templateData;
 
     // Dispatcher un événement personnalisé que PDFBuilder écoutera
