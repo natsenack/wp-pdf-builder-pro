@@ -109,9 +109,13 @@ try {
 
     # Build des assets
     Write-Host "   🔨 Build des assets JavaScript/TypeScript..." -ForegroundColor Yellow
-    & npm run build
-    if ($LASTEXITCODE -ne 0) {
-        throw "Échec du build webpack"
+    $ErrorActionPreference = "Continue"
+    & npm run build 2>&1 | Where-Object { $_ -notlike "*baseline*" }
+    $ErrorActionPreference = "Stop"
+    
+    # Vérifier que les fichiers sont bien générés
+    if (-not (Test-Path "assets/js/dist")) {
+        throw "Le dossier assets/js/dist n'a pas été créé par webpack"
     }
     Write-Host "   ✅ Build terminé" -ForegroundColor Green
 
@@ -135,102 +139,25 @@ try {
 }
 
 # 2 LISTER LES FICHIERS MODIFIES
-Write-Host "`n2 Detection des fichiers modifies..." -ForegroundColor Magenta
+Write-Host "`n2 Verification des assets compiles..." -ForegroundColor Magenta
 
 try {
-    Push-Location $WorkingDir
-
-    # Récupérer les fichiers modifiés via git
-    try {
-        $ErrorActionPreference = "Continue"
-        $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
-        $gitExitCode = $LASTEXITCODE
-        $ErrorActionPreference = "Stop"
-
-        if ($gitExitCode -eq 0) {
-            $allModified = $statusOutput | Where-Object { $_ -and $_ -notlike "*warning*" -and $_ -notlike "*fatal*" } | ForEach-Object {
-                $line = $_.ToString().Trim()
-                if ($line -match '^\s*([MADRCU\?\!]{1,2})\s+(.+)$') {
-                    $status = $matches[1]
-                    $filePart = $matches[2]
-                    
-                    if ($status -like "*R*") {
-                        if ($filePart -match '(.+)\s*->\s*(.+)') {
-                            $file = $matches[2].Trim()
-                        } else {
-                            $file = $filePart
-                        }
-                    } else {
-                        $file = $filePart
-                    }
-                    
-                    $file
-                }
-            } | Sort-Object -Unique
-
-            if ($allModified.Count -gt 0) {
-                Write-Host "Fichiers detectes par git ($($allModified.Count) fichiers):" -ForegroundColor Green
-                $allModified | ForEach-Object { Write-Host "   $_" -ForegroundColor Gray }
-            }
-        } else {
-            Write-Host "Git status a retourne une erreur" -ForegroundColor Yellow
-            $allModified = @()
-        }
-    } catch {
-        Write-Host "Erreur git: $($_.Exception.Message)" -ForegroundColor Yellow
-        $allModified = @()
-    }
-
-    # Filtrer pour inclure SEULEMENT les fichiers plugin/
-    try {
-        $pluginModified = $allModified | Where-Object {
-            try {
-                $filePath = $_
-                # Inclure tout ce qui commence par "plugin/"
-                $isPlugin = ($filePath -like "plugin/*")
-                
-                # Exclure les fichiers sources TypeScript bruts
-                $isNotExcluded = ($filePath -notlike "assets/js/src/*" -and
-                                $filePath -notlike "assets/ts/*" -and
-                                $filePath -notlike "*.ts" -and
-                                $filePath -notlike "*.tsx")
-                
-                return $isPlugin -and $isNotExcluded
-            } catch {
-                return $false
-            }
-        }
-    } catch {
-        Write-Host "Erreur lors du filtrage: $($_.Exception.Message)" -ForegroundColor Yellow
-        $pluginModified = @()
-    }
-
-    # IMPORTANT: Ajouter les fichiers dist qui viennent d'être compilés (timestamped récemment)
-    Write-Host "   Detection des fichiers dist compiles..." -ForegroundColor Yellow
-    try {
-        $buildTime = (Get-Date).AddMinutes(-3)  # Dernières 3 minutes
-        $distFiles = Get-ChildItem "$WorkingDir\plugin\resources\assets\js\dist\*" -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt $buildTime }
-        if ($distFiles.Count -gt 0) {
-            $distFilesRelative = $distFiles | ForEach-Object { $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/") }
-            Write-Host "   Fichiers dist trouves: $($distFiles.Count)" -ForegroundColor Cyan
-            $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
-        }
-    } catch {
-        Write-Host "   Erreur detection dist: $($_.Exception.Message)" -ForegroundColor Yellow
+    $distDir = "$WorkingDir\plugin\resources\assets\js\dist"
+    $jsFiles = Get-ChildItem "$distDir\*.js" -ErrorAction SilentlyContinue -File
+    
+    if ($jsFiles.Count -eq 0) {
+        Write-Host "Aucun fichier JS trouve dans $distDir" -ForegroundColor Red
+        exit 1
     }
     
-    if ($pluginModified.Count -eq 0) {
-        Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
-        Pop-Location
-        exit 0
+    Write-Host "✅ Fichiers JS detectes: $($jsFiles.Count)" -ForegroundColor Green
+    $jsFiles | ForEach-Object { Write-Host "   - $($_.Name)" -ForegroundColor Gray }
+    
+    # Créer liste des chemins relatifs pour FTP
+    $pluginModified = $jsFiles | ForEach-Object {
+        $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
     }
     
-    Write-Host "Total fichiers a deployer: $($pluginModified.Count)" -ForegroundColor Cyan
-    $pluginModified | ForEach-Object {
-        Write-Host "   - $_" -ForegroundColor White
-    }
-    
-    Pop-Location
 } catch {
     Write-Host "Erreur: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
