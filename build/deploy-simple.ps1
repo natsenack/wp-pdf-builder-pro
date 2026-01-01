@@ -117,7 +117,7 @@ try {
     if (-not (Test-Path "assets/js/dist")) {
         throw "Le dossier assets/js/dist n'a pas été créé par webpack"
     }
-    Write-Host "   ✅ Build terminé" -ForegroundColor Green
+    Write_Host "   ✅ Build terminé" -ForegroundColor Green
 
     # Copier les assets compilés
     Write-Host "   📋 Copie des assets vers plugin..." -ForegroundColor Yellow
@@ -130,6 +130,13 @@ try {
         Copy-Item "assets/css/dist/*" "plugin/resources/assets/css/dist/" -Recurse -Force -ErrorAction SilentlyContinue
     }
     Write-Host "   ✅ Assets copiés" -ForegroundColor Green
+    
+    # Copier les fichiers PHP modifiés
+    Write-Host "   📋 Copie des fichiers PHP modifiés..." -ForegroundColor Yellow
+    if (Test-Path "plugin/src" -and (Get-ChildItem "plugin/src" -Recurse -Include "*.php" -ErrorAction SilentlyContinue).Count -gt 0) {
+        Copy-Item "plugin/src/*" "plugin/src/" -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Host "   ✅ Fichiers PHP vérifiés" -ForegroundColor Green
+    }
 
     Pop-Location
 } catch {
@@ -139,22 +146,36 @@ try {
 }
 
 # 2 LISTER LES FICHIERS MODIFIES
-Write-Host "`n2 Verification des assets compiles..." -ForegroundColor Magenta
+Write-Host "`n2 Verification des fichiers à déployer..." -ForegroundColor Magenta
 
 try {
-    $distDir = "$WorkingDir\plugin\resources\assets\js\dist"
-    $jsFiles = Get-ChildItem "$distDir\*.js" -ErrorAction SilentlyContinue -File
+    $jsFiles = @()
+    $phpFiles = @()
     
-    if ($jsFiles.Count -eq 0) {
-        Write-Host "Aucun fichier JS trouve dans $distDir" -ForegroundColor Red
-        exit 1
+    # Déterminer les fichiers JS à déployer
+    $distDir = "$WorkingDir\plugin\resources\assets\js\dist"
+    if (Test-Path $distDir) {
+        $jsFiles = @(Get-ChildItem "$distDir\*.js" -ErrorAction SilentlyContinue -File)
     }
     
-    Write-Host "✅ Fichiers JS detectes: $($jsFiles.Count)" -ForegroundColor Green
-    $jsFiles | ForEach-Object { Write-Host "   - $($_.Name)" -ForegroundColor Gray }
+    # Déterminer les fichiers PHP modifiés
+    $srcDir = "$WorkingDir\plugin\src"
+    if (Test-Path $srcDir) {
+        $phpFiles = @(Get-ChildItem "$srcDir\*.php" -Recurse -ErrorAction SilentlyContinue -File)
+    }
     
-    # Créer liste des chemins relatifs pour FTP
-    $pluginModified = $jsFiles | ForEach-Object {
+    $allFiles = @($jsFiles) + @($phpFiles) | Where-Object { $_ }
+    
+    if ($allFiles.Count -eq 0) {
+        Write-Host "Aucun fichier à déployer (JS ou PHP)" -ForegroundColor Yellow
+        exit 0
+    }
+    
+    Write-Host "✅ Fichiers à déployer: $($allFiles.Count)" -ForegroundColor Green
+    Write-Host "   Fichiers JS: $($jsFiles.Count)" -ForegroundColor Cyan
+    Write-Host "   Fichiers PHP: $($phpFiles.Count)" -ForegroundColor Cyan
+    
+    $pluginModified = $allFiles | ForEach-Object {
         $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
     }
     
