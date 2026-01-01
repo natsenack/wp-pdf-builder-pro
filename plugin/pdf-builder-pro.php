@@ -1601,8 +1601,15 @@ function pdf_builder_save_template_handler() {
                 error_log('[PDF Builder SAVE] Position erreur UTF8 approximative: ' . $json_error_pos);
             }
 
-            wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
-            return;
+            // Try alternative decoding approaches
+            $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('[PDF Builder SAVE] ❌ Même erreur avec JSON_INVALID_UTF8_IGNORE');
+                wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+                return;
+            } else {
+                error_log('[PDF Builder SAVE] ✅ JSON décodé avec JSON_INVALID_UTF8_IGNORE');
+            }
         }
         // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
