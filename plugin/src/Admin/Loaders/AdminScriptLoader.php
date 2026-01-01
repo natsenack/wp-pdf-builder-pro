@@ -268,7 +268,7 @@ class AdminScriptLoader
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
-            $canvas_settings = $canvas_manager->get_all_settings();
+            $canvas_settings = $canvas_manager->getSettings();
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React

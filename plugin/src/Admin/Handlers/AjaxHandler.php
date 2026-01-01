@@ -44,6 +44,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
+        add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
 
         // Hooks AJAX de maintenance
@@ -334,6 +335,41 @@ class AjaxHandler
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Récupérer les paramètres du canvas (pour l'éditeur React)
+     */
+    public function ajaxGetCanvasSettings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_template_nonce')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Récupérer les paramètres du canvas
+            if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
+                $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
+                $settings = $canvas_manager->getSettings(); // Use the correct method name
+                wp_send_json_success([
+                    'data' => $settings,
+                    'message' => 'Paramètres du canvas récupérés avec succès'
+                ]);
+            } else {
+                wp_send_json_error('Gestionnaire de canvas non disponible');
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la récupération des paramètres: ' . $e->getMessage());
         }
     }
 
