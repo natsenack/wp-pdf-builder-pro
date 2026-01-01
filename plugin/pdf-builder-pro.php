@@ -273,7 +273,7 @@ function pdf_builder_add_plugin_action_links($links) {
     $settings_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">' . __('Paramètres', 'pdf-builder-pro') . '</a>';
 
     // Ajouter le lien vers la version premium
-    $premium_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings&tab=license') . '" style="color: #007cba; font-weight: bold;">' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
+    $premium_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings&tab=licence') . '" style="color: #007cba; font-weight: bold;">' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
 
     array_unshift($links, $premium_link, $settings_link);
     return $links;
