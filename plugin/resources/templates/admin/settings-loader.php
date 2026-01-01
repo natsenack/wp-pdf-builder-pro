@@ -209,21 +209,6 @@ function pdf_builder_load_settings_assets($hook) {
         true // Chargé dans le footer
     );
 
-    // Charger le script temp.js pour les modales Canvas
-    wp_enqueue_script(
-        'pdf-builder-temp',
-        PDF_BUILDER_PLUGIN_URL . 'temp.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
-
-    // Localiser le script temp.js avec les données AJAX
-    wp_localize_script('pdf-builder-temp', 'pdfBuilderCanvasAjax', array(
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_canvas_settings')
-    ));
-
     error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 

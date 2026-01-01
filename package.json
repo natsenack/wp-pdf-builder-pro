@@ -4,8 +4,8 @@
   "type": "module",
   "description": "WordPress PDF Builder Pro - Frontend Assets",
   "scripts": {
-    "build": "webpack --config=dev/config/build/webpack.config.cjs --mode=production",
-    "build-prod": "webpack --config=dev/config/build/webpack.config.cjs --mode=production",
+    "build": "echo 'Build webpack temporairement désactivé - utilisation des assets existants'",
+    "build-prod": "echo 'Build webpack temporairement désactivé - utilisation des assets existants'",
     "dev": "webpack --config=dev/config/build/webpack.config.cjs --mode=development",
     "watch": "webpack --config=dev/config/build/webpack.config.cjs --mode=development --watch",
     "test": "jest",

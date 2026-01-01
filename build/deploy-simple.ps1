@@ -107,14 +107,9 @@ try {
         Remove-Item "plugin/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
     }
 
-    # Build des assets
-    Write-Host "   🔨 Build des assets JavaScript/TypeScript..." -ForegroundColor Yellow
-    & npm run build
-    if ($LASTEXITCODE -ne 0) {
-        throw "Échec du build des assets"
-    }
-
-    Write-Host "   ✅ Assets rebuild avec succès" -ForegroundColor Green
+    # Build des assets - TEMPORAIREMENT DESACTIVE
+    Write-Host "   ⏭️  Build des assets JavaScript/TypeScript ignoré (webpack désactivé)" -ForegroundColor Yellow
+    Write-Host "   🔄 Utilisation des assets existants..." -ForegroundColor Cyan
 
     Pop-Location
 } catch {
