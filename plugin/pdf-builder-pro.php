@@ -1982,16 +1982,38 @@ function pdf_builder_save_template_handler() {
     // error_log('[PDF Builder SAVE] ✅ Nonce OK');
 
     try {
-        $template_id = intval($_POST['template_id'] ?? 0);
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-        $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+        // Utiliser php://input pour éviter les problèmes de troncature avec $_POST
+        $raw_input = file_get_contents('php://input');
+        error_log('[PDF Builder SAVE] Raw input length: ' . strlen($raw_input));
+        
+        // Essayer de décoder comme JSON d'abord (si envoyé comme JSON)
+        $input_data = json_decode($raw_input, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $template_id = intval($input_data['template_id'] ?? 0);
+            $template_data = $input_data['template_data'] ?? '';
+            $template_name = sanitize_text_field($input_data['template_name'] ?? '');
+            $nonce = $input_data['nonce'] ?? '';
+        } else {
+            // Fallback vers $_POST si ce n'est pas du JSON
+            $template_id = intval($_POST['template_id'] ?? 0);
+            $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+            $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        }
+
+        // Vérifier le nonce
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
+            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
+            wp_send_json_error('Nonce invalide');
+            return;
+        }
 
         // error_log('[PDF Builder SAVE] Template ID: ' . $template_id);
         // error_log('[PDF Builder SAVE] Template data length: ' . strlen($template_data));
         // error_log('[PDF Builder SAVE] Template name: ' . $template_name);
 
         if (!$template_id || empty($template_data)) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
+            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
             wp_send_json_error('Données manquantes');
             return;
         }
@@ -2005,6 +2027,10 @@ function pdf_builder_save_template_handler() {
             error_log('[PDF Builder SAVE] Données JSON reçues (début): ' . substr($template_data, 0, 500) . '...');
             error_log('[PDF Builder SAVE] Données JSON reçues (fin): ' . substr($template_data, -500) . '...');
             error_log('[PDF Builder SAVE] Longueur totale: ' . strlen($template_data));
+            
+            // Log du raw input complet si erreur
+            error_log('[PDF Builder SAVE] Raw input (début): ' . substr($raw_input, 0, 1000));
+            error_log('[PDF Builder SAVE] Raw input (fin): ' . substr($raw_input, -1000));
 
             // Chercher des caractères problématiques
             $invalid_chars = [];
@@ -2037,6 +2063,9 @@ function pdf_builder_save_template_handler() {
                 error_log('[PDF Builder SAVE] JSON après nettoyage (début): ' . substr($cleaned_json, 0, 500));
                 error_log('[PDF Builder SAVE] JSON après nettoyage (autour pos 773): ' . substr($cleaned_json, 700, 100));
                 error_log('[PDF Builder SAVE] JSON après nettoyage (fin): ' . substr($cleaned_json, -500));
+                
+                // Log du JSON nettoyé complet pour analyse
+                error_log('[PDF Builder SAVE] JSON nettoyé complet: ' . $cleaned_json);
 
                 // Analyser le JSON pour trouver l'erreur exacte
                 $json_analysis = analyze_json_error($cleaned_json);
@@ -2072,6 +2101,9 @@ function pdf_builder_save_template_handler() {
         }
         error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
+        // Utiliser le JSON nettoyé/corrigé si nécessaire
+        $final_json = isset($cleaned_json) ? $cleaned_json : $template_data;
+
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
         // error_log('[PDF Builder SAVE] Table templates: ' . $table_templates);
@@ -2095,7 +2127,7 @@ function pdf_builder_save_template_handler() {
         $result = $wpdb->update(
             $table_templates,
             [
-                'template_data' => $template_data,
+                'template_data' => $final_json,
                 'updated_at' => current_time('mysql')
             ],
             ['id' => $template_id],
