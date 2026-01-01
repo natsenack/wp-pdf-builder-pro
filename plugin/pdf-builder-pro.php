@@ -1931,15 +1931,9 @@ function pdf_builder_save_template_handler() {
         $decoded_data = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
-            error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
-            error_log('[PDF Builder SAVE] Données JSON (fin): ' . substr($template_data, -500) . '...');
+            error_log('[PDF Builder SAVE] Données JSON reçues (début): ' . substr($template_data, 0, 500) . '...');
+            error_log('[PDF Builder SAVE] Données JSON reçues (fin): ' . substr($template_data, -500) . '...');
             error_log('[PDF Builder SAVE] Longueur totale: ' . strlen($template_data));
-
-            // Try to find the problematic character
-            $json_error_pos = json_last_error() === JSON_ERROR_UTF8 ? strpos($template_data, '\x') : -1;
-            if ($json_error_pos !== false) {
-                error_log('[PDF Builder SAVE] Position erreur UTF8 approximative: ' . $json_error_pos);
-            }
 
             // Try alternative decoding approaches
             $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
@@ -1951,7 +1945,7 @@ function pdf_builder_save_template_handler() {
                 error_log('[PDF Builder SAVE] ✅ JSON décodé avec JSON_INVALID_UTF8_IGNORE');
             }
         }
-        // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
+        error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -2041,9 +2035,14 @@ function pdf_builder_load_template_handler() {
 
         $template_data = json_decode($template['template_data'], true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            wp_send_json_error('Erreur de décodage JSON');
+            error_log('[PDF Builder LOAD] Erreur JSON lors du décodage: ' . json_last_error_msg());
+            error_log('[PDF Builder LOAD] Données brutes (début): ' . substr($template['template_data'], 0, 200));
+            error_log('[PDF Builder LOAD] Données brutes (fin): ' . substr($template['template_data'], -200));
+            wp_send_json_error('Erreur de décodage JSON: ' . json_last_error_msg());
             return;
         }
+
+        error_log('[PDF Builder LOAD] Template chargé avec succès - ID: ' . $template_id . ', éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
 
         wp_send_json_success([
             'template' => $template_data,
