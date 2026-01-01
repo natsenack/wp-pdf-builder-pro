@@ -483,7 +483,6 @@ function pdf_builder_add_deactivation_modal() {
                 resize: vertical;
             }
             .pdf-builder-modal-footer {
-                padding: 0 20px 20px;
                 border-top: 1px solid #ddd;
                 display: flex;
                 justify-content: space-between;

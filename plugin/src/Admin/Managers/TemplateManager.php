@@ -339,6 +339,15 @@ class TemplateManager
                 return;
             }
 
+            // Décoder les données JSON si elles sont stockées en JSON
+            if (is_string($template_data)) {
+                $decoded_data = json_decode($template_data, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $template_data = $decoded_data;
+                }
+                // Si le décodage échoue, garder les données telles quelles (compatibilité legacy)
+            }
+
             // $this->debug_log('Template loaded successfully, data size: ' . strlen(json_encode($template_data)));
             wp_send_json_success([
                 'template' => $template_data,
@@ -375,13 +384,24 @@ class TemplateManager
         $result = [];
 
         foreach ($templates as $template) {
+            $template_data_raw = get_post_meta($template->ID, '_pdf_template_data', true);
+            
+            // Décoder les données JSON si nécessaire
+            $template_data = $template_data_raw;
+            if (is_string($template_data_raw)) {
+                $decoded = json_decode($template_data_raw, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $template_data = $decoded;
+                }
+            }
+
             $result[] = [
                 'id' => $template->ID,
                 'name' => $template->post_title,
                 'type' => get_post_meta($template->ID, '_pdf_template_type', true),
                 'is_default' => get_post_meta($template->ID, '_pdf_template_default', true) === '1',
                 'categories' => get_post_meta($template->ID, '_pdf_template_categories', true),
-                'data' => get_post_meta($template->ID, '_pdf_template_data', true),
+                'data' => $template_data,
             ];
         }
 
@@ -421,10 +441,22 @@ class TemplateManager
         }
 
         $template = $templates[0];
+        
+        $template_data_raw = get_post_meta($template->ID, '_pdf_template_data', true);
+        
+        // Décoder les données JSON si nécessaire
+        $template_data = $template_data_raw;
+        if (is_string($template_data_raw)) {
+            $decoded = json_decode($template_data_raw, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $template_data = $decoded;
+            }
+        }
+        
         return [
             'id' => $template->ID,
             'name' => $template->post_title,
-            'data' => get_post_meta($template->ID, '_pdf_template_data', true),
+            'data' => $template_data,
         ];
     }
 
