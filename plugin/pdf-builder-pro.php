@@ -1883,13 +1883,6 @@ function pdf_builder_auto_clear_cache() {
  * Analyse une erreur JSON pour trouver la position exacte du problème
  */
 function analyze_json_error($json_string) {
-    $max_length = 1000; // Limiter la longueur pour les logs
-    $truncated = strlen($json_string) > $max_length;
-
-    if ($truncated) {
-        $json_string = substr($json_string, 0, $max_length) . '...';
-    }
-
     // Essayer de parser le JSON caractère par caractère pour trouver l'erreur
     $depth = 0;
     $in_string = false;
@@ -1940,10 +1933,6 @@ function analyze_json_error($json_string) {
 
     if ($depth > 0) {
         return "Structure JSON incomplète - profondeur finale: $depth, dernière position valide: $last_valid_pos";
-    }
-
-    if ($truncated) {
-        return "JSON tronqué dans les logs - analyser le JSON complet côté frontend";
     }
 
     return "Erreur JSON inconnue - structure semble correcte";
