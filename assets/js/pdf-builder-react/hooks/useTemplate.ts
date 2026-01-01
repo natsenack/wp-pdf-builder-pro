@@ -541,13 +541,42 @@ export function useTemplate() {
         marginTop: state.template.marginTop,
         marginBottom: state.template.marginBottom
       };
+
+      // Sérialisation sécurisée avec gestion d'erreur
+      let templateDataJson: string;
+      try {
+        templateDataJson = JSON.stringify(templateData);
+        // console.log('[PDF_BUILDER_FRONTEND] JSON serialization successful, length:', templateDataJson.length);
+      } catch (jsonError) {
+        console.error('[PDF_BUILDER_FRONTEND] JSON serialization failed:', jsonError);
+        // Fallback: essayer de sérialiser sans les éléments problématiques
+        try {
+          const safeTemplateData = {
+            ...templateData,
+            elements: normalizedElements.map((el, idx) => {
+              try {
+                JSON.stringify(el);
+                return el;
+              } catch {
+                console.warn(`[PDF_BUILDER_FRONTEND] Element ${idx} non sérialisable, remplacé par objet vide`);
+                return { id: el.id || `element-${idx}`, type: el.type || 'unknown', x: 0, y: 0, width: 100, height: 100 };
+              }
+            })
+          };
+          templateDataJson = JSON.stringify(safeTemplateData);
+          console.log('[PDF_BUILDER_FRONTEND] Fallback JSON serialization successful');
+        } catch (fallbackError) {
+          console.error('[PDF_BUILDER_FRONTEND] Fallback JSON serialization also failed:', fallbackError);
+          throw new Error('Impossible de sérialiser les données du template');
+        }
+      }
       
       const formData = new FormData();
       formData.append('action', 'pdf_builder_save_template');
       formData.append('template_id', templateId);
       formData.append('template_name', state.template.name || 'Nouveau template');
       formData.append('template_description', state.template.description || '');
-      formData.append('template_data', JSON.stringify(templateData));
+      formData.append('template_data', templateDataJson);
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
       // Ajouter les paramètres du template
