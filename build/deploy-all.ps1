@@ -127,7 +127,7 @@ if (-not $SkipFTP) {
         Write-Host "📤 Upload ultra-rapide avec pool de connexions optimisé..." -ForegroundColor White
 
         $totalFiles = $filesToDeploy.Count
-        $maxConcurrentJobs = 8  # Optimisé pour petits fichiers
+        $maxConcurrentJobs = 12  # Augmenté pour exploiter le débit réseau disponible (12 MB/s)
         $maxRetries = 3         # Réduit pour accélérer
         $uploadedCount = 0
         $failedCount = 0
