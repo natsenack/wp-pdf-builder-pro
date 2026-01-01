@@ -89,144 +89,323 @@ if (-not $SkipFTP) {
         $ftpUri = "ftp://$FtpHost"
         Write-Host "🔌 Connexion à $ftpUri..." -ForegroundColor White
 
-        # Collecter tous les répertoires à créer
-        $directories = $filesToDeploy | ForEach-Object {
-            $relativePath = $_.FullName -replace [regex]::Escape($PluginPath), ""
-            $directory = [System.IO.Path]::GetDirectoryName($relativePath)
-            if ($directory -and $directory -ne "") { $directory }
-        } | Select-Object -Unique
+        # SOLUTION ALTERNATIVE : Créer les répertoires à la demande lors de l'upload
+        Write-Host "🏗️  Structure de répertoires créée à la demande lors de l'upload..." -ForegroundColor White
 
-        # OPTIMISATION : Trier par profondeur (parents d'abord) pour éviter les conflits
-        $directories = $directories | Sort-Object { ($_.Split('/') | Measure-Object).Count }
+        # 🚀 MÉTHODE FTP ULTRA-RÉACTIVE AVEC POOL DE CONNEXIONS
+        Write-Host "📤 Upload des fichiers (méthode ultra-réactive avec pool de connexions)..." -ForegroundColor White
 
-        Write-Host "🏗️  Création de la structure de répertoires ($($directories.Count) répertoires)..." -ForegroundColor White
-
-        # CRITIQUEMENT IMPORTANT : Créer les répertoires SÉQUENTIELLEMENT du plus haut niveau
-        $createdDirs = 0
-        foreach ($dir in $directories) {
-            # Créer le répertoire de manière récursive (tous les parents d'abord)
-            $parts = $dir -split '/'
-            $currentPath = ""
-
-            foreach ($part in $parts) {
-                if ($part) {
-                    $currentPath += "$part/"
-                    $ftpDir = "$FtpBasePath$currentPath".TrimEnd('/').Replace("\", "/")
-
-                    try {
-                        $ftpRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$ftpDir")
-                        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-                        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
-                        $ftpRequest.UseBinary = $true
-                        $ftpRequest.KeepAlive = $false
-                        $ftpRequest.Timeout = 15000
-
-                        $response = $ftpRequest.GetResponse()
-                        $response.Close()
-                        $createdDirs++
-                    } catch {
-                        # Le répertoire existe probablement déjà, c'est normal
-                        $createdDirs++
-                    }
-                }
-            }
-        }
-
-        Write-Host "✅ $createdDirs répertoires préparés" -ForegroundColor Green
-
-        # 🚀 MÉTHODE FTP OPTIMISÉE AVEC JOBS
-        Write-Host "📤 Upload des fichiers (méthode optimisée avec jobs)..." -ForegroundColor White
-
-        $batchSize = 10  # 10 fichiers simultanés pour stabilité
-        $maxRetries = 3
+        $totalFiles = $filesToDeploy.Count
+        $maxConcurrentJobs = 20  # Réduit à 20 pour plus de stabilité
+        $maxRetries = 5
         $uploadedCount = 0
         $failedCount = 0
-        $totalFiles = $filesToDeploy.Count
+        $failedFiles = @()  # Liste des fichiers échoués pour retry final
+        $totalAttempts = 0  # Compteur total des tentatives
+        $retryCount = 0     # Compteur des fichiers nécessitant des retries
+
+        Write-Host "⚡ Pool de connexions : $maxConcurrentJobs simultanées pour $totalFiles fichiers" -ForegroundColor Cyan
 
         # Grouper les fichiers par taille (gros fichiers en premier)
         $sortedFiles = $filesToDeploy | Sort-Object -Property Length -Descending
 
-        for ($i = 0; $i -lt $sortedFiles.Count; $i += $batchSize) {
-            $batch = $sortedFiles[$i..([math]::Min($i + $batchSize - 1, $sortedFiles.Count - 1))]
-            $batchNumber = [math]::Floor($i / $batchSize) + 1
-            $totalBatches = [math]::Ceiling($sortedFiles.Count / $batchSize)
+        # File d'attente et pool de jobs actifs
+        $fileQueue = [System.Collections.Concurrent.ConcurrentQueue[object]]::new()
+        $activeJobs = @{}
+        $jobCounter = 0
 
-            Write-Host "📦 Lot $batchNumber/$totalBatches ($($batch.Count) fichiers)..." -ForegroundColor Gray
+        # Remplir la file d'attente
+        foreach ($file in $sortedFiles) {
+            $relativePath = $file.FullName -replace [regex]::Escape($PluginPath), ""
+            $remotePath = "$FtpBasePath$relativePath".Replace("\", "/")
+            $fileQueue.Enqueue(@{
+                LocalPath = $file.FullName
+                RemotePath = $remotePath
+                FileName = [System.IO.Path]::GetFileName($file.FullName)
+                Id = $jobCounter++
+            })
+        }
 
-            # Upload en parallèle avec jobs
-            $jobs = @()
-            foreach ($file in $batch) {
-                $relativePath = $file.FullName -replace [regex]::Escape($PluginPath), ""
-                $remotePath = "$FtpBasePath$relativePath".Replace("\", "/")
+        Write-Host "🚀 Démarrage du pool de connexions..." -ForegroundColor Green
 
-                $job = Start-Job -ScriptBlock {
-                    param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPass, $maxRetries)
+        # TIMER POUR LES STATISTIQUES DE PERFORMANCE
+        $startTime = Get-Date
+        $totalBytesUploaded = 0
+        $lastProgressTime = $startTime
 
-                    $attempts = 0
-                    $success = $false
-                    $lastError = ""
-                    $fileName = [System.IO.Path]::GetFileName($localFile)
+        $processedFiles = 0
+        while ($fileQueue.Count -gt 0 -or $activeJobs.Count -gt 0) {
+            # Démarrer de nouveaux jobs si on a de la place dans le pool
+            while ($activeJobs.Count -lt $maxConcurrentJobs -and $fileQueue.Count -gt 0) {
+                $fileItem = $null
+                if ($fileQueue.TryDequeue([ref]$fileItem)) {
+                    $job = Start-Job -ScriptBlock {
+                        param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPass, $maxRetries, $ftpUri, $fileName)
 
-                    while (-not $success -and $attempts -lt $maxRetries) {
-                        $attempts++
-                        try {
-                            $webClient = New-Object System.Net.WebClient
-                            $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
-                            $webClient.UploadFile("ftp://$ftpHost$remoteFile", $localFile) | Out-Null
-                            $webClient.Dispose()
+                        $attempts = 0
+                        $success = $false
+                        $lastError = ""
 
-                            $success = $true
-                            return @{Success = $true; File = $remoteFile; Attempts = $attempts; FileName = $fileName}
-                        } catch {
-                            $lastError = $_.Exception.Message
-                            if ($attempts -lt $maxRetries) {
-                                Start-Sleep -Milliseconds (300 * $attempts)  # Backoff progressif
+                        while (-not $success -and $attempts -lt $maxRetries) {
+                            $attempts++
+                            try {
+                                # CRÉER LE RÉPERTOIRE RAPIDEMENT
+                                $remoteDir = [System.IO.Path]::GetDirectoryName($remoteFile).Replace("\", "/")
+                                if ($remoteDir -and $remoteDir -ne "/") {
+                                    $dirParts = $remoteDir -split '/' | Where-Object { $_ }
+                                    $currentDir = ""
+
+                                    foreach ($part in $dirParts) {
+                                        $currentDir += "/$part"
+                                        try {
+                                            $dirRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$currentDir")
+                                            $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                                            $dirRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+                                            $dirRequest.UseBinary = $true
+                                            $dirRequest.KeepAlive = $false
+                                            $dirRequest.Timeout = 3000  # Ultra-rapide
+
+                                            $dirResponse = $dirRequest.GetResponse()
+                                            $dirResponse.Close()
+                                        } catch {
+                                            # Répertoire existe déjà
+                                        }
+                                    }
+                                }
+
+                                # UPLOAD ULTRA-RAPIDE AVEC FTP OPTIMISÉ
+                                $ftpRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$remoteFile")
+                                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                                $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+                                $ftpRequest.UseBinary = $true
+                                $ftpRequest.UsePassive = $false  # Mode actif pour plus de compatibilité
+                                $ftpRequest.KeepAlive = $false
+                                $ftpRequest.Timeout = 60000  # 60 secondes
+                                $ftpRequest.ReadWriteTimeout = 60000
+
+                                $fileStream = [System.IO.File]::OpenRead($localFile)
+                                $requestStream = $ftpRequest.GetRequestStream()
+
+                                $buffer = New-Object byte[] 65536  # Buffer de 64KB pour vitesse optimale
+                                $bytesRead = 0
+
+                                while (($bytesRead = $fileStream.Read($buffer, 0, $buffer.Length)) -gt 0) {
+                                    $requestStream.Write($buffer, 0, $bytesRead)
+                                }
+
+                                $requestStream.Close()
+                                $fileStream.Close()
+
+                                $success = $true
+                                return @{Success = $true; File = $remoteFile; Attempts = $attempts; FileName = $fileName}
+                            } catch {
+                                $lastError = $_.Exception.Message
+                                if ($attempts -lt $maxRetries) {
+                                    Start-Sleep -Milliseconds (200 * $attempts)  # Backoff progressif plus long
+                                }
                             }
                         }
-                    }
 
-                    return @{Success = $false; File = $remoteFile; Error = $lastError; Attempts = $attempts; FileName = $fileName}
-                } -ArgumentList $file.FullName, $remotePath, $FtpHost, $FtpUser, $FtpPass, $maxRetries
+                        return @{Success = $false; File = $remoteFile; Error = $lastError; Attempts = $attempts; FileName = $fileName}
+                    } -ArgumentList $fileItem.LocalPath, $fileItem.RemotePath, $FtpHost, $FtpUser, $FtpPass, $maxRetries, $ftpUri, $fileItem.FileName
 
-                $jobs += $job
-            }
-
-            # Attendre que tous les jobs du lot soient terminés
-            $completedJobs = $jobs | Wait-Job
-            $results = $completedJobs | Receive-Job
-
-            # Traiter les résultats
-            foreach ($result in $results) {
-                if ($result.Success) {
-                    $uploadedCount++
-                    if ($result.Attempts -gt 1) {
-                        Write-Host "  ✅ $($result.FileName) (après $($result.Attempts) tentatives)" -ForegroundColor Yellow
-                    } else {
-                        Write-Host "  ✅ $($result.FileName)" -ForegroundColor Green
-                    }
-                } else {
-                    $failedCount++
-                    Write-Host "  ❌ $($result.FileName) : $($result.Error)" -ForegroundColor Red
+                    $activeJobs[$fileItem.Id] = $job
                 }
             }
 
-            # Nettoyer les jobs
-            $jobs | Remove-Job
+            # Vérifier les jobs terminés et les traiter immédiatement
+            $completedJobIds = @()
+            foreach ($jobId in $activeJobs.Keys) {
+                $job = $activeJobs[$jobId]
+                if ($job.State -eq 'Completed') {
+                    $result = Receive-Job $job
+                    $processedFiles++
 
-            # Afficher la progression
-            $progress = [math]::Round(($uploadedCount + $failedCount) / $totalFiles * 100, 1)
-            Write-Host "📊 Progression : $progress% ($uploadedCount uploadés, $failedCount échoués)" -ForegroundColor Cyan
+                    if ($result.Success) {
+                        $uploadedCount++
+                        $totalAttempts += $result.Attempts
+                        if ($result.Attempts -gt 1) {
+                            $retryCount++
+                        }
+                        # Accumuler la taille du fichier uploadé pour les statistiques
+                        $fileSize = (Get-Item $fileItem.LocalPath).Length
+                        $totalBytesUploaded += $fileSize
+
+                        if ($result.Attempts -gt 1) {
+                            Write-Host "  ✅ $($result.FileName) (après $($result.Attempts) tentatives)" -ForegroundColor Yellow
+                        } else {
+                            Write-Host "  ✅ $($result.FileName)" -ForegroundColor Green
+                        }
+                    } else {
+                        $failedCount++
+                        $totalAttempts += $result.Attempts
+                        $failedFiles += @{
+                            LocalPath = $fileItem.LocalPath
+                            RemotePath = $fileItem.RemotePath
+                            FileName = $fileItem.FileName
+                            Error = $result.Error
+                        }
+                        Write-Host "  ❌ $($result.FileName) : $($result.Error)" -ForegroundColor Red
+                    }
+
+                    Remove-Job $job
+                    $completedJobIds += $jobId
+                }
+            }
+
+            # Nettoyer les jobs terminés
+            foreach ($jobId in $completedJobIds) {
+                $activeJobs.Remove($jobId)
+            }
+
+            # Afficher la progression avec statistiques de performance
+            $currentTime = Get-Date
+            $elapsed = $currentTime - $startTime
+
+            if ($processedFiles % 5 -eq 0 -or ($processedFiles -gt 0 -and ($currentTime - $lastProgressTime).TotalSeconds -ge 2)) {
+                $progress = [math]::Round($processedFiles / $totalFiles * 100, 1)
+
+                # Calculer les vitesses
+                $filesPerMinute = if ($elapsed.TotalMinutes -gt 0) { [math]::Round($uploadedCount / $elapsed.TotalMinutes, 1) } else { 0 }
+                $mbPerMinute = if ($elapsed.TotalMinutes -gt 0) { [math]::Round($totalBytesUploaded / 1MB / $elapsed.TotalMinutes, 1) } else { 0 }
+
+                # Estimer le temps restant
+                $remainingFiles = $totalFiles - $processedFiles
+                $eta = if ($filesPerMinute -gt 0) {
+                    $minutesLeft = $remainingFiles / $filesPerMinute
+                    if ($minutesLeft -lt 1) {
+                        "$([math]::Round($minutesLeft * 60))s"
+                    } elseif ($minutesLeft -lt 60) {
+                        "$([math]::Round($minutesLeft))min"
+                    } else {
+                        "$([math]::Round($minutesLeft / 60, 1))h"
+                    }
+                } else { "∞" }
+
+                Write-Host "📊 $progress% | $uploadedCount/$totalFiles fichiers | ${filesPerMinute} f/min | ${mbPerMinute} Mo/min | ETA: ${eta} | $($activeJobs.Count) actifs" -ForegroundColor Cyan
+
+                $lastProgressTime = $currentTime
+            }
+
+            # Pause ultra-courte pour éviter surcharge CPU
+            if ($activeJobs.Count -gt 0) {
+                Start-Sleep -Milliseconds 10
+            }
+        }
+
+        $endTime = Get-Date
+        $totalElapsed = $endTime - $startTime
+
+        # RETRY SÉQUENTIEL POUR LES FICHIERS ÉCHOUÉS
+        if ($failedFiles.Count -gt 0) {
+            Write-Host "`n🔄 Tentative de retry séquentiel pour $($failedFiles.Count) fichiers échoués..." -ForegroundColor Yellow
+
+            foreach ($failedFile in $failedFiles) {
+                $attempts = 0
+                $success = $false
+                $lastError = ""
+
+                while (-not $success -and $attempts -lt $maxRetries) {
+                    $attempts++
+                    try {
+                        # CRÉER LE RÉPERTOIRE RAPIDEMENT
+                        $remoteDir = [System.IO.Path]::GetDirectoryName($failedFile.RemotePath).Replace("\", "/")
+                        if ($remoteDir -and $remoteDir -ne "/") {
+                            $dirParts = $remoteDir -split '/' | Where-Object { $_ }
+                            $currentDir = ""
+
+                            foreach ($part in $dirParts) {
+                                $currentDir += "/$part"
+                                try {
+                                    $dirRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$currentDir")
+                                    $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                                    $dirRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+                                    $dirRequest.UseBinary = $true
+                                    $dirRequest.UsePassive = $false
+                                    $dirRequest.KeepAlive = $false
+                                    $dirRequest.Timeout = 10000
+
+                                    $dirResponse = $dirRequest.GetResponse()
+                                    $dirResponse.Close()
+                                } catch {
+                                    # Répertoire existe déjà
+                                }
+                            }
+                        }
+
+                        # UPLOAD SÉQUENTIEL
+                        $ftpRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$($failedFile.RemotePath)")
+                        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+                        $ftpRequest.UseBinary = $true
+                        $ftpRequest.UsePassive = $false
+                        $ftpRequest.KeepAlive = $false
+                        $ftpRequest.Timeout = 60000
+                        $ftpRequest.ReadWriteTimeout = 60000
+
+                        $fileStream = [System.IO.File]::OpenRead($failedFile.LocalPath)
+                        $requestStream = $ftpRequest.GetRequestStream()
+
+                        $buffer = New-Object byte[] 65536
+                        $bytesRead = 0
+
+                        while (($bytesRead = $fileStream.Read($buffer, 0, $buffer.Length)) -gt 0) {
+                            $requestStream.Write($buffer, 0, $bytesRead)
+                        }
+
+                        $requestStream.Close()
+                        $fileStream.Close()
+
+                        $success = $true
+                        $uploadedCount++
+                        $failedCount--
+                        $fileSize = (Get-Item $failedFile.LocalPath).Length
+                        $totalBytesUploaded += $fileSize
+
+                        Write-Host "  ✅ $($failedFile.FileName) (retry séquentiel réussi après $attempts tentatives)" -ForegroundColor Green
+                    } catch {
+                        $lastError = $_.Exception.Message
+                        if ($attempts -lt $maxRetries) {
+                            Start-Sleep -Milliseconds (500 * $attempts)
+                        }
+                    }
+                }
+
+                if (-not $success) {
+                    Write-Host "  ❌ $($failedFile.FileName) : Échec définitif - $lastError" -ForegroundColor Red
+                }
+            }
         }
 
         if ($failedCount -eq 0) {
             Write-Host "✅ Déploiement FTP terminé : $uploadedCount fichiers uploadés avec succès" -ForegroundColor Green
         } else {
             Write-Host "⚠️  Déploiement FTP terminé : $uploadedCount fichiers uploadés, $failedCount échoués" -ForegroundColor Yellow
+            Write-Host "   Fichiers échoués :" -ForegroundColor Yellow
+            foreach ($failed in $failedFiles) {
+                if (-not $failed.ContainsKey('Error')) { continue }  # Skip if already retried successfully
+                Write-Host "   - $($failed.FileName): $($failed.Error)" -ForegroundColor Red
+            }
         }
+
+        # STATISTIQUES DE PERFORMANCE DÉTAILLÉES
+        $totalMB = [math]::Round($totalBytesUploaded / 1MB, 2)
+        $avgFilesPerMinute = [math]::Round($uploadedCount / $totalElapsed.TotalMinutes, 1)
+        $avgMBPerMinute = [math]::Round($totalMB / $totalElapsed.TotalMinutes, 1)
+        $avgMBPerSecond = [math]::Round($totalMB / $totalElapsed.TotalSeconds, 2)
+
+        Write-Host "📈 Statistiques de performance :" -ForegroundColor Magenta
+        Write-Host "   ⏱️  Durée totale : $([math]::Round($totalElapsed.TotalSeconds)) secondes" -ForegroundColor Magenta
+        Write-Host "   📁 Fichiers : $uploadedCount uploadés, $failedCount échoués" -ForegroundColor Magenta
+        Write-Host "   💾 Données : $totalMB Mo transférés" -ForegroundColor Magenta
+        Write-Host "   ⚡ Vitesse moyenne : $avgFilesPerMinute fichiers/min, $avgMBPerMinute Mo/min ($avgMBPerSecond Mo/s)" -ForegroundColor Magenta
+        Write-Host "   🔄 Taux de succès : $([math]::Round($uploadedCount / ($uploadedCount + $failedCount) * 100, 1))% ($uploadedCount/$(($uploadedCount + $failedCount)))" -ForegroundColor Magenta
+        Write-Host "   🎯 Tentatives : $totalAttempts total, $([math]::Round($totalAttempts / ($uploadedCount + $failedCount), 2)) tentatives/fichier en moyenne" -ForegroundColor Magenta
+        Write-Host "   🔁 Fichiers retried : $retryCount ($(if ($uploadedCount -gt 0) { [math]::Round($retryCount / $uploadedCount * 100, 1) } else { 0 })% des réussites)" -ForegroundColor Magenta
 
     } catch {
         Write-Host "❌ Erreur FTP : $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        Write-Host "⚠️  Continuation malgré les erreurs FTP..." -ForegroundColor Yellow
     }
 } else {
     Write-Host "`n3️⃣  DÉPLOIEMENT FTP IGNORÉ (-SkipFTP)" -ForegroundColor Gray
