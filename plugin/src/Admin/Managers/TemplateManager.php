@@ -301,7 +301,7 @@ class TemplateManager
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_template_nonce')) {
                 wp_send_json_error('Nonce invalide');
                 return;
             }

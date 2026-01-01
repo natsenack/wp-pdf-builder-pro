@@ -567,7 +567,7 @@ class PdfBuilderTemplateManager
             }
             
             // Vérifier le nonce
-            if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_ajax')) {
+            if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_save_template_nonce')) {
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
 
