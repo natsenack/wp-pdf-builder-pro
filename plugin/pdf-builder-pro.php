@@ -2036,8 +2036,32 @@ function pdf_builder_save_template_handler() {
                 $json_analysis = analyze_json_error($cleaned_json);
                 error_log('[PDF Builder SAVE] Analyse JSON: ' . $json_analysis);
 
-                wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
-                return;
+                // Tenter de corriger le JSON incomplet en ajoutant les crochets manquants
+                $open_braces = substr_count($cleaned_json, '{');
+                $close_braces = substr_count($cleaned_json, '}');
+                $open_brackets = substr_count($cleaned_json, '[');
+                $close_brackets = substr_count($cleaned_json, ']');
+
+                $missing_braces = $open_braces - $close_braces;
+                $missing_brackets = $open_brackets - $close_brackets;
+
+                if ($missing_braces > 0 || $missing_brackets > 0) {
+                    $fixed_json = $cleaned_json . str_repeat('}', $missing_braces) . str_repeat(']', $missing_brackets);
+                    error_log('[PDF Builder SAVE] Tentative de correction JSON - ajout de ' . $missing_braces . ' } et ' . $missing_brackets . ' ]');
+                    
+                    $decoded_data = json_decode($fixed_json, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        error_log('[PDF Builder SAVE] ✅ JSON corrigé avec succès');
+                        $cleaned_json = $fixed_json;
+                    } else {
+                        error_log('[PDF Builder SAVE] ❌ Échec de la correction JSON: ' . json_last_error_msg());
+                        wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+                        return;
+                    }
+                } else {
+                    wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+                    return;
+                }
             }
         }
         error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
