@@ -321,6 +321,8 @@ function pdf_builder_load_core()
     }
 
     // Initialiser le système de migration après le chargement des constantes
+    // TEMPORAIREMENT DÉSACTIVÉ - Classes manquantes causent des erreurs fatales
+    /*
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
         // Vérifier que la classe est chargée avant de l'utiliser
@@ -331,6 +333,7 @@ function pdf_builder_load_core()
             error_log('PDF Builder Pro: Impossible de charger la classe PDF_Builder_Migration_System');
         }
     }
+    */
 
     // Charger le logger en premier (nécessaire pour PDF_Builder_Core)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php')) {
@@ -775,6 +778,8 @@ function pdf_builder_load_bootstrap()
     }
 
     // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
+    // TEMPORAIREMENT DÉSACTIVÉ - Classes manquantes causent des erreurs fatales
+    /*
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
         // Vérifier que la classe est chargée avant de l'utiliser
@@ -785,6 +790,7 @@ function pdf_builder_load_bootstrap()
             error_log('PDF Builder Pro: Impossible de charger la classe PDF_Builder_Notification_Manager');
         }
     }
+    */
 
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
     /*
