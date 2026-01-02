@@ -211,8 +211,19 @@ try {
           console.log('[PDF Builder] Template elements count:', data.data.template?.elements?.length || 0);
 
           // Préparer les options avec les données chargées
+          let elements = data.data.template.elements;
+          if (Array.isArray(elements)) {
+            // Déjà un array
+            elements = elements;
+          } else if (typeof elements === 'object' && elements !== null) {
+            // Objet avec IDs comme clés - convertir en array
+            elements = Object.values(elements);
+          } else {
+            elements = [];
+          }
+
           const options = {
-            initialElements: data.data.template.elements || [],
+            initialElements: elements,
             templateName: data.data.name || window.pdfBuilderData.templateName || '',
             isNew: false,
             templateId: window.pdfBuilderData.templateId
