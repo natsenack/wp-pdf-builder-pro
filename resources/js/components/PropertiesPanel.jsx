@@ -236,6 +236,14 @@ const PropertiesPanel = memo(({
       case 'appearance':
         return (
           <div className="tab-content">
+            {/* DEBUG: Afficher les informations de debug */}
+            <div style={{padding: '10px', background: '#e6f7ff', border: '1px solid #1890ff', marginBottom: '10px'}}>
+              <strong>DEBUG: Onglet Apparence</strong><br/>
+              Élément: {selectedElement?.type || 'aucun'}<br/>
+              allowedControls: {JSON.stringify(allowedControls)}<br/>
+              smartOrder: {JSON.stringify(smartOrder)}<br/>
+              tabProfile: {JSON.stringify(tabProfile)}
+            </div>
             {selectedElement.type === 'product_table' && (
               renderTableAppearanceSection(selectedElement, localProperties, handlePropertyChange, activeTab)
             )}
@@ -276,6 +284,15 @@ const PropertiesPanel = memo(({
       case 'effects':
         return (
           <div className="tab-content">
+            {/* DEBUG: Afficher les informations de debug */}
+            <div style={{padding: '10px', background: '#ffe6e6', border: '1px solid #ff4d4f', marginBottom: '10px'}}>
+              <strong>DEBUG: Onglet Effets</strong><br/>
+              Élément: {selectedElement?.type || 'aucun'}<br/>
+              renderEffectsSection existe: {typeof renderEffectsSection}<br/>
+              shouldShowSection('effects'): {shouldShowSection('effects', selectedElement?.type) ? 'true' : 'false'}<br/>
+              allowedControls: {JSON.stringify(allowedControls)}<br/>
+              smartOrder: {JSON.stringify(smartOrder)}
+            </div>
             {renderEffectsSection && shouldShowSection('effects', selectedElement.type) ? (
               renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab)
             ) : (
