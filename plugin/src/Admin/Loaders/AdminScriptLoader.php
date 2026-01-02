@@ -270,16 +270,20 @@ class AdminScriptLoader
         ];
 
         // Ajouter les paramètres canvas depuis SettingsManager
-        if (method_exists($this->admin, 'getSettingsManager')) {
-            $settings_manager = $this->admin->getSettingsManager();
-            $canvas_settings = $settings_manager->getCanvasSettings();
+        if (isset($this->admin->settings_manager) && method_exists($this->admin->settings_manager, 'getCanvasSettings')) {
+            $canvas_settings = $this->admin->settings_manager->getCanvasSettings();
             $localize_data['canvasSettings'] = $canvas_settings;
+            
+            // Log pour déboguer
+            error_log('[WP AdminScriptLoader] Canvas settings loaded: ' . print_r($canvas_settings, true));
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
             wp_add_inline_script('pdf-builder-react', 
                 'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';',
                 'before'
             );
+        } else {
+            error_log('[WP AdminScriptLoader] SettingsManager not available or getCanvasSettings method missing');
         }
 
         // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
