@@ -278,41 +278,40 @@ function injectMissingStyles() {
 /* ===== PROPERTIES PANEL TOGGLE BUTTON ===== */
 .properties-panel-toggle {
   position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  background: #2563eb;
-  border: none;
-  border-radius: 50%;
+  right: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-  transition: all 0.3s ease;
+  box-shadow: none;
+  transition: all 0.2s ease;
   z-index: 200;
+  margin: 8px;
 }
 
 .properties-panel-toggle:hover {
-  background: #1d4ed8;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
-  transform: translateY(-50%) scale(1.1);
+  background: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 .properties-panel-toggle:active {
-  transform: translateY(-50%) scale(0.95);
+  background: #d1d5db;
 }
 
 .properties-panel-toggle .toggle-arrow {
-  font-size: 20px;
-  color: white;
+  font-size: 16px;
+  color: #374151;
   font-weight: bold;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 /* Quand le panel est ouvert, la flèche pointe vers la droite */
