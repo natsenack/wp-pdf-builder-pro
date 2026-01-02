@@ -104,19 +104,13 @@ function injectMissingStyles() {
 /* ===== PDF BUILDER TOOLBAR ===== */
 .pdf-builder-toolbar,
 .ribbon-toolbar {
-  position: absolute;
-  left: 0;
-  top: 60px;
-  width: 280px;
-  height: auto;
-  max-height: 80px;
   display: flex;
   flex-direction: column;
   gap: 0;
   padding: 0;
   background: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  box-shadow: 1px 0 3px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   z-index: 100;
 }
 
@@ -168,20 +162,19 @@ function injectMissingStyles() {
 .toolbar-content {
   display: flex;
   gap: 0;
-  padding: 6px 6px;
+  padding: 8px 8px;
   background: white;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   width: 100%;
   height: auto;
-  max-height: 50px;
 }
 
 .tab-content {
   display: flex;
   gap: 0;
   width: 100%;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: flex-start;
 }
 
@@ -189,11 +182,10 @@ function injectMissingStyles() {
 .toolbar-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 0 8px;
+  gap: 6px;
+  padding: 0 12px;
   border-right: 1px solid #e5e7eb;
-  flex: 1;
-  min-width: 80px;
+  flex-shrink: 0;
 }
 
 .toolbar-group:last-child {
