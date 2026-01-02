@@ -557,6 +557,13 @@ function pdf_builder_load_core()
             wp_enqueue_script('react', false, [], false, true);
             wp_enqueue_script('react-dom', false, ['react'], false, true);
 
+            // Charger le CSS React Editor
+            $react_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css';
+            error_log('[BOOTSTRAP] DEBUG: PDF_BUILDER_PRO_ASSETS_URL = ' . PDF_BUILDER_PRO_ASSETS_URL);
+            error_log('[BOOTSTRAP] DEBUG: react_css_url = ' . $react_css_url);
+            wp_enqueue_style('pdf-builder-react', $react_css_url, [], PDF_BUILDER_PRO_VERSION . '-' . time());
+            error_log('[BOOTSTRAP] Enqueued pdf-builder-react CSS: ' . $react_css_url);
+
             // Charger le bundle PDF Builder (optimisé avec code splitting)
             $bundle_url = PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/pdf-builder-react.js';
             wp_enqueue_script(
