@@ -161,19 +161,22 @@ function injectMissingStyles() {
 /* Contenu du toolbar */
 .toolbar-content {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0;
   padding: 8px 8px;
   background: white;
-  overflow-y: auto;
-  max-height: 120px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  flex: 1;
 }
 
 .tab-content {
   display: flex;
-  gap: 12px;
+  gap: 0;
   width: 100%;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex: 1;
 }
 
 /* Groupes d'outils */
@@ -181,8 +184,10 @@ function injectMissingStyles() {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 0 8px;
+  padding: 0 12px;
   border-right: 1px solid #e5e7eb;
+  flex-shrink: 0;
+  min-width: fit-content;
 }
 
 .toolbar-group:last-child {
