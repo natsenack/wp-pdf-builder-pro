@@ -187,21 +187,79 @@ try {
 
     console.log('[PDF Builder] ✅ pdfBuilderData found:', window.pdfBuilderData);
     console.log('[PDF Builder] pdfBuilderData keys:', Object.keys(window.pdfBuilderData));
-    console.log('[PDF Builder] initialElements count:', window.pdfBuilderData.initialElements ? window.pdfBuilderData.initialElements.length : 'undefined');
 
-    // Préparer les options pour l'initialisation
-    const options = {
-      initialElements: window.pdfBuilderData.initialElements || [],
-      templateName: window.pdfBuilderData.templateName || '',
-      isNew: !window.pdfBuilderData.hasExistingData,
-      templateId: window.pdfBuilderData.templateId || null
-    };
+    // Si on a un templateId, charger les données du template
+    if (window.pdfBuilderData.templateId && window.pdfBuilderData.templateId !== '0') {
+      console.log('[PDF Builder] Template ID found, loading template data via AJAX...');
 
-    console.log('[PDF Builder] Prepared options:', options);
-    console.log('[PDF Builder] Calling window.pdfBuilderPro.init...');
+      // Faire un appel AJAX pour charger le template
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_load_template');
+      formData.append('template_id', window.pdfBuilderData.templateId);
+      formData.append('nonce', window.pdfBuilderData.nonce || '');
 
-    // Appeler la vraie fonction d'initialisation
-    return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+      fetch(window.pdfBuilderData.ajaxUrl, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('[PDF Builder] ✅ Template loaded successfully:', data.data);
+
+          // Préparer les options avec les données chargées
+          const options = {
+            initialElements: data.data.template || [],
+            templateName: data.data.name || window.pdfBuilderData.templateName || '',
+            isNew: false,
+            templateId: window.pdfBuilderData.templateId
+          };
+
+          console.log('[PDF Builder] Prepared options with loaded template:', options);
+          console.log('[PDF Builder] Calling window.pdfBuilderPro.init...');
+          return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+        } else {
+          console.error('[PDF Builder] ❌ Failed to load template:', data.data);
+          // Fallback avec des données vides
+          const options = {
+            initialElements: [],
+            templateName: window.pdfBuilderData.templateName || '',
+            isNew: true,
+            templateId: window.pdfBuilderData.templateId
+          };
+          console.log('[PDF Builder] Fallback options:', options);
+          return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+        }
+      })
+      .catch(error => {
+        console.error('[PDF Builder] ❌ AJAX error loading template:', error);
+        // Fallback avec des données vides
+        const options = {
+          initialElements: [],
+          templateName: window.pdfBuilderData.templateName || '',
+          isNew: true,
+          templateId: window.pdfBuilderData.templateId
+        };
+        console.log('[PDF Builder] Fallback options after error:', options);
+        return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+      });
+
+      return true; // L'appel AJAX est asynchrone, on retourne true immédiatement
+    } else {
+      console.log('[PDF Builder] No template ID, using empty template');
+
+      // Préparer les options pour un nouveau template
+      const options = {
+        initialElements: [],
+        templateName: window.pdfBuilderData.templateName || '',
+        isNew: true,
+        templateId: null
+      };
+
+      console.log('[PDF Builder] Prepared options for new template:', options);
+      console.log('[PDF Builder] Calling window.pdfBuilderPro.init...');
+      return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+    }
   };
 
 } catch (error) {
