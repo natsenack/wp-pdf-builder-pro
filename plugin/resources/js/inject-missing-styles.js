@@ -436,6 +436,59 @@ function injectMissingStyles() {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+/* ===== PROPERTIES PANEL TABS ===== */
+.properties-tabs {
+  display: flex;
+  gap: 0;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  margin: -16px -16px 16px -16px;
+  padding: 0;
+}
+
+.properties-tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.properties-tab-button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.properties-tab-button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  background: white;
+}
+
+.properties-tab-icon {
+  font-size: 14px;
+}
+
+.properties-tab-label {
+  font-weight: 600;
+}
+
+/* Contenu des onglets des propriétés */
+.properties-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* ===== SIDEBAR / ELEMENT LIBRARY ===== */
 .pdf-builder-sidebar,
 .element-library-panel {
