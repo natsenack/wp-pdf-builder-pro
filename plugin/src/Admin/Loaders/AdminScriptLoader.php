@@ -217,6 +217,11 @@ class AdminScriptLoader
         wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url);
 
+        // React Editor CSS
+        $react_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css';
+        wp_enqueue_style('pdf-builder-react', $react_css_url, [], $cache_bust);
+        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react CSS: ' . $react_css_url);
+
         // Localize notifications data
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
             'ajax_url' => admin_url('admin-ajax.php'),
