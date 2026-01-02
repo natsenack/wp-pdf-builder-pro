@@ -74,6 +74,30 @@ const TemplateHeader = ({
 
   return (
     <>
+      <style>
+        {`
+          @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          
+          @keyframes modalFadeIn {
+            0% { 
+              opacity: 0; 
+              transform: scale(0.9) translateY(-20px); 
+            }
+            100% { 
+              opacity: 1; 
+              transform: scale(1) translateY(0); 
+            }
+          }
+          
+          @keyframes modalBackdropFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+          }
+        `}
+      </style>
       <div className="template-header">
         <div className="header-left">
           <button
@@ -221,282 +245,489 @@ const TemplateHeader = ({
             className="modal-content template-settings-modal"
             onClick={(e) => e.stopPropagation()}
             style={{
-              maxWidth: '520px',
-              animation: 'modalSlideIn 0.3s ease-out',
-              background: 'white',
-              borderRadius: '12px',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-              border: 'none'
+              maxWidth: '540px',
+              width: '90vw',
+              animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+              borderRadius: '16px',
+              boxShadow: '0 25px 80px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              backdropFilter: 'blur(20px)',
+              transform: 'translateY(0)',
+              transition: 'all 0.3s ease'
             }}
           >
             <div
               className="modal-header"
               style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
                 color: 'white',
                 borderBottom: 'none',
-                borderRadius: '12px 12px 0 0',
-                padding: '20px 24px'
+                borderRadius: '16px 16px 0 0',
+                padding: '24px 28px',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
-              <h3 style={{ color: 'white', fontSize: '20px', margin: '0' }}>Paramètres du template</h3>
-              <button
-                className="modal-close"
-                onClick={() => setShowTemplateSettingsModal(false)}
-                style={{
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  width: '32px',
-                  height: '32px',
-                  cursor: 'pointer',
-                  fontSize: '18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.color = 'white';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = 'rgba(255, 255, 255, 0.8)';
-                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                }}
-              >
-                ×
-              </button>
+              <div style={{
+                position: 'absolute',
+                top: '-50%',
+                left: '-50%',
+                width: '200%',
+                height: '200%',
+                background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+                animation: 'shine 3s ease-in-out infinite'
+              }}></div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                position: 'relative',
+                zIndex: 2
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px'
+                  }}>
+                    ⚙️
+                  </div>
+                  <div>
+                    <h3 style={{
+                      color: 'white',
+                      fontSize: '22px',
+                      margin: '0',
+                      fontWeight: '700',
+                      letterSpacing: '-0.5px'
+                    }}>
+                      Paramètres du template
+                    </h3>
+                    <p style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      margin: '4px 0 0 0',
+                      fontWeight: '400'
+                    }}>
+                      Personnalisez votre template
+                    </p>
+                  </div>
+                </div>
+                <button
+                  className="modal-close"
+                  onClick={() => setShowTemplateSettingsModal(false)}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '10px',
+                    width: '36px',
+                    height: '36px',
+                    cursor: 'pointer',
+                    fontSize: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    backdropFilter: 'blur(10px)',
+                    position: 'relative',
+                    zIndex: 2
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = 'white';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                    e.target.style.transform = 'scale(1.05) rotate(90deg)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = 'rgba(255, 255, 255, 0.9)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.target.style.transform = 'scale(1) rotate(0deg)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
             <div
               className="modal-body"
               style={{
-                padding: '24px',
-                background: '#f8fafc'
+                padding: '32px',
+                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+                borderRadius: '0 0 16px 16px'
               }}
             >
               <div
                 className="form-group"
                 style={{
-                  marginBottom: '20px',
-                  background: 'white',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
-                  transition: 'all 0.2s ease'
+                  marginBottom: '24px',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.borderColor = '#cbd5e0';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                  e.target.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  e.target.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
-                  e.target.style.boxShadow = 'none';
+                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+                  e.target.style.transform = 'translateY(0)';
                 }}
               >
-                <label
-                  htmlFor="settings-template-name"
-                  style={{
-                    color: '#2d3748',
-                    fontWeight: '600',
-                    marginBottom: '8px',
-                    fontSize: '15px',
-                    display: 'block'
-                  }}
-                >
-                  Nom du template
-                </label>
-                <input
-                  id="settings-template-name"
-                  type="text"
-                  value={templateSettings.name}
-                  onChange={(e) => setTemplateSettings({...templateSettings, name: e.target.value})}
-                  placeholder="Entrez le nom du template"
-                  style={{
-                    border: '2px solid #e2e8f0',
-                    borderRadius: '6px',
-                    padding: '10px 12px',
-                    fontSize: '14px',
-                    transition: 'all 0.2s ease',
-                    width: '100%',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#667eea';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.15)';
-                    e.target.style.transform = 'translateY(-1px)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e2e8f0';
-                    e.target.style.boxShadow = 'none';
-                    e.target.style.transform = 'none';
-                  }}
-                />
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '4px',
+                  height: '100%',
+                  background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
+                  borderRadius: '12px 0 0 12px'
+                }}></div>
+                <div style={{ marginLeft: '16px' }}>
+                  <label
+                    htmlFor="settings-template-name"
+                    style={{
+                      color: '#1a202c',
+                      fontWeight: '600',
+                      marginBottom: '10px',
+                      fontSize: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '6px',
+                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      color: 'white'
+                    }}>
+                      📝
+                    </span>
+                    Nom du template
+                  </label>
+                  <input
+                    id="settings-template-name"
+                    type="text"
+                    value={templateSettings.name}
+                    onChange={(e) => setTemplateSettings({...templateSettings, name: e.target.value})}
+                    placeholder="Entrez le nom du template"
+                    style={{
+                      border: '2px solid rgba(226, 232, 240, 0.8)',
+                      borderRadius: '10px',
+                      padding: '14px 16px',
+                      fontSize: '15px',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                      fontFamily: 'inherit',
+                      outline: 'none'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#667eea';
+                      e.target.style.boxShadow = '0 0 0 4px rgba(102, 126, 234, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05)';
+                      e.target.style.transform = 'translateY(-1px)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.95)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                      e.target.style.boxShadow = 'none';
+                      e.target.style.transform = 'none';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.8)';
+                    }}
+                  />
+                </div>
               </div>
 
               <div
                 className="form-group"
                 style={{
-                  marginBottom: '20px',
-                  background: 'white',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
-                  transition: 'all 0.2s ease'
+                  marginBottom: '24px',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.borderColor = '#cbd5e0';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                  e.target.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  e.target.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
-                  e.target.style.boxShadow = 'none';
+                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+                  e.target.style.transform = 'translateY(0)';
                 }}
               >
-                <label
-                  htmlFor="settings-template-description"
-                  style={{
-                    color: '#2d3748',
-                    fontWeight: '600',
-                    marginBottom: '8px',
-                    fontSize: '15px',
-                    display: 'block'
-                  }}
-                >
-                  Description
-                </label>
-                <textarea
-                  id="settings-template-description"
-                  value={templateSettings.description}
-                  onChange={(e) => setTemplateSettings({...templateSettings, description: e.target.value})}
-                  placeholder="Entrez une description du template"
-                  rows="3"
-                  style={{
-                    border: '2px solid #e2e8f0',
-                    borderRadius: '6px',
-                    padding: '10px 12px',
-                    fontSize: '14px',
-                    transition: 'all 0.2s ease',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    resize: 'vertical'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#667eea';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.15)';
-                    e.target.style.transform = 'translateY(-1px)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e2e8f0';
-                    e.target.style.boxShadow = 'none';
-                    e.target.style.transform = 'none';
-                  }}
-                />
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '4px',
+                  height: '100%',
+                  background: 'linear-gradient(180deg, #48bb78 0%, #38a169 100%)',
+                  borderRadius: '12px 0 0 12px'
+                }}></div>
+                <div style={{ marginLeft: '16px' }}>
+                  <label
+                    htmlFor="settings-template-description"
+                    style={{
+                      color: '#1a202c',
+                      fontWeight: '600',
+                      marginBottom: '10px',
+                      fontSize: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '6px',
+                      background: 'linear-gradient(135deg, #48bb78, #38a169)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      color: 'white'
+                    }}>
+                      📄
+                    </span>
+                    Description
+                  </label>
+                  <textarea
+                    id="settings-template-description"
+                    value={templateSettings.description}
+                    onChange={(e) => setTemplateSettings({...templateSettings, description: e.target.value})}
+                    placeholder="Entrez une description du template"
+                    rows="4"
+                    style={{
+                      border: '2px solid rgba(226, 232, 240, 0.8)',
+                      borderRadius: '10px',
+                      padding: '14px 16px',
+                      fontSize: '15px',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(10px)',
+                      fontFamily: 'inherit',
+                      outline: 'none',
+                      resize: 'vertical',
+                      minHeight: '80px'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#48bb78';
+                      e.target.style.boxShadow = '0 0 0 4px rgba(72, 187, 120, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05)';
+                      e.target.style.transform = 'translateY(-1px)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.95)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                      e.target.style.boxShadow = 'none';
+                      e.target.style.transform = 'none';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.8)';
+                    }}
+                  />
+                </div>
               </div>
 
               <div
                 className="form-group"
                 style={{
-                  marginBottom: '20px',
-                  background: 'white',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
-                  transition: 'all 0.2s ease'
+                  marginBottom: '24px',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.borderColor = '#cbd5e0';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                  e.target.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  e.target.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
-                  e.target.style.boxShadow = 'none';
+                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+                  e.target.style.transform = 'translateY(0)';
                 }}
               >
-                <label
-                  htmlFor="settings-template-category"
-                  style={{
-                    color: '#2d3748',
-                    fontWeight: '600',
-                    marginBottom: '8px',
-                    fontSize: '15px',
-                    display: 'block'
-                  }}
-                >
-                  Catégorie
-                </label>
-                <select
-                  id="settings-template-category"
-                  value={templateSettings.category}
-                  onChange={(e) => setTemplateSettings({...templateSettings, category: e.target.value})}
-                  style={{
-                    border: '2px solid #e2e8f0',
-                    borderRadius: '6px',
-                    padding: '10px 12px',
-                    fontSize: '14px',
-                    transition: 'all 0.2s ease',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    background: 'white'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#667eea';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.15)';
-                    e.target.style.transform = 'translateY(-1px)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e2e8f0';
-                    e.target.style.boxShadow = 'none';
-                    e.target.style.transform = 'none';
-                  }}
-                >
-                  <option value="facture">Facture</option>
-                  <option value="devis">Devis</option>
-                  <option value="commande">Bon de commande</option>
-                  <option value="contrat">Contrat</option>
-                  <option value="newsletter">Newsletter</option>
-                  <option value="autre">Autre</option>
-                </select>
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '4px',
+                  height: '100%',
+                  background: 'linear-gradient(180deg, #ed8936 0%, #dd6b20 100%)',
+                  borderRadius: '12px 0 0 12px'
+                }}></div>
+                <div style={{ marginLeft: '16px' }}>
+                  <label
+                    htmlFor="settings-template-category"
+                    style={{
+                      color: '#1a202c',
+                      fontWeight: '600',
+                      marginBottom: '10px',
+                      fontSize: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '6px',
+                      background: 'linear-gradient(135deg, #ed8936, #dd6b20)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      color: 'white'
+                    }}>
+                      🏷️
+                    </span>
+                    Catégorie
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <select
+                      id="settings-template-category"
+                      value={templateSettings.category}
+                      onChange={(e) => setTemplateSettings({...templateSettings, category: e.target.value})}
+                      style={{
+                        border: '2px solid rgba(226, 232, 240, 0.8)',
+                        borderRadius: '10px',
+                        padding: '14px 16px',
+                        fontSize: '15px',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: 'blur(10px)',
+                        fontFamily: 'inherit',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        appearance: 'none',
+                        backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6,9 12,15 18,9\'%3e%3c/polyline%3e%3c/svg%3e")',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 12px center',
+                        backgroundSize: '16px',
+                        paddingRight: '40px'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#ed8936';
+                        e.target.style.boxShadow = '0 0 0 4px rgba(237, 137, 54, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05)';
+                        e.target.style.transform = 'translateY(-1px)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.95)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                        e.target.style.boxShadow = 'none';
+                        e.target.style.transform = 'none';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.8)';
+                      }}
+                    >
+                      <option value="facture">📄 Facture</option>
+                      <option value="devis">📋 Devis</option>
+                      <option value="commande">🛒 Bon de commande</option>
+                      <option value="contrat">📑 Contrat</option>
+                      <option value="newsletter">📧 Newsletter</option>
+                      <option value="autre">📁 Autre</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div
               className="modal-footer"
               style={{
-                padding: '20px 24px',
-                background: 'white',
-                borderTop: '1px solid #e2e8f0',
-                borderRadius: '0 0 12px 12px',
+                padding: '24px 32px',
+                background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+                borderTop: '1px solid rgba(226, 232, 240, 0.6)',
+                borderRadius: '0 0 20px 20px',
                 display: 'flex',
                 justifyContent: 'flex-end',
-                gap: '12px'
+                gap: '12px',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
+              <div style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                background: 'linear-gradient(90deg, transparent 0%, rgba(102, 126, 234, 0.02) 50%, transparent 100%)',
+                animation: 'shine 3s ease-in-out infinite'
+              }}></div>
               <button
                 className="btn-secondary"
                 onClick={() => setShowTemplateSettingsModal(false)}
                 style={{
-                  border: '2px solid #e2e8f0',
-                  background: 'white',
-                  color: '#4a5568',
-                  padding: '10px 20px',
-                  fontWeight: '500',
-                  borderRadius: '6px',
+                  padding: '12px 24px',
+                  border: '2px solid rgba(226, 232, 240, 0.8)',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                  color: '#64748b',
+                  fontSize: '15px',
+                  fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  fontSize: '14px'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                  position: 'relative',
+                  zIndex: '1'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = '#f7fafc';
                   e.target.style.borderColor = '#cbd5e0';
-                  e.target.style.color = '#2d3748';
+                  e.target.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.background = 'linear-gradient(145deg, #f8fafc 0%, #ffffff 100%)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = 'white';
-                  e.target.style.borderColor = '#e2e8f0';
-                  e.target.style.color = '#4a5568';
+                  e.target.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.background = 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)';
+                }}
+                onMouseDown={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 1px 4px rgba(0, 0, 0, 0.06)';
+                }}
+                onMouseUp={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
                 }}
               >
                 Annuler
@@ -505,29 +736,67 @@ const TemplateHeader = ({
                 className="btn-primary"
                 onClick={handleSaveTemplateSettings}
                 style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  padding: '12px 24px',
                   border: 'none',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   color: 'white',
-                  padding: '10px 20px',
+                  fontSize: '15px',
                   fontWeight: '600',
-                  borderRadius: '6px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  fontSize: '14px',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 4px 16px rgba(102, 126, 234, 0.3)',
+                  position: 'relative',
+                  zIndex: '1',
+                  overflow: 'hidden',
                   letterSpacing: '0.5px'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.4)';
                   e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                  e.target.style.background = 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)';
                 }}
                 onMouseLeave={(e) => {
+                  e.target.style.boxShadow = '0 4px 16px rgba(102, 126, 234, 0.3)';
+                  e.target.style.transform = 'translateY(0)';
                   e.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                  e.target.style.transform = 'none';
-                  e.target.style.boxShadow = 'none';
+                }}
+                onMouseDown={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.2)';
+                }}
+                onMouseUp={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.4)';
                 }}
               >
-                Enregistrer
+                <span style={{
+                  position: 'relative',
+                  zIndex: '1',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>💾</span>
+                  Enregistrer
+                </span>
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                  transition: 'left 0.5s ease',
+                  zIndex: '0'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.left = '100%';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.left = '-100%';
+                }}
+                ></div>
               </button>
             </div>
           </div>
