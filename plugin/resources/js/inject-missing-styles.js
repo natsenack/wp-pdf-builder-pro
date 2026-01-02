@@ -1265,6 +1265,60 @@ textarea.text-input::placeholder {
   content: 'V';
   background: #f59e0b;
 }
+
+/* ===== RESOLUTION INDICATOR STYLES ===== */
+.resolution-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.resolution-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.resolution-dimensions {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.resolution-dpi {
+  font-size: 10px;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.resolution-zoom {
+  font-size: 10px;
+  opacity: 0.7;
+  font-weight: 400;
+  margin-top: 1px;
+}
+
+.resolution-indicator:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
   `;
 
   const styleElement = document.createElement('style');

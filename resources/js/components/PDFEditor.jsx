@@ -6,6 +6,7 @@ import { usePreviewContext } from './preview-system/context/PreviewContext';
 import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
 import TemplateHeader from './TemplateHeader';
+import ResolutionIndicator from './ResolutionIndicator';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
 // IMPORTANT: Import PDFEditor.css AFTER global CSS so it has lower specificity
@@ -3120,6 +3121,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             onMouseLeave={handleCanvasMouseUp}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
+          />
+          
+          {/* Indicateur de résolution */}
+          <ResolutionIndicator
+            canvasWidth={595}
+            canvasHeight={842}
+            dpi={72}
+            zoom={zoom * 100}
+            showIndicator={true}
           />
           
           {/* Bouton pour ouvrir/fermer le panel des propriétés - visible seulement si élément sélectionné */}

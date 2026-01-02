@@ -350,6 +350,7 @@ class SettingsManager
             'zoom_default' => intval($settings['pdf_builder_canvas_canvas_zoom_default'] ?? 100),
             'export_format' => $settings['pdf_builder_canvas_canvas_export_format'] ?? 'png',
             'export_quality' => intval($settings['pdf_builder_canvas_canvas_export_quality'] ?? 90),
+            'show_resolution_indicator' => ($settings['pdf_builder_canvas_show_resolution_indicator'] ?? '1') === '1',
         ];
     }
 
@@ -567,6 +568,7 @@ class SettingsManager
             'pdf_builder_canvas_performance_monitoring' => 'bool',
             'pdf_builder_canvas_error_reporting' => 'bool',
             'pdf_builder_canvas_memory_limit_php' => 'intval',
+            'pdf_builder_canvas_show_resolution_indicator' => 'bool',
         ];
 
         foreach ($canvas_fields as $field => $type) {
