@@ -206,6 +206,9 @@ try {
       .then(data => {
         if (data.success) {
           console.log('[PDF Builder] ✅ Template loaded successfully:', data.data);
+          console.log('[PDF Builder] Template data structure:', typeof data.data.template, data.data.template);
+          console.log('[PDF Builder] Template elements:', data.data.template?.elements);
+          console.log('[PDF Builder] Template elements count:', data.data.template?.elements?.length || 0);
 
           // Préparer les options avec les données chargées
           const options = {
@@ -216,6 +219,7 @@ try {
           };
 
           console.log('[PDF Builder] Prepared options with loaded template:', options);
+          console.log('[PDF Builder] Initial elements type:', typeof options.initialElements, 'length:', options.initialElements.length);
           console.log('[PDF Builder] Calling window.pdfBuilderPro.init...');
           return window.pdfBuilderPro.init('pdf-builder-react-root', options);
         } else {

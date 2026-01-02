@@ -276,6 +276,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Contexte d'aperçu
   const { actions: { openPreview } } = usePreviewContext();
 
+  console.log('[PDFEditor] PDFEditorContent called with:', { initialElements, templateName, isNew });
+  console.log('[PDFEditor] initialElements type:', typeof initialElements, 'length:', Array.isArray(initialElements) ? initialElements.length : 'not array');
+
   // État des éléments
   const [elements, setElements] = useState(() => {
     // Traiter les données initiales (peuvent être un tableau direct ou un objet avec settings)
@@ -289,8 +292,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       initialData = [];
     }
 
+    console.log('[PDFEditor] Processed initialData:', initialData);
+
     // Réparer automatiquement les propriétés des éléments lors du chargement
     const repairedElements = repairProductTableProperties(initialData);
+    console.log('[PDFEditor] Repaired elements:', repairedElements);
     return repairedElements;
   });
   const [selectedElementId, setSelectedElementId] = useState(null); // Maintenant c'est l'ID de l'élément
