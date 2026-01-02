@@ -159,6 +159,30 @@ Write-Host "   ⏱️  Durée: $duration secondes" -ForegroundColor Cyan
 if ($errorCount -eq 0) {
     Write-Host "   🎉 Déploiement terminé avec succès!" -ForegroundColor Green
 
+    # 3.5 COMPILATION AVANT COMMIT
+    Write-Host "`n3.5 Compilation..." -ForegroundColor Magenta
+
+    try {
+        Push-Location $WorkingDir
+        Write-Host "   🔨 Lancement de npm run build..." -ForegroundColor Yellow
+
+        $ErrorActionPreference = "Continue"
+        $buildResult = cmd /c "cd /d $WorkingDir && npm run build" 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   ✅ Compilation reussie" -ForegroundColor Green
+        } else {
+            Write-Host "   ❌ Compilation echouee: $($buildResult -join ' ')" -ForegroundColor Red
+            Write-Host "   ⚠️ Continuation du déploiement malgré l'erreur de compilation" -ForegroundColor Yellow
+        }
+
+        Pop-Location
+    } catch {
+        Write-Host "   ❌ Erreur compilation: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "   ⚠️ Continuation du déploiement malgré l'erreur de compilation" -ForegroundColor Yellow
+    }
+
     # 4 COMMIT GIT APRES DEPLOIEMENT
     Write-Host "`n4 Commit Git..." -ForegroundColor Magenta
 

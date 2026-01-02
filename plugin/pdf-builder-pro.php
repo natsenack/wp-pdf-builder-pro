@@ -14,6 +14,7 @@
  * Tested up to: 6.9
  * Requires PHP: 7.4
  * date de début de la création du plugin : 15/10/2025
+ * Test déploiement avec compilation automatique - 2026-01-03
  */
 
 // Définir les constantes du plugin
