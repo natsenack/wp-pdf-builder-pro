@@ -9,8 +9,8 @@
         checkInterval: 30000, // 30 secondes
         maxChecks: 10,
         excludedFiles: [
-            'contenu-settings.css',
-            'modals-contenu.css'
+            // Réactivé: 'contenu-settings.css',
+            // Réactivé: 'modals-contenu.css'
         ]
     };
 
