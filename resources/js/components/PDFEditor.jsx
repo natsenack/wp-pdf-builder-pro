@@ -3102,7 +3102,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
       {/* Zone de travail principale */}
       <div className="pdf-builder-workspace editor-workspace">
-        {/* Bibliothèque d'éléments */}
+        {/* Conteneur principal du workspace */}
+        <div className="workspace-content">
+          {/* Bibliothèque d'éléments */}
         {showElementLibrary && (
           <div className="pdf-builder-sidebar element-library-panel">
             <ElementLibrary
@@ -3173,6 +3175,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             />
           </div>
         )}
+        </div> {/* Fin du conteneur workspace-content */}
       </div>
       </div>
 
