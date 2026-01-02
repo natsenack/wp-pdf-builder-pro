@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /wp-admin/
+Disallow: /wp-includes/
+Disallow: /wp-content/plugins/
+Disallow: /wp-content/themes/
+Disallow: /wp-content/uploads/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+Allow: /wp-content/uploads/
+Allow: /wp-content/plugins/wp-pdf-builder-pro/resources/assets/
+
+Sitemap: https://threeaxe.fr/sitemap.xml
