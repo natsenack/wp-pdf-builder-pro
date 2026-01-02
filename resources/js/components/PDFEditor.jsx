@@ -365,7 +365,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [snapToElements, setSnapToElements] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
   const [showElementLibrary, setShowElementLibrary] = useState(true);
-  const [showPropertiesPanel, setShowPropertiesPanel] = useState(true);
+  const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
   
   // Paramètres du backend pour synchronisation avec la toolbar
   const [backendSettings, setBackendSettings] = useState(() => {
@@ -3121,6 +3121,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           />
+          
+          {/* Bouton pour ouvrir/fermer le panel des propriétés */}
+          <button
+            className={`properties-panel-toggle ${showPropertiesPanel ? 'open' : 'closed'}`}
+            onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
+            title={showPropertiesPanel ? 'Fermer les propriétés' : 'Ouvrir les propriétés'}
+          >
+            <span className="toggle-arrow">◀</span>
+          </button>
         </div>
 
         {/* Panel des propriétés */}

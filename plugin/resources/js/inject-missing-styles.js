@@ -264,6 +264,7 @@ function injectMissingStyles() {
   background: #fafbfc;
   overflow: auto;
   padding: 20px;
+  position: relative;
 }
 
 .pdf-builder-canvas,
@@ -272,6 +273,51 @@ function injectMissingStyles() {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid #f1f3f4;
   position: relative;
+}
+
+/* ===== PROPERTIES PANEL TOGGLE BUTTON ===== */
+.properties-panel-toggle {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: #2563eb;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  transition: all 0.3s ease;
+  z-index: 200;
+}
+
+.properties-panel-toggle:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.properties-panel-toggle:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.properties-panel-toggle .toggle-arrow {
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+/* Quand le panel est ouvert, la flèche pointe vers la droite */
+.properties-panel-toggle.open .toggle-arrow {
+  transform: rotate(180deg);
 }
 
 /* ===== WORKSPACE ===== */
