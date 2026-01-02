@@ -187,8 +187,17 @@ const TemplateHeader = ({
           @keyframes modalBackdropFadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
-          }
-        `}
+          }          
+          @keyframes modalSlideIn {
+            0% { 
+              opacity: 0; 
+              transform: scale(0.9) translateY(-20px); 
+            }
+            100% { 
+              opacity: 1; 
+              transform: scale(1) translateY(0); 
+            }
+          }        `}
       </style>
       <div className="template-header">
         <div className="header-left">
@@ -332,7 +341,24 @@ const TemplateHeader = ({
 
       {/* Modal Paramètres du Template */}
       {showTemplateSettingsModal && (
-        <div className="modal-overlay" onClick={() => setShowTemplateSettingsModal(false)}>
+        <div 
+          className="modal-overlay" 
+          onClick={() => setShowTemplateSettingsModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            backdropFilter: 'blur(3px)',
+            animation: 'modalFadeIn 0.3s ease-out'
+          }}
+        >
           <div
             className="modal-content template-settings-modal"
             onClick={(e) => e.stopPropagation()}
@@ -346,7 +372,9 @@ const TemplateHeader = ({
               border: '1px solid rgba(255, 255, 255, 0.18)',
               backdropFilter: 'blur(20px)',
               transform: 'translateY(0)',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              zIndex: 10001,
+              position: 'relative'
             }}
           >
             <div
