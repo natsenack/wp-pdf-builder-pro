@@ -4,7 +4,7 @@
  * Plugin Name: PDF Builder Pro
  * Plugin URI: https://github.com/natsenack/wp-pdf-builder-pro
  * Description: Constructeur de PDF professionnel ultra-performant avec architecture modulaire avancée
- * Version: 1.1.1
+ * Version: 1.1.0
  * Author: Natsenack
  * Author URI: https://github.com/natsenack
  * License: GPL v2 or later
