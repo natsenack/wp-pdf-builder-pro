@@ -32,7 +32,16 @@ try {
       console.log('[PDF Builder] ===== INIT START =====');
       console.log('[PDF Builder] Container ID:', containerId);
       console.log('[PDF Builder] Options received:', options);
-      console.log('[PDF Builder] Initial elements count:', options.initialElements ? options.initialElements.length : 0);
+
+      // Ensure initialElements is always an array
+      if (options.initialElements && typeof options.initialElements === 'object' && !Array.isArray(options.initialElements)) {
+        options.initialElements = Object.values(options.initialElements);
+        console.log('[PDF Builder] Converted initialElements object to array:', options.initialElements.length, 'elements');
+      } else if (!options.initialElements) {
+        options.initialElements = [];
+      }
+
+      console.log('[PDF Builder] Initial elements count:', options.initialElements.length);
 
       if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
         console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
