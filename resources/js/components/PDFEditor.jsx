@@ -3054,7 +3054,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   };
 
   return (
-    <div className="pdf-editor">
+    <div className="pdf-builder-container pdf-editor">
       {/* Header du template */}
       <TemplateHeader
         templateName={templateName}
@@ -3065,29 +3065,31 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       />
 
       {/* Toolbar principale */}
-      <Toolbar
-        selectedTool={selectedTool}
-        onToolSelect={handleToolSelect}
-        zoom={zoom}
-        onZoomChange={handleZoomChange}
-        showGrid={showGrid}
-        onShowGridChange={handleShowGridChange}
-        snapToGrid={snapToGrid}
-        onSnapToGridChange={handleSnapToGridChange}
-        snapToElements={snapToElements}
-        onSnapToElementsChange={handleSnapToElementsChange}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        settings={backendSettings}
-      />
+      <div className="pdf-builder-toolbar">
+        <Toolbar
+          selectedTool={selectedTool}
+          onToolSelect={handleToolSelect}
+          zoom={zoom}
+          onZoomChange={handleZoomChange}
+          showGrid={showGrid}
+          onShowGridChange={handleShowGridChange}
+          snapToGrid={snapToGrid}
+          onSnapToGridChange={handleSnapToGridChange}
+          snapToElements={snapToElements}
+          onSnapToElementsChange={handleSnapToElementsChange}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          settings={backendSettings}
+        />
+      </div>
 
       {/* Zone de travail principale */}
-      <div className="editor-workspace">
+      <div className="pdf-builder-workspace editor-workspace">
         {/* Bibliothèque d'éléments */}
         {showElementLibrary && (
-          <div className="element-library-panel">
+          <div className="pdf-builder-sidebar element-library-panel">
             <ElementLibrary
               onAddElement={handleAddElement}
               selectedTool={selectedTool}
@@ -3097,7 +3099,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         )}
 
         {/* Canvas principal */}
-        <div className="canvas-container">
+        <div className="pdf-builder-canvas-container canvas-container">
           <canvas
             ref={canvasRef}
             className="pdf-canvas"
@@ -3120,7 +3122,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         {/* Panel des propriétés */}
         {showPropertiesPanel && selectedElement && (
-          <div className="properties-panel-container">
+          <div className="pdf-builder-properties properties-panel-container">
             <PropertiesPanel
               selectedElements={selectedElement ? [selectedElement] : []}
               elements={elements}
