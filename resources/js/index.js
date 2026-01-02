@@ -33,6 +33,9 @@ try {
       console.log('[PDF Builder] Container ID:', containerId);
       console.log('[PDF Builder] Options received:', options);
 
+      // Debug logging for initialElements
+      console.log('[PDF Builder] Checking initialElements:', options.initialElements, 'type:', typeof options.initialElements, 'isArray:', Array.isArray(options.initialElements));
+
       // Ensure initialElements is always an array
       if (options.initialElements && typeof options.initialElements === 'object' && !Array.isArray(options.initialElements)) {
         console.log('[PDF Builder] Converting initialElements object to array. Type:', typeof options.initialElements, 'Keys:', Object.keys(options.initialElements));
