@@ -3152,25 +3152,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         )}
       </div>
 
-      {/* Barre d'outils secondaire */}
-      <div className="editor-toolbar-secondary">
-        <button
-          onClick={() => setShowElementLibrary(!showElementLibrary)}
-          className={`tool-btn ${showElementLibrary ? 'active' : ''}`}
-        >
-          📚 Bibliothèque
-        </button>
-        <button
-          onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
-          className={`tool-btn ${showPropertiesPanel ? 'active' : ''}`}
-        >
-          ⚙️ Propriétés
-        </button>
-        <span className="status-info">
-          Éléments: {elements.length} | Sélectionné: {selectedElement ? 'Oui' : 'Non'}
-        </span>
-      </div>
-
       {/* Modal d'aperçu */}
       <PreviewModal />
     </div>
