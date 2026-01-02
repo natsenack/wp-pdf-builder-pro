@@ -13,6 +13,7 @@ import renderBordersSection from './PropertiesPanel/sections/BordersSection';
 import renderLayoutSection from './PropertiesPanel/sections/LayoutSection';
 import renderContentSection from './PropertiesPanel/sections/ContentSection';
 import renderTableAppearanceSection from './PropertiesPanel/sections/TableAppearanceSection';
+import renderEffectsSection from './PropertiesPanel/sections/EffectsSection';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
