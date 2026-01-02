@@ -90,10 +90,18 @@ function get_canvas_modal_value($key, $default = '') {
                         <label for="modal_canvas_format">Format prédéfini</label>
                         <select id="modal_canvas_format" name="pdf_builder_canvas_format">
                             <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>A4 (210×297mm)</option>
-                            <option value="A3" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm) - soon</option>
-                            <option value="Letter" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter (8.5×11") - soon</option>
-                            <option value="Legal" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14") - soon</option>
-                            <option value="EtiquetteColis" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (10×15cm) - soon</option>
+                            <option value="A3" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm) - Bientôt disponible</option>
+                            <option value="Letter" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter (8.5×11") - Bientôt disponible</option>
+                            <option value="Legal" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14") - Bientôt disponible</option>
+                            <option value="Tabloid" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Tabloid'); ?>>Tabloid (11×17") - Bientôt disponible</option>
+                            <option value="EtiquetteColis" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (100×150mm) - Bientôt disponible</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="modal_canvas_orientation">Orientation</label>
+                        <select id="modal_canvas_orientation" name="pdf_builder_canvas_orientation">
+                            <option value="portrait" <?php selected(get_canvas_modal_value('orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
+                            <option value="landscape" <?php selected(get_canvas_modal_value('orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
                         </select>
                     </div>
                 </div>
@@ -154,32 +162,46 @@ function get_canvas_modal_value($key, $default = '') {
                 // Fonction pour mettre à jour les dimensions
                 function updateDimensions() {
                     const formatSelect = document.getElementById('modal_canvas_format');
+                    const orientationSelect = document.getElementById('modal_canvas_orientation');
                     const dpiSelect = document.getElementById('modal_canvas_dpi');
                     const widthInput = document.getElementById('modal_canvas_width');
                     const heightInput = document.getElementById('modal_canvas_height');
 
-                    if (!formatSelect || !dpiSelect || !widthInput || !heightInput) return;
+                    if (!formatSelect || !orientationSelect || !dpiSelect || !widthInput || !heightInput) return;
 
                     const format = formatSelect.value;
+                    const orientation = orientationSelect.value;
                     const dpi = parseInt(dpiSelect.value);
 
                     if (PAPER_FORMATS[format]) {
-                        const dimensions = PAPER_FORMATS[format];
+                        let dimensions = PAPER_FORMATS[format];
+
+                        // Appliquer l'orientation
+                        if (orientation === 'landscape') {
+                            dimensions = { width: dimensions.height, height: dimensions.width };
+                        }
+
                         const widthPx = calculatePixels(dimensions.width, dpi);
                         const heightPx = calculatePixels(dimensions.height, dpi);
 
                         widthInput.value = widthPx;
                         heightInput.value = heightPx;
+
+                        console.log(`[Canvas Modal] Format: ${format}, Orientation: ${orientation}, DPI: ${dpi} → ${widthPx}×${heightPx}px`);
                     }
                 }
 
                 // Écouteurs d'événements
                 document.addEventListener('DOMContentLoaded', function() {
                     const formatSelect = document.getElementById('modal_canvas_format');
+                    const orientationSelect = document.getElementById('modal_canvas_orientation');
                     const dpiSelect = document.getElementById('modal_canvas_dpi');
 
                     if (formatSelect) {
                         formatSelect.addEventListener('change', updateDimensions);
+                    }
+                    if (orientationSelect) {
+                        orientationSelect.addEventListener('change', updateDimensions);
                     }
                     if (dpiSelect) {
                         dpiSelect.addEventListener('change', updateDimensions);
