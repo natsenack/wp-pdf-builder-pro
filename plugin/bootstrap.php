@@ -323,8 +323,13 @@ function pdf_builder_load_core()
     // Initialiser le système de migration après le chargement des constantes
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
-        // Initialiser le système de migration maintenant que les constantes sont chargées
-        PDF_Builder_Migration_System::getInstance();
+        // Vérifier que la classe est chargée avant de l'utiliser
+        if (class_exists('PDF_Builder_Migration_System')) {
+            // Initialiser le système de migration maintenant que les constantes sont chargées
+            PDF_Builder_Migration_System::getInstance();
+        } else {
+            error_log('PDF Builder Pro: Impossible de charger la classe PDF_Builder_Migration_System');
+        }
     }
 
     // Charger le logger en premier (nécessaire pour PDF_Builder_Core)
