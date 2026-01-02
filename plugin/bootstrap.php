@@ -777,8 +777,13 @@ function pdf_builder_load_bootstrap()
     // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
-        // Initialiser l'instance
-        PDF_Builder_Notification_Manager::get_instance();
+        // Vérifier que la classe est chargée avant de l'utiliser
+        if (class_exists('PDF_Builder_Notification_Manager')) {
+            // Initialiser l'instance
+            PDF_Builder_Notification_Manager::get_instance();
+        } else {
+            error_log('PDF Builder Pro: Impossible de charger la classe PDF_Builder_Notification_Manager');
+        }
     }
 
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
