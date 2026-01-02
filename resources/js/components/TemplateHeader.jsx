@@ -178,9 +178,9 @@ const TemplateHeader = ({
 
   return (
     <>
-      {/* Toolbar temporairement cachée pour debug */}
-      {/* <div className="template-header">
-        <div className="header-left">
+      <div className="template-header">
+        {/* Toolbar temporairement cachée pour debug */}
+        {/* <div className="header-left">
           <button
             className="header-btn new-template-btn"
             onClick={() => setShowNewTemplateModal(true)}
@@ -189,7 +189,7 @@ const TemplateHeader = ({
             <span className="btn-icon">📄</span>
             <span className="btn-text">Nouveau template</span>
           </button>
-        </div>
+        </div> */}
 
         <div className="header-center">
           <h2 className="template-title">
@@ -202,7 +202,8 @@ const TemplateHeader = ({
           )}
         </div>
 
-        <div className="header-right">
+        {/* Toolbar temporairement cachée pour debug */}
+        {/* <div className="header-right">
           <button
             className="header-btn settings-btn"
             onClick={handleOpenTemplateSettings}
@@ -234,8 +235,8 @@ const TemplateHeader = ({
             <span className="btn-icon">👁️</span>
             <span className="btn-text">Aperçu</span>
           </button>
-        </div>
-      </div> */}
+        </div> */}
+      </div>
 
       {/* Modal Nouveau Template - Rendu via Portal */}
       {showNewTemplateModal && createPortal(
