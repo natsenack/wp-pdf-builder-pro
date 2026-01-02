@@ -722,7 +722,7 @@ function pdf_builder_init_ajax_handlers() {
     // Template handler - Gestion des templates
     $template_handler = new PDF_Builder_Template_Ajax_Handler();
     add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
-    add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
+    // add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']); // Commented out to avoid conflicts
     add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
 }
 

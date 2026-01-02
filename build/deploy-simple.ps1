@@ -1,204 +1,134 @@
-# Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
-# NOTE: Mode 'test' retiré — ce script effectue désormais le déploiement réel FTP par défaut.
-#commande possible - a lire absolument
+# Script de déploiement FTP ultra-simple
+# Déploie UNIQUEMENT les fichiers modifiés détectés par git
 # Usage: .\deploy-simple.ps1
-#.\build\deploy-simple.ps1
 
 param(
-    [Parameter(Mandatory=$false)]
-    [ValidateSet("plugin")]
-    [string]$Mode = "plugin",
     [switch]$SkipConnectionTest,
     [switch]$FastMode
 )
 
 $ErrorActionPreference = "Stop"
-
-# Forcer l'encodage UTF-8 pour éviter les problèmes avec les caractères accentués
-$OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-chcp 65001 | Out-Null  # Page de code UTF-8
 
 # Configuration FTP
 $FtpHost = "65.108.242.181"
 $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
-
 $WorkingDir = "I:\wp-pdf-builder-pro"
 
-# Fonction pour générer un message de commit intelligent
-function Get-SmartCommitMessage {
-    param([string[]]$ModifiedFiles)
+Write-Host "DEPLOIEMENT FTP ULTRA-SIMPLE" -ForegroundColor Cyan
+Write-Host ("=" * 40) -ForegroundColor White
 
-    $timestamp = Get-Date -Format "dd/MM/yyyy HH:mm:ss"
-
-    # Analyser les types de fichiers modifiés
-    $hasJs = $ModifiedFiles | Where-Object { $_ -like "*.js" -or $_ -like "*.jsx" -or $_ -like "*.ts" -or $_ -like "*.tsx" }
-    $hasCss = $ModifiedFiles | Where-Object { $_ -like "*.css" -or $_ -like "*.scss" -or $_ -like "*.sass" }
-    $hasPhp = $ModifiedFiles | Where-Object { $_ -like "*.php" }
-    $hasDist = $ModifiedFiles | Where-Object { $_ -like "*dist*" -or $_ -like "*build*" }
-    $hasConfig = $ModifiedFiles | Where-Object { $_ -like "*.json" -or $_ -like "*.config.*" -or $_ -like "*.yml" -or $_ -like "*.yaml" }
-
-    # Priorité: JS/TS > PHP > CSS > Config > Dist
-    if ($hasJs) {
-        $type = "feat"
-        $description = "Mise à jour des assets JavaScript/TypeScript"
-    } elseif ($hasPhp) {
-        $type = "fix"
-        $description = "Corrections PHP"
-    } elseif ($hasCss) {
-        $type = "style"
-        $description = "Mise à jour des styles CSS"
-    } elseif ($hasConfig) {
-        $type = "chore"
-        $description = "Configuration mise à jour"
-    } elseif ($hasDist) {
-        $type = "build"
-        $description = "Build et déploiement"
-    } else {
-        $type = "chore"
-        $description = "Mise à jour fichiers"
-    }
-
-    return "$type`: $description - $timestamp"
-}
-
-# Configuration FastMode
-if ($FastMode) {
-    $SkipConnectionTest = $true
-    Write-Host "MODE RAPIDE: Test de connexion desactiver, parallelisation maximale" -ForegroundColor Cyan
-}
-
-Write-Host "`nDEPLOIEMENT PLUGIN - Mode: $Mode $(if ($FastMode) { '(RAPIDE)' } else { '' })" -ForegroundColor Cyan
-Write-Host ("=" * 60) -ForegroundColor White
-
-Write-Host "`n1 Compilation des assets JavaScript/CSS..." -ForegroundColor Magenta
-
-# REBUILD DES ASSETS JAVASCRIPT/TYPESCRIPT
-Write-Host "   Rebuild des assets en cours..." -ForegroundColor Yellow
+# 1 DETECTION DES FICHIERS MODIFIES
+Write-Host "`n1 Detection des fichiers modifies..." -ForegroundColor Magenta
 
 try {
-    Push-Location $WorkingDir
+    # Obtenir les fichiers modifiés via git
+    $modifiedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only" 2>&1
+    $stagedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only --cached" 2>&1
+    $allModified = ($modifiedFiles + $stagedFiles) | Where-Object { $_ -and $_.Trim() -ne "" } | Select-Object -Unique
 
-    # Vérifier si Node.js est installé
-    $nodeVersion = & node --version 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Node.js n'est pas installé ou n'est pas dans le PATH"
-    }
-    Write-Host "   ✅ Node.js détecté: $nodeVersion" -ForegroundColor Green
-
-    # Vérifier si les dépendances sont installées
-    if (!(Test-Path "node_modules")) {
-        Write-Host "   📦 Installation des dépendances npm..." -ForegroundColor Yellow
-        & npm install
-        if ($LASTEXITCODE -ne 0) {
-            throw "Échec de l'installation des dépendances npm"
-        }
-        Write-Host "   ✅ Dépendances installées" -ForegroundColor Green
-    }
-
-    # Nettoyer les anciens builds
-    Write-Host "   🧹 Nettoyage des anciens builds..." -ForegroundColor Yellow
-    if (Test-Path "plugin/resources/assets/js/dist") {
-        Remove-Item "plugin/resources/assets/js/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
-    }
-    if (Test-Path "plugin/resources/assets/css/dist") {
-        Remove-Item "plugin/resources/assets/css/dist/*" -Recurse -Force -ErrorAction SilentlyContinue
-    }
-
-    # Build des assets
-    Write-Host "   🔨 Build des assets JavaScript/TypeScript..." -ForegroundColor Yellow
-    $ErrorActionPreference = "Continue"
-    & npm run build 2>&1 | Where-Object { $_ -notlike "*baseline*" }
-    $ErrorActionPreference = "Stop"
-    
-    # Vérifier que les fichiers sont bien générés
-    if (-not (Test-Path "assets/js/dist")) {
-        throw "Le dossier assets/js/dist n'a pas été créé par webpack"
-    }
-    Write_Host "   ✅ Build terminé" -ForegroundColor Green
-
-    # Copier les assets compilés
-    Write-Host "   📋 Copie des assets vers plugin..." -ForegroundColor Yellow
-    if (Test-Path "assets/js/dist") {
-        New-Item -ItemType Directory -Path "plugin/resources/assets/js/dist" -Force -ErrorAction SilentlyContinue | Out-Null
-        Copy-Item "assets/js/dist/*" "plugin/resources/assets/js/dist/" -Recurse -Force -ErrorAction SilentlyContinue
-    }
-    if (Test-Path "assets/css/dist") {
-        New-Item -ItemType Directory -Path "plugin/resources/assets/css/dist" -Force -ErrorAction SilentlyContinue | Out-Null
-        Copy-Item "assets/css/dist/*" "plugin/resources/assets/css/dist/" -Recurse -Force -ErrorAction SilentlyContinue
-    }
-    Write-Host "   ✅ Assets copiés" -ForegroundColor Green
-    
-    # Copier les fichiers PHP modifiés
-    Write-Host "   📋 Copie des fichiers PHP modifiés..." -ForegroundColor Yellow
-    if (Test-Path "plugin/src" -and (Get-ChildItem "plugin/src" -Recurse -Include "*.php" -ErrorAction SilentlyContinue).Count -gt 0) {
-        Copy-Item "plugin/src/*" "plugin/src/" -Recurse -Force -ErrorAction SilentlyContinue
-        Write-Host "   ✅ Fichiers PHP vérifiés" -ForegroundColor Green
-    }
-
-    Pop-Location
-} catch {
-    Write-Host "   ❌ Erreur lors du rebuild: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "   🔄 Continuation avec les assets existants..." -ForegroundColor Yellow
-    Pop-Location
-}
-
-# 2 LISTER LES FICHIERS MODIFIES
-Write-Host "`n2 Verification des fichiers à déployer..." -ForegroundColor Magenta
-
-try {
-    $jsFiles = @()
-    $phpFiles = @()
-    
-    # Déterminer les fichiers JS à déployer
-    $distDir = "$WorkingDir\plugin\resources\assets\js\dist"
-    if (Test-Path $distDir) {
-        $jsFiles = @(Get-ChildItem "$distDir\*.js" -ErrorAction SilentlyContinue -File)
-    }
-    
-    # Déterminer les fichiers PHP modifiés
-    $srcDir = "$WorkingDir\plugin\src"
-    if (Test-Path $srcDir) {
-        # Obtenir les fichiers modifiés via git
-        $modifiedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only" 2>&1
-        $stagedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only --cached" 2>&1
-        
-        $allModified = ($modifiedFiles + $stagedFiles) | Where-Object { $_ -and $_.Trim() -ne "" } | Select-Object -Unique
-        
-        $phpFiles = @()
-        foreach ($file in $allModified) {
-            $fullPath = Join-Path $WorkingDir $file
-            if ($file -like "plugin/src/*.php" -and (Test-Path $fullPath)) {
-                $phpFiles += Get-Item $fullPath
-            }
-        }
-        
-        # Si aucun fichier modifié, utiliser tous les PHP (pour les nouveaux déploiements)
-        if ($phpFiles.Count -eq 0) {
-            Write-Host "   Aucun fichier PHP modifié détecté, utilisation de tous les fichiers PHP" -ForegroundColor Yellow
-            $phpFiles = @(Get-ChildItem "$srcDir\*.php" -Recurse -ErrorAction SilentlyContinue -File)
+    $filesToDeploy = @()
+    foreach ($file in $allModified) {
+        $fullPath = Join-Path $WorkingDir $file
+        # Accepter tous les fichiers PHP et JS modifiés dans plugin/
+        if (($file -like "plugin/*.php" -or $file -like "plugin/src/*.php" -or $file -like "plugin/resources/assets/js/dist/*.js") -and (Test-Path $fullPath)) {
+            $filesToDeploy += Get-Item $fullPath
         }
     }
-    
-    $allFiles = @($jsFiles) + @($phpFiles) | Where-Object { $_ }
-    
-    if ($allFiles.Count -eq 0) {
-        Write-Host "Aucun fichier à déployer (JS ou PHP)" -ForegroundColor Yellow
+
+    if ($filesToDeploy.Count -eq 0) {
+        Write-Host "   ❌ Aucun fichier modifié détecté" -ForegroundColor Yellow
+        Write-Host "   💡 Modifiez et 'git add' des fichiers PHP/JS pour les déployer" -ForegroundColor Cyan
         exit 0
     }
-    
-    Write-Host "✅ Fichiers à déployer: $($allFiles.Count)" -ForegroundColor Green
-    Write-Host "   Fichiers JS: $($jsFiles.Count)" -ForegroundColor Cyan
-    Write-Host "   Fichiers PHP: $($phpFiles.Count)" -ForegroundColor Cyan
-    
-    $pluginModified = $allFiles | ForEach-Object {
-        $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
+
+    Write-Host "   ✅ $($filesToDeploy.Count) fichier(s) modifié(s) détecté(s)" -ForegroundColor Green
+
+    # Afficher la liste
+    Write-Host "`n   📋 Fichiers à déployer:" -ForegroundColor Yellow
+    foreach ($file in $filesToDeploy) {
+        $relativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
+        Write-Host "      - $relativePath" -ForegroundColor Gray
     }
-    
+
 } catch {
-    Write-Host "Erreur: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "   ❌ Erreur détection: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
+}
+
+# 2 UPLOAD FTP
+Write-Host "`n2 Upload FTP..." -ForegroundColor Magenta
+
+$uploadCount = 0
+$errorCount = 0
+$startTime = Get-Date
+
+# Test connexion FTP
+if (!$SkipConnectionTest) {
+    Write-Host "   Test connexion FTP..." -ForegroundColor Yellow
+    try {
+        $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost/"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.Timeout = 5000
+        $ftpRequest.UsePassive = $true
+        $ftpRequest.KeepAlive = $false
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        Write-Host "   ✅ Connexion FTP OK" -ForegroundColor Green
+    } catch {
+        Write-Host "   ❌ Erreur FTP: $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Upload de chaque fichier
+foreach ($file in $filesToDeploy) {
+    $relativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
+    # Construire le chemin FTP simple
+    $ftpFilePath = $relativePath.Replace("plugin/", "")
+
+    try {
+        # Upload direct du fichier (FTP gère automatiquement les répertoires)
+        $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$FtpPath/$ftpFilePath"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.UsePassive = $true
+        $ftpRequest.Timeout = 30000
+        $ftpRequest.KeepAlive = $false
+
+        $fileContent = [System.IO.File]::ReadAllBytes($file.FullName)
+        $ftpRequest.ContentLength = $fileContent.Length
+
+        $requestStream = $ftpRequest.GetRequestStream()
+        $requestStream.Write($fileContent, 0, $fileContent.Length)
+        $requestStream.Close()
+
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+
+        Write-Host "   ✅ $relativePath" -ForegroundColor Green
+        $uploadCount++
+
+    } catch {
+        Write-Host "   ❌ $relativePath - $($_.Exception.Message)" -ForegroundColor Red
+        $errorCount++
+    }
+}
+
+# Résumé
+$duration = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+Write-Host "`n3 Resume" -ForegroundColor Magenta
+Write-Host "   📊 Upload: $uploadCount réussi(s), $errorCount erreur(s)" -ForegroundColor Cyan
+Write-Host "   ⏱️  Durée: $duration secondes" -ForegroundColor Cyan
+
+if ($errorCount -eq 0) {
+    Write-Host "   🎉 Déploiement terminé avec succès!" -ForegroundColor Green
+} else {
+    Write-Host "   ⚠️  Déploiement terminé avec des erreurs" -ForegroundColor Yellow
     exit 1
 }
 

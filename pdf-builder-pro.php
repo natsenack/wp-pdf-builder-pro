@@ -2176,44 +2176,264 @@ function pdf_builder_save_template_handler() {
 /**
  * AJAX handler for loading templates (React frontend)
  */
-function pdf_builder_load_template_handler() {
+/**
+ * Get fallback template when database is unavailable or template not found
+ */
+function pdf_builder_get_fallback_template($template_id) {
+    $fallback_templates = array(
+        1 => array(
+            'name' => 'Template Basique A4',
+            'data' => array(
+                'elements' => array(
+                    array(
+                        'id' => 'header-1',
+                        'type' => 'text',
+                        'content' => 'EN-TÊTE DU DOCUMENT',
+                        'x' => 50,
+                        'y' => 50,
+                        'width' => 500,
+                        'height' => 30,
+                        'fontSize' => 18,
+                        'fontWeight' => 'bold',
+                        'textAlign' => 'center'
+                    ),
+                    array(
+                        'id' => 'content-1',
+                        'type' => 'text',
+                        'content' => 'Contenu du document ici...',
+                        'x' => 50,
+                        'y' => 100,
+                        'width' => 500,
+                        'height' => 200,
+                        'fontSize' => 12,
+                        'textAlign' => 'left'
+                    )
+                ),
+                'paper_size' => 'A4',
+                'orientation' => 'portrait',
+                'margins' => array(
+                    'top' => 20,
+                    'right' => 20,
+                    'bottom' => 20,
+                    'left' => 20
+                ),
+                'background' => '#ffffff'
+            )
+        ),
+        2 => array(
+            'name' => 'Template Facture',
+            'data' => array(
+                'elements' => array(
+                    array(
+                        'id' => 'logo-1',
+                        'type' => 'text',
+                        'content' => 'VOTRE ENTREPRISE',
+                        'x' => 50,
+                        'y' => 50,
+                        'width' => 200,
+                        'height' => 30,
+                        'fontSize' => 16,
+                        'fontWeight' => 'bold'
+                    ),
+                    array(
+                        'id' => 'invoice-title',
+                        'type' => 'text',
+                        'content' => 'FACTURE',
+                        'x' => 400,
+                        'y' => 50,
+                        'width' => 150,
+                        'height' => 30,
+                        'fontSize' => 20,
+                        'fontWeight' => 'bold',
+                        'textAlign' => 'right'
+                    ),
+                    array(
+                        'id' => 'invoice-number',
+                        'type' => 'text',
+                        'content' => 'N° FACTURE: [invoice_number]',
+                        'x' => 400,
+                        'y' => 90,
+                        'width' => 150,
+                        'height' => 20,
+                        'fontSize' => 12,
+                        'textAlign' => 'right'
+                    )
+                ),
+                'paper_size' => 'A4',
+                'orientation' => 'portrait',
+                'margins' => array(
+                    'top' => 20,
+                    'right' => 20,
+                    'bottom' => 20,
+                    'left' => 20
+                ),
+                'background' => '#ffffff'
+            )
+        ),
+        3 => array(
+            'name' => 'Template Lettre',
+            'data' => array(
+                'elements' => array(
+                    array(
+                        'id' => 'sender-address',
+                        'type' => 'text',
+                        'content' => '[sender_address]',
+                        'x' => 50,
+                        'y' => 50,
+                        'width' => 250,
+                        'height' => 60,
+                        'fontSize' => 11,
+                        'textAlign' => 'left'
+                    ),
+                    array(
+                        'id' => 'date',
+                        'type' => 'text',
+                        'content' => '[date]',
+                        'x' => 350,
+                        'y' => 50,
+                        'width' => 150,
+                        'height' => 20,
+                        'fontSize' => 11,
+                        'textAlign' => 'right'
+                    ),
+                    array(
+                        'id' => 'recipient-address',
+                        'type' => 'text',
+                        'content' => '[recipient_address]',
+                        'x' => 50,
+                        'y' => 130,
+                        'width' => 250,
+                        'height' => 60,
+                        'fontSize' => 11,
+                        'textAlign' => 'left'
+                    ),
+                    array(
+                        'id' => 'subject',
+                        'type' => 'text',
+                        'content' => 'Objet: [subject]',
+                        'x' => 50,
+                        'y' => 210,
+                        'width' => 450,
+                        'height' => 25,
+                        'fontSize' => 12,
+                        'fontWeight' => 'bold'
+                    ),
+                    array(
+                        'id' => 'body',
+                        'type' => 'text',
+                        'content' => '[body_content]',
+                        'x' => 50,
+                        'y' => 250,
+                        'width' => 450,
+                        'height' => 300,
+                        'fontSize' => 11,
+                        'textAlign' => 'left'
+                    )
+                ),
+                'paper_size' => 'A4',
+                'orientation' => 'portrait',
+                'margins' => array(
+                    'top' => 20,
+                    'right' => 20,
+                    'bottom' => 20,
+                    'left' => 20
+                ),
+                'background' => '#ffffff'
+            )
+        )
+    );
+
+    // Return specific template or default one
+    return $fallback_templates[$template_id] ?? $fallback_templates[1];
+}
     // Check permissions
     if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
+        wp_send_json_error(array(
+            'message' => 'Permissions insuffisantes',
+            'code' => 'insufficient_permissions'
+        ));
         return;
     }
 
     try {
         $template_id = intval($_POST['template_id'] ?? 0);
 
-        if (!$template_id) {
-            wp_send_json_error('ID du template manquant');
+        if (!$template_id || $template_id < 0) {
+            wp_send_json_error(array(
+                'message' => 'ID du template invalide',
+                'code' => 'invalid_template_id'
+            ));
             return;
         }
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
+        // Check if table exists
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $table_templates
+        ));
+
+        if (!$table_exists) {
+            // Table doesn't exist, provide fallback template
+            $fallback_template = pdf_builder_get_fallback_template($template_id);
+            if ($fallback_template) {
+                wp_send_json_success(array(
+                    'template' => $fallback_template['data'],
+                    'id' => $template_id,
+                    'name' => $fallback_template['name'],
+                    'fallback' => true,
+                    'message' => 'Template de secours utilisé (table manquante)'
+                ));
+                return;
+            } else {
+                wp_send_json_error(array(
+                    'message' => 'Table des templates manquante et aucun template de secours disponible',
+                    'code' => 'table_missing'
+                ));
+                return;
+            }
+        }
+
+        // Table exists, try to load template
         $template = $wpdb->get_row(
             $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );
 
         if (!$template) {
-            wp_send_json_error('Template non trouvé');
-            return;
+            // Template not found, try fallback
+            $fallback_template = pdf_builder_get_fallback_template($template_id);
+            if ($fallback_template) {
+                wp_send_json_success(array(
+                    'template' => $fallback_template['data'],
+                    'id' => $template_id,
+                    'name' => $fallback_template['name'],
+                    'fallback' => true,
+                    'message' => 'Template non trouvé, template de secours utilisé'
+                ));
+                return;
+            } else {
+                wp_send_json_error(array(
+                    'message' => 'Template non trouvé (ID: ' . $template_id . ')',
+                    'code' => 'template_not_found'
+                ));
+                return;
+            }
         }
 
+        // Template found, decode JSON data
         $template_data = json_decode($template['template_data'], true, 512, JSON_INVALID_UTF8_IGNORE);
+
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('[PDF Builder LOAD] Erreur JSON lors du décodage: ' . json_last_error_msg() . ' (code: ' . json_last_error() . ')');
             error_log('[PDF Builder LOAD] Données brutes (début): ' . substr($template['template_data'], 0, 200));
-            error_log('[PDF Builder LOAD] Données brutes (fin): ' . substr($template['template_data'], -200));
 
-            // Essayer de nettoyer les données JSON potentiellement corrompues
+            // Try to clean corrupted JSON data
             $cleaned_data = $template['template_data'];
 
-            // Si les données semblent être du JSON doublement encodé, essayer de décoder une fois de plus
+            // If data appears double-encoded, try decoding again
             if (strpos($cleaned_data, '{\\"') === 0 || strpos($cleaned_data, '[\\"') === 0) {
                 error_log('[PDF Builder LOAD] Tentative de décodage double JSON');
                 $cleaned_data = stripslashes($cleaned_data);
@@ -2221,25 +2441,85 @@ function pdf_builder_load_template_handler() {
                 if (json_last_error() === JSON_ERROR_NONE) {
                     error_log('[PDF Builder LOAD] ✅ JSON décodé après nettoyage des slashes');
                 } else {
-                    wp_send_json_error('Erreur de décodage JSON: ' . json_last_error_msg());
-                    return;
+                    // JSON still corrupted, use fallback
+                    $fallback_template = pdf_builder_get_fallback_template($template_id);
+                    if ($fallback_template) {
+                        wp_send_json_success(array(
+                            'template' => $fallback_template['data'],
+                            'id' => $template_id,
+                            'name' => $fallback_template['name'],
+                            'fallback' => true,
+                            'message' => 'Données JSON corrompues, template de secours utilisé'
+                        ));
+                        return;
+                    } else {
+                        wp_send_json_error(array(
+                            'message' => 'Erreur de décodage JSON: ' . json_last_error_msg(),
+                            'code' => 'json_decode_error'
+                        ));
+                        return;
+                    }
                 }
             } else {
-                wp_send_json_error('Erreur de décodage JSON: ' . json_last_error_msg());
+                // Use fallback for corrupted data
+                $fallback_template = pdf_builder_get_fallback_template($template_id);
+                if ($fallback_template) {
+                    wp_send_json_success(array(
+                        'template' => $fallback_template['data'],
+                        'id' => $template_id,
+                        'name' => $fallback_template['name'],
+                        'fallback' => true,
+                        'message' => 'Données JSON corrompues, template de secours utilisé'
+                    ));
+                    return;
+                } else {
+                    wp_send_json_error(array(
+                        'message' => 'Erreur de décodage JSON: ' . json_last_error_msg(),
+                        'code' => 'json_decode_error'
+                    ));
+                    return;
+                }
+            }
+        }
+
+        // Validate template structure
+        if (!is_array($template_data) || !isset($template_data['elements'])) {
+            error_log('[PDF Builder LOAD] Structure du template invalide pour ID: ' . $template_id);
+
+            $fallback_template = pdf_builder_get_fallback_template($template_id);
+            if ($fallback_template) {
+                wp_send_json_success(array(
+                    'template' => $fallback_template['data'],
+                    'id' => $template_id,
+                    'name' => $fallback_template['name'],
+                    'fallback' => true,
+                    'message' => 'Structure du template invalide, template de secours utilisé'
+                ));
+                return;
+            } else {
+                wp_send_json_error(array(
+                    'message' => 'Structure du template invalide',
+                    'code' => 'invalid_template_structure'
+                ));
                 return;
             }
         }
 
-        error_log('[PDF Builder LOAD] Template chargé avec succès - ID: ' . $template_id . ', éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
+        error_log('[PDF Builder LOAD] Template chargé avec succès - ID: ' . $template_id . ', éléments: ' . count($template_data['elements']));
 
-        wp_send_json_success([
+        wp_send_json_success(array(
             'template' => $template_data,
             'id' => $template['id'],
-            'name' => $template['name']
-        ]);
+            'name' => $template['name'],
+            'fallback' => false
+        ));
 
     } catch (Exception $e) {
-        wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+        error_log('[PDF Builder LOAD] Exception: ' . $e->getMessage());
+        wp_send_json_error(array(
+            'message' => 'Erreur lors du chargement: ' . $e->getMessage(),
+            'code' => 'exception'
+        ));
     }
 }
 
@@ -2871,4 +3151,7 @@ function pdf_builder_view_logs_handler() {
         wp_send_json_error('Erreur lors de la récupération des logs: ' . $e->getMessage());
     }
 }
+
+// Enregistrer le hook d'activation
+register_activation_hook(__FILE__, 'pdf_builder_activate');
 
