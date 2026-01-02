@@ -8,6 +8,9 @@ import PropertiesPanel from './PropertiesPanel';
 import TemplateHeader from './TemplateHeader';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
+// IMPORTANT: Import PDFEditor.css AFTER global CSS so it has lower specificity
+// The global pdf-builder-react.css is loaded via WordPress wp_enqueue_style
+// This local CSS provides component-level overrides only
 import './PDFEditor.css';
 
 // Fonctions utilitaires pour manipuler les couleurs

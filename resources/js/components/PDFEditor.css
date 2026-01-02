@@ -1,234 +1,36 @@
-/* PDF Editor - Force Modern Styling
-   This CSS bridges the gap between JSX elements and CSS React styling
+/* PDF Editor - Minimal overrides only
+   The main styling comes from pdf-builder-react.css loaded via WordPress
+   This file provides component-level fixes only
 */
 
-/* Main container - force modern layout */
+/* Ensure modern flex layout for editor */
 .pdf-editor,
 .pdf-builder-container {
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100vh !important;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  font-size: 14px !important;
-  color: #333 !important;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  background: #fff;
 }
 
-/* Header styling */
-.editor-header,
-.pdf-builder-header {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 16px 24px !important;
-  background: #ffffff !important;
-  border-bottom: 2px solid #e8ecf1 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-.editor-header h1,
-.editor-header h2 {
-  margin: 0 !important;
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  color: #1a202c !important;
-}
-
-/* Toolbar */
-.editor-toolbar,
-.pdf-builder-toolbar {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 12px 16px !important;
-  background: #ffffff !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  flex-wrap: wrap !important;
-}
-
-.tool-btn,
-.toolbar-btn {
-  background: #f0f4f8 !important;
-  border: 1px solid #cbd5e0 !important;
-  color: #2d3748 !important;
-  padding: 8px 12px !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  transition: all 0.2s !important;
-}
-
-.tool-btn:hover,
-.toolbar-btn:hover {
-  background: #e2e8f0 !important;
-  border-color: #a0aec0 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-}
-
-.tool-btn.active,
-.toolbar-btn.active {
-  background: #4299e1 !important;
-  color: #ffffff !important;
-  border-color: #3182ce !important;
-  font-weight: 600 !important;
-}
-
-/* Workspace */
+/* Workspace flex */
 .editor-workspace,
 .pdf-builder-workspace {
-  display: flex !important;
-  flex: 1 !important;
-  gap: 0 !important;
-  overflow: hidden !important;
-  background: #f7fafc !important;
-}
-
-/* Sidebars */
-.element-library-panel,
-.pdf-builder-sidebar {
-  width: 280px !important;
-  background: #ffffff !important;
-  border-right: 1px solid #e2e8f0 !important;
-  overflow-y: auto !important;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05) !important;
-  padding: 12px !important;
-}
-
-.properties-panel-container,
-.pdf-builder-properties {
-  width: 300px !important;
-  background: #ffffff !important;
-  border-left: 1px solid #e2e8f0 !important;
-  overflow-y: auto !important;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05) !important;
-  padding: 12px !important;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
 /* Canvas area */
 .canvas-container,
 .pdf-builder-canvas-container {
-  flex: 1 !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
-  padding: 20px !important;
-  overflow: auto !important;
-  background: linear-gradient(45deg, #f5f7fa 25%, #edf2f7 25%, #edf2f7 50%, #f5f7fa 50%, #f5f7fa 75%, #edf2f7 75%, #edf2f7) !important;
-  background-size: 40px 40px !important;
-  background-position: 0 0 !important;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto;
 }
 
-.pdf-canvas {
-  background: white !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
-  border-radius: 8px !important;
-  cursor: crosshair !important;
-  border: 2px solid #e2e8f0 !important;
-}
-
-.pdf-canvas:hover {
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2) !important;
-}
-
-/* Panel titles */
-.element-library-panel h3,
-.properties-panel-container h3,
-.pdf-builder-sidebar h3,
-.pdf-builder-properties h3 {
-  margin: 0 0 12px 0 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: #1a202c !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-}
-
-/* Secondary toolbar */
-.editor-toolbar-secondary {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 8px 16px !important;
-  background: #ffffff !important;
-  border-top: 1px solid #e2e8f0 !important;
-  flex-wrap: wrap !important;
-}
-
-.editor-toolbar-secondary .tool-btn {
-  background: #f0f4f8 !important;
-  border: 1px solid #cbd5e0 !important;
-  padding: 6px 10px !important;
-  font-size: 12px !important;
-}
-
-.editor-toolbar-secondary .tool-btn:hover {
-  background: #4299e1 !important;
-  color: white !important;
-}
-
-.editor-toolbar-secondary .tool-btn.active {
-  background: #4299e1 !important;
-  color: white !important;
-}
-
-/* Input fields and selects */
-input[type="text"],
-input[type="number"],
-input[type="range"],
-select,
-textarea {
-  background: #ffffff !important;
-  border: 1px solid #cbd5e0 !important;
-  border-radius: 4px !important;
-  padding: 6px 8px !important;
-  font-size: 13px !important;
-  font-family: inherit !important;
-  transition: all 0.2s !important;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-select:focus,
-textarea:focus {
-  border-color: #4299e1 !important;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1) !important;
-  outline: none !important;
-}
-
-/* Scrollbar styling */
-.element-library-panel::-webkit-scrollbar,
-.properties-panel-container::-webkit-scrollbar,
-.canvas-container::-webkit-scrollbar {
-  width: 8px !important;
-}
-
-.element-library-panel::-webkit-scrollbar-track,
-.properties-panel-container::-webkit-scrollbar-track,
-.canvas-container::-webkit-scrollbar-track {
-  background: #f7fafc !important;
-}
-
-.element-library-panel::-webkit-scrollbar-thumb,
-.properties-panel-container::-webkit-scrollbar-thumb,
-.canvas-container::-webkit-scrollbar-thumb {
-  background: #cbd5e0 !important;
-  border-radius: 4px !important;
-}
-
-.element-library-panel::-webkit-scrollbar-thumb:hover,
-.properties-panel-container::-webkit-scrollbar-thumb:hover,
-.canvas-container::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0 !important;
-}
-
-/* Canvas-specific styling */
-.pdf-element-selected {
-  box-shadow: inset 0 0 0 3px #4299e1 !important;
-}
-
-/* Ensure all elements inherit proper styling */
-* {
-  box-sizing: border-box !important;
-}
+/* Remove any aggressive !important from component-level CSS */
+/* Let pdf-builder-react.css handle all styling */
 
