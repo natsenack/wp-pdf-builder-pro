@@ -282,29 +282,11 @@ class AdminScriptLoader
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
-            error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
-
-            // Vérifier si le template processor existe
-            $template_processor = $this->admin->getTemplateProcessor();
-            if (!$template_processor) {
-                error_log('[WP AdminScriptLoader] ERROR: Template processor is null!');
-                $localize_data['templateLoadError'] = 'Template processor not available';
-            } else {
-                error_log('[WP AdminScriptLoader] Template processor exists, calling loadTemplateRobust');
-                $existing_template_data = $template_processor->loadTemplateRobust($template_id);
-
-                if ($existing_template_data && isset($existing_template_data['elements'])) {
-                    $localize_data['initialElements'] = $existing_template_data['elements'];
-                    $localize_data['existingTemplate'] = $existing_template_data;
-                    $localize_data['hasExistingData'] = true;
-                    error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
-                    error_log('[WP AdminScriptLoader] Template name: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
-                    error_log('[WP AdminScriptLoader] Elements count: ' . count($existing_template_data['elements']));
-                } else {
-                    error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id);
-                    error_log('[WP AdminScriptLoader] Returned data: ' . print_r($existing_template_data, true));
-                    $localize_data['templateLoadError'] = 'Template not found or invalid';
-                }
+            $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
+            if ($existing_template_data && isset($existing_template_data['elements'])) {
+                $localize_data['initialElements'] = $existing_template_data['elements'];
+                $localize_data['existingTemplate'] = $existing_template_data;
+                $localize_data['hasExistingData'] = true;
             }
         }
 
