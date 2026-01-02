@@ -336,109 +336,110 @@
   background: rgba(255,255,255,0.1);
 }
 
-/* Template Settings Modal Specific Styles */
-.modal-content.template-settings-modal {
-  max-width: 520px;
-  animation: modalSlideIn 0.3s ease-out;
+/* Template Settings Modal Specific Styles - HIGH PRIORITY */
+.template-settings-modal .modal-content {
+  max-width: 520px !important;
+  animation: modalSlideIn 0.3s ease-out !important;
 }
 
 .template-settings-modal .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-bottom: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border-bottom: none !important;
 }
 
 .template-settings-modal .modal-header h3 {
-  color: white;
-  font-size: 20px;
+  color: white !important;
+  font-size: 20px !important;
 }
 
 .template-settings-modal .modal-close {
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .template-settings-modal .modal-close:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.2);
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 .template-settings-modal .modal-body {
-  padding: 24px;
-  background: #f8fafc;
+  padding: 24px !important;
+  background: #f8fafc !important;
 }
 
 .template-settings-modal .form-group {
-  margin-bottom: 20px;
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
+  margin-bottom: 20px !important;
+  background: white !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease !important;
 }
 
 .template-settings-modal .form-group:hover {
-  border-color: #cbd5e0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
 }
 
 .template-settings-modal .form-group label {
-  color: #2d3748;
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 15px;
+  color: #2d3748 !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  font-size: 15px !important;
 }
 
 .template-settings-modal .form-group input,
 .template-settings-modal .form-group select,
 .template-settings-modal .form-group textarea {
-  border: 2px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 14px;
-  transition: all 0.2s ease;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  padding: 10px 12px !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
 }
 
 .template-settings-modal .form-group input:focus,
 .template-settings-modal .form-group select:focus,
 .template-settings-modal .form-group textarea:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-  transform: translateY(-1px);
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+  transform: translateY(-1px) !important;
 }
 
 .template-settings-modal .modal-footer {
-  padding: 20px 24px;
-  background: white;
-  border-top: 1px solid #e2e8f0;
+  padding: 20px 24px !important;
+  background: white !important;
+  border-top: 1px solid #e2e8f0 !important;
 }
 
 .template-settings-modal .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  padding: 10px 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border: none !important;
+  padding: 10px 20px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
 }
 
 .template-settings-modal .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
 }
 
 .template-settings-modal .btn-secondary {
-  border: 2px solid #e2e8f0;
-  background: white;
-  color: #4a5568;
-  padding: 10px 20px;
-  font-weight: 500;
+  border: 2px solid #e2e8f0 !important;
+  background: white !important;
+  color: #4a5568 !important;
+  padding: 10px 20px !important;
+  font-weight: 500 !important;
 }
 
 .template-settings-modal .btn-secondary:hover {
-  background: #f7fafc;
-  border-color: #cbd5e0;
-  color: #2d3748;
+  background: #f7fafc !important;
+  border-color: #cbd5e0 !important;
+  color: #2d3748 !important;
 }
 
 @keyframes modalSlideIn {
