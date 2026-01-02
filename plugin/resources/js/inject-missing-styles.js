@@ -1261,8 +1261,6 @@ textarea.text-input::placeholder {
   styleElement.id = 'pdf-builder-injected-styles';
   styleElement.textContent = styles;
   document.head.appendChild(styleElement);
-
-  console.log('[PDF Builder] ✅ Styles injectés avec succès');
 }
 
 // Injector au chargement du DOM
