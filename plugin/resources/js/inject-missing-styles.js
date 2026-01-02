@@ -107,25 +107,36 @@ function injectMissingStyles() {
   gap: 8px;
   padding: 12px 16px;
   background: #ffffff;
-  border-bottom: 1px solid #f1f3f4;
+  border-bottom: 2px solid #e5e7eb;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
   flex-wrap: wrap;
+  min-height: 50px;
+  z-index: 100;
 }
 
-.pdf-builder-toolbar button {
+.pdf-builder-toolbar button,
+.pdf-builder-toolbar select,
+.pdf-builder-toolbar input {
   padding: 8px 12px;
-  border: 1px solid #e8eaed;
+  border: 1px solid #d1d5db;
   background: white;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   transition: all 0.2s ease;
+  color: #374151;
 }
 
 .pdf-builder-toolbar button:hover {
-  background: #fafbfc;
-  border-color: #d1d5db;
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #1f2937;
+}
+
+.pdf-builder-toolbar button:active {
+  background: #e5e7eb;
 }
 
 .pdf-builder-toolbar button.active {
@@ -137,22 +148,28 @@ function injectMissingStyles() {
 /* ===== PDF BUILDER PROPERTIES PANEL ===== */
 .pdf-builder-properties,
 .properties-panel-container {
-  width: 320px;
+  width: 340px;
   background: #fafbfc;
-  border-left: 1px solid #f1f3f4;
+  border-left: 2px solid #e5e7eb;
   overflow-y: auto;
   padding: 16px;
-  box-shadow: -1px 0 3px rgba(0,0,0,0.03);
+  box-shadow: -2px 0 4px rgba(0,0,0,0.06);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .pdf-builder-properties h3,
 .properties-panel-container h3 {
   margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: #1f2937;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
 }
 
 .pdf-builder-properties .property-group,
@@ -263,7 +280,8 @@ function injectMissingStyles() {
   display: flex;
   flex: 1;
   overflow: hidden;
-  background: #ffffff;
+  background: #f9fafb;
+  gap: 0;
 }
 
 .editor-toolbar-secondary {

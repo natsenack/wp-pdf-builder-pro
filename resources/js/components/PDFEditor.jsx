@@ -365,7 +365,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [snapToElements, setSnapToElements] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
   const [showElementLibrary, setShowElementLibrary] = useState(true);
-  const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
+  const [showPropertiesPanel, setShowPropertiesPanel] = useState(true);
   
   // Paramètres du backend pour synchronisation avec la toolbar
   const [backendSettings, setBackendSettings] = useState(() => {
