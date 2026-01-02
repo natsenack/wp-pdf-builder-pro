@@ -209,7 +209,7 @@ try {
 
           // Préparer les options avec les données chargées
           const options = {
-            initialElements: data.data.template || [],
+            initialElements: data.data.template.elements || [],
             templateName: data.data.name || window.pdfBuilderData.templateName || '',
             isNew: false,
             templateId: window.pdfBuilderData.templateId
