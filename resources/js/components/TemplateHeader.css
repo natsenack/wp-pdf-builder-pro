@@ -382,6 +382,8 @@ div.template-settings-modal .form-group {
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 div.template-settings-modal .form-group:hover {
@@ -389,11 +391,33 @@ div.template-settings-modal .form-group:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+div.template-settings-modal .form-group-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px 0 0 8px;
+}
+
+div.template-settings-modal .form-group-content {
+  margin-left: 16px;
+}
+
+div.template-settings-modal .label-icon {
+  font-size: 16px;
+  opacity: 0.7;
+  margin-right: 8px;
+}
+
 div.template-settings-modal .form-group label {
   color: #2d3748;
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 15px;
+  display: flex;
+  align-items: center;
 }
 
 div.template-settings-modal .form-group input,
@@ -506,25 +530,67 @@ div.template-settings-modal .btn-secondary:hover {
   animation: shine 3s ease-in-out infinite;
 }
 
-@keyframes shine {
-  0% { transform: rotate(0deg) translateX(-100%); }
-  100% { transform: rotate(0deg) translateX(100%); }
+.template-settings-modal .modal-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
 }
 
-.template-settings-modal .modal-header h3 {
+.template-settings-modal .modal-header-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.template-settings-modal .settings-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.template-settings-modal .modal-header-text h3 {
   color: white;
+  font-size: 22px;
   margin: 0;
-  position: relative;
-  z-index: 1;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.template-settings-modal .modal-header-text p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin: 4px 0 0 0;
+  font-weight: 400;
 }
 
 .template-settings-modal .modal-close {
-  color: white;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .template-settings-modal .modal-close:hover {
-  background: rgba(255,255,255,0.2);
   color: white;
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05) rotate(90deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
