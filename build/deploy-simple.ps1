@@ -498,8 +498,18 @@ try {
             Write-Host "     $_" -ForegroundColor Gray
         }
         
-        # Générer un message de commit intelligent basé sur les fichiers modifiés
-        $commitMsg = Get-SmartCommitMessage -ModifiedFiles $pluginModified
+        # Générer un message de commit basé sur les fichiers modifiés
+        $fileTypes = @()
+        foreach ($file in $pluginModified) {
+            if ($file -like "*.php") { $fileTypes += "PHP" }
+            elseif ($file -like "*.js") { $fileTypes += "JS" }
+            elseif ($file -like "*.css") { $fileTypes += "CSS" }
+            elseif ($file -like "*.json") { $fileTypes += "JSON" }
+            else { $fileTypes += "autres" }
+        }
+        $fileTypes = $fileTypes | Select-Object -Unique
+        $commitMsg = "deploy: " + ($fileTypes -join "/") + " files - " + (Get-Date -Format "dd/MM/yyyy HH:mm")
+        
         Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
         $ErrorActionPreference = "Continue"
         $commitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMsg`"" 2>&1
