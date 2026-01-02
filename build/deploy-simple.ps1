@@ -27,7 +27,33 @@ try {
     # Obtenir les fichiers modifiés via git
     $modifiedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only" 2>&1
     $stagedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only --cached" 2>&1
-    $allModified = ($modifiedFiles + $stagedFiles) | Where-Object { $_ -and $_.Trim() -ne "" } | Select-Object -Unique
+
+    Write-Host "   DEBUG: modifiedFiles = '$modifiedFiles'" -ForegroundColor Gray
+    Write-Host "   DEBUG: stagedFiles = '$stagedFiles'" -ForegroundColor Gray
+
+    # Convertir les sorties en tableaux de fichiers
+    $modifiedArray = @()
+    if ($modifiedFiles -and $modifiedFiles.Trim() -ne "") {
+        $modifiedArray = $modifiedFiles -split '\s+' | Where-Object { $_ -and $_.Trim() -ne "" }
+    }
+
+    $stagedArray = @()
+    if ($stagedFiles -and $stagedFiles.Trim() -ne "") {
+        $stagedArray = $stagedFiles -split '\s+' | Where-Object { $_ -and $_.Trim() -ne "" }
+    }
+
+    Write-Host "   DEBUG: modifiedArray count = $($modifiedArray.Count)" -ForegroundColor Gray
+    Write-Host "   DEBUG: stagedArray count = $($stagedArray.Count)" -ForegroundColor Gray
+
+    $allModified = @()
+    $allModified += $modifiedArray
+    $allModified += $stagedArray
+    $allModified = $allModified | Select-Object -Unique
+
+    Write-Host "   DEBUG: allModified count = $($allModified.Count)" -ForegroundColor Gray
+    foreach ($file in $allModified) {
+        Write-Host "   DEBUG: file = '$file'" -ForegroundColor Gray
+    }
 
     $filesToDeploy = @()
     foreach ($file in $allModified) {
@@ -35,6 +61,9 @@ try {
         # Accepter tous les fichiers PHP et JS modifiés dans plugin/
         if (($file -like "plugin/*.php" -or $file -like "plugin/src/*.php" -or $file -like "plugin/resources/assets/js/dist/*.js") -and (Test-Path $fullPath)) {
             $filesToDeploy += Get-Item $fullPath
+            Write-Host "   DEBUG: Ajouté $file" -ForegroundColor Gray
+        } else {
+            Write-Host "   DEBUG: Ignoré $file (pattern non matching ou fichier inexistant)" -ForegroundColor Gray
         }
     }
 
@@ -127,6 +156,55 @@ Write-Host "   ⏱️  Durée: $duration secondes" -ForegroundColor Cyan
 
 if ($errorCount -eq 0) {
     Write-Host "   🎉 Déploiement terminé avec succès!" -ForegroundColor Green
+
+    # 4 COMMIT GIT APRES DEPLOIEMENT
+    Write-Host "`n4 Commit Git..." -ForegroundColor Magenta
+
+    try {
+        Push-Location $WorkingDir
+
+        # Vérifier s'il y a des changements à committer
+        $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+        $stagedFiles = $statusOutput | Where-Object { $_ -match "^[AM]" }
+
+        if ($stagedFiles -and $stagedFiles.Count -gt 0) {
+            # Générer un message de commit basé sur les fichiers déployés
+            $commitMessage = "deploy: $(Get-Date -Format 'dd/MM/yyyy HH:mm') - $($filesToDeploy.Count) fichiers deployes"
+
+            Write-Host "   📝 Commit: $commitMessage" -ForegroundColor Yellow
+
+            # Commit
+            $ErrorActionPreference = "Continue"
+            $commitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMessage`"" 2>&1
+            $ErrorActionPreference = "Stop"
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   ✅ Commit cree" -ForegroundColor Green
+
+                # Push
+                Write-Host "   📤 Push vers remote..." -ForegroundColor Yellow
+                $ErrorActionPreference = "Continue"
+                $pushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
+                $ErrorActionPreference = "Stop"
+
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "   ✅ Push reussi" -ForegroundColor Green
+                } else {
+                    Write-Host "   ⚠️ Push echoue: $($pushResult -join ' ')" -ForegroundColor Yellow
+                }
+            } else {
+                Write-Host "   ⚠️ Commit echoue: $($commitResult -join ' ')" -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "   ⏭️ Aucun changement a committer" -ForegroundColor Cyan
+        }
+
+        Pop-Location
+    } catch {
+        Write-Host "   ❌ Erreur git: $($_.Exception.Message)" -ForegroundColor Red
+        Pop-Location
+    }
+
 } else {
     Write-Host "   ⚠️  Déploiement terminé avec des erreurs" -ForegroundColor Yellow
     exit 1
