@@ -372,6 +372,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     return {};
   });
 
+  // Appeler renderCanvas quand les éléments changent
+  useEffect(() => {
+    renderCanvas();
+  }, [elements, selectedElementId, showGrid, zoom]);
+
   // Synchroniser selectedElement avec elements - REMOVED car on utilise maintenant selectedElementId
 
   // État pour le drag & drop
