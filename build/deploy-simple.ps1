@@ -28,9 +28,6 @@ try {
     $modifiedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only" 2>&1
     $stagedFiles = cmd /c "cd /d $WorkingDir && git diff --name-only --cached" 2>&1
 
-    Write-Host "   DEBUG: modifiedFiles = '$modifiedFiles'" -ForegroundColor Gray
-    Write-Host "   DEBUG: stagedFiles = '$stagedFiles'" -ForegroundColor Gray
-
     # Convertir les sorties en tableaux de fichiers
     $modifiedArray = @()
     if ($modifiedFiles -and $modifiedFiles.Trim() -ne "") {
@@ -42,18 +39,10 @@ try {
         $stagedArray = $stagedFiles -split '\s+' | Where-Object { $_ -and $_.Trim() -ne "" }
     }
 
-    Write-Host "   DEBUG: modifiedArray count = $($modifiedArray.Count)" -ForegroundColor Gray
-    Write-Host "   DEBUG: stagedArray count = $($stagedArray.Count)" -ForegroundColor Gray
-
     $allModified = @()
     $allModified += $modifiedArray
     $allModified += $stagedArray
     $allModified = $allModified | Select-Object -Unique
-
-    Write-Host "   DEBUG: allModified count = $($allModified.Count)" -ForegroundColor Gray
-    foreach ($file in $allModified) {
-        Write-Host "   DEBUG: file = '$file'" -ForegroundColor Gray
-    }
 
     $filesToDeploy = @()
     foreach ($file in $allModified) {
@@ -61,9 +50,6 @@ try {
         # Accepter tous les fichiers PHP et JS modifiés dans plugin/
         if (($file -like "plugin/*.php" -or $file -like "plugin/src/*.php" -or $file -like "plugin/resources/assets/js/dist/*.js") -and (Test-Path $fullPath)) {
             $filesToDeploy += Get-Item $fullPath
-            Write-Host "   DEBUG: Ajouté $file" -ForegroundColor Gray
-        } else {
-            Write-Host "   DEBUG: Ignoré $file (pattern non matching ou fichier inexistant)" -ForegroundColor Gray
         }
     }
 
@@ -596,51 +582,3 @@ if ($commitCreated -and $pushSuccess) {
     Write-Host "   Git: SKIP (rien a committer)" -ForegroundColor Gray
 }
 Write-Host ""
-
-# ✅ FINAL GIT PUSH - S'assurer que tout est pousse et clean
-Write-Host "5 Final Git Push..." -ForegroundColor Cyan
-try {
-    Push-Location $WorkingDir
-    
-    # ✅ CORRECTION: Vérifier qu'il n'y a plus de fichiers non committés
-    $ErrorActionPreference = "Continue"
-    $finalStatus = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
-    $ErrorActionPreference = "Stop"
-    
-    # Filtrer pour ne montrer que les fichiers modifiés (pas les fichiers non suivis)
-    $unstagedFiles = $finalStatus | Where-Object { $_ -match "^ [MADRCU]" }
-    
-    if ($unstagedFiles -and $unstagedFiles.Count -gt 0) {
-        Write-Host "   ⚠️ Fichiers modifies non commits detects:" -ForegroundColor Yellow
-        $unstagedFiles | ForEach-Object {
-            Write-Host "     $_" -ForegroundColor Gray
-        }
-        
-        # Ajouter et commiter les fichiers restants
-        Write-Host "   Commitment des fichiers restants..." -ForegroundColor Yellow
-        $ErrorActionPreference = "Continue"
-        cmd /c "cd /d $WorkingDir && git add -A" 2>&1 | Out-Null
-        $commitMsg = "chore: Commit final des fichiers restants - $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')"
-        $finalCommitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMsg`"" 2>&1
-        $ErrorActionPreference = "Stop"
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "   ✅ Commit final cree" -ForegroundColor Green
-        }
-    }
-    
-    # Pousser tout vers le remote
-    $ErrorActionPreference = "Continue"
-    $finalPushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
-    $ErrorActionPreference = "Stop"
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "   ✅ Final push vers origin/dev reussi" -ForegroundColor Green
-    } else {
-        Write-Host "   ⚠️ Final push info: $($finalPushResult -join ' ')" -ForegroundColor Yellow
-    }
-    
-    Pop-Location
-} catch {
-    Write-Host "   ⚠️ Erreur lors du final push: $($_.Exception.Message)" -ForegroundColor Yellow
-}

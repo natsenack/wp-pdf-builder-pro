@@ -254,7 +254,7 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Bundle React
-        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
+        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.js';
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
