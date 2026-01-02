@@ -807,10 +807,10 @@ body.pdf-builder-active #wpadminbar {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  background: #ffffff; /* Blanc pur */
-  border-bottom: 1px solid #f1f3f4; /* Gris très clair */
+  background: #ffffff; /* Même background que le workspace */
+  border-bottom: 1px solid #f1f3f4; /* Bordure subtile pour séparation légère */
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Ombre subtile */
+  box-shadow: none; /* Pas d'ombre pour intégration */
 }
 
 .pdf-builder-toolbar button {
