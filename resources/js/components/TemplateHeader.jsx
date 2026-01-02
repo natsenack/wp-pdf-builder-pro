@@ -9,6 +9,17 @@ const TemplateHeader = ({
   onCreateNew,
   onPreview
 }) => {
+  // Obtenir ou créer le container pour les portals
+  const getPortalContainer = () => {
+    let container = document.getElementById('pdf-builder-portals');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'pdf-builder-portals';
+      document.body.appendChild(container);
+      console.warn('Portal container not found, created new one at body level');
+    }
+    return container;
+  };
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
   const [showTemplateSettingsModal, setShowTemplateSettingsModal] = useState(false);
   const [newTemplateData, setNewTemplateData] = useState({
@@ -305,7 +316,7 @@ const TemplateHeader = ({
             </div>
           </div>
         </div>,
-        document.getElementById('pdf-builder-portals')
+        getPortalContainer()
       )}
 
       {/* Modal Paramètres du Template - Rendu via Portal */}
@@ -410,7 +421,7 @@ const TemplateHeader = ({
             </div>
           </div>
         </div>,
-        document.getElementById('pdf-builder-portals')
+        getPortalContainer()
       )}
     </>
   );
