@@ -216,7 +216,7 @@ try {
             // Déjà un array
             elements = elements;
           } else if (typeof elements === 'object' && elements !== null) {
-            // Objet avec IDs comme clés - convertir en array
+            // Objet avec IDs comme clés - convertir en array (fix for template loading)
             elements = Object.values(elements);
           } else {
             elements = [];
