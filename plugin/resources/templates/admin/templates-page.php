@@ -28,6 +28,9 @@ if (!class_exists('PDF_Builder\TemplateDefaults')) {
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
+// Inclure le script predefined-templates.js pour les fonctions de gestion des templates
+wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'js/predefined-templates.js', ['jquery'], '1.1.0', true);
+
 // Vérifications freemium
 $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
