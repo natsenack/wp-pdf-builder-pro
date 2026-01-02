@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Toolbar } from './Toolbar';
+import TemplateHeaderBar from './TemplateHeaderBar';
+import CanvasToolbar from './CanvasToolbar';
 import PreviewModal from './preview-system/components/PreviewModal';
 import { PreviewProvider } from './preview-system/context/PreviewProvider';
 import { usePreviewContext } from './preview-system/context/PreviewContext';
 import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
-import TemplateHeader from './TemplateHeader';
 import ResolutionIndicator from './ResolutionIndicator';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
@@ -3071,7 +3071,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       
       <div className="pdf-builder-container pdf-editor">
         {/* Header du template */}
-        <TemplateHeader
+        <TemplateHeaderBar
           templateName={templateName}
           isNew={isNew}
         onSave={handleSave}
@@ -3081,7 +3081,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
       {/* Toolbar principale */}
       <div className="pdf-builder-toolbar">
-        <Toolbar
+        <CanvasToolbar
           selectedTool={selectedTool}
           onToolSelect={handleToolSelect}
           zoom={zoom}
