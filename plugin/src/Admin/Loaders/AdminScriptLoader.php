@@ -219,8 +219,10 @@ class AdminScriptLoader
 
         // React Editor CSS
         $react_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css';
+        error_log('[WP AdminScriptLoader] DEBUG: PDF_BUILDER_PRO_ASSETS_URL = ' . PDF_BUILDER_PRO_ASSETS_URL);
+        error_log('[WP AdminScriptLoader] DEBUG: react_css_url = ' . $react_css_url);
         wp_enqueue_style('pdf-builder-react', $react_css_url, [], $cache_bust);
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react CSS: ' . $react_css_url);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react CSS: ' . $react_css_url);
 
         // Localize notifications data
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
