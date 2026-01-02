@@ -3079,6 +3079,27 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         onPreview={handlePreview}
       />
 
+      {/* Toolbar principal */}
+      <div className="pdf-builder-toolbar">
+        <CanvasToolbar
+          selectedTool={selectedTool}
+          onToolSelect={handleToolSelect}
+          zoom={zoom}
+          onZoomChange={handleZoomChange}
+          showGrid={showGrid}
+          onShowGridChange={handleShowGridChange}
+          snapToGrid={snapToGrid}
+          onSnapToGridChange={handleSnapToGridChange}
+          snapToElements={snapToElements}
+          onSnapToElementsChange={handleSnapToElementsChange}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          settings={backendSettings}
+        />
+      </div>
+
       {/* Zone de travail principale */}
       <div className="pdf-builder-workspace editor-workspace">
         {/* Bibliothèque d'éléments */}
@@ -3153,27 +3174,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           </div>
         )}
       </div>
-      </div>
-
-      {/* Toolbar déplacé dans le workspace */}
-      <div className="pdf-builder-toolbar">
-        <CanvasToolbar
-          selectedTool={selectedTool}
-          onToolSelect={handleToolSelect}
-          zoom={zoom}
-          onZoomChange={handleZoomChange}
-          showGrid={showGrid}
-          onShowGridChange={handleShowGridChange}
-          snapToGrid={snapToGrid}
-          onSnapToGridChange={handleSnapToGridChange}
-          snapToElements={snapToElements}
-          onSnapToElementsChange={handleSnapToElementsChange}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-          canUndo={canUndo}
-          canRedo={canRedo}
-          settings={backendSettings}
-        />
       </div>
 
       {/* Modal d'aperçu */}
