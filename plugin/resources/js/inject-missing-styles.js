@@ -586,17 +586,7 @@ function injectMissingStyles() {
   font-size: 12px;
   color: #6b7280;
 }
-  `;
 
-  const styleElement = document.createElement('style');
-  styleElement.id = 'pdf-builder-injected-styles';
-  styleElement.textContent = styles;
-  document.head.appendChild(styleElement);
-
-  console.log('[PDF Builder] ✅ Styles injectés avec succès');
-}
-
-// Injector au chargement du DOM
 /* ===== ACCORDION STYLES ===== */
 .accordion {
   border: 1px solid #e5e7eb;
@@ -1264,4 +1254,23 @@ textarea.text-input::placeholder {
 .adaptive-demo-mode .adaptive-control.adaptive-vertical::before {
   content: 'V';
   background: #f59e0b;
+}
+  `;
+
+  const styleElement = document.createElement('style');
+  styleElement.id = 'pdf-builder-injected-styles';
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+
+  console.log('[PDF Builder] ✅ Styles injectés avec succès');
+}
+
+// Injector au chargement du DOM
+document.addEventListener('DOMContentLoaded', injectMissingStyles);
+
+// Injector immédiat si le DOM est déjà chargé
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectMissingStyles);
+} else {
+  injectMissingStyles();
 }
