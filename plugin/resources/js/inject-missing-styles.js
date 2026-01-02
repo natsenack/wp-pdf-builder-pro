@@ -558,6 +558,7 @@ function injectMissingStyles() {
   overflow: hidden;
   background: #f9fafb;
   gap: 0;
+  position: relative;
 }
 
 .editor-toolbar-secondary {
