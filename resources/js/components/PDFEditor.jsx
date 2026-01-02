@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TemplateHeaderBar from './TemplateHeaderBar';
-import CanvasToolbar from './CanvasToolbar';
+// import CanvasToolbar from './CanvasToolbar'; // COMMENTÉ POUR CACHER LE TOOLBAR
 import PreviewModal from './preview-system/components/PreviewModal';
 import { PreviewProvider } from './preview-system/context/PreviewProvider';
 import { usePreviewContext } from './preview-system/context/PreviewContext';
@@ -3078,29 +3078,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         onCreateNew={handleCreateNew}
         onPreview={handlePreview}
       />
-
-      {/* Toolbar principale - COMMENTÉ POUR CACHER */}
-      {/*
-      <div className="pdf-builder-toolbar">
-        <CanvasToolbar
-          selectedTool={selectedTool}
-          onToolSelect={handleToolSelect}
-          zoom={zoom}
-          onZoomChange={handleZoomChange}
-          showGrid={showGrid}
-          onShowGridChange={handleShowGridChange}
-          snapToGrid={snapToGrid}
-          onSnapToGridChange={handleSnapToGridChange}
-          snapToElements={snapToElements}
-          onSnapToElementsChange={handleSnapToElementsChange}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-          canUndo={canUndo}
-          canRedo={canRedo}
-          settings={backendSettings}
-        />
-      </div>
-      */}
 
       {/* Zone de travail principale */}
       <div className="pdf-builder-workspace editor-workspace">
