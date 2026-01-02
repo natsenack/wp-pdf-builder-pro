@@ -344,38 +344,10 @@ const TemplateHeader = ({
         <div 
           className="modal-overlay" 
           onClick={() => setShowTemplateSettingsModal(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10000,
-            backdropFilter: 'blur(3px)',
-            animation: 'modalFadeIn 0.3s ease-out'
-          }}
         >
           <div
             className="modal-content template-settings-modal"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: '540px',
-              width: '90vw',
-              animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-              borderRadius: '16px',
-              boxShadow: '0 25px 80px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              backdropFilter: 'blur(20px)',
-              transform: 'translateY(0)',
-              transition: 'all 0.3s ease',
-              zIndex: 10001,
-              position: 'relative'
-            }}
           >
             <div
               className="modal-header"
