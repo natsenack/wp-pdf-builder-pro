@@ -9,11 +9,17 @@ const TemplateHeader = ({
   onPreview
 }) => {
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
+  const [showTemplateSettingsModal, setShowTemplateSettingsModal] = useState(false);
   const [newTemplateData, setNewTemplateData] = useState({
     name: '',
     width: 595,
     height: 842,
     orientation: 'portrait'
+  });
+  const [templateSettings, setTemplateSettings] = useState({
+    name: templateName || '',
+    description: '',
+    category: 'autre'
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -50,6 +56,22 @@ const TemplateHeader = ({
     });
   };
 
+  const handleOpenTemplateSettings = () => {
+    // Initialiser avec les valeurs actuelles
+    setTemplateSettings({
+      name: templateName || '',
+      description: '',
+      category: 'autre'
+    });
+    setShowTemplateSettingsModal(true);
+  };
+
+  const handleSaveTemplateSettings = () => {
+    // TODO: Sauvegarder les paramètres du template
+    console.log('Sauvegarde des paramètres:', templateSettings);
+    setShowTemplateSettingsModal(false);
+  };
+
   return (
     <>
       <div className="template-header">
@@ -76,6 +98,15 @@ const TemplateHeader = ({
         </div>
 
         <div className="header-right">
+          <button
+            className="header-btn settings-btn"
+            onClick={handleOpenTemplateSettings}
+            title="Paramètres du template"
+          >
+            <span className="btn-icon">⚙️</span>
+            <span className="btn-text">Paramètres</span>
+          </button>
+
           <button
             className={`header-btn save-btn ${isSaving ? 'saving' : ''}`}
             onClick={handleSave}
@@ -177,6 +208,78 @@ const TemplateHeader = ({
                 disabled={!newTemplateData.name.trim()}
               >
                 Créer le template
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Paramètres du Template */}
+      {showTemplateSettingsModal && (
+        <div className="modal-overlay" onClick={() => setShowTemplateSettingsModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Paramètres du template</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowTemplateSettingsModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <div className="form-group">
+                <label htmlFor="settings-template-name">Nom du template</label>
+                <input
+                  id="settings-template-name"
+                  type="text"
+                  value={templateSettings.name}
+                  onChange={(e) => setTemplateSettings({...templateSettings, name: e.target.value})}
+                  placeholder="Entrez le nom du template"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="settings-template-description">Description</label>
+                <textarea
+                  id="settings-template-description"
+                  value={templateSettings.description}
+                  onChange={(e) => setTemplateSettings({...templateSettings, description: e.target.value})}
+                  placeholder="Entrez une description du template"
+                  rows="3"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="settings-template-category">Catégorie</label>
+                <select
+                  id="settings-template-category"
+                  value={templateSettings.category}
+                  onChange={(e) => setTemplateSettings({...templateSettings, category: e.target.value})}
+                >
+                  <option value="facture">Facture</option>
+                  <option value="devis">Devis</option>
+                  <option value="commande">Bon de commande</option>
+                  <option value="contrat">Contrat</option>
+                  <option value="newsletter">Newsletter</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowTemplateSettingsModal(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleSaveTemplateSettings}
+              >
+                Enregistrer
               </button>
             </div>
           </div>
