@@ -39,7 +39,7 @@ function pdf_builder_load_utilities_emergency() {
     );
 
     foreach ($utilities as $utility) {
-        $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
+        $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/backend/utilities/Utilities/' . $utility;
         if (file_exists($utility_path) && !class_exists('PDF_Builder\\Utilities\\' . str_replace('.php', '', $utility))) {
             require_once $utility_path;
         }
@@ -61,7 +61,7 @@ function pdf_builder_ensure_onboarding_manager() {
         pdf_builder_load_utilities_emergency();
 
         // Double vérification avec chargement manuel
-        $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+        $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/backend/utilities/Utilities/PDF_Builder_Onboarding_Manager.php';
         if (file_exists($onboarding_path)) {
             require_once $onboarding_path;
         }

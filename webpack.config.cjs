@@ -4,12 +4,12 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: {
-    'pdf-builder-utils': './assets/js/pdf-builder-utils.js',
-    'settings-tabs-improved': './assets/js/settings-tabs-improved.js',
-    'pdf-builder-react': './resources/js/index.js'
+    'pdf-builder-utils': './plugin/assets/js/pdf-builder-utils.js',
+    'settings-tabs-improved': './plugin/assets/js/settings-tabs-improved.js',
+    'pdf-builder-react': './plugin/src/frontend/index.js'
   },
   output: {
-    path: path.resolve(__dirname, 'plugin/resources/assets/js/dist'),
+    path: path.resolve(__dirname, 'plugin/assets/js/dist'),
     filename: '[name].js',
     clean: true,
     libraryTarget: 'window'
@@ -18,18 +18,18 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'plugin/resources/assets/js/dist/pdf-builder-react.js'),
-          to: path.resolve(__dirname, 'plugin/resources/assets/js/pdf-builder-react.js'),
+          from: path.resolve(__dirname, 'plugin/assets/js/dist/pdf-builder-react.js'),
+          to: path.resolve(__dirname, 'plugin/assets/js/pdf-builder-react.js'),
           noErrorOnMissing: true
         },
         {
-          from: path.resolve(__dirname, 'plugin/resources/assets/js/dist/pdf-builder-utils.js'),
-          to: path.resolve(__dirname, 'plugin/resources/assets/js/pdf-builder-utils.js'),
+          from: path.resolve(__dirname, 'plugin/assets/js/dist/pdf-builder-utils.js'),
+          to: path.resolve(__dirname, 'plugin/assets/js/pdf-builder-utils.js'),
           noErrorOnMissing: true
         },
         {
-          from: path.resolve(__dirname, 'plugin/resources/assets/js/dist/settings-tabs-improved.js'),
-          to: path.resolve(__dirname, 'plugin/resources/assets/js/settings-tabs-improved.js'),
+          from: path.resolve(__dirname, 'plugin/assets/js/dist/settings-tabs-improved.js'),
+          to: path.resolve(__dirname, 'plugin/assets/js/settings-tabs-improved.js'),
           noErrorOnMissing: true
         }
       ]
