@@ -326,17 +326,58 @@ class SettingsManager
     }
 
     /**
+     * Calcule les dimensions du canvas en pixels basées sur le format, l'orientation et les DPI
+     */
+    private function calculateCanvasDimensions($format, $orientation, $dpi)
+    {
+        // Dimensions des formats de page en millimètres (largeur × hauteur)
+        $formats = [
+            'A4' => ['width' => 210, 'height' => 297],
+            'A3' => ['width' => 297, 'height' => 420],
+            'Letter' => ['width' => 216, 'height' => 279],
+            'Legal' => ['width' => 216, 'height' => 356],
+            'Tabloid' => ['width' => 279, 'height' => 432],
+        ];
+
+        // Format par défaut si non reconnu
+        if (!isset($formats[$format])) {
+            $format = 'A4';
+        }
+
+        $dimensions = $formats[$format];
+
+        // Calcul des dimensions en pixels : (dimension_mm × dpi) ÷ 25.4
+        $width_px = round(($dimensions['width'] * $dpi) / 25.4);
+        $height_px = round(($dimensions['height'] * $dpi) / 25.4);
+
+        // Appliquer l'orientation (inverser largeur/hauteur si paysage)
+        if ($orientation === 'landscape') {
+            return ['width' => $height_px, 'height' => $width_px];
+        }
+
+        return ['width' => $width_px, 'height' => $height_px];
+    }
+
+    /**
      * Obtenir les paramètres canvas
      */
     private function getCanvasSettings()
     {
         $settings = get_option('pdf_builder_settings', []);
+
+        $format = $settings['pdf_builder_canvas_canvas_format'] ?? 'A4';
+        $orientation = $settings['pdf_builder_canvas_canvas_orientation'] ?? 'portrait';
+        $dpi = intval($settings['pdf_builder_canvas_canvas_dpi'] ?? 96);
+
+        // Calcul automatique des dimensions basées sur le format, l'orientation et les DPI
+        $calculated_dimensions = $this->calculateCanvasDimensions($format, $orientation, $dpi);
+
         return [
-            'format' => $settings['pdf_builder_canvas_canvas_format'] ?? 'A4',
-            'orientation' => $settings['pdf_builder_canvas_canvas_orientation'] ?? 'portrait',
-            'dpi' => intval($settings['pdf_builder_canvas_canvas_dpi'] ?? 96),
-            'width' => intval($settings['pdf_builder_canvas_canvas_width'] ?? 794),
-            'height' => intval($settings['pdf_builder_canvas_canvas_height'] ?? 1123),
+            'format' => $format,
+            'orientation' => $orientation,
+            'dpi' => $dpi,
+            'width' => $calculated_dimensions['width'],
+            'height' => $calculated_dimensions['height'],
             'drag_enabled' => ($settings['pdf_builder_canvas_canvas_drag_enabled'] ?? '1') === '1',
             'resize_enabled' => ($settings['pdf_builder_canvas_canvas_resize_enabled'] ?? '1') === '1',
             'rotate_enabled' => ($settings['pdf_builder_canvas_canvas_rotate_enabled'] ?? '1') === '1',
