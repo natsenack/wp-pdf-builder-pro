@@ -3,13 +3,6 @@ const path = require('path');
 module.exports = {
   mode: 'production',
   entry: {
-    'pdf-builder-react': './assets/js/pdf-builder-react-wrapper.js',
-    'pdf-builder-wrap': './assets/js/pdf-builder-wrap.js',
-    'pdf-preview-api-client': './assets/js/pdf-preview-api-client.js',
-    'pdf-preview-integration': './assets/js/pdf-preview-integration.js',
-    'settings-global-save': './assets/js/settings-global-save.js',
-    'tabs-root-monitor': './assets/js/tabs-root-monitor.js',
-    'ajax-throttle': './assets/js/ajax-throttle.js',
     'pdf-builder-utils': './assets/js/pdf-builder-utils.js',
     'settings-tabs-improved': './assets/js/settings-tabs-improved.js'
   },
