@@ -50,6 +50,9 @@ try {
         # Accepter tous les fichiers PHP et JS modifiés dans plugin/
         if (($file -like "plugin/*.php" -or $file -like "plugin/src/*.php" -or $file -like "plugin/resources/assets/js/dist/*.js") -and (Test-Path $fullPath)) {
             $filesToDeploy += Get-Item $fullPath
+            Write-Host "   ✅ Ajouté: $file" -ForegroundColor Green
+        } else {
+            Write-Host "   ❌ Ignoré: $file (ne correspond pas aux critères)" -ForegroundColor Gray
         }
     }
 
