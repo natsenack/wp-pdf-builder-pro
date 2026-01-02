@@ -86,11 +86,6 @@ try {
         }
 
         console.log('[PDF Builder] ===== INIT SUCCESS =====');
-              templateId: options.templateId || null
-            }),
-            container
-          );
-        }
 
         if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
           console.log('PDF Editor initialized successfully in container:', containerId);
