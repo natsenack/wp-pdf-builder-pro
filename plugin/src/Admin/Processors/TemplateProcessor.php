@@ -44,15 +44,22 @@ class TemplateProcessor
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
+            error_log('[TemplateProcessor] Loading template ID: ' . $template_id);
+            error_log('[TemplateProcessor] Table name: ' . $table_templates);
+
             // Vérifier que la table existe
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+                error_log('[TemplateProcessor] ERROR: Table does not exist: ' . $table_templates);
                 return $this->getDefaultInvoiceTemplate();
             }
 
             $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
+                error_log('[TemplateProcessor] ERROR: Template not found in database for ID: ' . $template_id);
                 return $this->getDefaultInvoiceTemplate();
             }
+
+            error_log('[TemplateProcessor] Template found in DB: ' . print_r($template, true));
 
             // Essayer de décoder le JSON
             $template_data = json_decode($template['template_data'], true);
