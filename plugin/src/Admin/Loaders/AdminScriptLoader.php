@@ -270,21 +270,55 @@ class AdminScriptLoader
         ];
 
         // Ajouter les paramètres canvas depuis SettingsManager
+        error_log('[WP AdminScriptLoader] Checking SettingsManager availability...');
+        error_log('[WP AdminScriptLoader] admin object exists: ' . (isset($this->admin) ? 'YES' : 'NO'));
+        error_log('[WP AdminScriptLoader] settings_manager property exists: ' . (isset($this->admin->settings_manager) ? 'YES' : 'NO'));
+        if (isset($this->admin->settings_manager)) {
+            error_log('[WP AdminScriptLoader] settings_manager type: ' . gettype($this->admin->settings_manager));
+            error_log('[WP AdminScriptLoader] settings_manager class: ' . get_class($this->admin->settings_manager));
+            error_log('[WP AdminScriptLoader] getCanvasSettings method exists: ' . (method_exists($this->admin->settings_manager, 'getCanvasSettings') ? 'YES' : 'NO'));
+        }
+
         if (isset($this->admin->settings_manager) && method_exists($this->admin->settings_manager, 'getCanvasSettings')) {
             $canvas_settings = $this->admin->settings_manager->getCanvasSettings();
             $localize_data['canvasSettings'] = $canvas_settings;
-            
+
             // Log pour déboguer
             error_log('[WP AdminScriptLoader] Canvas settings loaded: ' . print_r($canvas_settings, true));
             error_log('[WP AdminScriptLoader] Canvas width: ' . $canvas_settings['width'] . ', height: ' . $canvas_settings['height'] . ', dpi: ' . $canvas_settings['dpi']);
-            
+
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
-            wp_add_inline_script('pdf-builder-react', 
+            wp_add_inline_script('pdf-builder-react',
                 'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';',
                 'before'
             );
         } else {
-            error_log('[WP AdminScriptLoader] SettingsManager not available or getCanvasSettings method missing');
+            error_log('[WP AdminScriptLoader] SettingsManager not available or getCanvasSettings method missing - FALLBACK MODE');
+            // Fallback: définir des valeurs par défaut directement
+            $fallback_settings = [
+                'format' => 'A4',
+                'orientation' => 'portrait',
+                'dpi' => 96,
+                'width' => 794,
+                'height' => 1123,
+                'drag_enabled' => true,
+                'resize_enabled' => true,
+                'rotate_enabled' => true,
+                'multi_select' => true,
+                'selection_mode' => 'click',
+                'keyboard_shortcuts' => true,
+                'grid_enabled' => true,
+                'grid_size' => 20,
+                'snap_to_grid' => true,
+                'navigation_enabled' => true,
+                'zoom_default' => 100
+            ];
+            $localize_data['canvasSettings'] = $fallback_settings;
+            wp_add_inline_script('pdf-builder-react',
+                'window.pdfBuilderCanvasSettings = ' . wp_json_encode($fallback_settings) . ';',
+                'before'
+            );
+            error_log('[WP AdminScriptLoader] Fallback canvas settings applied: ' . print_r($fallback_settings, true));
         }
 
         // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
