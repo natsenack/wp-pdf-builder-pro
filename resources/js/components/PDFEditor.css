@@ -34,20 +34,3 @@
 /* Remove any aggressive !important from component-level CSS */
 /* Let pdf-builder-react.css handle all styling */
 
-/* Cacher le toolbar temporairement quand le modal des paramètres est ouvert */
-body #pdf-builder-portals .modal-overlay {
-  display: flex !important;
-}
-
-.pdf-builder-toolbar {
-  transition: opacity 0.3s ease;
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Cacher le toolbar quand la modale est active */
-body.modal-settings-open .pdf-builder-toolbar {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}

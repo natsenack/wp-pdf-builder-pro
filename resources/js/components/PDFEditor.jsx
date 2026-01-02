@@ -9,7 +9,6 @@ import TemplateHeader from './TemplateHeader';
 import ResolutionIndicator from './ResolutionIndicator';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
-import { ModalProvider, useModalContext } from './ModalContext';
 // IMPORTANT: Import PDFEditor.css AFTER global CSS so it has lower specificity
 // The global pdf-builder-react.css is loaded via WordPress wp_enqueue_style
 // This local CSS provides component-level overrides only
@@ -3185,16 +3184,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
 export const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true, canvasSettings = {} }) => {
   return (
-    <ModalProvider>
-      <PreviewProvider>
-        <PDFEditorContent
-          initialElements={initialElements}
-          onSave={onSave}
-          templateName={templateName}
-          isNew={isNew}
-          canvasSettings={canvasSettings}
-        />
-      </PreviewProvider>
-    </ModalProvider>
+    <PreviewProvider>
+      <PDFEditorContent
+        initialElements={initialElements}
+        onSave={onSave}
+        templateName={templateName}
+        isNew={isNew}
+        canvasSettings={canvasSettings}
+      />
+    </PreviewProvider>
   );
 };
