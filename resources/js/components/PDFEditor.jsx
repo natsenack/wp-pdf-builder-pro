@@ -3123,15 +3123,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             onDrop={handleDrop}
           />
           
-          {/* Indicateur de résolution */}
-          <ResolutionIndicator
-            canvasWidth={595}
-            canvasHeight={842}
-            dpi={72}
-            zoom={zoom * 100}
-            showIndicator={true}
-          />
-          
           {/* Bouton pour ouvrir/fermer le panel des propriétés - visible seulement si élément sélectionné */}
           {selectedElement && (
             <button
@@ -3143,6 +3134,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             </button>
           )}
         </div>
+
+        {/* Indicateur de résolution - positionné par rapport au container du canvas */}
+        <ResolutionIndicator
+          canvasWidth={595}
+          canvasHeight={842}
+          dpi={72}
+          zoom={zoom * 100}
+          showIndicator={true}
+        />
 
         {/* Panel des propriétés */}
         {showPropertiesPanel && selectedElement && (
