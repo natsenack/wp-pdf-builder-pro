@@ -217,7 +217,7 @@ const TemplateHeader = ({
       {/* Modal Paramètres du Template */}
       {showTemplateSettingsModal && (
         <div className="modal-overlay" onClick={() => setShowTemplateSettingsModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content template-settings-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Paramètres du template</h3>
               <button
