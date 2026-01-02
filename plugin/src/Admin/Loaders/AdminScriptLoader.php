@@ -269,15 +269,16 @@ class AdminScriptLoader
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
         ];
 
-        // Ajouter les paramètres canvas
-        if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
-            $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
-            $canvas_settings = $canvas_manager->getSettings();
+        // Ajouter les paramètres canvas depuis SettingsManager
+        if (method_exists($this->admin, 'getSettingsManager')) {
+            $settings_manager = $this->admin->getSettingsManager();
+            $canvas_settings = $settings_manager->getCanvasSettings();
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
-            wp_add_inline_script('pdf-builder-admin', 
-                'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';'
+            wp_add_inline_script('pdf-builder-react', 
+                'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';',
+                'before'
             );
         }
 

@@ -75,12 +75,18 @@ try {
         console.log('[PDF Builder] ✅ Container found:', container);
 
         console.log('[PDF Builder] 🎨 Preparing React element for PDF Editor...');
+        
+        // Récupérer les paramètres canvas depuis les données globales
+        const canvasSettings = window.pdfBuilderCanvasSettings || window.pdfBuilderData?.canvasSettings || {};
+        console.log('[PDF Builder] 🎨 Canvas settings:', canvasSettings);
+        
         const reactElement = React.createElement(PDFEditor, {
           initialElements: options.initialElements || [],
           onSave: options.onSave || (() => {}),
           templateName: options.templateName || '',
           isNew: options.isNew || false,
-          templateId: options.templateId || null
+          templateId: options.templateId || null,
+          canvasSettings: canvasSettings
         });
         console.log('[PDF Builder] ✅ React element created for template:', options.templateName);
 

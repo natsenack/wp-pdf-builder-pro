@@ -1269,7 +1269,7 @@ textarea.text-input::placeholder {
 
 /* ===== RESOLUTION INDICATOR STYLES ===== */
 .resolution-indicator {
-  position: relative;
+  position: absolute;
   margin: 10px;
   background: rgba(0, 0, 0, 0.8);
   color: white;
@@ -1287,7 +1287,7 @@ textarea.text-input::placeholder {
   align-items: center;
   gap: 2px;
   min-width: 80px;
-  float: right;
+  right: 10px;
 }
 
 .resolution-info {

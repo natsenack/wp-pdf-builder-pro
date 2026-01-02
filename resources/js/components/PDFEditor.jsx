@@ -276,12 +276,19 @@ const adjustColor = (color, amount) => {
  * PDFEditor - Éditeur principal complet avec éléments et propriétés
  * Phase 2.2.4.1 - Implémentation complète du système d'éléments
  */
-const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
+const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isNew = true, canvasSettings = {} }) => {
   // Contexte d'aperçu
   const { actions: { openPreview } } = usePreviewContext();
 
-  console.log('[PDFEditor] PDFEditorContent called with:', { initialElements, templateName, isNew });
+  console.log('[PDFEditor] PDFEditorContent called with:', { initialElements, templateName, isNew, canvasSettings });
   console.log('[PDFEditor] initialElements type:', typeof initialElements, 'length:', Array.isArray(initialElements) ? initialElements.length : 'not array');
+
+  // Dimensions du canvas depuis les paramètres
+  const canvasWidth = canvasSettings.width || 794;
+  const canvasHeight = canvasSettings.height || 1123;
+  const canvasDpi = canvasSettings.dpi || 96;
+
+  console.log('[PDFEditor] Canvas dimensions:', { width: canvasWidth, height: canvasHeight, dpi: canvasDpi });
 
   // État des éléments
   const [elements, setElements] = useState(() => {
@@ -3107,8 +3114,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           <canvas
             ref={canvasRef}
             className="pdf-canvas"
-            width={595}
-            height={842}
+            width={canvasWidth}
+            height={canvasHeight}
             style={{
               transform: `scale(${zoom})`,
               transformOrigin: 'top left',
@@ -3136,9 +3143,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           {/* Indicateur de résolution - dans le container du canvas */}
           <ResolutionIndicator
-            canvasWidth={595}
-            canvasHeight={842}
-            dpi={72}
+            canvasWidth={canvasWidth}
+            canvasHeight={canvasHeight}
+            dpi={canvasDpi}
             zoom={zoom * 100}
             showIndicator={true}
           />
@@ -3170,7 +3177,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   );
 };
 
-export const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
+export const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true, canvasSettings = {} }) => {
   return (
     <PreviewProvider>
       <PDFEditorContent
@@ -3178,6 +3185,7 @@ export const PDFEditor = ({ initialElements = [], onSave, templateName = '', isN
         onSave={onSave}
         templateName={templateName}
         isNew={isNew}
+        canvasSettings={canvasSettings}
       />
     </PreviewProvider>
   );
