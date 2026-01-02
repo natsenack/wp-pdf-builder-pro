@@ -276,6 +276,7 @@ class AdminScriptLoader
             
             // Log pour déboguer
             error_log('[WP AdminScriptLoader] Canvas settings loaded: ' . print_r($canvas_settings, true));
+            error_log('[WP AdminScriptLoader] Canvas width: ' . $canvas_settings['width'] . ', height: ' . $canvas_settings['height'] . ', dpi: ' . $canvas_settings['dpi']);
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
             wp_add_inline_script('pdf-builder-react', 

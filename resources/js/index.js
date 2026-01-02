@@ -80,6 +80,13 @@ try {
         const canvasSettings = window.pdfBuilderCanvasSettings || window.pdfBuilderData?.canvasSettings || {};
         console.log('[PDF Builder] 🎨 Canvas settings from global:', canvasSettings);
         
+        // Debug: Afficher les paramètres dans une alerte
+        if (Object.keys(canvasSettings).length > 0) {
+          setTimeout(() => {
+            alert('Canvas Settings: ' + JSON.stringify(canvasSettings, null, 2));
+          }, 1000);
+        }
+        
         const reactElement = React.createElement(PDFEditor, {
           initialElements: options.initialElements || [],
           onSave: options.onSave || (() => {}),
