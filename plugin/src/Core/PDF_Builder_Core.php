@@ -379,7 +379,7 @@ class PdfBuilderCore
             <h1><?php _e('PDF Builder React Editor', 'pdf-builder-pro'); ?></h1>
             <p><?php _e('Advanced PDF template editor with React interface.', 'pdf-builder-pro'); ?></p>
 
-            <div id="pdf-builder-react-editor-container">
+            <div id="pdf-builder-react-root">
                 <!-- Le contenu React sera chargé ici -->
                 <p><?php _e('Loading React Editor...', 'pdf-builder-pro'); ?></p>
             </div>
