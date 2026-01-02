@@ -3079,7 +3079,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         onPreview={handlePreview}
       />
 
-      {/* Toolbar principale */}
+      {/* Toolbar principale - COMMENTÉ POUR CACHER */}
+      {/*
       <div className="pdf-builder-toolbar">
         <CanvasToolbar
           selectedTool={selectedTool}
@@ -3099,6 +3100,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           settings={backendSettings}
         />
       </div>
+      */}
 
       {/* Zone de travail principale */}
       <div className="pdf-builder-workspace editor-workspace">
