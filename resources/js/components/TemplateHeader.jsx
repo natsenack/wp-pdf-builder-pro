@@ -217,46 +217,240 @@ const TemplateHeader = ({
       {/* Modal Paramètres du Template */}
       {showTemplateSettingsModal && (
         <div className="modal-overlay" onClick={() => setShowTemplateSettingsModal(false)}>
-          <div className="modal-content template-settings-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Paramètres du template</h3>
+          <div
+            className="modal-content template-settings-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '520px',
+              animation: 'modalSlideIn 0.3s ease-out',
+              background: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              border: 'none'
+            }}
+          >
+            <div
+              className="modal-header"
+              style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                borderBottom: 'none',
+                borderRadius: '12px 12px 0 0',
+                padding: '20px 24px'
+              }}
+            >
+              <h3 style={{ color: 'white', fontSize: '20px', margin: '0' }}>Paramètres du template</h3>
               <button
                 className="modal-close"
                 onClick={() => setShowTemplateSettingsModal(false)}
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  width: '32px',
+                  height: '32px',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = 'white';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = 'rgba(255, 255, 255, 0.8)';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
               >
                 ×
               </button>
             </div>
 
-            <div className="modal-body">
-              <div className="form-group">
-                <label htmlFor="settings-template-name">Nom du template</label>
+            <div
+              className="modal-body"
+              style={{
+                padding: '24px',
+                background: '#f8fafc'
+              }}
+            >
+              <div
+                className="form-group"
+                style={{
+                  marginBottom: '20px',
+                  background: 'white',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = '#cbd5e0';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <label
+                  htmlFor="settings-template-name"
+                  style={{
+                    color: '#2d3748',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                    fontSize: '15px',
+                    display: 'block'
+                  }}
+                >
+                  Nom du template
+                </label>
                 <input
                   id="settings-template-name"
                   type="text"
                   value={templateSettings.name}
                   onChange={(e) => setTemplateSettings({...templateSettings, name: e.target.value})}
                   placeholder="Entrez le nom du template"
+                  style={{
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '6px',
+                    padding: '10px 12px',
+                    fontSize: '14px',
+                    transition: 'all 0.2s ease',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#667eea';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.15)';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e2e8f0';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.transform = 'none';
+                  }}
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="settings-template-description">Description</label>
+              <div
+                className="form-group"
+                style={{
+                  marginBottom: '20px',
+                  background: 'white',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = '#cbd5e0';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <label
+                  htmlFor="settings-template-description"
+                  style={{
+                    color: '#2d3748',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                    fontSize: '15px',
+                    display: 'block'
+                  }}
+                >
+                  Description
+                </label>
                 <textarea
                   id="settings-template-description"
                   value={templateSettings.description}
                   onChange={(e) => setTemplateSettings({...templateSettings, description: e.target.value})}
                   placeholder="Entrez une description du template"
                   rows="3"
+                  style={{
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '6px',
+                    padding: '10px 12px',
+                    fontSize: '14px',
+                    transition: 'all 0.2s ease',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    resize: 'vertical'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#667eea';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.15)';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e2e8f0';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.transform = 'none';
+                  }}
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="settings-template-category">Catégorie</label>
+              <div
+                className="form-group"
+                style={{
+                  marginBottom: '20px',
+                  background: 'white',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = '#cbd5e0';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <label
+                  htmlFor="settings-template-category"
+                  style={{
+                    color: '#2d3748',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                    fontSize: '15px',
+                    display: 'block'
+                  }}
+                >
+                  Catégorie
+                </label>
                 <select
                   id="settings-template-category"
                   value={templateSettings.category}
                   onChange={(e) => setTemplateSettings({...templateSettings, category: e.target.value})}
+                  style={{
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '6px',
+                    padding: '10px 12px',
+                    fontSize: '14px',
+                    transition: 'all 0.2s ease',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    background: 'white'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#667eea';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.15)';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e2e8f0';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.transform = 'none';
+                  }}
                 >
                   <option value="facture">Facture</option>
                   <option value="devis">Devis</option>
@@ -268,16 +462,70 @@ const TemplateHeader = ({
               </div>
             </div>
 
-            <div className="modal-footer">
+            <div
+              className="modal-footer"
+              style={{
+                padding: '20px 24px',
+                background: 'white',
+                borderTop: '1px solid #e2e8f0',
+                borderRadius: '0 0 12px 12px',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '12px'
+              }}
+            >
               <button
                 className="btn-secondary"
                 onClick={() => setShowTemplateSettingsModal(false)}
+                style={{
+                  border: '2px solid #e2e8f0',
+                  background: 'white',
+                  color: '#4a5568',
+                  padding: '10px 20px',
+                  fontWeight: '500',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontSize: '14px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#f7fafc';
+                  e.target.style.borderColor = '#cbd5e0';
+                  e.target.style.color = '#2d3748';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'white';
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.color = '#4a5568';
+                }}
               >
                 Annuler
               </button>
               <button
                 className="btn-primary"
                 onClick={handleSaveTemplateSettings}
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  border: 'none',
+                  color: 'white',
+                  padding: '10px 20px',
+                  fontWeight: '600',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontSize: '14px',
+                  letterSpacing: '0.5px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)';
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = 'none';
+                }}
               >
                 Enregistrer
               </button>
