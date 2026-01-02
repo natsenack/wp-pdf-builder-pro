@@ -4,7 +4,8 @@ module.exports = {
   mode: 'production',
   entry: {
     'pdf-builder-utils': './assets/js/pdf-builder-utils.js',
-    'settings-tabs-improved': './assets/js/settings-tabs-improved.js'
+    'settings-tabs-improved': './assets/js/settings-tabs-improved.js',
+    'pdf-builder-react': './resources/js/components/PDFEditor.jsx'
   },
   output: {
     path: path.resolve(__dirname, 'plugin/resources/assets/js/dist'),
@@ -20,19 +21,23 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env', '@babel/preset-react']
           }
         }
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
   },
   externals: {
     'react': 'React',
