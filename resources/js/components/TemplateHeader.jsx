@@ -56,20 +56,112 @@ const TemplateHeader = ({
     });
   };
 
-  const handleOpenTemplateSettings = () => {
-    // Initialiser avec les valeurs actuelles
-    setTemplateSettings({
-      name: templateName || '',
-      description: '',
-      category: 'autre'
-    });
+  const handleOpenTemplateSettings = async () => {
+    try {
+      const templateId = window.pdfBuilderData?.templateId;
+      
+      if (!templateId) {
+        console.error('ID du template non disponible');
+        // Utiliser les valeurs par défaut
+        setTemplateSettings({
+          name: templateName || '',
+          description: '',
+          category: 'autre'
+        });
+        setShowTemplateSettingsModal(true);
+        return;
+      }
+
+      // Charger les paramètres actuels du template
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_load_template_settings');
+      formData.append('template_id', templateId);
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+
+      console.log('Chargement des paramètres du template:', templateId);
+
+      const response = await fetch(window.pdfBuilderData?.ajaxUrl || window.ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        console.log('Paramètres chargés:', result.data);
+        setTemplateSettings({
+          name: result.data.name || templateName || '',
+          description: result.data.description || '',
+          category: result.data.category || 'autre'
+        });
+      } else {
+        console.log('Aucun paramètre trouvé, utilisation des valeurs par défaut');
+        // Utiliser les valeurs par défaut si pas de données
+        setTemplateSettings({
+          name: templateName || '',
+          description: '',
+          category: 'autre'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des paramètres:', error);
+      // Utiliser les valeurs par défaut en cas d'erreur
+      setTemplateSettings({
+        name: templateName || '',
+        description: '',
+        category: 'autre'
+      });
+    }
+    
     setShowTemplateSettingsModal(true);
   };
 
-  const handleSaveTemplateSettings = () => {
-    // TODO: Sauvegarder les paramètres du template
-    console.log('Sauvegarde des paramètres:', templateSettings);
-    setShowTemplateSettingsModal(false);
+  const handleSaveTemplateSettings = async () => {
+    try {
+      const templateId = window.pdfBuilderData?.templateId;
+      
+      if (!templateId) {
+        console.error('ID du template non disponible');
+        alert('Erreur: ID du template non trouvé');
+        return;
+      }
+
+      // Préparer les données pour l'AJAX
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_save_template_settings');
+      formData.append('template_id', templateId);
+      formData.append('name', templateSettings.name);
+      formData.append('description', templateSettings.description);
+      formData.append('category', templateSettings.category);
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+
+      console.log('Sauvegarde des paramètres du template:', {
+        templateId,
+        name: templateSettings.name,
+        description: templateSettings.description,
+        category: templateSettings.category
+      });
+
+      // Faire l'appel AJAX
+      const response = await fetch(window.pdfBuilderData?.ajaxUrl || window.ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('Paramètres du template sauvegardés avec succès');
+        alert('Paramètres du template sauvegardés avec succès !');
+        setShowTemplateSettingsModal(false);
+      } else {
+        console.error('Erreur lors de la sauvegarde:', result.data);
+        alert('Erreur lors de la sauvegarde: ' + (result.data || 'Erreur inconnue'));
+      }
+    } catch (error) {
+      console.error('Erreur AJAX:', error);
+      alert('Erreur lors de la sauvegarde des paramètres');
+    }
   };
 
   return (
