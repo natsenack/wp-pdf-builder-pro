@@ -866,8 +866,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
 
       // Respecter les limites du canvas
-      newX = Math.max(0, Math.min(595 - (dragElement.width || 100), newX));
-      newY = Math.max(0, Math.min(842 - (dragElement.height || 30), newY));
+      newX = Math.max(0, Math.min(canvasWidth - (dragElement.width || 100), newX));
+      newY = Math.max(0, Math.min(canvasHeight - (dragElement.height || 30), newY));
 
       handleElementUpdate(dragElement.id, {
         x: newX,
@@ -888,8 +888,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     };
 
     // Appliquer les contraintes globales du canvas
-    rect.x = Math.max(0, Math.min(595 - rect.width, rect.x)); // Canvas A4
-    rect.y = Math.max(0, Math.min(842 - rect.height, rect.y)); // Canvas A4
+    rect.x = Math.max(0, Math.min(canvasWidth - rect.width, rect.x)); // Canvas dynamique
+    rect.y = Math.max(0, Math.min(canvasHeight - rect.height, rect.y)); // Canvas dynamique
 
     // Appliquer les contraintes de type d'élément
     const constraints = VALIDATION_CONSTRAINTS.numeric;
