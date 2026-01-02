@@ -33,7 +33,7 @@ try {
       console.log('[PDF Builder] Container ID:', containerId);
       console.log('[PDF Builder] Options received:', options);
 
-      // Debug logging for initialElements
+      // Debug logging for initialElements - FORCE REBUILD
       console.log('[PDF Builder] Checking initialElements:', options.initialElements, 'type:', typeof options.initialElements, 'isArray:', Array.isArray(options.initialElements));
 
       // Ensure initialElements is always an array
