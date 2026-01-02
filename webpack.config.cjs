@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -13,6 +14,27 @@ module.exports = {
     clean: true,
     libraryTarget: 'window'
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'plugin/resources/assets/js/dist/pdf-builder-react.js'),
+          to: path.resolve(__dirname, 'plugin/resources/assets/js/pdf-builder-react.js'),
+          noErrorOnMissing: true
+        },
+        {
+          from: path.resolve(__dirname, 'plugin/resources/assets/js/dist/pdf-builder-utils.js'),
+          to: path.resolve(__dirname, 'plugin/resources/assets/js/pdf-builder-utils.js'),
+          noErrorOnMissing: true
+        },
+        {
+          from: path.resolve(__dirname, 'plugin/resources/assets/js/dist/settings-tabs-improved.js'),
+          to: path.resolve(__dirname, 'plugin/resources/assets/js/settings-tabs-improved.js'),
+          noErrorOnMissing: true
+        }
+      ]
+    })
+  ],
   module: {
     rules: [
       {
