@@ -553,6 +553,15 @@ function pdf_builder_load_core()
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
             // error_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook);
 
+            // ✅ Injector les styles manquants EN PREMIER
+            wp_enqueue_script(
+                'pdf-builder-inject-styles',
+                PDF_BUILDER_PLUGIN_URL . 'resources/js/inject-missing-styles.js',
+                [],
+                PDF_BUILDER_PRO_VERSION . '-' . time(),
+                true
+            );
+
             // Charger React depuis WordPress Core (optimisé)
             wp_enqueue_script('react', false, [], false, true);
             wp_enqueue_script('react-dom', false, ['react'], false, true);
