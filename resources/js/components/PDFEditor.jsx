@@ -323,7 +323,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   }, [initialElements]);
 
   // Mettre à jour les éléments quand initialElements change
+  const prevInitialElementsRef = useRef();
   useEffect(() => {
+    // Vérifier si initialElements a réellement changé
+    const prevElements = prevInitialElementsRef.current;
+    if (JSON.stringify(prevElements) === JSON.stringify(initialElements)) {
+      return; // Pas de changement, éviter la boucle infinie
+    }
+    prevInitialElementsRef.current = initialElements;
+
     if (initialElements) {
       let elementsData = initialElements;
       if (Array.isArray(initialElements)) {
