@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useModalContext } from './ModalContext';
 import './TemplateHeader.css';
 
 const TemplateHeader = ({
@@ -21,7 +22,20 @@ const TemplateHeader = ({
     return container;
   };
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
-  const [showTemplateSettingsModal, setShowTemplateSettingsModal] = useState(false);
+  const { showTemplateSettingsModal, setShowTemplateSettingsModal } = useModalContext();
+  
+  // Ajouter/retirer la classe au body quand la modale est ouverte
+  useEffect(() => {
+    if (showTemplateSettingsModal) {
+      document.body.classList.add('modal-settings-open');
+    } else {
+      document.body.classList.remove('modal-settings-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-settings-open');
+    };
+  }, [showTemplateSettingsModal]);
+  
   const [newTemplateData, setNewTemplateData] = useState({
     name: '',
     width: 595,
