@@ -35,10 +35,16 @@ try {
 
       // Ensure initialElements is always an array
       if (options.initialElements && typeof options.initialElements === 'object' && !Array.isArray(options.initialElements)) {
-        options.initialElements = Object.values(options.initialElements);
+        console.log('[PDF Builder] Converting initialElements object to array. Type:', typeof options.initialElements, 'Keys:', Object.keys(options.initialElements));
+        const converted = Object.values(options.initialElements);
+        console.log('[PDF Builder] Conversion result:', converted, 'Length:', converted.length);
+        options.initialElements = converted;
         console.log('[PDF Builder] Converted initialElements object to array:', options.initialElements.length, 'elements');
       } else if (!options.initialElements) {
         options.initialElements = [];
+        console.log('[PDF Builder] Set initialElements to empty array');
+      } else {
+        console.log('[PDF Builder] initialElements is already an array with length:', options.initialElements.length);
       }
 
       console.log('[PDF Builder] Initial elements count:', options.initialElements.length);
