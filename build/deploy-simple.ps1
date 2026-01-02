@@ -44,11 +44,24 @@ try {
     $allModified += $stagedArray
     $allModified = $allModified | Select-Object -Unique
 
+    # GIT ADD DES FICHIERS MODIFIES
+    if ($allModified.Count -gt 0) {
+        Write-Host "`n1.5 Git add des fichiers modifies..." -ForegroundColor Magenta
+        try {
+            $ErrorActionPreference = "Continue"
+            $addResult = cmd /c "cd /d $WorkingDir && git add $($allModified -join ' ')" 2>&1
+            $ErrorActionPreference = "Stop"
+            Write-Host "   ✅ Fichiers ajoutes au staging" -ForegroundColor Green
+        } catch {
+            Write-Host "   ⚠️ Erreur git add: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+    }
+
     $filesToDeploy = @()
     foreach ($file in $allModified) {
         $fullPath = Join-Path $WorkingDir $file
         # Accepter tous les fichiers PHP et JS modifiés dans plugin/
-        if (($file -like "plugin/*.php" -or $file -like "plugin/src/*.php" -or $file -like "plugin/resources/assets/js/dist/*.js" -or $file -like "plugin/resources/assets/js/*.js") -and (Test-Path $fullPath)) {
+        if (($file -like "plugin/*.php" -or $file -like "plugin/src/*.php" -or $file -like "plugin/resources/assets/js/dist/*.js" -or $file -like "plugin/resources/assets/js/*.js" -or $file -like "plugin/resources/js/*.js") -and (Test-Path $fullPath)) {
             $filesToDeploy += Get-Item $fullPath
             Write-Host "   ✅ Ajouté: $file" -ForegroundColor Green
         } else {
