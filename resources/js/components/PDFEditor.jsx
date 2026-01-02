@@ -3065,14 +3065,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   };
 
   return (
-    <div className="pdf-builder-container pdf-editor">
-      {/* Conteneur pour les portals (modals) */}
+    <>
+      {/* Conteneur pour les portals (modals) - DEHORS du container pour éviter overflow hidden */}
       <div id="pdf-builder-portals"></div>
       
-      {/* Header du template */}
-      <TemplateHeader
-        templateName={templateName}
-        isNew={isNew}
+      <div className="pdf-builder-container pdf-editor">
+        {/* Header du template */}
+        <TemplateHeader
+          templateName={templateName}
+          isNew={isNew}
         onSave={handleSave}
         onCreateNew={handleCreateNew}
         onPreview={handlePreview}
@@ -3173,10 +3174,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           </div>
         )}
       </div>
+      </div>
 
       {/* Modal d'aperçu */}
       <PreviewModal />
-    </div>
+    </>
   );
 };
 
