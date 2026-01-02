@@ -178,7 +178,8 @@ const TemplateHeader = ({
 
   return (
     <>
-      <div className="template-header" style={{ display: 'none' }}>
+      {/* Toolbar temporairement cachée pour debug */}
+      {/* <div className="template-header">
         <div className="header-left">
           <button
             className="header-btn new-template-btn"
@@ -234,7 +235,7 @@ const TemplateHeader = ({
             <span className="btn-text">Aperçu</span>
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Modal Nouveau Template - Rendu via Portal */}
       {showNewTemplateModal && createPortal(
