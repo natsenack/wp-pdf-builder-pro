@@ -984,23 +984,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Fonction de rendu du canvas
   const renderCanvas = () => {
+    console.log('[PDFEditor] renderCanvas called, elements count:', elements.length);
     const canvas = canvasRef.current;
     if (!canvas) {
+      console.log('[PDFEditor] renderCanvas: canvas not found');
       return;
     }
 
-    if (elements.length > 0) {
-    }
-
+    console.log('[PDFEditor] renderCanvas: canvas found, starting render');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Fond blanc
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    console.log('[PDFEditor] renderCanvas: background drawn');
 
     // Grille si activée
     if (showGrid) {
+      console.log('[PDFEditor] renderCanvas: drawing grid');
       ctx.strokeStyle = '#f0f0f0';
       ctx.lineWidth = 1;
       const gridSize = 20;
@@ -1035,7 +1037,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       return 0;
     });
 
+    console.log('[PDFEditor] renderCanvas: rendering', sortedElements.length, 'sorted elements');
     sortedElements.forEach((element, index) => {
+      console.log(`[PDFEditor] renderCanvas: rendering element ${index + 1}/${sortedElements.length}:`, element.type, 'at', element.x, element.y);
       // Mettre en évidence l'élément sélectionné
       if ((selectedElement && selectedElement.id) === element.id) {
         ctx.strokeStyle = '#007cba';

@@ -1172,8 +1172,14 @@ class PdfBuilderAdmin
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            // console.warn('[PDF Builder] React loading timeout - showing editor anyway');
+                            console.warn('[PDF Builder] React loading timeout - showing editor anyway');
                             this.hide(); // Fallback: show editor even if React init fails
+                            // Try to initialize React anyway in case it became available
+                            setTimeout(() => {
+                                if (this.isReactReady()) {
+                                    this.initializeReact();
+                                }
+                            }, 100);
                         }
                     }, 500);
                 },
@@ -1195,6 +1201,10 @@ class PdfBuilderAdmin
                             console.log('[PDF Builder] PHP: Calling window.pdfBuilderReact.initPDFBuilderReact()...');
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
                             console.log('[PDF Builder] PHP: React initialization result:', result);
+                            // Hide loader after successful React initialization
+                            if (result !== false) {
+                                this.hide();
+                            }
                             // console.log('[PDF Builder] React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
