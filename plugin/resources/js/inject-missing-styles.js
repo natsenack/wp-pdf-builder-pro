@@ -179,8 +179,8 @@ function injectMissingStyles() {
   align-items: flex-start;
 }
 
-/* Contenu des propriétés (onglets) */
-.properties-content {
+/* Contenu des onglets du PropertiesPanel */
+.properties-panel .tab-content {
     display: flex;
     gap: 0;
     width: 100%;
