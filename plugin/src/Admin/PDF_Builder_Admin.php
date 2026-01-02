@@ -1186,17 +1186,25 @@ class PdfBuilderAdmin
 
                 initializeReact: function() {
                     if (this.isReactReady()) {
+                        console.log('[PDF Builder] ===== PHP: initializeReact called =====');
+                        console.log('[PDF Builder] PHP: window.pdfBuilderReact exists:', typeof window.pdfBuilderReact !== 'undefined');
+                        console.log('[PDF Builder] PHP: initPDFBuilderReact function exists:', typeof window.pdfBuilderReact.initPDFBuilderReact === 'function');
+
                         // console.log('[PDF Builder] Initializing React...');
                         try {
+                            console.log('[PDF Builder] PHP: Calling window.pdfBuilderReact.initPDFBuilderReact()...');
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
+                            console.log('[PDF Builder] PHP: React initialization result:', result);
                             // console.log('[PDF Builder] React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
                         } catch (error) {
+                            console.error('[PDF Builder] PHP: React initialization failed:', error);
                             // console.error('[PDF Builder] React initialization failed:', error);
                             return false;
                         }
                     }
+                    console.log('[PDF Builder] PHP: React not ready yet');
                     return false;
                 }
             };

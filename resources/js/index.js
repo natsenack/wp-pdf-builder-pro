@@ -181,15 +181,18 @@ try {
   // AJOUTER la fonction manquante pour l'initialisation React
   window.pdfBuilderReact = window.pdfBuilderReact || {};
   window.pdfBuilderReact.initPDFBuilderReact = function() {
-    console.log('[PDF Builder] initPDFBuilderReact called');
+    console.log('[PDF Builder] ===== initPDFBuilderReact CALLED =====');
 
     // Vérifier que pdfBuilderData existe
     if (!window.pdfBuilderData) {
-      console.error('[PDF Builder] pdfBuilderData not found on window');
+      console.error('[PDF Builder] ❌ pdfBuilderData not found on window');
+      console.log('[PDF Builder] Available window keys with pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
       return false;
     }
 
-    console.log('[PDF Builder] pdfBuilderData found:', window.pdfBuilderData);
+    console.log('[PDF Builder] ✅ pdfBuilderData found:', window.pdfBuilderData);
+    console.log('[PDF Builder] pdfBuilderData keys:', Object.keys(window.pdfBuilderData));
+    console.log('[PDF Builder] initialElements count:', window.pdfBuilderData.initialElements ? window.pdfBuilderData.initialElements.length : 'undefined');
 
     // Préparer les options pour l'initialisation
     const options = {
@@ -199,7 +202,8 @@ try {
       templateId: window.pdfBuilderData.templateId || null
     };
 
-    console.log('[PDF Builder] Initializing with options:', options);
+    console.log('[PDF Builder] Prepared options:', options);
+    console.log('[PDF Builder] Calling window.pdfBuilderPro.init...');
 
     // Appeler la vraie fonction d'initialisation
     return window.pdfBuilderPro.init('pdf-builder-react-root', options);
