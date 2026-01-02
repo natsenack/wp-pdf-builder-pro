@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import './TemplateHeader.css';
 
 const TemplateHeader = ({
@@ -224,8 +225,8 @@ const TemplateHeader = ({
         </div>
       </div>
 
-      {/* Modal Nouveau Template */}
-      {showNewTemplateModal && (
+      {/* Modal Nouveau Template - Rendu via Portal */}
+      {showNewTemplateModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowNewTemplateModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
@@ -303,11 +304,12 @@ const TemplateHeader = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.getElementById('pdf-builder-portals')
       )}
 
-      {/* Modal Paramètres du Template */}
-      {showTemplateSettingsModal && (
+      {/* Modal Paramètres du Template - Rendu via Portal */}
+      {showTemplateSettingsModal && createPortal(
         <div 
           className="modal-overlay" 
           onClick={() => setShowTemplateSettingsModal(false)}
@@ -407,7 +409,8 @@ const TemplateHeader = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.getElementById('pdf-builder-portals')
       )}
     </>
   );

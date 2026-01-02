@@ -3066,6 +3066,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   return (
     <div className="pdf-builder-container pdf-editor">
+      {/* Conteneur pour les portals (modals) */}
+      <div id="pdf-builder-portals"></div>
+      
       {/* Header du template */}
       <TemplateHeader
         templateName={templateName}
