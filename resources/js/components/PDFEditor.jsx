@@ -3133,16 +3133,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               <span className="toggle-arrow">◀</span>
             </button>
           )}
-        </div>
 
-        {/* Indicateur de résolution - positionné par rapport au container du canvas */}
-        <ResolutionIndicator
-          canvasWidth={595}
-          canvasHeight={842}
-          dpi={72}
-          zoom={zoom * 100}
-          showIndicator={true}
-        />
+          {/* Indicateur de résolution - dans le container du canvas */}
+          <ResolutionIndicator
+            canvasWidth={595}
+            canvasHeight={842}
+            dpi={72}
+            zoom={zoom * 100}
+            showIndicator={true}
+          />
+        </div>
 
         {/* Panel des propriétés */}
         {showPropertiesPanel && selectedElement && (

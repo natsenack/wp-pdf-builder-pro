@@ -1269,9 +1269,8 @@ textarea.text-input::placeholder {
 
 /* ===== RESOLUTION INDICATOR STYLES ===== */
 .resolution-indicator {
-  position: absolute;
-  top: 10px;
-  right: 60px;
+  position: relative;
+  margin: 10px;
   background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 6px 12px;
@@ -1279,7 +1278,7 @@ textarea.text-input::placeholder {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 12px;
   font-weight: 500;
-  z-index: 100;
+  z-index: 50;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -1288,6 +1287,7 @@ textarea.text-input::placeholder {
   align-items: center;
   gap: 2px;
   min-width: 80px;
+  float: right;
 }
 
 .resolution-info {
