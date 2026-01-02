@@ -537,21 +537,11 @@ export const useCanvasState = ({
 
   const saveTemplate = useCallback(async () => {
     if (loadingStates.saving) {
-      return;
+      return null;
     }
 
-    // console.log('🚀 PDF Builder SAVE - Démarrage de la sauvegarde');
+    // console.log('🚀 PDF Builder SAVE - Préparation des données de sauvegarde');
     setLoadingStates(prev => ({ ...prev, saving: true }));
-
-    // Déterminer si c'est un template existant
-    const isExistingTemplate = templateId && templateId !== '0' && templateId !== 0;
-
-    // Fonction pour vérifier la disponibilité de Toastr avec retry
-    const checkToastrAvailability = () => {
-      return Promise.resolve(true); // Toastr is now always available (real or fallback)
-    };
-
-    const toastrAvailable = await checkToastrAvailability();
 
     try {
       // Fonction pour nettoyer et valider les données avant sérialisation
@@ -598,6 +588,79 @@ export const useCanvasState = ({
             } else if (typeof value !== 'number') {
               // Valeurs par défaut
               const defaults = {
+                'x': 0, 'y': 0, 'width': 100, 'height': 50, 'fontSize': 14, 'opacity': 1,
+                'lineHeight': 1.2, 'letterSpacing': 0, 'zIndex': 0, 'borderWidth': 0,
+                'borderRadius': 0, 'rotation': 0, 'padding': 0, 'scale': 1,
+                'shadowOffsetX': 0, 'shadowOffsetY': 0, 'brightness': 100, 'contrast': 100, 'saturate': 100,
+                'progressValue': 0, 'lineWidth': 1, 'spacing': 0
+              };
+              validatedValue = defaults[key] || 0;
+            }
+          }
+
+          // Propriétés de couleur - s'assurer qu'elles sont des strings valides
+          const colorProps = ['color', 'backgroundColor', 'borderColor', 'shadowColor', 'textShadowColor'];
+          if (colorProps.includes(key)) {
+            if (typeof value !== 'string' || !value) {
+              validatedValue = key === 'backgroundColor' ? 'transparent' : '#000000';
+            }
+          }
+
+          // Propriétés de texte
+          const textProps = ['text', 'fontFamily', 'textAlign', 'textTransform', 'textDecoration'];
+          if (textProps.includes(key)) {
+            if (typeof value !== 'string') {
+              const defaults = {
+                'text': '', 'fontFamily': 'Arial', 'textAlign': 'left',
+                'textTransform': 'none', 'textDecoration': 'none'
+              };
+              validatedValue = defaults[key] || '';
+            }
+          }
+
+          // Propriétés booléennes
+          const booleanProps = ['visible', 'locked', 'required'];
+          if (booleanProps.includes(key)) {
+            validatedValue = Boolean(value);
+          }
+
+          cleaned[key] = validatedValue;
+        }
+
+        return cleaned;
+      };
+
+      // Nettoyer tous les éléments
+      const cleanedElements = elements.map(cleanElementForSerialization);
+
+      // Préparer les données du template
+      const templateData = {
+        elements: cleanedElements,
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        nextId: nextId,
+        version: '2.0.0',
+        lastModified: new Date().toISOString()
+      };
+
+      // Sérialiser en JSON
+      const jsonString = JSON.stringify(templateData, null, 2);
+
+      // Retourner les données préparées au lieu de faire un appel AJAX
+      return {
+        templateData: templateData,
+        jsonString: jsonString,
+        templateName: (window.pdfBuilderData && window.pdfBuilderData.templateName) || `Template ${(window.pdfBuilderData && window.pdfBuilderData.templateId) || 'New'}`,
+        templateId: (window.pdfBuilderData && window.pdfBuilderData.templateId) || '0'
+      };
+
+    } catch (error) {
+      console.error('Erreur lors de la préparation des données de sauvegarde:', error);
+      throw error;
+    } finally {
+      setLoadingStates(prev => ({ ...prev, saving: false }));
+    }
+  }, [elements, canvasWidth, canvasHeight, nextId, loadingStates.saving]);
                 x: 0, y: 0, width: 100, height: 50, fontSize: 14,
                 opacity: 1, lineHeight: 1.2, letterSpacing: 0, zIndex: 0,
                 borderWidth: 0, borderRadius: 0, rotation: 0, padding: 0
@@ -985,82 +1048,21 @@ export const useCanvasState = ({
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
-      // Sauvegarde directe via AJAX avec FormData pour les données volumineuses
-      // console.log('📤 PDF Builder SAVE - Préparation des données pour envoi au serveur');
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_pro_save_template');
-      formData.append('template_data', jsonString);
-      formData.append('template_name', (window.pdfBuilderData && window.pdfBuilderData.templateName) || `Template ${(window.pdfBuilderData && window.pdfBuilderData.templateId) || 'New'}`);
-      formData.append('template_id', (window.pdfBuilderData && window.pdfBuilderData.templateId) || '0');
-      // Obtenir un nonce frais avant la sauvegarde
-      try {
-        const nonceResponse = await fetch((window.pdfBuilderAjax && window.pdfBuilderAjax.ajaxurl) || '/wp-admin/admin-ajax.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            action: 'pdf_builder_get_fresh_nonce'
-          })
-        });
+      // Retourner les données préparées au lieu de faire un appel AJAX
+      return {
+        templateData: templateData,
+        jsonString: jsonString,
+        templateName: (window.pdfBuilderData && window.pdfBuilderData.templateName) || `Template ${(window.pdfBuilderData && window.pdfBuilderData.templateId) || 'New'}`,
+        templateId: (window.pdfBuilderData && window.pdfBuilderData.templateId) || '0'
+      };
 
-        if (nonceResponse.ok) {
-          const nonceData = await nonceResponse.json();
-          if (nonceData.success) {
-            formData.append('nonce', nonceData.data.nonce);
-          } else {
-            formData.append('nonce', (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || (window.pdfBuilderData && window.pdfBuilderData.nonce) || '');
-          }
-        } else {
-          formData.append('nonce', (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || (window.pdfBuilderData && window.pdfBuilderData.nonce) || '');
-        }
-      } catch (error) {
-        formData.append('nonce', (window.pdfBuilderAjax && window.pdfBuilderAjax.nonce) || (window.pdfBuilderData && window.pdfBuilderData.nonce) || '');
-      }
-
-      // console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
-      //   action: 'pdf_builder_pro_save_template',
-      //   templateName: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
-      //   templateId: window.pdfBuilderData?.templateId || '0',
-      //   nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '',
-      //   jsonLength: jsonString.length
-      // });
-
-      const response = await fetch((window.pdfBuilderAjax && window.pdfBuilderAjax.ajaxurl) || '/wp-admin/admin-ajax.php', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error((result.data && result.data.message) || 'Erreur lors de la sauvegarde');
-      }
-
-      // Notification de succès pour les templates existants
-      if (isExistingTemplate) {
-        if (toastrAvailable) {
-          toastr.success('Modifications du canvas sauvegardées avec succès !');
-        } else {
-          alert('Modifications du canvas sauvegardées avec succès !');
-        }
-      }
-
-      return templateData;
     } catch (error) {
-      // Notification d'erreur
-      const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
-      if (toastrAvailable) {
-        toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
-      } else {
-        alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
-      }
-
-      throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
+      console.error('Erreur lors de la préparation des données de sauvegarde:', error);
+      throw error;
     } finally {
       setLoadingStates(prev => ({ ...prev, saving: false }));
     }
-  }, [elements, canvasWidth, canvasHeight, isSaving, templateId]);
+  }, [elements, canvasWidth, canvasHeight, nextId, loadingStates.saving]);
 
   const loadTemplate = useCallback((templateData) => {
     if (templateData.elements) {

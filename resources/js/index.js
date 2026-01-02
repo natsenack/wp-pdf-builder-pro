@@ -225,6 +225,60 @@ try {
   window.initializePDFBuilderPro = function() {
     return pdfBuilderPro;
   };
+
+  // AJOUTER la fonction manquante pour l'initialisation React
+  window.pdfBuilderReact = window.pdfBuilderReact || {};
+  window.pdfBuilderReact.initPDFBuilderReact = function() {
+    console.log('[PDF Builder] initPDFBuilderReact called');
+
+    // Vérifier que pdfBuilderData existe
+    if (!window.pdfBuilderData) {
+      console.error('[PDF Builder] pdfBuilderData not found on window');
+      return false;
+    }
+
+    console.log('[PDF Builder] pdfBuilderData found:', window.pdfBuilderData);
+
+    // Préparer les options pour l'initialisation
+    const options = {
+      initialElements: window.pdfBuilderData.initialElements || [],
+      templateName: window.pdfBuilderData.templateName || '',
+      isNew: !window.pdfBuilderData.hasExistingData,
+      templateId: window.pdfBuilderData.templateId || null
+    };
+
+    console.log('[PDF Builder] Initializing with options:', options);
+
+    // Appeler la vraie fonction d'initialisation
+    return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+  };
+
+  // AJOUTER la fonction manquante pour l'initialisation React
+  window.pdfBuilderReact = window.pdfBuilderReact || {};
+  window.pdfBuilderReact.initPDFBuilderReact = function() {
+    console.log('[PDF Builder] initPDFBuilderReact called');
+
+    // Vérifier que pdfBuilderData existe
+    if (!window.pdfBuilderData) {
+      console.error('[PDF Builder] pdfBuilderData not found on window');
+      return false;
+    }
+
+    console.log('[PDF Builder] pdfBuilderData found:', window.pdfBuilderData);
+
+    // Préparer les options pour l'initialisation
+    const options = {
+      initialElements: window.pdfBuilderData.initialElements || [],
+      templateName: window.pdfBuilderData.templateName || '',
+      isNew: !window.pdfBuilderData.hasExistingData,
+      templateId: window.pdfBuilderData.templateId || null
+    };
+
+    console.log('[PDF Builder] Initializing with options:', options);
+
+    // Appeler la vraie fonction d'initialisation
+    return window.pdfBuilderPro.init('pdf-builder-react-root', options);
+  };
 }
 
 } catch (error) {

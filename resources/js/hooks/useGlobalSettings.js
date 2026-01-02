@@ -376,24 +376,8 @@ export const useGlobalSettings = () => {
           show_margins: updated.showMargins
         };
 
-        // Faire l'appel AJAX en arrière-plan (sans bloquer)
-        fetch(ajaxSettings.ajaxurl + '?action=pdf_builder_save_settings_page', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            ...wpSettings,
-            nonce: ajaxSettings.nonce
-          })
-        })
-        .then(response => {
-          if (!response.ok) {
-          } else {
-          }
-        })
-        .catch(error => {
-        });
+        // Sauvegarde locale uniquement - plus d'AJAX
+        console.log('Paramètres mis à jour localement:', wpSettings);
       }
 
       return updated;
