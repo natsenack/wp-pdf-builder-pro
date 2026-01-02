@@ -102,47 +102,264 @@ function injectMissingStyles() {
 }
 
 /* ===== PDF BUILDER TOOLBAR ===== */
-.pdf-builder-toolbar {
+.pdf-builder-toolbar,
+.ribbon-toolbar {
   display: flex;
-  gap: 8px;
-  padding: 12px 16px;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
   background: #ffffff;
-  border-bottom: 2px solid #e5e7eb;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-  flex-wrap: wrap;
-  min-height: 50px;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   z-index: 100;
 }
 
-.pdf-builder-toolbar button,
-.pdf-builder-toolbar select,
-.pdf-builder-toolbar input {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 4px;
+/* Onglets du toolbar */
+.toolbar-tabs {
+  display: flex;
+  gap: 0;
+  background: #fafbfc;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
+  color: #6b7280;
   transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tab-button:hover {
+  background: #f3f4f6;
   color: #374151;
 }
 
-.pdf-builder-toolbar button:hover {
+.tab-button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  background: white;
+}
+
+.tab-icon {
+  font-size: 16px;
+}
+
+.tab-label {
+  font-weight: 600;
+}
+
+/* Contenu du toolbar */
+.toolbar-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 8px 8px;
+  background: white;
+  overflow-y: auto;
+  max-height: 120px;
+}
+
+.tab-content {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+/* Groupes d'outils */
+.toolbar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 8px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+.toolbar-group h5 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  min-width: 60px;
+}
+
+.group-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.group-buttons.shapes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+/* Boutons d'édition */
+.edit-button,
+.tool-button,
+.zoom-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.15s ease;
+  min-width: 32px;
+  min-height: 28px;
+}
+
+.edit-button:hover:not(:disabled),
+.tool-button:hover,
+.zoom-button:hover {
   background: #f3f4f6;
   border-color: #9ca3af;
   color: #1f2937;
 }
 
-.pdf-builder-toolbar button:active {
+.edit-button:active:not(:disabled),
+.tool-button:active,
+.zoom-button:active {
   background: #e5e7eb;
+  border-color: #6b7280;
 }
 
-.pdf-builder-toolbar button.active {
+.edit-button.active,
+.tool-button.active,
+.zoom-button.active {
   background: #2563eb;
   color: white;
   border-color: #2563eb;
+}
+
+.edit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-content,
+.tool-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.button-icon,
+.tool-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.button-text,
+.tool-label {
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Contrôles de zoom */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zoom-value {
+  min-width: 35px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Options d'affichage */
+.display-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+  user-select: none;
+  position: relative;
+}
+
+.toggle-label:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.toggle-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+}
+
+.toggle-label.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggle-text {
+  font-weight: 500;
+}
+
+.toggle-shortcut {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.tooltip-hint {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  font-size: 10px;
+  white-space: nowrap;
+  background: #1f2937;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 2px;
+  z-index: 1000;
+  display: none;
+}
+
+.toggle-label:hover .tooltip-hint {
+  display: block;
 }
 
 /* ===== PDF BUILDER PROPERTIES PANEL ===== */
