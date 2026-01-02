@@ -198,6 +198,12 @@ const PropertiesPanel = memo(({
       >
         📝 Contenu
       </button>
+      <button
+        className={`tab-btn ${activeTab === 'effects' ? 'active' : ''}`}
+        onClick={() => setActiveTab('effects')}
+      >
+        ✨ Effets
+      </button>
     </div>
   ), [activeTab]);
 
@@ -242,6 +248,9 @@ const PropertiesPanel = memo(({
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;
+                case 'effects':
+                  return allowedControls.includes('effects') ?
+                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
                 default:
                   return null;
               }
@@ -256,11 +265,23 @@ const PropertiesPanel = memo(({
           </div>
         );
 
-
       case 'content':
         return (
           <div className="tab-content">
             {renderContentSection(selectedElement, localProperties, handlePropertyChange, activeTab)}
+          </div>
+        );
+
+      case 'effects':
+        return (
+          <div className="tab-content">
+            {renderEffectsSection && shouldShowSection('effects', selectedElement.type) ? (
+              renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab)
+            ) : (
+              <div className="no-effects">
+                <p>Aucun effet disponible pour cet élément</p>
+              </div>
+            )}
           </div>
         );
 
