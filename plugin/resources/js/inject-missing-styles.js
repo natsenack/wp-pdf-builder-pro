@@ -172,6 +172,15 @@ function injectMissingStyles() {
 }
 
 .tab-content {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+/* Contenu des propriétés (onglets) */
+.properties-content {
     display: flex;
     gap: 0;
     width: 100%;
