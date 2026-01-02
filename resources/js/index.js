@@ -78,7 +78,7 @@ try {
         
         // Récupérer les paramètres canvas depuis les données globales
         const canvasSettings = window.pdfBuilderCanvasSettings || window.pdfBuilderData?.canvasSettings || {};
-        console.log('[PDF Builder] 🎨 Canvas settings:', canvasSettings);
+        console.log('[PDF Builder] 🎨 Canvas settings from global:', canvasSettings);
         
         const reactElement = React.createElement(PDFEditor, {
           initialElements: options.initialElements || [],
