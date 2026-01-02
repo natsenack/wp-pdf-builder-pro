@@ -79,58 +79,22 @@ try {
                 console.log('Sanitized elements for JSON:', sanitizedElements);
               }
               
-              // Préparer la structure complète du template
-              const templateData = {
-                elements: sanitizedElements,
-                canvasWidth: 595,  // A4 width in pixels at 72 DPI
-                canvasHeight: 842, // A4 height in pixels at 72 DPI
-                version: '2.0.0'
-              };
+              // Utiliser la nouvelle fonction saveTemplate qui ne fait pas d'AJAX
+              const saveResult = await onSave(elements);
               
-              // Tester la sérialisation JSON
-              let jsonString;
-              try {
-                jsonString = JSON.stringify(templateData);
+              if (saveResult) {
                 if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
-                  console.log('JSON serialization successful, length:', jsonString.length);
+                  console.log('Template data prepared successfully:', saveResult);
                 }
-              } catch (jsonError) {
-                console.error('JSON serialization failed:', jsonError);
-                throw new Error('Erreur de sérialisation JSON: ' + jsonError.message);
-              }
-              
-              // Préparer les données pour la sauvegarde
-              const saveData = {
-                action: 'pdf_builder_save_template',
-                template_data: jsonString,
-                template_name: options.templateName || 'Template sans nom',
-                template_id: options.templateId || 0,
-                nonce: window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : (window.pdfBuilderPro ? window.pdfBuilderPro.nonce : '')
-              };
-
-              // Envoyer via AJAX
-              const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams(saveData)
-              });
-
-              const result = await response.json();
-              
-              if (result.success) {
-                if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
-                  console.log('Template saved successfully:', result.data);
-                }
-                // Afficher un message de succès si possible
+                // Les données sont maintenant disponibles dans saveResult
+                // L'appelant peut décider quoi faire avec (sauvegarde locale, export, etc.)
                 if (window.pdfBuilderPro && window.pdfBuilderPro.showNotice) {
-                  window.pdfBuilderPro.showNotice('Template sauvegardé avec succès !', 'success');
+                  window.pdfBuilderPro.showNotice('Données du template préparées avec succès !', 'success');
                 }
               } else {
-                console.error('Save failed:', result.data);
+                console.error('Save failed: no result returned');
                 if (window.pdfBuilderPro && window.pdfBuilderPro.showNotice) {
-                  window.pdfBuilderPro.showNotice('Erreur lors de la sauvegarde: ' + result.data, 'error');
+                  window.pdfBuilderPro.showNotice('Erreur lors de la préparation des données', 'error');
                 }
               }
             } catch (error) {
