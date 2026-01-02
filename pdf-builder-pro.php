@@ -20,7 +20,7 @@
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
+define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'plugin/resources/assets/');
 
 // ✅ VERSION DYNAMIQUE - Force cache busting à chaque changement de fichier
 // Calcule un hash basé sur le timestamp de modification du plugin
