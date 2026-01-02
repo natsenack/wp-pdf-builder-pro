@@ -8,7 +8,7 @@ import PropertiesPanel from './PropertiesPanel';
 import TemplateHeader from './TemplateHeader';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import { repairProductTableProperties } from '../utils/elementRepairUtils';
-// import './PDFEditor.css'; // CSS local désactivé - utiliser pdf-builder-react.css à la place
+import './PDFEditor.css';
 
 // Fonctions utilitaires pour manipuler les couleurs
 const lightenColor = (color, percent) => {
