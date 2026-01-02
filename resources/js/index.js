@@ -29,7 +29,7 @@ try {
 
     // REMPLACER la méthode init existante par celle qui utilise React
     window.pdfBuilderPro.init = function(containerId, options = {}) {
-      console.log('[PDF Builder] ===== INIT START =====');
+      console.log('[PDF Builder] ===== INIT START ===== NEW VERSION WITH DEBUG LOGS =====');
       console.log('[PDF Builder] Container ID:', containerId);
       console.log('[PDF Builder] Options received:', options);
 
