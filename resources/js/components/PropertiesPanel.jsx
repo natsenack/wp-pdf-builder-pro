@@ -224,6 +224,14 @@ const PropertiesPanel = memo(({
       );
     }
 
+    // DEBUG: Afficher les informations générales de debug
+    console.log('DEBUG PropertiesPanel:', {
+      selectedElement,
+      localProperties,
+      activeTab,
+      selectedElementsCount: selectedElements.length
+    });
+
     // Obtenir l'ordre intelligent des propriétés pour ce type d'élément
     const smartOrder = getSmartPropertyOrder(selectedElement.type, activeTab);
 
