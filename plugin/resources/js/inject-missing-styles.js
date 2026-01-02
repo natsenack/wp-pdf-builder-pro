@@ -172,11 +172,12 @@ function injectMissingStyles() {
 }
 
 .tab-content {
-  display: flex;
-  gap: 0;
-  width: 100%;
-  flex-wrap: nowrap;
-  align-items: flex-start;
+    display: flex;
+    gap: 0;
+    width: 100%;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    flex-direction: column;
 }
 
 /* Groupes d'outils */
