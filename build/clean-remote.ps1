@@ -10,7 +10,11 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
-Write-Host "🧹 Nettoyage du dossier distant: $FtpPath" -ForegroundColor Yellow
+# Éléments autorisés dans le plugin
+$AllowedItems = @("analytics", "api", "assets", "bootstrap.php", "config", "core", "languages", "pdf-builder-pro.php", "resources", "src", "uninstall.php", "vendor")
+
+Write-Host "🧹 Nettoyage du dossier distant pour correspondre au plugin local: $FtpPath" -ForegroundColor Yellow
+Write-Host "Éléments autorisés: $($AllowedItems -join ', ')" -ForegroundColor White
 Write-Host "Serveur: $FtpHost" -ForegroundColor White
 Write-Host ("=" * 50) -ForegroundColor White
 
@@ -30,8 +34,8 @@ function Get-FtpFileList {
         $response.Close()
         return $files
     } catch {
-        Write-Host "Erreur lors de la liste des fichiers: $($_.Exception.Message)" -ForegroundColor Red
-        return $null
+        Write-Host "Erreur lors de la liste des fichiers pour $path : $($_.Exception.Message)" -ForegroundColor Yellow
+        return @()
     }
 }
 
@@ -60,8 +64,20 @@ function Remove-FtpDirectory {
 
     # Lister le contenu du dossier
     $files = Get-FtpFileList -path $dirPath
-    if ($null -eq $files) {
-        Write-Host "⚠️ Impossible d'accéder au dossier: $dirPath" -ForegroundColor Yellow
+    if ($files.Count -eq 0) {
+        # Essayer de supprimer le dossier vide
+        try {
+            $webclient = New-Object System.Net.WebClient
+            $webclient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost$dirPath/")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::RemoveDirectory
+            $ftpRequest.Credentials = $webclient.Credentials
+            $response = $ftpRequest.GetResponse()
+            $response.Close()
+            Write-Host "✓ Dossier supprimé: $dirPath" -ForegroundColor Green
+        } catch {
+            Write-Host "⚠️ Impossible de supprimer le dossier (peut-être non vide ou inaccessible): $dirPath" -ForegroundColor Yellow
+        }
         return
     }
 
@@ -126,10 +142,31 @@ foreach ($item in $items) {
     Write-Host "  - $item" -ForegroundColor White
 }
 
+# Identifier les éléments à supprimer
+$itemsToDelete = @()
+foreach ($item in $items) {
+    if ($AllowedItems -notcontains $item) {
+        $itemsToDelete += $item
+    }
+}
+Write-Host "" -ForegroundColor White
+Write-Host "Debug - Items distants: $($items -join ', ')" -ForegroundColor Cyan
+Write-Host "Debug - Allowed: $($AllowedItems -join ', ')" -ForegroundColor Cyan
+Write-Host "Debug - ToDelete: $($itemsToDelete -join ', ')" -ForegroundColor Cyan
+Write-Host "" -ForegroundColor White
+Write-Host "🗑️ Éléments à supprimer (non présents dans le plugin local):" -ForegroundColor Yellow
+if ($itemsToDelete.Count -eq 0) {
+    Write-Host "  Aucun élément à supprimer" -ForegroundColor Green
+    exit 0
+}
+foreach ($item in $itemsToDelete) {
+    Write-Host "  - $item" -ForegroundColor Red
+}
+
 # Demander confirmation
 if (-not $Force) {
     Write-Host "" -ForegroundColor White
-    $confirmation = Read-Host "⚠️  Voulez-vous vraiment supprimer TOUS ces éléments? (oui/non)"
+    $confirmation = Read-Host "⚠️ Voulez-vous vraiment supprimer ces éléments? (oui/non)"
     if ($confirmation -ne "oui") {
         Write-Host "❌ Opération annulée par l'utilisateur" -ForegroundColor Yellow
         exit 0
@@ -142,31 +179,28 @@ if (-not $Force) {
 Write-Host "" -ForegroundColor White
 Write-Host "🗑️  Suppression en cours..." -ForegroundColor Yellow
 
-# Supprimer chaque élément
+# Supprimer chaque élément non autorisé
 $deletedCount = 0
-$totalCount = $items.Count
+$totalCount = $itemsToDelete.Count
 
-foreach ($item in $items) {
+foreach ($item in $itemsToDelete) {
     $fullPath = "$FtpPath/$item"
     Write-Host "Suppression de $item..." -ForegroundColor White
 
     try {
-        # Tester si c'est un dossier
-        $webclient = New-Object System.Net.WebClient
-        $webclient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
-        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost$fullPath/")
-        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
-        $ftpRequest.Credentials = $webclient.Credentials
-        $response = $ftpRequest.GetResponse()
-        $response.Close()
-        # C'est un dossier
-        Remove-FtpDirectory -dirPath $fullPath
-    } catch {
-        # C'est un fichier
+        # Essayer de supprimer comme fichier
         Remove-FtpFile -filePath $fullPath
+        $deletedCount++
+    } catch {
+        # Essayer de supprimer comme dossier
+        try {
+            Remove-FtpDirectory -dirPath $fullPath
+            $deletedCount++
+        } catch {
+            Write-Host "⚠️ Impossible de supprimer $item : $($_.Exception.Message)" -ForegroundColor Yellow
+        }
     }
 
-    $deletedCount++
     $percent = [math]::Round(($deletedCount / $totalCount) * 100)
     Write-Progress -Activity "Nettoyage du serveur distant" -Status "$deletedCount/$totalCount éléments supprimés" -PercentComplete $percent
 }
