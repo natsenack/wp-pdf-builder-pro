@@ -1,6 +1,6 @@
 # Script de déploiement complet : Compilation + FTP asynchrone + Git
 # Envoie TOUS les fichiers du dossier plugin/ vers le serveur distant
-# Usage: .\deployall.ps1 [-Mode <plugin|full>] [-SkipConnectionTest] [-FastMode]
+# Usage: .\deployall.ps1 [-Mode <plugin|full>] [-SkipConnectionTest] [-FastMode] [-DryRun]
 
 param(
     [ValidateSet("plugin", "full")]
@@ -33,17 +33,23 @@ $startTime = Get-Date
 Write-Host "🚀 DEPLOIEMENT COMPLET - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Cyan
 Write-Host ("=" * 60) -ForegroundColor Cyan
 
+if ($DryRun) {
+    Write-Host "🔍 MODE SIMULATION (pas d'upload reel)" -ForegroundColor Yellow
+    Write-Host ""
+}
+
 # Fonction pour afficher la barre de progression
 function Show-ProgressBar {
     param(
         [int]$Current,
         [int]$Total,
         [string]$Activity = "Progression",
-        [string]$Status = "",
         [double]$Speed = 0,
         [string]$ETA = ""
     )
 
+    if ($Total -eq 0) { return }
+    
     $percent = [math]::Round(($Current / $Total) * 100, 1)
     $progressBar = ("█" * [math]::Floor($percent / 2)) + ("░" * (50 - [math]::Floor($percent / 2)))
 
@@ -153,7 +159,7 @@ $excludedPatterns = @(
 
 Write-Host "📂 Collecte des fichiers depuis: $PluginPath" -ForegroundColor White
 
-$rawFiles = Get-ChildItem -Path $PluginPath -Recurse -File
+$rawFiles = Get-ChildItem -Path $PluginPath -Recurse -File -ErrorAction SilentlyContinue
 $totalFiles = 0
 
 foreach ($file in $rawFiles) {
@@ -180,7 +186,9 @@ Write-Host "📊 Fichiers a deployer: $totalFiles ($( [math]::Round($totalSize /
 Write-Host "`n4️⃣  DEPLOIEMENT FTP ASYNCHRONE" -ForegroundColor Yellow
 Write-Host ("-" * 40) -ForegroundColor Yellow
 
-if (!$SkipConnectionTest) {
+if ($DryRun) {
+    Write-Host "🔍 Mode simulation - pas de test FTP reel" -ForegroundColor Yellow
+} elseif (!$SkipConnectionTest) {
     Write-Host "🔌 Test connexion FTP..." -ForegroundColor White
     try {
         $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost/"
@@ -199,81 +207,54 @@ if (!$SkipConnectionTest) {
 }
 
 # Collecter les repertoires
-$directories = @{}
+$directories = [System.Collections.Generic.List[string]]::new()
 foreach ($file in $allFiles) {
     $relativePath = $file.FullName.Replace("$PluginPath\", "").Replace("$PluginPath/", "")
     $remoteDir = [System.IO.Path]::GetDirectoryName("$FtpPath/$relativePath").Replace("\", "/")
 
-    if ($remoteDir -and $remoteDir -ne $FtpPath -and -not $directories.ContainsKey($remoteDir)) {
-        $directories[$remoteDir] = $true
+    if ($remoteDir -and $remoteDir -ne $FtpPath -and -not $directories.Contains($remoteDir)) {
+        $directories.Add($remoteDir)
     }
 }
 
-# Creation des repertoires en parallele
-Write-Host "🏗️ Creation des repertoires ($($directories.Count))..." -ForegroundColor White
+# Creation des repertoires (sequentiellement pour eviter les timeouts)
+if (-not $DryRun -and $directories.Count -gt 0) {
+    Write-Host "🏗️ Creation des repertoires ($($directories.Count))..." -ForegroundColor White
 
-$dirJobs = @()
-foreach ($dir in $directories.Keys) {
-    $job = Start-Job -ScriptBlock {
-        param($ftpHost, $ftpUser, $ftpPass, $dir)
+    $createdDirs = 0
+    foreach ($dir in $directories) {
         try {
-            $ftpUri = "ftp://$ftpUser`:$ftpPass@$ftpHost$dir/"
+            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$dir/"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $ftpRequest.UseBinary = $true
             $ftpRequest.UsePassive = $true
             $ftpRequest.Timeout = 5000
             $ftpRequest.KeepAlive = $false
+            
             $response = $ftpRequest.GetResponse()
             $response.Close()
-            return @{ Success = $true; Dir = $dir }
-        } catch {
-            return @{ Success = $false; Dir = $dir; Error = $_.Exception.Message }
-        }
-    } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $dir
-    $dirJobs += $job
-}
-
-# Attendre la creation des repertoires
-$createdDirs = 0
-$dirTimeout = 15
-$dirStartTime = Get-Date
-
-while ($dirJobs.Count -gt 0 -and ((Get-Date) - $dirStartTime).TotalSeconds -lt $dirTimeout) {
-    $completedDirJobs = $dirJobs | Where-Object { $_.State -eq 'Completed' }
-    foreach ($job in $completedDirJobs) {
-        $result = Receive-Job $job
-        if ($result.Success) {
             $createdDirs++
-            Write-Host "  ✅ Repertoire cree: $($result.Dir)" -ForegroundColor Green
-        } else {
-            Write-Host "  ⚠️ Repertoire existe deja ou erreur: $($result.Dir)" -ForegroundColor Gray
+        } catch {
+            # Le repertoire existe probablement deja
         }
-        Remove-Job $job
-        $dirJobs = $dirJobs | Where-Object { $_.Id -ne $job.Id }
     }
-    Start-Sleep -Milliseconds 200
+    Write-Host "✅ Repertoires crees/verifies: $createdDirs" -ForegroundColor Green
+} elseif ($DryRun) {
+    Write-Host "✅ Repertoires crees/verifies: $($directories.Count) (simulation)" -ForegroundColor Green
 }
-
-# Nettoyer jobs restants
-foreach ($job in $dirJobs) {
-    Write-Host "⏰ Timeout creation repertoire: $($job.Name)" -ForegroundColor Yellow
-    Stop-Job $job
-    Remove-Job $job
-}
-
-Write-Host "✅ Repertoires crees/verifies: $createdDirs" -ForegroundColor Green
 
 # Upload parallele des fichiers
 $maxConcurrentUploads = $(if ($FastMode) { 10 } else { 6 })
 $uploadJobs = [System.Collections.Generic.List[object]]::new()
-$jobTimeout = $(if ($FastMode) { 30 } else { 45 })
 
 if ($DryRun) {
     Write-Host "🔍 Mode simulation - pas d'upload reel" -ForegroundColor Yellow
     $uploadedCount = $totalFiles
     $totalBytesUploaded = $totalSize
     $ftpSuccess = $true
+    Write-Host "✅ Upload FTP termine (simulation): $uploadedCount/$totalFiles fichiers" -ForegroundColor Green
+    Write-Host "⚡ Donnees: $([math]::Round($totalSize / 1024 / 1024, 2)) MB" -ForegroundColor Cyan
 } else {
     Write-Host "🚀 Upload parallele des fichiers ($totalFiles fichiers)..." -ForegroundColor Cyan
 
@@ -289,17 +270,17 @@ if ($DryRun) {
         while ($uploadJobs.Count -ge $maxConcurrentUploads) {
             $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
             foreach ($job in $completedJobs) {
-                $result = Receive-Job $job
+                $result = Receive-Job $job -ErrorAction SilentlyContinue
                 $processedCount++
-                if ($result.Success) {
+                if ($result -and $result.Success) {
                     $uploadedCount++
                     $totalBytesUploaded += $result.Size
                     Write-Host "  ✅ $($result.File)" -ForegroundColor Green
-                } else {
+                } elseif ($result) {
                     $failedCount++
-                    Write-Host "  ❌ $($result.File) - $($result.Error)" -ForegroundColor Red
+                    Write-Host "  ❌ $($result.File) - Tentative $($result.Attempts)/3" -ForegroundColor Red
                 }
-                Remove-Job $job
+                Remove-Job $job -Force -ErrorAction SilentlyContinue
                 $uploadJobs.Remove($job) | Out-Null
             }
 
@@ -360,17 +341,17 @@ if ($DryRun) {
     while ($uploadJobs.Count -gt 0 -and ((Get-Date) - $globalStartTime).TotalSeconds -lt $globalTimeout) {
         $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
         foreach ($job in $completedJobs) {
-            $result = Receive-Job $job
+            $result = Receive-Job $job -ErrorAction SilentlyContinue
             $processedCount++
-            if ($result.Success) {
+            if ($result -and $result.Success) {
                 $uploadedCount++
                 $totalBytesUploaded += $result.Size
                 Write-Host "  ✅ $($result.File)" -ForegroundColor Green
-            } else {
+            } elseif ($result) {
                 $failedCount++
-                Write-Host "  ❌ $($result.File) - $($result.Error)" -ForegroundColor Red
+                Write-Host "  ❌ $($result.File) - Tentative $($result.Attempts)/3" -ForegroundColor Red
             }
-            Remove-Job $job
+            Remove-Job $job -Force -ErrorAction SilentlyContinue
             $uploadJobs.Remove($job) | Out-Null
         }
 
@@ -391,13 +372,13 @@ if ($DryRun) {
         if ($job.State -ne 'Completed') {
             $failedCount++
             Write-Host "  ⏰ TIMEOUT: $($job.Name)" -ForegroundColor Red
-            Stop-Job $job
-            Remove-Job $job
+            Stop-Job $job -ErrorAction SilentlyContinue
+            Remove-Job $job -Force -ErrorAction SilentlyContinue
         }
     }
 
-    $uploadDuration = Get-Date - $uploadStartTime
-    $avgSpeedMBps = [math]::Round($totalBytesUploaded / $uploadDuration.TotalSeconds / 1024 / 1024, 2)
+    $uploadDuration = (Get-Date) - $uploadStartTime
+    $avgSpeedMBps = if ($uploadDuration.TotalSeconds -gt 0) { [math]::Round($totalBytesUploaded / $uploadDuration.TotalSeconds / 1024 / 1024, 2) } else { 0 }
 
     Write-Host "✅ Upload FTP termine: $uploadedCount reussis, $failedCount echoues" -ForegroundColor Green
     Write-Host "⚡ Vitesse moyenne: $avgSpeedMBps MB/s | Duree: $([math]::Round($uploadDuration.TotalSeconds))s | Donnees: $([math]::Round($totalBytesUploaded / 1024 / 1024, 2)) MB" -ForegroundColor Cyan
@@ -447,7 +428,7 @@ try {
 Write-Host "`n🎉 DEPLOIEMENT TERMINE !" -ForegroundColor Green
 Write-Host ("=" * 60) -ForegroundColor Green
 
-$totalDuration = Get-Date - $startTime
+$totalDuration = (Get-Date) - $startTime
 
 Write-Host "📊 RESUME DETAILLE:" -ForegroundColor White
 Write-Host "   • Compilation: $(if ($compilationSuccess) { "✅ Reussie" } else { "⚠️ Echouee" })" -ForegroundColor $(if ($compilationSuccess) { "Green" } else { "Yellow" })
@@ -457,7 +438,9 @@ Write-Host "   • Git: $(if ($gitSuccess) { "✅ OK" } else { "⚠️ Partiel" 
 Write-Host "   • Duree totale: $([math]::Round($totalDuration.TotalSeconds)) secondes" -ForegroundColor Cyan
 Write-Host "   • Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor White
 
-if ($ftpSuccess) {
+if ($DryRun) {
+    Write-Host "`n ℹ️  Mode simulation termine" -ForegroundColor Cyan
+} elseif ($ftpSuccess) {
     Write-Host "`n✨ DEPLOIEMENT REUSSI !" -ForegroundColor Green
 } else {
     Write-Host "`n❌ DEPLOIEMENT ECHOUÉ" -ForegroundColor Red
