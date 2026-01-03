@@ -138,29 +138,37 @@ try {
     Write-Host "❌ Erreur git: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# 3. COLLECTE DES FICHIERS
+# 3. COLLECTE DES FICHIERS - AVEC FILTRES INTELLIGENTS
 Write-Host "`n3️⃣  COLLECTE DES FICHIERS" -ForegroundColor Yellow
 Write-Host ("-" * 30) -ForegroundColor Yellow
 
 $allFiles = @()
 $excludedPatterns = @(
-    "node_modules",
-    ".git",
-    "build",
-    "logs",
-    "*.log",
-    "*.tmp",
-    "*.bak",
-    ".DS_Store",
-    "Thumbs.db",
-    "*.swp",
-    "*.swo"
+    "vendor",           # Composer dependencies (énorme, à réinstaller avec composer install)
+    "node_modules",     # NPM dependencies
+    ".git",             # Dossier git
+    ".gitignore",       # Fichier gitignore
+    ".env",             # Fichiers d'environnement
+    "*.log",            # Fichiers de log
+    "*.tmp",            # Fichiers temporaires
+    "*.bak",            # Fichiers de sauvegarde
+    ".DS_Store",        # Fichiers système macOS
+    "Thumbs.db",        # Fichiers système Windows
+    "*.swp",            # Fichiers vim
+    "*.swo",            # Fichiers vim
+    "build",            # Dossier de build local
+    "dist",             # Dossier de distribution local
+    ".vscode",          # Configuration VSCode locale
+    ".idea",            # Configuration IDE locale
+    "node_modules.zip", # Archives node_modules
+    "package-lock.json" # Fichier npm lock
 )
 
-Write-Host "📂 Collecte des fichiers depuis: $PluginPath" -ForegroundColor White
+Write-Host "📂 Collecte des fichiers deploables depuis: $PluginPath" -ForegroundColor White
+Write-Host "⚠️  Exclusions: vendor/, node_modules, .git, fichiers temporaires..." -ForegroundColor Yellow
 
 $rawFiles = Get-ChildItem -Path $PluginPath -Recurse -File -ErrorAction SilentlyContinue
-$totalFiles = 0
+$filteredCount = 0
 
 foreach ($file in $rawFiles) {
     $relativePath = $file.FullName.Replace("$PluginPath\", "").Replace("$PluginPath/", "")
@@ -169,95 +177,54 @@ foreach ($file in $rawFiles) {
     foreach ($pattern in $excludedPatterns) {
         if ($relativePath -like "*$pattern*" -or $file.Name -like $pattern) {
             $shouldExclude = $true
+            $filteredCount++
             break
         }
     }
 
     if (-not $shouldExclude) {
         $allFiles += $file
-        $totalFiles++
     }
 }
 
+$totalFiles = $allFiles.Count
 $totalSize = ($allFiles | Measure-Object -Property Length -Sum).Sum
 Write-Host "📊 Fichiers a deployer: $totalFiles ($( [math]::Round($totalSize / 1MB, 2) ) MB)" -ForegroundColor Green
+Write-Host "🚫 Fichiers ignores: $filteredCount" -ForegroundColor Gray
 
-# 4. DEPLOIEMENT FTP ASYNCHRONE
-Write-Host "`n4️⃣  DEPLOIEMENT FTP ASYNCHRONE" -ForegroundColor Yellow
+# 4. DEPLOIEMENT FTP
+Write-Host "`n4️⃣  DEPLOIEMENT FTP" -ForegroundColor Yellow
 Write-Host ("-" * 40) -ForegroundColor Yellow
 
 if ($DryRun) {
     Write-Host "🔍 Mode simulation - pas de test FTP reel" -ForegroundColor Yellow
-} elseif (!$SkipConnectionTest) {
-    Write-Host "🔌 Test connexion FTP..." -ForegroundColor White
-    try {
-        $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost/"
-        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
-        $ftpRequest.UsePassive = $true
-        $ftpRequest.Timeout = 5000
-        $ftpRequest.KeepAlive = $false
-        $response = $ftpRequest.GetResponse()
-        $response.Close()
-        Write-Host "✅ Connexion FTP OK" -ForegroundColor Green
-    } catch {
-        Write-Host "❌ Erreur FTP: $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
-    }
-}
-
-# Collecter les repertoires
-$directories = [System.Collections.Generic.List[string]]::new()
-foreach ($file in $allFiles) {
-    $relativePath = $file.FullName.Replace("$PluginPath\", "").Replace("$PluginPath/", "")
-    $remoteDir = [System.IO.Path]::GetDirectoryName("$FtpPath/$relativePath").Replace("\", "/")
-
-    if ($remoteDir -and $remoteDir -ne $FtpPath -and -not $directories.Contains($remoteDir)) {
-        $directories.Add($remoteDir)
-    }
-}
-
-# Creation des repertoires (sequentiellement pour eviter les timeouts)
-if (-not $DryRun -and $directories.Count -gt 0) {
-    Write-Host "🏗️ Creation des repertoires ($($directories.Count))..." -ForegroundColor White
-
-    $createdDirs = 0
-    foreach ($dir in $directories) {
-        try {
-            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$dir/"
-            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-            $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $true
-            $ftpRequest.Timeout = 5000
-            $ftpRequest.KeepAlive = $false
-            
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-            $createdDirs++
-        } catch {
-            # Le repertoire existe probablement deja
-        }
-    }
-    Write-Host "✅ Repertoires crees/verifies: $createdDirs" -ForegroundColor Green
-} elseif ($DryRun) {
-    Write-Host "✅ Repertoires crees/verifies: $($directories.Count) (simulation)" -ForegroundColor Green
-}
-
-# Upload parallele des fichiers
-$maxConcurrentUploads = $(if ($FastMode) { 10 } else { 6 })
-$uploadJobs = [System.Collections.Generic.List[object]]::new()
-
-if ($DryRun) {
-    Write-Host "🔍 Mode simulation - pas d'upload reel" -ForegroundColor Yellow
     $uploadedCount = $totalFiles
     $totalBytesUploaded = $totalSize
     $ftpSuccess = $true
     Write-Host "✅ Upload FTP termine (simulation): $uploadedCount/$totalFiles fichiers" -ForegroundColor Green
     Write-Host "⚡ Donnees: $([math]::Round($totalSize / 1024 / 1024, 2)) MB" -ForegroundColor Cyan
 } else {
-    Write-Host "🚀 Upload parallele des fichiers ($totalFiles fichiers)..." -ForegroundColor Cyan
+    # Test connexion FTP
+    if (!$SkipConnectionTest) {
+        Write-Host "🔌 Test connexion FTP..." -ForegroundColor White
+        try {
+            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost/"
+            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = 5000
+            $ftpRequest.KeepAlive = $false
+            $response = $ftpRequest.GetResponse()
+            $response.Close()
+            Write-Host "✅ Connexion FTP OK" -ForegroundColor Green
+        } catch {
+            Write-Host "❌ Erreur FTP: $($_.Exception.Message)" -ForegroundColor Red
+            exit 1
+        }
+    }
 
+    # Upload des fichiers
+    Write-Host "🚀 Upload de $totalFiles fichiers..." -ForegroundColor Cyan
     $processedCount = 0
     $lastProgressTime = Get-Date
     $uploadStartTime = Get-Date
@@ -265,118 +232,74 @@ if ($DryRun) {
     foreach ($file in $allFiles) {
         $relativePath = $file.FullName.Replace("$PluginPath\", "").Replace("$PluginPath/", "")
         $remotePath = "$FtpPath/$relativePath".Replace("\", "/")
-
-        # Gestion des jobs simultanes
-        while ($uploadJobs.Count -ge $maxConcurrentUploads) {
-            $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
-            foreach ($job in $completedJobs) {
-                $result = Receive-Job $job -ErrorAction SilentlyContinue
-                $processedCount++
-                if ($result -and $result.Success) {
-                    $uploadedCount++
-                    $totalBytesUploaded += $result.Size
-                    Write-Host "  ✅ $($result.File)" -ForegroundColor Green
-                } elseif ($result) {
-                    $failedCount++
-                    Write-Host "  ❌ $($result.File) - Tentative $($result.Attempts)/3" -ForegroundColor Red
-                }
-                Remove-Job $job -Force -ErrorAction SilentlyContinue
-                $uploadJobs.Remove($job) | Out-Null
-            }
-
-            # Barre de progression
-            $currentTime = Get-Date
-            if (($currentTime - $lastProgressTime).TotalSeconds -ge 1) {
-                $elapsed = $currentTime - $uploadStartTime
-                $speedMBps = if ($elapsed.TotalSeconds -gt 0) { [math]::Round($totalBytesUploaded / $elapsed.TotalSeconds / 1024 / 1024, 2) } else { 0 }
-                Show-ProgressBar -Current $processedCount -Total $totalFiles -Activity "fichiers" -Speed $speedMBps
-                $lastProgressTime = $currentTime
-            }
-
-            Start-Sleep -Milliseconds 50
-        }
-
-        # Job d'upload
-        $job = Start-Job -ScriptBlock {
-            param($ftpHost, $ftpUser, $ftpPass, $remotePath, $localFile, $fileName, $fileSize)
-
-            $maxRetries = 3
-            for ($attempt = 1; $attempt -le $maxRetries; $attempt++) {
-                try {
-                    $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpUser`:$ftpPass@$ftpHost$remotePath")
-                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-                    
-                    # Utiliser le mode texte pour PHP/HTML/JSON, binaire pour les autres
-                    $useBinary = -not ($fileName -like "*.php" -or $fileName -like "*.html" -or $fileName -like "*.json" -or $fileName -like "*.txt" -or $fileName -like "*.md")
-                    $ftpRequest.UseBinary = $useBinary
-                    $ftpRequest.UsePassive = $true
-                    $ftpRequest.Timeout = 15000
-                    $ftpRequest.ReadWriteTimeout = 30000
-                    $ftpRequest.KeepAlive = $false
-
-                    $fileContent = [System.IO.File]::ReadAllBytes($localFile)
-                    $ftpRequest.ContentLength = $fileContent.Length
-
-                    $requestStream = $ftpRequest.GetRequestStream()
-                    $requestStream.Write($fileContent, 0, $fileContent.Length)
-                    $requestStream.Close()
-
-                    $response = $ftpRequest.GetResponse()
-                    $response.Close()
-
-                    return @{ Success = $true; File = $fileName; Size = $fileSize; Attempts = $attempt }
-                } catch {
-                    if ($attempt -ge $maxRetries) {
-                        return @{ Success = $false; File = $fileName; Size = $fileSize; Error = $_.Exception.Message; Attempts = $attempt }
+        
+        $maxRetries = 3
+        $uploaded = $false
+        
+        for ($attempt = 1; $attempt -le $maxRetries; $attempt++) {
+            try {
+                # Créer le répertoire parent si nécessaire
+                $remoteDir = Split-Path -Path $remotePath
+                if ($remoteDir) {
+                    try {
+                        $dirRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpUser`:$FtpPass@$FtpHost$remoteDir/")
+                        $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                        $dirRequest.UsePassive = $true
+                        $dirRequest.Timeout = 10000
+                        $dirRequest.KeepAlive = $false
+                        $dirResponse = $dirRequest.GetResponse()
+                        $dirResponse.Close()
+                    } catch {
+                        # Le répertoire existe probablement déjà, on continue
                     }
-                    Start-Sleep -Seconds 1
+                }
+
+                # Upload du fichier en mode TEXTE (défaut)
+                $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpUser`:$FtpPass@$FtpHost$remotePath")
+                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                $ftpRequest.UseBinary = $false  # MODE TEXTE par défaut
+                $ftpRequest.UsePassive = $true
+                $ftpRequest.Timeout = 20000
+                $ftpRequest.ReadWriteTimeout = 40000
+                $ftpRequest.KeepAlive = $false
+
+                $fileContent = [System.IO.File]::ReadAllBytes($file.FullName)
+                $ftpRequest.ContentLength = $fileContent.Length
+
+                $requestStream = $ftpRequest.GetRequestStream()
+                $requestStream.Write($fileContent, 0, $fileContent.Length)
+                $requestStream.Close()
+
+                $response = $ftpRequest.GetResponse()
+                $response.Close()
+
+                $uploadedCount++
+                $totalBytesUploaded += $file.Length
+                Write-Host "  ✅ $relativePath" -ForegroundColor Green
+                $uploaded = $true
+                break
+            } catch {
+                if ($attempt -lt $maxRetries) {
+                    Write-Host "  ⚠️ $relativePath - Tentative $attempt/$maxRetries" -ForegroundColor Yellow
+                    Start-Sleep -Seconds 2
+                } else {
+                    $failedCount++
+                    Write-Host "  ❌ $relativePath - ECHEC: $($_.Exception.Message)" -ForegroundColor Red
                 }
             }
-        } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $remotePath, $file.FullName, $file.Name, $file.Length
-
-        $uploadJobs.Add($job) | Out-Null
-    }
-
-    # Attendre la fin de tous les uploads
-    $globalTimeout = $(if ($FastMode) { 300 } else { 600 })
-    $globalStartTime = Get-Date
-
-    while ($uploadJobs.Count -gt 0 -and ((Get-Date) - $globalStartTime).TotalSeconds -lt $globalTimeout) {
-        $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
-        foreach ($job in $completedJobs) {
-            $result = Receive-Job $job -ErrorAction SilentlyContinue
-            $processedCount++
-            if ($result -and $result.Success) {
-                $uploadedCount++
-                $totalBytesUploaded += $result.Size
-                Write-Host "  ✅ $($result.File)" -ForegroundColor Green
-            } elseif ($result) {
-                $failedCount++
-                Write-Host "  ❌ $($result.File) - Tentative $($result.Attempts)/3" -ForegroundColor Red
-            }
-            Remove-Job $job -Force -ErrorAction SilentlyContinue
-            $uploadJobs.Remove($job) | Out-Null
         }
 
-        # Barre de progression finale
+        $processedCount++
+        
+        # Barre de progression
         $currentTime = Get-Date
-        if (($currentTime - $lastProgressTime).TotalSeconds -ge 1) {
+        if (($currentTime - $lastProgressTime).TotalSeconds -ge 2) {
             $elapsed = $currentTime - $uploadStartTime
             $speedMBps = if ($elapsed.TotalSeconds -gt 0) { [math]::Round($totalBytesUploaded / $elapsed.TotalSeconds / 1024 / 1024, 2) } else { 0 }
-            Show-ProgressBar -Current $processedCount -Total $totalFiles -Activity "fichiers" -Speed $speedMBps
+            $percent = [math]::Round(($processedCount / $totalFiles) * 100, 1)
+            $progressBar = ("█" * [math]::Floor($percent / 2)) + ("░" * (50 - [math]::Floor($percent / 2)))
+            Write-Host "📊 [$progressBar] ${percent}% | $processedCount/$totalFiles | ${speedMBps} MB/s" -ForegroundColor Cyan
             $lastProgressTime = $currentTime
-        }
-
-        Start-Sleep -Milliseconds 100
-    }
-
-    # Nettoyer jobs timeout
-    foreach ($job in $uploadJobs) {
-        if ($job.State -ne 'Completed') {
-            $failedCount++
-            Write-Host "  ⏰ TIMEOUT: $($job.Name)" -ForegroundColor Red
-            Stop-Job $job -ErrorAction SilentlyContinue
-            Remove-Job $job -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -437,6 +360,7 @@ Write-Host "📊 RESUME DETAILLE:" -ForegroundColor White
 Write-Host "   • Compilation: $(if ($compilationSuccess) { "✅ Reussie" } else { "⚠️ Echouee" })" -ForegroundColor $(if ($compilationSuccess) { "Green" } else { "Yellow" })
 Write-Host "   • Collecte fichiers: ✅ $totalFiles fichiers ($( [math]::Round($totalSize / 1MB, 2) ) MB)" -ForegroundColor Green
 Write-Host "   • FTP Upload: $(if ($ftpSuccess) { "✅ $uploadedCount/$(($uploadedCount + $failedCount)) fichiers" } else { "❌ Echoue" }) ($( [math]::Round($totalBytesUploaded / 1024 / 1024, 2) ) MB)" -ForegroundColor $(if ($ftpSuccess) { "Green" } else { "Red" })
+Write-Host "   • Erreurs: $failedCount fichier(s) en echec" -ForegroundColor $(if ($failedCount -eq 0) { "Green" } else { "Yellow" })
 Write-Host "   • Git: $(if ($gitSuccess) { "✅ OK" } else { "⚠️ Partiel" })" -ForegroundColor $(if ($gitSuccess) { "Green" } else { "Yellow" })
 Write-Host "   • Duree totale: $([math]::Round($totalDuration.TotalSeconds)) secondes" -ForegroundColor Cyan
 Write-Host "   • Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor White
