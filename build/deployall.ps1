@@ -6,7 +6,8 @@ param(
     [ValidateSet("plugin", "full")]
     [string]$Mode = "plugin",
     [switch]$SkipConnectionTest,
-    [switch]$FastMode
+    [switch]$FastMode,
+    [switch]$DryRun
 )
 
 $ErrorActionPreference = "Stop"
@@ -244,15 +245,19 @@ while ($dirJobs.Count -gt 0 -and ((Get-Date) - $dirStartTime).TotalSeconds -lt $
         $result = Receive-Job $job
         if ($result.Success) {
             $createdDirs++
+            Write-Host "  ✅ Repertoire cree: $($result.Dir)" -ForegroundColor Green
+        } else {
+            Write-Host "  ⚠️ Repertoire existe deja ou erreur: $($result.Dir)" -ForegroundColor Gray
         }
         Remove-Job $job
+        $dirJobs = $dirJobs | Where-Object { $_.Id -ne $job.Id }
     }
-    $dirJobs = $dirJobs | Where-Object { $_.State -ne 'Completed' }
     Start-Sleep -Milliseconds 200
 }
 
 # Nettoyer jobs restants
 foreach ($job in $dirJobs) {
+    Write-Host "⏰ Timeout creation repertoire: $($job.Name)" -ForegroundColor Yellow
     Stop-Job $job
     Remove-Job $job
 }
@@ -264,18 +269,95 @@ $maxConcurrentUploads = $(if ($FastMode) { 10 } else { 6 })
 $uploadJobs = [System.Collections.Generic.List[object]]::new()
 $jobTimeout = $(if ($FastMode) { 30 } else { 45 })
 
-Write-Host "🚀 Upload parallele des fichiers ($totalFiles fichiers)..." -ForegroundColor Cyan
+if ($DryRun) {
+    Write-Host "🔍 Mode simulation - pas d'upload reel" -ForegroundColor Yellow
+    $uploadedCount = $totalFiles
+    $totalBytesUploaded = $totalSize
+    $ftpSuccess = $true
+} else {
+    Write-Host "🚀 Upload parallele des fichiers ($totalFiles fichiers)..." -ForegroundColor Cyan
 
-$processedCount = 0
-$lastProgressTime = Get-Date
-$uploadStartTime = Get-Date
+    $processedCount = 0
+    $lastProgressTime = Get-Date
+    $uploadStartTime = Get-Date
 
-foreach ($file in $allFiles) {
-    $relativePath = $file.FullName.Replace("$PluginPath\", "").Replace("$PluginPath/", "")
-    $remotePath = "$FtpPath/$relativePath".Replace("\", "/")
+    foreach ($file in $allFiles) {
+        $relativePath = $file.FullName.Replace("$PluginPath\", "").Replace("$PluginPath/", "")
+        $remotePath = "$FtpPath/$relativePath".Replace("\", "/")
 
-    # Gestion des jobs simultanes
-    while ($uploadJobs.Count -ge $maxConcurrentUploads) {
+        # Gestion des jobs simultanes
+        while ($uploadJobs.Count -ge $maxConcurrentUploads) {
+            $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
+            foreach ($job in $completedJobs) {
+                $result = Receive-Job $job
+                $processedCount++
+                if ($result.Success) {
+                    $uploadedCount++
+                    $totalBytesUploaded += $result.Size
+                    Write-Host "  ✅ $($result.File)" -ForegroundColor Green
+                } else {
+                    $failedCount++
+                    Write-Host "  ❌ $($result.File) - $($result.Error)" -ForegroundColor Red
+                }
+                Remove-Job $job
+                $uploadJobs.Remove($job) | Out-Null
+            }
+
+            # Barre de progression
+            $currentTime = Get-Date
+            if (($currentTime - $lastProgressTime).TotalSeconds -ge 1) {
+                $elapsed = $currentTime - $uploadStartTime
+                $speedMBps = if ($elapsed.TotalSeconds -gt 0) { [math]::Round($totalBytesUploaded / $elapsed.TotalSeconds / 1024 / 1024, 2) } else { 0 }
+                Show-ProgressBar -Current $processedCount -Total $totalFiles -Activity "fichiers" -Speed $speedMBps
+                $lastProgressTime = $currentTime
+            }
+
+            Start-Sleep -Milliseconds 50
+        }
+
+        # Job d'upload
+        $job = Start-Job -ScriptBlock {
+            param($ftpHost, $ftpUser, $ftpPass, $remotePath, $localFile, $fileName, $fileSize)
+
+            $maxRetries = 3
+            for ($attempt = 1; $attempt -le $maxRetries; $attempt++) {
+                try {
+                    $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpUser`:$ftpPass@$ftpHost$remotePath")
+                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                    $ftpRequest.UseBinary = $true
+                    $ftpRequest.UsePassive = $true
+                    $ftpRequest.Timeout = 15000
+                    $ftpRequest.ReadWriteTimeout = 30000
+                    $ftpRequest.KeepAlive = $false
+
+                    $fileContent = [System.IO.File]::ReadAllBytes($localFile)
+                    $ftpRequest.ContentLength = $fileContent.Length
+
+                    $requestStream = $ftpRequest.GetRequestStream()
+                    $requestStream.Write($fileContent, 0, $fileContent.Length)
+                    $requestStream.Close()
+
+                    $response = $ftpRequest.GetResponse()
+                    $response.Close()
+
+                    return @{ Success = $true; File = $fileName; Size = $fileSize; Attempts = $attempt }
+                } catch {
+                    if ($attempt -ge $maxRetries) {
+                        return @{ Success = $false; File = $fileName; Size = $fileSize; Error = $_.Exception.Message; Attempts = $attempt }
+                    }
+                    Start-Sleep -Seconds 1
+                }
+            }
+        } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $remotePath, $file.FullName, $file.Name, $file.Length
+
+        $uploadJobs.Add($job) | Out-Null
+    }
+
+    # Attendre la fin de tous les uploads
+    $globalTimeout = $(if ($FastMode) { 300 } else { 600 })
+    $globalStartTime = Get-Date
+
+    while ($uploadJobs.Count -gt 0 -and ((Get-Date) - $globalStartTime).TotalSeconds -lt $globalTimeout) {
         $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
         foreach ($job in $completedJobs) {
             $result = Receive-Job $job
@@ -292,7 +374,7 @@ foreach ($file in $allFiles) {
             $uploadJobs.Remove($job) | Out-Null
         }
 
-        # Barre de progression
+        # Barre de progression finale
         $currentTime = Get-Date
         if (($currentTime - $lastProgressTime).TotalSeconds -ge 1) {
             $elapsed = $currentTime - $uploadStartTime
@@ -301,97 +383,27 @@ foreach ($file in $allFiles) {
             $lastProgressTime = $currentTime
         }
 
-        Start-Sleep -Milliseconds 50
+        Start-Sleep -Milliseconds 100
     }
 
-    # Job d'upload
-    $job = Start-Job -ScriptBlock {
-        param($ftpHost, $ftpUser, $ftpPass, $remotePath, $localFile, $fileName, $fileSize)
-
-        $maxRetries = 3
-        for ($attempt = 1; $attempt -le $maxRetries; $attempt++) {
-            try {
-                $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpUser`:$ftpPass@$ftpHost$remotePath")
-                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-                $ftpRequest.UseBinary = $true
-                $ftpRequest.UsePassive = $true
-                $ftpRequest.Timeout = 15000
-                $ftpRequest.ReadWriteTimeout = 30000
-                $ftpRequest.KeepAlive = $false
-
-                $fileContent = [System.IO.File]::ReadAllBytes($localFile)
-                $ftpRequest.ContentLength = $fileContent.Length
-
-                $requestStream = $ftpRequest.GetRequestStream()
-                $requestStream.Write($fileContent, 0, $fileContent.Length)
-                $requestStream.Close()
-
-                $response = $ftpRequest.GetResponse()
-                $response.Close()
-
-                return @{ Success = $true; File = $fileName; Size = $fileSize; Attempts = $attempt }
-            } catch {
-                if ($attempt -ge $maxRetries) {
-                    return @{ Success = $false; File = $fileName; Size = $fileSize; Error = $_.Exception.Message; Attempts = $attempt }
-                }
-                Start-Sleep -Seconds 1
-            }
-        }
-    } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $remotePath, $file.FullName, $file.Name, $file.Length
-
-    $uploadJobs.Add($job) | Out-Null
-}
-
-# Attendre la fin de tous les uploads
-$globalTimeout = $(if ($FastMode) { 300 } else { 600 })
-$globalStartTime = Get-Date
-
-while ($uploadJobs.Count -gt 0 -and ((Get-Date) - $globalStartTime).TotalSeconds -lt $globalTimeout) {
-    $completedJobs = $uploadJobs | Where-Object { $_.State -eq 'Completed' }
-    foreach ($job in $completedJobs) {
-        $result = Receive-Job $job
-        $processedCount++
-        if ($result.Success) {
-            $uploadedCount++
-            $totalBytesUploaded += $result.Size
-            Write-Host "  ✅ $($result.File)" -ForegroundColor Green
-        } else {
+    # Nettoyer jobs timeout
+    foreach ($job in $uploadJobs) {
+        if ($job.State -ne 'Completed') {
             $failedCount++
-            Write-Host "  ❌ $($result.File) - $($result.Error)" -ForegroundColor Red
+            Write-Host "  ⏰ TIMEOUT: $($job.Name)" -ForegroundColor Red
+            Stop-Job $job
+            Remove-Job $job
         }
-        Remove-Job $job
-        $uploadJobs.Remove($job) | Out-Null
     }
 
-    # Barre de progression finale
-    $currentTime = Get-Date
-    if (($currentTime - $lastProgressTime).TotalSeconds -ge 1) {
-        $elapsed = $currentTime - $uploadStartTime
-        $speedMBps = if ($elapsed.TotalSeconds -gt 0) { [math]::Round($totalBytesUploaded / $elapsed.TotalSeconds / 1024 / 1024, 2) } else { 0 }
-        Show-ProgressBar -Current $processedCount -Total $totalFiles -Activity "fichiers" -Speed $speedMBps
-        $lastProgressTime = $currentTime
-    }
+    $uploadDuration = Get-Date - $uploadStartTime
+    $avgSpeedMBps = [math]::Round($totalBytesUploaded / $uploadDuration.TotalSeconds / 1024 / 1024, 2)
 
-    Start-Sleep -Milliseconds 100
+    Write-Host "✅ Upload FTP termine: $uploadedCount reussis, $failedCount echoues" -ForegroundColor Green
+    Write-Host "⚡ Vitesse moyenne: $avgSpeedMBps MB/s | Duree: $([math]::Round($uploadDuration.TotalSeconds))s | Donnees: $([math]::Round($totalBytesUploaded / 1024 / 1024, 2)) MB" -ForegroundColor Cyan
+
+    $ftpSuccess = $uploadedCount -gt 0
 }
-
-# Nettoyer jobs timeout
-foreach ($job in $uploadJobs) {
-    if ($job.State -ne 'Completed') {
-        $failedCount++
-        Write-Host "  ⏰ TIMEOUT: $($job.Name)" -ForegroundColor Red
-        Stop-Job $job
-        Remove-Job $job
-    }
-}
-
-$uploadDuration = Get-Date - $uploadStartTime
-$avgSpeedMBps = [math]::Round($totalBytesUploaded / $uploadDuration.TotalSeconds / 1024 / 1024, 2)
-
-Write-Host "✅ Upload FTP termine: $uploadedCount reussis, $failedCount echoues" -ForegroundColor Green
-Write-Host "⚡ Vitesse moyenne: $avgSpeedMBps MB/s | Duree: $([math]::Round($uploadDuration.TotalSeconds))s | Donnees: $([math]::Round($totalBytesUploaded / 1024 / 1024, 2)) MB" -ForegroundColor Cyan
-
-$ftpSuccess = $uploadedCount -gt 0
 
 # 5. GESTION GIT APRES DEPLOIEMENT
 Write-Host "`n5️⃣  FINALISATION GIT" -ForegroundColor Yellow
