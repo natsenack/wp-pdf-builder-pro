@@ -105,6 +105,30 @@ try {
     exit 1
 }
 
+# 1.8 COMPILATION AVANT DEPLOIEMENT
+Write-Host "`n1.8 Compilation avant deploiement..." -ForegroundColor Magenta
+
+try {
+    Push-Location $WorkingDir
+    Write-Host "   🔨 Lancement de npm run build..." -ForegroundColor Yellow
+
+    $ErrorActionPreference = "Continue"
+    $buildResult = cmd /c "cd /d $WorkingDir && npm run build" 2>&1
+    $ErrorActionPreference = "Stop"
+
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   ✅ Compilation reussie" -ForegroundColor Green
+    } else {
+        Write-Host "   ❌ Compilation echouee: $($buildResult -join ' ')" -ForegroundColor Red
+        Write-Host "   ⚠️ Continuation du deploiement malgre l'erreur de compilation" -ForegroundColor Yellow
+    }
+
+    Pop-Location
+} catch {
+    Write-Host "   ❌ Erreur compilation: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "   ⚠️ Continuation du deploiement malgre l'erreur de compilation" -ForegroundColor Yellow
+}
+
 # 2 UPLOAD FTP
 Write-Host "`n2 Upload FTP..." -ForegroundColor Magenta
 
