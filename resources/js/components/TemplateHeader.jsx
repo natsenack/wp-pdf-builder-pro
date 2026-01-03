@@ -1,0 +1,430 @@
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
+import './TemplateHeader.css';
+
+const TemplateHeader = ({
+  templateName,
+  isNew,
+  onSave,
+  onCreateNew,
+  onPreview
+}) => {
+  // Obtenir ou créer le container pour les portals
+  const getPortalContainer = () => {
+    let container = document.getElementById('pdf-builder-portals');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'pdf-builder-portals';
+      document.body.appendChild(container);
+      console.warn('Portal container not found, created new one at body level');
+    }
+    return container;
+  };
+  const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
+  const [showTemplateSettingsModal, setShowTemplateSettingsModal] = useState(false);
+  const [newTemplateData, setNewTemplateData] = useState({
+    name: '',
+    width: 595,
+    height: 842,
+    orientation: 'portrait'
+  });
+  const [templateSettings, setTemplateSettings] = useState({
+    name: templateName || '',
+    description: '',
+    category: 'autre'
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  const handleSave = async () => {
+    if (onSave) {
+      setIsSaving(true);
+      setSaveMessage('');
+
+      try {
+        await onSave();
+        setSaveMessage('Template sauvegardé avec succès !');
+        setTimeout(() => setSaveMessage(''), 3000); // Masquer le message après 3 secondes
+      } catch (error) {
+        setSaveMessage('Erreur lors de la sauvegarde');
+        setTimeout(() => setSaveMessage(''), 3000);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handleCreateNew = () => {
+    if (onCreateNew) {
+      onCreateNew(newTemplateData);
+    }
+    setShowNewTemplateModal(false);
+    // Reset form
+    setNewTemplateData({
+      name: '',
+      width: 595,
+      height: 842,
+      orientation: 'portrait'
+    });
+  };
+
+  const handleOpenTemplateSettings = async () => {
+    try {
+      const templateId = window.pdfBuilderData?.templateId;
+      
+      if (!templateId) {
+        console.error('ID du template non disponible');
+        // Utiliser les valeurs par défaut
+        setTemplateSettings({
+          name: templateName || '',
+          description: '',
+          category: 'autre'
+        });
+        setShowTemplateSettingsModal(true);
+        return;
+      }
+
+      // Charger les paramètres actuels du template
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_load_template_settings');
+      formData.append('template_id', templateId);
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+
+      console.log('Chargement des paramètres du template:', templateId);
+
+      const response = await fetch(window.pdfBuilderData?.ajaxUrl || window.ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        console.log('Paramètres chargés:', result.data);
+        setTemplateSettings({
+          name: result.data.name || templateName || '',
+          description: result.data.description || '',
+          category: result.data.category || 'autre'
+        });
+      } else {
+        console.log('Aucun paramètre trouvé, utilisation des valeurs par défaut');
+        // Utiliser les valeurs par défaut si pas de données
+        setTemplateSettings({
+          name: templateName || '',
+          description: '',
+          category: 'autre'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des paramètres:', error);
+      // Utiliser les valeurs par défaut en cas d'erreur
+      setTemplateSettings({
+        name: templateName || '',
+        description: '',
+        category: 'autre'
+      });
+    }
+    
+    setShowTemplateSettingsModal(true);
+  };
+
+  const handleSaveTemplateSettings = async () => {
+    try {
+      const templateId = window.pdfBuilderData?.templateId;
+      
+      if (!templateId) {
+        console.error('ID du template non disponible');
+        alert('Erreur: ID du template non trouvé');
+        return;
+      }
+
+      // Préparer les données pour l'AJAX
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_save_template_settings');
+      formData.append('template_id', templateId);
+      formData.append('name', templateSettings.name);
+      formData.append('description', templateSettings.description);
+      formData.append('category', templateSettings.category);
+      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+
+      console.log('Sauvegarde des paramètres du template:', {
+        templateId,
+        name: templateSettings.name,
+        description: templateSettings.description,
+        category: templateSettings.category
+      });
+
+      // Faire l'appel AJAX
+      const response = await fetch(window.pdfBuilderData?.ajaxUrl || window.ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('Paramètres du template sauvegardés avec succès');
+        alert('Paramètres du template sauvegardés avec succès !');
+        setShowTemplateSettingsModal(false);
+      } else {
+        console.error('Erreur lors de la sauvegarde:', result.data);
+        alert('Erreur lors de la sauvegarde: ' + (result.data || 'Erreur inconnue'));
+      }
+    } catch (error) {
+      console.error('Erreur AJAX:', error);
+      alert('Erreur lors de la sauvegarde des paramètres');
+    }
+  };
+
+  return (
+    <>
+      <div className="template-header">
+        <div className="header-left">
+          <button
+            className="header-btn new-template-btn"
+            onClick={() => setShowNewTemplateModal(true)}
+            title="Créer un nouveau template"
+          >
+            <span className="btn-icon">📄</span>
+            <span className="btn-text">Nouveau template</span>
+          </button>
+        </div>
+
+        <div className="header-center">
+          <h2 className="template-title">
+            {isNew ? 'Nouveau template' : `Modifier: ${templateName || 'Template sans nom'}`}
+          </h2>
+          {saveMessage && (
+            <div className={`save-message ${saveMessage.includes('succès') ? 'success' : 'error'}`}>
+              {saveMessage}
+            </div>
+          )}
+        </div>
+
+        <div className="header-right">
+          <button
+            className="header-btn settings-btn"
+            onClick={handleOpenTemplateSettings}
+            title="Paramètres du template"
+          >
+            <span className="btn-icon">⚙️</span>
+            <span className="btn-text">Paramètres</span>
+          </button>
+
+          <button
+            className={`header-btn save-btn ${isSaving ? 'saving' : ''}`}
+            onClick={handleSave}
+            disabled={isSaving}
+            title={isNew ? 'Sauvegarder le template' : 'Modifier le template'}
+          >
+            <span className="btn-icon">
+              {isSaving ? '⏳' : (isNew ? '💾' : '✏️')}
+            </span>
+            <span className="btn-text">
+              {isSaving ? 'Sauvegarde...' : (isNew ? 'Sauvegarder' : 'Modifier')}
+            </span>
+          </button>
+
+          <button
+            className="header-btn preview-btn"
+            onClick={onPreview}
+            title="Aperçu du PDF"
+          >
+            <span className="btn-icon">👁️</span>
+            <span className="btn-text">Aperçu</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Modal Nouveau Template - Rendu via Portal */}
+      {showNewTemplateModal && createPortal(
+        <div className="modal-overlay" onClick={() => setShowNewTemplateModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Créer un nouveau template</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowNewTemplateModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <div className="form-group">
+                <label htmlFor="template-name">Nom du template</label>
+                <input
+                  id="template-name"
+                  type="text"
+                  value={newTemplateData.name}
+                  onChange={(e) => setNewTemplateData({...newTemplateData, name: e.target.value})}
+                  placeholder="Entrez le nom du template"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="template-width">Largeur (px)</label>
+                <input
+                  id="template-width"
+                  type="number"
+                  value={newTemplateData.width}
+                  onChange={(e) => setNewTemplateData({...newTemplateData, width: parseInt(e.target.value)})}
+                  min="100"
+                  max="2000"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="template-height">Hauteur (px)</label>
+                <input
+                  id="template-height"
+                  type="number"
+                  value={newTemplateData.height}
+                  onChange={(e) => setNewTemplateData({...newTemplateData, height: parseInt(e.target.value)})}
+                  min="100"
+                  max="3000"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="template-orientation">Orientation</label>
+                <select
+                  id="template-orientation"
+                  value={newTemplateData.orientation}
+                  onChange={(e) => setNewTemplateData({...newTemplateData, orientation: e.target.value})}
+                >
+                  <option value="portrait">Portrait</option>
+                  <option value="landscape">Paysage</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowNewTemplateModal(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleCreateNew}
+                disabled={!newTemplateData.name.trim()}
+              >
+                Créer le template
+              </button>
+            </div>
+          </div>
+        </div>,
+        getPortalContainer()
+      )}
+
+      {/* Modal Paramètres du Template - Rendu via Portal */}
+      {showTemplateSettingsModal && createPortal(
+        <div 
+          className="modal-overlay" 
+          onClick={() => setShowTemplateSettingsModal(false)}
+        >
+          <div
+            className="modal-content template-settings-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="modal-header-content">
+                <div className="modal-header-icon">
+                  <div className="settings-icon">⚙️</div>
+                </div>
+                <div className="modal-header-text">
+                  <h3>Paramètres du template</h3>
+                  <p>Personnalisez votre template</p>
+                </div>
+              </div>
+              <button
+                className="modal-close"
+                onClick={() => setShowTemplateSettingsModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <div className="form-group">
+                <div className="form-group-accent"></div>
+                <div className="form-group-content">
+                  <label htmlFor="settings-template-name">
+                    <span className="label-icon">📝</span>
+                    Nom du template
+                  </label>
+                  <input
+                    id="settings-template-name"
+                    type="text"
+                    value={templateSettings.name}
+                    onChange={(e) => setTemplateSettings({...templateSettings, name: e.target.value})}
+                    placeholder="Entrez le nom du template"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="form-group-accent"></div>
+                <div className="form-group-content">
+                  <label htmlFor="settings-template-description">
+                    <span className="label-icon">📄</span>
+                    Description
+                  </label>
+                  <textarea
+                    id="settings-template-description"
+                    value={templateSettings.description}
+                    onChange={(e) => setTemplateSettings({...templateSettings, description: e.target.value})}
+                    placeholder="Décrivez votre template (optionnel)"
+                    rows="3"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="form-group-accent"></div>
+                <div className="form-group-content">
+                  <label htmlFor="settings-template-category">
+                    <span className="label-icon">🏷️</span>
+                    Catégorie
+                  </label>
+                  <select
+                    id="settings-template-category"
+                    value={templateSettings.category}
+                    onChange={(e) => setTemplateSettings({...templateSettings, category: e.target.value})}
+                  >
+                    <option value="facture">Facture</option>
+                    <option value="devis">Devis</option>
+                    <option value="bon-commande">Bon de commande</option>
+                    <option value="contrat">Contrat</option>
+                    <option value="certificat">Certificat</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowTemplateSettingsModal(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleSaveTemplateSettings}
+              >
+                Sauvegarder
+              </button>
+            </div>
+          </div>
+        </div>,
+        getPortalContainer()
+      )}
+    </>
+  );
+};
+
+export default TemplateHeader;
