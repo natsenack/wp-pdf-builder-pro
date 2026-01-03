@@ -122,7 +122,7 @@ try {
 
     # AJOUTER LES FICHIERS COMPILÉS JS
     Write-Host "`n   🔍 Recherche des fichiers JS compilés..." -ForegroundColor Yellow
-    $distPath = Join-Path $WorkingDir "plugin/resources/assets/js/dist"
+    $distPath = Join-Path $WorkingDir "plugin/assets/js/dist"
     if (Test-Path $distPath) {
         $builtFiles = Get-ChildItem -Path $distPath -Filter "*.js" -Recurse
         foreach ($builtFile in $builtFiles) {
@@ -133,7 +133,7 @@ try {
     }
 
     # AJOUTER LES FICHIERS CSS COMPILÉS SI PRÉSENTS
-    $cssDistPath = Join-Path $WorkingDir "plugin/resources/assets/css"
+    $cssDistPath = Join-Path $WorkingDir "plugin/assets/css"
     if (Test-Path $cssDistPath) {
         $builtCssFiles = Get-ChildItem -Path $cssDistPath -Filter "*.css" -Recurse
         foreach ($builtCssFile in $builtCssFiles) {
