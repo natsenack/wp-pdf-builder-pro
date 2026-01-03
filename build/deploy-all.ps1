@@ -107,19 +107,8 @@ try {
 
     Write-Host "✅ Répertoires vérifiés/créés : $createdDirs" -ForegroundColor Green
 
-    # UPLOAD PARALLÈLE ULTRA-RAPIDE AVEC RUNSPACES
-    Write-Host "🚀 Upload parallèle ultra-rapide..." -ForegroundColor White
-
-    $totalFiles = $allFiles.Count
-    $maxConcurrent = 12
-    $startTime = Get-Date
-    $lastProgressTime = $startTime
-
-    # Grouper les fichiers par taille (gros fichiers en premier)
-    $sortedFiles = $allFiles | Sort-Object -Property Length -Descending
-
-    # ScriptBlock pour l'upload dans les runspaces avec retry
-    $uploadScript = {
+    # FONCTION UPLOAD SYNCHRONE
+    function Upload-File {
         param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPass, $fileName, $fileSize)
 
         $maxRetries = 3
@@ -204,6 +193,9 @@ try {
             }
         }
     }
+
+    # UPLOAD SYNCHRONE SIMPLE
+    Write-Host "🚀 Upload synchrone des fichiers..." -ForegroundColor Cyan
 
     # UPLOAD SYNCHRONE SIMPLE
     Write-Host "🚀 Upload synchrone des fichiers..." -ForegroundColor Cyan
