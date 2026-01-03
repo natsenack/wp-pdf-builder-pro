@@ -6,7 +6,7 @@ module.exports = {
   entry: {
     'pdf-builder-utils': './plugin/assets/js/pdf-builder-utils.js',
     'settings-tabs-improved': './plugin/assets/js/settings-tabs-improved.js',
-    'pdf-builder-react': './plugin/src/frontend/index.js'
+    'pdf-builder-react': './src/frontend/index.js'
   },
   output: {
     path: path.resolve(__dirname, 'plugin/assets/js/dist'),
