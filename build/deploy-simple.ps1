@@ -44,6 +44,30 @@ try {
     $allModified += $stagedArray
     $allModified = $allModified | Select-Object -Unique
 
+    # 1.3 COMPILATION AVANT GIT
+    Write-Host "`n1.3 Compilation avant git..." -ForegroundColor Magenta
+
+    try {
+        Push-Location $WorkingDir
+        Write-Host "   🔨 Lancement de npm run build..." -ForegroundColor Yellow
+
+        $ErrorActionPreference = "Continue"
+        $buildResult = cmd /c "cd /d $WorkingDir && npm run build" 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   ✅ Compilation reussie" -ForegroundColor Green
+        } else {
+            Write-Host "   ❌ Compilation echouee: $($buildResult -join ' ')" -ForegroundColor Red
+            Write-Host "   ⚠️ Continuation malgre l'erreur de compilation" -ForegroundColor Yellow
+        }
+
+        Pop-Location
+    } catch {
+        Write-Host "   ❌ Erreur compilation: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "   ⚠️ Continuation malgre l'erreur de compilation" -ForegroundColor Yellow
+    }
+
     # GIT ADD DES FICHIERS MODIFIES
     if ($allModified.Count -gt 0) {
         Write-Host "`n1.5 Git add des fichiers modifies..." -ForegroundColor Magenta
@@ -93,6 +117,29 @@ try {
             Write-Host "   ✅ Ajouté: $file" -ForegroundColor Green
         } else {
             Write-Host "   ❌ Ignoré: $file (ne correspond pas aux critères)" -ForegroundColor Gray
+        }
+    }
+
+    # AJOUTER LES FICHIERS COMPILÉS JS
+    Write-Host "`n   🔍 Recherche des fichiers JS compilés..." -ForegroundColor Yellow
+    $distPath = Join-Path $WorkingDir "plugin/resources/assets/js/dist"
+    if (Test-Path $distPath) {
+        $builtFiles = Get-ChildItem -Path $distPath -Filter "*.js" -Recurse
+        foreach ($builtFile in $builtFiles) {
+            $relativePath = $builtFile.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
+            $filesToDeploy += $builtFile
+            Write-Host "   ✅ Ajouté (compilé): $relativePath" -ForegroundColor Green
+        }
+    }
+
+    # AJOUTER LES FICHIERS CSS COMPILÉS SI PRÉSENTS
+    $cssDistPath = Join-Path $WorkingDir "plugin/resources/assets/css"
+    if (Test-Path $cssDistPath) {
+        $builtCssFiles = Get-ChildItem -Path $cssDistPath -Filter "*.css" -Recurse
+        foreach ($builtCssFile in $builtCssFiles) {
+            $relativePath = $builtCssFile.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
+            $filesToDeploy += $builtCssFile
+            Write-Host "   ✅ Ajouté (CSS compilé): $relativePath" -ForegroundColor Green
         }
     }
 
@@ -209,30 +256,6 @@ Write-Host "   ⏱️  Durée: $duration secondes" -ForegroundColor Cyan
 
 if ($errorCount -eq 0) {
     Write-Host "   🎉 Déploiement terminé avec succès!" -ForegroundColor Green
-
-    # 3.5 COMPILATION AVANT COMMIT
-    Write-Host "`n3.5 Compilation..." -ForegroundColor Magenta
-
-    try {
-        Push-Location $WorkingDir
-        Write-Host "   🔨 Lancement de npm run build..." -ForegroundColor Yellow
-
-        $ErrorActionPreference = "Continue"
-        $buildResult = cmd /c "cd /d $WorkingDir && npm run build" 2>&1
-        $ErrorActionPreference = "Stop"
-
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "   ✅ Compilation reussie" -ForegroundColor Green
-        } else {
-            Write-Host "   ❌ Compilation echouee: $($buildResult -join ' ')" -ForegroundColor Red
-            Write-Host "   ⚠️ Continuation du déploiement malgré l'erreur de compilation" -ForegroundColor Yellow
-        }
-
-        Pop-Location
-    } catch {
-        Write-Host "   ❌ Erreur compilation: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "   ⚠️ Continuation du déploiement malgré l'erreur de compilation" -ForegroundColor Yellow
-    }
 
     # 4 COMMIT GIT APRES DEPLOIEMENT
     Write-Host "`n4 Commit Git..." -ForegroundColor Magenta
