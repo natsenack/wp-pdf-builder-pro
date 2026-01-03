@@ -65,11 +65,22 @@ try {
             $ErrorActionPreference = "Stop"
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "   ✅ Commit cree: $commitMessage" -ForegroundColor Green
+
+                # PUSH APRES COMMIT
+                Write-Host "   📤 Push vers remote..." -ForegroundColor Yellow
+                $ErrorActionPreference = "Continue"
+                $pushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
+                $ErrorActionPreference = "Stop"
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "   ✅ Push reussi" -ForegroundColor Green
+                } else {
+                    Write-Host "   ⚠️ Push echoue: $($pushResult -join ' ')" -ForegroundColor Yellow
+                }
             } else {
                 Write-Host "   ⚠️ Commit echoue: $($commitResult -join ' ')" -ForegroundColor Yellow
             }
         } catch {
-            Write-Host "   ⚠️ Erreur commit: $($_.Exception.Message)" -ForegroundColor Yellow
+            Write-Host "   ⚠️ Erreur commit/push: $($_.Exception.Message)" -ForegroundColor Yellow
         }
     }
 
