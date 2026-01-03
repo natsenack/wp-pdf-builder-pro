@@ -1380,14 +1380,14 @@ function pdf_builder_init()
     }
 
     // Initialiser notre autoloader personnalisé
-    require_once dirname(plugin_dir_path(__FILE__)) . '/src/backend/core/Core/core/autoloader.php';
+    require_once plugin_dir_path(__FILE__) . 'src/backend/core/Core/core/PdfBuilderAutoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
         \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
 
     // Charger le système de nonce unifié
-    require_once dirname(plugin_dir_path(__FILE__)) . '/src/backend/core/Core/PDF_Builder_Nonce_Manager.php';
-    require_once dirname(plugin_dir_path(__FILE__)) . '/src/backend/core/Core/PDF_Builder_Unified_Ajax_Handler.php';
+    require_once plugin_dir_path(__FILE__) . 'src/backend/core/Core/PDF_Builder_Nonce_Manager.php';
+    require_once plugin_dir_path(__FILE__) . 'src/backend/core/Core/PDF_Builder_Unified_Ajax_Handler.php';
 
     // Initialiser le système de nonce unifié
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
@@ -1434,7 +1434,7 @@ function pdf_builder_init()
     // Tools for development/tests removed from production bootstrap
 
     // Charger le moniteur de performance (maintenant géré par le système avancé)
-    $performance_monitor_path = dirname(plugin_dir_path(__FILE__)) . '/src/backend/core/Core/PDF_Builder_Performance_Monitor.php';
+    $performance_monitor_path = plugin_dir_path(__FILE__) . 'src/backend/core/Core/PDF_Builder_Performance_Monitor.php';
     if (file_exists($performance_monitor_path)) {
         require_once $performance_monitor_path;
         // Le moniteur de performance est maintenant initialisé via PDF_Builder_Health_Monitor
