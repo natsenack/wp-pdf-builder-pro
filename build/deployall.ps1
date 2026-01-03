@@ -305,7 +305,10 @@ if ($DryRun) {
                 try {
                     $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpUser`:$ftpPass@$ftpHost$remotePath")
                     $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-                    $ftpRequest.UseBinary = $true
+                    
+                    # Utiliser le mode texte pour PHP/HTML/JSON, binaire pour les autres
+                    $useBinary = -not ($fileName -like "*.php" -or $fileName -like "*.html" -or $fileName -like "*.json" -or $fileName -like "*.txt" -or $fileName -like "*.md")
+                    $ftpRequest.UseBinary = $useBinary
                     $ftpRequest.UsePassive = $true
                     $ftpRequest.Timeout = 15000
                     $ftpRequest.ReadWriteTimeout = 30000
