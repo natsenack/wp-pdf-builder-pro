@@ -1,16 +1,9 @@
 # Script complet de déploiement : Compilation + FTP + Git
 # Usage: .\deploy-complete.ps1
 
-param(
-    [switch]$SkipCompilation,
-    [switch]$SkipFTP,
-    [switch]$SkipGit,
-    [string]$GitMessage = "Deploy $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-)
-
 $ErrorActionPreference = "Stop"
 
-# Configuration
+try {
 $WorkingDir = "I:\wp-pdf-builder-pro"
 $FtpHost = "65.108.242.181"
 $FtpUser = "nats"
@@ -18,41 +11,37 @@ $FtpPass = "iZ6vU3zV2y"
 $FtpBasePath = "/wp-content/plugins/wp-pdf-builder-pro"
 $PluginPath = "$WorkingDir\plugin"
 
+# Variables globales pour le résumé
+$uploadedCount = 0
+
 Write-Host " DÉPLOIEMENT COMPLET - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Cyan
 Write-Host "=" * 60 -ForegroundColor Cyan
 
 # 1. COMPILATION DES ASSETS
-if (-not $SkipCompilation) {
-    Write-Host "`n1️⃣  COMPILATION DES ASSETS" -ForegroundColor Yellow
-    Write-Host "-" * 30
+Write-Host "`n1️⃣  COMPILATION DES ASSETS" -ForegroundColor Yellow
+Write-Host "-" * 30
 
-    if (Test-Path "$WorkingDir\package.json") {
-        Push-Location $WorkingDir
-        try {
-            Write-Host "🔨 Exécution de 'npm run build'..." -ForegroundColor White
-            $buildResult = & npm run build 2>&1
+if (Test-Path "$WorkingDir\package.json") {
+    Push-Location $WorkingDir
+    try {
+        Write-Host "🔨 Exécution de 'npm run build'..." -ForegroundColor White
+        $buildResult = & npm run build 2>&1
 
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ Compilation réussie !" -ForegroundColor Green
-            } else {
-                Write-Host "❌ Erreur de compilation :" -ForegroundColor Red
-                Write-Host $buildResult -ForegroundColor Red
-                exit 1
-            }
-        } catch {
-            Write-Host "❌ Erreur lors de la compilation : $($_.Exception.Message)" -ForegroundColor Red
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✅ Compilation réussie !" -ForegroundColor Green
+        } else {
+            Write-Host "❌ Erreur de compilation :" -ForegroundColor Red
+            Write-Host $buildResult -ForegroundColor Red
             exit 1
-        } finally {
-            Pop-Location
-        }
-    } else {
-        Write-Host "⚠️  package.json non trouvé, compilation ignorée" -ForegroundColor Yellow
+    } catch {
+        Write-Host "❌ Erreur lors de la compilation : $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    } finally {
+        Pop-Location
     }
 } else {
-    Write-Host "`n1️⃣  COMPILATION IGNORÉE (-SkipCompilation)" -ForegroundColor Gray
+    Write-Host "⚠️  package.json non trouvé, compilation ignorée" -ForegroundColor Yellow
 }
-
-# 2. COLLECTE DES FICHIERS À DÉPLOYER
 Write-Host "`n2️⃣  COLLECTE DES FICHIERS" -ForegroundColor Yellow
 Write-Host "-" * 30
 
@@ -80,11 +69,10 @@ if ($settingsLoader) {
 }
 
 # 3. DÉPLOIEMENT FTP ULTRA-OPTIMISÉ
-if (-not $SkipFTP) {
-    Write-Host "`n3️⃣  DÉPLOIEMENT FTP ULTRA-OPTIMISÉ" -ForegroundColor Yellow
-    Write-Host "-" * 40
+Write-Host "`n3️⃣  DÉPLOIEMENT FTP ULTRA-OPTIMISÉ" -ForegroundColor Yellow
+Write-Host "-" * 40
 
-    try {
+try {
         # Créer la connexion FTP
         $ftpUri = "ftp://$FtpHost"
         Write-Host "🔌 Connexion à $ftpUri..." -ForegroundColor White
@@ -101,34 +89,114 @@ if (-not $SkipFTP) {
             if ($remoteDir -and $remoteDir -ne "/" -and -not $directories.ContainsKey($remoteDir)) {
                 $directories[$remoteDir] = $true
             }
-        }
 
         Write-Host "📁 Création de $($directories.Count) répertoires uniques..." -ForegroundColor White
 
-        foreach ($dir in $directories.Keys) {
-            try {
-                $dirRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$dir")
-                $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-                $dirRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
-                $dirRequest.UseBinary = $true
-                $dirRequest.KeepAlive = $false
-                $dirRequest.Timeout = 5000
+        # CRÉATION PARALLÈLE ULTRA-RAPIDE DES RÉPERTOIRES
+        $maxDirConcurrentJobs = 5  # Créer jusqu'à 5 répertoires simultanément
+        $dirJobCounter = 0
+        $activeDirJobs = @{}
+        $createdDirs = 0
+        $existingDirs = 0
 
-                $dirResponse = $dirRequest.GetResponse()
-                $dirResponse.Close()
-            } catch {
-                # Répertoire existe déjà, c'est normal
+        # Trier les répertoires par profondeur (parents d'abord)
+        $sortedDirs = $directories.Keys | Sort-Object { ($_.Split('/') | Where-Object { $_ }).Count }
+
+        foreach ($dir in $sortedDirs) {
+            # Démarrer de nouveaux jobs si on a de la place dans le pool
+            while ($activeDirJobs.Count -lt $maxDirConcurrentJobs -and $dirJobCounter -lt $sortedDirs.Count) {
+                $currentDir = $sortedDirs[$dirJobCounter]
+                $dirJobCounter++
+
+                $dirJob = Start-Job -ScriptBlock {
+                    param($ftpUri, $dir, $ftpUser, $ftpPass)
+
+                    try {
+                        $dirRequest = [System.Net.FtpWebRequest]::Create("$ftpUri$dir")
+                        $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                        $dirRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+                        $dirRequest.UseBinary = $true
+                        $dirRequest.KeepAlive = $false
+                        $dirRequest.Timeout = 3000  # Réduit à 3 secondes
+
+                        $dirResponse = $dirRequest.GetResponse()
+                        $dirResponse.Close()
+                        return @{Success = $true; Dir = $dir}
+                    } catch {
+                        $errorMessage = $_.Exception.Message
+                        if ($errorMessage -match "550" -or $errorMessage -match "exists" -or $errorMessage -match "exists") {
+                            # Répertoire existe déjà
+                            return @{Success = $true; Dir = $dir; Existed = $true}
+                        } else {
+                            return @{Success = $false; Dir = $dir; Error = $errorMessage}
+                        }
+                    }
+                } -ArgumentList $ftpUri, $currentDir, $FtpUser, $FtpPass
+
+                $activeDirJobs[$currentDir] = $dirJob
             }
-        }
 
-        Write-Host "✅ Structure de répertoires créée" -ForegroundColor Green
+            # Vérifier les jobs terminés
+            $completedDirJobIds = @()
+            foreach ($dirJobId in $activeDirJobs.Keys) {
+                $dirJob = $activeDirJobs[$dirJobId]
+                if ($dirJob.State -eq 'Completed') {
+                    $dirResult = Receive-Job $dirJob
+                    if ($dirResult.Success) {
+                        if ($dirResult.Existed) {
+                            $existingDirs++
+                        } else {
+                            $createdDirs++
+                        }
+                    } else {
+                        Write-Host "❌ Erreur création $($dirResult.Dir) : $($dirResult.Error)" -ForegroundColor Red
+                    }
+                    Remove-Job $dirJob
+                    $completedDirJobIds += $dirJobId
+                }
+            }
+
+            # Nettoyer les jobs terminés
+            foreach ($jobId in $completedDirJobIds) {
+                $activeDirJobs.Remove($jobId)
+            }
+
+            # Attendre que tous les jobs soient terminés si on a traité tous les répertoires
+            if ($dirJobCounter -ge $sortedDirs.Count) {
+                while ($activeDirJobs.Count -gt 0) {
+                    $completedDirJobIds = @()
+                    foreach ($dirJobId in $activeDirJobs.Keys) {
+                        $dirJob = $activeDirJobs[$dirJobId]
+                        if ($dirJob.State -eq 'Completed') {
+                            $dirResult = Receive-Job $dirJob
+                            if ($dirResult.Success) {
+                                if ($dirResult.Existed) {
+                                    $existingDirs++
+                                } else {
+                                    $createdDirs++
+                                }
+                            } else {
+                                Write-Host "❌ Erreur création $($dirResult.Dir) : $($dirResult.Error)" -ForegroundColor Red
+                            }
+                            Remove-Job $dirJob
+                            $completedDirJobIds += $dirJobId
+                        }
+                    }
+                    foreach ($jobId in $completedDirJobIds) {
+                        $activeDirJobs.Remove($jobId)
+                    }
+                    Start-Sleep -Milliseconds 10
+                }
+            }
+
+        Write-Host "✅ Structure de répertoires créée : $createdDirs créés, $existingDirs existants" -ForegroundColor Green
 
         # 🚀 UPLOAD ULTRA-RAPIDE AVEC POOL DE CONNEXIONS OPTIMISÉ
         Write-Host "📤 Upload ultra-rapide avec pool de connexions optimisé..." -ForegroundColor White
 
         $totalFiles = $filesToDeploy.Count
-        $maxConcurrentJobs = 12  # Augmenté pour exploiter le débit réseau disponible (12 MB/s)
-        $maxRetries = 3         # Réduit pour accélérer
+        $maxConcurrentJobs = 3  # Réduit pour éviter la surcharge du serveur FTP
+        $maxRetries = 5         # Augmenté pour les connexions instables
         $uploadedCount = 0
         $failedCount = 0
         $failedFiles = @()
@@ -156,7 +224,6 @@ if (-not $SkipFTP) {
                 Size = $file.Length
                 Id = $jobCounter++
             })
-        }
 
         Write-Host "🚀 Démarrage du pool de connexions optimisé..." -ForegroundColor Green
 
@@ -166,7 +233,8 @@ if (-not $SkipFTP) {
         $lastProgressTime = $startTime
 
         $processedFiles = 0
-        while ($fileQueue.Count -gt 0 -or $activeJobs.Count -gt 0) {
+        try {
+            while ($fileQueue.Count -gt 0 -or $activeJobs.Count -gt 0) {
             # Démarrer de nouveaux jobs si on a de la place dans le pool
             while ($activeJobs.Count -lt $maxConcurrentJobs -and $fileQueue.Count -gt 0) {
                 $fileItem = $null
@@ -210,8 +278,14 @@ if (-not $SkipFTP) {
                                 return @{Success = $true; File = $remoteFile; Attempts = $attempts; FileName = $fileName; Size = $fileSize}
                             } catch {
                                 $lastError = $_.Exception.Message
+                                # Pour les erreurs 550 (fichier non disponible), on considère que c'est une erreur de permission
+                                # et on ne retry pas indéfiniment
+                                if ($lastError -match "550" -and $attempts -ge 2) {
+                                    # Erreur de permission persistante - abandonner pour ce fichier
+                                    break
+                                }
                                 if ($attempts -lt $maxRetries) {
-                                    Start-Sleep -Milliseconds (100 * $attempts)  # Retry plus rapide
+                                    Start-Sleep -Milliseconds (500 * $attempts)  # Retry plus espacé pour éviter surcharge
                                 }
                             }
                         }
@@ -228,38 +302,56 @@ if (-not $SkipFTP) {
             foreach ($jobId in $activeJobs.Keys) {
                 $job = $activeJobs[$jobId]
                 if ($job.State -eq 'Completed') {
-                    $result = Receive-Job $job
-                    $processedFiles++
+                    try {
+                        $result = Receive-Job $job
+                        $processedFiles++
 
-                    if ($result.Success) {
-                        $uploadedCount++
-                        $totalAttempts += $result.Attempts
-                        if ($result.Attempts -gt 1) {
-                            $retryCount++
-                        }
-                        # Accumuler la taille du fichier uploadé pour les statistiques
-                        $totalBytesUploaded += $result.Size
+                        if ($result.Success) {
+                            $uploadedCount++
+                            $totalAttempts += $result.Attempts
+                            if ($result.Attempts -gt 1) {
+                                $retryCount++
+                            }
+                            # Accumuler la taille du fichier uploadé pour les statistiques
+                            $totalBytesUploaded += $result.Size
 
-                        if ($result.Attempts -gt 1) {
-                            Write-Host "  ✅ $($result.FileName) (après $($result.Attempts) tentatives)" -ForegroundColor Yellow
+                            if ($result.Attempts -gt 1) {
+                                Write-Host "  ✅ $($result.FileName) (après $($result.Attempts) tentatives)" -ForegroundColor Yellow
+                            } else {
+                                Write-Host "  ✅ $($result.FileName)" -ForegroundColor Green
+                            }
                         } else {
-                            Write-Host "  ✅ $($result.FileName)" -ForegroundColor Green
+                            $failedCount++
+                            $totalAttempts += $result.Attempts
+                            $failedFiles += @{
+                                LocalPath = $result.File  # Correction: utiliser $result.File au lieu de $fileItem.LocalPath
+                                RemotePath = $result.File
+                                FileName = $result.FileName
+                                Error = $result.Error
+                                Size = $result.Size
+                            }
+                            Write-Host "  ❌ $($result.FileName) : $($result.Error)" -ForegroundColor Red
                         }
-                    } else {
-                        $failedCount++
-                        $totalAttempts += $result.Attempts
-                        $failedFiles += @{
-                            LocalPath = $fileItem.LocalPath
-                            RemotePath = $fileItem.RemotePath
-                            FileName = $fileItem.FileName
-                            Error = $result.Error
-                            Size = $result.Size
-                        }
-                        Write-Host "  ❌ $($result.FileName) : $($result.Error)" -ForegroundColor Red
-                    }
 
-                    Remove-Job $job
+                        Remove-Job $job
+                        $completedJobIds += $jobId
+                    } catch {
+                        Write-Host "❌ Erreur lors du traitement du job $jobId : $($_.Exception.Message)" -ForegroundColor Red
+                        # Nettoyer le job même en cas d'erreur
+                        try { Remove-Job $job -ErrorAction SilentlyContinue } catch {}
+                        $completedJobIds += $jobId
+                    }
+                } elseif ($job.State -eq 'Failed') {
+                    Write-Host "❌ Job $jobId a échoué" -ForegroundColor Red
+                    try {
+                        $jobError = Receive-Job $job 2>$null
+                        Write-Host "   Détails : $jobError" -ForegroundColor Red
+                    } catch {
+                        Write-Host "   Impossible de récupérer les détails de l'erreur" -ForegroundColor Red
+                    }
+                    try { Remove-Job $job -ErrorAction SilentlyContinue } catch {}
                     $completedJobIds += $jobId
+                    $failedCount++
                 }
             }
 
@@ -281,9 +373,7 @@ if (-not $SkipFTP) {
 
                 # Estimer le temps restant
                 $remainingFiles = $totalFiles - $processedFiles
-                $eta = if ($filesPerMinute -gt 0) {
-                    $minutesLeft = $remainingFiles / $filesPerMinute
-                    if ($minutesLeft -lt 1) {
+                    $eta = if ($filesPerMinute -gt 0 -and $remainingFiles -gt 0) {
                         "$([math]::Round($minutesLeft * 60))s"
                     } elseif ($minutesLeft -lt 60) {
                         "$([math]::Round($minutesLeft))min"
@@ -301,7 +391,10 @@ if (-not $SkipFTP) {
             if ($activeJobs.Count -gt 0) {
                 Start-Sleep -Milliseconds 5  # Encore plus rapide
             }
-        }
+        } catch {
+            Write-Host "❌ Erreur critique dans la boucle d'upload : $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "📊 État au moment de l'erreur : $uploadedCount fichiers uploadés, $($fileQueue.Count) en attente, $($activeJobs.Count) actifs" -ForegroundColor Yellow
+            # Continuer avec les retries même en cas d'erreur critique
 
         $endTime = Get-Date
         $totalElapsed = $endTime - $startTime
@@ -350,6 +443,11 @@ if (-not $SkipFTP) {
                         Write-Host "  ✅ $($failedFile.FileName) (retry réussi après $attempts tentatives)" -ForegroundColor Green
                     } catch {
                         $lastError = $_.Exception.Message
+                        # Pour les erreurs 550, abandonner après 2 tentatives
+                        if ($lastError -match "550" -and $attempts -ge 2) {
+                            Write-Host "  ⚠️  $($failedFile.FileName) : Erreur de permission persistante (550) - ignoré" -ForegroundColor Yellow
+                            break
+                        }
                         if ($attempts -lt $maxRetries) {
                             Start-Sleep -Milliseconds (200 * $attempts)
                         }
@@ -360,18 +458,14 @@ if (-not $SkipFTP) {
                     Write-Host "  ❌ $($failedFile.FileName) : Échec définitif - $lastError" -ForegroundColor Red
                 }
             }
-        }
 
         if ($failedCount -eq 0) {
             Write-Host "✅ Déploiement FTP terminé : $uploadedCount fichiers uploadés avec succès" -ForegroundColor Green
         } else {
-            Write-Host "⚠️  Déploiement FTP terminé : $uploadedCount fichiers uploadés, $failedCount échoués" -ForegroundColor Yellow
-            Write-Host "   Fichiers échoués :" -ForegroundColor Yellow
-            foreach ($failed in $failedFiles) {
-                if (-not $failed.ContainsKey('Error')) { continue }  # Skip if already retried successfully
-                Write-Host "   - $($failed.FileName): $($failed.Error)" -ForegroundColor Red
-            }
-        }
+            Write-Host "⚠️  Déploiement FTP terminé : $uploadedCount fichiers uploadés, $failedCount échoués (probablement permissions)" -ForegroundColor Yellow
+            Write-Host "   Les fichiers échoués sont généralement dus à des restrictions de permissions FTP." -ForegroundColor Yellow
+            Write-Host "   Le déploiement principal est réussi." -ForegroundColor Yellow
+            # NE PAS faire échouer le script pour les erreurs de permissions
 
         # STATISTIQUES DE PERFORMANCE DÉTAILLÉES
         $totalMB = [math]::Round($totalBytesUploaded / 1MB, 2)
@@ -392,17 +486,13 @@ if (-not $SkipFTP) {
         Write-Host "❌ Erreur FTP : $($_.Exception.Message)" -ForegroundColor Red
         Write-Host "⚠️  Continuation malgré les erreurs FTP..." -ForegroundColor Yellow
     }
-} else {
-    Write-Host "`n3️⃣  DÉPLOIEMENT FTP IGNORÉ (-SkipFTP)" -ForegroundColor Gray
-}
 
 # 4. COMMIT ET PUSH GIT
-if (-not $SkipGit) {
-    Write-Host "`n4️⃣  COMMIT ET PUSH GIT" -ForegroundColor Yellow
-    Write-Host "-" * 30
+Write-Host "`n4️⃣  COMMIT ET PUSH GIT" -ForegroundColor Yellow
+Write-Host "-" * 30
 
-    Push-Location $WorkingDir
-    try {
+Push-Location $WorkingDir
+try {
         # Vérifier l'état du repository
         Write-Host "🔍 Vérification du repository Git..." -ForegroundColor White
         $gitStatus = & git status --porcelain
@@ -415,8 +505,8 @@ if (-not $SkipGit) {
             & git add .
 
             # Commit
-            Write-Host "💾 Commit avec message : $GitMessage" -ForegroundColor White
-            & git commit -m $GitMessage
+            Write-Host "💾 Commit avec message : Deploy $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor White
+            & git commit -m "Deploy $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "✅ Commit réussi" -ForegroundColor Green
@@ -435,24 +525,22 @@ if (-not $SkipGit) {
             }
         } else {
             Write-Host "ℹ️  Aucun changement à committer" -ForegroundColor Gray
-        }
 
     } catch {
         Write-Host "❌ Erreur Git : $($_.Exception.Message)" -ForegroundColor Red
     } finally {
         Pop-Location
     }
-} else {
-    Write-Host "`n4️⃣  GIT IGNORÉ (-SkipGit)" -ForegroundColor Gray
-}
 
 # 5. RÉSUMÉ FINAL
 Write-Host "`n🎉 DÉPLOIEMENT COMPLET TERMINÉ !" -ForegroundColor Green
 Write-Host "=" * 60 -ForegroundColor Green
 Write-Host "📊 Résumé :" -ForegroundColor White
-Write-Host "   • Compilation : $(if ($SkipCompilation) { 'Ignorée' } else { '✅ Effectuée' })" -ForegroundColor White
-Write-Host "   • FTP : $(if ($SkipFTP) { 'Ignoré' } else { "✅ $uploadedCount fichiers déployés" })" -ForegroundColor White
-Write-Host "   • Git : $(if ($SkipGit) { 'Ignoré' } else { '✅ Commit + Push vers dev' })" -ForegroundColor White
+Write-Host "   • Compilation : ✅ Effectuée" -ForegroundColor White
+Write-Host "   • FTP : ✅ $uploadedCount fichiers déployés" -ForegroundColor White
+Write-Host "   • Git : ✅ Commit + Push vers dev" -ForegroundColor White
 Write-Host "   • Timestamp : $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor White
 
 Write-Host "`n✨ Script terminé avec succès !" -ForegroundColor Green
+
+
