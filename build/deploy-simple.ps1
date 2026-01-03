@@ -55,6 +55,22 @@ try {
         } catch {
             Write-Host "   ⚠️ Erreur git add: $($_.Exception.Message)" -ForegroundColor Yellow
         }
+
+        # COMMIT GIT DES FICHIERS AJOUTES
+        Write-Host "`n1.7 Commit des fichiers ajoutes..." -ForegroundColor Magenta
+        try {
+            $commitMessage = "deploy prep: $(Get-Date -Format 'dd/MM/yyyy HH:mm') - $($allModified.Count) fichiers ajoutes"
+            $ErrorActionPreference = "Continue"
+            $commitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMessage`" --allow-empty" 2>&1
+            $ErrorActionPreference = "Stop"
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   ✅ Commit cree: $commitMessage" -ForegroundColor Green
+            } else {
+                Write-Host "   ⚠️ Commit echoue: $($commitResult -join ' ')" -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Host "   ⚠️ Erreur commit: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
     }
 
     $filesToDeploy = @()

@@ -3103,7 +3103,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       {/* Zone de travail principale */}
       <div className="pdf-builder-workspace editor-workspace">
         {/* Conteneur principal du workspace */}
-        <div className="workspace-content" style={{ display: 'flex', width: '100%', height: '100%' }}>
+        <div className="workspace-content" style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
           {/* Bibliothèque d'éléments */}
         {showElementLibrary && (
           <div className="pdf-builder-sidebar element-library-panel">
@@ -3116,7 +3116,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         )}
 
         {/* Canvas principal */}
-        <div className="pdf-builder-canvas-container canvas-container">
+        <div className="pdf-builder-canvas-container canvas-container" style={{ flex: 1 }}>
           <canvas
             ref={canvasRef}
             className="pdf-canvas"
