@@ -1,0 +1,262 @@
+<?php
+/**
+ * PDF Builder Pro - Handlers AJAX Principaux
+ * Gestion des actions AJAX essentielles
+ */
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+
+/**
+ * AJAX handler pour obtenir un nonce frais
+ */
+function pdf_builder_ajax_get_fresh_nonce() {
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Permission denied');
+        return;
+    }
+    $nonce = wp_create_nonce('pdf_builder_ajax');
+    wp_send_json_success(array(
+        'nonce' => $nonce,
+        'timestamp' => time()
+    ));
+}
+
+/**
+ * AJAX handler pour récupérer un template par ID
+ */
+function pdf_builder_ajax_get_template() {
+    // Vérifier le nonce de sécurité
+    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Vérifier les permissions utilisateur
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error(__('Permission refusée.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Valider et récupérer l'ID du template
+    $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
+    if (!$template_id || $template_id < 1) {
+        wp_send_json_error(__('ID du template manquant ou invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Récupérer le template depuis la table personnalisée
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+    $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+
+    // Si le template n'est pas trouvé dans la table personnalisée, chercher dans wp_posts
+    if (!$template) {
+        $post = get_post($template_id);
+        if ($post && $post->post_type === 'pdf_template') {
+            $template_data_raw = get_post_meta($post->ID, '_pdf_template_data', true);
+            if (!empty($template_data_raw)) {
+                $template = array(
+                    'id' => $post->ID,
+                    'name' => $post->post_title,
+                    'template_data' => $template_data_raw,
+                    'created_at' => $post->post_date,
+                    'updated_at' => $post->post_modified
+                );
+            }
+        }
+    }
+
+    if (!$template) {
+        wp_send_json_error(__('Template non trouvé.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Décoder les données JSON du template
+    $template_data = json_decode($template['template_data'], true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        wp_send_json_error(__('Erreur lors du décodage des données du template.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Gérer les différents formats de données
+    $elements = [];
+    $canvas = null;
+    if (is_array($template_data)) {
+        if (isset($template_data['elements'])) {
+            $elements = $template_data['elements'];
+            $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
+        } elseif (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+            $elements = $template_data['pages'][0]['elements'] ?? [];
+            $canvas = isset($template_data['canvas']) ? $template_data['canvas'] : null;
+        } else {
+            $elements = $template_data;
+            $canvas = null;
+        }
+    } else {
+        wp_send_json_error(__('Format de données du template invalide.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Traiter les éléments
+    if (is_string($elements)) {
+        $unescaped_elements = stripslashes($elements);
+        $decoded_elements = json_decode($unescaped_elements, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $elements = $decoded_elements;
+        } else {
+            $elements = [];
+        }
+    } elseif (!is_array($elements)) {
+        $elements = [];
+    }
+
+    // Traiter le canvas si présent
+    if ($canvas !== null) {
+        if (is_string($canvas)) {
+            $unescaped_canvas = stripslashes($canvas);
+            $decoded_canvas = json_decode($unescaped_canvas, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $canvas = $decoded_canvas;
+            } else {
+                $canvas = null;
+            }
+        } elseif (!is_array($canvas) && !is_null($canvas)) {
+            $canvas = null;
+        }
+    }
+
+    // Vérifier que elements est défini
+    if (!isset($elements)) {
+        wp_send_json_error(__('Données du template incomplètes.', 'pdf-builder-pro'));
+        return;
+    }
+
+    // Transformer les éléments dans le format attendu par React
+    $transformed_elements = [];
+    foreach ($elements as $element) {
+        $transformed_element = [];
+
+        // Copier les propriétés de base
+        if (isset($element['id'])) {
+            $transformed_element['id'] = $element['id'];
+        }
+        if (isset($element['type'])) {
+            $transformed_element['type'] = $element['type'];
+        }
+        if (isset($element['content'])) {
+            $transformed_element['content'] = $element['content'];
+        }
+
+        // Gérer les positions
+        if (isset($element['position']['x'])) {
+            $transformed_element['x'] = (int)$element['position']['x'];
+        } elseif (isset($element['x'])) {
+            $transformed_element['x'] = (int)$element['x'];
+        }
+        if (isset($element['position']['y'])) {
+            $transformed_element['y'] = (int)$element['position']['y'];
+        } elseif (isset($element['y'])) {
+            $transformed_element['y'] = (int)$element['y'];
+        }
+
+        // Gérer les dimensions
+        if (isset($element['size']['width'])) {
+            $transformed_element['width'] = (int)$element['size']['width'];
+        } elseif (isset($element['width'])) {
+            $transformed_element['width'] = (int)$element['width'];
+        }
+        if (isset($element['size']['height'])) {
+            $transformed_element['height'] = (int)$element['size']['height'];
+        } elseif (isset($element['height'])) {
+            $transformed_element['height'] = (int)$element['height'];
+        }
+
+        // Copier les autres propriétés de style
+        $style_properties = ['fontSize', 'fontWeight', 'color', 'textAlign', 'verticalAlign', 'backgroundColor', 'borderColor', 'borderWidth', 'borderStyle', 'rotation', 'opacity'];
+        if (isset($element['style']) && is_array($element['style'])) {
+            foreach ($style_properties as $prop) {
+                if (isset($element['style'][$prop])) {
+                    $transformed_element[$prop] = $element['style'][$prop];
+                }
+            }
+        } else {
+            foreach ($style_properties as $prop) {
+                if (isset($element[$prop])) {
+                    $transformed_element[$prop] = $element[$prop];
+                }
+            }
+        }
+
+        // Pour les éléments text, utiliser content comme text
+        if (isset($element['type']) && $element['type'] === 'text' && isset($element['content'])) {
+            $transformed_element['text'] = $element['content'];
+        }
+
+        // Copier d'autres propriétés utiles
+        $copy_properties = ['visible', 'locked', 'zIndex', 'name', 'src', 'logoUrl', 'defaultSrc', 'alignment', 'borderRadius'];
+        foreach ($copy_properties as $prop) {
+            if (isset($element[$prop])) {
+                $transformed_element[$prop] = $element[$prop];
+            }
+        }
+
+        // Propriétés par défaut
+        if (!isset($transformed_element['x'])) {
+            $transformed_element['x'] = 0;
+        }
+        if (!isset($transformed_element['y'])) {
+            $transformed_element['y'] = 0;
+        }
+        if (!isset($transformed_element['width'])) {
+            $transformed_element['width'] = 100;
+        }
+        if (!isset($transformed_element['height'])) {
+            $transformed_element['height'] = 50;
+        }
+        if (!isset($transformed_element['visible'])) {
+            $transformed_element['visible'] = true;
+        }
+        if (!isset($transformed_element['locked'])) {
+            $transformed_element['locked'] = false;
+        }
+
+        $transformed_elements[] = $transformed_element;
+    }
+
+    $elements = $transformed_elements;
+
+    // Enrichir les logos company_logo avec src si absent
+    foreach ($elements as &$el) {
+        if (isset($el['type']) && $el['type'] === 'company_logo') {
+            if (empty($el['src']) && empty($el['logoUrl'])) {
+                $custom_logo_id = get_theme_mod('custom_logo');
+                if ($custom_logo_id) {
+                    $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    if ($logo_url) {
+                        $el['src'] = $logo_url;
+                    }
+                } else {
+                    $site_logo_id = get_option('site_logo');
+                    if ($site_logo_id) {
+                        $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
+                        if ($logo_url) {
+                            $el['src'] = $logo_url;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    unset($el);
+
+    $cache_data = array(
+        'id' => $template['id'],
+        'name' => $template['name'],
+        'elements' => $elements,
+        'canvas' => $canvas
+    );
+
+    wp_send_json_success($cache_data);
+}

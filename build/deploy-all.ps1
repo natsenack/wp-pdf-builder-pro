@@ -121,7 +121,10 @@ param(
     [string]$FileFilter = "all",
 
     [Parameter(Mandatory=$false)]
-    [string[]]$CustomFilter = @()
+    [string[]]$CustomFilter = @(),
+
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipBuild
 )
 
 # Configuration des logs
@@ -667,12 +670,12 @@ function Test-FtpDirectoryEmpty {
 # Déterminer le chemin local selon le mode
 switch ($Mode) {
     "plugin" {
-        $LocalPath = "I:\wp-pdf-builder-pro\plugin"
+        $LocalPath = "I:\wp-pdf-builder-proV1\plugin"
         $Description = "PLUGIN WORDPRESS UNIQUEMENT"
         $Color = "Green"
     }
     default {
-        $LocalPath = "I:\wp-pdf-builder-pro\plugin"
+        $LocalPath = "I:\wp-pdf-builder-proV1\plugin"
         $Description = "TEST DE DÉPLOIEMENT (SIMULATION)"
         $Color = "Cyan"
         $IsTestMode = $true
@@ -992,7 +995,7 @@ if ($IsTestMode) {
 }
 
 # 6. Compiler les assets (si nécessaire)
-if ($Mode -eq "plugin" -and -not $IsTestMode) {
+if ($Mode -eq "plugin" -and -not $IsTestMode -and -not $SkipBuild) {
     Write-Host "`n1️⃣  ÉTAPE 1 : COMPILATION DES ASSETS" -ForegroundColor Magenta
     Write-Host "-" * 40
 
