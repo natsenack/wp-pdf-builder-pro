@@ -25,7 +25,7 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
-$WorkingDir = "I:\wp-pdf-builder-pro"
+$WorkingDir = "I:\wp-pdf-builder-proV1"
 
 # Fonction pour générer un message de commit intelligent
 function Get-SmartCommitMessage {
