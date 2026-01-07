@@ -181,6 +181,44 @@ try {
         Write-Host "Erreur lors de la detection des fichiers vendor: $($_.Exception.Message)" -ForegroundColor Yellow
     }
     
+    # Vérifier si le dossier vendor existe déjà sur le serveur distant
+    Write-Host "Verification de l'existence du dossier vendor sur le serveur..." -ForegroundColor Yellow
+    $vendorExists = $false
+    try {
+        $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$FtpPath/vendor/"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.UseBinary = $false
+        $ftpRequest.UsePassive = $true
+        $ftpRequest.Timeout = 5000
+        $ftpRequest.KeepAlive = $false
+        $response = $ftpRequest.GetResponse()
+        $reader = New-Object System.IO.StreamReader($response.GetResponseStream())
+        $content = $reader.ReadToEnd()
+        $reader.Close()
+        $response.Close()
+        
+        if ($content -and $content.Trim().Length -gt 0) {
+            $vendorExists = $true
+            Write-Host "   Dossier vendor detecte sur le serveur - exclusion des fichiers vendor du deploiement" -ForegroundColor Cyan
+        } else {
+            Write-Host "   Dossier vendor non detecte sur le serveur" -ForegroundColor Gray
+        }
+    } catch {
+        Write-Host "   Impossible de verifier le dossier vendor (serveur indisponible) - inclusion des fichiers vendor" -ForegroundColor Yellow
+        $vendorExists = $false
+    }
+    
+    # Exclure les fichiers vendor si le dossier existe déjà
+    if ($vendorExists) {
+        $originalCount = $pluginModified.Count
+        $pluginModified = $pluginModified | Where-Object { $_ -notlike "plugin/vendor/*" }
+        $excludedCount = $originalCount - $pluginModified.Count
+        if ($excludedCount -gt 0) {
+            Write-Host "   $excludedCount fichier(s) vendor exclu(s) du deploiement" -ForegroundColor Cyan
+        }
+    }
+    
     if ($pluginModified.Count -eq 0) {
         Write-Host "Aucun fichier modifie a deployer" -ForegroundColor Green
         Write-Host "   (Tous les fichiers sont a jour)" -ForegroundColor Gray
