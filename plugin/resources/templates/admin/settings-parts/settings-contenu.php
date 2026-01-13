@@ -616,8 +616,8 @@
 
                         var data = {
                             action: 'pdf_builder_save_allowed_setting',
-                            option_name: optionName,
-                            option_value: value,
+                            setting_key: optionName,
+                            values: JSON.stringify(value),
                             nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.ajax_nonce) ? window.pdfBuilderNotifications.ajax_nonce : ''
                         };
 
