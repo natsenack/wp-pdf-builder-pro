@@ -767,7 +767,7 @@
                             }
 
                             // Appliquer paramètres
-                            var applyBtn = e.target.closest('.canvas-modal-apply');
+                            var applyBtn = e.target.closest('.canvas-modal-save');
                             if (applyBtn) {
                                 e.preventDefault();
                                 var category = applyBtn.getAttribute('data-category');
