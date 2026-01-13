@@ -681,6 +681,9 @@ function dismissTemplateLimitNotice() {
     console.log('dismissTemplateLimitNotice called');
     const notice = document.getElementById('pdf-builder-template-limit-notice');
     console.log('notice element:', notice);
+    console.log('notice current display:', notice ? notice.style.display : 'element not found');
+    console.log('notice classes:', notice ? notice.className : 'element not found');
+
     if (notice) {
         // Utiliser le système localStorage de PDF Builder
         var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
@@ -689,7 +692,15 @@ function dismissTemplateLimitNotice() {
         localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
 
         notice.style.display = 'none';
+        notice.classList.add('pdf-builder-dismissed');
         console.log('notice hidden and saved to localStorage');
+        console.log('localStorage content:', localStorage.getItem('pdf_builder_dismissed_notices'));
+
+        // Vérifier après un court délai si elle est toujours masquée
+        setTimeout(function() {
+            console.log('notice display after timeout:', notice.style.display);
+            console.log('notice classes after timeout:', notice.className);
+        }, 100);
     }
 }
 
