@@ -34,7 +34,7 @@ try {
         if (window.pdfBuilderDebugSettings && window.pdfBuilderDebugSettings.javascript) {
             
         }
-        this.init();
+        // this.init(); // Moved to end of constructor
 
         /**
          * Initialisation du système
@@ -486,6 +486,9 @@ try {
             }
             this.initialized = false;
         }
+
+        // Initialize the instance
+        this.init();
     }
 
     // Instance globale
