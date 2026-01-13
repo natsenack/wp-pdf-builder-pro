@@ -714,8 +714,14 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, checking for dismissed notice');
     const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
     console.log('Dismissed status:', dismissed);
+
+    // Ne masquer que si la notification existe ET qu'elle a été explicitement masquée
     if (dismissed === 'true') {
-        dismissTemplateLimitNotice();
+        const notice = document.getElementById('template-limit-notice');
+        if (notice) {
+            console.log('Removing previously dismissed notice');
+            notice.remove();
+        }
     }
 });
 </script>
