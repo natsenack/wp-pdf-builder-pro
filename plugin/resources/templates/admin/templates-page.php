@@ -72,7 +72,7 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 
 <?php
 // Enqueue the templates JavaScript
-wp_enqueue_script('pdf-builder-templates', '', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+wp_enqueue_script('pdf-builder-templates', '', ['jquery'], PDF_BUILDER_PRO_VERSION, false);
 wp_add_inline_script('pdf-builder-templates', "
 var pdfBuilderTemplatesNonce = '" . esc_js($templates_nonce) . "';
 var ajaxurl = '" . esc_js(admin_url('admin-ajax.php')) . "';
