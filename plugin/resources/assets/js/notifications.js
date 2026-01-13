@@ -5,10 +5,10 @@
  * Updated: 2025-11-29
  */
 
-console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and starting execution');
+// console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and starting execution');
 
 try {
-    console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
+    // console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
 
     
         'use strict';
@@ -632,14 +632,14 @@ try {
         }
     };
 
-    console.log('[PDF Builder] NOTIFICATIONS.JS - Global functions defined:');
-    console.log('[PDF Builder] NOTIFICATIONS.JS - showSuccessNotification:', typeof window.showSuccessNotification);
-    console.log('[PDF Builder] NOTIFICATIONS.JS - showErrorNotification:', typeof window.showErrorNotification);
+    // console.log('[PDF Builder] NOTIFICATIONS.JS - Global functions defined:');
+    // console.log('[PDF Builder] NOTIFICATIONS.JS - showSuccessNotification:', typeof window.showSuccessNotification);
+    // console.log('[PDF Builder] NOTIFICATIONS.JS - showErrorNotification:', typeof window.showErrorNotification);
 
     // Initialisation automatique
     jQuery(document).ready(function() {
         window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
-        console.log('[PDF Builder] NOTIFICATIONS.JS - Instance initialized in document ready');
+        // console.log('[PDF Builder] NOTIFICATIONS.JS - Instance initialized in document ready');
 
         // Filtrer les notifications WordPress pour n'afficher que celles liées au PDF Builder
         filterWordPressNotifications();
@@ -649,7 +649,7 @@ try {
      * Filtre les notifications WordPress pour n'afficher que celles liées au PDF Builder
      */
     function filterWordPressNotifications() {
-        console.log('[PDF Builder] NOTIFICATIONS.JS - Filtering WordPress notifications...');
+        // console.log('[PDF Builder] NOTIFICATIONS.JS - Filtering WordPress notifications...');
 
         // Fonction pour marquer les notifications pertinentes
         function markRelevantNotifications() {
@@ -659,7 +659,7 @@ try {
 
                 // EXCLURE la notification de limite de templates du filtrage
                 if ($notice.attr('id') === 'pdf-builder-template-limit-notice' || $notice.hasClass('pdf-builder-template-limit-notice')) {
-                    console.log('[PDF Builder] NOTIFICATIONS.JS - Skipping template limit notice (always visible)');
+                    // console.log('[PDF Builder] NOTIFICATIONS.JS - Skipping template limit notice (always visible)');
                     return; // Ne pas traiter cette notification
                 }
 
@@ -753,11 +753,11 @@ try {
                     $notice.addClass('pdf-builder-notice pdf-builder-related');
                     // S'assurer qu'elle n'a pas la classe de masquage
                     $notice.removeClass('pdf-builder-hide');
-                    console.log('[PDF Builder] NOTIFICATIONS.JS - Showing PDF Builder related notice:', noticeText.substring(0, 100) + '...');
+                    // console.log('[PDF Builder] NOTIFICATIONS.JS - Showing PDF Builder related notice:', noticeText.substring(0, 100) + '...');
                 } else {
                     // Marquer explicitement pour le masquage forcé
                     $notice.addClass('pdf-builder-hide');
-                    console.log('[PDF Builder] NOTIFICATIONS.JS - Hiding non-PDF Builder notice:', noticeText.substring(0, 100) + '...');
+                    // console.log('[PDF Builder] NOTIFICATIONS.JS - Hiding non-PDF Builder notice:', noticeText.substring(0, 100) + '...');
                 }
             });
         }
@@ -827,30 +827,30 @@ try {
      * Gestion de la fermeture des notifications PDF Builder
      */
     function initNoticeDismissal() {
-        console.log('[PDF Builder] NOTIFICATIONS.JS - Initializing notice dismissal...');
+        // console.log('[PDF Builder] NOTIFICATIONS.JS - Initializing notice dismissal...');
 
         // Vérifier si la notification a été fermée précédemment
         var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
         if (dismissedNotices) {
             dismissedNotices = JSON.parse(dismissedNotices);
             if (dismissedNotices['template_limit']) {
-                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice was previously dismissed, hiding it');
+                // console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice was previously dismissed, hiding it');
                 jQuery('#pdf-builder-template-limit-notice').addClass('pdf-builder-dismissed').hide();
-                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice hidden on init');
+                // console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice hidden on init');
             }
         }
 
         // Gérer le clic sur le bouton de fermeture
         jQuery(document).on('click', '.pdf-builder-dismiss-btn', function(e) {
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button clicked');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Event target:', e.target);
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Event target classes:', e.target.className);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button clicked');
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Event target:', e.target);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Event target classes:', e.target.className);
             e.preventDefault();
             e.stopPropagation();
 
             var $notice = jQuery(this).closest('.pdf-builder-template-limit-notice');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Found notice element:', $notice.length, $notice);
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Notice HTML:', $notice.html());
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Found notice element:', $notice.length, $notice);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Notice HTML:', $notice.html());
 
             if ($notice.length === 0) {
                 console.error('[PDF Builder] NOTIFICATIONS.JS - Could not find parent notice element');
@@ -862,11 +862,11 @@ try {
             var noticeId = 'template_limit';
 
             // Masquer la notification immédiatement et ajouter la classe
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Before hide, notice is visible:', $notice.is(':visible'));
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Before hide, notice is visible:', $notice.is(':visible'));
             $notice.hide().addClass('pdf-builder-dismissed');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Notice hidden immediately');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - After hide, notice is visible:', $notice.is(':visible'));
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Notice has dismissed class:', $notice.hasClass('pdf-builder-dismissed'));
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Notice hidden immediately');
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - After hide, notice is visible:', $notice.is(':visible'));
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Notice has dismissed class:', $notice.hasClass('pdf-builder-dismissed'));
 
             // Sauvegarder l'état dans localStorage
             var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
@@ -874,28 +874,28 @@ try {
             dismissedNotices[noticeId] = true;
             localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
 
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice dismissed and saved to localStorage');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - localStorage content:', localStorage.getItem('pdf_builder_dismissed_notices'));
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice dismissed and saved to localStorage');
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - localStorage content:', localStorage.getItem('pdf_builder_dismissed_notices'));
         });
 
         // Vérifier que le bouton existe
         setTimeout(function() {
             var $dismissBtn = jQuery('.pdf-builder-dismiss-btn');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button found:', $dismissBtn.length, $dismissBtn);
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button HTML:', $dismissBtn.html());
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button parent:', $dismissBtn.closest('.pdf-builder-template-limit-notice').length);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button found:', $dismissBtn.length, $dismissBtn);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button HTML:', $dismissBtn.html());
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button parent:', $dismissBtn.closest('.pdf-builder-template-limit-notice').length);
         }, 1000);
 
         // Gérer le clic sur les boutons qui doivent réafficher la notification
         jQuery(document).on('click', '#upgrade-required-btn, #open-template-gallery', function(e) {
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Template action button clicked, re-showing notification');
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Button clicked:', this.id);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Template action button clicked, re-showing notification');
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Button clicked:', this.id);
 
             var $notice = jQuery('#pdf-builder-template-limit-notice');
             if ($notice.length > 0) {
                 // Retirer la classe dismissed et afficher la notification
                 $notice.removeClass('pdf-builder-dismissed').show();
-                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice re-shown');
+                // console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice re-shown');
 
                 // Supprimer l'état du localStorage
                 var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');

@@ -8,7 +8,7 @@
 
     // Fonction pour forcer le rechargement des CSS
     function forceCSSReload() {
-        console.log('🔄 PDF Builder: Forçage du rechargement CSS...');
+        // console.log('🔄 PDF Builder: Forçage du rechargement CSS...');
 
         // Récupérer tous les liens CSS du plugin
         $('link[rel="stylesheet"]').each(function() {
@@ -17,11 +17,11 @@
                 // Ajouter un paramètre unique pour forcer le rechargement
                 var newHref = href + (href.indexOf('?') !== -1 ? '&' : '?') + '_force=' + Date.now();
                 $(this).attr('href', newHref);
-                console.log('📄 CSS rechargé:', href);
+                // console.log('📄 CSS rechargé:', href);
             }
         });
 
-        console.log('✅ PDF Builder: Rechargement CSS terminé');
+        // console.log('✅ PDF Builder: Rechargement CSS terminé');
     }
 
     // Exposer la fonction globalement pour utilisation manuelle

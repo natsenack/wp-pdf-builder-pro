@@ -460,7 +460,7 @@
                 (function($) {
                     'use strict';
 
-                    console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
+                    // console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
 
                     // Définir ajaxurl si non défini (nécessaire pour les appels AJAX)
                     if (typeof ajaxurl === 'undefined') {
@@ -477,27 +477,27 @@
 
                     // Fonction simple pour ouvrir une modal
                     function openModal(category) {
-                        console.log('[PDF Builder] openModal called with category:', category);
+                        // console.log('[PDF Builder] openModal called with category:', category);
                         var modalId = modalConfig[category];
-                        console.log('[PDF Builder] Looking for modal ID:', modalId);
+                        // console.log('[PDF Builder] Looking for modal ID:', modalId);
                         if (!modalId) {
                             console.error('[PDF Builder] Unknown category:', category);
                             return;
                         }
 
                         var modal = document.getElementById(modalId);
-                        console.log('[PDF Builder] Modal element found:', modal);
+                        // console.log('[PDF Builder] Modal element found:', modal);
                         if (modal) {
-                            console.log('[PDF Builder] Setting modal display to flex');
+                            // console.log('[PDF Builder] Setting modal display to flex');
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
-                            console.log('[PDF Builder] Opened modal:', modalId);
+                            // console.log('[PDF Builder] Opened modal:', modalId);
                         } else {
                             console.error('[PDF Builder] Modal not found:', modalId);
-                            console.log('[PDF Builder] Available modal IDs:');
+                            // console.log('[PDF Builder] Available modal IDs:');
                             Object.values(modalConfig).forEach(function(id) {
                                 var element = document.getElementById(id);
-                                console.log('  -', id, ':', element ? 'EXISTS' : 'NOT FOUND');
+                                // console.log('  -', id, ':', element ? 'EXISTS' : 'NOT FOUND');
                             });
                         }
                     }
@@ -507,33 +507,33 @@
                         if (modalElement) {
                             modalElement.style.display = 'none';
                             document.body.style.overflow = '';
-                            console.log('[PDF Builder] Closed modal');
+                            // console.log('[PDF Builder] Closed modal');
                         }
                     }
 
                     // Appliquer les paramètres d'une modal
                     function applyModalSettings(category) {
-                        console.log('[PDF Builder DEBUG] applyModalSettings called with category:', category);
+                        // console.log('[PDF Builder DEBUG] applyModalSettings called with category:', category);
 
                         var modalId = modalConfig[category];
-                        console.log('[PDF Builder DEBUG] modalId for category:', modalId);
+                        // console.log('[PDF Builder DEBUG] modalId for category:', modalId);
 
                         if (!modalId) {
-                            console.log('[PDF Builder DEBUG] No modalId found for category, returning');
+                            // console.log('[PDF Builder DEBUG] No modalId found for category, returning');
                             return;
                         }
 
                         var modal = document.getElementById(modalId);
-                        console.log('[PDF Builder DEBUG] Modal element found:', modal ? 'YES' : 'NO');
+                        // console.log('[PDF Builder DEBUG] Modal element found:', modal ? 'YES' : 'NO');
 
                         if (!modal) {
-                            console.log('[PDF Builder DEBUG] Modal element not found, returning');
+                            // console.log('[PDF Builder DEBUG] Modal element not found, returning');
                             return;
                         }
 
                         // Collecter et synchroniser les valeurs
                         var inputs = modal.querySelectorAll('input, select, textarea');
-                        console.log('[PDF Builder DEBUG] Found', inputs.length, 'inputs in modal');
+                        // console.log('[PDF Builder DEBUG] Found', inputs.length, 'inputs in modal');
 
                         var updatedCount = 0;
 
@@ -548,34 +548,34 @@
                             }
                         });
 
-                        console.log('[PDF Builder DEBUG] Inputs grouped by name:', Object.keys(inputsByName));
+                        // console.log('[PDF Builder DEBUG] Inputs grouped by name:', Object.keys(inputsByName));
 
                         // Traiter chaque groupe d'inputs
                         var savePromises = [];
                         Object.keys(inputsByName).forEach(function(inputName) {
-                            console.log('[PDF Builder DEBUG] Processing input group:', inputName);
+                            // console.log('[PDF Builder DEBUG] Processing input group:', inputName);
 
                             var inputGroup = inputsByName[inputName];
                             var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
 
-                            console.log('[PDF Builder DEBUG] Hidden field found for', inputName + ':', hiddenField ? 'YES' : 'NO');
+                            // console.log('[PDF Builder DEBUG] Hidden field found for', inputName + ':', hiddenField ? 'YES' : 'NO');
 
                             if (hiddenField) {
                                 var newValue;
 
                                 // Gérer les arrays (checkboxes multiples)
                                 if (inputName.includes('[]') && inputGroup.length > 1) {
-                                    console.log('[PDF Builder DEBUG] Processing array input:', inputName, 'with', inputGroup.length, 'elements');
+                                    // console.log('[PDF Builder DEBUG] Processing array input:', inputName, 'with', inputGroup.length, 'elements');
 
                                     newValue = [];
                                     inputGroup.forEach(function(input) {
                                         if (input.type === 'checkbox' && input.checked) {
                                             newValue.push(input.value);
-                                            console.log('[PDF Builder DEBUG] Checkbox checked:', input.value);
+                                            // console.log('[PDF Builder DEBUG] Checkbox checked:', input.value);
                                         }
                                     });
                                     newValue = JSON.stringify(newValue);
-                                    console.log('[PDF Builder DEBUG] Array value:', newValue);
+                                    // console.log('[PDF Builder DEBUG] Array value:', newValue);
 
                                     // Sauvegarder directement les paramètres allowed_* via AJAX
                                     if (inputName.includes('allowed_')) {
