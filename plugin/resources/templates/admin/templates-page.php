@@ -67,13 +67,24 @@ if ($templates_count === 0 && !$is_premium) {
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
 <script>
-var pdfBuilderTemplatesNonce = '<?php echo esc_js($templates_nonce); ?>';
 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
-var pdfBuilderAjax = {
-    nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>',
-    editor_url: '<?php echo esc_js(admin_url('admin.php?page=pdf-builder-react-editor')); ?>'
-};
 </script>
+
+<?php
+// Enqueue the templates JavaScript
+wp_enqueue_script('pdf-builder-templates', '', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+wp_add_inline_script('pdf-builder-templates', "
+var pdfBuilderTemplatesNonce = '" . esc_js($templates_nonce) . "';
+var ajaxurl = '" . esc_js(admin_url('admin-ajax.php')) . "';
+var pdfBuilderAjax = {
+    nonce: '" . esc_js(wp_create_nonce('pdf_builder_ajax')) . "',
+    editor_url: '" . esc_js(admin_url('admin.php?page=pdf-builder-react-editor')) . "'
+};
+var defaultDpi = '" . esc_js($canvas_defaults['dpi']) . "';
+var defaultFormat = '" . esc_js($canvas_defaults['format']) . "';
+var defaultOrientation = '" . esc_js($canvas_defaults['orientation']) . "';
+");
+?>
 
 <div class="wrap">
     <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
@@ -681,17 +692,18 @@ var pdfBuilderAjax = {
     </div>
 </div>
 
-<script>
+<?php
+// Enqueue the templates JavaScript with all functions
+wp_enqueue_script('pdf-builder-templates', '', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+wp_add_inline_script('pdf-builder-templates', "
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
     // Pour les utilisateurs gratuits, utiliser la même modal pour tous les upgrades
-    <?php if (!$is_premium): ?>
-        // En mode gratuit, utiliser toujours la modal gallery pour cohérence
-        const modal = document.getElementById('upgrade-modal-gallery');
-    <?php else: ?>
-        // En mode premium, utiliser la modal spécifique
-        const modal = document.getElementById('upgrade-modal-' + reason);
-    <?php endif; ?>
+    " . ($is_premium ? "
+// En mode premium, utiliser la modal spécifique
+        const modal = document.getElementById('upgrade-modal-' + reason);" : "
+// En mode gratuit, utiliser toujours la modal gallery pour cohérence
+        const modal = document.getElementById('upgrade-modal-gallery');") . "
 
     if (modal) {
         modal.style.display = 'flex';
@@ -740,13 +752,11 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
 // Gestionnaire pour bouton galerie de modèles (uniquement premium)
 document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
     e.preventDefault();
-    <?php if ($is_premium): ?>
-        // Ouvrir la galerie pour utilisateurs premium
-        document.getElementById('template-gallery-modal').style.display = 'flex';
-    <?php else: ?>
-        // Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal('gallery');
-    <?php endif; ?>
+    " . ($is_premium ? "
+// Ouvrir la galerie pour utilisateurs premium
+        document.getElementById('template-gallery-modal').style.display = 'flex';" : "
+// Montrer modal upgrade pour utilisateurs gratuits
+        showUpgradeModal('gallery');") . "
 });
 
 // Fonction pour fermer la galerie de modèles
@@ -773,7 +783,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (filter === 'all') {
                     card.style.display = 'block';
                 } else {
-                    const templateType = card.className.match(/template-type-(\w+)/);
+                    const templateType = card.className.match(/template-type-(\\w+)/);
                     if (templateType && templateType[1] === filter) {
                         card.style.display = 'block';
                     } else {
@@ -839,12 +849,12 @@ function openTemplateSettings(templateId, templateName) {
     .then(data => {
         if (data.success) {
             // Remplir le modal avec les données
-            document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de "' + templateName + '"';
+            document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de \"' + templateName + '\"';
             document.getElementById('template-name-input').value = data.data.name || '';
             document.getElementById('template-category').value = data.data.category || 'autre';
-            document.getElementById('template-dpi').value = data.data.dpi || '<?php echo $canvas_defaults['dpi']; ?>';
-            document.getElementById('template-paper-size').value = data.data.paper_size || '<?php echo $canvas_defaults['format']; ?>';
-            document.getElementById('template-orientation').value = data.data.orientation || '<?php echo $canvas_defaults['orientation']; ?>';
+            document.getElementById('template-dpi').value = data.data.dpi || defaultDpi;
+            document.getElementById('template-paper-size').value = data.data.paper_size || defaultFormat;
+            document.getElementById('template-orientation').value = data.data.orientation || defaultOrientation;
             
             // Stocker l'ID du template en cours d'édition
             document.getElementById('template-settings-modal').setAttribute('data-template-id', templateId);
@@ -896,7 +906,7 @@ function duplicateTemplate(templateId, templateName) {
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer le template "' + templateName + '" ? Cette action est irréversible.')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer le template \"' + templateName + '\" ? Cette action est irréversible.')) {
         fetch(ajaxurl, {
             method: 'POST',
             headers: {
@@ -1048,4 +1058,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-</script>
+");
+?>
