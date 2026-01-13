@@ -448,9 +448,34 @@
     outline-offset: 2px;
 }
 
-/* ===========================================
-   MASQUAGE DES NOTIFICATIONS NON-PERTINENTES
-   =========================================== */
+/* Exception spéciale pour la notification de limite de templates - JAMAIS masquer */
+#pdf-builder-template-limit-notice,
+.pdf-builder-template-limit-notice {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 15px 0 !important;
+    padding: 15px !important;
+    background: #d1ecf1 !important;
+    border: 1px solid #bee5eb !important;
+    border-radius: 4px !important;
+}
+
+/* S'assurer que cette notification n'est pas affectée par les règles générales */
+.notice#pdf-builder-template-limit-notice,
+.notice.pdf-builder-template-limit-notice,
+.updated#pdf-builder-template-limit-notice,
+.updated.pdf-builder-template-limit-notice,
+.error#pdf-builder-template-limit-notice,
+.error.pdf-builder-template-limit-notice {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
 
 /* Masquer TOUTES les notifications WordPress et plugins par défaut */
 .notice,

@@ -649,6 +649,13 @@ try {
             // Sélecteurs étendus pour TOUS les types de notifications
             $('.notice, .notice-error, .notice-success, .notice-warning, .notice-info, .updated, .error, .update-nag, .update-message, .settings-error, .settings-updated, .message, .admin-notice, .plugin-notice, .theme-notice, .core-notice, .components-notice, .wp-notice, .fade, .auto-fold-up, .is-dismissible').each(function() {
                 var $notice = $(this);
+
+                // EXCLURE la notification de limite de templates du filtrage
+                if ($notice.attr('id') === 'pdf-builder-template-limit-notice' || $notice.hasClass('pdf-builder-template-limit-notice')) {
+                    console.log('[PDF Builder] NOTIFICATIONS.JS - Skipping template limit notice (always visible)');
+                    return; // Ne pas traiter cette notification
+                }
+
                 var noticeText = $notice.text().toLowerCase();
                 var noticeHtml = $notice.html().toLowerCase();
                 var noticeClasses = $notice.attr('class') || '';

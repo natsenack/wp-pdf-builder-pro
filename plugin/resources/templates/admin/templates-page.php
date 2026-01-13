@@ -91,7 +91,7 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div class="notice notice-info pdf-builder-notice pdf-builder-related pdf-builder-critical" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
+            <div id="pdf-builder-template-limit-notice" class="pdf-builder-template-limit-notice" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
                     <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
