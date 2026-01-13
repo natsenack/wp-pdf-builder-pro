@@ -564,14 +564,19 @@
                         });
 
                         console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
+
+                        // Recharger les paramètres allowed après la sauvegarde
+                        if (category === 'systeme') {
+                            setTimeout(function() {
+                                reloadAllowedSettings();
+                            }, 500); // Petit délai pour s'assurer que la sauvegarde est terminée
+                        }
                     }
 
-                    // Fonction pour sauvegarder les paramètres allowed_* via AJAX
-                    function saveAllowedSetting(optionName, value) {
+                    // Fonction pour recharger les paramètres depuis le serveur
+                    function reloadAllowedSettings() {
                         var data = {
-                            action: 'pdf_builder_save_allowed_setting',
-                            option_name: optionName,
-                            option_value: value,
+                            action: 'pdf_builder_get_allowed_settings',
                             nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : ''
                         };
 
@@ -585,14 +590,60 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                console.log('[PDF Builder] Saved', optionName, 'successfully');
+                                console.log('[PDF Builder] Reloaded settings:', data.data);
+
+                                // Mettre à jour les checkboxes dans les modales
+                                updateModalCheckboxes('dpis', data.data.allowed_dpis || []);
+                                updateModalCheckboxes('formats', data.data.allowed_formats || []);
+                                updateModalCheckboxes('orientations', data.data.allowed_orientations || []);
+
+                                // Afficher une notification de succès
+                                showSaveNotification('Paramètres sauvegardés avec succès !');
                             } else {
-                                console.error('[PDF Builder] Failed to save', optionName, ':', data.data);
+                                console.error('[PDF Builder] Failed to reload settings:', data.data);
                             }
                         })
                         .catch(error => {
-                            console.error('[PDF Builder] Error saving', optionName, ':', error);
+                            console.error('[PDF Builder] Error reloading settings:', error);
                         });
+                    }
+
+                    // Fonction pour mettre à jour les checkboxes dans une modal
+                    function updateModalCheckboxes(type, values) {
+                        var modalId = modalConfig.systeme; // Les paramètres allowed sont dans la modal "systeme"
+                        var modal = document.getElementById(modalId);
+                        if (!modal) return;
+
+                        var checkboxes = modal.querySelectorAll('input[name="pdf_builder_canvas_allowed_' + type + '[]"]');
+                        checkboxes.forEach(function(checkbox) {
+                            var isChecked = values.includes(checkbox.value);
+                            checkbox.checked = isChecked;
+                            console.log('[PDF Builder] Updated checkbox', checkbox.value, 'to', isChecked);
+                        });
+                    }
+
+                    // Fonction pour afficher une notification de sauvegarde
+                    function showSaveNotification(message) {
+                        // Supprimer les notifications existantes
+                        var existingNotifications = document.querySelectorAll('.pdf-builder-save-notification');
+                        existingNotifications.forEach(function(notification) {
+                            notification.remove();
+                        });
+
+                        // Créer une nouvelle notification
+                        var notification = document.createElement('div');
+                        notification.className = 'pdf-builder-save-notification notice notice-success is-dismissible';
+                        notification.innerHTML = '<p>' + message + '</p>';
+                        notification.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 10000; min-width: 300px;';
+
+                        document.body.appendChild(notification);
+
+                        // Auto-suppression après 3 secondes
+                        setTimeout(function() {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 3000);
                     }
 
                     // Initialisation des événements

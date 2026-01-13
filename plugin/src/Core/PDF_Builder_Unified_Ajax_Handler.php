@@ -36,6 +36,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
         add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']);
         add_action('wp_ajax_pdf_builder_save_allowed_setting', [$this, 'handle_save_allowed_setting']);
+        add_action('wp_ajax_pdf_builder_get_allowed_settings', [$this, 'handle_get_allowed_settings']);
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
         // add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
 
@@ -221,6 +222,31 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             error_log('[PDF Builder AJAX] Erreur sauvegarde allowed setting: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Récupère les paramètres allowed_* pour l'interface utilisateur
+     */
+    public function handle_get_allowed_settings() {
+        if (!$this->nonce_manager->validate_ajax_request('pdf_builder_ajax')) {
+            return;
+        }
+
+        try {
+            $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
+            $allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+            $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
+
+            wp_send_json_success([
+                'allowed_dpis' => $allowed_dpis,
+                'allowed_formats' => $allowed_formats,
+                'allowed_orientations' => $allowed_orientations
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur récupération allowed settings: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
