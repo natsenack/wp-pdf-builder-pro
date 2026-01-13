@@ -497,40 +497,13 @@ foreach ($segment in $pathSegments) {
 $progressId = 1
 Write-Progress -Id $progressId -Activity "Upload FTP" -Status "Initialisation..." -PercentComplete 0
 
+$filesToDeploy = $pluginModified
 $jobs = New-Object System.Collections.ArrayList
 $completed = 0
 
-for ($i = 0; $i -lt $filesToDeploy.Count; $i++) {
-    $file = $filesToDeploy[$i]
-    $relativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
-    $ftpFilePath = $relativePath -replace '^plugin/', ''
-
-    # Attendre si trop de jobs en cours
-    while ($jobs.Count -ge $maxConcurrent) {
-        $finishedJobs = @()
-        foreach ($job in $jobs) {
-            if ($job.State -eq 'Completed') {
-                $finishedJobs += $job
-            }
-        }
-        foreach ($job in $finishedJobs) {
-            $result = Receive-Job $job
-            if ($result.Success) {
-                Write-Log "Upload réussi: $($result.RelativePath)" "SUCCESS"
-                $uploadCount++
-            } else {
-                Write-Log "Erreur upload $($result.RelativePath) : $($result.Error)" "ERROR"
-                $errorCount++
-            }
-            Remove-Job $job
-            $jobs.Remove($job) | Out-Null
-            $completed++
-        }
-        if ($jobs.Count -ge $maxConcurrent) {
-            Start-Sleep -Milliseconds 500
-        }
-    }
-
+foreach ($file in $filesToDeploy) {
+    $relativePath = $file
+    $ftpFilePath = $file
     $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
     Write-Progress -Id $progressId -Activity "Upload FTP" -Status "$relativePath" -PercentComplete $percentComplete
 
@@ -544,52 +517,20 @@ for ($i = 0; $i -lt $filesToDeploy.Count; $i++) {
     # Démarrer le job d'upload
     $job = Start-Job -ScriptBlock {
         param($file, $ftpFilePath, $ftpHost, $ftpUser, $ftpPass, $ftpPath, $WorkingDir)
-        
+
         try {
             $basePath = if ($ftpPath) { "$ftpHost$ftpPath" } else { $ftpHost }
             $ftpUri = "ftp://$ftpUser`:$ftpPass@$basePath/$ftpFilePath"
-            
-            # Supprimer le fichier existant
-            try {
-                $deleteRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-                $deleteRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
-                $deleteRequest.UseBinary = $true
-                $deleteRequest.UsePassive = $false
-                $deleteRequest.Timeout = 10000
-                $deleteResponse = $deleteRequest.GetResponse()
-                $deleteResponse.Close()
-            } catch {}
-            
-        # Créer le répertoire si nécessaire
-            $remoteDir = [System.IO.Path]::GetDirectoryName($ftpFilePath)
-            if ($remoteDir) {
-                $remoteDir = $remoteDir -replace '\\', '/'
-                $segments = $remoteDir -split '/' | Where-Object { $_ }
-                $currentPath = ""
-                foreach ($segment in $segments) {
-                    $currentPath += "/$segment"
-                    try {
-                        $dirUri = "ftp://$ftpUser`:$ftpPass@$basePath$currentPath/"
-                        $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
-                        $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-                        $dirRequest.UseBinary = $true
-                        $dirRequest.UsePassive = $false
-                        $dirRequest.Timeout = 15000
-                        $dirResponse = $dirRequest.GetResponse()
-                        $dirResponse.Close()
-                    } catch {}
-                }
-            }
-            
+
             # Upload du fichier - Mode binaire pour TOUS les fichiers pour éviter la corruption
-            $isBinary = $true  # Toujours utiliser le mode binaire
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.UseBinary = $isBinary
+            $ftpRequest.UseBinary = $true
             $ftpRequest.UsePassive = $false
             $ftpRequest.Timeout = 60000
 
-            $fileContent = [System.IO.File]::ReadAllBytes($file.FullName)
+            $fullPath = "$WorkingDir\$file"
+            $fileContent = [System.IO.File]::ReadAllBytes($fullPath)
             $ftpRequest.ContentLength = $fileContent.Length
 
             $requestStream = $ftpRequest.GetRequestStream()
@@ -599,13 +540,18 @@ for ($i = 0; $i -lt $filesToDeploy.Count; $i++) {
             $response = $ftpRequest.GetResponse()
             $response.Close()
 
-            return @{ Success = $true; RelativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/"); Error = $null }
+            return @{ Success = $true; RelativePath = $file; Error = $null }
         } catch {
-            return @{ Success = $false; RelativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/"); Error = $_.Exception.Message }
+            return @{ Success = $false; RelativePath = $file; Error = $_.Exception.Message }
         }
     } -ArgumentList $file, $ftpFilePath, $FtpHost, $FtpUser, $FtpPass, $FtpPath, $WorkingDir
-    
+
     $jobs.Add($job) | Out-Null
+
+    # Attendre si trop de jobs en cours (maxConcurrent = 5)
+    while ($jobs.Count -ge $maxConcurrent) {
+        Start-Sleep -Milliseconds 500
+    }
 }
 
 # Attendre la fin de tous les jobs
