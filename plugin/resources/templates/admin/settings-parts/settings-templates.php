@@ -60,8 +60,8 @@
 
         // Récupération des statuts de commande
         public function get_order_statuses() {
-            if (function_exists('wc_get_order_statuses')) {
-                return wc_get_order_statuses();
+            if (\function_exists('wc_get_order_statuses')) {
+                return \wc_get_order_statuses();
             } else {
                 $statuses = get_option('wc_order_statuses', []);
                 return !empty($statuses) ? $statuses : [

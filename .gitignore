@@ -21,6 +21,7 @@ fix_*.py
 demo-*.html
 *-diagnostic.js
 *-repair.js
+plugin/woocommerce-stubs.php
 
 # Sécurité - Ne jamais commiter les credentials
 ftp-config.env

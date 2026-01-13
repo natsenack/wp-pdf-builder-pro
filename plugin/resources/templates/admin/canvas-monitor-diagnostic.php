@@ -309,5 +309,5 @@ function exportCanvasSettings() {
     margin: 5px 0;
 }
 </style>
-<?php</content>
+<?php ?></content>
 <parameter name="filePath">i:\wp-pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php

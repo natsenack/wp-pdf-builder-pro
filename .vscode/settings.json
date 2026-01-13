@@ -93,6 +93,7 @@
   ],
   "intelephense.scanFiles": [
     "${workspaceFolder}/stubs.php",
+    "${workspaceFolder}/plugin/woocommerce-stubs.php",
     "${workspaceFolder}/vendor/phpunit/phpunit/src/Framework/**/*.php"
   ],
   "intelephense.completion.insertUseDeclaration": true,

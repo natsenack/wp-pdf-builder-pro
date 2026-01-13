@@ -1294,7 +1294,7 @@ function pdf_builder_test_cache_ajax() {
 
     // Test 2: Tester les transients WordPress
     $transient_test_key = 'pdf_builder_test_' . time();
-    $transient_test_value = 'test_value_' . rand(1000, 9999);
+    $transient_test_value = 'test_value_' . \rand(1000, 9999);
 
     // Définir un transient
     $set_result = set_transient($transient_test_key, $transient_test_value, 300); // 5 minutes

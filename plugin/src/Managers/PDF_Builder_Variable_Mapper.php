@@ -533,9 +533,9 @@ class PDFBuilderVariableMapper
         );
 
         // Add WooCommerce-specific fallbacks only if WooCommerce is available
-        if (did_action('plugins_loaded') && function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && function_exists('get_woocommerce_currency')) {
+        if (did_action('plugins_loaded') && \function_exists('pdf_builder_is_woocommerce_active') && \pdf_builder_is_woocommerce_active() && \function_exists('get_woocommerce_currency')) {
             $fallbacks['order_total'] = '$0.00';
-            $fallbacks['currency'] = get_woocommerce_currency();
+            $fallbacks['currency'] = \get_woocommerce_currency();
             $fallbacks['subtotal'] = '$0.00';
             $fallbacks['tax_amount'] = '$0.00';
             $fallbacks['shipping_amount'] = '$0.00';

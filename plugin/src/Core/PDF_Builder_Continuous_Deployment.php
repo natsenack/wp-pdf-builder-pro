@@ -594,8 +594,8 @@ class PDF_Builder_Continuous_Deployment {
         if (file_exists($migration_file)) {
             include_once $migration_file;
 
-            if (function_exists('pdf_builder_run_migrations')) {
-                pdf_builder_run_migrations($version);
+            if (\function_exists('pdf_builder_run_migrations')) {
+                \pdf_builder_run_migrations($version);
             }
         }
     }

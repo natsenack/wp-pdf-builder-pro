@@ -1278,7 +1278,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         try {
             // Test 1: Vérifier si le cache WordPress fonctionne
             $test_key = 'pdf_builder_cache_test_' . time();
-            $test_value = 'test_value_' . rand(1000, 9999);
+            $test_value = 'test_value_' . \rand(1000, 9999);
 
             wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
             $retrieved_value = wp_cache_get($test_key, 'pdf_builder');
@@ -1290,7 +1290,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Test 2: Vérifier les transients
             $transient_key = 'pdf_builder_test_transient';
-            $transient_value = 'transient_test_' . rand(1000, 9999);
+            $transient_value = 'transient_test_' . \rand(1000, 9999);
 
             set_transient($transient_key, $transient_value, 300);
             $transient_retrieved = get_transient($transient_key);
