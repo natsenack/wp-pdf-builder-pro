@@ -594,6 +594,20 @@
                                 console.log('[PDF Builder] Updated', inputName, 'to', newValue);
                             } else {
                                 console.log('[PDF Builder DEBUG] No hidden field found for', inputName);
+                                // For array inputs without hidden field, save via AJAX
+                                if (inputName.includes('[]') && inputGroup.length > 1) {
+                                    var values = [];
+                                    inputGroup.forEach(function(input) {
+                                        if (input.type === 'checkbox' && input.checked) {
+                                            values.push(input.value);
+                                            console.log('[PDF Builder DEBUG] Checkbox checked:', input.value);
+                                        }
+                                    });
+                                    var jsonValue = JSON.stringify(values);
+                                    console.log('[PDF Builder DEBUG] Saving array setting via AJAX:', inputName, 'with values:', values);
+                                    var optionName = inputName.replace('pdf_builder_canvas_', '').replace('[]', '');
+                                    savePromises.push(saveAllowedSetting(optionName, jsonValue));
+                                }
                             }
                         });
 
