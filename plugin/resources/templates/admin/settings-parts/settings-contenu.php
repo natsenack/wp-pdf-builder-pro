@@ -12,11 +12,9 @@
     // Define AJAX variables for inline scripts
     ?>
     <script>
-    var pdfBuilderNotifications = <?php echo json_encode(array(
-        'ajax' => array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'ajax_nonce' => wp_create_nonce('pdf_builder_ajax')
-        )
+    window.pdfBuilderNotifications = <?php echo json_encode(array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'ajax_nonce' => wp_create_nonce('pdf_builder_ajax')
     )); ?>;
     </script>
     <?php
