@@ -73,66 +73,6 @@ function get_canvas_modal_value($key, $default = '') {
                                value="<?php echo esc_attr(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>" readonly>
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['height']; ?>px</span>
                     </div>
-                    <div class="setting-group">
-                        <label>DPI autorisés pour les templates</label>
-                        <div class="checkbox-grid">
-                            <?php
-                            $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
-                            $dpi_options = [
-                                '72' => '72 DPI (Écran)',
-                                '96' => '96 DPI (Web)',
-                                '150' => '150 DPI (Impression)',
-                                '200' => '200 DPI (Haute qualité)',
-                                '300' => '300 DPI (Professionnel) ⭐ PREMIUM',
-                                '400' => '400 DPI (Très haute qualité) ⭐ PREMIUM',
-                                '600' => '600 DPI (Maximum) ⭐ PREMIUM'
-                            ];
-                            foreach ($dpi_options as $dpi_value => $dpi_label) {
-                                $checked = in_array($dpi_value, $allowed_dpis) ? 'checked' : '';
-                                $disabled = (in_array($dpi_value, ['300', '400', '600'])) ? 'disabled' : '';
-                                $premium_class = (in_array($dpi_value, ['300', '400', '600'])) ? 'premium-option' : '';
-                                echo "<label class='checkbox-option $premium_class'><input type='checkbox' name='pdf_builder_canvas_allowed_dpis[]' value='$dpi_value' $checked $disabled> $dpi_label</label>";
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    <div class="setting-group">
-                        <label>Formats autorisés pour les templates</label>
-                        <div class="checkbox-grid">
-                            <?php
-                            $allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
-                            $format_options = [
-                                'A4' => 'A4 (210×297mm)',
-                                'A3' => 'A3 (297×420mm) - Bientôt disponible',
-                                'Letter' => 'Letter (8.5×11") - Bientôt disponible',
-                                'Legal' => 'Legal (8.5×14") - Bientôt disponible',
-                                'EtiquetteColis' => 'Étiquette Colis (10×15cm) - Bientôt disponible'
-                            ];
-                            foreach ($format_options as $format_value => $format_label) {
-                                $checked = in_array($format_value, $allowed_formats) ? 'checked' : '';
-                                $disabled = (in_array($format_value, ['A3', 'Letter', 'Legal', 'EtiquetteColis'])) ? 'disabled' : '';
-                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_formats[]' value='$format_value' $checked $disabled> $format_label</label>";
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    <div class="setting-group">
-                        <label>Orientations autorisées pour les templates</label>
-                        <div class="checkbox-grid">
-                            <?php
-                            $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
-                            $orientation_options = [
-                                'portrait' => 'Portrait (Vertical)',
-                                'landscape' => 'Paysage (Horizontal) - Bientôt disponible'
-                            ];
-                            foreach ($orientation_options as $orientation_value => $orientation_label) {
-                                $checked = in_array($orientation_value, $allowed_orientations) ? 'checked' : '';
-                                $disabled = ($orientation_value === 'landscape') ? 'disabled' : '';
-                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_orientations[]' value='$orientation_value' $checked $disabled> $orientation_label</label>";
-                            }
-                            ?>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -472,6 +412,73 @@ function get_canvas_modal_value($key, $default = '') {
                         <input type="number" id="modal_canvas_response_timeout" name="pdf_builder_canvas_response_timeout"
                                value="<?php echo esc_attr(get_canvas_modal_value('response_timeout', $canvas_defaults['response_timeout'])); ?>">
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['response_timeout']; ?>ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Paramètres Autorises -->
+            <div class="modal-section">
+                <h4 class="modal-section-title">Paramètres Autorises</h4>
+                <div class="modal-settings-grid compact">
+                    <div class="setting-group">
+                        <label>DPI autorisés pour les templates</label>
+                        <div class="checkbox-grid">
+                            <?php
+                            $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
+                            $dpi_options = [
+                                '72' => '72 DPI (Écran)',
+                                '96' => '96 DPI (Web)',
+                                '150' => '150 DPI (Impression)',
+                                '200' => '200 DPI (Haute qualité)',
+                                '300' => '300 DPI (Professionnel) ⭐ PREMIUM',
+                                '400' => '400 DPI (Très haute qualité) ⭐ PREMIUM',
+                                '600' => '600 DPI (Maximum) ⭐ PREMIUM'
+                            ];
+                            foreach ($dpi_options as $dpi_value => $dpi_label) {
+                                $checked = in_array($dpi_value, $allowed_dpis) ? 'checked' : '';
+                                $disabled = (in_array($dpi_value, ['300', '400', '600'])) ? 'disabled' : '';
+                                $premium_class = (in_array($dpi_value, ['300', '400', '600'])) ? 'premium-option' : '';
+                                echo "<label class='checkbox-option $premium_class'><input type='checkbox' name='pdf_builder_canvas_allowed_dpis[]' value='$dpi_value' $checked $disabled> $dpi_label</label>";
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label>Formats autorisés pour les templates</label>
+                        <div class="checkbox-grid">
+                            <?php
+                            $allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+                            $format_options = [
+                                'A4' => 'A4 (210×297mm)',
+                                'A3' => 'A3 (297×420mm) - Bientôt disponible',
+                                'Letter' => 'Letter (8.5×11") - Bientôt disponible',
+                                'Legal' => 'Legal (8.5×14") - Bientôt disponible',
+                                'EtiquetteColis' => 'Étiquette Colis (10×15cm) - Bientôt disponible'
+                            ];
+                            foreach ($format_options as $format_value => $format_label) {
+                                $checked = in_array($format_value, $allowed_formats) ? 'checked' : '';
+                                $disabled = (in_array($format_value, ['A3', 'Letter', 'Legal', 'EtiquetteColis'])) ? 'disabled' : '';
+                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_formats[]' value='$format_value' $checked $disabled> $format_label</label>";
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label>Orientations autorisées pour les templates</label>
+                        <div class="checkbox-grid">
+                            <?php
+                            $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
+                            $orientation_options = [
+                                'portrait' => 'Portrait (Vertical)',
+                                'landscape' => 'Paysage (Horizontal) - Bientôt disponible'
+                            ];
+                            foreach ($orientation_options as $orientation_value => $orientation_label) {
+                                $checked = in_array($orientation_value, $allowed_orientations) ? 'checked' : '';
+                                $disabled = ($orientation_value === 'landscape') ? 'disabled' : '';
+                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_orientations[]' value='$orientation_value' $checked $disabled> $orientation_label</label>";
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
