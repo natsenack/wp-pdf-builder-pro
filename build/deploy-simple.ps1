@@ -309,7 +309,7 @@ $filesToDeploy = @()
 
 if ($All) {
     Write-Log "Mode complet: tous les fichiers du plugin" "INFO"
-    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'temp\.js$', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README', 'config\.ts', 'tsconfig')
+    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README', 'config\.ts', 'tsconfig')
     if (-not $IncludeVendor) {
         $exclusions += 'vendor'
     }
