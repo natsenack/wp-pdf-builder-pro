@@ -905,8 +905,12 @@ try {
 
             console.log('[PDF Builder] NOTIFICATIONS.JS - Notice reset:', noticeId);
         }
-    }
 
+    })();
+
+}
+catch (error) {
+    console.error('[PDF Builder] NOTIFICATIONS.JS - Error:', error);
 }
 
 // Force redeploy marker 3
