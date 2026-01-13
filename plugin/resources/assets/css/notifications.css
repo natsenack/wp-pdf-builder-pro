@@ -495,7 +495,7 @@
 }
 
 /* Masquer la notification si elle a été fermée */
-.pdf-builder-template-limit-notice.pdf-builder-dismissed {
+#pdf-builder-template-limit-notice.pdf-builder-dismissed {
     display: none !important;
 }
 
