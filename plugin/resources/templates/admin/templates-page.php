@@ -91,7 +91,7 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+            <div id="pdf-builder-template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <a href="#" onclick="dismissTemplateLimitNotice(); return false;" style="position: absolute; top: 5px; right: 5px; color: #dc3545; font-size: 20px; font-weight: bold; text-decoration: none; line-height: 1;" title="Fermer">
                     ✕
                 </a>
@@ -679,7 +679,7 @@ document.addEventListener('click', function(e) {
 // Fonction pour masquer la notification de limite de templates
 function dismissTemplateLimitNotice() {
     console.log('dismissTemplateLimitNotice called');
-    const notice = document.getElementById('template-limit-notice');
+    const notice = document.getElementById('pdf-builder-template-limit-notice');
     console.log('notice element:', notice);
     if (notice) {
         // Utiliser le système localStorage de PDF Builder
@@ -695,7 +695,7 @@ function dismissTemplateLimitNotice() {
 
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
-    const notice = document.getElementById('template-limit-notice');
+    const notice = document.getElementById('pdf-builder-template-limit-notice');
     if (notice) {
         // Supprimer du localStorage pour permettre la réaffichage
         var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
