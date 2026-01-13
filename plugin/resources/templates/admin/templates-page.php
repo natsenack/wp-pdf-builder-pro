@@ -493,6 +493,11 @@ var pdfBuilderAjax = {
     }
 }
 
+/* Masquer la notification de limite de templates quand elle est dismissed */
+#template-limit-notice.dismissed {
+    display: none !important;
+}
+
 .template-modal-content input[type="checkbox"] {
     width: auto;
     margin: 0;
@@ -682,9 +687,9 @@ function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     console.log('Notice element:', notice);
     if (notice) {
-        // Supprimer complètement l'élément du DOM pour éviter les conflits
-        notice.remove();
-        console.log('Notification supprimée du DOM');
+        // Masquer avec une classe CSS au lieu de supprimer du DOM
+        notice.classList.add('dismissed');
+        console.log('Notification masquée avec classe CSS');
 
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
@@ -696,12 +701,11 @@ function dismissTemplateLimitNotice() {
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
     console.log('showTemplateLimitNotice called');
-    let notice = document.getElementById('template-limit-notice');
-
-    // Si la notification n'existe pas, on ne peut pas la recréer facilement
-    // On se contente de supprimer l'état de masquage
-    if (!notice) {
-        console.log('Notification n\'existe pas dans le DOM');
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        // Réafficher en supprimant la classe CSS
+        notice.classList.remove('dismissed');
+        console.log('Notification réaffichée');
     }
 
     // Supprimer l'état de masquage de localStorage
