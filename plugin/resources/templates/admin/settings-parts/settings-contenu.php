@@ -594,14 +594,14 @@
                         console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
 
                         // Recharger les paramètres allowed après la sauvegarde
-                        if (category === 'systeme') {
-                            console.log('[PDF Builder DEBUG] Category is systeme, scheduling reloadAllowedSettings in 500ms');
+                        if (category === 'systeme' || category === 'affichage') {
+                            console.log('[PDF Builder DEBUG] Category is systeme or affichage, scheduling reloadAllowedSettings in 500ms');
                             setTimeout(function() {
                                 console.log('[PDF Builder DEBUG] Calling reloadAllowedSettings');
                                 reloadAllowedSettings();
                             }, 500); // Petit délai pour s'assurer que la sauvegarde est terminée
                         } else {
-                            console.log('[PDF Builder DEBUG] Category is not systeme, skipping reloadAllowedSettings');
+                            console.log('[PDF Builder DEBUG] Category is not systeme or affichage, skipping reloadAllowedSettings');
                         }
                     }
 
