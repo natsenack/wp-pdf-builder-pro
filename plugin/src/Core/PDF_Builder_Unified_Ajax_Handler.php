@@ -189,7 +189,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         try {
             $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
-            $values_json = sanitize_text_field($_POST['values'] ?? '');
+            $values_json = $_POST['values'] ?? ''; // Don't sanitize JSON data
 
             if (empty($setting_key)) {
                 wp_send_json_error(['message' => 'Clé de paramètre manquante']);
@@ -199,7 +199,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Décoder la valeur JSON
             $values = json_decode($values_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error(['message' => 'Valeur JSON invalide']);
+                error_log('[PDF Builder AJAX] JSON decode error: ' . json_last_error_msg() . ' for data: ' . $values_json);
+                wp_send_json_error(['message' => 'Valeur JSON invalide: ' . json_last_error_msg()]);
                 return;
             }
 
