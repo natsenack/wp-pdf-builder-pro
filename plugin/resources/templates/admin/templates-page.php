@@ -686,9 +686,9 @@ function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     console.log('Notice element:', notice);
     if (notice) {
-        // Supprimer complètement l'élément du DOM pour éviter les conflits
-        notice.remove();
-        console.log('Notification supprimée du DOM');
+        // Masquer au lieu de supprimer pour pouvoir la réafficher
+        notice.style.display = 'none';
+        console.log('Notification masquée');
 
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
@@ -700,17 +700,17 @@ function dismissTemplateLimitNotice() {
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
     console.log('showTemplateLimitNotice called');
-    let notice = document.getElementById('template-limit-notice');
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        // Réafficher la notification
+        notice.style.display = 'block';
+        console.log('Notification réaffichée');
 
-    // Si la notification n'existe pas, on ne peut pas la recréer facilement
-    // On se contente de supprimer l'état de masquage
-    if (!notice) {
+        // Supprimer l'état de masquage de localStorage
+        localStorage.removeItem('pdf_builder_template_limit_dismissed');
+    } else {
         console.log('Notification n\'existe pas dans le DOM');
     }
-
-    // Supprimer l'état de masquage de localStorage
-    localStorage.removeItem('pdf_builder_template_limit_dismissed');
-    console.log('État de masquage supprimé du localStorage');
 }
 
 // Vérifier au chargement de la page si la notification a été masquée
@@ -718,14 +718,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, checking for dismissed notice');
     const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
     console.log('Dismissed status:', dismissed);
-
-    // Ne masquer que si la notification existe ET qu'elle a été explicitement masquée
     if (dismissed === 'true') {
-        const notice = document.getElementById('template-limit-notice');
-        if (notice) {
-            console.log('Removing previously dismissed notice');
-            notice.remove();
-        }
+        dismissTemplateLimitNotice();
     }
 });
 </script>
