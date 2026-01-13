@@ -614,36 +614,26 @@
                     function saveAllowedSetting(optionName, value) {
                         console.log('[PDF Builder DEBUG] saveAllowedSetting called with:', optionName, value);
 
-                        var data = {
-                            action: 'pdf_builder_save_allowed_setting',
-                            setting_key: optionName,
-                            values: JSON.stringify(value),
-                            nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.ajax_nonce) ? window.pdfBuilderNotifications.ajax_nonce : ''
-                        };
-
-                        console.log('[PDF Builder DEBUG] AJAX data:', data);
-
-                        fetch(ajaxurl, {
+                        return $.ajax({
+                            url: pdfBuilderNotifications.ajax_url,
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
+                            data: {
+                                action: 'pdf_builder_save_allowed_setting',
+                                setting_key: optionName,
+                                values: JSON.stringify(value),
+                                nonce: pdfBuilderNotifications.ajax_nonce
                             },
-                            body: new URLSearchParams(data)
-                        })
-                        .then(response => {
-                            console.log('[PDF Builder DEBUG] AJAX response status:', response.status);
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('[PDF Builder DEBUG] AJAX response data:', data);
-                            if (data.success) {
-                                console.log('[PDF Builder] Successfully saved', optionName);
-                            } else {
-                                console.error('[PDF Builder] Failed to save', optionName + ':', data.data);
+                            success: function(response) {
+                                console.log('[PDF Builder DEBUG] saveAllowedSetting success:', response);
+                                if (response.success) {
+                                    console.log('[PDF Builder] Successfully saved', optionName);
+                                } else {
+                                    console.error('[PDF Builder] Failed to save', optionName + ':', response.data);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('[PDF Builder] Error saving', optionName + ':', error);
                             }
-                        })
-                        .catch(error => {
-                            console.error('[PDF Builder] Error saving', optionName + ':', error);
                         });
                     }
 
