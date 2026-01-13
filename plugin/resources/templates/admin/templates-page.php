@@ -609,7 +609,15 @@ var pdfBuilderAjax = {
 <script>
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
-    const modal = document.getElementById('upgrade-modal-' + reason);
+    // Pour les utilisateurs gratuits, utiliser la même modal pour tous les upgrades
+    <?php if (!$is_premium): ?>
+        // En mode gratuit, utiliser toujours la modal gallery pour cohérence
+        const modal = document.getElementById('upgrade-modal-gallery');
+    <?php else: ?>
+        // En mode premium, utiliser la modal spécifique
+        const modal = document.getElementById('upgrade-modal-' + reason);
+    <?php endif; ?>
+
     if (modal) {
         modal.style.display = 'flex';
 

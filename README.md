@@ -1118,3 +1118,5 @@ Console JavaScript affiche toutes les étapes d'initialisation.
 **Plugin PDF Builder Pro v1.1.0.10 - Améliorations de Performance !** ⚡
 
 **Plugin PDF Builder Pro v1.2.0 - Sortie officiel du plugin sur wordpress.org et woocommerce !** 🚀
+
+**Plugin PDF Builder Pro v1.2.0.1 - Amélioratioin de la gestion des forms en ajax !** 🛠️
