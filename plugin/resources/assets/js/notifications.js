@@ -855,19 +855,17 @@ try {
 
             var noticeId = 'template_limit';
 
-            // Masquer la notification avec une animation
-            $notice.slideUp(300, function() {
-                $notice.addClass('pdf-builder-dismissed');
-                console.log('[PDF Builder] NOTIFICATIONS.JS - Notice hidden with animation');
+            // Masquer la notification immédiatement et ajouter la classe
+            $notice.hide().addClass('pdf-builder-dismissed');
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Notice hidden immediately');
 
-                // Sauvegarder l'état dans localStorage
-                var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
-                dismissedNotices = JSON.parse(dismissedNotices);
-                dismissedNotices[noticeId] = true;
-                localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
+            // Sauvegarder l'état dans localStorage
+            var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
+            dismissedNotices = JSON.parse(dismissedNotices);
+            dismissedNotices[noticeId] = true;
+            localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
 
-                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice dismissed and saved to localStorage');
-            });
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice dismissed and saved to localStorage');
         });
 
         // Vérifier que le bouton existe
