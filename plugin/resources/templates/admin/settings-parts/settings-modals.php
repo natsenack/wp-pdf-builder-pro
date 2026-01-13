@@ -83,13 +83,15 @@ function get_canvas_modal_value($key, $default = '') {
                                 '96' => '96 DPI (Web)',
                                 '150' => '150 DPI (Impression)',
                                 '200' => '200 DPI (Haute qualité)',
-                                '300' => '300 DPI (Professionnel)',
-                                '400' => '400 DPI (Très haute qualité)',
-                                '600' => '600 DPI (Maximum)'
+                                '300' => '300 DPI (Professionnel) ⭐ PREMIUM',
+                                '400' => '400 DPI (Très haute qualité) ⭐ PREMIUM',
+                                '600' => '600 DPI (Maximum) ⭐ PREMIUM'
                             ];
                             foreach ($dpi_options as $dpi_value => $dpi_label) {
                                 $checked = in_array($dpi_value, $allowed_dpis) ? 'checked' : '';
-                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_dpis[]' value='$dpi_value' $checked> $dpi_label</label>";
+                                $disabled = (in_array($dpi_value, ['300', '400', '600'])) ? 'disabled' : '';
+                                $premium_class = (in_array($dpi_value, ['300', '400', '600'])) ? 'premium-option' : '';
+                                echo "<label class='checkbox-option $premium_class'><input type='checkbox' name='pdf_builder_canvas_allowed_dpis[]' value='$dpi_value' $checked $disabled> $dpi_label</label>";
                             }
                             ?>
                         </div>

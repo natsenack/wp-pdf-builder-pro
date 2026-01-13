@@ -443,14 +443,16 @@ var pdfBuilderAjax = {
                                     '96' => '96 DPI (Web)',
                                     '150' => '150 DPI (Impression)',
                                     '200' => '200 DPI (Haute qualité)',
-                                    '300' => '300 DPI (Professionnel)',
-                                    '400' => '400 DPI (Très haute qualité)',
-                                    '600' => '600 DPI (Maximum)'
+                                    '300' => '300 DPI (Professionnel) ⭐ PREMIUM',
+                                    '400' => '400 DPI (Très haute qualité) ⭐ PREMIUM',
+                                    '600' => '600 DPI (Maximum) ⭐ PREMIUM'
                                 ];
                                 foreach ($dpi_options as $dpi_value => $dpi_label) {
                                     if (in_array($dpi_value, $allowed_dpis)) {
                                         $selected = (get_canvas_modal_value('dpi', $canvas_defaults['dpi']) == $dpi_value) ? 'selected' : '';
-                                        echo "<option value='$dpi_value' $selected>$dpi_label</option>";
+                                        $disabled = (in_array($dpi_value, ['300', '400', '600'])) ? 'disabled' : '';
+                                        $premium_class = (in_array($dpi_value, ['300', '400', '600'])) ? 'premium-option' : '';
+                                        echo "<option value='$dpi_value' $selected $disabled class='$premium_class'>$dpi_label</option>";
                                     }
                                 }
                                 ?>
