@@ -89,6 +89,14 @@ var pdfBuilderAjax = {
             </span>
         </div>
 
+        <!-- DEBUG: Affichage temporaire des variables de condition -->
+        <div style="background: #ffeaa7; border: 1px solid #d63031; padding: 10px; margin: 10px 0; border-radius: 4px; font-size: 12px;">
+            <strong>DEBUG - Variables de notification:</strong><br>
+            is_premium: <?php echo $is_premium ? 'true' : 'false'; ?><br>
+            templates_count: <?php echo $templates_count; ?><br>
+            Condition (!$is_premium && $templates_count >= 1): <?php echo (!$is_premium && $templates_count >= 1) ? 'TRUE - Notification devrait s\'afficher' : 'FALSE - Notification ne s\'affiche pas'; ?>
+        </div>
+
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
             <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
