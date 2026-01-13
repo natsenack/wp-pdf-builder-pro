@@ -24,6 +24,7 @@ class PdfBuilderTemplatesAjax
         add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'saveTemplateSettings'));
         add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'setDefaultTemplate'));
         add_action('wp_ajax_pdf_builder_delete_template', array($this, 'deleteTemplate'));
+        add_action('wp_ajax_pdf_builder_duplicate_template', array($this, 'duplicateTemplate'));
         add_action('wp_ajax_pdf_builder_save_order_status_templates', array($this, 'saveOrderStatusTemplates'));
     }
 
