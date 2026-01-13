@@ -633,7 +633,48 @@ try {
     $(document).ready(function() {
         window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
         console.log('[PDF Builder] NOTIFICATIONS.JS - Instance initialized in document ready');
+
+        // Filtrer les notifications WordPress pour n'afficher que celles liées au PDF Builder
+        filterWordPressNotifications();
     });
+
+    /**
+     * Filtre les notifications WordPress pour n'afficher que celles liées au PDF Builder
+     */
+    function filterWordPressNotifications() {
+        console.log('[PDF Builder] NOTIFICATIONS.JS - Filtering WordPress notifications...');
+
+        // Attendre un peu que les notifications soient chargées
+        setTimeout(function() {
+            $('.notice, .notice-error, .notice-success, .notice-warning, .notice-info, .updated, .error, .update-nag').each(function() {
+                var $notice = $(this);
+                var noticeText = $notice.text().toLowerCase();
+                var noticeHtml = $notice.html().toLowerCase();
+
+                // Vérifier si la notification contient des mots-clés liés au PDF Builder
+                var isPdfBuilderRelated = (
+                    noticeText.indexOf('pdf builder') !== -1 ||
+                    noticeText.indexOf('pdf-builder') !== -1 ||
+                    noticeText.indexOf('template') !== -1 ||
+                    noticeText.indexOf('license') !== -1 ||
+                    noticeText.indexOf('licence') !== -1 ||
+                    noticeHtml.indexOf('pdf-builder') !== -1 ||
+                    noticeHtml.indexOf('pdf builder') !== -1 ||
+                    $notice.hasClass('pdf-builder-notice') ||
+                    $notice.find('[href*="pdf-builder"]').length > 0 ||
+                    $notice.find('[href*="PDF Builder"]').length > 0
+                );
+
+                if (isPdfBuilderRelated) {
+                    $notice.addClass('pdf-builder-related');
+                    console.log('[PDF Builder] NOTIFICATIONS.JS - Showing PDF Builder related notice:', noticeText.substring(0, 100) + '...');
+                } else {
+                    // Masquer les notifications non-pertinentes (le CSS s'en charge)
+                    console.log('[PDF Builder] NOTIFICATIONS.JS - Hiding non-PDF Builder notice:', noticeText.substring(0, 100) + '...');
+                }
+            });
+        }, 100);
+    }
 
 })(jQuery);
 

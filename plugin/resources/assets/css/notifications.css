@@ -447,3 +447,43 @@
     outline: 2px solid #007cba;
     outline-offset: 2px;
 }
+
+/* ===========================================
+   MASQUAGE DES NOTIFICATIONS NON-PERTINENTES
+   =========================================== */
+
+/* Masquer toutes les notifications WordPress par défaut */
+.notice:not(.pdf-builder-notice):not(.pdf-builder-related) {
+    display: none !important;
+}
+
+/* Afficher les notifications marquées comme liées au PDF Builder */
+.notice.pdf-builder-notice,
+.notice.pdf-builder-related {
+    display: block !important;
+}
+
+/* Garder les notifications d'erreur critiques */
+.notice.error,
+.notice.updated,
+.notice.notice-error,
+.notice.notice-success,
+.notice.notice-warning,
+.notice.notice-info {
+    display: block !important;
+}
+
+/* Masquer spécifiquement certaines notifications courantes non-pertinentes */
+.notice[class*="plugin"]:not(.pdf-builder-notice),
+.notice[class*="theme"]:not(.pdf-builder-notice),
+.notice[class*="update"]:not(.pdf-builder-notice):not(.pdf-builder-related),
+.notice[class*="wordpress"]:not(.pdf-builder-notice),
+.notice[class*="core"]:not(.pdf-builder-notice) {
+    display: none !important;
+}
+
+/* Exception: garder les notifications de mise à jour si elles concernent notre plugin */
+.notice.update-message:has([href*="pdf-builder"]),
+.notice.update-message:has([href*="PDF Builder"]) {
+    display: block !important;
+}
