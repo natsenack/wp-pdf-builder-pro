@@ -460,6 +460,11 @@
 
                     console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
 
+                    // Définir ajaxurl si non défini (nécessaire pour les appels AJAX)
+                    if (typeof ajaxurl === 'undefined') {
+                        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+                    }
+
                     // Configuration des modals
                     var modalConfig = {
                         'affichage': 'canvas-affichage-modal-overlay',
@@ -690,7 +695,7 @@
 
                     // Fonction pour mettre à jour les checkboxes dans une modal
                     function updateModalCheckboxes(type, values) {
-                        var modalId = modalConfig.systeme; // Les paramètres allowed sont dans la modal "systeme"
+                        var modalId = modalConfig.affichage; // Les paramètres allowed sont dans la modal "affichage"
                         var modal = document.getElementById(modalId);
                         if (!modal) return;
 
@@ -704,26 +709,18 @@
 
                     // Fonction pour afficher une notification de sauvegarde
                     function showSaveNotification(message) {
-                        // Supprimer les notifications existantes
-                        var existingNotifications = document.querySelectorAll('.pdf-builder-save-notification');
-                        existingNotifications.forEach(function(notification) {
-                            notification.remove();
-                        });
+                        console.log('[PDF Builder DEBUG] showSaveNotification called with:', message);
 
-                        // Créer une nouvelle notification
-                        var notification = document.createElement('div');
-                        notification.className = 'pdf-builder-save-notification notice notice-success is-dismissible';
-                        notification.innerHTML = '<p>' + message + '</p>';
-                        notification.style.cssText = 'position: fixed; top: 40px; right: 20px; z-index: 10000; min-width: 300px;';
-
-                        document.body.appendChild(notification);
-
-                        // Auto-suppression après 3 secondes
-                        setTimeout(function() {
-                            if (notification.parentNode) {
-                                notification.parentNode.removeChild(notification);
-                            }
-                        }, 3000);
+                        // Utiliser le système de notifications unifié du plugin
+                        if (window.pdfBuilderNotify && window.pdfBuilderNotify.success) {
+                            window.pdfBuilderNotify.success(message, {
+                                duration: 3000,
+                                dismissible: true
+                            });
+                        } else {
+                            console.warn('[PDF Builder] Notification system not available, falling back to console');
+                            console.log('[PDF Builder] SUCCESS:', message);
+                        }
                     }
 
                     // Initialisation des événements
@@ -795,6 +792,40 @@
                         });
 
                         console.log('[PDF Builder] Events initialized');
+                    }
+
+                    // Fonction pour afficher une notification de sauvegarde
+                    function showSaveNotification(message) {
+                        console.log('[PDF Builder DEBUG] showSaveNotification called with:', message);
+
+                        // Supprimer les notifications existantes
+                        var existingNotifications = document.querySelectorAll('.pdf-builder-notification');
+                        existingNotifications.forEach(function(notification) {
+                            notification.remove();
+                        });
+
+                        // Créer la nouvelle notification
+                        var notification = document.createElement('div');
+                        notification.className = 'pdf-builder-notification success';
+                        notification.innerHTML = '<span class="notification-icon">✅</span> ' + message;
+
+                        // Ajouter au body
+                        document.body.appendChild(notification);
+
+                        // Afficher avec animation
+                        setTimeout(function() {
+                            notification.classList.add('show');
+                        }, 10);
+
+                        // Masquer automatiquement après 3 secondes
+                        setTimeout(function() {
+                            notification.classList.remove('show');
+                            setTimeout(function() {
+                                if (notification.parentNode) {
+                                    notification.parentNode.removeChild(notification);
+                                }
+                            }, 300);
+                        }, 3000);
                     }
 
                     // Initialisation au chargement du DOM
