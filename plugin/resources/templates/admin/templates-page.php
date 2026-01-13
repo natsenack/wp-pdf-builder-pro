@@ -83,6 +83,358 @@ var pdfBuilderAjax = {
 var defaultDpi = '" . esc_js($canvas_defaults['dpi']) . "';
 var defaultFormat = '" . esc_js($canvas_defaults['format']) . "';
 var defaultOrientation = '" . esc_js($canvas_defaults['orientation']) . "';
+
+// Fonction pour afficher modal upgrade
+function showUpgradeModal(reason) {
+    // Pour les utilisateurs gratuits, utiliser la même modal pour tous les upgrades
+    ' . ($is_premium ? '
+// En mode premium, utiliser la modal spécifique
+        const modal = document.getElementById(\'upgrade-modal-\' + reason);' : '
+// En mode gratuit, utiliser toujours la modal gallery pour cohérence
+        const modal = document.getElementById(\'upgrade-modal-gallery\');') . '
+
+    if (modal) {
+        modal.style.display = 'flex';
+
+        // Tracking pour analytics (si disponible)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'upgrade_modal_shown', {
+                'reason': reason,
+                'user_type': 'free',
+                'page': 'templates'
+            });
+        }
+    }
+}
+
+// Gestionnaire pour bouton créer template
+document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Vérifier limite côté client (sécurité supplémentaire)
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_check_template_limit',
+            'nonce': pdfBuilderAjax.nonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.can_create) {
+            // Rediriger vers éditeur
+            window.location.href = pdfBuilderAjax.editor_url;
+        } else {
+            showUpgradeModal('template');
+        }
+    })
+    .catch(error => {
+        // console.error('Erreur vérification limite:', error);
+        showUpgradeModal('template');
+    });
+});
+
+// Gestionnaire pour bouton galerie de modèles (uniquement premium)
+document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    ' . ($is_premium ? '
+// Ouvrir la galerie pour utilisateurs premium
+        document.getElementById(\'template-gallery-modal\').style.display = \'flex\';' : '
+// Montrer modal upgrade pour utilisateurs gratuits
+        showUpgradeModal(\'gallery\');') . '
+});
+
+// Fonction pour fermer la galerie de modèles
+function closeTemplateGallery() {
+    document.getElementById('template-gallery-modal').style.display = 'none';
+}
+
+// Gestion du filtrage des templates
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const templateCards = document.querySelectorAll('.template-card');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Retirer la classe active de tous les boutons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+            
+            // Filtrer les cartes de templates
+            templateCards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const templateType = card.className.match(/template-type-(\\w+)/);
+                    if (templateType && templateType[1] === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+
+    // Gestion du filtrage de la galerie
+    const galleryFilterButtons = document.querySelectorAll('.gallery-filter-btn');
+    const galleryTemplates = document.querySelectorAll('.predefined-template-card');
+
+    galleryFilterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Retirer la classe active de tous les boutons de galerie
+            galleryFilterButtons.forEach(btn => btn.classList.remove('active'));
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+            
+            // Filtrer les templates de la galerie
+            galleryTemplates.forEach(item => {
+                if (filter === 'all') {
+                    item.style.display = 'block';
+                } else {
+                    const itemCategory = item.getAttribute('data-category');
+                    if (itemCategory === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+});
+
+// Fermer modal au clic sur overlay ou bouton close
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
+        e.target.closest('.modal-overlay').style.display = 'none';
+    }
+});
+
+// Fonctions pour la gestion des templates
+function openTemplateSettings(templateId, templateName) {
+    // Charger les paramètres du template
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_load_template_settings',
+            'template_id': templateId,
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remplir le modal avec les données
+            document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de \"' + templateName + '\"';
+            document.getElementById('template-name-input').value = data.data.name || '';
+            document.getElementById('template-category').value = data.data.category || 'autre';
+            document.getElementById('template-dpi').value = data.data.dpi || defaultDpi;
+            document.getElementById('template-paper-size').value = data.data.paper_size || defaultFormat;
+            document.getElementById('template-orientation').value = data.data.orientation || defaultOrientation;
+            
+            // Stocker l'ID du template en cours d'édition
+            document.getElementById('template-settings-modal').setAttribute('data-template-id', templateId);
+            
+            // Mettre à jour les informations affichées
+            updateTemplateInfo();
+            
+            // Afficher le modal
+            document.getElementById('template-settings-modal').style.display = 'flex';
+        } else {
+            alert('Erreur lors du chargement des paramètres: ' + (data.data || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors du chargement des paramètres du template');
+    });
+}
+
+function duplicateTemplate(templateId, templateName) {
+    const newName = prompt('Entrez le nom du nouveau template:', templateName + ' (Copie)');
+    if (newName && newName.trim()) {
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_duplicate_template',
+                'template_id': templateId,
+                'template_name': newName.trim(),
+                'nonce': pdfBuilderTemplatesNonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Template dupliqué avec succès!');
+                location.reload();
+            } else {
+                alert('Erreur lors de la duplication: ' + (data.data || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la duplication du template');
+        });
+    }
+}
+
+function confirmDeleteTemplate(templateId, templateName) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer le template \"' + templateName + '\" ? Cette action est irréversible.')) {
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_delete_template',
+                'template_id': templateId,
+                'nonce': pdfBuilderTemplatesNonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Template supprimé avec succès!');
+                location.reload();
+            } else {
+                alert('Erreur lors de la suppression: ' + (data.data || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la suppression du template');
+        });
+    }
+}
+
+function toggleDefaultTemplate(templateId, category, templateName) {
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_set_default_template',
+            'template_id': templateId,
+            'is_default': 1, // Toggle to default
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Template défini comme par défaut pour la catégorie ' + category);
+            location.reload();
+        } else {
+            alert('Erreur: ' + (data.data || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la modification du statut par défaut');
+    });
+}
+
+function closeTemplateSettings() {
+    document.getElementById('template-settings-modal').style.display = 'none';
+}
+
+function saveTemplateSettings() {
+    const templateId = document.getElementById('template-settings-modal').getAttribute('data-template-id');
+    const name = document.getElementById('template-name-input').value;
+    const category = document.getElementById('template-category').value;
+    const dpi = document.getElementById('template-dpi').value;
+    const paperSize = document.getElementById('template-paper-size').value;
+    const orientation = document.getElementById('template-orientation').value;
+    
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_save_template_settings',
+            'template_id': templateId,
+            'name': name,
+            'category': category,
+            'dpi': dpi,
+            'paper_size': paperSize,
+            'orientation': orientation,
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Paramètres sauvegardés avec succès!');
+            closeTemplateSettings();
+            location.reload();
+        } else {
+            alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la sauvegarde des paramètres');
+    });
+}
+
+function selectPredefinedTemplate(templateSlug) {
+    // Rediriger vers l'éditeur avec le template prédéfini
+    window.location.href = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
+}
+
+// Fonction pour mettre à jour les informations du template en temps réel
+function updateTemplateInfo() {
+    const dpi = document.getElementById('template-dpi').value;
+    const paperSize = document.getElementById('template-paper-size').value;
+    const orientation = document.getElementById('template-orientation').value;
+    
+    // Dimensions en pixels selon le format et l'orientation
+    let widthPx, heightPx;
+    switch (paperSize) {
+        case 'A4':
+            widthPx = orientation === 'portrait' ? 595 : 842;
+            heightPx = orientation === 'portrait' ? 842 : 595;
+            break;
+        case 'A3':
+            widthPx = orientation === 'portrait' ? 842 : 1191;
+            heightPx = orientation === 'portrait' ? 1191 : 842;
+            break;
+        case 'Letter':
+            widthPx = orientation === 'portrait' ? 612 : 792;
+            heightPx = orientation === 'portrait' ? 792 : 612;
+            break;
+        case 'Legal':
+            widthPx = orientation === 'portrait' ? 612 : 1008;
+            heightPx = orientation === 'portrait' ? 1008 : 612;
+            break;
+        default:
+            widthPx = 595;
+            heightPx = 842;
+    }
+    
+    // Mettre à jour l'affichage
+    document.getElementById('info-resolution').textContent = widthPx + '×' + heightPx;
+    document.getElementById('info-dpi').textContent = dpi;
+    document.getElementById('info-format').textContent = paperSize;
+    document.getElementById('info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
+}
 ");
 ?>
 
@@ -691,372 +1043,3 @@ var defaultOrientation = '" . esc_js($canvas_defaults['orientation']) . "';
         </div>
     </div>
 </div>
-
-<?php
-// Enqueue the templates JavaScript with all functions
-wp_enqueue_script('pdf-builder-templates', '', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-wp_add_inline_script('pdf-builder-templates', "
-// Fonction pour afficher modal upgrade
-function showUpgradeModal(reason) {
-    // Pour les utilisateurs gratuits, utiliser la même modal pour tous les upgrades
-    " . ($is_premium ? "
-// En mode premium, utiliser la modal spécifique
-        const modal = document.getElementById('upgrade-modal-' + reason);" : "
-// En mode gratuit, utiliser toujours la modal gallery pour cohérence
-        const modal = document.getElementById('upgrade-modal-gallery');") . "
-
-    if (modal) {
-        modal.style.display = 'flex';
-
-        // Tracking pour analytics (si disponible)
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'upgrade_modal_shown', {
-                'reason': reason,
-                'user_type': 'free',
-                'page': 'templates'
-            });
-        }
-    }
-}
-
-// Gestionnaire pour bouton créer template
-document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
-    e.preventDefault();
-
-    // Vérifier limite côté client (sécurité supplémentaire)
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_check_template_limit',
-            'nonce': pdfBuilderAjax.nonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.can_create) {
-            // Rediriger vers éditeur
-            window.location.href = pdfBuilderAjax.editor_url;
-        } else {
-            showUpgradeModal('template');
-        }
-    })
-    .catch(error => {
-        // console.error('Erreur vérification limite:', error);
-        showUpgradeModal('template');
-    });
-});
-
-// Gestionnaire pour bouton galerie de modèles (uniquement premium)
-document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
-    e.preventDefault();
-    " . ($is_premium ? "
-// Ouvrir la galerie pour utilisateurs premium
-        document.getElementById('template-gallery-modal').style.display = 'flex';" : "
-// Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal('gallery');") . "
-});
-
-// Fonction pour fermer la galerie de modèles
-function closeTemplateGallery() {
-    document.getElementById('template-gallery-modal').style.display = 'none';
-}
-
-// Gestion du filtrage des templates
-document.addEventListener('DOMContentLoaded', function() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const templateCards = document.querySelectorAll('.template-card');
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            
-            // Retirer la classe active de tous les boutons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
-            
-            // Filtrer les cartes de templates
-            templateCards.forEach(card => {
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else {
-                    const templateType = card.className.match(/template-type-(\\w+)/);
-                    if (templateType && templateType[1] === filter) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                }
-            });
-        });
-    });
-
-    // Gestion du filtrage de la galerie
-    const galleryFilterButtons = document.querySelectorAll('.gallery-filter-btn');
-    const galleryTemplates = document.querySelectorAll('.predefined-template-card');
-
-    galleryFilterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            
-            // Retirer la classe active de tous les boutons de galerie
-            galleryFilterButtons.forEach(btn => btn.classList.remove('active'));
-            // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
-            
-            // Filtrer les templates de la galerie
-            galleryTemplates.forEach(item => {
-                if (filter === 'all') {
-                    item.style.display = 'block';
-                } else {
-                    const itemCategory = item.getAttribute('data-category');
-                    if (itemCategory === filter) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                }
-            });
-        });
-    });
-});
-
-// Fermer modal au clic sur overlay ou bouton close
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
-        e.target.closest('.modal-overlay').style.display = 'none';
-    }
-});
-
-// Fonctions pour la gestion des templates
-function openTemplateSettings(templateId, templateName) {
-    // Charger les paramètres du template
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_load_template_settings',
-            'template_id': templateId,
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remplir le modal avec les données
-            document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de \"' + templateName + '\"';
-            document.getElementById('template-name-input').value = data.data.name || '';
-            document.getElementById('template-category').value = data.data.category || 'autre';
-            document.getElementById('template-dpi').value = data.data.dpi || defaultDpi;
-            document.getElementById('template-paper-size').value = data.data.paper_size || defaultFormat;
-            document.getElementById('template-orientation').value = data.data.orientation || defaultOrientation;
-            
-            // Stocker l'ID du template en cours d'édition
-            document.getElementById('template-settings-modal').setAttribute('data-template-id', templateId);
-            
-            // Mettre à jour les informations affichées
-            updateTemplateInfo();
-            
-            // Afficher le modal
-            document.getElementById('template-settings-modal').style.display = 'flex';
-        } else {
-            alert('Erreur lors du chargement des paramètres: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        alert('Erreur lors du chargement des paramètres du template');
-    });
-}
-
-function duplicateTemplate(templateId, templateName) {
-    const newName = prompt('Entrez le nom du nouveau template:', templateName + ' (Copie)');
-    if (newName && newName.trim()) {
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_duplicate_template',
-                'template_id': templateId,
-                'template_name': newName.trim(),
-                'nonce': pdfBuilderTemplatesNonce
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Template dupliqué avec succès!');
-                location.reload();
-            } else {
-                alert('Erreur lors de la duplication: ' + (data.data || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            alert('Erreur lors de la duplication du template');
-        });
-    }
-}
-
-function confirmDeleteTemplate(templateId, templateName) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer le template \"' + templateName + '\" ? Cette action est irréversible.')) {
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_delete_template',
-                'template_id': templateId,
-                'nonce': pdfBuilderTemplatesNonce
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Template supprimé avec succès!');
-                location.reload();
-            } else {
-                alert('Erreur lors de la suppression: ' + (data.data || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            alert('Erreur lors de la suppression du template');
-        });
-    }
-}
-
-function toggleDefaultTemplate(templateId, category, templateName) {
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_set_default_template',
-            'template_id': templateId,
-            'is_default': 1, // Toggle to default
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Template défini comme par défaut pour la catégorie ' + category);
-            location.reload();
-        } else {
-            alert('Erreur: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        alert('Erreur lors de la modification du statut par défaut');
-    });
-}
-
-function closeTemplateSettings() {
-    document.getElementById('template-settings-modal').style.display = 'none';
-}
-
-function saveTemplateSettings() {
-    const templateId = document.getElementById('template-settings-modal').getAttribute('data-template-id');
-    const name = document.getElementById('template-name-input').value;
-    const category = document.getElementById('template-category').value;
-    const dpi = document.getElementById('template-dpi').value;
-    const paperSize = document.getElementById('template-paper-size').value;
-    const orientation = document.getElementById('template-orientation').value;
-    
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_save_template_settings',
-            'template_id': templateId,
-            'name': name,
-            'category': category,
-            'dpi': dpi,
-            'paper_size': paperSize,
-            'orientation': orientation,
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Paramètres sauvegardés avec succès!');
-            closeTemplateSettings();
-            location.reload();
-        } else {
-            alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        alert('Erreur lors de la sauvegarde des paramètres');
-    });
-}
-
-function selectPredefinedTemplate(templateSlug) {
-    // Rediriger vers l'éditeur avec le template prédéfini
-    window.location.href = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
-}
-
-// Fonction pour mettre à jour les informations du template en temps réel
-function updateTemplateInfo() {
-    const dpi = document.getElementById('template-dpi').value;
-    const paperSize = document.getElementById('template-paper-size').value;
-    const orientation = document.getElementById('template-orientation').value;
-    
-    // Dimensions en pixels selon le format et l'orientation
-    let widthPx, heightPx;
-    switch (paperSize) {
-        case 'A4':
-            widthPx = orientation === 'portrait' ? 595 : 842;
-            heightPx = orientation === 'portrait' ? 842 : 595;
-            break;
-        case 'A3':
-            widthPx = orientation === 'portrait' ? 842 : 1191;
-            heightPx = orientation === 'portrait' ? 1191 : 842;
-            break;
-        case 'Letter':
-            widthPx = orientation === 'portrait' ? 612 : 792;
-            heightPx = orientation === 'portrait' ? 792 : 612;
-            break;
-        case 'Legal':
-            widthPx = orientation === 'portrait' ? 612 : 1008;
-            heightPx = orientation === 'portrait' ? 1008 : 612;
-            break;
-        default:
-            widthPx = 595;
-            heightPx = 842;
-    }
-    
-    // Mettre à jour l'affichage
-    document.getElementById('info-resolution').textContent = widthPx + '×' + heightPx;
-    document.getElementById('info-dpi').textContent = dpi;
-    document.getElementById('info-format').textContent = paperSize;
-    document.getElementById('info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
-}
-
-// Initialiser les event listeners pour la mise à jour en temps réel
-document.addEventListener('DOMContentLoaded', function() {
-    // Écouter les changements sur les sélecteurs
-    ['template-dpi', 'template-paper-size', 'template-orientation'].forEach(function(id) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener('change', updateTemplateInfo);
-        }
-    });
-});
-");
-?>
