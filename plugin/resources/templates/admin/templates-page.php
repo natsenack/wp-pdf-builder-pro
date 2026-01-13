@@ -43,6 +43,7 @@ $canvas_defaults = [
 // Récupérer les DPI et formats autorisés depuis les paramètres
 $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
 $allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+$allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
@@ -484,8 +485,19 @@ var pdfBuilderAjax = {
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">Orientation</label>
                             <select id="template-orientation" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="portrait" <?php selected(get_canvas_modal_value('orientation', $canvas_defaults['orientation']), 'portrait'); ?>>Portrait</option>
-                                <option value="landscape" <?php selected(get_canvas_modal_value('orientation', $canvas_defaults['orientation']), 'landscape'); ?>>Paysage</option>
+                                <?php
+                                $orientation_options = [
+                                    'portrait' => 'Portrait (Vertical)',
+                                    'landscape' => 'Paysage (Horizontal) - Bientôt disponible'
+                                ];
+                                foreach ($orientation_options as $orientation_value => $orientation_label) {
+                                    if (in_array($orientation_value, $allowed_orientations)) {
+                                        $selected = (get_canvas_modal_value('orientation', $canvas_defaults['orientation']) == $orientation_value) ? 'selected' : '';
+                                        $disabled = ($orientation_value === 'landscape') ? 'disabled' : '';
+                                        echo "<option value='$orientation_value' $selected $disabled>$orientation_label</option>";
+                                    }
+                                }
+                                ?>
                             </select>
                             <span class="value-indicator" style="display: block; margin-top: 3px; font-size: 12px; color: #666;">Défaut: <?php echo ucfirst($canvas_defaults['orientation']); ?></span>
                         </div>

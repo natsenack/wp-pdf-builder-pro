@@ -116,6 +116,23 @@ function get_canvas_modal_value($key, $default = '') {
                             ?>
                         </div>
                     </div>
+                    <div class="setting-group">
+                        <label>Orientations autorisées pour les templates</label>
+                        <div class="checkbox-grid">
+                            <?php
+                            $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
+                            $orientation_options = [
+                                'portrait' => 'Portrait (Vertical)',
+                                'landscape' => 'Paysage (Horizontal) - Bientôt disponible'
+                            ];
+                            foreach ($orientation_options as $orientation_value => $orientation_label) {
+                                $checked = in_array($orientation_value, $allowed_orientations) ? 'checked' : '';
+                                $disabled = ($orientation_value === 'landscape') ? 'disabled' : '';
+                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_orientations[]' value='$orientation_value' $checked $disabled> $orientation_label</label>";
+                            }
+                            ?>
+                        </div>
+                    </div>
                 </div>
             </div>
 

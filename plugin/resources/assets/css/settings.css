@@ -3864,6 +3864,17 @@ select option:disabled {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
+/* Styles pour les options bientôt disponibles */
+.checkbox-option input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.checkbox-option input:disabled + * {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .checkbox-item label {
     font-weight: 500;
     color: #495057;
