@@ -721,13 +721,20 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, checking for dismissed notice');
     const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
     console.log('Dismissed status:', dismissed);
-    if (dismissed === 'true') {
-        const notice = document.getElementById('template-limit-notice');
-        if (notice) {
-            console.log('Masquant la notification précédemment masquée');
-            notice.style.display = 'none';
+
+    // Fonction pour masquer la notification si elle doit l'être
+    function hideNoticeIfDismissed() {
+        if (localStorage.getItem('pdf_builder_template_limit_dismissed') === 'true') {
+            const notice = document.getElementById('template-limit-notice');
+            if (notice && notice.style.display !== 'none') {
+                console.log('Masquant la notification détectée comme visible');
+                notice.style.display = 'none';
+            }
         }
     }
+
+    // Masquer immédiatement si nécessaire
+    hideNoticeIfDismissed();
 
     // Ajouter un event listener direct sur la croix pour s'assurer qu'elle fonctionne
     const closeButton = document.querySelector('#template-limit-notice a[title="Fermer"]');
@@ -743,5 +750,11 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.log('Close button not found');
     }
+
+    // Vérifier périodiquement si la notification ne devrait pas être masquée
+    // au cas où un autre script la réaffiche
+    setInterval(function() {
+        hideNoticeIfDismissed();
+    }, 1000); // Vérifier toutes les secondes
 });
 </script>
