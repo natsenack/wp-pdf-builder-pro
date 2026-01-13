@@ -188,33 +188,33 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         try {
-            $option_name = sanitize_text_field($_POST['option_name'] ?? '');
-            $option_value_json = sanitize_text_field($_POST['option_value'] ?? '');
+            $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
+            $values_json = sanitize_text_field($_POST['values'] ?? '');
 
-            if (empty($option_name)) {
-                wp_send_json_error(['message' => 'Nom d\'option manquant']);
+            if (empty($setting_key)) {
+                wp_send_json_error(['message' => 'Clé de paramètre manquante']);
                 return;
             }
 
             // Décoder la valeur JSON
-            $option_value = json_decode($option_value_json, true);
+            $values = json_decode($values_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 wp_send_json_error(['message' => 'Valeur JSON invalide']);
                 return;
             }
 
-            // Construire le nom complet de l'option
-            $full_option_name = 'pdf_builder_canvas_' . $option_name;
+            // Le setting_key est déjà le nom complet de l'option (ex: pdf_builder_canvas_allowed_dpis)
+            $option_name = $setting_key;
 
             // Sauvegarder l'option
-            $updated = update_option($full_option_name, $option_value);
+            $updated = update_option($option_name, $values);
 
             if ($updated) {
-                error_log("[PDF Builder AJAX] Saved allowed setting: {$full_option_name} = " . print_r($option_value, true));
+                error_log("[PDF Builder AJAX] Saved allowed setting: {$option_name} = " . print_r($values, true));
                 wp_send_json_success([
                     'message' => 'Paramètre sauvegardé avec succès',
-                    'option_name' => $full_option_name,
-                    'option_value' => $option_value
+                    'option_name' => $option_name,
+                    'option_value' => $values
                 ]);
             } else {
                 wp_send_json_error(['message' => 'Échec de la sauvegarde du paramètre']);
