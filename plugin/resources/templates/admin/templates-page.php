@@ -753,8 +753,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Vérifier périodiquement si la notification ne devrait pas être masquée
     // au cas où un autre script la réaffiche
+    let checkCount = 0;
     setInterval(function() {
-        hideNoticeIfDismissed();
-    }, 1000); // Vérifier toutes les secondes
+        checkCount++;
+        const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
+        if (dismissed === 'true') {
+            const notice = document.getElementById('template-limit-notice');
+            if (notice) {
+                const currentDisplay = notice.style.display;
+                if (currentDisplay !== 'none') {
+                    console.log(`[${checkCount}] Masquant la notification détectée comme visible (display: ${currentDisplay})`);
+                    notice.style.display = 'none';
+                }
+                // Vérifier aussi les autres propriétés qui pourraient la rendre visible
+                if (notice.style.visibility === 'hidden' || notice.style.opacity === '0') {
+                    console.log(`[${checkCount}] Remettant la notification masquée correctement`);
+                    notice.style.display = 'none';
+                    notice.style.visibility = '';
+                    notice.style.opacity = '';
+                }
+            }
+        }
+    }, 500); // Vérifier toutes les 500ms pour être plus réactif
 });
 </script>
