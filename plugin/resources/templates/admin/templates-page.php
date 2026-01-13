@@ -99,8 +99,12 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
+            <!-- DEBUG: Cette notification devrait s'afficher -->
+            <div style="background: #ff6b6b; color: white; padding: 10px; margin: 10px 0; border-radius: 4px; font-weight: bold;">
+                🚨 DEBUG: La notification PHP est exécutée !
+            </div>
             <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
-                <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: rgba(255,255,255,0.8); color: #dc3545; cursor: pointer; font-size: 18px; font-weight: bold; line-height: 1; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" title="Fermer">
+                <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 5px; right: 5px; border: 2px solid #dc3545; margin: 0; padding: 2px 6px; background: #fff; color: #dc3545; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 3px;" title="Fermer">
                     ×
                 </button>
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
