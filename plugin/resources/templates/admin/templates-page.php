@@ -84,15 +84,18 @@ var pdfBuilderAjax = {
 var defaultDpi = '" . esc_js($canvas_defaults['dpi']) . "';
 var defaultFormat = '" . esc_js($canvas_defaults['format']) . "';
 var defaultOrientation = '" . esc_js($canvas_defaults['orientation']) . "';
+var isPremium = " . ($is_premium ? 'true' : 'false') . ";
 
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
-    // Pour les utilisateurs gratuits, utiliser la même modal pour tous les upgrades
-    " . ($is_premium ? "
-// En mode premium, utiliser la modal spécifique
-        const modal = document.getElementById('upgrade-modal-' + reason);" : "
-// En mode gratuit, utiliser toujours la modal gallery pour cohérence
-        const modal = document.getElementById('upgrade-modal-gallery');") . "
+    var modal;
+    if (isPremium) {
+        // En mode premium, utiliser la modal spécifique
+        modal = document.getElementById('upgrade-modal-' + reason);
+    } else {
+        // En mode gratuit, utiliser toujours la modal gallery pour cohérence
+        modal = document.getElementById('upgrade-modal-gallery');
+    }
 
     if (modal) {
         modal.style.display = 'flex';
@@ -101,7 +104,7 @@ function showUpgradeModal(reason) {
         if (typeof gtag !== 'undefined') {
             gtag('event', 'upgrade_modal_shown', {
                 'reason': reason,
-                'user_type': 'free',
+                'user_type': isPremium ? 'premium' : 'free',
                 'page': 'templates'
             });
         }
@@ -141,11 +144,13 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
 // Gestionnaire pour bouton galerie de modèles (uniquement premium)
 document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
     e.preventDefault();
-    " . ($is_premium ? "
-// Ouvrir la galerie pour utilisateurs premium
-        document.getElementById('template-gallery-modal').style.display = 'flex';" : "
-// Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal('gallery');") . "
+    if (isPremium) {
+        // Ouvrir la galerie pour utilisateurs premium
+        document.getElementById('template-gallery-modal').style.display = 'flex';
+    } else {
+        // Montrer modal upgrade pour utilisateurs gratuits
+        showUpgradeModal('gallery');
+    }
 });
 
 // Fonction pour fermer la galerie de modèles
