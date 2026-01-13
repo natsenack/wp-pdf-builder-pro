@@ -164,6 +164,11 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_error_reporting]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_error_reporting', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_php]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>">
 
+                    <!-- Champs cachés pour les paramètres allowed_* (arrays) -->
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allowed_dpis[]]" value="<?php echo esc_attr(json_encode(get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']))); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allowed_formats[]]" value="<?php echo esc_attr(json_encode(get_option('pdf_builder_canvas_allowed_formats', ['A4']))); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allowed_orientations[]]" value="<?php echo esc_attr(json_encode(get_option('pdf_builder_canvas_allowed_orientations', ['portrait']))); ?>">
+
                     <!-- DEBUG: Hidden fields rendering completed -->
                     <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
 
@@ -516,14 +521,43 @@
                         var inputs = modal.querySelectorAll('input, select, textarea');
                         var updatedCount = 0;
 
+                        // Grouper les inputs par nom pour gérer les arrays
+                        var inputsByName = {};
                         inputs.forEach(function(input) {
                             if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
-                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
-                                if (hiddenField) {
-                                    var newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
-                                    hiddenField.value = newValue;
-                                    updatedCount++;
+                                if (!inputsByName[input.name]) {
+                                    inputsByName[input.name] = [];
                                 }
+                                inputsByName[input.name].push(input);
+                            }
+                        });
+
+                        // Traiter chaque groupe d'inputs
+                        Object.keys(inputsByName).forEach(function(inputName) {
+                            var inputGroup = inputsByName[inputName];
+                            var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
+
+                            if (hiddenField) {
+                                var newValue;
+
+                                // Gérer les arrays (checkboxes multiples)
+                                if (inputName.includes('[]') && inputGroup.length > 1) {
+                                    newValue = [];
+                                    inputGroup.forEach(function(input) {
+                                        if (input.type === 'checkbox' && input.checked) {
+                                            newValue.push(input.value);
+                                        }
+                                    });
+                                    newValue = JSON.stringify(newValue);
+                                } else {
+                                    // Valeur simple
+                                    var input = inputGroup[0];
+                                    newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+                                }
+
+                                hiddenField.value = newValue;
+                                updatedCount++;
+                                console.log('[PDF Builder] Updated', inputName, 'to', newValue);
                             }
                         });
 
