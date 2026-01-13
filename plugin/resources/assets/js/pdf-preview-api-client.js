@@ -948,7 +948,4 @@ window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
 
-');
-');
-
 

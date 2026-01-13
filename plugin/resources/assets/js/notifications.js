@@ -905,7 +905,9 @@ try {
 
             console.log('[PDF Builder] NOTIFICATIONS.JS - Notice reset:', noticeId);
         }
-    };
+    }
 
-// Force redeploy marker 2
+}
+
+// Force redeploy marker 3
 
