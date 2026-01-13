@@ -682,19 +682,22 @@ document.addEventListener('click', function(e) {
 
 // Fonction pour masquer la notification de limite de templates
 function dismissTemplateLimitNotice() {
-    console.log('dismissTemplateLimitNotice called');
+    console.log('dismissTemplateLimitNotice called - START');
     const notice = document.getElementById('template-limit-notice');
-    console.log('Notice element:', notice);
+    console.log('Notice element found:', !!notice);
     if (notice) {
+        console.log('Before hiding - display style:', notice.style.display);
         // Masquer la notification au lieu de la supprimer
         notice.style.display = 'none';
-        console.log('Notification masquée');
+        console.log('After hiding - display style:', notice.style.display);
 
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
+        console.log('Saved to localStorage');
     } else {
-        console.error('Element template-limit-notice non trouvé');
+        console.error('Element template-limit-notice not found');
     }
+    console.log('dismissTemplateLimitNotice called - END');
 }
 
 // Fonction pour réafficher la notification de limite de templates
@@ -724,6 +727,21 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Masquant la notification précédemment masquée');
             notice.style.display = 'none';
         }
+    }
+
+    // Ajouter un event listener direct sur la croix pour s'assurer qu'elle fonctionne
+    const closeButton = document.querySelector('#template-limit-notice a[title="Fermer"]');
+    if (closeButton) {
+        console.log('Close button found, adding event listener');
+        closeButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Close button clicked via event listener');
+            dismissTemplateLimitNotice();
+            return false;
+        });
+    } else {
+        console.log('Close button not found');
     }
 });
 </script>
