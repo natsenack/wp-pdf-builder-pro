@@ -67,14 +67,14 @@ var pdfBuilderAjax = {
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('template_limit')"
+                        onclick="showTemplateLimitNotice(); showUpgradeModal('template_limit')"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showTemplateLimitNotice()">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
@@ -91,7 +91,10 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
+            <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+                <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
+                    <span class="dashicons dashicons-dismiss"></span>
+                </button>
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
                     <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
@@ -672,5 +675,20 @@ document.addEventListener('click', function(e) {
         e.target.closest('.modal-overlay').style.display = 'none';
     }
 });
-</script> 
- 
+
+// Fonction pour masquer la notification de limite de templates
+function dismissTemplateLimitNotice() {
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        notice.style.display = 'none';
+    }
+}
+
+// Fonction pour réafficher la notification de limite de templates
+function showTemplateLimitNotice() {
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        notice.style.display = 'block';
+    }
+}
+</script>
