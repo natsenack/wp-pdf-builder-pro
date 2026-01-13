@@ -18,6 +18,9 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
     define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 }
 
+// Inclure les stubs pour Intelephense
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/stubs.php';
+
 // ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================

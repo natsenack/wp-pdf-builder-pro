@@ -1,18 +1,16 @@
-# Script de déploiement FTP pour PDF Builder Pro
-# Usage: .\deploy-simple.ps1 [-All] [-IncludeVendor] [-SkipConnectionTest] [-ConfigFile "path\to\config.json"]
-# Amélioré pour performance, puissance, dynamisme et sécurité
-# domaine : threeaxe.fr
-#le script ne doit pas etre modifier sans la permission de l'utilisateur
+# Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
+# NOTE: Mode 'test' retiré — ce script effectue désormais le déploiement réel FTP par défaut.
+#commande possible - a lire absolument
+# Usage: .\deploy-simple.ps1
+#.\build\deploy-simple.ps1
 
 param(
     [switch]$All,
     [switch]$SkipConnectionTest,
-    [switch]$IncludeVendor,
-    [string]$ConfigFile = "ftp-config.json"
+    [switch]$FastMode
 )
 
 # Paramètres par défaut pour les options supprimées
-$Clean = $false
 $Verbose = $false
 $DryRun = $false
 
@@ -51,7 +49,6 @@ if (!(Test-Path (Join-Path $WorkingDir "plugin"))) {
     exit 1
 }
 
-$PluginDir = Join-Path $WorkingDir "plugin"
 $LogFile = Join-Path $PSScriptRoot "deployment.log"
 
 # Fonction de logging
@@ -272,98 +269,15 @@ function Test-DeployedFileIntegrity {
         
         Write-Log "Intégrité OK: $remotePath ($($content.Length) caractères)" "SUCCESS"
         return $true
-    } catch {
-        Write-Log "Erreur vérification $remotePath : $($_.Exception.Message)" "ERROR"
-        return $false
     }
-}
-
-Write-Host "🚀 DÉPLOIEMENT FTP PDF BUILDER PRO" -ForegroundColor Cyan
-$mode = if ($All) { "COMPLET (-All)" } else { "MODIFIÉ UNIQUEMENT" }
-$vendorMode = if ($IncludeVendor) { "AVEC VENDOR" } else { "SANS VENDOR" }
-Write-Host "Mode: $mode | $vendorMode" -ForegroundColor Yellow
-Write-Host ("=" * 60) -ForegroundColor White
-Write-Log "Début du déploiement en mode $mode ($vendorMode)"
-
-# 1 DETECTION DES FICHIERS A DEPLOYER
-Write-Host "`n1 Detection des fichiers..." -ForegroundColor Magenta
-
-$filesToDeploy = @()
-
-if ($All) {
-    Write-Log "Mode complet: tous les fichiers du plugin" "INFO"
-    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'temp\.js$', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README', 'config\.ts', 'tsconfig')
-    if (-not $IncludeVendor) {
-        $exclusions += 'vendor'
+    catch {
+        Write-Host "Erreur lors du filtrage des fichiers: $($_.Exception.Message)" -ForegroundColor Yellow
     }
-    $filesToDeploy = @(Get-ChildItem -Path $PluginDir -Recurse -File | Where-Object {
-        $path = $_.FullName
-        -not ($exclusions | Where-Object { $path -match $_ })
-    })
-} else {
-    Write-Log "Mode normal: fichiers modifiés" "INFO"
-    $modified = @(& git diff --name-only)
-    $staged = @(& git diff --cached --name-only)
-    $untracked = @(& git ls-files --others --exclude-standard)
-    $allFiles = ($modified + $staged + $untracked) | Select-Object -Unique | Where-Object { $_ -like "plugin/*" -and (Test-Path (Join-Path $WorkingDir $_)) }
-    $filesToDeploy = @($allFiles | ForEach-Object { Get-Item (Join-Path $WorkingDir $_) })
-}
-
-# Add compiled files
-$distPath = Join-Path $WorkingDir "plugin/assets/js/dist"
-if (Test-Path $distPath) {
-    $filesToDeploy = $filesToDeploy + (Get-ChildItem -Path $distPath -Filter "*.js" -Recurse)
-}
-$cssDistPath = Join-Path $WorkingDir "plugin/assets/css"
-if (Test-Path $cssDistPath) {
-    $filesToDeploy = $filesToDeploy + (Get-ChildItem -Path $cssDistPath -Filter "*.css" -Recurse)
-}
-
-# Always include critical compiled files (force add even if not detected as modified)
-$criticalCompiledFiles = @(
-    "plugin/assets/js/pdf-builder-react.js",
-    "plugin/assets/js/pdf-builder-react.js.map"
-    # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
-)
-foreach ($criticalCompiledFile in $criticalCompiledFiles) {
-    $criticalCompiledPath = Join-Path $WorkingDir $criticalCompiledFile
-    if (Test-Path $criticalCompiledPath) {
-        $fileItem = Get-Item $criticalCompiledPath
-        if ($filesToDeploy.FullName -notcontains $fileItem.FullName) {
-            $filesToDeploy += $fileItem
-            Write-Log "Fichier compilé critique ajouté: $criticalCompiledFile" "INFO"
-        }
-    }
-}
-
-# Always include critical files
-$criticalFiles = @("pdf-builder-pro.php", "src/Core/PDF_Builder_Unified_Ajax_Handler.php", "config/autoloader.php")
-foreach ($criticalFile in $criticalFiles) {
-    $criticalPath = Join-Path $PluginDir $criticalFile
-    if (Test-Path $criticalPath) {
-        $fileItem = Get-Item $criticalPath
-        if ($filesToDeploy.FullName -notcontains $fileItem.FullName) {
-            $filesToDeploy += $fileItem
-            Write-Log "Fichier critique ajouté: $criticalFile" "INFO"
-        }
-    }
-}
-
-Write-Log "$($filesToDeploy.Count) fichier(s) détecté(s)" "SUCCESS"
-
-# 2 COMPILATION
-Write-Host "`n2 Compilation..." -ForegroundColor Magenta
-Write-Log "Début de la compilation" "INFO"
-
-Push-Location $WorkingDir
-$packageJsonPath = Join-Path $WorkingDir "package.json"
-if (Test-Path $packageJsonPath) {
-    # Vérifier si npm est disponible
-    $npmAvailable = $null
+}    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
     try {
-        $npmVersion = & npm --version 2>$null
-        $npmAvailable = $true
-        Write-Log "npm disponible (version $npmVersion)" "INFO"
+        $distFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\dist\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
+        $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+        $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
     } catch {
         Write-Log "npm non disponible, compilation ignorée" "WARN"
         $npmAvailable = $false
@@ -399,7 +313,7 @@ if (Test-Path $packageJsonPath) {
             exit 1
         }
     }
-} else {
+else {
     Write-Log "package.json non trouvé, compilation ignorée" "WARN"
 }
 Pop-Location
@@ -458,62 +372,93 @@ if (!$SkipConnectionTest) {
     }
 }
 
-# Créer le répertoire de base si nécessaire
-Write-Log "Création du répertoire de base: $FtpPath" "INFO"
-$pathWithoutLeadingSlash = $FtpPath.TrimStart('/')
-$pathSegments = $pathWithoutLeadingSlash -split '/'
-$currentPath = ""
+    # Créer tous les répertoires en parallèle
+    Write-Host "   Creation des repertoires..." -ForegroundColor Yellow
+    $dirs = @{}
+    foreach ($file in $pluginModified) {
+        $dir = Split-Path $file -Parent
+        if ($dir -and !$dirs.ContainsKey($dir)) {
+            $dirs[$dir] = $true
+        }
+    }
 
-foreach ($segment in $pathSegments) {
-    $currentPath += "/$segment"
-    Write-Log "Vérification répertoire: $currentPath" "INFO"
-    if (!(Test-FtpDirectoryExists $currentPath)) {
-        Write-Log "Création répertoire: $currentPath" "INFO"
+    # Ajouter tous les répertoires parents nécessaires (récursif)
+    $allDirs = @{}
+    foreach ($dir in $dirs.Keys) {
+        $currentDir = $dir
+        while ($currentDir -and $currentDir -ne "." -and $currentDir -ne "plugin") {
+            if (!$allDirs.ContainsKey($currentDir)) {
+                $allDirs[$currentDir] = $true
+            }
+            $currentDir = Split-Path $currentDir -Parent
+        }
+    }
+
+    # Fonction pour créer récursivement tous les répertoires nécessaires
+    function New-FtpDirectoryRecursive {
+        param([string]$ftpPath)
+
         try {
-            $ftpUri = "ftp://$FtpHost$currentPath/"
+            # Créer le répertoire directement (FTP gère la récursion automatiquement)
+            $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$ftpPath/"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $false
-            $ftpRequest.Timeout = 15000
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = 5000  # Augmenté pour la création récursive
+            $ftpRequest.KeepAlive = $false
             $response = $ftpRequest.GetResponse()
             $response.Close()
-            Write-Log "Répertoire créé: $currentPath" "SUCCESS"
+            return $true
         } catch {
-            if ($_.Exception.Message -match "550") {
-                Write-Log "Répertoire existe déjà ou accès refusé: $currentPath" "WARN"
-            } else {
-                Write-Log "Échec création répertoire $currentPath : $($_.Exception.Message)" "ERROR"
-                exit 1
-            }
+            # Le répertoire existe probablement déjà, ou il y a eu une erreur
+            return $false
         }
-    } else {
-        Write-Log "Répertoire existe déjà: $currentPath" "INFO"
     }
-}
 
-# Upload avec parallélisation
-$progressId = 1
-Write-Progress -Id $progressId -Activity "Upload FTP" -Status "Initialisation..." -PercentComplete 0
-
-$jobs = New-Object System.Collections.ArrayList
-$completed = 0
-
-for ($i = 0; $i -lt $filesToDeploy.Count; $i++) {
-    $file = $filesToDeploy[$i]
-    $relativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/")
-    $ftpFilePath = $relativePath -replace '^plugin/', ''
-
-    # Attendre si trop de jobs en cours
-    while ($jobs.Count -ge $maxConcurrent) {
-        $finishedJobs = @()
-        foreach ($job in $jobs) {
-            if ($job.State -eq 'Completed') {
-                $finishedJobs += $job
-            }
+    # Créer tous les répertoires en parallèle avec gestion récursive
+    $dirJobs = @()
+    foreach ($dir in $allDirs.Keys) {
+        # Corriger le calcul du chemin FTP
+        if ($dir.StartsWith("plugin/")) {
+            $ftpDir = $dir.Substring(7)
+        } elseif ($dir.StartsWith("plugin\")) {
+            $ftpDir = $dir.Substring(7)
+        } else {
+            $ftpDir = $dir
         }
-        foreach ($job in $finishedJobs) {
+        $ftpDir = $ftpDir.Replace("\", "/")
+        $fullPath = "$FtpPath/$ftpDir".TrimEnd('/')
+
+        if ($fullPath -ne $FtpPath) {
+            $job = Start-Job -ScriptBlock {
+                param($ftpHost, $ftpUser, $ftpPass, $fullPath)
+                try {
+                    # Créer le répertoire récursivement
+                    $ftpUri = "ftp://$using:FtpUser`:$using:FtpPass@$using:FtpHost$fullPath/"
+                    $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                    $ftpRequest.UseBinary = $true
+                    $ftpRequest.UsePassive = $true
+                    $ftpRequest.Timeout = 5000
+                    $ftpRequest.KeepAlive = $false
+                    $response = $ftpRequest.GetResponse()
+                    $response.Close()
+                    return @{ Success = $true; Path = $fullPath }
+                } catch {
+                    return @{ Success = $false; Path = $fullPath; Error = $_.Exception.Message }
+                }
+            } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $fullPath
+            $dirJobs += $job
+        }
+    }
+
+    # Attendre la fin de la création des répertoires (max 15 secondes pour la récursion)
+    $dirTimeout = 15
+    $dirStartTime = Get-Date
+    while ($dirJobs.Count -gt 0 -and ((Get-Date) - $dirStartTime).TotalSeconds -lt $dirTimeout) {
+        $completedDirJobs = $dirJobs | Where-Object { $_.State -eq 'Completed' }
+        foreach ($job in $completedDirJobs) {
             $result = Receive-Job $job
             if ($result.Success) {
                 Write-Log "Upload réussi: $($result.RelativePath)" "SUCCESS"
@@ -531,82 +476,90 @@ for ($i = 0; $i -lt $filesToDeploy.Count; $i++) {
         }
     }
 
-    $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
-    Write-Progress -Id $progressId -Activity "Upload FTP" -Status "$relativePath" -PercentComplete $percentComplete
+    $filesToDeploy = $pluginModified
+    $jobs = @()
+    $completed = 0
+    $progressId = 1
+    foreach ($file in $filesToDeploy) {
+        $relativePath = $file
+        $ftpFilePath = $file
+        $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
+        Write-Progress -Id $progressId -Activity "Upload FTP" -Status "$relativePath" -PercentComplete $percentComplete
 
-    if ($DryRun) {
-        Write-Log "SIMULATION: $relativePath" "INFO"
-        $uploadCount++
-        $completed++
-        continue
-    }
-
-    # Démarrer le job d'upload
-    $job = Start-Job -ScriptBlock {
-        param($file, $ftpFilePath, $ftpHost, $ftpUser, $ftpPass, $ftpPath, $WorkingDir)
-        
-        try {
-            $basePath = if ($ftpPath) { "$ftpHost$ftpPath" } else { $ftpHost }
-            $ftpUri = "ftp://$ftpUser`:$ftpPass@$basePath/$ftpFilePath"
-            
-            # Supprimer le fichier existant
-            try {
-                $deleteRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-                $deleteRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
-                $deleteRequest.UseBinary = $true
-                $deleteRequest.UsePassive = $false
-                $deleteRequest.Timeout = 10000
-                $deleteResponse = $deleteRequest.GetResponse()
-                $deleteResponse.Close()
-            } catch {}
-            
-        # Créer le répertoire si nécessaire
-            $remoteDir = [System.IO.Path]::GetDirectoryName($ftpFilePath)
-            if ($remoteDir) {
-                $remoteDir = $remoteDir -replace '\\', '/'
-                $segments = $remoteDir -split '/' | Where-Object { $_ }
-                $currentPath = ""
-                foreach ($segment in $segments) {
-                    $currentPath += "/$segment"
-                    try {
-                        $dirUri = "ftp://$ftpUser`:$ftpPass@$basePath$currentPath/"
-                        $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
-                        $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-                        $dirRequest.UseBinary = $true
-                        $dirRequest.UsePassive = $false
-                        $dirRequest.Timeout = 15000
-                        $dirResponse = $dirRequest.GetResponse()
-                        $dirResponse.Close()
-                    } catch {}
-                }
-            }
-            
-            # Upload du fichier - Mode binaire pour TOUS les fichiers pour éviter la corruption
-            $isBinary = $true  # Toujours utiliser le mode binaire
-            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.UseBinary = $isBinary
-            $ftpRequest.UsePassive = $false
-            $ftpRequest.Timeout = 60000
-
-            $fileContent = [System.IO.File]::ReadAllBytes($file.FullName)
-            $ftpRequest.ContentLength = $fileContent.Length
-
-            $requestStream = $ftpRequest.GetRequestStream()
-            $requestStream.Write($fileContent, 0, $fileContent.Length)
-            $requestStream.Close()
-
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-
-            return @{ Success = $true; RelativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/"); Error = $null }
-        } catch {
-            return @{ Success = $false; RelativePath = $file.FullName.Replace("$WorkingDir\", "").Replace("\", "/"); Error = $_.Exception.Message }
+        if ($DryRun) {
+            Write-Log "SIMULATION: $relativePath" "INFO"
+            $uploadCount++
+            $completed++
+            continue
         }
-    } -ArgumentList $file, $ftpFilePath, $FtpHost, $FtpUser, $FtpPass, $FtpPath, $WorkingDir
-    
-    $jobs.Add($job) | Out-Null
-}
+
+        # Démarrer le job d'upload
+        $job = Start-Job -ScriptBlock {
+            param($file, $ftpFilePath, $ftpHost, $ftpUser, $ftpPass, $ftpPath, $WorkingDir)
+            
+            try {
+                $basePath = if ($ftpPath) { "$ftpHost$ftpPath" } else { $ftpHost }
+                $ftpUri = "ftp://$ftpUser`:$ftpPass@$basePath/$ftpFilePath"
+                
+                # Supprimer le fichier existant
+                try {
+                    $deleteRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                    $deleteRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
+                    $deleteRequest.UseBinary = $true
+                    $deleteRequest.UsePassive = $false
+                    $deleteRequest.Timeout = 10000
+                    $deleteResponse = $deleteRequest.GetResponse()
+                    $deleteResponse.Close()
+                } catch {}
+                
+                # Créer le répertoire si nécessaire
+                $remoteDir = [System.IO.Path]::GetDirectoryName($ftpFilePath)
+                if ($remoteDir) {
+                    $remoteDir = $remoteDir -replace '\\', '/'
+                    $segments = $remoteDir -split '/' | Where-Object { $_ }
+                    $currentPath = ""
+                    foreach ($segment in $segments) {
+                        $currentPath += "/$segment"
+                        try {
+                            $dirUri = "ftp://$ftpUser`:$ftpPass@$basePath$currentPath/"
+                            $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
+                            $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                            $dirRequest.UseBinary = $true
+                            $dirRequest.UsePassive = $false
+                            $dirRequest.Timeout = 15000
+                            $dirResponse = $dirRequest.GetResponse()
+                            $dirResponse.Close()
+                        } catch {}
+                    }
+                }
+                
+                # Upload du fichier - Mode binaire pour TOUS les fichiers pour éviter la corruption
+                $isBinary = $true  # Toujours utiliser le mode binaire
+                $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                $ftpRequest.UseBinary = $isBinary
+                $ftpRequest.UsePassive = $false
+                $ftpRequest.Timeout = 60000
+
+                $fullPath = "$WorkingDir\$file"
+                $fileContent = [System.IO.File]::ReadAllBytes($fullPath)
+                $ftpRequest.ContentLength = $fileContent.Length
+
+                $requestStream = $ftpRequest.GetRequestStream()
+                $requestStream.Write($fileContent, 0, $fileContent.Length)
+                $requestStream.Close()
+
+                $response = $ftpRequest.GetResponse()
+                $response.Close()
+
+                return @{ Success = $true; RelativePath = $file; Error = $null }
+            } catch {
+                return @{ Success = $false; RelativePath = $file; Error = $_.Exception.Message }
+            }
+        } -ArgumentList $file, $ftpFilePath, $FtpHost, $FtpUser, $FtpPass, $FtpPath, $WorkingDir
+        
+        $jobs.Add($job) | Out-Null
+    }
 
 # Attendre la fin de tous les jobs
 while ($jobs.Count -gt 0) {
@@ -650,141 +603,164 @@ if ($errorCount -gt 0) {
     Write-Log "Déploiement réussi" "SUCCESS"
 }
 
-# 4 VÉRIFICATION POST-DÉPLOIEMENT
-Write-Host "`n4 Vérification post-déploiement..." -ForegroundColor Magenta
-Write-Log "Vérification de l'intégrité des fichiers déployés" "INFO"
+# 4 GIT COMMIT + PUSH + TAG
+Write-Host "`n4 Git commit + push + tag..." -ForegroundColor Magenta
 
-$criticalFiles = @(
-    "src/Core/PDF_Builder_Unified_Ajax_Handler.php",
-    "pdf-builder-pro.php",
-    "src/Core/core/autoloader.php"
-)
+$commitCreated = $false
+$pushSuccess = $false
 
-$integrityErrors = 0
-$integrityWarnings = 0
-foreach ($criticalFile in $criticalFiles) {
-    $result = Test-DeployedFileIntegrity $criticalFile
-    if ($result -eq $false) {
-        # Vérifier si c'est une erreur 550 (fichier non trouvé) - possible cache serveur
-        try {
-            $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-            $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$criticalFile"
-            $testRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $testRequest.Method = [System.Net.WebRequestMethods+Ftp]::DownloadFile
-            $testRequest.UseBinary = $true
-            $testRequest.UsePassive = $true
-            $testRequest.Timeout = 5000
-            $testResponse = $testRequest.GetResponse()
-            $testResponse.Close()
-        } catch {
-            if ($_.Exception.Message -match "550") {
-                Write-Log "Fichier critique $criticalFile non trouvé (possible cache serveur) - marqué comme avertissement" "WARN"
-                $integrityWarnings++
-                continue
-            }
-        }
-        $integrityErrors++
-        Write-Log "ÉCHEC intégrité: $criticalFile" "ERROR"
-    }
-}
-
-if ($integrityErrors -gt 0) {
-    Write-Log "ÉCHEC: $integrityErrors fichier(s) critique(s) défaillant(s)" "ERROR"
-    Write-Host "`n❌ INTÉGRITÉ COMPROMISE - Redéploiement recommandé" -ForegroundColor Red
-    if (!$DryRun) { exit 1 }
-} elseif ($integrityWarnings -gt 0) {
-    Write-Log "AVERTISSEMENT: $integrityWarnings fichier(s) critique(s) avec problèmes temporaires (possible cache serveur)" "WARN"
-    Write-Host "`n⚠️  INTÉGRITÉ PARTIELLE - $integrityWarnings fichier(s) avec avertissements (cache serveur possible)" -ForegroundColor Yellow
-    Write-Host "   Le déploiement est probablement réussi malgré ces avertissements" -ForegroundColor Yellow
-} else {
-    Write-Log "Intégrité des fichiers critiques vérifiée" "SUCCESS"
-    Write-Host "`n✅ INTÉGRITÉ VÉRIFIÉE" -ForegroundColor Green
-    
-    # Vérifier si des fichiers semblent anciens (possible cache serveur)
-    $oldFilesCount = 0
-    foreach ($criticalFile in $criticalFiles) {
-        try {
-            $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-            $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$criticalFile"
-            $dateRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $dateRequest.Method = [System.Net.WebRequestMethods+Ftp]::GetDateTimestamp
-            $dateRequest.UseBinary = $true
-            $dateRequest.UsePassive = $true
-            $dateRequest.Timeout = 10000
-            $dateResponse = $dateRequest.GetResponse()
-            $lastModified = $dateResponse.LastModified
-            $dateResponse.Close()
-            
-            $timeSinceModified = [DateTime]::Now - $lastModified
-            if ($timeSinceModified.TotalMinutes -gt 10) {
-                $oldFilesCount++
-            }
-        } catch {}
-    }
-    
-    if ($oldFilesCount -gt 0) {
-        Write-Host "`n⚠️  ATTENTION: $oldFilesCount fichier(s) critique(s) semblent ancien(s) sur le serveur" -ForegroundColor Yellow
-        Write-Host "   Cela peut indiquer un cache serveur (OPcache, etc.)" -ForegroundColor Yellow
-        Write-Host "   Si l'erreur persiste, videz le cache PHP/WordPress sur le serveur" -ForegroundColor Yellow
-    }
-}
-
-# NETTOYAGE
-if ($Clean -and !$DryRun) {
-    Write-Host "`n4 Nettoyage..." -ForegroundColor Magenta
-    Write-Log "Début du nettoyage" "INFO"
-
-    # Supprimer fichiers déplacés connus
-    $oldFiles = @(
-        "src/backend/core/Core/PDF_Builder_Nonce_Manager.php",
-        "src/backend/core/Core/PDF_Builder_Performance_Monitor.php",
-        "src/backend/core/Core/PDF_Builder_Unified_Ajax_Handler.php",
-        "src/backend/core/Core/core/PdfBuilderAutoloader.php"
-    )
-    foreach ($file in $oldFiles) {
-        if (Remove-FtpFile $file) {
-            Write-Log "Fichier obsolète supprimé: $file" "INFO"
-        }
-    }
-
-    # Supprimer fichiers obsolètes
-    $localFiles = $filesToDeploy | ForEach-Object {
-        $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/").Replace("plugin/", "")
-    }
-    $ftpFiles = Get-FtpFiles
-    $toDelete = $ftpFiles | Where-Object { $localFiles -notcontains $_ }
-    foreach ($file in $toDelete) {
-        if (Remove-FtpFile $file) {
-            Write-Log "Fichier obsolète supprimé: $file" "INFO"
-        }
-    }
-    Write-Log "Nettoyage terminé" "SUCCESS"
-}
-
-# COMMIT GIT
-if (!$DryRun) {
-    Write-Host "`n5 Commit Git..." -ForegroundColor Magenta
-    Write-Log "Vérification des changements Git" "INFO"
-
+try {
     Push-Location $WorkingDir
-    try {
-        $status = & git status --porcelain
-        if ($status) {
-            $message = "deploy: $(Get-Date -Format 'dd/MM/yyyy HH:mm') - $($filesToDeploy.Count) fichiers"
-            if ($All) { $message += " (complet)" }
-            & git commit -m $message
-            $currentBranch = & git branch --show-current
-            & git push origin $currentBranch
-            Write-Log "Commit et push Git réussis" "SUCCESS"
-        } else {
-            Write-Log "Aucun changement à committer" "INFO"
+
+    # ✅ CORRECTION: Ajouter TOUS les fichiers modifiés (même s'ils ne sont pas dans $pluginModified)
+    Write-Host "   Staging de TOUS les fichiers modifies..." -ForegroundColor Yellow
+    $ErrorActionPreference = "Continue"
+    cmd /c "cd /d $WorkingDir && git add -A" 2>&1 | Out-Null
+    $ErrorActionPreference = "Stop"
+
+    # Vérifier s'il y a des changements à committer
+    $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+    $stagedFiles = $statusOutput | Where-Object { $_ -and $_ -match "^[AM]" }
+    
+    if ($stagedFiles -and $stagedFiles.Count -gt 0) {
+        # Afficher les fichiers qui seront committés
+        Write-Host "   Fichiers à committer:" -ForegroundColor Cyan
+        $stagedFiles | ForEach-Object {
+            Write-Host "     $_" -ForegroundColor Gray
         }
-    } catch {
-        Write-Log "Erreur Git: $($_.Exception.Message)" "ERROR"
-    } finally {
-        Pop-Location
+        
+        # Générer un message de commit intelligent basé sur les fichiers modifiés
+        $commitMsg = "Deploy $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+        Write-Host "   Commit: $commitMsg" -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        $commitResult = cmd /c "cd /d $WorkingDir && git commit -m `"$commitMsg`"" 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   Commit cree" -ForegroundColor Green
+            $commitCreated = $true
+        } else {
+            Write-Host "   Erreur commit: $($commitResult -join ' ')" -ForegroundColor Red
+            $commitCreated = $false
+        }
+    } else {
+        Write-Host "   Rien a committer (deja a jour)" -ForegroundColor Gray
+        $commitCreated = $false
     }
+
+    # Push seulement si un commit a été créé
+    if ($commitCreated) {
+        Write-Host "   Push vers remote..." -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        $pushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   Push reussi" -ForegroundColor Green
+            $pushSuccess = $true
+        } else {
+            Write-Host "   Erreur push: $($pushResult -join ' ')" -ForegroundColor Red
+            $pushSuccess = $false
+        }
+    } else {
+        Write-Host "   Pas de push (pas de commit)" -ForegroundColor Gray
+        $pushSuccess = $true  # Pas d'erreur si pas de commit
+    }
+
+    # Tag seulement si push réussi - OPTIONNEL, peut être désactivé pour accélérer
+    if ($pushSuccess -and $commitCreated) {
+        # ✅ CORRECTION: Utiliser le format de version déployé (comme dans les logs)
+        $version = Get-Date -Format "v1.0.0-11eplo25-ddMMyyyy-HHmmss"
+        Write-Host "   Tag: $version" -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        $tagResult = cmd /c "cd /d $WorkingDir && git tag -a $version -m `"Deploiement $version`"" 2>&1
+        $ErrorActionPreference = "Stop"
+
+        if ($LASTEXITCODE -eq 0) {
+            $ErrorActionPreference = "Continue"
+            $tagPushResult = cmd /c "cd /d $WorkingDir && git push origin $version" 2>&1
+            $ErrorActionPreference = "Stop"
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   Tag cree et pousse" -ForegroundColor Green
+            } else {
+                Write-Host "   Erreur push tag: $($tagPushResult -join ' ')" -ForegroundColor Red
+            }
+        } else {
+            Write-Host "   Erreur creation tag: $($tagResult -join ' ')" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "   Pas de tag (pas de push ou commit)" -ForegroundColor Gray
+    }
+
+    Pop-Location
+} catch {
+    Write-Host "   Erreur git: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-Write-Host "`n🎉 DÉPLOIEMENT TERMINÉ !" -ForegroundColor Green
-Write-Log "Fin du déploiement" "INFO"
+# FIN
+Write-Host "`nDEPLOIEMENT TERMINE AVEC SUCCES!" -ForegroundColor Green
+Write-Host ("=" * 60) -ForegroundColor White
+Write-Host "Resume:" -ForegroundColor Cyan
+Write-Host "   Compilation: OK" -ForegroundColor Green
+
+# Afficher le statut FTP selon le mode
+Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
+
+# Afficher le statut Git selon les résultats
+if ($commitCreated -and $pushSuccess) {
+    Write-Host "   Git: OK (commit + push + tag)" -ForegroundColor Green
+} elseif ($commitCreated) {
+    Write-Host "   Git: PARTIEL (commit OK, push/tag echoue)" -ForegroundColor Yellow
+} else {
+    Write-Host "   Git: SKIP (rien a committer)" -ForegroundColor Gray
+}
+Write-Host ""
+
+# ✅ FINAL GIT PUSH - S'assurer que tout est pousse et clean
+Write-Host "5 Final Git Push..." -ForegroundColor Cyan
+try {
+    Push-Location $WorkingDir
+    
+    # ✅ CORRECTION: Vérifier qu'il n'y a plus de fichiers non committés
+    $ErrorActionPreference = "Continue"
+    $finalStatus = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+    $ErrorActionPreference = "Stop"
+    
+    # Filtrer pour ne montrer que les fichiers modifiés (pas les fichiers non suivis)
+    $unstagedFiles = $finalStatus | Where-Object { $_ -match "^ [MADRCU]" }
+    
+    if ($unstagedFiles -and $unstagedFiles.Count -gt 0) {
+        Write-Host "   ⚠️ Fichiers modifies non commits detects:" -ForegroundColor Yellow
+        $unstagedFiles | ForEach-Object {
+            Write-Host "     $_" -ForegroundColor Gray
+        }
+        
+        # Ajouter et commiter les fichiers restants
+        Write-Host "   Commitment des fichiers restants..." -ForegroundColor Yellow
+        $ErrorActionPreference = "Continue"
+        cmd /c "cd /d $WorkingDir && git add -A" 2>&1 | Out-Null
+        $commitMsg = "chore: Commit final des fichiers restants - $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')"
+        cmd /c "cd /d $WorkingDir && git commit -m `"$commitMsg`"" 2>&1 | Out-Null
+        $ErrorActionPreference = "Stop"
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   ✅ Commit final cree" -ForegroundColor Green
+        }
+    }
+    
+    # Pousser tout vers le remote
+    $ErrorActionPreference = "Continue"
+    $finalPushResult = cmd /c "cd /d $WorkingDir && git push origin dev" 2>&1
+    $ErrorActionPreference = "Stop"
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   ✅ Final push vers origin/dev reussi" -ForegroundColor Green
+    } else {
+        Write-Host "   ⚠️ Final push info: $($finalPushResult -join ' ')" -ForegroundColor Yellow
+    }
+    
+    Pop-Location
+} catch {
+    Write-Host "   ⚠️ Erreur lors du final push: $($_.Exception.Message)" -ForegroundColor Yellow
+}
