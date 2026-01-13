@@ -273,11 +273,45 @@ function Test-DeployedFileIntegrity {
     catch {
         Write-Host "Erreur lors du filtrage des fichiers: $($_.Exception.Message)" -ForegroundColor Yellow
     }
-}    # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
-    try {
-        $distFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\dist\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
-        $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
-        $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
+}
+
+# 1. DÉTECTION DES FICHIERS MODIFIÉS
+Write-Host "`n1 Detection des fichiers modifies..." -ForegroundColor Magenta
+Write-Log "Détection des fichiers modifiés via Git" "INFO"
+
+Push-Location $WorkingDir
+try {
+    # Détecter les fichiers modifiés/staged avec Git
+    $statusOutput = cmd /c "cd /d $WorkingDir && git status --porcelain" 2>&1
+    $modifiedFiles = $statusOutput | Where-Object { $_ -and $_ -match "^[AM]" } | ForEach-Object { $_.Substring(3) }
+    
+    # Filtrer seulement les fichiers du plugin
+    $pluginModified = $modifiedFiles | Where-Object { $_.StartsWith("plugin/") } | ForEach-Object { $_.Replace("\", "/") }
+    
+    Write-Log "Fichiers modifiés détectés: $($pluginModified.Count)" "INFO"
+    if ($pluginModified.Count -gt 0) {
+        Write-Host "   Fichiers modifies:" -ForegroundColor Cyan
+        $pluginModified | ForEach-Object {
+            Write-Host "     $_" -ForegroundColor Gray
+        }
+    } else {
+        Write-Host "   Aucun fichier modifie detecte" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Log "Erreur lors de la détection des fichiers: $($_.Exception.Message)" "ERROR"
+    $pluginModified = @()
+} finally {
+    Pop-Location
+}
+
+# 2. COMPILATION ET AJOUT DES FICHIERS DIST
+Write-Host "`n2 Compilation et fichiers dist..." -ForegroundColor Magenta
+
+# Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
+try {
+    $distFiles = Get-ChildItem "$WorkingDir\plugin\assets\js\dist\*.js" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) } | Select-Object -ExpandProperty FullName
+    $distFilesRelative = $distFiles | ForEach-Object { $_.Replace("$WorkingDir\", "").Replace("\", "/") }
+    $pluginModified = @($pluginModified) + @($distFilesRelative) | Sort-Object -Unique
     } catch {
         Write-Log "npm non disponible, compilation ignorée" "WARN"
         $npmAvailable = $false

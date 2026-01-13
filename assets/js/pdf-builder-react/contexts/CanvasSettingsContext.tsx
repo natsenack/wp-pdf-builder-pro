@@ -161,7 +161,7 @@ interface CanvasSettingsProviderProps {
 
 function loadSettingsFromWindowObj(): CanvasSettingsContextType {
   try {
-    const windowSettings = window.pdfBuilderData?.canvasSettings || window.pdfBuilderCanvasSettings;
+    const windowSettings = window.pdfBuilderCanvasSettings;
     
     // Debug: Check if window settings exist - FORCE LOG
     
