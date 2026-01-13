@@ -464,6 +464,36 @@
     position: relative !important;
 }
 
+/* Bouton de fermeture de la notification de limite */
+.pdf-builder-dismiss-btn {
+    position: absolute !important;
+    top: 0 !important;
+    right: 1px !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 9px !important;
+    background: none !important;
+    color: #0c5460 !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    z-index: 10 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.pdf-builder-dismiss-btn:hover {
+    color: #0c5460 !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-radius: 2px !important;
+}
+
+.pdf-builder-dismiss-btn:focus {
+    outline: 2px solid #0c5460 !important;
+    outline-offset: 1px !important;
+}
+
 /* Masquer la notification si elle a été fermée */
 #pdf-builder-template-limit-notice.pdf-builder-dismissed {
     display: none !important;

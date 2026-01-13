@@ -91,7 +91,7 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div id="pdf-builder-template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+            <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <a href="#" onclick="dismissTemplateLimitNotice(); return false;" style="position: absolute; top: 5px; right: 5px; color: #dc3545; font-size: 20px; font-weight: bold; text-decoration: none; line-height: 1;" title="Fermer">
                     ✕
                 </a>
@@ -679,43 +679,20 @@ document.addEventListener('click', function(e) {
 // Fonction pour masquer la notification de limite de templates
 function dismissTemplateLimitNotice() {
     console.log('dismissTemplateLimitNotice called');
-    const notice = document.getElementById('pdf-builder-template-limit-notice');
+    const notice = document.getElementById('template-limit-notice');
     console.log('notice element:', notice);
-    console.log('notice current display:', notice ? notice.style.display : 'element not found');
-    console.log('notice classes:', notice ? notice.className : 'element not found');
-
     if (notice) {
-        // Utiliser le système localStorage de PDF Builder
-        var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
-        dismissedNotices = JSON.parse(dismissedNotices);
-        dismissedNotices['template_limit'] = true;
-        localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
-
         notice.style.display = 'none';
-        notice.classList.add('pdf-builder-dismissed');
-        console.log('notice hidden and saved to localStorage');
-        console.log('localStorage content:', localStorage.getItem('pdf_builder_dismissed_notices'));
-
-        // Vérifier après un court délai si elle est toujours masquée
-        setTimeout(function() {
-            console.log('notice display after timeout:', notice.style.display);
-            console.log('notice classes after timeout:', notice.className);
-        }, 100);
+        console.log('notice hidden');
+    } else {
+        console.log('notice element not found');
     }
 }
 
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
-    const notice = document.getElementById('pdf-builder-template-limit-notice');
+    const notice = document.getElementById('template-limit-notice');
     if (notice) {
-        // Supprimer du localStorage pour permettre la réaffichage
-        var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
-        if (dismissedNotices) {
-            dismissedNotices = JSON.parse(dismissedNotices);
-            delete dismissedNotices['template_limit'];
-            localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
-        }
-
         notice.style.display = 'block';
     }
 }
