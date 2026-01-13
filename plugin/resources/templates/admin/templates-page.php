@@ -33,9 +33,6 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
-// DEBUG: Afficher les valeurs pour diagnostiquer
-echo '<!-- DEBUG PREMIUM: is_premium=' . ($is_premium ? 'true' : 'false') . ', templates_count=' . $templates_count . ', user_can_create=' . ($user_can_create ? 'true' : 'false') . ' -->';
-
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
@@ -94,7 +91,6 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <!-- DEBUG: Notification affichée car is_premium=false et templates_count >= 1 -->
             <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <a href="#" onclick="dismissTemplateLimitNotice(); return false;" style="position: absolute; top: 5px; right: 5px; color: #dc3545; font-size: 20px; font-weight: bold; text-decoration: none; line-height: 1;" title="Fermer">
                     ✕
@@ -682,38 +678,35 @@ document.addEventListener('click', function(e) {
 
 // Fonction pour masquer la notification de limite de templates
 function dismissTemplateLimitNotice() {
-    console.log('dismissTemplateLimitNotice called - START');
+    console.log('dismissTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
-    console.log('Notice element found:', !!notice);
+    console.log('Notice element:', notice);
     if (notice) {
-        console.log('Before hiding - display style:', notice.style.display);
-        // Masquer la notification au lieu de la supprimer
-        notice.style.display = 'none';
-        console.log('After hiding - display style:', notice.style.display);
+        // Supprimer complètement l'élément du DOM pour éviter les conflits
+        notice.remove();
+        console.log('Notification supprimée du DOM');
 
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
-        console.log('Saved to localStorage');
     } else {
-        console.error('Element template-limit-notice not found');
+        console.error('Element template-limit-notice non trouvé');
     }
-    console.log('dismissTemplateLimitNotice called - END');
 }
 
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
     console.log('showTemplateLimitNotice called');
-    const notice = document.getElementById('template-limit-notice');
-    if (notice) {
-        // Afficher la notification
-        notice.style.display = 'block';
-        console.log('Notification affichée');
+    let notice = document.getElementById('template-limit-notice');
 
-        // Supprimer l'état de masquage de localStorage
-        localStorage.removeItem('pdf_builder_template_limit_dismissed');
-    } else {
-        console.log('Notification n\'existe pas dans le DOM - elle ne peut pas être affichée');
+    // Si la notification n'existe pas, on ne peut pas la recréer facilement
+    // On se contente de supprimer l'état de masquage
+    if (!notice) {
+        console.log('Notification n\'existe pas dans le DOM');
     }
+
+    // Supprimer l'état de masquage de localStorage
+    localStorage.removeItem('pdf_builder_template_limit_dismissed');
+    console.log('État de masquage supprimé du localStorage');
 }
 
 // Vérifier au chargement de la page si la notification a été masquée
@@ -722,58 +715,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
     console.log('Dismissed status:', dismissed);
 
-    // Fonction pour masquer la notification si elle doit l'être
-    function hideNoticeIfDismissed() {
-        if (localStorage.getItem('pdf_builder_template_limit_dismissed') === 'true') {
-            const notice = document.getElementById('template-limit-notice');
-            if (notice && notice.style.display !== 'none') {
-                console.log('Masquant la notification détectée comme visible');
-                notice.style.display = 'none';
-            }
+    // Ne masquer que si la notification existe ET qu'elle a été explicitement masquée
+    if (dismissed === 'true') {
+        const notice = document.getElementById('template-limit-notice');
+        if (notice) {
+            console.log('Removing previously dismissed notice');
+            notice.remove();
         }
     }
-
-    // Masquer immédiatement si nécessaire
-    hideNoticeIfDismissed();
-
-    // Ajouter un event listener direct sur la croix pour s'assurer qu'elle fonctionne
-    const closeButton = document.querySelector('#template-limit-notice a[title="Fermer"]');
-    if (closeButton) {
-        console.log('Close button found, adding event listener');
-        closeButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Close button clicked via event listener');
-            dismissTemplateLimitNotice();
-            return false;
-        });
-    } else {
-        console.log('Close button not found');
-    }
-
-    // Vérifier périodiquement si la notification ne devrait pas être masquée
-    // au cas où un autre script la réaffiche
-    let checkCount = 0;
-    setInterval(function() {
-        checkCount++;
-        const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
-        if (dismissed === 'true') {
-            const notice = document.getElementById('template-limit-notice');
-            if (notice) {
-                const currentDisplay = notice.style.display;
-                if (currentDisplay !== 'none') {
-                    console.log(`[${checkCount}] Masquant la notification détectée comme visible (display: ${currentDisplay})`);
-                    notice.style.display = 'none';
-                }
-                // Vérifier aussi les autres propriétés qui pourraient la rendre visible
-                if (notice.style.visibility === 'hidden' || notice.style.opacity === '0') {
-                    console.log(`[${checkCount}] Remettant la notification masquée correctement`);
-                    notice.style.display = 'none';
-                    notice.style.visibility = '';
-                    notice.style.opacity = '';
-                }
-            }
-        }
-    }, 500); // Vérifier toutes les 500ms pour être plus réactif
 });
 </script>
