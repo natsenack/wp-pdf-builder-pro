@@ -40,8 +40,6 @@ class PDFPreviewAPI {
      */
     async generateEditorPreview(templateData, options = {}) {
         
-        :', isDebugEnabled());
-
         if (this.isGenerating) {
             
             return null;
