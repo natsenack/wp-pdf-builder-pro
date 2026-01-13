@@ -678,14 +678,11 @@ document.addEventListener('click', function(e) {
 
 // Fonction pour masquer la notification de limite de templates
 function dismissTemplateLimitNotice() {
-    console.log('dismissTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
-    console.log('notice element:', notice);
     if (notice) {
         notice.style.display = 'none';
-        console.log('notice hidden');
-    } else {
-        console.log('notice element not found');
+        // Sauvegarder l'état de masquage dans localStorage
+        localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
     }
 }
 
@@ -694,6 +691,16 @@ function showTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
         notice.style.display = 'block';
+        // Supprimer l'état de masquage de localStorage
+        localStorage.removeItem('pdf_builder_template_limit_dismissed');
     }
 }
+
+// Vérifier au chargement de la page si la notification a été masquée
+document.addEventListener('DOMContentLoaded', function() {
+    const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
+    if (dismissed === 'true') {
+        dismissTemplateLimitNotice();
+    }
+});
 </script>
