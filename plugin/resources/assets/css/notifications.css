@@ -452,7 +452,7 @@
    MASQUAGE DES NOTIFICATIONS NON-PERTINENTES
    =========================================== */
 
-/* Masquer TOUTES les notifications WordPress par défaut */
+/* Masquer TOUTES les notifications WordPress et plugins par défaut */
 .notice,
 .notice-error,
 .notice-success,
@@ -460,8 +460,70 @@
 .notice-info,
 .updated,
 .error,
-.update-nag {
+.update-nag,
+.update-message,
+.settings-error,
+.settings-updated,
+.fade,
+.auto-fold-up,
+.message,
+.error-message,
+.updated-message,
+.notice-dismiss,
+.is-dismissible,
+.components-notice,
+.components-notice__content,
+.wp-notice,
+.admin-notice,
+.plugin-notice,
+.theme-notice,
+.core-notice,
+.security-notice,
+.maintenance-notice,
+.backup-notice,
+.update-notice,
+.install-notice,
+.activation-notice,
+.deactivation-notice,
+.network-notice,
+.multisite-notice,
+.user-notice,
+.comment-notice,
+.post-notice,
+.page-notice,
+.media-notice,
+.menu-notice,
+.widget-notice,
+.customizer-notice,
+.editor-notice,
+.dashboard-notice,
+.tools-notice,
+.import-notice,
+.export-notice,
+.site-health-notice,
+.privacy-notice,
+.gdpr-notice,
+.cookie-notice,
+.analytics-notice,
+.seo-notice,
+.performance-notice,
+.security-notice,
+.backup-notice,
+.migration-notice,
+.compatibility-notice,
+.deprecation-notice,
+.debug-notice,
+.dev-notice,
+.test-notice,
+.staging-notice,
+.production-notice {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Afficher UNIQUEMENT les notifications marquées comme liées au PDF Builder */
@@ -470,13 +532,53 @@
 .updated.pdf-builder-notice,
 .updated.pdf-builder-related,
 .error.pdf-builder-notice,
-.error.pdf-builder-related {
+.error.pdf-builder-related,
+.settings-error.pdf-builder-notice,
+.settings-updated.pdf-builder-notice,
+.update-message.pdf-builder-notice,
+.message.pdf-builder-notice,
+.admin-notice.pdf-builder-notice,
+.plugin-notice.pdf-builder-notice,
+.components-notice.pdf-builder-notice,
+.wp-notice.pdf-builder-notice {
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 5px 0 15px !important;
+    padding: 12px 12px 12px 38px !important;
 }
 
 /* Garder les notifications d'erreur CRITIQUES marquées comme importantes */
 .notice.error.pdf-builder-critical,
 .notice.updated.pdf-builder-critical,
-.error.pdf-builder-critical {
+.error.pdf-builder-critical,
+.settings-error.pdf-builder-critical,
+.update-message.pdf-builder-critical {
     display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Forcer le masquage des notifications marquées comme non-pertinentes */
+.notice.pdf-builder-hide,
+.updated.pdf-builder-hide,
+.error.pdf-builder-hide,
+.settings-error.pdf-builder-hide,
+.update-message.pdf-builder-hide,
+.message.pdf-builder-hide,
+.admin-notice.pdf-builder-hide,
+.plugin-notice.pdf-builder-hide,
+.components-notice.pdf-builder-hide,
+.wp-notice.pdf-builder-hide {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }

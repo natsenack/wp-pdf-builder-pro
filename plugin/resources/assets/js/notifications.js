@@ -646,34 +646,73 @@ try {
 
         // Fonction pour marquer les notifications pertinentes
         function markRelevantNotifications() {
-            $('.notice, .notice-error, .notice-success, .notice-warning, .notice-info, .updated, .error, .update-nag').each(function() {
+            // Sélecteurs étendus pour TOUS les types de notifications
+            $('.notice, .notice-error, .notice-success, .notice-warning, .notice-info, .updated, .error, .update-nag, .update-message, .settings-error, .settings-updated, .message, .admin-notice, .plugin-notice, .theme-notice, .core-notice, .components-notice, .wp-notice, .fade, .auto-fold-up, .is-dismissible').each(function() {
                 var $notice = $(this);
                 var noticeText = $notice.text().toLowerCase();
                 var noticeHtml = $notice.html().toLowerCase();
+                var noticeClasses = $notice.attr('class') || '';
+
+                // Liste étendue de mots-clés liés au PDF Builder
+                var pdfBuilderKeywords = [
+                    'pdf builder', 'pdf-builder', 'pdf_builder', 'wp-pdf-builder',
+                    'template', 'license', 'licence', 'pdf', 'builder',
+                    'canvas', 'unified', 'pro', 'premium', 'upgrade',
+                    'duplicate', 'settings', 'configuration', 'preview',
+                    'export', 'import', 'migration', 'backup'
+                ];
 
                 // Vérifier si la notification contient des mots-clés liés au PDF Builder
-                var isPdfBuilderRelated = (
-                    noticeText.indexOf('pdf builder') !== -1 ||
-                    noticeText.indexOf('pdf-builder') !== -1 ||
-                    noticeText.indexOf('pdf_builder') !== -1 ||
-                    noticeText.indexOf('template') !== -1 ||
-                    noticeText.indexOf('license') !== -1 ||
-                    noticeText.indexOf('licence') !== -1 ||
-                    noticeHtml.indexOf('pdf-builder') !== -1 ||
-                    noticeHtml.indexOf('pdf builder') !== -1 ||
-                    noticeHtml.indexOf('pdf_builder') !== -1 ||
-                    $notice.hasClass('pdf-builder-notice') ||
-                    $notice.hasClass('pdf-builder-related') ||
-                    $notice.hasClass('pdf-builder-critical') ||
-                    $notice.find('[href*="pdf-builder"]').length > 0 ||
-                    $notice.find('[href*="PDF Builder"]').length > 0 ||
-                    $notice.find('[href*="pdf_builder"]').length > 0
-                );
+                var isPdfBuilderRelated = false;
+
+                // Vérification des mots-clés dans le texte
+                for (var i = 0; i < pdfBuilderKeywords.length; i++) {
+                    if (noticeText.indexOf(pdfBuilderKeywords[i]) !== -1 ||
+                        noticeHtml.indexOf(pdfBuilderKeywords[i]) !== -1) {
+                        isPdfBuilderRelated = true;
+                        break;
+                    }
+                }
+
+                // Vérification des classes existantes
+                if (!isPdfBuilderRelated) {
+                    isPdfBuilderRelated = (
+                        $notice.hasClass('pdf-builder-notice') ||
+                        $notice.hasClass('pdf-builder-related') ||
+                        $notice.hasClass('pdf-builder-critical') ||
+                        noticeClasses.indexOf('pdf-builder') !== -1
+                    );
+                }
+
+                // Vérification des liens
+                if (!isPdfBuilderRelated) {
+                    isPdfBuilderRelated = (
+                        $notice.find('[href*="pdf-builder"]').length > 0 ||
+                        $notice.find('[href*="PDF Builder"]').length > 0 ||
+                        $notice.find('[href*="pdf_builder"]').length > 0 ||
+                        $notice.find('[href*="wp-pdf-builder"]').length > 0 ||
+                        $notice.find('[href*="template"]').length > 0 ||
+                        $notice.find('[href*="license"]').length > 0
+                    );
+                }
+
+                // Vérification des attributs data
+                if (!isPdfBuilderRelated) {
+                    isPdfBuilderRelated = (
+                        $notice.attr('data-plugin') === 'pdf-builder' ||
+                        $notice.attr('data-source') === 'pdf-builder' ||
+                        $notice.attr('data-type') === 'pdf-builder'
+                    );
+                }
 
                 if (isPdfBuilderRelated) {
                     $notice.addClass('pdf-builder-notice pdf-builder-related');
+                    // S'assurer qu'elle n'a pas la classe de masquage
+                    $notice.removeClass('pdf-builder-hide');
                     console.log('[PDF Builder] NOTIFICATIONS.JS - Showing PDF Builder related notice:', noticeText.substring(0, 100) + '...');
                 } else {
+                    // Marquer explicitement pour le masquage forcé
+                    $notice.addClass('pdf-builder-hide');
                     console.log('[PDF Builder] NOTIFICATIONS.JS - Hiding non-PDF Builder notice:', noticeText.substring(0, 100) + '...');
                 }
             });
@@ -689,34 +728,55 @@ try {
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType === Node.ELEMENT_NODE) {
-                            if ($(node).is('.notice, .updated, .error, .update-nag') ||
-                                $(node).find('.notice, .updated, .error, .update-nag').length > 0) {
+                            // Vérifier si le noeud ajouté est une notification ou contient des notifications
+                            if ($(node).is('.notice, .updated, .error, .update-nag, .update-message, .settings-error, .settings-updated, .message, .admin-notice, .plugin-notice, .theme-notice, .core-notice, .components-notice, .wp-notice, .fade, .auto-fold-up, .is-dismissible') ||
+                                $(node).find('.notice, .updated, .error, .update-nag, .update-message, .settings-error, .settings-updated, .message, .admin-notice, .plugin-notice, .theme-notice, .core-notice, .components-notice, .wp-notice, .fade, .auto-fold-up, .is-dismissible').length > 0) {
                                 shouldUpdate = true;
                             }
                         }
                     });
                 }
+                // Aussi vérifier les changements d'attributs (comme l'ajout de classes)
+                else if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if ($(mutation.target).is('.notice, .updated, .error, .update-nag, .update-message, .settings-error, .settings-updated, .message, .admin-notice, .plugin-notice, .theme-notice, .core-notice, .components-notice, .wp-notice, .fade, .auto-fold-up, .is-dismissible')) {
+                        shouldUpdate = true;
+                    }
+                }
             });
 
             if (shouldUpdate) {
-                markRelevantNotifications();
+                // Petit délai pour s'assurer que le contenu est complètement chargé
+                setTimeout(markRelevantNotifications, 10);
             }
         });
 
         // Observer le corps de la page pour les nouvelles notifications
         observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class']
         });
 
-        // Observer spécifiquement la zone de notifications WordPress
-        var wpBodyContent = document.getElementById('wpbody-content');
-        if (wpBodyContent) {
-            observer.observe(wpBodyContent, {
-                childList: true,
-                subtree: true
-            });
-        }
+        // Observer spécifiquement les zones communes où apparaissent les notifications
+        var commonAreas = [
+            document.getElementById('wpbody-content'),
+            document.getElementById('wp-admin-bar'),
+            document.getElementById('wpcontent'),
+            document.querySelector('.wrap'),
+            document.querySelector('#wpbody')
+        ];
+
+        commonAreas.forEach(function(area) {
+            if (area) {
+                observer.observe(area, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+            }
+        });
     }
 
 })(jQuery);
