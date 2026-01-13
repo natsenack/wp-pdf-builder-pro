@@ -678,27 +678,36 @@ document.addEventListener('click', function(e) {
 
 // Fonction pour masquer la notification de limite de templates
 function dismissTemplateLimitNotice() {
+    console.log('dismissTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
+    console.log('Notice element:', notice);
     if (notice) {
         notice.style.display = 'none';
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
+        console.log('Notification masquée et sauvegardée dans localStorage');
+    } else {
+        console.error('Element template-limit-notice non trouvé');
     }
 }
 
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
+    console.log('showTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
         notice.style.display = 'block';
         // Supprimer l'état de masquage de localStorage
         localStorage.removeItem('pdf_builder_template_limit_dismissed');
+        console.log('Notification affichée et localStorage nettoyé');
     }
 }
 
 // Vérifier au chargement de la page si la notification a été masquée
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, checking for dismissed notice');
     const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
+    console.log('Dismissed status:', dismissed);
     if (dismissed === 'true') {
         dismissTemplateLimitNotice();
     }
