@@ -682,26 +682,12 @@ function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     console.log('Notice element:', notice);
     if (notice) {
-        // Utiliser plusieurs méthodes pour s'assurer que la notification est masquée
-        notice.style.display = 'none !important';
-        notice.style.visibility = 'hidden';
-        notice.style.opacity = '0';
-        notice.style.height = '0';
-        notice.style.overflow = 'hidden';
-        notice.setAttribute('aria-hidden', 'true');
+        // Supprimer complètement l'élément du DOM pour éviter les conflits
+        notice.remove();
+        console.log('Notification supprimée du DOM');
 
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
-        console.log('Notification masquée avec toutes les méthodes et sauvegardée dans localStorage');
-
-        // Vérifier périodiquement si la notification n'est pas réaffichée
-        setTimeout(function() {
-            const checkNotice = document.getElementById('template-limit-notice');
-            if (checkNotice && (checkNotice.style.display !== 'none' || checkNotice.style.visibility !== 'hidden')) {
-                console.log('Notification réaffichée, re-masquage forcé');
-                dismissTemplateLimitNotice();
-            }
-        }, 1000);
     } else {
         console.error('Element template-limit-notice non trouvé');
     }
@@ -710,13 +696,17 @@ function dismissTemplateLimitNotice() {
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
     console.log('showTemplateLimitNotice called');
-    const notice = document.getElementById('template-limit-notice');
-    if (notice) {
-        notice.style.display = 'block';
-        // Supprimer l'état de masquage de localStorage
-        localStorage.removeItem('pdf_builder_template_limit_dismissed');
-        console.log('Notification affichée et localStorage nettoyé');
+    let notice = document.getElementById('template-limit-notice');
+
+    // Si la notification n'existe pas, on ne peut pas la recréer facilement
+    // On se contente de supprimer l'état de masquage
+    if (!notice) {
+        console.log('Notification n\'existe pas dans le DOM');
     }
+
+    // Supprimer l'état de masquage de localStorage
+    localStorage.removeItem('pdf_builder_template_limit_dismissed');
+    console.log('État de masquage supprimé du localStorage');
 }
 
 // Vérifier au chargement de la page si la notification a été masquée
@@ -727,17 +717,5 @@ document.addEventListener('DOMContentLoaded', function() {
     if (dismissed === 'true') {
         dismissTemplateLimitNotice();
     }
-
-    // Vérifier périodiquement si la notification n'est pas réaffichée par un autre script
-    setInterval(function() {
-        const dismissedCheck = localStorage.getItem('pdf_builder_template_limit_dismissed');
-        if (dismissedCheck === 'true') {
-            const notice = document.getElementById('template-limit-notice');
-            if (notice && (notice.style.display !== 'none' || notice.style.visibility !== 'hidden')) {
-                console.log('Notification réaffichée détectée, re-masquage');
-                dismissTemplateLimitNotice();
-            }
-        }
-    }, 2000); // Vérifier toutes les 2 secondes
 });
 </script>
