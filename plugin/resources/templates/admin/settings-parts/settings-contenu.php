@@ -645,7 +645,7 @@
                             data: {
                                 action: 'pdf_builder_save_allowed_setting',
                                 setting_key: optionName,
-                                values: value,
+                                values: JSON.stringify(value),
                                 nonce: pdfBuilderNotifications.ajax_nonce
                             },
                             success: function(response) {
