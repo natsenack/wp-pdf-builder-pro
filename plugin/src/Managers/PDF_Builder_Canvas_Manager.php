@@ -35,6 +35,7 @@ class PdfBuilderCanvasManager
     private function __construct()
     {
         $this->initDefaultSettings();
+        $this->migrateLegacySettings(); // Migrer les anciens paramètres si nécessaire
         $this->initHooks();
     }
 
@@ -119,25 +120,18 @@ class PdfBuilderCanvasManager
      */
     public function getCanvasSettings()
     {
-        // Les paramètres canvas sont sauvegardés dans pdf_builder_settings
-        $all_settings = get_option('pdf_builder_settings', []);
-// Extraire seulement les paramètres canvas
-        $canvas_settings = [];
-        $canvas_keys = array_keys($this->default_settings);
-// Liste des champs boolean
+        // Les paramètres canvas sont sauvegardés dans pdf_builder_canvas_settings
+        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+        // Liste des champs boolean
         $boolean_fields = ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements',
                           'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
                           'enable_rotation', 'multi_select', 'copy_paste_enabled'];
-        foreach ($canvas_keys as $key) {
-            if (isset($all_settings[$key])) {
-                $value = $all_settings[$key];
-        // Convertir les valeurs vides en false pour les champs boolean
-                if (in_array($key, $boolean_fields) && ($value === '' || $value === null)) {
-                    $value = false;
-                } elseif (in_array($key, $boolean_fields)) {
-                    $value = $value === '1' || $value === 1 || $value === true;
-                }
-                $canvas_settings[$key] = $value;
+
+        // Convertir les valeurs depuis la base de données
+        foreach ($canvas_settings as $key => $value) {
+            if (in_array($key, $boolean_fields)) {
+                $canvas_settings[$key] = $value === '1' || $value === 1 || $value === true;
             }
         }
 
@@ -202,12 +196,13 @@ class PdfBuilderCanvasManager
     {
         // Valider les paramètres
         $validated_settings = $this->validateSettings($settings);
-// Récupérer tous les paramètres existants
-        $all_settings = get_option('pdf_builder_settings', []);
-// Mettre à jour seulement les paramètres canvas
-        $updated_settings = array_merge($all_settings, $validated_settings);
-// Sauvegarder
-        $result = update_option('pdf_builder_settings', $updated_settings);
+
+        // Sauvegarder directement dans pdf_builder_canvas_settings
+        $result = update_option('pdf_builder_canvas_settings', $validated_settings);
+
+        // Synchroniser avec les anciennes options pour compatibilité
+        $this->syncLegacyOptions();
+
         return $validated_settings;
     }
 
@@ -230,7 +225,8 @@ class PdfBuilderCanvasManager
     public function initCanvasSettings($canvas_data)
     {
         $settings = $this->getCanvasSettings();
-// Appliquer les paramètres par défaut si non définis
+
+        // Appliquer les paramètres par défaut si non définis
         if (!isset($canvas_data['width']) || empty($canvas_data['width'])) {
             $canvas_data['width'] = $settings['default_canvas_width'];
         }
@@ -313,6 +309,117 @@ class PdfBuilderCanvasManager
             return $default;
         }
         return $value;
+    }
+
+    /**
+     * Obtenir seulement les paramètres modifiés (différents des défauts)
+     */
+    public function getModifiedSettings()
+    {
+        $all_settings = $this->getCanvasSettings();
+        $modified = [];
+
+        foreach ($all_settings as $key => $value) {
+            if (isset($this->default_settings[$key]) && $value !== $this->default_settings[$key]) {
+                $modified[$key] = $value;
+            }
+        }
+
+        return $modified;
+    }
+
+    /**
+     * Synchroniser les paramètres avec les anciennes options individuelles pour compatibilité
+     */
+    public function syncLegacyOptions()
+    {
+        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+        if (!empty($canvas_settings)) {
+            // Mapping des nouvelles clés vers les anciennes options
+            $sync_mapping = [
+                'default_canvas_width' => 'pdf_builder_canvas_width',
+                'default_canvas_height' => 'pdf_builder_canvas_height',
+                'canvas_background_color' => 'pdf_builder_canvas_bg_color',
+                'grid_color' => 'pdf_builder_canvas_border_color',
+                'handle_size' => 'pdf_builder_canvas_border_width',
+                'show_grid' => 'pdf_builder_canvas_grid_enabled',
+                'grid_size' => 'pdf_builder_canvas_grid_size',
+                'show_guides' => 'pdf_builder_canvas_guides_enabled',
+                'snap_to_grid' => 'pdf_builder_canvas_snap_to_grid',
+                'min_zoom' => 'pdf_builder_canvas_zoom_min',
+                'max_zoom' => 'pdf_builder_canvas_zoom_max',
+                'default_zoom' => 'pdf_builder_canvas_zoom_default',
+            ];
+
+            foreach ($sync_mapping as $new_key => $old_key) {
+                if (isset($canvas_settings[$new_key])) {
+                    update_option($old_key, $canvas_settings[$new_key]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Migrer les anciens paramètres individuels vers le nouveau système unifié
+     * NOTE: Les anciennes options sont conservées pour la compatibilité
+     */
+    public function migrateLegacySettings()
+    {
+        $migrated = false;
+        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+        if (empty($canvas_settings)) {
+            // Liste des anciens paramètres individuels à migrer
+            $legacy_keys = [
+                'pdf_builder_canvas_width' => 'default_canvas_width',
+                'pdf_builder_canvas_height' => 'default_canvas_height',
+                'pdf_builder_canvas_bg_color' => 'canvas_background_color',
+                'pdf_builder_canvas_border_color' => 'grid_color',
+                'pdf_builder_canvas_border_width' => 'handle_size',
+                'pdf_builder_canvas_grid_enabled' => 'show_grid',
+                'pdf_builder_canvas_grid_size' => 'grid_size',
+                'pdf_builder_canvas_guides_enabled' => 'show_guides',
+                'pdf_builder_canvas_snap_to_grid' => 'snap_to_grid',
+                'pdf_builder_canvas_zoom_min' => 'min_zoom',
+                'pdf_builder_canvas_zoom_max' => 'max_zoom',
+                'pdf_builder_canvas_zoom_default' => 'default_zoom',
+            ];
+
+            foreach ($legacy_keys as $old_key => $new_key) {
+                $old_value = get_option($old_key);
+                if ($old_value !== false && !isset($canvas_settings[$new_key])) {
+                    $canvas_settings[$new_key] = $old_value;
+                    $migrated = true;
+                    // NOTE: Les anciennes options sont conservées pour compatibilité
+                    // delete_option($old_key); // Commenté pour éviter de casser le système
+                }
+            }
+
+            if ($migrated) {
+                update_option('pdf_builder_canvas_settings', $canvas_settings);
+            }
+        }
+
+        return $migrated;
+    }
+
+    /**
+     * Vérifier si le canvas manager est correctement configuré
+     */
+    public function isConfigured()
+    {
+        $settings = $this->getCanvasSettings();
+        return !empty($settings) && is_array($settings);
+    }
+
+    /**
+     * Obtenir les paramètres canvas au format JSON pour JavaScript
+     */
+    public function getCanvasSettingsJson()
+    {
+        $settings = $this->getCanvasSettings();
+        return wp_json_encode($settings);
     }
 
     /**
