@@ -9,15 +9,7 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
-    // Define AJAX variables for inline scripts
-    ?>
-    <script>
-    window.pdfBuilderNotifications = <?php echo json_encode(array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'ajax_nonce' => wp_create_nonce('pdf_builder_ajax')
-    )); ?>;
-    </script>
-    <?php
+    // AJAX variables are now localized via AdminScriptLoader.php
 
     $settings = get_option('pdf_builder_settings', array());
 
