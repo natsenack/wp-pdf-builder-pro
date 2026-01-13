@@ -74,19 +74,6 @@ function get_canvas_modal_value($key, $default = '') {
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['height']; ?>px</span>
                     </div>
                     <div class="setting-group">
-                        <label for="modal_canvas_dpi">DPI par défaut</label>
-                        <select id="modal_canvas_dpi" name="pdf_builder_canvas_dpi">
-                            <option value="72" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '72'); ?>>72 DPI (Écran)</option>
-                            <option value="96" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '96'); ?>>96 DPI (Web)</option>
-                            <option value="150" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '150'); ?>>150 DPI (Impression)</option>
-                            <option value="200" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '200'); ?>>200 DPI (Haute qualité)</option>
-                            <option value="300" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '300'); ?>>300 DPI (Professionnel)</option>
-                            <option value="400" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '400'); ?>>400 DPI (Très haute qualité)</option>
-                            <option value="600" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '600'); ?>>600 DPI (Maximum)</option>
-                        </select>
-                        <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['dpi']; ?> DPI</span>
-                    </div>
-                    <div class="setting-group">
                         <label>DPI autorisés pour les templates</label>
                         <div class="checkbox-grid">
                             <?php
@@ -106,16 +93,6 @@ function get_canvas_modal_value($key, $default = '') {
                             }
                             ?>
                         </div>
-                    </div>
-                    <div class="setting-group">
-                        <label for="modal_canvas_format">Format par défaut</label>
-                        <select id="modal_canvas_format" name="pdf_builder_canvas_format">
-                            <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>A4 (210×297mm)</option>
-                            <option value="A3" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm) - soon</option>
-                            <option value="Letter" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter (8.5×11") - soon</option>
-                            <option value="Legal" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14") - soon</option>
-                            <option value="EtiquetteColis" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (10×15cm) - soon</option>
-                        </select>
                     </div>
                     <div class="setting-group">
                         <label>Formats autorisés pour les templates</label>
