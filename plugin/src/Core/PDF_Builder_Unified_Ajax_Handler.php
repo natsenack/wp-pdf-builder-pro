@@ -191,6 +191,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
             $values_json = $_POST['values'] ?? ''; // Don't sanitize JSON data
 
+            // Handle URL-encoded JSON data from AJAX
+            $values_json = stripslashes($values_json);
+
             if (empty($setting_key)) {
                 wp_send_json_error(['message' => 'Clé de paramètre manquante']);
                 return;
