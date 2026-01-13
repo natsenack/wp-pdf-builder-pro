@@ -632,6 +632,12 @@
                     // Fonction pour sauvegarder un paramètre allowed_* via AJAX
                     function saveAllowedSetting(optionName, value) {
                         console.log('[PDF Builder DEBUG] saveAllowedSetting called with:', optionName, value);
+                        console.log('[PDF Builder DEBUG] pdfBuilderNotifications:', pdfBuilderNotifications);
+
+                        if (!pdfBuilderNotifications || !pdfBuilderNotifications.ajax_url) {
+                            console.error('[PDF Builder] pdfBuilderNotifications not defined or missing ajax_url');
+                            return $.Deferred().reject('pdfBuilderNotifications not available').promise();
+                        }
 
                         return $.ajax({
                             url: pdfBuilderNotifications.ajax_url,
