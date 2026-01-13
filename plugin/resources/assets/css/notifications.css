@@ -582,3 +582,30 @@
     margin: 0 !important;
     padding: 0 !important;
 }
+
+/* Masquage spécifique des notifications d'autres plugins courants */
+.notice[class*="elementor"],
+.notice[class*="wpforms"],
+.notice[class*="woocommerce"],
+.notice[class*="yoast"],
+.notice[class*="jetpack"],
+.notice[class*="akismet"],
+.notice[class*="mailchimp"],
+.notice[class*="google-analytics"],
+.notice[class*="contact-form"],
+.notice[class*="backup"],
+.notice[class*="security"],
+.notice[class*="performance"],
+.notice[class*="cache"],
+.notice[class*="seo"],
+.notice[class*="gdpr"],
+.notice[class*="cookie"],
+.notice[class*="maintenance"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}

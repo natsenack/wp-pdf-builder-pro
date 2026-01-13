@@ -662,6 +662,23 @@ try {
                     'export', 'import', 'migration', 'backup'
                 ];
 
+                // Mots-clés pour identifier les notifications NON pertinentes (autres plugins)
+                var nonRelevantKeywords = [
+                    'elementor', 'element or', 'wpforms', 'contact form',
+                    'woocommerce', 'woo commerce', 'wp mail', 'mailchimp',
+                    'yoast', 'seo', 'google analytics', 'jetpack',
+                    'akismet', 'backup', 'security', 'performance',
+                    'cache', 'optimization', 'speed', 'gdpr', 'cookie',
+                    'maintenance', 'update core', 'wordpress update',
+                    'plugin update', 'theme update', 'database',
+                    'server', 'hosting', 'ssl', 'https', 'admin bar',
+                    'dashboard', 'widget', 'menu', 'customizer',
+                    'editor', 'gutenberg', 'block', 'media library',
+                    'comments', 'users', 'roles', 'permissions',
+                    'multisite', 'network', 'translation', 'language',
+                    'debug', 'error log', 'php', 'mysql', 'server error'
+                ];
+
                 // Vérifier si la notification contient des mots-clés liés au PDF Builder
                 var isPdfBuilderRelated = false;
 
@@ -674,8 +691,21 @@ try {
                     }
                 }
 
-                // Vérification des classes existantes
+                // Vérifier si c'est une notification NON pertinente d'autres plugins
+                var isNonRelevant = false;
                 if (!isPdfBuilderRelated) {
+                    for (var j = 0; j < nonRelevantKeywords.length; j++) {
+                        if (noticeText.indexOf(nonRelevantKeywords[j]) !== -1 ||
+                            noticeHtml.indexOf(nonRelevantKeywords[j]) !== -1 ||
+                            noticeClasses.indexOf(nonRelevantKeywords[j].replace(/\s+/g, '-')) !== -1) {
+                            isNonRelevant = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Vérification des classes existantes
+                if (!isPdfBuilderRelated && !isNonRelevant) {
                     isPdfBuilderRelated = (
                         $notice.hasClass('pdf-builder-notice') ||
                         $notice.hasClass('pdf-builder-related') ||
@@ -685,7 +715,7 @@ try {
                 }
 
                 // Vérification des liens
-                if (!isPdfBuilderRelated) {
+                if (!isPdfBuilderRelated && !isNonRelevant) {
                     isPdfBuilderRelated = (
                         $notice.find('[href*="pdf-builder"]').length > 0 ||
                         $notice.find('[href*="PDF Builder"]').length > 0 ||
@@ -697,7 +727,7 @@ try {
                 }
 
                 // Vérification des attributs data
-                if (!isPdfBuilderRelated) {
+                if (!isPdfBuilderRelated && !isNonRelevant) {
                     isPdfBuilderRelated = (
                         $notice.attr('data-plugin') === 'pdf-builder' ||
                         $notice.attr('data-source') === 'pdf-builder' ||
