@@ -644,8 +644,8 @@ try {
     function filterWordPressNotifications() {
         console.log('[PDF Builder] NOTIFICATIONS.JS - Filtering WordPress notifications...');
 
-        // Attendre un peu que les notifications soient chargées
-        setTimeout(function() {
+        // Fonction pour marquer les notifications pertinentes
+        function markRelevantNotifications() {
             $('.notice, .notice-error, .notice-success, .notice-warning, .notice-info, .updated, .error, .update-nag').each(function() {
                 var $notice = $(this);
                 var noticeText = $notice.text().toLowerCase();
@@ -655,25 +655,68 @@ try {
                 var isPdfBuilderRelated = (
                     noticeText.indexOf('pdf builder') !== -1 ||
                     noticeText.indexOf('pdf-builder') !== -1 ||
+                    noticeText.indexOf('pdf_builder') !== -1 ||
                     noticeText.indexOf('template') !== -1 ||
                     noticeText.indexOf('license') !== -1 ||
                     noticeText.indexOf('licence') !== -1 ||
                     noticeHtml.indexOf('pdf-builder') !== -1 ||
                     noticeHtml.indexOf('pdf builder') !== -1 ||
+                    noticeHtml.indexOf('pdf_builder') !== -1 ||
                     $notice.hasClass('pdf-builder-notice') ||
+                    $notice.hasClass('pdf-builder-related') ||
+                    $notice.hasClass('pdf-builder-critical') ||
                     $notice.find('[href*="pdf-builder"]').length > 0 ||
-                    $notice.find('[href*="PDF Builder"]').length > 0
+                    $notice.find('[href*="PDF Builder"]').length > 0 ||
+                    $notice.find('[href*="pdf_builder"]').length > 0
                 );
 
                 if (isPdfBuilderRelated) {
-                    $notice.addClass('pdf-builder-related');
+                    $notice.addClass('pdf-builder-notice pdf-builder-related');
                     console.log('[PDF Builder] NOTIFICATIONS.JS - Showing PDF Builder related notice:', noticeText.substring(0, 100) + '...');
                 } else {
-                    // Masquer les notifications non-pertinentes (le CSS s'en charge)
                     console.log('[PDF Builder] NOTIFICATIONS.JS - Hiding non-PDF Builder notice:', noticeText.substring(0, 100) + '...');
                 }
             });
-        }, 100);
+        }
+
+        // Appliquer immédiatement le filtrage
+        markRelevantNotifications();
+
+        // Observer les changements dans le DOM pour les nouvelles notifications
+        var observer = new MutationObserver(function(mutations) {
+            var shouldUpdate = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if ($(node).is('.notice, .updated, .error, .update-nag') ||
+                                $(node).find('.notice, .updated, .error, .update-nag').length > 0) {
+                                shouldUpdate = true;
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (shouldUpdate) {
+                markRelevantNotifications();
+            }
+        });
+
+        // Observer le corps de la page pour les nouvelles notifications
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Observer spécifiquement la zone de notifications WordPress
+        var wpBodyContent = document.getElementById('wpbody-content');
+        if (wpBodyContent) {
+            observer.observe(wpBodyContent, {
+                childList: true,
+                subtree: true
+            });
+        }
     }
 
 })(jQuery);
