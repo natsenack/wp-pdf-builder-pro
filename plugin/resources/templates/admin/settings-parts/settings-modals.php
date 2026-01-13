@@ -41,11 +41,33 @@ $canvas_defaults = [
     'error_reporting' => '1'
 ];
 
-// Fonction helper pour récupérer une valeur canvas
+// Fonction helper pour récupérer une valeur canvas (avec contournement du cache)
 function get_canvas_modal_value($key, $default = '') {
     $option_key = 'pdf_builder_canvas_' . $key;
-    $value = get_option($option_key, $default);
+    // Forcer la lecture directe depuis la base de données en contournant le cache
+    global $wpdb;
+    $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+
+    if ($value === null) {
+        $value = $default;
+    }
+
     return $value;
+}
+
+// Fonction helper pour récupérer les valeurs allowed_* (avec contournement du cache)
+function get_canvas_allowed_values($type, $default = []) {
+    $option_key = 'pdf_builder_canvas_allowed_' . $type;
+    global $wpdb;
+    $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
+
+    if ($value === null) {
+        return $default;
+    }
+
+    // Désérialiser si nécessaire
+    $unserialized = maybe_unserialize($value);
+    return is_array($unserialized) ? $unserialized : $default;
 }
 ?>
 
@@ -77,7 +99,7 @@ function get_canvas_modal_value($key, $default = '') {
                         <label>DPI autorisés pour les templates</label>
                         <div class="checkbox-grid">
                             <?php
-                            $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
+                            $allowed_dpis = get_canvas_allowed_values('dpis', ['96', '150', '300']);
                             $dpi_options = [
                                 '72' => '72 DPI (Écran)',
                                 '96' => '96 DPI (Web)',
@@ -100,7 +122,7 @@ function get_canvas_modal_value($key, $default = '') {
                         <label>Formats autorisés pour les templates</label>
                         <div class="checkbox-grid">
                             <?php
-                            $allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+                            $allowed_formats = get_canvas_allowed_values('formats', ['A4']);
                             $format_options = [
                                 'A4' => 'A4 (210×297mm)',
                                 'A3' => 'A3 (297×420mm) - Bientôt disponible',
@@ -120,7 +142,7 @@ function get_canvas_modal_value($key, $default = '') {
                         <label>Orientations autorisées pour les templates</label>
                         <div class="checkbox-grid">
                             <?php
-                            $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
+                            $allowed_orientations = get_canvas_allowed_values('orientations', ['portrait']);
                             $orientation_options = [
                                 'portrait' => 'Portrait (Vertical)',
                                 'landscape' => 'Paysage (Horizontal) - Bientôt disponible'
