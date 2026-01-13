@@ -407,6 +407,16 @@ var pdfBuilderAjax = {
                             <option value="autre">Autre</option>
                         </select>
                     </div>
+
+                    <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">📋 Informations techniques</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
+                            <div><strong>Format:</strong> <span id="template-info-format">A4</span></div>
+                            <div><strong>Orientation:</strong> <span id="template-info-orientation">Portrait</span></div>
+                            <div><strong>Résolution:</strong> <span id="template-info-resolution">594 × 1123 px</span></div>
+                            <div><strong>DPI recommandé:</strong> <span id="template-info-dpi">300 DPI</span></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="template-modal-footer" style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: end; -webkit-justify-content: flex-end; -moz-box-pack: end; -ms-flex-pack: end; justify-content: flex-end; -webkit-gap: 10px; -moz-gap: 10px; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
@@ -735,15 +745,33 @@ function openTemplateSettings(templateId, templateName) {
             // Remplir le modal avec les données
             document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de "' + templateName + '"';
             document.getElementById('template-name-input').value = data.data.name || '';
-            document.getElementById('template-description-input').value = data.data.description || '';
-            document.getElementById('template-public').checked = data.data.is_public || false;
-            document.getElementById('template-paper-size').value = data.data.paper_size || 'A4';
-            document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
             document.getElementById('template-category').value = data.data.category || 'autre';
-            
+
+            // Mettre à jour les informations techniques
+            const paperSize = data.data.paper_size || 'A4';
+            const orientation = data.data.orientation || 'portrait';
+
+            document.getElementById('template-info-format').textContent = paperSize;
+            document.getElementById('template-info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
+
+            // Calculer la résolution basée sur le format et l'orientation
+            let resolution = '';
+            if (paperSize === 'A4') {
+                resolution = orientation === 'portrait' ? '594 × 1123 px' : '1123 × 594 px';
+            } else if (paperSize === 'A3') {
+                resolution = orientation === 'portrait' ? '840 × 1191 px' : '1191 × 840 px';
+            } else if (paperSize === 'Letter') {
+                resolution = orientation === 'portrait' ? '612 × 792 px' : '792 × 612 px';
+            } else if (paperSize === 'Legal') {
+                resolution = orientation === 'portrait' ? '612 × 1008 px' : '1008 × 612 px';
+            }
+
+            document.getElementById('template-info-resolution').textContent = resolution;
+            document.getElementById('template-info-dpi').textContent = '300 DPI';
+
             // Stocker l'ID du template en cours d'édition
             document.getElementById('template-settings-modal').setAttribute('data-template-id', templateId);
-            
+
             // Afficher le modal
             document.getElementById('template-settings-modal').style.display = 'flex';
         } else {
@@ -851,12 +879,8 @@ function closeTemplateSettings() {
 function saveTemplateSettings() {
     const templateId = document.getElementById('template-settings-modal').getAttribute('data-template-id');
     const name = document.getElementById('template-name-input').value;
-    const description = document.getElementById('template-description-input').value;
-    const isPublic = document.getElementById('template-public').checked ? 1 : 0;
-    const paperSize = document.getElementById('template-paper-size').value;
-    const orientation = document.getElementById('template-orientation').value;
     const category = document.getElementById('template-category').value;
-    
+
     fetch(ajaxurl, {
         method: 'POST',
         headers: {
@@ -866,10 +890,6 @@ function saveTemplateSettings() {
             'action': 'pdf_builder_save_template_settings',
             'template_id': templateId,
             'name': name,
-            'description': description,
-            'is_public': isPublic,
-            'paper_size': paperSize,
-            'orientation': orientation,
             'category': category,
             'nonce': pdfBuilderTemplatesNonce
         })
