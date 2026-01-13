@@ -78,7 +78,7 @@ function Test-FtpDirectoryExists {
         $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($global:FtpUser, $global:FtpPass)
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $ftpRequest.UseBinary = $true
-        $ftpRequest.UsePassive = $false
+        $ftpRequest.UsePassive = $true
         $ftpRequest.Timeout = 10000
         $response = $ftpRequest.GetResponse()
         $response.Close()
@@ -157,7 +157,24 @@ function Get-FtpFiles {
     return $files
 }
 
-# Fonction pour vérifier l'intégrité d'un fichier déployé
+# Fonction pour supprimer un fichier sur FTP
+function Remove-FtpFile {
+    param([string]$remotePath)
+    try {
+        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
+        $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$remotePath"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.UsePassive = $false
+        $ftpRequest.Timeout = 10000
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        return $true
+    } catch {
+        return $false
+    }
+}
 function Test-DeployedFileIntegrity {
     param([string]$remotePath, [string]$expectedContent = "")
     try {
@@ -169,7 +186,7 @@ function Test-DeployedFileIntegrity {
         $dateRequest.Method = [System.Net.WebRequestMethods+Ftp]::GetDateTimestamp
         $dateRequest.UseBinary = $true
         $dateRequest.UsePassive = $true
-        $dateRequest.Timeout = 10000
+        $dateRequest.Timeout = 3000  # Réduit pour accélérer
         try {
             $dateResponse = $dateRequest.GetResponse()
             $lastModified = $dateResponse.LastModified
@@ -189,7 +206,7 @@ function Test-DeployedFileIntegrity {
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::DownloadFile
         $ftpRequest.UseBinary = $true  # Mode binaire pour préserver les octets exacts
         $ftpRequest.UsePassive = $true
-        $ftpRequest.Timeout = 30000
+        $ftpRequest.Timeout = 10000  # Réduit pour accélérer
         
         $response = $ftpRequest.GetResponse()
         $stream = $response.GetResponseStream()
@@ -312,11 +329,25 @@ if ($All) {
 # Add compiled files
 $distPath = Join-Path $WorkingDir "plugin/assets/js/dist"
 if (Test-Path $distPath) {
-    $filesToDeploy = $filesToDeploy + (Get-ChildItem -Path $distPath -Filter "*.js" -Recurse)
+    $compiledJsFiles = Get-ChildItem -Path $distPath -Filter "*.js" -Recurse
+    foreach ($compiledFile in $compiledJsFiles) {
+        # Calculer le chemin relatif pour les fichiers compilés
+        $compiledRelativePath = $compiledFile.FullName.Replace("$PluginDir\", "").Replace("\", "/")
+        # Ajouter une propriété personnalisée pour le chemin relatif
+        $compiledFile | Add-Member -MemberType NoteProperty -Name RelativePath -Value $compiledRelativePath -Force
+    }
+    $filesToDeploy = $filesToDeploy + $compiledJsFiles
 }
 $cssDistPath = Join-Path $WorkingDir "plugin/assets/css"
 if (Test-Path $cssDistPath) {
-    $filesToDeploy = $filesToDeploy + (Get-ChildItem -Path $cssDistPath -Filter "*.css" -Recurse)
+    $compiledCssFiles = Get-ChildItem -Path $cssDistPath -Filter "*.css" -Recurse
+    foreach ($compiledFile in $compiledCssFiles) {
+        # Calculer le chemin relatif pour les fichiers compilés
+        $compiledRelativePath = $compiledFile.FullName.Replace("$PluginDir\", "").Replace("\", "/")
+        # Ajouter une propriété personnalisée pour le chemin relatif
+        $compiledFile | Add-Member -MemberType NoteProperty -Name RelativePath -Value $compiledRelativePath -Force
+    }
+    $filesToDeploy = $filesToDeploy + $compiledCssFiles
 }
 
 # Always include critical compiled files (force add even if not detected as modified)
@@ -438,7 +469,7 @@ Write-Log "Début de l'upload FTP" "INFO"
 $startTime = Get-Date
 $uploadCount = 0
 $errorCount = 0
-$maxConcurrent = 5  # Nombre maximum d'uploads simultanés
+$maxConcurrent = 15  # Nombre maximum d'uploads simultanés (augmenté pour accélérer)
 
 # Test connexion
 if (!$SkipConnectionTest) {
@@ -475,8 +506,8 @@ foreach ($segment in $pathSegments) {
             $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $false
-            $ftpRequest.Timeout = 15000
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = 30000
             $response = $ftpRequest.GetResponse()
             $response.Close()
             Write-Log "Répertoire créé: $currentPath" "SUCCESS"
@@ -493,17 +524,69 @@ foreach ($segment in $pathSegments) {
     }
 }
 
+# Créer tous les répertoires nécessaires avant l'upload
+Write-Host "`n3.1 Création des répertoires..." -ForegroundColor Magenta
+$directoriesToCreate = @()
+foreach ($file in $filesToDeploy) {
+    if ($file.PSObject.Properties.Match('RelativePath').Count -gt 0) {
+        $relativePath = $file.RelativePath
+    } else {
+        $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
+    }
+    $remoteDir = [System.IO.Path]::GetDirectoryName($relativePath)
+    if ($remoteDir) {
+        $remoteDir = $remoteDir -replace '\\', '/'
+        $segments = $remoteDir -split '/' | Where-Object { $_ }
+        $currentPath = ""
+        foreach ($segment in $segments) {
+            $currentPath += "/$segment"
+            if ($directoriesToCreate -notcontains $currentPath) {
+                $directoriesToCreate += $currentPath
+            }
+        }
+    }
+}
+
+Write-Log "Création de $($directoriesToCreate.Count) répertoire(s)" "INFO"
+foreach ($dir in $directoriesToCreate) {
+    Write-Log "Création répertoire: $dir" "INFO"
+    try {
+        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
+        $dirUri = "ftp://$FtpUser`:$FtpPass@$basePath$dir/"
+        $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
+        $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+        $dirRequest.UseBinary = $true
+        $dirRequest.UsePassive = $true
+        $dirRequest.Timeout = 30000
+        $dirResponse = $dirRequest.GetResponse()
+        $dirResponse.Close()
+        Write-Log "Répertoire créé: $dir" "SUCCESS"
+    } catch {
+        if ($_.Exception.Message -match "550") {
+            Write-Log "Répertoire existe déjà: $dir" "INFO"
+        } else {
+            Write-Log "Échec création répertoire $dir : $($_.Exception.Message)" "ERROR"
+        }
+    }
+}
+Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
+
 # Upload avec parallélisation
+Write-Host "`n3.2 Upload des fichiers..." -ForegroundColor Magenta
 $progressId = 1
 Write-Progress -Id $progressId -Activity "Upload FTP" -Status "Initialisation..." -PercentComplete 0
 
-$filesToDeploy = $pluginModified
 $jobs = New-Object System.Collections.ArrayList
 $completed = 0
 
 foreach ($file in $filesToDeploy) {
-    $relativePath = $file
-    $ftpFilePath = $file
+    # Calculer le chemin relatif sans le préfixe "plugin/"
+    if ($file.PSObject.Properties.Match('RelativePath').Count -gt 0) {
+        $relativePath = $file.RelativePath
+    } else {
+        $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
+    }
+    $ftpFilePath = $relativePath
     $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
     Write-Progress -Id $progressId -Activity "Upload FTP" -Status "$relativePath" -PercentComplete $percentComplete
 
@@ -526,10 +609,10 @@ foreach ($file in $filesToDeploy) {
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
             $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $false
-            $ftpRequest.Timeout = 60000
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = 30000
 
-            $fullPath = "$WorkingDir\$file"
+            $fullPath = $file.FullName
             $fileContent = [System.IO.File]::ReadAllBytes($fullPath)
             $ftpRequest.ContentLength = $fileContent.Length
 
@@ -540,17 +623,17 @@ foreach ($file in $filesToDeploy) {
             $response = $ftpRequest.GetResponse()
             $response.Close()
 
-            return @{ Success = $true; RelativePath = $file; Error = $null }
+            return @{ Success = $true; RelativePath = $ftpFilePath; Error = $null }
         } catch {
-            return @{ Success = $false; RelativePath = $file; Error = $_.Exception.Message }
+            return @{ Success = $false; RelativePath = $ftpFilePath; Error = $_.Exception.Message }
         }
     } -ArgumentList $file, $ftpFilePath, $FtpHost, $FtpUser, $FtpPass, $FtpPath, $WorkingDir
 
     $jobs.Add($job) | Out-Null
 
-    # Attendre si trop de jobs en cours (maxConcurrent = 5)
+    # Attendre si trop de jobs en cours
     while ($jobs.Count -ge $maxConcurrent) {
-        Start-Sleep -Milliseconds 500
+        Start-Sleep -Milliseconds 100  # Réduit pour accélérer
     }
 }
 
@@ -575,7 +658,7 @@ while ($jobs.Count -gt 0) {
     Write-Progress -Id $progressId -Activity "Upload FTP" -Status "Finalisation..." -PercentComplete $percentComplete
     
     if ($jobs.Count -gt 0) {
-        Start-Sleep -Milliseconds 500
+        Start-Sleep -Milliseconds 100  # Réduit pour accélérer
     }
 }
 
@@ -619,7 +702,7 @@ foreach ($criticalFile in $criticalFiles) {
             $testRequest.Method = [System.Net.WebRequestMethods+Ftp]::DownloadFile
             $testRequest.UseBinary = $true
             $testRequest.UsePassive = $true
-            $testRequest.Timeout = 5000
+            $testRequest.Timeout = 2000  # Réduit pour accélérer
             $testResponse = $testRequest.GetResponse()
             $testResponse.Close()
         } catch {
@@ -677,7 +760,7 @@ if ($integrityErrors -gt 0) {
 
 # NETTOYAGE
 if ($Clean -and !$DryRun) {
-    Write-Host "`n4 Nettoyage..." -ForegroundColor Magenta
+    Write-Host "`n5 Nettoyage..." -ForegroundColor Magenta
     Write-Log "Début du nettoyage" "INFO"
 
     # Supprimer fichiers déplacés connus
@@ -709,7 +792,7 @@ if ($Clean -and !$DryRun) {
 
 # COMMIT GIT
 if (!$DryRun) {
-    Write-Host "`n5 Commit Git..." -ForegroundColor Magenta
+    Write-Host "`n6 Commit Git..." -ForegroundColor Magenta
     Write-Log "Vérification des changements Git" "INFO"
 
     Push-Location $WorkingDir
