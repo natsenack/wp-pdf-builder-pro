@@ -67,14 +67,14 @@ var pdfBuilderAjax = {
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showTemplateLimitNotice(); showUpgradeModal('template_limit')"
+                        onclick="showUpgradeModal('template')"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showTemplateLimitNotice()">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showUpgradeModal('gallery')">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
@@ -105,7 +105,7 @@ var pdfBuilderAjax = {
                         $templates_count
                     ); ?>
                 </p>
-                <a href="#" onclick="showUpgradeModal('template_limit')" class="button button-primary">
+                <a href="#" onclick="showUpgradeModal('template')" class="button button-primary">
                     <span class="dashicons dashicons-star-filled"></span>
                     <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
                 </a>
