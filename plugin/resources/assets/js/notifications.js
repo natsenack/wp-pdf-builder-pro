@@ -830,7 +830,7 @@ try {
         }
 
         // Gérer le clic sur le bouton de fermeture
-        $(document).on('click', '.pdf-builder-notice-dismiss', function(e) {
+        $(document).on('click', '.pdf-builder-dismiss-btn', function(e) {
             e.preventDefault();
             e.stopPropagation();
 
