@@ -213,7 +213,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Sauvegarder l'option
             $updated = update_option($full_option_name, $values);
 
-            if ($updated) {
+            // Vérifier si la sauvegarde a réussi ou si la valeur est déjà correcte
+            $current_value = get_option($full_option_name);
+            if ($updated || $current_value === $values) {
                 error_log("[PDF Builder AJAX] Saved allowed setting: {$full_option_name} = " . print_r($values, true));
                 wp_send_json_success([
                     'message' => 'Paramètre sauvegardé avec succès',
@@ -221,6 +223,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'option_value' => $values
                 ]);
             } else {
+                error_log("[PDF Builder AJAX] Failed to save allowed setting: {$full_option_name}, current: " . print_r($current_value, true) . ", desired: " . print_r($values, true));
                 wp_send_json_error(['message' => 'Échec de la sauvegarde du paramètre']);
             }
 
