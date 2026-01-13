@@ -5,6 +5,8 @@
  * Updated: 2025-11-29
  */
 
+console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and starting execution');
+
 try {
     console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
 
