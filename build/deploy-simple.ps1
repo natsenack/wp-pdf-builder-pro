@@ -326,29 +326,7 @@ if ($All) {
     $filesToDeploy = @($allFiles | ForEach-Object { Get-Item (Join-Path $WorkingDir $_) })
 }
 
-# Add compiled files
-$distPath = Join-Path $WorkingDir "plugin/assets/js/dist"
-if (Test-Path $distPath) {
-    $compiledJsFiles = Get-ChildItem -Path $distPath -Filter "*.js" -Recurse
-    foreach ($compiledFile in $compiledJsFiles) {
-        # Calculer le chemin relatif pour les fichiers compilés
-        $compiledRelativePath = $compiledFile.FullName.Replace("$PluginDir\", "").Replace("\", "/")
-        # Ajouter une propriété personnalisée pour le chemin relatif
-        $compiledFile | Add-Member -MemberType NoteProperty -Name RelativePath -Value $compiledRelativePath -Force
-    }
-    $filesToDeploy = $filesToDeploy + $compiledJsFiles
-}
-$cssDistPath = Join-Path $WorkingDir "plugin/assets/css"
-if (Test-Path $cssDistPath) {
-    $compiledCssFiles = Get-ChildItem -Path $cssDistPath -Filter "*.css" -Recurse
-    foreach ($compiledFile in $compiledCssFiles) {
-        # Calculer le chemin relatif pour les fichiers compilés
-        $compiledRelativePath = $compiledFile.FullName.Replace("$PluginDir\", "").Replace("\", "/")
-        # Ajouter une propriété personnalisée pour le chemin relatif
-        $compiledFile | Add-Member -MemberType NoteProperty -Name RelativePath -Value $compiledRelativePath -Force
-    }
-    $filesToDeploy = $filesToDeploy + $compiledCssFiles
-}
+# Compiled files are already included in the main detection
 
 # Always include critical compiled files (force add even if not detected as modified)
 $criticalCompiledFiles = @(
@@ -469,7 +447,7 @@ Write-Log "Début de l'upload FTP" "INFO"
 $startTime = Get-Date
 $uploadCount = 0
 $errorCount = 0
-$maxConcurrent = 15  # Nombre maximum d'uploads simultanés (augmenté pour accélérer)
+$maxConcurrent = 5  # Nombre maximum d'uploads simultanés
 
 # Test connexion
 if (!$SkipConnectionTest) {
@@ -548,7 +526,12 @@ foreach ($file in $filesToDeploy) {
 }
 
 Write-Log "Création de $($directoriesToCreate.Count) répertoire(s)" "INFO"
+$dirProgressId = 2
+Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "Initialisation..." -PercentComplete 0
+$dirCompleted = 0
 foreach ($dir in $directoriesToCreate) {
+    $dirPercent = [math]::Round(($dirCompleted / $directoriesToCreate.Count) * 100)
+    Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "$dir" -PercentComplete $dirPercent
     Write-Log "Création répertoire: $dir" "INFO"
     try {
         $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
@@ -557,7 +540,7 @@ foreach ($dir in $directoriesToCreate) {
         $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
         $dirRequest.UseBinary = $true
         $dirRequest.UsePassive = $true
-        $dirRequest.Timeout = 30000
+        $dirRequest.Timeout = 10000  # Réduit pour accélérer
         $dirResponse = $dirRequest.GetResponse()
         $dirResponse.Close()
         Write-Log "Répertoire créé: $dir" "SUCCESS"
@@ -568,16 +551,18 @@ foreach ($dir in $directoriesToCreate) {
             Write-Log "Échec création répertoire $dir : $($_.Exception.Message)" "ERROR"
         }
     }
+    $dirCompleted++
 }
+Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Completed
 Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 
 # Upload avec parallélisation
 Write-Host "`n3.2 Upload des fichiers..." -ForegroundColor Magenta
-$progressId = 1
-Write-Progress -Id $progressId -Activity "Upload FTP" -Status "Initialisation..." -PercentComplete 0
-
+$uploadProgressId = 3
+Write-Progress -Id $uploadProgressId -Activity "Upload FTP" -Status "Initialisation..." -PercentComplete 0
 $jobs = New-Object System.Collections.ArrayList
 $completed = 0
+$uploadStartTime = Get-Date
 
 foreach ($file in $filesToDeploy) {
     # Calculer le chemin relatif sans le préfixe "plugin/"
@@ -588,7 +573,9 @@ foreach ($file in $filesToDeploy) {
     }
     $ftpFilePath = $relativePath
     $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
-    Write-Progress -Id $progressId -Activity "Upload FTP" -Status "$relativePath" -PercentComplete $percentComplete
+    $elapsed = (Get-Date) - $uploadStartTime
+    $speed = if ($elapsed.TotalSeconds -gt 0) { [math]::Round($completed / $elapsed.TotalSeconds, 2) } else { 0 }
+    Write-Progress -Id $uploadProgressId -Activity "Upload FTP" -Status "$relativePath ($speed fichiers/s)" -PercentComplete $percentComplete
 
     if ($DryRun) {
         Write-Log "SIMULATION: $relativePath" "INFO"
@@ -597,72 +584,39 @@ foreach ($file in $filesToDeploy) {
         continue
     }
 
-    # Démarrer le job d'upload
-    $job = Start-Job -ScriptBlock {
-        param($file, $ftpFilePath, $ftpHost, $ftpUser, $ftpPass, $ftpPath, $WorkingDir)
+    # Upload séquentiel
+    try {
+        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
+        $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$ftpFilePath"
 
-        try {
-            $basePath = if ($ftpPath) { "$ftpHost$ftpPath" } else { $ftpHost }
-            $ftpUri = "ftp://$ftpUser`:$ftpPass@$basePath/$ftpFilePath"
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.UsePassive = $true
+        $ftpRequest.Timeout = 60000
 
-            # Upload du fichier - Mode binaire pour TOUS les fichiers pour éviter la corruption
-            $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.UseBinary = $true
-            $ftpRequest.UsePassive = $true
-            $ftpRequest.Timeout = 30000
+        $fullPath = $file.FullName
+        $fileContent = [System.IO.File]::ReadAllBytes($fullPath)
+        $ftpRequest.ContentLength = $fileContent.Length
 
-            $fullPath = $file.FullName
-            $fileContent = [System.IO.File]::ReadAllBytes($fullPath)
-            $ftpRequest.ContentLength = $fileContent.Length
+        $requestStream = $ftpRequest.GetRequestStream()
+        $requestStream.Write($fileContent, 0, $fileContent.Length)
+        $requestStream.Close()
 
-            $requestStream = $ftpRequest.GetRequestStream()
-            $requestStream.Write($fileContent, 0, $fileContent.Length)
-            $requestStream.Close()
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
 
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-
-            return @{ Success = $true; RelativePath = $ftpFilePath; Error = $null }
-        } catch {
-            return @{ Success = $false; RelativePath = $ftpFilePath; Error = $_.Exception.Message }
-        }
-    } -ArgumentList $file, $ftpFilePath, $FtpHost, $FtpUser, $FtpPass, $FtpPath, $WorkingDir
-
-    $jobs.Add($job) | Out-Null
-
-    # Attendre si trop de jobs en cours
-    while ($jobs.Count -ge $maxConcurrent) {
-        Start-Sleep -Milliseconds 100  # Réduit pour accélérer
+        Write-Log "Upload réussi: $relativePath" "SUCCESS"
+        $uploadCount++
+    } catch {
+        Write-Host "❌ Erreur upload $relativePath : $($_.Exception.Message)" -ForegroundColor Red
+        Write-Log "Erreur upload $relativePath : $($_.Exception.Message)" "ERROR"
+        $errorCount++
     }
+    $completed++
 }
 
-# Attendre la fin de tous les jobs
-while ($jobs.Count -gt 0) {
-    $finishedJobs = $jobs | Where-Object { $_.State -eq 'Completed' }
-    foreach ($job in $finishedJobs) {
-        $result = Receive-Job $job
-        if ($result.Success) {
-            Write-Log "Upload réussi: $($result.RelativePath)" "SUCCESS"
-            $uploadCount++
-        } else {
-            Write-Log "Erreur upload $($result.RelativePath) : $($result.Error)" "ERROR"
-            $errorCount++
-        }
-        Remove-Job $job
-        $completed++
-    }
-    $jobs = $jobs | Where-Object { $_.State -ne 'Completed' }
-    
-    $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
-    Write-Progress -Id $progressId -Activity "Upload FTP" -Status "Finalisation..." -PercentComplete $percentComplete
-    
-    if ($jobs.Count -gt 0) {
-        Start-Sleep -Milliseconds 100  # Réduit pour accélérer
-    }
-}
-
-Write-Progress -Id $progressId -Activity "Upload FTP" -Completed
+Write-Progress -Id $uploadProgressId -Activity "Upload FTP" -Completed
 
 $duration = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
 $speed = if ($duration -gt 0) { [math]::Round($uploadCount / $duration, 2) } else { 0 }
