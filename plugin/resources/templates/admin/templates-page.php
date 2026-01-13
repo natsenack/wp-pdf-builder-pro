@@ -682,8 +682,14 @@ function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     console.log('notice element:', notice);
     if (notice) {
+        // Utiliser le système localStorage de PDF Builder
+        var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
+        dismissedNotices = JSON.parse(dismissedNotices);
+        dismissedNotices['template_limit'] = true;
+        localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
+
         notice.style.display = 'none';
-        console.log('notice hidden');
+        console.log('notice hidden and saved to localStorage');
     }
 }
 
@@ -691,6 +697,14 @@ function dismissTemplateLimitNotice() {
 function showTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
+        // Supprimer du localStorage pour permettre la réaffichage
+        var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
+        if (dismissedNotices) {
+            dismissedNotices = JSON.parse(dismissedNotices);
+            delete dismissedNotices['template_limit'];
+            localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
+        }
+
         notice.style.display = 'block';
     }
 }
