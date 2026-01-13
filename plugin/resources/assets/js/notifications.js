@@ -886,6 +886,28 @@ try {
             console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button parent:', $dismissBtn.closest('.pdf-builder-template-limit-notice').length);
         }, 1000);
 
+        // Gérer le clic sur les boutons qui doivent réafficher la notification
+        jQuery(document).on('click', '#upgrade-required-btn, #open-template-gallery', function(e) {
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Template action button clicked, re-showing notification');
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Button clicked:', this.id);
+
+            var $notice = jQuery('#pdf-builder-template-limit-notice');
+            if ($notice.length > 0) {
+                // Retirer la classe dismissed et afficher la notification
+                $notice.removeClass('pdf-builder-dismissed').show();
+                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice re-shown');
+
+                // Supprimer l'état du localStorage
+                var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
+                if (dismissedNotices) {
+                    dismissedNotices = JSON.parse(dismissedNotices);
+                    delete dismissedNotices['template_limit'];
+                    localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
+                    console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice removed from localStorage');
+                }
+            }
+        });
+
         console.log('[PDF Builder] NOTIFICATIONS.JS - Notice dismissal initialized');
     }
 
