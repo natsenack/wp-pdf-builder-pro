@@ -819,7 +819,7 @@ class PDFPreviewAPI {
             const dragDuration = performance.now() - this.dragStartTime;
             if (dragDuration > 10) { // Seulement pour les drags significatifs (>10ms)
                 const fps = 1000 / dragDuration;
-                }ms (${fps.toFixed(1)}fps)`);
+                console.log(`Drag performance: ${dragDuration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
             }
         }
     }
