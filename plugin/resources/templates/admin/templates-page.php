@@ -104,9 +104,9 @@ var pdfBuilderAjax = {
                 🚨 DEBUG: La notification PHP est exécutée !
             </div>
             <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
-                <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 5px; right: 5px; border: 2px solid #dc3545; margin: 0; padding: 2px 6px; background: #fff; color: #dc3545; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 3px;" title="Fermer">
-                    ×
-                </button>
+                <a href="#" onclick="dismissTemplateLimitNotice(); return false;" style="position: absolute; top: 5px; right: 5px; color: #dc3545; font-size: 20px; font-weight: bold; text-decoration: none; line-height: 1;" title="Fermer">
+                    ✕
+                </a>
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
                     <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
