@@ -115,6 +115,7 @@ class AdminScriptLoader
             wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_notifications'),
+                'ajax_nonce' => wp_create_nonce('pdf_builder_ajax'),
                 'settings' => [
                     'enabled' => true,
                     'position' => 'top-right',
@@ -221,6 +222,7 @@ class AdminScriptLoader
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_notifications'),
+            'ajax_nonce' => wp_create_nonce('pdf_builder_ajax'),
             'settings' => [
                 'enabled' => true,
                 'position' => 'top-right',

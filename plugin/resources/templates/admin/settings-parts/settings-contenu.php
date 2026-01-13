@@ -618,7 +618,7 @@
                             action: 'pdf_builder_save_allowed_setting',
                             option_name: optionName,
                             option_value: value,
-                            nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.nonce) ? window.pdfBuilderNotifications.nonce : ''
+                            nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.ajax_nonce) ? window.pdfBuilderNotifications.ajax_nonce : ''
                         };
 
                         console.log('[PDF Builder DEBUG] AJAX data:', data);
@@ -653,7 +653,7 @@
 
                         var data = {
                             action: 'pdf_builder_get_allowed_settings',
-                            nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.nonce) ? window.pdfBuilderNotifications.nonce : ''
+                            nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.ajax_nonce) ? window.pdfBuilderNotifications.ajax_nonce : ''
                         };
 
                         console.log('[PDF Builder DEBUG] reloadAllowedSettings AJAX data:', data);
