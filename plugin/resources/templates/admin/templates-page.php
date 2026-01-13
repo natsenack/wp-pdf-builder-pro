@@ -384,7 +384,7 @@ function updateTemplateInfo() {
     document.getElementById('info-dpi').textContent = dpi;
     document.getElementById('info-format').textContent = paperSize;
     document.getElementById('info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
-", 'after');
+");
 ?>
 
     <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
