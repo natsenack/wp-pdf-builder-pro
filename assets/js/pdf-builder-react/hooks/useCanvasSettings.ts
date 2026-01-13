@@ -38,10 +38,10 @@ export const useCanvasSettings = () => {
 
                 const data = await response.json();
 
-                if (data.success && data.data) {
+                if (data.success && data.data && data.data.settings) {
                     window.pdfBuilderCanvasSettings = {
                         ...window.pdfBuilderCanvasSettings,
-                        ...data.data
+                        ...data.data.settings
                     };
                     setSettings(window.pdfBuilderCanvasSettings);
                 } else {
