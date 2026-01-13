@@ -72,8 +72,9 @@ var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 
 <?php
 // Enqueue the templates JavaScript
-wp_enqueue_script('pdf-builder-templates', '', ['jquery'], PDF_BUILDER_PRO_VERSION, false);
-wp_add_inline_script('pdf-builder-templates', "
+wp_enqueue_script('pdf-builder-templates-js', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/pdf-builder-templates.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+wp_add_inline_script('pdf-builder-templates-js', "
+// ✅ FIX: Variables JavaScript pour les templates
 var pdfBuilderTemplatesNonce = '" . esc_js($templates_nonce) . "';
 var ajaxurl = '" . esc_js(admin_url('admin-ajax.php')) . "';
 var pdfBuilderAjax = {
@@ -87,11 +88,11 @@ var defaultOrientation = '" . esc_js($canvas_defaults['orientation']) . "';
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
     // Pour les utilisateurs gratuits, utiliser la même modal pour tous les upgrades
-    ' . ($is_premium ? '
+    " . ($is_premium ? "
 // En mode premium, utiliser la modal spécifique
-        const modal = document.getElementById(\'upgrade-modal-\' + reason);' : '
+        const modal = document.getElementById('upgrade-modal-' + reason);" : "
 // En mode gratuit, utiliser toujours la modal gallery pour cohérence
-        const modal = document.getElementById(\'upgrade-modal-gallery\');') . '
+        const modal = document.getElementById('upgrade-modal-gallery');") . "
 
     if (modal) {
         modal.style.display = 'flex';
@@ -140,11 +141,11 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
 // Gestionnaire pour bouton galerie de modèles (uniquement premium)
 document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
     e.preventDefault();
-    ' . ($is_premium ? '
+    " . ($is_premium ? "
 // Ouvrir la galerie pour utilisateurs premium
-        document.getElementById(\'template-gallery-modal\').style.display = \'flex\';' : '
+        document.getElementById('template-gallery-modal').style.display = 'flex';" : "
 // Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal(\'gallery\');') . '
+        showUpgradeModal('gallery');") . "
 });
 
 // Fonction pour fermer la galerie de modèles
@@ -154,57 +155,41 @@ function closeTemplateGallery() {
 
 // Gestion du filtrage des templates
 document.addEventListener('DOMContentLoaded', function() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const templateCards = document.querySelectorAll('.template-card');
-
+    const filterButtons = document.querySelectorAll('.template-filter-btn');
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
             const filter = this.getAttribute('data-filter');
             
-            // Retirer la classe active de tous les boutons
+            // Mettre à jour les boutons actifs
             filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Ajouter la classe active au bouton cliqué
             this.classList.add('active');
             
             // Filtrer les cartes de templates
+            const templateCards = document.querySelectorAll('.template-card');
             templateCards.forEach(card => {
                 if (filter === 'all') {
                     card.style.display = 'block';
                 } else {
-                    const templateType = card.className.match(/template-type-(\\w+)/);
-                    if (templateType && templateType[1] === filter) {
+                    const cardCategory = card.getAttribute('data-category');
+                    if (cardCategory === filter) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
                     }
                 }
             });
-        });
-    });
-
-    // Gestion du filtrage de la galerie
-    const galleryFilterButtons = document.querySelectorAll('.gallery-filter-btn');
-    const galleryTemplates = document.querySelectorAll('.predefined-template-card');
-
-    galleryFilterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
             
-            // Retirer la classe active de tous les boutons de galerie
-            galleryFilterButtons.forEach(btn => btn.classList.remove('active'));
-            // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
-            
-            // Filtrer les templates de la galerie
-            galleryTemplates.forEach(item => {
+            // Filtrer aussi les templates de la galerie si ouverte
+            const galleryTemplates = document.querySelectorAll('.predefined-template-card');
+            galleryTemplates.forEach(card => {
                 if (filter === 'all') {
-                    item.style.display = 'block';
+                    card.style.display = 'block';
                 } else {
-                    const itemCategory = item.getAttribute('data-category');
-                    if (itemCategory === filter) {
-                        item.style.display = 'block';
+                    const cardCategory = card.getAttribute('data-category');
+                    if (cardCategory === filter) {
+                        card.style.display = 'block';
                     } else {
-                        item.style.display = 'none';
+                        card.style.display = 'none';
                     }
                 }
             });
@@ -322,45 +307,18 @@ function confirmDeleteTemplate(templateId, templateName) {
     }
 }
 
-function toggleDefaultTemplate(templateId, category, templateName) {
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_set_default_template',
-            'template_id': templateId,
-            'is_default': 1, // Toggle to default
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Template défini comme par défaut pour la catégorie ' + category);
-            location.reload();
-        } else {
-            alert('Erreur: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        alert('Erreur lors de la modification du statut par défaut');
-    });
-}
-
-function closeTemplateSettings() {
-    document.getElementById('template-settings-modal').style.display = 'none';
-}
-
 function saveTemplateSettings() {
     const templateId = document.getElementById('template-settings-modal').getAttribute('data-template-id');
-    const name = document.getElementById('template-name-input').value;
-    const category = document.getElementById('template-category').value;
-    const dpi = document.getElementById('template-dpi').value;
-    const paperSize = document.getElementById('template-paper-size').value;
-    const orientation = document.getElementById('template-orientation').value;
+    const templateName = document.getElementById('template-name-input').value.trim();
+    const templateCategory = document.getElementById('template-category').value;
+    const templateDpi = document.getElementById('template-dpi').value;
+    const templatePaperSize = document.getElementById('template-paper-size').value;
+    const templateOrientation = document.getElementById('template-orientation').value;
+    
+    if (!templateName) {
+        alert('Veuillez entrer un nom pour le template.');
+        return;
+    }
     
     fetch(ajaxurl, {
         method: 'POST',
@@ -370,11 +328,11 @@ function saveTemplateSettings() {
         body: new URLSearchParams({
             'action': 'pdf_builder_save_template_settings',
             'template_id': templateId,
-            'name': name,
-            'category': category,
-            'dpi': dpi,
-            'paper_size': paperSize,
-            'orientation': orientation,
+            'template_name': templateName,
+            'template_category': templateCategory,
+            'template_dpi': templateDpi,
+            'template_paper_size': templatePaperSize,
+            'template_orientation': templateOrientation,
             'nonce': pdfBuilderTemplatesNonce
         })
     })
@@ -382,7 +340,7 @@ function saveTemplateSettings() {
     .then(data => {
         if (data.success) {
             alert('Paramètres sauvegardés avec succès!');
-            closeTemplateSettings();
+            document.getElementById('template-settings-modal').style.display = 'none';
             location.reload();
         } else {
             alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
@@ -394,39 +352,31 @@ function saveTemplateSettings() {
     });
 }
 
-function selectPredefinedTemplate(templateSlug) {
-    // Rediriger vers l'éditeur avec le template prédéfini
-    window.location.href = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
-}
-
-// Fonction pour mettre à jour les informations du template en temps réel
 function updateTemplateInfo() {
     const dpi = document.getElementById('template-dpi').value;
     const paperSize = document.getElementById('template-paper-size').value;
     const orientation = document.getElementById('template-orientation').value;
     
-    // Dimensions en pixels selon le format et l'orientation
+    // Calculer les dimensions en pixels
     let widthPx, heightPx;
+    const dpiNum = parseInt(dpi);
+    
     switch (paperSize) {
         case 'A4':
-            widthPx = orientation === 'portrait' ? 595 : 842;
-            heightPx = orientation === 'portrait' ? 842 : 595;
+            widthPx = orientation === 'portrait' ? Math.round(210 * dpiNum / 25.4) : Math.round(297 * dpiNum / 25.4);
+            heightPx = orientation === 'portrait' ? Math.round(297 * dpiNum / 25.4) : Math.round(210 * dpiNum / 25.4);
             break;
         case 'A3':
-            widthPx = orientation === 'portrait' ? 842 : 1191;
-            heightPx = orientation === 'portrait' ? 1191 : 842;
+            widthPx = orientation === 'portrait' ? Math.round(297 * dpiNum / 25.4) : Math.round(420 * dpiNum / 25.4);
+            heightPx = orientation === 'portrait' ? Math.round(420 * dpiNum / 25.4) : Math.round(297 * dpiNum / 25.4);
             break;
         case 'Letter':
-            widthPx = orientation === 'portrait' ? 612 : 792;
-            heightPx = orientation === 'portrait' ? 792 : 612;
-            break;
-        case 'Legal':
-            widthPx = orientation === 'portrait' ? 612 : 1008;
-            heightPx = orientation === 'portrait' ? 1008 : 612;
+            widthPx = orientation === 'portrait' ? Math.round(216 * dpiNum / 25.4) : Math.round(279 * dpiNum / 25.4);
+            heightPx = orientation === 'portrait' ? Math.round(279 * dpiNum / 25.4) : Math.round(216 * dpiNum / 25.4);
             break;
         default:
-            widthPx = 595;
-            heightPx = 842;
+            widthPx = 794;
+            heightPx = 1123;
     }
     
     // Mettre à jour l'affichage
@@ -434,9 +384,22 @@ function updateTemplateInfo() {
     document.getElementById('info-dpi').textContent = dpi;
     document.getElementById('info-format').textContent = paperSize;
     document.getElementById('info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
-}
-");
+", 'after');
 ?>
+
+    <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
+
+    <!-- Debug section removed for production: API debug UI and tests have been stripped -->
+
+    <div style="background: #fff; padding: 20px; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
+
+        <div style="margin: 20px 0;">
+            <?php if ($user_can_create): ?>
+                <a href="#" class="button button-primary" id="create-template-btn">
+                    <span class="dashicons dashicons-plus"></span>
+                    <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
+                </a>
 
 <div class="wrap">
     <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
@@ -1043,3 +1006,4 @@ function updateTemplateInfo() {
         </div>
     </div>
 </div>
+<?php endif; ?>
