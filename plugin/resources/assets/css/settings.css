@@ -3801,21 +3801,43 @@ select option:disabled {
 /* Styles pour les options de sélection multiple */
 .checkbox-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 12px;
     margin-top: 8px;
 }
 
-.checkbox-item {
+.checkbox-option {
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 13px;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+    transition: all 0.2s ease;
 }
 
-.checkbox-item input[type="checkbox"] {
+.checkbox-option:hover {
+    background: #f0f0f0;
+    border-color: #ccc;
+}
+
+.checkbox-option input[type="checkbox"] {
     width: 16px;
     height: 16px;
     accent-color: #007cba;
+    margin: 0;
+}
+
+.checkbox-option input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.checkbox-option:has(input[type="checkbox"]:disabled) {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .checkbox-item label {

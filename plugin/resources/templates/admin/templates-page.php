@@ -28,6 +28,29 @@ if (!class_exists('PDF_Builder\TemplateDefaults')) {
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
+// Valeurs par défaut pour les paramètres canvas
+$canvas_defaults = [
+    'width' => '794',
+    'height' => '1123',
+    'dpi' => '96',
+    'format' => 'A4',
+    'bg_color' => '#ffffff',
+    'border_color' => '#cccccc',
+    'border_width' => '1',
+    'orientation' => 'portrait'
+];
+
+// Récupérer les DPI et formats autorisés depuis les paramètres
+$allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
+$allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+
+// Fonction helper pour récupérer une valeur canvas
+function get_canvas_modal_value($key, $default = '') {
+    $option_key = 'pdf_builder_canvas_' . $key;
+    $value = get_option($option_key, $default);
+    return $value;
+}
+
 // Vérifications freemium
 $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
@@ -408,13 +431,72 @@ var pdfBuilderAjax = {
                         </select>
                     </div>
 
-                    <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">📋 Informations techniques</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
-                            <div><strong>Format:</strong> <span id="template-info-format">A4</span></div>
-                            <div><strong>Orientation:</strong> <span id="template-info-orientation">Portrait</span></div>
-                            <div><strong>Résolution:</strong> <span id="template-info-resolution">594 × 1123 px</span></div>
-                            <div><strong>DPI recommandé:</strong> <span id="template-info-dpi">300 DPI</span></div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres de génération</label>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Résolution (DPI)</label>
+                            <select id="template-dpi" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <?php
+                                $dpi_options = [
+                                    '72' => '72 DPI (Écran)',
+                                    '96' => '96 DPI (Web)',
+                                    '150' => '150 DPI (Impression)',
+                                    '200' => '200 DPI (Haute qualité)',
+                                    '300' => '300 DPI (Professionnel)',
+                                    '400' => '400 DPI (Très haute qualité)',
+                                    '600' => '600 DPI (Maximum)'
+                                ];
+                                foreach ($dpi_options as $dpi_value => $dpi_label) {
+                                    if (in_array($dpi_value, $allowed_dpis)) {
+                                        $selected = (get_canvas_modal_value('dpi', $canvas_defaults['dpi']) == $dpi_value) ? 'selected' : '';
+                                        echo "<option value='$dpi_value' $selected>$dpi_label</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                            <span class="value-indicator" style="display: block; margin-top: 3px; font-size: 12px; color: #666;">Défaut: <?php echo $canvas_defaults['dpi']; ?> DPI</span>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Format de papier</label>
+                            <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <?php
+                                $format_options = [
+                                    'A4' => 'A4 (210×297mm)',
+                                    'A3' => 'A3 (297×420mm)',
+                                    'Letter' => 'Letter (8.5×11")',
+                                    'Legal' => 'Legal (8.5×14")'
+                                ];
+                                foreach ($format_options as $format_value => $format_label) {
+                                    if (in_array($format_value, $allowed_formats)) {
+                                        $selected = (get_canvas_modal_value('format', $canvas_defaults['format']) == $format_value) ? 'selected' : '';
+                                        echo "<option value='$format_value' $selected>$format_label</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                            <span class="value-indicator" style="display: block; margin-top: 3px; font-size: 12px; color: #666;">Défaut: <?php echo $canvas_defaults['format']; ?></span>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Orientation</label>
+                            <select id="template-orientation" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <option value="portrait" <?php selected(get_canvas_modal_value('orientation', $canvas_defaults['orientation']), 'portrait'); ?>>Portrait</option>
+                                <option value="landscape" <?php selected(get_canvas_modal_value('orientation', $canvas_defaults['orientation']), 'landscape'); ?>>Paysage</option>
+                            </select>
+                            <span class="value-indicator" style="display: block; margin-top: 3px; font-size: 12px; color: #666;">Défaut: <?php echo ucfirst($canvas_defaults['orientation']); ?></span>
+                        </div>
+                    </div>
+
+                    <!-- Zone informative -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                        <h4 style="margin: 0 0 10px 0; color: #23282d; font-size: 14px;">📊 Informations du template</h4>
+                        <div id="template-info-display" style="font-size: 13px; color: #666; line-height: 1.4;">
+                            <div><strong>Résolution:</strong> <span id="info-resolution">--</span> px</div>
+                            <div><strong>DPI:</strong> <span id="info-dpi">--</span></div>
+                            <div><strong>Format:</strong> <span id="info-format">--</span></div>
+                            <div><strong>Orientation:</strong> <span id="info-orientation">--</span></div>
                         </div>
                     </div>
                 </div>
@@ -746,32 +828,16 @@ function openTemplateSettings(templateId, templateName) {
             document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de "' + templateName + '"';
             document.getElementById('template-name-input').value = data.data.name || '';
             document.getElementById('template-category').value = data.data.category || 'autre';
-
-            // Mettre à jour les informations techniques
-            const paperSize = data.data.paper_size || 'A4';
-            const orientation = data.data.orientation || 'portrait';
-
-            document.getElementById('template-info-format').textContent = paperSize;
-            document.getElementById('template-info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
-
-            // Calculer la résolution basée sur le format et l'orientation
-            let resolution = '';
-            if (paperSize === 'A4') {
-                resolution = orientation === 'portrait' ? '594 × 1123 px' : '1123 × 594 px';
-            } else if (paperSize === 'A3') {
-                resolution = orientation === 'portrait' ? '840 × 1191 px' : '1191 × 840 px';
-            } else if (paperSize === 'Letter') {
-                resolution = orientation === 'portrait' ? '612 × 792 px' : '792 × 612 px';
-            } else if (paperSize === 'Legal') {
-                resolution = orientation === 'portrait' ? '612 × 1008 px' : '1008 × 612 px';
-            }
-
-            document.getElementById('template-info-resolution').textContent = resolution;
-            document.getElementById('template-info-dpi').textContent = '300 DPI';
-
+            document.getElementById('template-dpi').value = data.data.dpi || '<?php echo $canvas_defaults['dpi']; ?>';
+            document.getElementById('template-paper-size').value = data.data.paper_size || '<?php echo $canvas_defaults['format']; ?>';
+            document.getElementById('template-orientation').value = data.data.orientation || '<?php echo $canvas_defaults['orientation']; ?>';
+            
             // Stocker l'ID du template en cours d'édition
             document.getElementById('template-settings-modal').setAttribute('data-template-id', templateId);
-
+            
+            // Mettre à jour les informations affichées
+            updateTemplateInfo();
+            
             // Afficher le modal
             document.getElementById('template-settings-modal').style.display = 'flex';
         } else {
@@ -880,7 +946,10 @@ function saveTemplateSettings() {
     const templateId = document.getElementById('template-settings-modal').getAttribute('data-template-id');
     const name = document.getElementById('template-name-input').value;
     const category = document.getElementById('template-category').value;
-
+    const dpi = document.getElementById('template-dpi').value;
+    const paperSize = document.getElementById('template-paper-size').value;
+    const orientation = document.getElementById('template-orientation').value;
+    
     fetch(ajaxurl, {
         method: 'POST',
         headers: {
@@ -891,6 +960,9 @@ function saveTemplateSettings() {
             'template_id': templateId,
             'name': name,
             'category': category,
+            'dpi': dpi,
+            'paper_size': paperSize,
+            'orientation': orientation,
             'nonce': pdfBuilderTemplatesNonce
         })
     })
@@ -914,4 +986,52 @@ function selectPredefinedTemplate(templateSlug) {
     // Rediriger vers l'éditeur avec le template prédéfini
     window.location.href = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
 }
+
+// Fonction pour mettre à jour les informations du template en temps réel
+function updateTemplateInfo() {
+    const dpi = document.getElementById('template-dpi').value;
+    const paperSize = document.getElementById('template-paper-size').value;
+    const orientation = document.getElementById('template-orientation').value;
+    
+    // Dimensions en pixels selon le format et l'orientation
+    let widthPx, heightPx;
+    switch (paperSize) {
+        case 'A4':
+            widthPx = orientation === 'portrait' ? 595 : 842;
+            heightPx = orientation === 'portrait' ? 842 : 595;
+            break;
+        case 'A3':
+            widthPx = orientation === 'portrait' ? 842 : 1191;
+            heightPx = orientation === 'portrait' ? 1191 : 842;
+            break;
+        case 'Letter':
+            widthPx = orientation === 'portrait' ? 612 : 792;
+            heightPx = orientation === 'portrait' ? 792 : 612;
+            break;
+        case 'Legal':
+            widthPx = orientation === 'portrait' ? 612 : 1008;
+            heightPx = orientation === 'portrait' ? 1008 : 612;
+            break;
+        default:
+            widthPx = 595;
+            heightPx = 842;
+    }
+    
+    // Mettre à jour l'affichage
+    document.getElementById('info-resolution').textContent = widthPx + '×' + heightPx;
+    document.getElementById('info-dpi').textContent = dpi;
+    document.getElementById('info-format').textContent = paperSize;
+    document.getElementById('info-orientation').textContent = orientation === 'portrait' ? 'Portrait' : 'Paysage';
+}
+
+// Initialiser les event listeners pour la mise à jour en temps réel
+document.addEventListener('DOMContentLoaded', function() {
+    // Écouter les changements sur les sélecteurs
+    ['template-dpi', 'template-paper-size', 'template-orientation'].forEach(function(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', updateTemplateInfo);
+        }
+    });
+});
 </script>

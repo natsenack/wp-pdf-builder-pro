@@ -74,7 +74,7 @@ function get_canvas_modal_value($key, $default = '') {
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['height']; ?>px</span>
                     </div>
                     <div class="setting-group">
-                        <label for="modal_canvas_dpi">DPI</label>
+                        <label for="modal_canvas_dpi">DPI par défaut</label>
                         <select id="modal_canvas_dpi" name="pdf_builder_canvas_dpi">
                             <option value="72" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '72'); ?>>72 DPI (Écran)</option>
                             <option value="96" <?php selected(get_canvas_modal_value('dpi', $canvas_defaults['dpi']), '96'); ?>>96 DPI (Web)</option>
@@ -87,7 +87,28 @@ function get_canvas_modal_value($key, $default = '') {
                         <span class="value-indicator value-default">Défaut: <?php echo $canvas_defaults['dpi']; ?> DPI</span>
                     </div>
                     <div class="setting-group">
-                        <label for="modal_canvas_format">Format prédéfini</label>
+                        <label>DPI autorisés pour les templates</label>
+                        <div class="checkbox-grid">
+                            <?php
+                            $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
+                            $dpi_options = [
+                                '72' => '72 DPI (Écran)',
+                                '96' => '96 DPI (Web)',
+                                '150' => '150 DPI (Impression)',
+                                '200' => '200 DPI (Haute qualité)',
+                                '300' => '300 DPI (Professionnel)',
+                                '400' => '400 DPI (Très haute qualité)',
+                                '600' => '600 DPI (Maximum)'
+                            ];
+                            foreach ($dpi_options as $dpi_value => $dpi_label) {
+                                $checked = in_array($dpi_value, $allowed_dpis) ? 'checked' : '';
+                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_dpis[]' value='$dpi_value' $checked> $dpi_label</label>";
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="modal_canvas_format">Format par défaut</label>
                         <select id="modal_canvas_format" name="pdf_builder_canvas_format">
                             <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>A4 (210×297mm)</option>
                             <option value="A3" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3 (297×420mm) - soon</option>
@@ -95,6 +116,26 @@ function get_canvas_modal_value($key, $default = '') {
                             <option value="Legal" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal (8.5×14") - soon</option>
                             <option value="EtiquetteColis" disabled <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'EtiquetteColis'); ?>>Étiquette Colis (10×15cm) - soon</option>
                         </select>
+                    </div>
+                    <div class="setting-group">
+                        <label>Formats autorisés pour les templates</label>
+                        <div class="checkbox-grid">
+                            <?php
+                            $allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+                            $format_options = [
+                                'A4' => 'A4 (210×297mm)',
+                                'A3' => 'A3 (297×420mm) - Bientôt disponible',
+                                'Letter' => 'Letter (8.5×11") - Bientôt disponible',
+                                'Legal' => 'Legal (8.5×14") - Bientôt disponible',
+                                'EtiquetteColis' => 'Étiquette Colis (10×15cm) - Bientôt disponible'
+                            ];
+                            foreach ($format_options as $format_value => $format_label) {
+                                $checked = in_array($format_value, $allowed_formats) ? 'checked' : '';
+                                $disabled = (in_array($format_value, ['A3', 'Letter', 'Legal', 'EtiquetteColis'])) ? 'disabled' : '';
+                                echo "<label class='checkbox-option'><input type='checkbox' name='pdf_builder_canvas_allowed_formats[]' value='$format_value' $checked $disabled> $format_label</label>";
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
