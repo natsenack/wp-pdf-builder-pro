@@ -820,26 +820,38 @@ try {
      * Gestion de la fermeture des notifications PDF Builder
      */
     function initNoticeDismissal() {
+        console.log('[PDF Builder] NOTIFICATIONS.JS - Initializing notice dismissal...');
+
         // Vérifier si la notification a été fermée précédemment
         var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
         if (dismissedNotices) {
             dismissedNotices = JSON.parse(dismissedNotices);
             if (dismissedNotices['template_limit']) {
                 $('#pdf-builder-template-limit-notice').addClass('pdf-builder-dismissed');
+                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice was previously dismissed');
             }
         }
 
         // Gérer le clic sur le bouton de fermeture
         $(document).on('click', '.pdf-builder-dismiss-btn', function(e) {
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button clicked');
             e.preventDefault();
             e.stopPropagation();
 
             var $notice = $(this).closest('.pdf-builder-template-limit-notice');
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Found notice element:', $notice.length, $notice);
+
+            if ($notice.length === 0) {
+                console.error('[PDF Builder] NOTIFICATIONS.JS - Could not find parent notice element');
+                return;
+            }
+
             var noticeId = 'template_limit';
 
             // Masquer la notification avec une animation
             $notice.slideUp(300, function() {
                 $notice.addClass('pdf-builder-dismissed');
+                console.log('[PDF Builder] NOTIFICATIONS.JS - Notice hidden with animation');
 
                 // Sauvegarder l'état dans localStorage
                 var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
@@ -850,10 +862,29 @@ try {
                 console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice dismissed and saved to localStorage');
             });
         });
+
+        // Vérifier que le bouton existe
+        setTimeout(function() {
+            var $dismissBtn = $('.pdf-builder-dismiss-btn');
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Dismiss button found:', $dismissBtn.length, $dismissBtn);
+        }, 1000);
+
+        console.log('[PDF Builder] NOTIFICATIONS.JS - Notice dismissal initialized');
     }
 
     // Initialiser la gestion des fermetures de notifications
-    initNoticeDismissal();
+    // Attendre que jQuery soit disponible
+    if (typeof jQuery !== 'undefined') {
+        initNoticeDismissal();
+    } else {
+        // Si jQuery n'est pas encore disponible, attendre qu'il le soit
+        var checkJQuery = setInterval(function() {
+            if (typeof jQuery !== 'undefined') {
+                clearInterval(checkJQuery);
+                initNoticeDismissal();
+            }
+        }, 100);
+    }
 
     /**
      * Fonction pour réafficher une notification fermée (utile pour les tests ou reset)
