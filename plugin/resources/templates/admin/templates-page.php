@@ -686,7 +686,7 @@ function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     console.log('Notice element:', notice);
     if (notice) {
-        // Masquer au lieu de supprimer pour pouvoir la réafficher
+        // Masquer la notification au lieu de la supprimer
         notice.style.display = 'none';
         console.log('Notification masquée');
 
@@ -702,14 +702,14 @@ function showTemplateLimitNotice() {
     console.log('showTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
-        // Réafficher la notification
+        // Afficher la notification
         notice.style.display = 'block';
-        console.log('Notification réaffichée');
+        console.log('Notification affichée');
 
         // Supprimer l'état de masquage de localStorage
         localStorage.removeItem('pdf_builder_template_limit_dismissed');
     } else {
-        console.log('Notification n\'existe pas dans le DOM');
+        console.log('Notification n\'existe pas dans le DOM - elle ne peut pas être affichée');
     }
 }
 
@@ -719,7 +719,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
     console.log('Dismissed status:', dismissed);
     if (dismissed === 'true') {
-        dismissTemplateLimitNotice();
+        const notice = document.getElementById('template-limit-notice');
+        if (notice) {
+            console.log('Masquant la notification précédemment masquée');
+            notice.style.display = 'none';
+        }
     }
 });
 </script>
