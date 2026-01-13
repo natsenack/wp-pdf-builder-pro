@@ -125,27 +125,29 @@ try {
          * Lier les événements
          */
         this.bindEvents = function() {
+            var self = this; // Preserve context
+
             // Délégation d'événements pour les boutons de fermeture
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.notification-close')) {
                     e.preventDefault();
                     var notification = e.target.closest('.pdf-builder-notification');
                     if (notification) {
-                        this.dismiss(notification);
+                        self.dismiss(notification);
                     }
                 }
 
                 // Bouton "Tout fermer"
                 if (e.target.closest('.notifications-dismiss-all')) {
                     e.preventDefault();
-                    this.dismissAll();
+                    self.dismissAll();
                 }
             });
 
             // Gestion du clavier (Échap pour fermer)
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    this.dismissAll();
+                    self.dismissAll();
                 }
             });
 
@@ -323,7 +325,6 @@ try {
             if (animate) {
                 // Animation de sortie
                 notification.classList.remove('visible');
-                notification.classList.add('dismissing');
 
                 setTimeout(() => {
                     this.removeNotification(notification);
