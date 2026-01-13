@@ -457,7 +457,7 @@
             ?>
 
 <script>
-                (function() {
+                (function($) {
                     'use strict';
 
                     console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
@@ -863,7 +863,7 @@
                     }
 
                     console.log('[PDF Builder] Canvas modals system ready');
-                })();
+                })(jQuery);
             </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
