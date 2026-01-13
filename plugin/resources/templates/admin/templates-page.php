@@ -397,40 +397,6 @@ var pdfBuilderAjax = {
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #23282d;">Description</label>
-                        <textarea id="template-description-input" rows="3" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical;"></textarea>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; cursor: pointer;">
-                                <input type="checkbox" id="template-public" style="margin-right: 8px;">
-                                <span>Template public (visible par tous les utilisateurs)</span>
-                            </label>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Format de papier</label>
-                            <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="A4">A4 (594 × 1123 px)</option>
-                                <option value="A3">A3 (840 × 1191 px)</option>
-                                <option value="Letter">Letter (612 × 792 px)</option>
-                                <option value="Legal">Legal (612 × 1008 px)</option>
-                            </select>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Orientation</label>
-                            <select id="template-orientation" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="portrait">Portrait</option>
-                                <option value="landscape">Paysage</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
                         <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #23282d;">Catégorie</label>
                         <select id="template-category" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
                             <option value="facture">Facture</option>
