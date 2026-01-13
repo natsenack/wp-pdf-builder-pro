@@ -35,6 +35,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions de sauvegarde principales
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
         add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']);
+        add_action('wp_ajax_pdf_builder_save_allowed_setting', [$this, 'handle_save_allowed_setting']);
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
         // add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
 
@@ -173,6 +174,53 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             // error_log('[PDF Builder AJAX] Erreur sauvegarde: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Gère la sauvegarde des paramètres allowed_* (DPIs, formats, orientations)
+     */
+    public function handle_save_allowed_setting() {
+        if (!$this->nonce_manager->validate_ajax_request('pdf_builder_ajax')) {
+            return;
+        }
+
+        try {
+            $option_name = sanitize_text_field($_POST['option_name'] ?? '');
+            $option_value_json = sanitize_text_field($_POST['option_value'] ?? '');
+
+            if (empty($option_name)) {
+                wp_send_json_error(['message' => 'Nom d\'option manquant']);
+                return;
+            }
+
+            // Décoder la valeur JSON
+            $option_value = json_decode($option_value_json, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                wp_send_json_error(['message' => 'Valeur JSON invalide']);
+                return;
+            }
+
+            // Construire le nom complet de l'option
+            $full_option_name = 'pdf_builder_canvas_' . $option_name;
+
+            // Sauvegarder l'option
+            $updated = update_option($full_option_name, $option_value);
+
+            if ($updated) {
+                error_log("[PDF Builder AJAX] Saved allowed setting: {$full_option_name} = " . print_r($option_value, true));
+                wp_send_json_success([
+                    'message' => 'Paramètre sauvegardé avec succès',
+                    'option_name' => $full_option_name,
+                    'option_value' => $option_value
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Échec de la sauvegarde du paramètre']);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur sauvegarde allowed setting: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }

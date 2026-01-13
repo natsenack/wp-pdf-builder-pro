@@ -164,11 +164,6 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_error_reporting]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_error_reporting', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_php]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>">
 
-                    <!-- Champs cachés pour les paramètres allowed_* (arrays) -->
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allowed_dpis[]]" value="<?php echo esc_attr(json_encode(get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']))); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allowed_formats[]]" value="<?php echo esc_attr(json_encode(get_option('pdf_builder_canvas_allowed_formats', ['A4']))); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allowed_orientations[]]" value="<?php echo esc_attr(json_encode(get_option('pdf_builder_canvas_allowed_orientations', ['portrait']))); ?>">
-
                     <!-- DEBUG: Hidden fields rendering completed -->
                     <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
 
@@ -549,6 +544,13 @@
                                         }
                                     });
                                     newValue = JSON.stringify(newValue);
+
+                                    // Sauvegarder directement les paramètres allowed_* via AJAX
+                                    if (inputName.includes('allowed_')) {
+                                        var optionName = inputName.replace('pdf_builder_canvas_', '').replace('[]', '');
+                                        saveAllowedSetting(optionName, newValue);
+                                        return; // Ne pas mettre à jour le champ caché pour ces paramètres
+                                    }
                                 } else {
                                     // Valeur simple
                                     var input = inputGroup[0];
@@ -561,8 +563,36 @@
                             }
                         });
 
-                        closeModal(modal);
                         console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
+                    }
+
+                    // Fonction pour sauvegarder les paramètres allowed_* via AJAX
+                    function saveAllowedSetting(optionName, value) {
+                        var data = {
+                            action: 'pdf_builder_save_allowed_setting',
+                            option_name: optionName,
+                            option_value: value,
+                            nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : ''
+                        };
+
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams(data)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('[PDF Builder] Saved', optionName, 'successfully');
+                            } else {
+                                console.error('[PDF Builder] Failed to save', optionName, ':', data.data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('[PDF Builder] Error saving', optionName, ':', error);
+                        });
                     }
 
                     // Initialisation des événements
