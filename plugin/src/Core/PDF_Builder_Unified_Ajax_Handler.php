@@ -203,17 +203,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                 return;
             }
 
-            // Le setting_key est déjà le nom complet de l'option (ex: pdf_builder_canvas_allowed_dpis)
-            $option_name = $setting_key;
+            // Le setting_key est le nom court (ex: allowed_dpis)
+            $full_option_name = 'pdf_builder_canvas_' . $setting_key;
 
             // Sauvegarder l'option
-            $updated = update_option($option_name, $values);
+            $updated = update_option($full_option_name, $values);
 
             if ($updated) {
-                error_log("[PDF Builder AJAX] Saved allowed setting: {$option_name} = " . print_r($values, true));
+                error_log("[PDF Builder AJAX] Saved allowed setting: {$full_option_name} = " . print_r($values, true));
                 wp_send_json_success([
                     'message' => 'Paramètre sauvegardé avec succès',
-                    'option_name' => $option_name,
+                    'option_name' => $full_option_name,
                     'option_value' => $values
                 ]);
             } else {

@@ -549,6 +549,7 @@
                         console.log('[PDF Builder DEBUG] Inputs grouped by name:', Object.keys(inputsByName));
 
                         // Traiter chaque groupe d'inputs
+                        var savePromises = [];
                         Object.keys(inputsByName).forEach(function(inputName) {
                             console.log('[PDF Builder DEBUG] Processing input group:', inputName);
 
@@ -578,7 +579,7 @@
                                     if (inputName.includes('allowed_')) {
                                         var optionName = inputName.replace('pdf_builder_canvas_', '').replace('[]', '');
                                         console.log('[PDF Builder DEBUG] Saving allowed setting via AJAX:', optionName, 'with value:', newValue);
-                                        saveAllowedSetting(optionName, newValue);
+                                        savePromises.push(saveAllowedSetting(optionName, newValue));
                                         return; // Ne pas mettre à jour le champ caché pour ces paramètres
                                     }
                                 } else {
@@ -598,15 +599,17 @@
 
                         console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
 
-                        // Recharger les paramètres allowed après la sauvegarde
-                        if (category === 'systeme' || category === 'affichage') {
-                            console.log('[PDF Builder DEBUG] Category is systeme or affichage, scheduling reloadAllowedSettings in 500ms');
-                            setTimeout(function() {
-                                console.log('[PDF Builder DEBUG] Calling reloadAllowedSettings');
+                        // Attendre que toutes les sauvegardes AJAX soient terminées avant de recharger
+                        if (savePromises.length > 0) {
+                            $.when.apply($, savePromises).done(function() {
+                                console.log('[PDF Builder DEBUG] All AJAX saves completed, calling reloadAllowedSettings');
                                 reloadAllowedSettings();
-                            }, 500); // Petit délai pour s'assurer que la sauvegarde est terminée
+                            }).fail(function() {
+                                console.error('[PDF Builder] Some AJAX saves failed');
+                                reloadAllowedSettings(); // Recharger quand même
+                            });
                         } else {
-                            console.log('[PDF Builder DEBUG] Category is not systeme or affichage, skipping reloadAllowedSettings');
+                            reloadAllowedSettings();
                         }
                     }
 
@@ -620,7 +623,7 @@
                             data: {
                                 action: 'pdf_builder_save_allowed_setting',
                                 setting_key: optionName,
-                                values: JSON.stringify(value),
+                                values: value,
                                 nonce: pdfBuilderNotifications.ajax_nonce
                             },
                             success: function(response) {
