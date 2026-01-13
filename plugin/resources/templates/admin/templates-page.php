@@ -682,10 +682,26 @@ function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     console.log('Notice element:', notice);
     if (notice) {
-        notice.style.display = 'none';
+        // Utiliser plusieurs méthodes pour s'assurer que la notification est masquée
+        notice.style.display = 'none !important';
+        notice.style.visibility = 'hidden';
+        notice.style.opacity = '0';
+        notice.style.height = '0';
+        notice.style.overflow = 'hidden';
+        notice.setAttribute('aria-hidden', 'true');
+
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
-        console.log('Notification masquée et sauvegardée dans localStorage');
+        console.log('Notification masquée avec toutes les méthodes et sauvegardée dans localStorage');
+
+        // Vérifier périodiquement si la notification n'est pas réaffichée
+        setTimeout(function() {
+            const checkNotice = document.getElementById('template-limit-notice');
+            if (checkNotice && (checkNotice.style.display !== 'none' || checkNotice.style.visibility !== 'hidden')) {
+                console.log('Notification réaffichée, re-masquage forcé');
+                dismissTemplateLimitNotice();
+            }
+        }, 1000);
     } else {
         console.error('Element template-limit-notice non trouvé');
     }
@@ -711,5 +727,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if (dismissed === 'true') {
         dismissTemplateLimitNotice();
     }
+
+    // Vérifier périodiquement si la notification n'est pas réaffichée par un autre script
+    setInterval(function() {
+        const dismissedCheck = localStorage.getItem('pdf_builder_template_limit_dismissed');
+        if (dismissedCheck === 'true') {
+            const notice = document.getElementById('template-limit-notice');
+            if (notice && (notice.style.display !== 'none' || notice.style.visibility !== 'hidden')) {
+                console.log('Notification réaffichée détectée, re-masquage');
+                dismissTemplateLimitNotice();
+            }
+        }
+    }, 2000); // Vérifier toutes les 2 secondes
 });
 </script>
