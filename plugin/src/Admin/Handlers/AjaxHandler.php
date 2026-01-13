@@ -9,6 +9,7 @@ namespace PDF_Builder\Admin\Handlers;
 
 use Exception;
 use WP_Error;
+use PDF_Builder\Canvas\Canvas_Manager;
 
 /**
  * Classe responsable de la gestion des appels AJAX
@@ -56,6 +57,7 @@ class AjaxHandler
         // Hooks AJAX canvas
         add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
         add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
+        add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
     }
 
     /**
@@ -1518,6 +1520,39 @@ class AjaxHandler
         } else {
             // Texte standard
             return sanitize_text_field($value);
+        }
+    }
+
+    /**
+     * Récupère les paramètres du canvas via AJAX
+     */
+    public function ajaxGetCanvasSettings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Récupérer les paramètres du canvas
+            $canvas_manager = Canvas_Manager::get_instance();
+            $settings = $canvas_manager->getAllSettings();
+
+            wp_send_json_success([
+                'settings' => $settings,
+                'message' => __('Paramètres du canvas récupérés avec succès', 'pdf-builder-pro')
+            ]);
+        } catch (\Exception $e) {
+            wp_send_json_error([
+                'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
+            ]);
         }
     }
 }
