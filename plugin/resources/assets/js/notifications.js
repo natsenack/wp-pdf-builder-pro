@@ -816,19 +816,61 @@ try {
         });
     }
 
-})(jQuery);
+    /**
+     * Gestion de la fermeture des notifications PDF Builder
+     */
+    function initNoticeDismissal() {
+        // Vérifier si la notification a été fermée précédemment
+        var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
+        if (dismissedNotices) {
+            dismissedNotices = JSON.parse(dismissedNotices);
+            if (dismissedNotices['template_limit']) {
+                $('#pdf-builder-template-limit-notice').addClass('pdf-builder-dismissed');
+            }
+        }
 
-} catch (error) {
-    console.error('[PDF Builder] NOTIFICATIONS.JS - Error during script execution:', error);
-    // Fallback: définir au moins les fonctions globales de base
-    window.showSuccessNotification = function(message) {
-        console.log('FALLBACK SUCCESS:', message);
-        alert('✅ ' + message);
+        // Gérer le clic sur le bouton de fermeture
+        $(document).on('click', '.pdf-builder-notice-dismiss', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var $notice = $(this).closest('.pdf-builder-template-limit-notice');
+            var noticeId = 'template_limit';
+
+            // Masquer la notification avec une animation
+            $notice.slideUp(300, function() {
+                $notice.addClass('pdf-builder-dismissed');
+
+                // Sauvegarder l'état dans localStorage
+                var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices') || '{}';
+                dismissedNotices = JSON.parse(dismissedNotices);
+                dismissedNotices[noticeId] = true;
+                localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
+
+                console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice dismissed and saved to localStorage');
+            });
+        });
+    }
+
+    // Initialiser la gestion des fermetures de notifications
+    initNoticeDismissal();
+
+    /**
+     * Fonction pour réafficher une notification fermée (utile pour les tests ou reset)
+     */
+    window.pdfBuilderResetDismissedNotice = function(noticeId) {
+        var dismissedNotices = localStorage.getItem('pdf_builder_dismissed_notices');
+        if (dismissedNotices) {
+            dismissedNotices = JSON.parse(dismissedNotices);
+            delete dismissedNotices[noticeId];
+            localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
+
+            // Réafficher la notification
+            if (noticeId === 'template_limit') {
+                $('#pdf-builder-template-limit-notice').removeClass('pdf-builder-dismissed').show();
+            }
+
+            console.log('[PDF Builder] NOTIFICATIONS.JS - Notice reset:', noticeId);
+        }
     };
-    window.showErrorNotification = function(message) {
-        console.log('FALLBACK ERROR:', message);
-        alert('❌ ' + message);
-    };
-    console.log('[PDF Builder] NOTIFICATIONS.JS - Fallback functions defined');
-}
 
