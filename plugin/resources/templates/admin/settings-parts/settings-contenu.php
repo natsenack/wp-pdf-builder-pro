@@ -9,6 +9,16 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
+    // Define AJAX variables for inline scripts
+    ?>
+    <script>
+    var pdfBuilderNotifications = <?php echo json_encode(array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'ajax_nonce' => wp_create_nonce('pdf_builder_ajax')
+    )); ?>;
+    </script>
+    <?php
+
     $settings = get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
