@@ -33,6 +33,9 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdmin::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
+// DEBUG: Afficher les valeurs pour diagnostiquer
+echo '<!-- DEBUG PREMIUM: is_premium=' . ($is_premium ? 'true' : 'false') . ', templates_count=' . $templates_count . ', user_can_create=' . ($user_can_create ? 'true' : 'false') . ' -->';
+
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
@@ -91,6 +94,7 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
+            <!-- DEBUG: Notification affichée car is_premium=false et templates_count >= 1 -->
             <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <a href="#" onclick="dismissTemplateLimitNotice(); return false;" style="position: absolute; top: 5px; right: 5px; color: #dc3545; font-size: 20px; font-weight: bold; text-decoration: none; line-height: 1;" title="Fermer">
                     ✕
