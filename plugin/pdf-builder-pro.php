@@ -1754,12 +1754,22 @@ function pdf_builder_save_template_handler() {
                 $json_errors[] = 'UTF-8 fixed decode: ' . json_last_error_msg();
 
                 // Approach 3: Try to fix Latin-1 to UTF-8 conversion (Ã© -> é)
-                $latin1_to_utf8 = utf8_encode($template_data);
+                $latin1_to_utf8 = mb_convert_encoding($template_data, 'UTF-8', 'ISO-8859-1');
                 $decoded_data = json_decode($latin1_to_utf8, true, 512, JSON_INVALID_UTF8_IGNORE);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     $json_errors[] = 'Latin-1 to UTF-8 decode: ' . json_last_error_msg();
 
-                    // Approach 4: Try to fix specific encoding issues
+                    // Approach 3.5: Fix specific corruption (datedAt -> updatedAt)
+                    $fixed_corruption = str_replace('datedAt', 'updatedAt', $template_data);
+                    $decoded_data = json_decode($fixed_corruption, true, 512, JSON_INVALID_UTF8_IGNORE);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        $json_errors[] = 'Corruption fix decode: ' . json_last_error_msg();
+
+                    } else {
+                        error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction datedAt->updatedAt');
+                    }
+
+                        // Approach 4: Try to fix specific encoding issues
                     $fixed_json = preg_replace('/Ã©/', 'é', $template_data);
                     $fixed_json = preg_replace('/Ã¨/', 'è', $fixed_json);
                     $fixed_json = preg_replace('/Ãª/', 'ê', $fixed_json);
