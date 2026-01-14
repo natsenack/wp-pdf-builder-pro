@@ -45,7 +45,12 @@ $allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300
 if (!is_array($allowed_dpis)) {
     $allowed_dpis = ['96', '150', '300'];
 }
-?>
+
+// Récupérer les orientations autorisées depuis les paramètres du plugin
+$allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
+if (!is_array($allowed_orientations)) {
+    $allowed_orientations = ['portrait'];
+}
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
 <script>
@@ -422,8 +427,16 @@ var pdfBuilderAjax = {
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">Orientation</label>
                             <select id="template-orientation" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="portrait">Portrait</option>
-                                <option value="landscape">Paysage</option>
+                                <?php
+                                $orientation_labels = [
+                                    'portrait' => 'Portrait (Vertical)',
+                                    'landscape' => 'Paysage (Horizontal)'
+                                ];
+                                foreach ($allowed_orientations as $orientation):
+                                    $label = isset($orientation_labels[$orientation]) ? $orientation_labels[$orientation] : ucfirst($orientation);
+                                ?>
+                                    <option value="<?php echo esc_attr($orientation); ?>"><?php echo esc_html($label); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
