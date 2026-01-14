@@ -1690,6 +1690,14 @@ function pdf_builder_save_template_handler() {
         error_log('[PDF Builder SAVE] wp_send_json_error called for permissions - this should not appear');
         return;
     }
+        // Check permissions
+    if (!current_user_can('manage_options')) {
+        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
+        error_log('[PDF Builder SAVE] About to call wp_send_json_error for permissions');
+        wp_send_json_error('Permissions insuffisantes');
+        error_log('[PDF Builder SAVE] wp_send_json_error called for permissions - this should not appear');
+        return;
+    }
     error_log('[PDF Builder SAVE] ✅ Permissions OK');
 
     // Log the raw template_data for debugging
@@ -1699,6 +1707,11 @@ function pdf_builder_save_template_handler() {
     if (strlen($template_data) > 1000) {
         error_log('[PDF Builder SAVE] Raw template_data (last 1000 chars): ' . substr($template_data, -1000));
     }
+
+    // Strip slashes from form data (handles escaped quotes from multipart/form-data)
+    $template_data = stripslashes($template_data);
+    error_log('[PDF Builder SAVE] After stripslashes length: ' . strlen($template_data));
+    error_log('[PDF Builder SAVE] After stripslashes (first 200 chars): ' . substr($template_data, 0, 200));
 
     // Check nonce
     $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
