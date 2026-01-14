@@ -26,7 +26,7 @@
         
         // Log periodically
         if (checkCount === 1 || checkCount % 25 === 0) {
-            ');
+            // console.log('[pdf-builder-init] Still waiting for pdfBuilderReact... (' + checkCount + '/' + MAX_CHECKS + ')');
         }
         
         // Keep checking

@@ -28,7 +28,6 @@
 
     // Create initial stub but DON'T assign to window yet
     var stub = createStub();
-    ');
 
     // Check if webpack bundle has replaced the stub
     // Look for the webpack bundle flag
@@ -38,7 +37,6 @@
 
         }
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function' && window.pdfBuilderReact._isWebpackBundle) {
-            ');
             isInitialized = true;
             clearInterval(checkRealModule);
             
@@ -62,7 +60,6 @@
             if (!window.pdfBuilderReact || !window.pdfBuilderReact._isWebpackBundle) {
                 window.pdfBuilderReact = stub;
                 Object.assign(initialized, window.pdfBuilderReact);
-                ');
             } else {
                 
             }
