@@ -849,14 +849,17 @@ function updateResolutionDisplay() {
     resolutionDisplay.textContent = `Résolution: ${defaultWidthPx} × ${defaultHeightPx} px`;
 }
 
-// Écouteur pour mettre à jour la résolution quand le DPI change
+// Écouteur pour mettre à jour la résolution quand le DPI change (délégation d'événement)
+document.addEventListener('change', function(e) {
+    if (e.target && e.target.id === 'template-dpi') {
+        updateResolutionDisplay();
+    }
+});
+
+// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
-    // Utiliser la délégation d'événement pour les éléments dynamiques
-    document.addEventListener('change', function(e) {
-        if (e.target && e.target.id === 'template-dpi') {
-            updateResolutionDisplay();
-        }
-    });
+    // Mise à jour initiale si nécessaire
+    updateResolutionDisplay();
 });
 
 function openTemplateSettings(templateId, templateName) {
