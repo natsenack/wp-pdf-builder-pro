@@ -295,13 +295,13 @@ var pdfBuilderAjax = {
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
                         <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">📄 Tous</button>
-                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
-                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #6c757d; border-color: #6c757d; color: white;">📄 Tous</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #e3f2fd; border-color: #2196f3; color: #1565c0;">🧾 Factures</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #e8f5e8; border-color: #4caf50; color: #2e7d32;">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #fff3e0; border-color: #ff9800; color: #e65100;">📦 Commandes</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffebee; border-color: #f44336; color: #b71c1c;">📑 Contrats</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #f3e5f5; border-color: #9c27b0; color: #6a1b9a;">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -540,12 +540,12 @@ var pdfBuilderAjax = {
 
 
 .gallery-filter-btn.active {
-    -webkit-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    -moz-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    -ms-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    -o-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    font-weight: bold !important;
+    -webkit-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
+    -moz-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
+    -ms-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
+    -o-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
+    box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
+    font-weight: bold;
 }
 
 
