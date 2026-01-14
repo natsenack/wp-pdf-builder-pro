@@ -55,7 +55,7 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
-  console.log('🔧 initPDFBuilderReact called');
+  console.log('🔧 initPDFBuilderReact called at ' + new Date().toISOString());
 
   // Debug: Check if container exists
   const container = document.getElementById('pdf-builder-react-root');
@@ -63,7 +63,7 @@ export function initPDFBuilderReact() {
   console.log('🔧 container found:', !!container);
 
   if (!container) {
-    console.error('PDF Builder React: Container element not found');
+    console.log('PDF Builder React: Container element not found');
     console.log('🔧 Available elements with pdf-builder in ID:');
     const allElements = document.querySelectorAll('[id*="pdf-builder"]');
     allElements.forEach(el => console.log('  -', el.id, el));
@@ -93,9 +93,10 @@ export function initPDFBuilderReact() {
   if (editorEl) editorEl.style.display = 'block';
 
   try {
-    console.log('🔧 Creating React root');
+    console.log('🔧 About to create React root');
     const root = createRoot(container);
-    console.log('🔧 Root created, rendering PDFBuilder');
+    console.log('🔧 Root created successfully');
+    console.log('🔧 About to render PDFBuilder');
     root.render(
       // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
       // In development, it can help catch bugs, but production needs single render
@@ -118,7 +119,7 @@ export function initPDFBuilderReact() {
     return true;
 
   } catch (error) {
-    console.error('PDF Builder React: Initialization error:', error);
+    console.log('PDF Builder React: Initialization error:', error);
     // Don't hide the container on error, so we can see it
     // container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
     // Remove the initialized flag on error
