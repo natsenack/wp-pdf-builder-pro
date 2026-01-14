@@ -1156,52 +1156,41 @@ class PdfBuilderAdmin
                 editor: null,
 
                 init: function() {
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: Initializing loader at ' + new Date().toISOString());
                     this.element = document.getElementById('pdf-builder-loader');
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: Elements found - loader:', !!this.element, 'editor:', !!this.editor);
 
                     if (!this.element || !this.editor) {
-                        console.error('🔥🔥🔥 INIT_LOGS_V4: Loader elements not found');
-                        console.log('🔥🔥🔥 INIT_LOGS_V4: Available elements with pdf-builder in ID:');
                         const allElements = document.querySelectorAll('[id*="pdf-builder"]');
                         allElements.forEach(el => console.log('  -', el.id));
                         return;
                     }
 
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: Starting React readiness check...');
                     this.startChecking();
                 },
 
                 hide: function() {
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: Hiding loader, showing editor');
                     if (this.element && this.editor) {
                         this.element.style.display = 'none';
                         this.editor.style.display = 'block';
-                        console.log('🔥🔥🔥 INIT_LOGS_V4: Editor loaded and displayed');
                     }
                 },
 
                 startChecking: function() {
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: Starting React readiness checking loop');
                     let attempts = 0;
                     const maxAttempts = 100; // 50 secondes à 500ms
 
                     const checkInterval = setInterval(() => {
                         attempts++;
-                        console.log('🔥🔥🔥 INIT_LOGS_V4: Check attempt #' + attempts);
 
                         if (this.isReactReady()) {
                             clearInterval(checkInterval);
-                            console.log('🔥🔥🔥 INIT_LOGS_V4: React is ready, initializing...');
                             this.initializeReact();
                             return;
                         }
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            console.warn('🔥🔥🔥 INIT_LOGS_V4: React loading timeout - showing editor anyway');
                             this.hide(); // Fallback: montrer l'éditeur même si React n'est pas prêt
                         }
                     }, 500);
@@ -1211,7 +1200,6 @@ class PdfBuilderAdmin
                     const hasWindowPdfBuilderReact = typeof window.pdfBuilderReact !== 'undefined';
                     const hasInitFunction = hasWindowPdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
 
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: React readiness check at ' + new Date().toISOString());
                     console.log('  - window.pdfBuilderReact exists:', hasWindowPdfBuilderReact);
                     console.log('  - initPDFBuilderReact function exists:', hasInitFunction);
                     console.log('  - window.pdfBuilderReact:', window.pdfBuilderReact);
@@ -1220,40 +1208,30 @@ class PdfBuilderAdmin
                 },
 
                 initializeReact: function() {
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: initializeReact called');
                     if (this.isReactReady()) {
-                        console.log('🔥🔥🔥 INIT_LOGS_V4: React is confirmed ready, calling initPDFBuilderReact...');
                         try {
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
-                            console.log('🔥🔥🔥 INIT_LOGS_V4: React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
                         } catch (error) {
-                            console.error('🔥🔥🔥 INIT_LOGS_V4: React initialization failed:', error);
                             return false;
                         }
                     }
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: React not ready, skipping initialization');
                     return false;
                 }
             };
 
             // Initialize when DOM is ready
-            console.log('🔥🔥🔥 INIT_LOGS_V4: Setting up DOM ready listener');
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => {
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: DOMContentLoaded fired, calling loader.init()');
                     loader.init();
                 });
             } else {
-                console.log('🔥🔥🔥 INIT_LOGS_V4: DOM already ready, calling loader.init() immediately');
                 loader.init();
             }
 
             // Listen for React ready event
-            console.log('🔥🔥🔥 INIT_LOGS_V4: Setting up pdfBuilderReactLoaded event listener');
             document.addEventListener('pdfBuilderReactLoaded', function() {
-                console.log('🔥🔥🔥 INIT_LOGS_V4: pdfBuilderReactLoaded event received, calling initializeReact');
                 loader.initializeReact();
             });
 
@@ -1473,3 +1451,5 @@ class PdfBuilderAdmin
         <?php
     }
 }
+
+
