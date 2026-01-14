@@ -23,6 +23,9 @@ class AdminScriptLoader
     public function __construct($admin)
     {
         $this->admin = $admin;
+
+        // Enregistrer le hook pour charger les scripts admin
+        add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
     }
 
     /**
