@@ -1753,23 +1753,35 @@ function pdf_builder_save_template_handler() {
             if (json_last_error() !== JSON_ERROR_NONE) {
                 $json_errors[] = 'UTF-8 fixed decode: ' . json_last_error_msg();
 
-                // Approach 3: Try to fix specific encoding issues
-                $fixed_json = preg_replace('/Ã©/', 'é', $template_data);
-                $fixed_json = preg_replace('/Ã¨/', 'è', $fixed_json);
-                $fixed_json = preg_replace('/Ãª/', 'ê', $fixed_json);
-                $fixed_json = preg_replace('/Ã«/', 'ë', $fixed_json);
-                $fixed_json = preg_replace('/Ã¢/', 'â', $fixed_json);
-                $fixed_json = preg_replace('/Ã®/', 'î', $fixed_json);
-                $fixed_json = preg_replace('/Ã´/', 'ô', $fixed_json);
-                $fixed_json = preg_replace('/Ã»/', 'û', $fixed_json);
-                $fixed_json = preg_replace('/Ã¼/', 'ü', $fixed_json);
-                $fixed_json = preg_replace('/Ã§/', 'ç', $fixed_json);
-                $fixed_json = preg_replace('/Ã/', 'À', $fixed_json);
-                $fixed_json = preg_replace('/Ã/', 'É', $fixed_json);
-
-                $decoded_data = json_decode($fixed_json, true, 512, JSON_INVALID_UTF8_IGNORE);
+                // Approach 3: Try to fix Latin-1 to UTF-8 conversion (Ã© -> é)
+                $latin1_to_utf8 = utf8_encode($template_data);
+                $decoded_data = json_decode($latin1_to_utf8, true, 512, JSON_INVALID_UTF8_IGNORE);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    $json_errors[] = 'Character fixed decode: ' . json_last_error_msg();
+                    $json_errors[] = 'Latin-1 to UTF-8 decode: ' . json_last_error_msg();
+
+                // Approach 3: Try to fix Latin-1 to UTF-8 conversion (Ã© -> é)
+                $latin1_to_utf8 = utf8_encode($template_data);
+                $decoded_data = json_decode($latin1_to_utf8, true, 512, JSON_INVALID_UTF8_IGNORE);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $json_errors[] = 'Latin-1 to UTF-8 decode: ' . json_last_error_msg();
+
+                    // Approach 4: Try to fix specific encoding issues
+                    $fixed_json = preg_replace('/Ã©/', 'é', $template_data);
+                    $fixed_json = preg_replace('/Ã¨/', 'è', $fixed_json);
+                    $fixed_json = preg_replace('/Ãª/', 'ê', $fixed_json);
+                    $fixed_json = preg_replace('/Ã«/', 'ë', $fixed_json);
+                    $fixed_json = preg_replace('/Ã¢/', 'â', $fixed_json);
+                    $fixed_json = preg_replace('/Ã®/', 'î', $fixed_json);
+                    $fixed_json = preg_replace('/Ã´/', 'ô', $fixed_json);
+                    $fixed_json = preg_replace('/Ã»/', 'û', $fixed_json);
+                    $fixed_json = preg_replace('/Ã¼/', 'ü', $fixed_json);
+                    $fixed_json = preg_replace('/Ã§/', 'ç', $fixed_json);
+                    $fixed_json = preg_replace('/Ã/', 'À', $fixed_json);
+                    $fixed_json = preg_replace('/Ã/', 'É', $fixed_json);
+
+                    $decoded_data = json_decode($fixed_json, true, 512, JSON_INVALID_UTF8_IGNORE);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        $json_errors[] = 'Character fixed decode: ' . json_last_error_msg();
 
                     // Last resort: try to manually fix the JSON
                     error_log('[PDF Builder SAVE] ❌ ÉCHEC: Toutes les méthodes de décodage JSON ont échoué');
