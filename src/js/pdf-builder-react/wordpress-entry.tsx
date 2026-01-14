@@ -59,6 +59,8 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
+  // Use alert for critical debug since console might be interfered with
+  alert('🚨🚨🚨 ALERT_DEBUG: initPDFBuilderReact CALLED 🚨🚨🚨');
   console.error('🚨🚨🚨 EXTREME_DEBUG_V3: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚨🚨🚨');
   console.log('🚨🚨🚨 EXTREME_DEBUG_V3: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚨🚨🚨');
   console.error('UNIQUE_DEBUG: initPDFBuilderReact called at ' + new Date().toISOString());
