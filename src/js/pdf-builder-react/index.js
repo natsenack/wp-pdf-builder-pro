@@ -1,19 +1,5 @@
-// Simple export
-console.log('index.js is being executed');
-const exports = {
-  initPDFBuilderReact: () => console.log('init'),
-  loadTemplate: () => console.log('load'),
-  getEditorState: () => ({}),
-  setEditorState: () => {},
-  getCurrentTemplate: () => null,
-  exportTemplate: () => {},
-  saveTemplate: () => {},
-  registerEditorInstance: () => {},
-  resetAPI: () => {},
-  updateCanvasDimensions: () => {},
-  _isWebpackBundle: true
-};
+// Import the actual React implementation
+import './wordpress-entry';
 
-if (typeof window !== 'undefined') {
-  window.pdfBuilderReact = exports;
-}
+// Re-export for webpack
+export * from './wordpress-entry';
