@@ -26,7 +26,7 @@
         
         // Log periodically
         if (checkCount === 1 || checkCount % 25 === 0) {
-            ');
+            console.log('[PDF Builder Init] Checking for React module... (' + checkCount + '/' + MAX_CHECKS + ')');
         }
         
         // Keep checking
