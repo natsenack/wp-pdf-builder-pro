@@ -1128,6 +1128,16 @@ class PdfBuilderAdmin
         (function() {
             'use strict';
 
+            // Vérifier si on est sur la page de l'éditeur React
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentPage = urlParams.get('page');
+
+            // Ne charger React que sur la page appropriée
+            if (currentPage !== 'pdf-builder-react-editor') {
+                console.log('[PDF Builder] Not on React editor page, skipping React initialization');
+                return;
+            }
+
             // Simple loader management
             const loader = {
                 element: null,
@@ -1138,7 +1148,7 @@ class PdfBuilderAdmin
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
                     if (!this.element || !this.editor) {
-                        // console.error('[PDF Builder] Loader elements not found');
+                        console.error('[PDF Builder] Loader elements not found');
                         return;
                     }
 
@@ -1149,7 +1159,7 @@ class PdfBuilderAdmin
                     if (this.element && this.editor) {
                         this.element.style.display = 'none';
                         this.editor.style.display = 'block';
-                        // console.log('[PDF Builder] Editor loaded and displayed');
+                        console.log('[PDF Builder] Editor loaded and displayed');
                     }
                 },
 
@@ -1183,14 +1193,14 @@ class PdfBuilderAdmin
 
                 initializeReact: function() {
                     if (this.isReactReady()) {
-                        // console.log('[PDF Builder] Initializing React...');
+                        console.log('[PDF Builder] Initializing React...');
                         try {
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
-                            // console.log('[PDF Builder] React initialization result:', result);
+                            console.log('[PDF Builder] React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
                         } catch (error) {
-                            // console.error('[PDF Builder] React initialization failed:', error);
+                            console.error('[PDF Builder] React initialization failed:', error);
                             return false;
                         }
                     }
