@@ -2,9 +2,20 @@
  * PDF Builder React - Initialization Helper
  * This file ensures that window.pdfBuilderReact is properly initialized
  * and triggers the initialization event after the bundle loads.
- * 
+ *
  * This file MUST load AFTER pdf-builder-react.js
  */
+
+// Suppress React passive event listener warnings in development
+const originalWarn = console.warn;
+console.warn = function(...args) {
+    if (args[0] && typeof args[0] === 'string' &&
+        (args[0].includes('Added non-passive event listener') ||
+         args[0].includes('passive event listener'))) {
+        return; // Suppress these warnings
+    }
+    originalWarn.apply(console, args);
+};
 
 (function() {
     'use strict';
