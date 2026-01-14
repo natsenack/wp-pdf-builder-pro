@@ -1,0 +1,7 @@
+open threeaxe.fr
+threeaxe
+Natsenack2024@
+binary
+cd wp-content/plugins/wp-pdf-builder-pro
+put "i:\wp-pdf-builder-proV1\plugin\clear-cache.php" clear-cache.php
+bye

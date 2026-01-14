@@ -200,7 +200,8 @@ class AdminScriptLoader
     {
         // error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s'));
 
-        $cache_bust = time();
+        // Force cache busting with timestamp + random to ensure fresh load
+        $cache_bust = time() . '-' . wp_rand(1000, 9999);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
         // AJAX throttle manager
