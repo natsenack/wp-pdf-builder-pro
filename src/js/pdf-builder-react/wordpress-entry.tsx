@@ -4,7 +4,8 @@
  */
 
 // DEBUG: Log when script starts loading
-console.log('🔧 DEBUG: wordpress-entry.tsx script started loading');
+console.log('🔧 DEBUG: wordpress-entry.tsx script started loading at ' + new Date().toISOString());
+console.error('UNIQUE_GLOBAL_DEBUG: wordpress-entry.tsx script started loading at ' + new Date().toISOString());
 debugLog('🔧 DEBUG: pdf-builder-react-wrapper.min.js script started loading');
 
 import React from 'react';
