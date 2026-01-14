@@ -1690,14 +1690,6 @@ function pdf_builder_save_template_handler() {
         error_log('[PDF Builder SAVE] wp_send_json_error called for permissions - this should not appear');
         return;
     }
-        // Check permissions
-    if (!current_user_can('manage_options')) {
-        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
-        error_log('[PDF Builder SAVE] About to call wp_send_json_error for permissions');
-        wp_send_json_error('Permissions insuffisantes');
-        error_log('[PDF Builder SAVE] wp_send_json_error called for permissions - this should not appear');
-        return;
-    }
     error_log('[PDF Builder SAVE] ✅ Permissions OK');
 
     // Log the raw template_data for debugging
@@ -1727,7 +1719,7 @@ function pdf_builder_save_template_handler() {
 
     try {
         $template_id = intval($_POST['template_id'] ?? 0);
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+        // $template_data is already set and stripslashed above
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
 
         // error_log('[PDF Builder SAVE] Template ID: ' . $template_id);
