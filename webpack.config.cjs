@@ -14,8 +14,7 @@ module.exports = {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
     library: {
-      type: 'var',
-      name: 'PDFBuilderTemp',
+      type: 'global',
     },
     clean: true,
   },
