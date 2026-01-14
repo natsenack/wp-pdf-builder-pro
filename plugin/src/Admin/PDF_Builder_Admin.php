@@ -1185,6 +1185,7 @@ class PdfBuilderAdmin
 
                         if (this.isReactReady()) {
                             clearInterval(checkInterval);
+                            console.log('🔥🔥🔥 INIT_LOGS_V4: React is ready, initializing...');
                             this.initializeReact();
                             return;
                         }
@@ -1208,15 +1209,20 @@ class PdfBuilderAdmin
                 },
 
                 initializeReact: function() {
+                    console.log('🔥🔥🔥 INIT_LOGS_V4: initializeReact called');
                     if (this.isReactReady()) {
+                        console.log('🔥🔥🔥 INIT_LOGS_V4: React is confirmed ready, calling initPDFBuilderReact...');
                         try {
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
+                            console.log('🔥🔥🔥 INIT_LOGS_V4: React initialization result:', result);
                             // React will handle hiding the loader internally
                             return true;
                         } catch (error) {
+                            console.error('🔥🔥🔥 INIT_LOGS_V4: Error calling initPDFBuilderReact:', error);
                             return false;
                         }
                     }
+                    console.log('🔥🔥🔥 INIT_LOGS_V4: React not ready, skipping initialization');
                     return false;
                 }
             };
