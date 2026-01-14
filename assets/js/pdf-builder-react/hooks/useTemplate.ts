@@ -582,6 +582,76 @@ export function useTemplate() {
 
       if (!result.success) {
         debugError('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
+
+        // Vérifier si c'est une erreur de nonce invalide
+        const serverErrorMessage = result.data || '';
+        if (serverErrorMessage.includes('Nonce invalide') || serverErrorMessage.includes('nonce')) {
+          debugLog('[PDF_BUILDER_FRONTEND] Erreur de nonce détectée, tentative de récupération d\'un nouveau nonce');
+
+          try {
+            // Tenter de récupérer un nouveau nonce
+            const freshNonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
+              method: 'POST',
+              body: new URLSearchParams({
+                'action': 'pdf_builder_get_fresh_nonce'
+              })
+            });
+
+            if (freshNonceResponse.ok) {
+              const freshNonceData = await freshNonceResponse.json();
+              if (freshNonceData.success && freshNonceData.data?.nonce) {
+                debugLog('[PDF_BUILDER_FRONTEND] Nouveau nonce obtenu, relance de la sauvegarde');
+
+                // Mettre à jour le nonce global
+                if (window.pdfBuilderData) {
+                  window.pdfBuilderData.nonce = freshNonceData.data.nonce;
+                }
+
+                // Relancer la sauvegarde avec le nouveau nonce
+                const retryFormData = new FormData();
+                retryFormData.append('action', 'pdf_builder_save_template');
+                retryFormData.append('template_id', templateId);
+                retryFormData.append('template_name', state.template.name || 'Nouveau template');
+                retryFormData.append('template_description', state.template.description || '');
+                retryFormData.append('template_data', JSON.stringify(templateData));
+                retryFormData.append('nonce', freshNonceData.data.nonce);
+
+                // Ajouter les paramètres du template
+                retryFormData.append('show_guides', state.template.showGuides ? '1' : '0');
+                retryFormData.append('snap_to_grid', state.template.snapToGrid ? '1' : '0');
+                retryFormData.append('margin_top', (state.template.marginTop || 0).toString());
+                retryFormData.append('margin_bottom', (state.template.marginBottom || 0).toString());
+                retryFormData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
+                retryFormData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
+
+                const retryResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
+                  method: 'POST',
+                  body: retryFormData
+                });
+
+                if (retryResponse.ok) {
+                  const retryResult = await retryResponse.json();
+                  if (retryResult.success) {
+                    debugLog('[PDF_BUILDER_FRONTEND] Sauvegarde réussie avec nouveau nonce');
+
+                    dispatch({
+                      type: 'SAVE_TEMPLATE',
+                      payload: {
+                        id: retryResult.data.template_id || retryResult.data.id,
+                        name: retryResult.data.name
+                      }
+                    });
+
+                    return; // Sortie précoce en cas de succès
+                  }
+                }
+              }
+            }
+          } catch (nonceRefreshError) {
+            debugError('[PDF_BUILDER_FRONTEND] Échec récupération nouveau nonce:', nonceRefreshError);
+          }
+        }
+
         const errorMessage = result.data || 'Unknown error during save';
         throw new Error(errorMessage);
       }
