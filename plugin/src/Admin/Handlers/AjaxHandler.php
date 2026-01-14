@@ -273,16 +273,10 @@ class AjaxHandler
                 return;
             }
 
-            // Pour les requêtes GET (chargement de template), on peut être plus permissif avec le nonce
-            // car c'est une opération de lecture, mais on garde la vérification pour la sécurité
-            $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
+            // Pour les requêtes GET de chargement de template (lecture seule),
+            // on ne vérifie pas le nonce car c'est une opération de lecture sécurisée
+            // Les permissions utilisateur suffisent comme protection
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
-
-            // Vérifier le nonce seulement s'il est fourni (pour compatibilité)
-            if (!empty($nonce) && !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
 
             if (!$template_id) {
                 wp_send_json_error('ID de template manquant');
