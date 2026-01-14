@@ -851,12 +851,12 @@ function updateResolutionDisplay() {
 
 // Écouteur pour mettre à jour la résolution quand le DPI change
 document.addEventListener('DOMContentLoaded', function() {
-    const dpiSelect = document.getElementById('template-dpi');
-    if (dpiSelect) {
-        dpiSelect.addEventListener('change', updateResolutionDisplay);
-        // Mise à jour initiale
-        updateResolutionDisplay();
-    }
+    // Utiliser la délégation d'événement pour les éléments dynamiques
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'template-dpi') {
+            updateResolutionDisplay();
+        }
+    });
 });
 
 function openTemplateSettings(templateId, templateName) {
