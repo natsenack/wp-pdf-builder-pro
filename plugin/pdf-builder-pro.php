@@ -1692,19 +1692,14 @@ function pdf_builder_save_template_handler() {
 
     // Check nonce
     $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
-    error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
+    // error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
     if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
-        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
-        error_log('[PDF Builder SAVE] Nonce attendu: pdf_builder_save_template_nonce');
-        // TEMPORAIRE: En mode debug, permettre la sauvegarde sans nonce
-        if (!defined('WP_DEBUG') || !WP_DEBUG) {
-            wp_send_json_error('Nonce invalide');
-            return;
-        } else {
-            error_log('[PDF Builder SAVE] ⚠️ MODE DEBUG: Nonce ignoré pour permettre la sauvegarde');
-        }
+        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
+        // error_log('[PDF Builder SAVE] Nonce attendu: pdf_builder_save_template_nonce');
+        wp_send_json_error('Nonce invalide');
+        return;
     }
-    error_log('[PDF Builder SAVE] ✅ Nonce OK');
+    // error_log('[PDF Builder SAVE] ✅ Nonce OK');
 
     try {
         $template_id = intval($_POST['template_id'] ?? 0);
