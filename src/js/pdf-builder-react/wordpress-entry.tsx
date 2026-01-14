@@ -22,8 +22,8 @@ debugDiv.textContent = '🚨 REACT SCRIPT LOADED 🚨 ' + new Date().toISOString
 document.body.appendChild(debugDiv);
 
 // Also add to window
-window['REACT_SCRIPT_LOADED'] = true;
-window['REACT_LOAD_TIME'] = new Date().toISOString();
+(window as any)['REACT_SCRIPT_LOADED'] = true;
+(window as any)['REACT_LOAD_TIME'] = new Date().toISOString();
 
 /**
  * PDF Builder React - Point d'entrée WordPress
@@ -139,13 +139,37 @@ export function initPDFBuilderReact() {
 
     // Try to render with error boundary
     try {
+      console.log('🎨 Attempting to render PDFBuilder...');
       root.render(<PDFBuilder />);
       console.log('✅ PDFBuilder rendered successfully');
     } catch (renderError) {
-      console.error('❌ FAIL: PDFBuilder render error:', renderError);
-      console.error('❌ FAIL: Render error stack:', renderError.stack);
-      container.removeAttribute('data-react-initialized');
-      return false;
+      const error = renderError instanceof Error ? renderError : new Error(String(renderError));
+      console.error('❌ FAIL: PDFBuilder render error:', error);
+      console.error('❌ FAIL: Render error stack:', error.stack);
+      console.error('❌ FAIL: Render error message:', error.message);
+      console.error('❌ FAIL: Render error name:', error.name);
+
+      // Try to render a simple fallback component
+      try {
+        console.log('🔄 Trying fallback render...');
+        root.render(
+          <div style={{ padding: '20px', background: '#ffebee', border: '1px solid #f44336', borderRadius: '4px', color: '#c62828' }}>
+            <h3>Erreur de rendu React</h3>
+            <p>Le composant PDFBuilder n'a pas pu être rendu. Erreur: {error.message}</p>
+            <details>
+              <summary>Détails de l'erreur</summary>
+              <pre>{error.stack}</pre>
+            </details>
+          </div>
+        );
+        console.log('✅ Fallback render successful');
+        return true; // Return true since we rendered something
+      } catch (fallbackError) {
+        const fallbackErr = fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError));
+        console.error('❌ FAIL: Fallback render also failed:', fallbackErr);
+        container.removeAttribute('data-react-initialized');
+        return false;
+      }
     }
 
     // Charger les données initiales du template s'il y en a
@@ -171,8 +195,9 @@ export function initPDFBuilderReact() {
     return true;
 
   } catch (error) {
-    console.error('❌ FAIL: React initialization error:', error);
-    console.error('❌ FAIL: Error stack:', error.stack);
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error('❌ FAIL: React initialization error:', err);
+    console.error('❌ FAIL: Error stack:', err.stack);
 
     // Try to remove initialization flag if container exists
     const container = document.getElementById('pdf-builder-react-root');

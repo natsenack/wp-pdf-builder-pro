@@ -1150,6 +1150,51 @@ class PdfBuilderAdmin
 
             console.log('[PDF Builder] On React editor page, proceeding with initialization');
 
+            // Force reload if old version is cached
+            if (!window.FORCE_RELOAD_CHECKED) {
+                window.FORCE_RELOAD_CHECKED = true;
+                console.log('🔄 Checking for script updates...');
+
+                // Check if new debug logs are available
+                setTimeout(function() {
+                    if (typeof window.pdfBuilderReact !== 'undefined' &&
+                        typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+
+                        // Try to call initPDFBuilderReact and check if it logs the new messages
+                        var originalLog = console.log;
+                        var logMessages = [];
+                        console.log = function() {
+                            logMessages.push(Array.from(arguments).join(' '));
+                            originalLog.apply(console, arguments);
+                        };
+
+                        try {
+                            var result = window.pdfBuilderReact.initPDFBuilderReact();
+                            console.log = originalLog;
+
+                            // Check if new logs are present
+                            var hasNewLogs = logMessages.some(msg =>
+                                msg.includes('💥 NUCLEAR_DEBUG_V1') ||
+                                msg.includes('Root created successfully') ||
+                                msg.includes('PDFBuilder component available')
+                            );
+
+                            if (!hasNewLogs) {
+                                console.warn('⚠️ Old script version detected, forcing reload...');
+                                setTimeout(function() {
+                                    window.location.reload(true);
+                                }, 1000);
+                            } else {
+                                console.log('✅ New script version confirmed');
+                            }
+                        } catch (e) {
+                            console.log = originalLog;
+                            console.error('❌ Error during version check:', e);
+                        }
+                    }
+                }, 2000);
+            }
+
             // Simple loader management
             const loader = {
                 element: null,
