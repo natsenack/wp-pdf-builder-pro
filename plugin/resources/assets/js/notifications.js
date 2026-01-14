@@ -903,12 +903,12 @@ try {
                     dismissedNotices = JSON.parse(dismissedNotices);
                     delete dismissedNotices['template_limit'];
                     localStorage.setItem('pdf_builder_dismissed_notices', JSON.stringify(dismissedNotices));
-                    console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice removed from localStorage');
+                    // console.log('[PDF Builder] NOTIFICATIONS.JS - Template limit notice removed from localStorage');
                 }
             }
         });
 
-        console.log('[PDF Builder] NOTIFICATIONS.JS - Notice dismissal initialized');
+        // console.log('[PDF Builder] NOTIFICATIONS.JS - Notice dismissal initialized');
     }
 
     // Initialiser la gestion des fermetures de notifications
@@ -940,7 +940,7 @@ try {
                 jQuery('#pdf-builder-template-limit-notice').removeClass('pdf-builder-dismissed').show();
             }
 
-            console.log('[PDF Builder] NOTIFICATIONS.JS - Notice reset:', noticeId);
+            // console.log('[PDF Builder] NOTIFICATIONS.JS - Notice reset:', noticeId);
         }
     }
 

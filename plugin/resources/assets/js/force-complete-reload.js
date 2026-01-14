@@ -198,8 +198,8 @@
         const script = document.createElement('script');
         script.src = '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/js/canvas-card-monitor.js?v=' + timestamp + '&emergency=' + timestamp;
         script.onload = function() {
-            console.log('✅ URGENCE: canvas-card-monitor.js rechargé avec succès');
-            console.log('🔍 Vérifiez que l\'erreur "Unexpected token" a disparu');
+            // console.log('✅ URGENCE: canvas-card-monitor.js rechargé avec succès');
+            // console.log('🔍 Vérifiez que l\'erreur "Unexpected token" a disparu');
         };
         script.onerror = function() {
             console.error('❌ URGENCE: Échec du rechargement de canvas-card-monitor.js');
