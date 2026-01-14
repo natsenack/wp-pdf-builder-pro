@@ -67,14 +67,14 @@ var pdfBuilderAjax = {
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('template')"
+                        onclick="showTemplateLimitNotice(); showUpgradeModal('template')"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showUpgradeModal('gallery')">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showTemplateLimitNotice(); showUpgradeModal('gallery')">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
@@ -711,7 +711,7 @@ function dismissTemplateLimitNotice() {
 
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
-    console.log('showTemplateLimitNotice called - THIS SHOULD NOT HAPPEN');
+    console.log('showTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
         // Réafficher en supprimant la classe CSS
