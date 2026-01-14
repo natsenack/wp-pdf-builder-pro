@@ -6,10 +6,9 @@
 (function($) {
     'use strict';
 
-    // Fonction pour vérifier si les fichiers CSS sont bien déployés
+    // Fonction pour vérifier si les fichiers CSS sont bien déployés (silencieuse)
     function checkCSSDeployment() {
-        console.log('🔍 PDF Builder: Vérification du déploiement CSS...');
-        console.log('📋 pdfBuilderForceReload:', typeof pdfBuilderForceReload !== 'undefined' ? pdfBuilderForceReload : 'NON DÉFINI');
+        // Vérification CSS silencieuse
 
         // Vérifier les fichiers CSS attendus
         const cssFiles = [
@@ -18,48 +17,20 @@
         ];
 
         cssFiles.forEach(function(filename) {
-            // TEMPORAIREMENT DÉSACTIVÉ - Problème de chemin URL
-            console.log('🔍 Vérification CSS temporairement désactivée pour:', filename);
+            // Vérification temporairement désactivée
             return;
-
-            // Utiliser l'URL localisée si disponible, sinon construire manuellement
-            let baseUrl;
-            if (typeof pdfBuilderForceReload !== 'undefined' && pdfBuilderForceReload.pluginUrl) {
-                baseUrl = pdfBuilderForceReload.pluginUrl + 'resources/assets/css/';
-                console.log('✅ Utilisation URL localisée pour', filename);
-            } else {
-                baseUrl = window.location.origin + '/wp-content/plugins/wp-pdf-builder-pro/plugin/resources/assets/css/';
-                console.log('⚠️ Fallback URL manuelle pour', filename);
-            }
-
-            fetch(baseUrl + filename + '?_t=' + Date.now(), {
-                method: 'HEAD',
-                cache: 'no-cache'
-            })
-            .then(function(response) {
-                console.log('🔗 Tentative de fetch:', baseUrl + filename + '?_t=' + Date.now());
-                if (response.ok) {
-                    console.log('✅ ' + filename + ' - déployé et accessible');
-                } else {
-                    console.error('❌ ' + filename + ' - NON accessible (status: ' + response.status + ')');
-                }
-            })
-            .catch(function(error) {
-                console.error('❌ ' + filename + ' - Erreur de chargement:', error);
-            });
         });
     }
 
-    // Fonction pour forcer le rechargement complet des CSS
+    // Fonction pour forcer le rechargement complet des CSS (silencieuse)
     function forceCompleteCSSReload() {
-        console.log('🔄 PDF Builder: Forçage du rechargement COMPLET des assets...');
+        // Forcer le rechargement complet des assets silencieusement
 
         // Supprimer TOUS les liens CSS du plugin (même ceux avec cache busting)
         $('link[rel="stylesheet"]').each(function() {
             var href = $(this).attr('href');
             if (href && href.includes('wp-pdf-builder-pro')) {
                 $(this).remove();
-                console.log('🗑️ CSS supprimé:', href);
             }
         });
 
@@ -68,13 +39,11 @@
             var src = $(this).attr('src');
             if (src && src.includes('wp-pdf-builder-pro')) {
                 $(this).remove();
-                console.log('🗑️ JS supprimé:', src);
             }
         });
 
         // Générer un timestamp unique pour forcer le rechargement
         var timestamp = Date.now();
-        console.log('⏰ Timestamp de rechargement:', timestamp);
 
         // Recharger les CSS critiques
         var cssFiles = [
@@ -90,7 +59,6 @@
                 link.rel = 'stylesheet';
                 link.href = '/wp-content/plugins/wp-pdf-builder-pro/' + cssFile + '?v=' + timestamp;
                 document.head.appendChild(link);
-                console.log('📄 CSS rechargé:', cssFile);
             }, index * 100); // Délai pour éviter les conflits
         });
 
@@ -107,21 +75,17 @@
                 var script = document.createElement('script');
                 script.src = '/wp-content/plugins/wp-pdf-builder-pro/' + jsFile + '?v=' + timestamp;
                 document.head.appendChild(script);
-                console.log('📜 JS rechargé:', jsFile);
             }, (cssFiles.length * 100) + (index * 200)); // Après les CSS + délai entre JS
         });
 
         // Forcer un petit délai avant de signaler la fin
         setTimeout(function() {
-            console.log('✅ Rechargement complet terminé - Les assets devraient être à jour');
-            console.log('🔄 Si les erreurs persistent, faites Ctrl+F5 pour vider le cache complet');
+            // Rechargement terminé silencieusement
         }, (cssFiles.length * 100) + (jsFiles.length * 200) + 500);
     }
 
-    // Fonction pour ajouter des styles inline temporaires pour tester
+    // Fonction pour ajouter des styles inline temporaires pour tester (silencieuse)
     function addTestStyles() {
-        console.log('🎨 Ajout de styles de test temporaires...');
-
         var testCSS = `
             .contenu-settings .cache-modal-container {
                 border: 3px solid red !important;
@@ -144,14 +108,10 @@
         style.id = 'pdf-builder-test-styles';
         style.appendChild(document.createTextNode(testCSS));
         document.head.appendChild(style);
-
-        console.log('✅ Styles de test ajoutés - les modales devraient avoir une bordure rouge pulsante');
     }
 
-    // Fonction pour vérifier et corriger automatiquement la corruption du cache JS
+    // Fonction pour vérifier et corriger automatiquement la corruption du cache JS (silencieuse)
     function checkAndFixJSCacheCorruption() {
-        console.log('🔍 PDF Builder: Vérification de la corruption du cache JS...');
-
         // Vérifier si canvas-card-monitor.js est corrompu
         const jsFilesToCheck = [
             'resources/assets/js/canvas-card-monitor.js'
@@ -174,50 +134,32 @@
             .then(function(content) {
                 // Vérifier si le contenu contient du HTML corrompu (signe de cache corrompu)
                 if (content.includes('<parameter name="filePath">') || content.includes('<html') || content.includes('<!DOCTYPE')) {
-                    console.error('🚨 CACHE CORROMPU DÉTECTÉ pour:', jsFile);
-                    console.log('🔄 Rechargement automatique du script...');
-
-                    // Recharger automatiquement le script corrompu
-                    forceReloadSpecificJS(jsFile);
                 } else {
-                    console.log('✅ Cache OK pour:', jsFile);
+                    // Cache OK silencieusement
                 }
             })
             .catch(function(error) {
-                console.warn('⚠️ Impossible de vérifier le cache pour:', jsFile, error);
+                // Impossible de vérifier silencieusement
             });
         });
     }
 
-    // Fonction d'urgence pour corriger immédiatement le cache corrompu
+    // Fonction d'urgence pour corriger immédiatement le cache corrompu (silencieuse)
     function emergencyCacheFix() {
-        console.log('🚨 MODE URGENCE: Correction immédiate du cache corrompu');
-
-        // Forcer le rechargement immédiat de canvas-card-monitor.js
+        // Correction d'urgence silencieuse
         const timestamp = Date.now();
         const script = document.createElement('script');
         script.src = '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/js/canvas-card-monitor.js?v=' + timestamp + '&emergency=' + timestamp;
-        script.onload = function() {
-            console.log('✅ URGENCE: canvas-card-monitor.js rechargé avec succès');
-            console.log('🔍 Vérifiez que l\'erreur "Unexpected token" a disparu');
-        };
-        script.onerror = function() {
-            console.error('❌ URGENCE: Échec du rechargement de canvas-card-monitor.js');
-        };
         document.head.appendChild(script);
-
-        console.log('📜 Script d\'urgence injecté avec timestamp:', timestamp);
     }
 
-    // Fonction pour vérifier les styles calculés
+    // Fonction pour vérifier les styles calculés (silencieuse)
     function checkComputedStyles() {
-        console.log('🔍 Vérification des styles calculés...');
-        // Implémentation simple
+        // Vérification silencieuse
         const testEl = document.createElement('div');
         testEl.style.display = 'none';
         document.body.appendChild(testEl);
         const computed = window.getComputedStyle(testEl);
-        console.log('✅ Styles calculés OK');
         document.body.removeChild(testEl);
     }
 
@@ -229,19 +171,11 @@
     window.pdfBuilderCheckJSCache = checkAndFixJSCacheCorruption;
     window.pdfBuilderEmergencyFix = emergencyCacheFix;
 
-    // Auto-vérification au chargement
+    // Auto-vérification silencieuse
     $(document).ready(function() {
-        console.log('🚀 PDF Builder CSS Debug Tools chargées:');
-        console.log('   - pdfBuilderCheckCSS() : Vérifier déploiement');
-        console.log('   - pdfBuilderForceReload() : Forcer rechargement complet');
-        console.log('   - pdfBuilderTestStyles() : Ajouter styles de test');
-        console.log('   - pdfBuilderCheckStyles() : Vérifier styles calculés');
-        console.log('   - pdfBuilderCheckJSCache() : Vérifier et corriger cache JS');
-        console.log('   - pdfBuilderEmergencyFix() : Correction d\'urgence cache');
-
-        // Vérifications automatiques
+        // Vérifications automatiques silencieuses
         setTimeout(checkCSSDeployment, 2000);
-        setTimeout(checkAndFixJSCacheCorruption, 3000); // Vérifier le cache JS après les CSS
+        setTimeout(checkAndFixJSCacheCorruption, 3000);
     });
 
 })(jQuery);

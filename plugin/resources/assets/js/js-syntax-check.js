@@ -6,7 +6,7 @@
 (function() {
     'use strict';
 
-    console.log('🔍 PDF Builder: Starting JavaScript syntax diagnostic...');
+    // JavaScript syntax diagnostic silencieux
 
     // Function to count try/catch blocks in a script
     function analyzeScript(script, index) {
@@ -106,20 +106,7 @@
             }
         });
 
-        console.log(`📈 TOTAL: try=${totalTry}, catch=${totalCatch}, balanced=${totalTry === totalCatch}`);
-        console.log(`🚨 SYNTAX ERRORS FOUND: ${syntaxErrors.length}`);
-
-        if (syntaxErrors.length > 0) {
-            console.error('🚨 CRITICAL: Syntax errors detected:', syntaxErrors);
-        }
-
-        if (totalTry !== totalCatch) {
-            console.error('🚨 CRITICAL: Try/Catch imbalance detected across all scripts!');
-        } else {
-            console.log('✅ All scripts appear to have balanced try/catch blocks');
-        }
-
-        // Store results for debugging
+        // Store results for debugging (silently)
         window.pdfBuilderScriptDiagnostic = {
             results: results,
             totalTry: totalTry,
@@ -132,22 +119,15 @@
         return { results, syntaxErrors };
     }
 
-    // Run diagnostic when DOM is ready
+    // Run diagnostic silently
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', diagnoseScripts);
     } else {
         diagnoseScripts();
     }
 
-    // Also run after delays to catch dynamically loaded scripts
-    setTimeout(() => {
-        console.log('🔄 Running delayed diagnostic (2s)...');
-        diagnoseScripts();
-    }, 2000);
-
-    setTimeout(() => {
-        console.log('🔄 Running delayed diagnostic (5s)...');
-        diagnoseScripts();
-    }, 5000);
+    // Also run after delays to catch dynamically loaded scripts (silently)
+    setTimeout(diagnoseScripts, 2000);
+    setTimeout(diagnoseScripts, 5000);
 
 })();

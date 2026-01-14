@@ -82,149 +82,85 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
-  // LOG ABSOLU AU DÉBUT - VERSION NUCLEAR
-  console.log('💥💥💥 NUCLEAR_DEBUG_V1: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 💥💥💥');
-  console.log('🚀🚀🚀 EXTREME_DEBUG_V3: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚀🚀🚀');
-  console.error('UNIQUE_DEBUG: initPDFBuilderReact called at ' + new Date().toISOString());
+  // LOG CRITIQUE - DÉBUT
+  console.log('💥 NUCLEAR_DEBUG_V1: initPDFBuilderReact STARTED');
 
-  // Debug: Check if container exists
-  console.log('🔍🔍🔍 DETAILED_LOG: Step 1 - Checking container element');
+  // Step 1: Check container
   const container = document.getElementById('pdf-builder-react-root');
-  console.error('UNIQUE_DEBUG: container element: ' + container);
-  console.log('🔧 container element:', container);
-  console.log('🔧 container found:', !!container);
-  console.log('🔍🔍🔍 DETAILED_LOG: Container check result:', !!container);
+  console.log('🔍 Container found:', !!container);
 
   if (!container) {
-    alert('🚨🚨🚨 ALERT_DEBUG: Container element not found! 🚨🚨🚨');
-    console.error('UNIQUE_DEBUG: Container element not found');
-    console.log('PDF Builder React: Container element not found');
-    console.log('🔧 Available elements with pdf-builder in ID:');
-    const allElements = document.querySelectorAll('[id*="pdf-builder"]');
-    allElements.forEach(el => console.log('  -', el.id, el));
-    console.log('🔍🔍🔍 DETAILED_LOG: Returning false due to missing container');
+    console.error('❌ FAIL: Container element not found');
     return false;
   }
 
-  // Check if React has already been initialized
-  console.log('🔍🔍🔍 DETAILED_LOG: Step 2 - Checking if already initialized');
+  // Step 2: Check if already initialized
   const isInitialized = container.hasAttribute('data-react-initialized');
-  console.error('UNIQUE_DEBUG: container already initialized: ' + isInitialized);
-  console.log('🔧 container already initialized:', isInitialized);
-  console.log('🔍🔍🔍 DETAILED_LOG: Already initialized check result:', isInitialized);
+  console.log('🔍 Already initialized:', isInitialized);
 
   if (isInitialized) {
-    console.error('UNIQUE_DEBUG: React already initialized');
-    console.log('🔧 React already initialized');
-    console.log('🔍🔍🔍 DETAILED_LOG: Returning true because already initialized');
+    console.log('✅ SUCCESS: Already initialized');
     return true;
   }
 
-  // Mark as initialized
-  console.log('🔍🔍🔍 DETAILED_LOG: Step 3 - Marking as initialized');
+  // Step 3: Mark as initialized
   container.setAttribute('data-react-initialized', 'true');
-  console.error('UNIQUE_DEBUG: Marked as initialized');
-  console.log('🔧 Marked as initialized');
+  console.log('✅ Container marked as initialized');
 
-  // Masquer le loading et afficher l'éditeur
-  console.log('🔍🔍🔍 DETAILED_LOG: Step 4 - Hiding loading and showing editor');
+  // Step 4: Show editor, hide loading
   const loadingEl = document.getElementById('pdf-builder-loader');
   const editorEl = document.getElementById('pdf-builder-editor-container');
-  console.error('UNIQUE_DEBUG: loadingEl found: ' + !!loadingEl + ' editorEl found: ' + !!editorEl);
-  console.log('🔧 loadingEl found:', !!loadingEl, 'editorEl found:', !!editorEl);
-  console.log('🔍🔍🔍 DETAILED_LOG: Loading elements check - loadingEl:', !!loadingEl, 'editorEl:', !!editorEl);
+  if (loadingEl) loadingEl.style.display = 'none';
+  if (editorEl) editorEl.style.display = 'block';
+  console.log('🔄 UI updated: loading hidden, editor shown');
 
-  if (loadingEl) {
-    loadingEl.style.display = 'none';
-    console.log('🔍🔍🔍 DETAILED_LOG: Loading element hidden');
-  }
-  if (editorEl) {
-    editorEl.style.display = 'block';
-    console.log('🔍🔍🔍 DETAILED_LOG: Editor element shown');
-  }
-
+  // Step 5: Initialize React
   try {
-    console.log('🔍🔍🔍 DETAILED_LOG: Step 5 - Entering try block for React initialization');
-    console.error('UNIQUE_DEBUG: About to check if React is available');
-    console.log('🔧 About to check if React is available');
+    console.log('⚛️ Checking React availability');
 
-    // Vérifier que React est disponible
-    console.log('🔍🔍🔍 DETAILED_LOG: Checking React availability');
     if (typeof React === 'undefined') {
-      console.error('UNIQUE_DEBUG: React is not available');
-      console.log('🔍🔍🔍 DETAILED_LOG: React is undefined, throwing error');
-      throw new Error('React is not loaded');
+      console.error('❌ FAIL: React not loaded');
+      return false;
     }
-    console.log('🔍🔍🔍 DETAILED_LOG: React is available');
 
     if (typeof createRoot === 'undefined') {
-      console.error('UNIQUE_DEBUG: createRoot is not available');
-      console.log('🔍🔍🔍 DETAILED_LOG: createRoot is undefined, throwing error');
-      throw new Error('createRoot is not available');
+      console.error('❌ FAIL: createRoot not available');
+      return false;
     }
-    console.log('🔍🔍🔍 DETAILED_LOG: createRoot is available');
 
-    console.error('UNIQUE_DEBUG: React is available, about to create React root');
-    console.log('🔧 React is available, about to create React root');
-    console.log('🔍🔍🔍 DETAILED_LOG: About to create React root');
+    console.log('✅ React ready, creating root');
     const root = createRoot(container);
-    console.error('UNIQUE_DEBUG: Root created successfully');
-    console.log('🔧 Root created successfully');
-    console.log('🔍🔍🔍 DETAILED_LOG: React root created successfully');
 
-    console.error('UNIQUE_DEBUG: About to render PDFBuilder');
-    console.log('🔧 About to render PDFBuilder');
-    console.log('🔍🔍🔍 DETAILED_LOG: About to render PDFBuilder component');
+    console.log('🎨 Rendering PDFBuilder component');
+    root.render(<PDFBuilder />);
 
-    root.render(
-      // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
-      // In development, it can help catch bugs, but production needs single render
-      <PDFBuilder />
-    );
-    console.error('UNIQUE_DEBUG: PDFBuilder rendered successfully');
-    console.log('🔧 PDFBuilder rendered successfully');
-    console.log('🔍🔍🔍 DETAILED_LOG: PDFBuilder component rendered successfully');
+    console.log('✅ PDFBuilder rendered successfully');
 
     // Charger les données initiales du template s'il y en a
-    console.log('🔍🔍🔍 DETAILED_LOG: Step 6 - Checking for existing template data');
+    // Step 6: Load template data if available
     const dataWindow = window as unknown as { pdfBuilderData?: { existingTemplate?: unknown } };
     const existingTemplate = dataWindow.pdfBuilderData?.existingTemplate;
-    console.log('🔍🔍🔍 DETAILED_LOG: Existing template found:', !!existingTemplate);
 
     if (existingTemplate) {
-      const tpl = existingTemplate as { id?: string; elements?: unknown[] };
-      console.log('🔍🔍🔍 DETAILED_LOG: Loading existing template via API');
-
-      // Charger le template via l'API globale
+      console.log('📄 Loading existing template');
       setTimeout(() => {
         try {
-          console.log('🔍🔍🔍 DETAILED_LOG: Inside setTimeout, about to call loadTemplate');
           loadTemplate(existingTemplate);
-          console.log('🔍🔍🔍 DETAILED_LOG: Template load initiated successfully');
+          console.log('✅ Template loaded');
         } catch (templateError) {
-          console.error('UNIQUE_DEBUG: Error in setTimeout loadTemplate:', templateError);
-          console.log('🔍🔍🔍 DETAILED_LOG: Error in setTimeout loadTemplate:', templateError);
+          console.error('❌ Template load error:', templateError);
         }
       }, 100);
     } else {
-      console.log('🔍🔍🔍 DETAILED_LOG: No existing template to load');
+      console.log('📄 No existing template');
     }
 
-    console.log('🔍🔍🔍 DETAILED_LOG: About to return true from initPDFBuilderReact');
-    console.error('UNIQUE_DEBUG: About to return true from initPDFBuilderReact');
+    console.log('🎉 SUCCESS: initPDFBuilderReact completed');
     return true;
 
   } catch (error) {
-    console.error('UNIQUE_DEBUG: Error during React initialization:', error);
-    console.log('🔍🔍🔍 DETAILED_LOG: Error caught in try block:', error);
-    alert('PDF Builder React: Initialization error: ' + error);
-    console.log('PDF Builder React: Initialization error:', error);
-    // Don't hide the container on error, so we can see it
-    // container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
-    // Remove the initialized flag on error
+    console.error('❌ FAIL: React initialization error:', error);
     container.removeAttribute('data-react-initialized');
-    console.log('🔍🔍🔍 DETAILED_LOG: Removed initialized flag due to error');
-    console.log('🔍🔍🔍 DETAILED_LOG: Returning false due to error');
     return false;
   }
 }
@@ -233,11 +169,9 @@ export function initPDFBuilderReact() {
 // (Déjà déclarée plus haut)
 
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
-console.log('🔧 DEBUG: About to assign window.initPDFBuilderReact');
 window.initPDFBuilderReact = initPDFBuilderReact;
 
 // Exporter l'API complète pour WordPress
-console.log('🔧 DEBUG: About to assign window.pdfBuilderReact');
 window.pdfBuilderReact = {
   initPDFBuilderReact,
   loadTemplate,
@@ -250,5 +184,4 @@ window.pdfBuilderReact = {
   resetAPI,
   _isWebpackBundle: true
 };
-console.log('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
 

@@ -6,7 +6,7 @@
  */
 
 try {
-    console.log('[PDF Builder] NOTIFICATIONS.JS - Script loaded and executing');
+    // PDF Builder Pro - Notifications JavaScript silencieux
 
     (function($) {
         'use strict';
@@ -625,14 +625,11 @@ try {
         }
     };
 
-    console.log('[PDF Builder] NOTIFICATIONS.JS - Global functions defined:');
-    console.log('[PDF Builder] NOTIFICATIONS.JS - showSuccessNotification:', typeof window.showSuccessNotification);
-    console.log('[PDF Builder] NOTIFICATIONS.JS - showErrorNotification:', typeof window.showErrorNotification);
+    };
 
     // Initialisation automatique
     $(document).ready(function() {
         window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
-        console.log('[PDF Builder] NOTIFICATIONS.JS - Instance initialized in document ready');
     });
 
 })(jQuery);
