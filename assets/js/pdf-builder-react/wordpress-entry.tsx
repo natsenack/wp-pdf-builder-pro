@@ -4,7 +4,7 @@
  */
 
 // DEBUG: Log when script starts loading
-// debugLog('🔧 DEBUG: pdf-builder-react.js script started loading');
+debugLog('🔧 DEBUG: pdf-builder-react.js script started loading');
 
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
@@ -111,26 +111,20 @@ export function initPDFBuilderReact() {
 // (Déjà déclarée plus haut)
 
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
-try {
-  window.initPDFBuilderReact = initPDFBuilderReact;
-} catch (error) {
-  debugWarn('PDF Builder React: Could not assign initPDFBuilderReact to window:', error);
-}
+window.initPDFBuilderReact = initPDFBuilderReact;
 
 // Exporter l'API complète pour WordPress
-try {
-  window.pdfBuilderReact = {
-    initPDFBuilderReact,
-    loadTemplate,
-    getEditorState,
-    setEditorState,
-    getCurrentTemplate,
-    exportTemplate,
-    saveTemplate,
-    registerEditorInstance,
-    resetAPI
-  };
-} catch (error) {
-  debugWarn('PDF Builder React: Could not assign pdfBuilderReact to window:', error);
-}
+debugLog('🔧 DEBUG: About to assign window.pdfBuilderReact');
+window.pdfBuilderReact = {
+  initPDFBuilderReact,
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  registerEditorInstance,
+  resetAPI
+};
+debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
 

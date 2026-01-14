@@ -35,23 +35,23 @@ export function useTemplate() {
 
   // Charger un template existant
   const loadExistingTemplate = useCallback(async (templateId: string) => {
-    // console.log('🔄 [useTemplate] loadExistingTemplate called with templateId:', templateId);
-    // console.log('🔄 [useTemplate] window.pdfBuilderData at start:', window.pdfBuilderData);
-    // console.log('🔄 [useTemplate] window.pdfBuilderData?.ajaxUrl:', window.pdfBuilderData?.ajaxUrl);
-    // console.log('🔄 [useTemplate] window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
-    // console.log('🔄 [useTemplate] window keys containing pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
-    // console.log('🔄 [useTemplate] window.pdfBuilderData?.existingTemplate:', window.pdfBuilderData?.existingTemplate);
-    // console.log('🔄 [useTemplate] window.pdfBuilderData?.hasExistingData:', window.pdfBuilderData?.hasExistingData);
+    console.log('🔄 [useTemplate] loadExistingTemplate called with templateId:', templateId);
+    console.log('🔄 [useTemplate] window.pdfBuilderData at start:', window.pdfBuilderData);
+    console.log('🔄 [useTemplate] window.pdfBuilderData?.ajaxUrl:', window.pdfBuilderData?.ajaxUrl);
+    console.log('🔄 [useTemplate] window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
+    console.log('🔄 [useTemplate] window keys containing pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
+    console.log('🔄 [useTemplate] window.pdfBuilderData?.existingTemplate:', window.pdfBuilderData?.existingTemplate);
+    console.log('🔄 [useTemplate] window.pdfBuilderData?.hasExistingData:', window.pdfBuilderData?.hasExistingData);
 
     try {
       // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
       if (window.pdfBuilderData?.existingTemplate && window.pdfBuilderData?.hasExistingData) {
-        // console.log('🔄 [useTemplate] USING LOCALIZED DATA PATH for template:', templateId);
+        console.log('🔄 [useTemplate] USING LOCALIZED DATA PATH for template:', templateId);
         const templateData = window.pdfBuilderData.existingTemplate;
-        // console.log('🔄 [useTemplate] templateData:', templateData);
-        // console.log('🔄 [useTemplate] templateData.name:', templateData?.name);
-        // console.log('🔄 [useTemplate] templateData._db_name:', templateData?._db_name);
-        // console.log('🔄 [useTemplate] templateData keys:', Object.keys(templateData || {}));
+        console.log('🔄 [useTemplate] templateData:', templateData);
+        console.log('🔄 [useTemplate] templateData.name:', templateData?.name);
+        console.log('🔄 [useTemplate] templateData._db_name:', templateData?._db_name);
+        console.log('🔄 [useTemplate] templateData keys:', Object.keys(templateData || {}));
 
         // Utiliser le nom du JSON en priorité (s'il existe et n'est pas vide), sinon le nom de la DB, sinon fallback explicite
         const templateName = (templateData?.name && templateData.name.trim() !== '') ?
@@ -59,7 +59,7 @@ export function useTemplate() {
                            (templateData?._db_name && templateData._db_name.trim() !== '') ?
                            templateData._db_name :
                            `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
-        // console.log('🔄 [useTemplate] Final template name:', templateName);
+        console.log('🔄 [useTemplate] Final template name:', templateName);
         // console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
 
         // Parse JSON strings if needed
@@ -153,10 +153,10 @@ export function useTemplate() {
       }
 
       // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
-      // console.log('🔄 [useTemplate] USING AJAX FALLBACK PATH for template:', templateId);
-      // console.log('🔄 [useTemplate] Checking window.pdfBuilderData again:', window.pdfBuilderData);
-      // console.log('🔄 [useTemplate] ajaxUrl for AJAX call:', window.pdfBuilderData?.ajaxUrl);
-      // console.log('🔄 [useTemplate] nonce for AJAX call:', window.pdfBuilderData?.nonce);
+      console.log('🔄 [useTemplate] USING AJAX FALLBACK PATH for template:', templateId);
+      console.log('🔄 [useTemplate] Checking window.pdfBuilderData again:', window.pdfBuilderData);
+      console.log('🔄 [useTemplate] ajaxUrl for AJAX call:', window.pdfBuilderData?.ajaxUrl);
+      console.log('🔄 [useTemplate] nonce for AJAX call:', window.pdfBuilderData?.nonce);
 
       // Détecter le navigateur pour des en-têtes spécifiques
       const isChrome = typeof navigator !== 'undefined' &&
@@ -171,7 +171,7 @@ export function useTemplate() {
         !/Chrome/.test(navigator.userAgent) &&
         !/Chromium/.test(navigator.userAgent);
 
-      // console.log('🔄 [useTemplate] Browser detection:', { isChrome, isFirefox, isSafari });
+      console.log('🔄 [useTemplate] Browser detection:', { isChrome, isFirefox, isSafari });
 
       // Préparer les options fetch avec des en-têtes spécifiques par navigateur
       const fetchOptions: RequestInit = {
@@ -194,22 +194,22 @@ export function useTemplate() {
         // Chrome peut avoir besoin d'un mode plus permissif
         fetchOptions.mode = 'cors';
         fetchOptions.cache = 'no-cache';
-        // console.log('🔄 [useTemplate] Using Chrome-specific options');
+        console.log('🔄 [useTemplate] Using Chrome-specific options');
       } else if (isFirefox) {
         // Firefox gère bien le cache par défaut
         fetchOptions.cache = 'no-cache';
-        // console.log('🔄 [useTemplate] Using Firefox-specific options');
+        console.log('🔄 [useTemplate] Using Firefox-specific options');
       } else if (isSafari) {
         // Safari peut avoir des problèmes avec certains modes
         fetchOptions.mode = 'cors';
-        // console.log('🔄 [useTemplate] Using Safari-specific options');
+        console.log('🔄 [useTemplate] Using Safari-specific options');
       }
 
       const cacheBreaker = Date.now();
       const url = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`;
 
-      // console.log('🔄 [useTemplate] About to fetch URL:', url);
-      // console.log('🔄 [useTemplate] Fetch options:', fetchOptions);
+      console.log('🔄 [useTemplate] About to fetch URL:', url);
+      console.log('🔄 [useTemplate] Fetch options:', fetchOptions);
 
       const response = await fetch(url, fetchOptions);
 
@@ -225,16 +225,16 @@ export function useTemplate() {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
-      // console.log('🔄 [useTemplate] AJAX result:', result);
-      // console.log('🔄 [useTemplate] result.data:', result.data);
-      // console.log('🔄 [useTemplate] result.template:', result.template);
-      // console.log('🔄 [useTemplate] result.template_name:', result.template_name);
+      console.log('🔄 [useTemplate] AJAX result:', result);
+      console.log('🔄 [useTemplate] result.data:', result.data);
+      console.log('🔄 [useTemplate] result.template:', result.template);
+      console.log('🔄 [useTemplate] result.template_name:', result.template_name);
 
       const templateData = result.data ? result.data.template : result.template;
       const ajaxTemplateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
 
-      // console.log('🔄 [useTemplate] templateData:', templateData);
-      // console.log('🔄 [useTemplate] ajaxTemplateName:', ajaxTemplateName);
+      console.log('🔄 [useTemplate] templateData:', templateData);
+      console.log('🔄 [useTemplate] ajaxTemplateName:', ajaxTemplateName);
 
       // Appliquer la même logique de fallback que pour les données localisées
       const templateName = (ajaxTemplateName && ajaxTemplateName.trim() !== '') ?

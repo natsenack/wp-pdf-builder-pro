@@ -47,19 +47,19 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   height = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderContentProps) {
-  // debugLog('🏗️ PDFBuilderContent: Component initialized with props:', { width, height, className });
+  debugLog('🏗️ PDFBuilderContent: Component initialized with props:', { width, height, className });
 
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
   const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
 
-  // debugLog('📱 PDFBuilderContent: Initial state set:', { isHeaderFixed, isPropertiesPanelOpen, manualSaveSuccess });
+  debugLog('📱 PDFBuilderContent: Initial state set:', { isHeaderFixed, isPropertiesPanelOpen, manualSaveSuccess });
 
   // Hooks responsives
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
-  // debugLog('📱 PDFBuilderContent: Responsive hooks:', { isMobile, isTablet });
+  debugLog('📱 PDFBuilderContent: Responsive hooks:', { isMobile, isTablet });
 
   const {
     templateName,
@@ -81,68 +81,68 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     updateTemplateSettings
   } = useTemplate();
 
-  // debugLog('📋 PDFBuilderContent: useTemplate hook values:', {
-  //   templateName,
-  //   templateDescription,
-  //   canvasWidth,
-  //   canvasHeight,
-  //   marginTop,
-  //   marginBottom,
-  //   showGuides,
-  //   snapToGrid,
-  //   isNewTemplate,
-  //   isModified,
-  //   isSaving,
-  //   isLoading,
-  //   isEditingExistingTemplate
-  // });
+  debugLog('📋 PDFBuilderContent: useTemplate hook values:', {
+    templateName,
+    templateDescription,
+    canvasWidth,
+    canvasHeight,
+    marginTop,
+    marginBottom,
+    showGuides,
+    snapToGrid,
+    isNewTemplate,
+    isModified,
+    isSaving,
+    isLoading,
+    isEditingExistingTemplate
+  });
 
   // Hook pour les paramètres du canvas
   const canvasSettings = useCanvasSettings();
 
-  // debugLog('🎨 PDFBuilderContent: Canvas settings:', canvasSettings);
+  debugLog('🎨 PDFBuilderContent: Canvas settings:', canvasSettings);
 
   // Injection des utilitaires responsives
   useEffect(() => {
-    // debugLog('🔧 PDFBuilderContent: Injecting responsive utils');
+    debugLog('🔧 PDFBuilderContent: Injecting responsive utils');
     injectResponsiveUtils();
-    // debugLog('✅ PDFBuilderContent: Responsive utils injected');
+    debugLog('✅ PDFBuilderContent: Responsive utils injected');
   }, []);
 
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {
-    // debugLog('📜 PDFBuilderContent: Setting up scroll handler');
+    debugLog('📜 PDFBuilderContent: Setting up scroll handler');
 
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const newIsHeaderFixed = scrollTop > 100;
-      // debugLog('📜 PDFBuilderContent: Scroll detected, scrollTop:', scrollTop, 'isHeaderFixed:', newIsHeaderFixed);
+      debugLog('📜 PDFBuilderContent: Scroll detected, scrollTop:', scrollTop, 'isHeaderFixed:', newIsHeaderFixed);
       setIsHeaderFixed(newIsHeaderFixed);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // debugLog('✅ PDFBuilderContent: Scroll handler added');
+    debugLog('✅ PDFBuilderContent: Scroll handler added');
 
     return () => {
-      // debugLog('🧹 PDFBuilderContent: Cleaning up scroll handler');
+      debugLog('🧹 PDFBuilderContent: Cleaning up scroll handler');
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   // Wrapper pour sauvegarder
   const saveTemplateWithAutoSave = useCallback(async () => {
-    // debugLog('💾 PDFBuilderContent: Manual save initiated');
+    debugLog('💾 PDFBuilderContent: Manual save initiated');
 
     try {
       // Effectuer la sauvegarde manuelle
-      // debugLog('🔄 PDFBuilderContent: Calling saveTemplate...');
+      debugLog('🔄 PDFBuilderContent: Calling saveTemplate...');
       await saveTemplate();
-      // debugLog('✅ PDFBuilderContent: Manual save successful');
-      // debugLog('[PDF_BUILDER] Manual save successful');
+      debugLog('✅ PDFBuilderContent: Manual save successful');
+      debugLog('[PDF_BUILDER] Manual save successful');
 
       // Afficher une notification de succès
       if (typeof window !== 'undefined' && window.showSuccessNotification) {
-        // debugLog('🔔 PDFBuilderContent: Showing success notification');
+        debugLog('🔔 PDFBuilderContent: Showing success notification');
         window.showSuccessNotification('Template sauvegardé avec succès !');
       }
 
@@ -152,7 +152,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
       // Afficher une notification d'erreur
       if (typeof window !== 'undefined' && window.showErrorNotification) {
-        // debugLog('🔔 PDFBuilderContent: Showing error notification');
+        debugLog('🔔 PDFBuilderContent: Showing error notification');
         window.showErrorNotification('Erreur lors de la sauvegarde du template');
       }
 
@@ -309,7 +309,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               {/* ✅ ONLY render Canvas when template is loaded OR it's a new template */}
               {!isLoading && (
                 <>
-                  {/* {debugLog('🎨 PDFBuilderContent: Rendering Canvas component')} */}
+                  {debugLog('🎨 PDFBuilderContent: Rendering Canvas component')}
                   <Canvas width={width} height={height} />
                 </>
               )}
@@ -318,9 +318,9 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
             {/* Bouton toggle pour le panneau de propriétés */}
             <button
               onClick={() => {
-                // debugLog('🔘 PDFBuilderContent: Properties panel toggle clicked, current state:', isPropertiesPanelOpen);
+                debugLog('🔘 PDFBuilderContent: Properties panel toggle clicked, current state:', isPropertiesPanelOpen);
                 setIsPropertiesPanelOpen(!isPropertiesPanelOpen);
-                // debugLog('🔄 PDFBuilderContent: Properties panel state changed to:', !isPropertiesPanelOpen);
+                debugLog('🔄 PDFBuilderContent: Properties panel state changed to:', !isPropertiesPanelOpen);
               }}
               style={{
                 position: 'absolute',

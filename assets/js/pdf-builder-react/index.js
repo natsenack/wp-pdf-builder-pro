@@ -2,7 +2,7 @@
 // PDF Builder React Bundle - Entry Point OPTIMISÉ avec Code Splitting
 // ============================================================================
 
-// console.log('🎯 [BUNDLE START] pdf-builder-react/index.js file loaded and executing');
+console.log('🎯 [BUNDLE START] pdf-builder-react/index.js file loaded and executing');
 
 // Import du diagnostic de compatibilité
 import '../fallbacks/browser-compatibility.js';
@@ -15,11 +15,11 @@ import { debugLog, debugError } from './utils/debug.ts';
 import { createElement, Component, useRef, useState, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
-// console.log('🔧 [WEBPACK BUNDLE] React available:', typeof createElement);
-// console.log('🔧 [WEBPACK BUNDLE] React.useRef available:', typeof useRef);
-// console.log('🔧 [WEBPACK BUNDLE] React.useState available:', typeof useState);
-// console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof createRoot);
+console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
+console.log('🔧 [WEBPACK BUNDLE] React available:', typeof createElement);
+console.log('🔧 [WEBPACK BUNDLE] React.useRef available:', typeof useRef);
+console.log('🔧 [WEBPACK BUNDLE] React.useState available:', typeof useState);
+console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof createRoot);
 
 // ✅ Exports React from window for fallback access
 if (typeof window !== 'undefined' && !window.React) {
@@ -97,18 +97,18 @@ class ErrorBoundary extends Component {
 // Flag pour afficher les logs d'initialisation détaillés
 const DEBUG_VERBOSE = false;
 
-// console.log('🎯 [BUNDLE INIT] About to define initPDFBuilderReact function');
+console.log('🎯 [BUNDLE INIT] About to define initPDFBuilderReact function');
 
 if (DEBUG_VERBOSE) debugLog('🚀 PDF Builder React bundle starting execution...');
 
 async function initPDFBuilderReact() {
-  // console.log('🚀 [initPDFBuilderReact] Function called');
+  console.log('🚀 [initPDFBuilderReact] Function called');
   if (DEBUG_VERBOSE) debugLog('✅ initPDFBuilderReact function called');
 
   try {
     // Vérifier si le container existe
     const container = document.getElementById('pdf-builder-react-root');
-    // console.log('🔍 [initPDFBuilderReact] Container found:', !!container);
+    console.log('🔍 [initPDFBuilderReact] Container found:', !!container);
     if (DEBUG_VERBOSE) debugLog('🔍 Container element:', container);
     if (!container) {
       console.error('❌ [initPDFBuilderReact] Container #pdf-builder-react-root not found');
@@ -140,25 +140,25 @@ async function initPDFBuilderReact() {
     // Créer et rendre l'application React
     // Essayer createRoot d'abord (React 18), sinon utiliser render (compatibilité)
     let root;
-    // console.log('🔧 [initPDFBuilderReact] Checking ReactDOM.createRoot:', typeof createRoot);
+    console.log('🔧 [initPDFBuilderReact] Checking ReactDOM.createRoot:', typeof createRoot);
     if (createRoot) {
       root = createRoot(container);
-      // console.log('✅ [initPDFBuilderReact] Using React 18 createRoot API');
+      console.log('✅ [initPDFBuilderReact] Using React 18 createRoot API');
       if (DEBUG_VERBOSE) debugLog('🎨 Using React 18 createRoot API');
     } else {
-      // console.log('⚠️ [initPDFBuilderReact] createRoot not available, using render fallback');
+      console.log('⚠️ [initPDFBuilderReact] createRoot not available, using render fallback');
       // Fallback pour anciennes versions
       if (DEBUG_VERBOSE) debugLog('🎨 Using React render API (fallback)');
     }
 
-    // console.log('🎨 [initPDFBuilderReact] About to render React component...');
+    console.log('🎨 [initPDFBuilderReact] About to render React component...');
 
     // Récupérer les dimensions dynamiques depuis les paramètres
     const canvasDimensions = getCanvasDimensions();
     const canvasWidth = canvasDimensions.width;
     const canvasHeight = canvasDimensions.height;
 
-    // console.log('📐 [initPDFBuilderReact] Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
+    console.log('📐 [initPDFBuilderReact] Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
 
     const element = createElement(ErrorBoundary, null,
       createElement(Suspense, { fallback: createElement('div', { style: { padding: '20px', textAlign: 'center' } }, 'Chargement de l\'éditeur PDF...') },
@@ -168,18 +168,18 @@ async function initPDFBuilderReact() {
 
     if (root) {
       // React 18 API
-      // console.log('🎯 [initPDFBuilderReact] Calling root.render()...');
+      console.log('🎯 [initPDFBuilderReact] Calling root.render()...');
       root.render(element);
-      // console.log('✅ [initPDFBuilderReact] root.render() completed');
+      console.log('✅ [initPDFBuilderReact] root.render() completed');
     } else {
       // Fallback API
-      // console.log('🎯 [initPDFBuilderReact] Calling ReactDOM.render()...');
+      console.log('🎯 [initPDFBuilderReact] Calling ReactDOM.render()...');
       // For fallback, we need to import render from react-dom
       const { render } = await import('react-dom');
       render(element, container);
-      // console.log('✅ [initPDFBuilderReact] ReactDOM.render() completed');
+      console.log('✅ [initPDFBuilderReact] ReactDOM.render() completed');
     }
-    // console.log('✅ [initPDFBuilderReact] React rendering completed successfully');
+    console.log('✅ [initPDFBuilderReact] React rendering completed successfully');
     if (DEBUG_VERBOSE) debugLog('✅ React component rendered successfully');
 
     return true;
@@ -217,7 +217,7 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 // ✅ CRITICAL: Assign to window SYNCHRONOUSLY
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = exports;
-  // console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
+  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
 }
 
 // No complex exports - let webpack UMD handle it with the assignment above
