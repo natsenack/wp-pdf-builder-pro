@@ -1732,8 +1732,11 @@ function pdf_builder_save_template_handler() {
 
         // Decode and validate JSON
         // First, fix potential UTF-8 encoding issues
+        error_log('[PDF Builder SAVE] Template data before encoding fix: length=' . strlen($template_data) . ', starts with: ' . substr($template_data, 0, 50));
         $template_data = mb_convert_encoding($template_data, 'UTF-8', 'UTF-8');
+        error_log('[PDF Builder SAVE] Template data after mb_convert_encoding: length=' . strlen($template_data) . ', starts with: ' . substr($template_data, 0, 50));
         $template_data = preg_replace('/[\x00-\x1F\x7F]/', '', $template_data); // Remove control characters
+        error_log('[PDF Builder SAVE] Template data after preg_replace: length=' . strlen($template_data) . ', starts with: ' . substr($template_data, 0, 50));
 
         // Try multiple approaches to decode JSON
         $decoded_data = null;
