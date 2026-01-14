@@ -59,55 +59,17 @@ class PDFEditorPreviewIntegration {
     }
 
     init() {
-        this.createPreviewButton();
+        // this.createPreviewButton(); // Supprimé
         this.bindEvents();
     }
 
-    createPreviewButton() {
-        // Créer le bouton d'aperçu dans la barre d'outils
-        this.previewBtn = document.createElement('button');
-        this.previewBtn.id = 'pdf-editor-preview-btn';
-        this.previewBtn.innerHTML = '👁️ Aperçu';
-        this.previewBtn.title = 'Générer un aperçu PDF';
-        this.previewBtn.style.cssText = `
-            background: #007cba;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
-        `;
-
-        // L'ajouter à la barre d'outils existante
-        const toolbar = document.querySelector('.pdf-editor-toolbar') ||
-                       document.querySelector('#pdf-editor-toolbar') ||
-                       document.querySelector('.toolbar');
-
-        if (toolbar) {
-            toolbar.appendChild(this.previewBtn);
-        } else {
-            // Fallback: l'ajouter au body avec position fixe
-            this.previewBtn.style.position = 'fixed';
-            this.previewBtn.style.top = '10px';
-            this.previewBtn.style.right = '10px';
-            this.previewBtn.style.zIndex = '1000';
-            document.body.appendChild(this.previewBtn);
-        }
-    }
+    // createPreviewButton() supprimée - fonction plus utilisée
 
     bindEvents() {
-        if (this.previewBtn) {
-            this.previewBtn.addEventListener('click', () => {
-                this.generatePreview();
-            });
-        }
-
-        // Raccourci clavier Ctrl+P (ou Cmd+P sur Mac)
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-                e.preventDefault();
+        // Raccourci clavier Ctrl+P (ou Cmd+P sur Mac) - supprimé car bouton supprimé
+        // document.addEventListener('keydown', (e) => {
+        //     if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        //         e.preventDefault();
                 this.generatePreview();
             }
         });
