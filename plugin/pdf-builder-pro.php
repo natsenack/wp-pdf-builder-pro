@@ -1763,6 +1763,65 @@ function pdf_builder_save_template_handler() {
                     // Last resort: try to manually fix the JSON
                     error_log('[PDF Builder SAVE] ❌ ÉCHEC: Toutes les méthodes de décodage JSON ont échoué');
                     error_log('[PDF Builder SAVE] Erreurs JSON: ' . implode(', ', $json_errors));
+
+                    // Try to find the exact syntax error position
+                    $json_length = strlen($template_data);
+                    error_log('[PDF Builder SAVE] Longueur totale JSON: ' . $json_length);
+
+                    // Check for common JSON syntax errors
+                    $brace_count = 0;
+                    $bracket_count = 0;
+                    $in_string = false;
+                    $escaped = false;
+
+                    for ($i = 0; $i < $json_length; $i++) {
+                        $char = $template_data[$i];
+
+                        if ($escaped) {
+                            $escaped = false;
+                            continue;
+                        }
+
+                        if ($char === '\\') {
+                            $escaped = true;
+                            continue;
+                        }
+
+                        if ($char === '"' && !$escaped) {
+                            $in_string = !$in_string;
+                            continue;
+                        }
+
+                        if (!$in_string) {
+                            if ($char === '{') $brace_count++;
+                            if ($char === '}') $brace_count--;
+                            if ($char === '[') $bracket_count++;
+                            if ($char === ']') $bracket_count--;
+
+                            // Check for structural issues
+                            if ($brace_count < 0 || $bracket_count < 0) {
+                                error_log('[PDF Builder SAVE] Erreur structurelle détectée à la position ' . $i . ': ' . substr($template_data, max(0, $i-20), 40));
+                                break;
+                            }
+                        }
+                    }
+
+                    error_log('[PDF Builder SAVE] Compteurs finaux - accolades: ' . $brace_count . ', crochets: ' . $bracket_count . ', in_string: ' . ($in_string ? 'oui' : 'non'));
+
+                    // Try to extract a valid JSON subset for debugging
+                    $first_brace = strpos($template_data, '{');
+                    $last_brace = strrpos($template_data, '}');
+
+                    if ($first_brace !== false && $last_brace !== false && $last_brace > $first_brace) {
+                        $potential_json = substr($template_data, $first_brace, $last_brace - $first_brace + 1);
+                        $test_decode = json_decode($potential_json, true);
+                        if ($test_decode !== null) {
+                            error_log('[PDF Builder SAVE] ✅ Sous-ensemble JSON valide trouvé, longueur: ' . strlen($potential_json));
+                        } else {
+                            error_log('[PDF Builder SAVE] ❌ Même le sous-ensemble JSON est invalide: ' . json_last_error_msg());
+                        }
+                    }
+
                     error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
                     error_log('[PDF Builder SAVE] About to call wp_send_json_error for invalid JSON');
                     wp_send_json_error('Données JSON invalides - toutes les corrections ont échoué');
