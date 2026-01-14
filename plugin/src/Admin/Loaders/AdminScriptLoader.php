@@ -302,16 +302,22 @@ class AdminScriptLoader
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
             // error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
-            $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
-            if ($existing_template_data && isset($existing_template_data['elements'])) {
-                $localize_data['initialElements'] = $existing_template_data['elements'];
-                $localize_data['existingTemplate'] = $existing_template_data;
-                $localize_data['hasExistingData'] = true;
-                // error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
-                // error_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
-                // error_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data));
+
+            // Vérifier que template_processor existe
+            if (isset($this->admin->template_processor) && $this->admin->template_processor) {
+                $existing_template_data = $this->admin->template_processor->loadTemplateRobust($template_id);
+                if ($existing_template_data && isset($existing_template_data['elements'])) {
+                    $localize_data['initialElements'] = $existing_template_data['elements'];
+                    $localize_data['existingTemplate'] = $existing_template_data;
+                    $localize_data['hasExistingData'] = true;
+                    // error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
+                    // error_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
+                    // error_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data));
+                } else {
+                    // error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
+                }
             } else {
-                // error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
+                // error_log('[WP AdminScriptLoader] Template processor not available, skipping template data loading');
             }
         }
 
