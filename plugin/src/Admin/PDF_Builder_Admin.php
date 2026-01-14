@@ -1183,18 +1183,29 @@ class PdfBuilderAdmin
                     const checkInterval = setInterval(() => {
                         attempts++;
 
-                        if (this.isReactReady()) {
+                        if (this.isReactReady() && this.isContainerReady()) {
                             clearInterval(checkInterval);
-                            console.log('🔥🔥🔥 INIT_LOGS_V4: React is ready, initializing...');
+                            console.log('🔥🔥🔥 INIT_LOGS_V4: React and container are ready, initializing...');
                             this.initializeReact();
                             return;
                         }
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            this.hide(); // Fallback: montrer l'éditeur même si React n'est pas prêt
+                            console.error('🔥🔥🔥 INIT_LOGS_V4: Timeout reached, forcing initialization anyway...');
+                            this.initializeReact(); // Try anyway as fallback
                         }
                     }, 500);
+                },
+
+                isContainerReady: function() {
+                    const container = document.getElementById('pdf-builder-react-root');
+                    const exists = !!container;
+                    console.log('🔥🔥🔥 INIT_LOGS_V4: Container check - exists:', exists);
+                    if (container) {
+                        console.log('🔥🔥🔥 INIT_LOGS_V4: Container details:', container.tagName, container.id, 'display:', container.style.display);
+                    }
+                    return exists;
                 },
 
                 isReactReady: function() {
@@ -1212,6 +1223,18 @@ class PdfBuilderAdmin
                     console.log('🔥🔥🔥 INIT_LOGS_V4: initializeReact called');
                     if (this.isReactReady()) {
                         console.log('🔥🔥🔥 INIT_LOGS_V4: React is confirmed ready, calling initPDFBuilderReact...');
+
+                        // Additional check: ensure container exists in DOM
+                        const container = document.getElementById('pdf-builder-react-root');
+                        if (!container) {
+                            console.error('🔥🔥🔥 INIT_LOGS_V4: Container #pdf-builder-react-root not found in DOM!');
+                            console.log('🔥🔥🔥 INIT_LOGS_V4: Available elements with pdf-builder in ID:');
+                            const allElements = document.querySelectorAll('[id*="pdf-builder"]');
+                            allElements.forEach(el => console.log('  -', el.id, el.tagName, el.style.display));
+                            return false;
+                        }
+
+                        console.log('🔥🔥🔥 INIT_LOGS_V4: Container found, proceeding with React init...');
                         try {
                             const result = window.pdfBuilderReact.initPDFBuilderReact();
                             console.log('🔥🔥🔥 INIT_LOGS_V4: React initialization result:', result);
