@@ -714,7 +714,6 @@ window.CanvasCardMonitor = {
         const formattedMessage = `[${timestamp}] [${level}] ${message}`;
 
         // Afficher dans la console
-        // console.log(formattedMessage, ...args);
 
         // Stocker les erreurs et avertissements
         if (level === 'ERROR') {

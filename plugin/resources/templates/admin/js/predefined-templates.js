@@ -184,7 +184,6 @@
                 }
             },
             error: function(xhr, status, error) {
-                // console.error('AJAX error:', status, error, xhr.responseText);
                 hideLoadingState();
                 showErrorMessage(pdfBuilderPredefined.strings.loadError);
             }
