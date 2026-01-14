@@ -433,7 +433,7 @@ var pdfBuilderAjax = {
                                     <?php endforeach; ?>
                                 </select>
                                 <div id="resolution-display" style="background: #f8f9fa; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #666; min-width: 120px; text-align: center;">
-                                    Résolution: -- × -- mm
+                                    Résolution: -- × -- px
                                 </div>
                             </div>
                         </div>
@@ -838,7 +838,7 @@ function updateResolutionDisplay() {
     
     const dpi = parseInt(dpiSelect.value);
     if (isNaN(dpi) || dpi <= 0) {
-        resolutionDisplay.textContent = 'Résolution: -- × -- mm';
+        resolutionDisplay.textContent = 'Résolution: -- × -- px';
         return;
     }
     
@@ -846,12 +846,7 @@ function updateResolutionDisplay() {
     const defaultWidthPx = 794;  // largeur en pixels
     const defaultHeightPx = 1123; // hauteur en pixels
     
-    // Calculer les dimensions physiques en mm
-    // 1 pouce = 25.4 mm, donc conversion pixels -> mm = (pixels / dpi) * 25.4
-    const widthMm = Math.round((defaultWidthPx / dpi) * 25.4);
-    const heightMm = Math.round((defaultHeightPx / dpi) * 25.4);
-    
-    resolutionDisplay.textContent = `Résolution: ${widthMm} × ${heightMm} mm`;
+    resolutionDisplay.textContent = `Résolution: ${defaultWidthPx} × ${defaultHeightPx} px`;
 }
 
 // Écouteur pour mettre à jour la résolution quand le DPI change
