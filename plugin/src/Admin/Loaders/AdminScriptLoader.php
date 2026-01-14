@@ -253,7 +253,12 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
-        // Bundle React
+        // Bundle React principal (contient le code React)
+        $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
+        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], $version_param, true);
+        wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
+
+        // Wrapper script (dépend du bundle principal)
         $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
         
         // Localize script data BEFORE enqueuing
@@ -296,14 +301,14 @@ class AdminScriptLoader
             }
         }
 
-        wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
-        // error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react with data: ' . json_encode($localize_data));
+        wp_localize_script('pdf-builder-react-main', 'pdfBuilderData', $localize_data);
+        // error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react-main with data: ' . json_encode($localize_data));
 
         // Also set window.pdfBuilderData directly
-        wp_add_inline_script('pdf-builder-react', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
+        wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-main'], $version_param, true);
         wp_script_add_data('pdf-builder-react', 'type', 'text/javascript');
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
