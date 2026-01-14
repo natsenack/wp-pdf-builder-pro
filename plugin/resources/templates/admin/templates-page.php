@@ -66,7 +66,7 @@ var pdfBuilderAjax = {
                     <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
                 </a>
             <?php else: ?>
-                <button class="button button-secondary" id="upgrade-required-btn"
+                <button class="button" id="upgrade-required-btn"
                         onclick="showTemplateLimitNotice(); showUpgradeModal('template')"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
