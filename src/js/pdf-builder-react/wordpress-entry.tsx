@@ -4,6 +4,7 @@
  */
 
 // DEBUG: Log when script starts loading
+console.log('🔧 DEBUG: wordpress-entry.tsx script started loading');
 debugLog('🔧 DEBUG: pdf-builder-react-wrapper.min.js script started loading');
 
 import { createRoot } from 'react-dom/client';
@@ -129,10 +130,11 @@ export function initPDFBuilderReact() {
 // (Déjà déclarée plus haut)
 
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
+console.log('🔧 DEBUG: About to assign window.initPDFBuilderReact');
 window.initPDFBuilderReact = initPDFBuilderReact;
 
 // Exporter l'API complète pour WordPress
-debugLog('🔧 DEBUG: About to assign window.pdfBuilderReact');
+console.log('🔧 DEBUG: About to assign window.pdfBuilderReact');
 window.pdfBuilderReact = {
   initPDFBuilderReact,
   loadTemplate,
@@ -145,5 +147,5 @@ window.pdfBuilderReact = {
   resetAPI,
   _isWebpackBundle: true
 };
-debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
+console.log('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
 
