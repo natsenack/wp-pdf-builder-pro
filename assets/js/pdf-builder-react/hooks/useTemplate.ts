@@ -481,7 +481,8 @@ export function useTemplate() {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
-      const templateId = getTemplateIdFromUrl();
+      // ✅ Utiliser l'id du state ou de l'URL
+      const templateId = state.template.id || getTemplateIdFromUrl();
       // console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
 
       if (!templateId) {
