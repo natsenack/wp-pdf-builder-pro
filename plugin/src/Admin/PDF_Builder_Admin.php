@@ -1103,7 +1103,7 @@ class PdfBuilderAdmin
                         font-weight: 500;
                         animation: none;
                         transform: none;
-                    "><?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?></p>
+                    "><?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?> <span id="pdf-builder-timeout-counter">(10s)</span></p>
                 </div>
             </div>
 
@@ -1178,13 +1178,27 @@ class PdfBuilderAdmin
 
                 startChecking: function() {
                     let attempts = 0;
-                    const maxAttempts = 100; // 50 secondes à 500ms
+                    const maxAttempts = 20; // 10 secondes à 500ms
+                    let countdown = 10;
+
+                    // Start countdown display
+                    const counterElement = document.getElementById('pdf-builder-timeout-counter');
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        if (counterElement && countdown >= 0) {
+                            counterElement.textContent = `(${countdown}s)`;
+                        }
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                        }
+                    }, 1000);
 
                     const checkInterval = setInterval(() => {
                         attempts++;
 
                         if (this.isReactReady() && this.isContainerReady()) {
                             clearInterval(checkInterval);
+                            clearInterval(countdownInterval);
                             console.log('🔥🔥🔥 INIT_LOGS_V4: React and container are ready, initializing...');
                             this.initializeReact();
                             return;
@@ -1192,8 +1206,9 @@ class PdfBuilderAdmin
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            console.error('🔥🔥🔥 INIT_LOGS_V4: Timeout reached, forcing initialization anyway...');
-                            this.initializeReact(); // Try anyway as fallback
+                            clearInterval(countdownInterval);
+                            console.error('🔥🔥🔥 INIT_LOGS_V4: Timeout reached after 10 seconds, showing error...');
+                            this.showLoadingError();
                         }
                     }, 500);
                 },
@@ -1207,6 +1222,102 @@ class PdfBuilderAdmin
                     }
                     return exists;
                 },
+
+                showLoadingError: function() {
+                    // Hide loader
+                    if (this.element) {
+                        this.element.style.display = 'none';
+                    }
+
+                    // Show editor container with error message
+                    if (this.editor) {
+                        this.editor.style.display = 'block';
+                        this.editor.innerHTML = `
+                            <div style="
+                                padding: 40px;
+                                text-align: center;
+                                background: #fff;
+                                border: 2px solid #dc3232;
+                                border-radius: 8px;
+                                margin: 20px;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            ">
+                                <h2 style="color: #dc3232; margin-top: 0;">❌ Erreur de chargement de l'éditeur PDF</h2>
+                                <p style="color: #666; font-size: 16px; margin-bottom: 20px;">
+                                    L'éditeur React n'a pas pu se charger dans les 10 secondes imparties.
+                                </p>
+
+                                <div style="
+                                    background: #f8f9fa;
+                                    border: 1px solid #e1e1e1;
+                                    border-radius: 4px;
+                                    padding: 15px;
+                                    margin: 20px 0;
+                                    text-align: left;
+                                    font-family: monospace;
+                                    font-size: 12px;
+                                    color: #333;
+                                ">
+                                    <strong>Informations de débogage :</strong><br>
+                                    • React disponible: ${typeof window.pdfBuilderReact !== 'undefined'}<br>
+                                    • Fonction initPDFBuilderReact: ${typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function'}<br>
+                                    • Container #pdf-builder-react-root: ${!!document.getElementById('pdf-builder-react-root')}<br>
+                                    • Script React chargé: ${!!window.REACT_SCRIPT_LOADED}<br>
+                                    • Heure de chargement: ${window.REACT_LOAD_TIME || 'Non défini'}<br>
+                                    • Timestamp: ${new Date().toISOString()}
+                                </div>
+
+                                <div style="margin-top: 20px;">
+                                    <button onclick="location.reload()" style="
+                                        background: #007cba;
+                                        color: white;
+                                        border: none;
+                                        padding: 10px 20px;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        font-size: 14px;
+                                        margin-right: 10px;
+                                    ">🔄 Recharger la page</button>
+
+                                    <button onclick="console.log('Debug info:', {
+                                        react: window.pdfBuilderReact,
+                                        container: document.getElementById('pdf-builder-react-root'),
+                                        scripts: Array.from(document.querySelectorAll('script')).filter(s => s.src.includes('pdf-builder-react')).map(s => s.src)
+                                    })" style="
+                                        background: #646970;
+                                        color: white;
+                                        border: none;
+                                        padding: 10px 20px;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        font-size: 14px;
+                                    ">🔍 Afficher les logs de débogage</button>
+                                </div>
+
+                                <p style="color: #666; font-size: 12px; margin-top: 20px;">
+                                    Vérifiez la console du navigateur (F12) pour plus de détails sur l'erreur.
+                                </p>
+                            </div>
+                        `;
+                    }
+
+                    // Log detailed error information
+                    console.error('🚨 PDF BUILDER LOADING ERROR 🚨');
+                    console.error('React available:', typeof window.pdfBuilderReact !== 'undefined');
+                    console.error('initPDFBuilderReact function:', typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function');
+                    console.error('Container exists:', !!document.getElementById('pdf-builder-react-root'));
+                    console.error('React script loaded:', !!window.REACT_SCRIPT_LOADED);
+                    console.error('React load time:', window.REACT_LOAD_TIME);
+
+                    // Check for script loading issues
+                    const reactScripts = Array.from(document.querySelectorAll('script')).filter(s =>
+                        s.src.includes('pdf-builder-react')
+                    );
+                    console.error('React scripts found:', reactScripts.length);
+                    reactScripts.forEach((script, index) => {
+                        console.error(`Script ${index + 1}:`, script.src, 'loaded:', !script.hasAttribute('data-error'));
+                    });
+                }
 
                 isReactReady: function() {
                     const hasWindowPdfBuilderReact = typeof window.pdfBuilderReact !== 'undefined';

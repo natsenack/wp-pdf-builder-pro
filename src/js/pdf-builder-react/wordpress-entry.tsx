@@ -1,5 +1,6 @@
 // LOG AU DÉBUT ABSOLU DU FICHIER REACT
 console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V5: wordpress-entry.tsx STARTED EXECUTING at ' + new Date().toISOString());
+console.error('🚨🚨🚨 CRITICAL: React script execution started - if you see this, script is running');
 
 // IMMEDIATE VISUAL INDICATOR - Add visible element to DOM
 const debugDiv = document.createElement('div');
