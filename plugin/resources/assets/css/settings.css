@@ -1193,47 +1193,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         }
     }
 
-    /* Onglets en mode mobile */
-    .nav-tabs-container .nav-tab {
-        display: block;
-        width: 100%;
-        margin: 0;
-        border: none;
-        border-radius: 0;
-        border-bottom: 1px solid #e9ecef;
-        padding: 15px 18px;
-        text-align: left;
-        white-space: normal;
-        background: transparent;
-        color: #495057;
-        font-size: 14px;
-        font-weight: 500;
-        
-    }
-
-    .nav-tabs-container .nav-tab:last-child {
-        border-bottom: none;
-    }
-
-    .nav-tabs-container .nav-tab:hover {
-        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-        color: #007cba;
-        padding-left: 22px;
-    }
-
-    .nav-tabs-container .nav-tab-active {
-        background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-        color: white;
-        border-bottom-color: #007cba;
-        font-weight: 600;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .nav-tabs-container .nav-tab-active:hover {
-        background: linear-gradient(135deg, #005a87 0%, #004080 100%);
-        color: white;
-        padding-left: 18px;
-    }
+    /* Onglets en mode mobile - déplacés vers settings-tabs.css */
 }
 
 /* Optimisations pour très petits écrans */
@@ -1266,31 +1226,11 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         padding-left: 14px;
     }
 
-    /* Animations d'apparition pour les onglets */
-    .nav-tab {
-        animation: fadeInUp 0.4s ease-out;
-    }
-
-    .nav-tab:nth-child(1) { animation-delay: 0.1s; }
-    .nav-tab:nth-child(2) { animation-delay: 0.2s; }
-    .nav-tab:nth-child(3) { animation-delay: 0.3s; }
-    .nav-tab:nth-child(4) { animation-delay: 0.4s; }
-    .nav-tab:nth-child(5) { animation-delay: 0.5s; }
-    .nav-tab:nth-child(6) { animation-delay: 0.6s; }
-    .nav-tab:nth-child(7) { animation-delay: 0.7s; }
+    /* Animations d'apparition pour les onglets - déplacées vers settings-tabs.css */
     .nav-tab:nth-child(8) { animation-delay: 0.8s; }
     .nav-tab:nth-child(9) { animation-delay: 0.9s; }
 
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+    /* @keyframes fadeInUp déplacée vers settings-tabs.css */
 }
 
 .hidden-tab {
@@ -2871,21 +2811,7 @@ select option:disabled {
     display: block !important;
 }
 
-/* Animation d'apparition progressive */
-#general .tab-content.active {
-    animation: fadeInUp 0.5s ease-out;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+/* Animation d'apparition progressive - déplacée vers settings-tabs.css */
 
 /* Style pour les sections d'information dans l'onglet général */
 #general .general-section {
