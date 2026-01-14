@@ -43,7 +43,7 @@ class Canvas_AJAX_Handler
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
-            $settings = $canvas_manager->get_all_settings();
+            $settings = $canvas_manager->getAllSettings();
             wp_send_json_success([
                 'settings' => $settings,
                 'message' => __('Paramètres du canvas récupérés avec succès', 'pdf-builder-pro')
@@ -85,7 +85,7 @@ class Canvas_AJAX_Handler
             if ($saved) {
                 wp_send_json_success([
                     'message' => __('Paramètres du canvas sauvegardés avec succès', 'pdf-builder-pro'),
-                    'settings' => $canvas_manager->get_all_settings()
+                    'settings' => $canvas_manager->getAllSettings()
                 ]);
             } else {
                 wp_send_json_error([
@@ -129,7 +129,7 @@ class Canvas_AJAX_Handler
             $canvas_manager->reset_to_defaults();
             wp_send_json_success([
                 'message' => __('Paramètres du canvas réinitialisés aux valeurs par défaut', 'pdf-builder-pro'),
-                'settings' => $canvas_manager->get_all_settings()
+                'settings' => $canvas_manager->getAllSettings()
             ]);
         } catch (\Exception $e) {
             wp_send_json_error([
