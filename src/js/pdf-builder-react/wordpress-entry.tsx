@@ -7,6 +7,7 @@
 console.log('🔧 DEBUG: wordpress-entry.tsx script started loading');
 debugLog('🔧 DEBUG: pdf-builder-react-wrapper.min.js script started loading');
 
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
 import { debugError, debugWarn, debugLog } from './utils/debug';
