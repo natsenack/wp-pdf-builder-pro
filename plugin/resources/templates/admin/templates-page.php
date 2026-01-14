@@ -617,9 +617,12 @@ var pdfBuilderAjax = {
 <script>
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
+    console.log('showUpgradeModal called with reason:', reason);
     const modal = document.getElementById('upgrade-modal-' + reason);
+    console.log('Modal element:', modal);
     if (modal) {
         modal.style.display = 'flex';
+        console.log('Modal displayed');
 
         // Tracking pour analytics (si disponible)
         if (typeof gtag !== 'undefined') {
@@ -629,6 +632,8 @@ function showUpgradeModal(reason) {
                 'page': 'templates'
             });
         }
+    } else {
+        console.error('Modal upgrade-modal-' + reason + ' not found');
     }
 }
 
@@ -721,6 +726,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Dismissed status:', dismissed);
     if (dismissed === 'true') {
         dismissTemplateLimitNotice();
+    }
+
+    // Observer les changements sur la notification
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    console.log('Notification class changed:', notice.className);
+                    console.log('Has dismissed class:', notice.classList.contains('dismissed'));
+                }
+            });
+        });
+        observer.observe(notice, { attributes: true, attributeFilter: ['class'] });
+        console.log('MutationObserver set up for notification');
     }
 });
 </script>
