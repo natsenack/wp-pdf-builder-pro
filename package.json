@@ -17,8 +17,8 @@
     "test:resilience": "jest tests/canvas-resilience.test.js"
   },
   "devDependencies": {
+    "@babel/cli": "^7.28.6",
     "@babel/core": "^7.20.0",
-    "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/preset-env": "^7.20.0",
     "@babel/preset-react": "^7.23.3",
