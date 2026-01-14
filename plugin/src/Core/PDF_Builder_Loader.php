@@ -204,7 +204,7 @@ class PDF_Builder_Loader {
         }
 
         // Charger les managers WooCommerce seulement si WooCommerce est actif
-        if (\function_exists('pdf_builder_is_woocommerce_active') && \pdf_builder_is_woocommerce_active()) {
+        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
             foreach ($woocommerce_managers as $manager) {
                 $this->require_file('src/Managers/' . $manager);
             }
@@ -220,7 +220,7 @@ class PDF_Builder_Loader {
         ];
 
         // Charger l'Onboarding Manager seulement si WooCommerce est actif
-        if (\function_exists('pdf_builder_is_woocommerce_active') && \pdf_builder_is_woocommerce_active()) {
+        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
             $utilities[] = 'PDF_Builder_Onboarding_Manager.php';
         }
 
@@ -250,7 +250,7 @@ class PDF_Builder_Loader {
      */
     private function load_integrations() {
         // WooCommerce si actif - différer la vérification pour éviter les problèmes de chargement
-        if (\function_exists('pdf_builder_is_woocommerce_active') && \pdf_builder_is_woocommerce_active()) {
+        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active()) {
             // Intégration WooCommerce - cache supprimé
         }
     }

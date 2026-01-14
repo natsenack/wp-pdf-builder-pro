@@ -9,7 +9,6 @@ namespace PDF_Builder\Admin\Handlers;
 
 use Exception;
 use WP_Error;
-use PDF_Builder\Canvas\Canvas_Manager;
 
 /**
  * Classe responsable de la gestion des appels AJAX
@@ -42,8 +41,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajaxGeneratePdfFromCanvas']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
         add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
-        // REMOVED: pdf_builder_save_template is now handled by pdf-builder-pro.php to avoid conflicts
-        // add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
+        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
@@ -58,7 +56,6 @@ class AjaxHandler
         // Hooks AJAX canvas
         add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
         add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
-        add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajaxGetCanvasSettings']);
     }
 
     /**
@@ -160,7 +157,7 @@ class AjaxHandler
     {
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
-
+        
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
             $template_manager->ajaxSaveTemplateV3();
             return;
@@ -174,8 +171,11 @@ class AjaxHandler
                 return;
             }
 
-            // Note: Nonce check removed to prevent expiration issues during long editing sessions
-            // Permission check provides adequate security for template save operations
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
 
             $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
             $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
@@ -186,9 +186,18 @@ class AjaxHandler
                 return;
             }
 
-            // Cette implémentation de secours ne devrait pas être utilisée
-            // Le template manager devrait toujours être disponible
+            // Sauvegarder le template
+            // Note: Template manager should be available, this fallback shouldn't be reached
             wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
+
+            if ($result) {
+                wp_send_json_success([
+                    'template_id' => $result,
+                    'message' => 'Template sauvegardé avec succès'
+                ]);
+            } else {
+                wp_send_json_error('Erreur lors de la sauvegarde du template');
+            }
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -262,10 +271,13 @@ class AjaxHandler
                 return;
             }
 
-            // Pour les requêtes GET de chargement de template (lecture seule),
-            // on ne vérifie pas le nonce car c'est une opération de lecture sécurisée
-            // Les permissions utilisateur suffisent comme protection
+            // Vérifier le nonce depuis les paramètres GET ou POST
+            $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
+            if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
 
             if (!$template_id) {
                 wp_send_json_error('ID de template manquant');
@@ -1506,33 +1518,6 @@ class AjaxHandler
         } else {
             // Texte standard
             return sanitize_text_field($value);
-        }
-    }
-
-    /**
-     * Récupère les paramètres du canvas via AJAX
-     */
-    public function ajaxGetCanvasSettings()
-    {
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
-                return;
-            }
-
-            // Récupérer les paramètres du canvas
-            $canvas_manager = Canvas_Manager::get_instance();
-            $settings = $canvas_manager->getAllSettings();
-
-            wp_send_json_success([
-                'settings' => $settings,
-                'message' => __('Paramètres du canvas récupérés avec succès', 'pdf-builder-pro')
-            ]);
-        } catch (\Exception $e) {
-            wp_send_json_error([
-                'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
-            ]);
         }
     }
 }

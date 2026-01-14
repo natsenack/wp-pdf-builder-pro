@@ -448,7 +448,7 @@ class PDF_Builder_Task_Scheduler {
             ];
         }
 
-        return $status;
+        return $stats;
     }
 
     /**

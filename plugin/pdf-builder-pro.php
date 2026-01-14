@@ -20,7 +20,7 @@
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'resources/assets/');
+define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
 define('PDF_BUILDER_VERSION', '1.1.0');
 define('PDF_BUILDER_PRO_VERSION', '1.1.0');
 
@@ -45,26 +45,6 @@ if (function_exists('add_action')) {
 if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
     pdf_builder_register_ajax_handlers();
 }
-
-// Désenregistrer les scripts problématiques qui causent des erreurs d'export ES6
-add_action('wp_enqueue_scripts', function() {
-    // Désenregistrer webpage_content_reporter et scripts similaires qui causent des erreurs
-    wp_deregister_script('webpage_content_reporter');
-    wp_dequeue_script('webpage_content_reporter');
-    
-    // Filtrer tous les scripts problématiques
-    global $wp_scripts;
-    if (isset($wp_scripts) && $wp_scripts instanceof WP_Scripts) {
-        $patterns = ['webpage_content_reporter', 'content-reporter', 'snippet', 'isolated'];
-        foreach ($wp_scripts->registered as $handle => $script) {
-            foreach ($patterns as $pattern) {
-                if (stripos($handle, $pattern) !== false) {
-                    wp_dequeue_script($handle);
-                }
-            }
-        }
-    }
-}, 20);
 
 /**
  * Fonction d'activation
@@ -1363,7 +1343,7 @@ function pdf_builder_get_fresh_nonce_ajax() {
     }
 
     // Générer un nouveau nonce
-    $fresh_nonce = wp_create_nonce('pdf_builder_save_template_nonce');
+    $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
 
     // error_log('PDF Builder AJAX: Generated fresh nonce: ' . substr($fresh_nonce, 0, 10) . '..., User ID: ' . get_current_user_id());
 
@@ -1694,52 +1674,36 @@ function pdf_builder_auto_clear_cache() {
  */
 function pdf_builder_save_template_handler() {
     // Log détaillé du début de la requête
-    error_log('[PDF Builder SAVE] ===== DÉBUT SAUVEGARDE =====');
-    error_log('[PDF Builder SAVE] Timestamp: ' . current_time('mysql'));
-    error_log('[PDF Builder SAVE] User ID: ' . get_current_user_id());
-    error_log('[PDF Builder SAVE] User capabilities: ' . (current_user_can('manage_options') ? 'HAS_MANAGE_OPTIONS' : 'NO_MANAGE_OPTIONS'));
-    error_log('[PDF Builder SAVE] REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
-    error_log('[PDF Builder SAVE] Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'UNKNOWN'));
-    error_log('[PDF Builder SAVE] POST data keys: ' . implode(', ', array_keys($_POST)));
+    // error_log('[PDF Builder SAVE] ===== DÉBUT SAUVEGARDE =====');
+    // error_log('[PDF Builder SAVE] Timestamp: ' . current_time('mysql'));
+    // error_log('[PDF Builder SAVE] User ID: ' . get_current_user_id());
+    // error_log('[PDF Builder SAVE] User capabilities: ' . (current_user_can('manage_options') ? 'HAS_MANAGE_OPTIONS' : 'NO_MANAGE_OPTIONS'));
+    // error_log('[PDF Builder SAVE] REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
+    // error_log('[PDF Builder SAVE] Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'UNKNOWN'));
+    // error_log('[PDF Builder SAVE] POST data keys: ' . implode(', ', array_keys($_POST)));
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
-        error_log('[PDF Builder SAVE] About to call wp_send_json_error for permissions');
+        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
         wp_send_json_error('Permissions insuffisantes');
-        error_log('[PDF Builder SAVE] wp_send_json_error called for permissions - this should not appear');
         return;
     }
-    error_log('[PDF Builder SAVE] ✅ Permissions OK');
-
-    // Log the raw template_data for debugging
-    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-    error_log('[PDF Builder SAVE] Raw template_data length: ' . strlen($template_data));
-    error_log('[PDF Builder SAVE] Raw template_data (first 1000 chars): ' . substr($template_data, 0, 1000));
-    if (strlen($template_data) > 1000) {
-        error_log('[PDF Builder SAVE] Raw template_data (last 1000 chars): ' . substr($template_data, -1000));
-    }
-
-    // Strip slashes from form data (handles escaped quotes from multipart/form-data)
-    $template_data = stripslashes($template_data);
-    error_log('[PDF Builder SAVE] After stripslashes length: ' . strlen($template_data));
-    error_log('[PDF Builder SAVE] After stripslashes (first 200 chars): ' . substr($template_data, 0, 200));
+    // error_log('[PDF Builder SAVE] ✅ Permissions OK');
 
     // Check nonce
     $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
     // error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
     if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
-        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant - nonce: ' . substr($nonce, 0, 10) . '...');
-        error_log('[PDF Builder SAVE] About to call wp_send_json_error for nonce');
+        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
+        // error_log('[PDF Builder SAVE] Nonce attendu: pdf_builder_save_template_nonce');
         wp_send_json_error('Nonce invalide');
-        error_log('[PDF Builder SAVE] wp_send_json_error called for nonce - this should not appear');
         return;
     }
     // error_log('[PDF Builder SAVE] ✅ Nonce OK');
 
     try {
         $template_id = intval($_POST['template_id'] ?? 0);
-        // $template_data is already set and stripslashed above
+        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
 
         // error_log('[PDF Builder SAVE] Template ID: ' . $template_id);
@@ -1747,150 +1711,20 @@ function pdf_builder_save_template_handler() {
         // error_log('[PDF Builder SAVE] Template name: ' . $template_name);
 
         if (!$template_id || empty($template_data)) {
-            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
-            error_log('[PDF Builder SAVE] About to call wp_send_json_error for missing data');
+            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
             wp_send_json_error('Données manquantes');
-            error_log('[PDF Builder SAVE] wp_send_json_error called for missing data - this should not appear');
             return;
         }
         // error_log('[PDF Builder SAVE] ✅ Données de base OK');
 
         // Decode and validate JSON
-        // First, fix potential UTF-8 encoding issues
-        error_log('[PDF Builder SAVE] Template data before encoding fix: length=' . strlen($template_data) . ', starts with: ' . substr($template_data, 0, 50));
-        $template_data = mb_convert_encoding($template_data, 'UTF-8', 'UTF-8');
-        error_log('[PDF Builder SAVE] Template data after mb_convert_encoding: length=' . strlen($template_data) . ', starts with: ' . substr($template_data, 0, 50));
-        $template_data = preg_replace('/[\x00-\x1F\x7F]/', '', $template_data); // Remove control characters
-        error_log('[PDF Builder SAVE] Template data after preg_replace: length=' . strlen($template_data) . ', starts with: ' . substr($template_data, 0, 50));
-
-        // Try multiple approaches to decode JSON
-        $decoded_data = null;
-        $json_errors = [];
-
-        // Approach 1: Standard decode with error ignore
-        $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
+        $decoded_data = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $json_errors[] = 'Standard decode: ' . json_last_error_msg();
-
-            // Approach 2: Fix common UTF-8 issues with iconv
-            $clean_json = iconv('UTF-8', 'UTF-8//IGNORE', $template_data);
-            $decoded_data = json_decode($clean_json, true, 512, JSON_INVALID_UTF8_IGNORE);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $json_errors[] = 'UTF-8 fixed decode: ' . json_last_error_msg();
-
-                // Approach 3: Try to fix Latin-1 to UTF-8 conversion (Ã© -> é)
-                $latin1_to_utf8 = mb_convert_encoding($template_data, 'UTF-8', 'ISO-8859-1');
-                $decoded_data = json_decode($latin1_to_utf8, true, 512, JSON_INVALID_UTF8_IGNORE);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $json_errors[] = 'Latin-1 to UTF-8 decode: ' . json_last_error_msg();
-
-                    // Approach 3.5: Fix specific corruption (datedAt -> updatedAt)
-                    $fixed_corruption = str_replace('datedAt', 'updatedAt', $template_data);
-                    $decoded_data = json_decode($fixed_corruption, true, 512, JSON_INVALID_UTF8_IGNORE);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        $json_errors[] = 'Corruption fix decode: ' . json_last_error_msg();
-
-                    } else {
-                        error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction datedAt->updatedAt');
-                    }
-
-                        // Approach 4: Try to fix specific encoding issues
-                    $fixed_json = preg_replace('/Ã©/', 'é', $template_data);
-                    $fixed_json = preg_replace('/Ã¨/', 'è', $fixed_json);
-                    $fixed_json = preg_replace('/Ãª/', 'ê', $fixed_json);
-                    $fixed_json = preg_replace('/Ã«/', 'ë', $fixed_json);
-                    $fixed_json = preg_replace('/Ã¢/', 'â', $fixed_json);
-                    $fixed_json = preg_replace('/Ã®/', 'î', $fixed_json);
-                    $fixed_json = preg_replace('/Ã´/', 'ô', $fixed_json);
-                    $fixed_json = preg_replace('/Ã»/', 'û', $fixed_json);
-                    $fixed_json = preg_replace('/Ã¼/', 'ü', $fixed_json);
-                    $fixed_json = preg_replace('/Ã§/', 'ç', $fixed_json);
-                    $fixed_json = preg_replace('/Ã/', 'À', $fixed_json);
-                    $fixed_json = preg_replace('/Ã/', 'É', $fixed_json);
-
-                    $decoded_data = json_decode($fixed_json, true, 512, JSON_INVALID_UTF8_IGNORE);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        $json_errors[] = 'Character fixed decode: ' . json_last_error_msg();
-
-                    // Last resort: try to manually fix the JSON
-                    error_log('[PDF Builder SAVE] ❌ ÉCHEC: Toutes les méthodes de décodage JSON ont échoué');
-                    error_log('[PDF Builder SAVE] Erreurs JSON: ' . implode(', ', $json_errors));
-
-                    // Try to find the exact syntax error position
-                    $json_length = strlen($template_data);
-                    error_log('[PDF Builder SAVE] Longueur totale JSON: ' . $json_length);
-
-                    // Check for common JSON syntax errors
-                    $brace_count = 0;
-                    $bracket_count = 0;
-                    $in_string = false;
-                    $escaped = false;
-
-                    for ($i = 0; $i < $json_length; $i++) {
-                        $char = $template_data[$i];
-
-                        if ($escaped) {
-                            $escaped = false;
-                            continue;
-                        }
-
-                        if ($char === '\\') {
-                            $escaped = true;
-                            continue;
-                        }
-
-                        if ($char === '"' && !$escaped) {
-                            $in_string = !$in_string;
-                            continue;
-                        }
-
-                        if (!$in_string) {
-                            if ($char === '{') $brace_count++;
-                            if ($char === '}') $brace_count--;
-                            if ($char === '[') $bracket_count++;
-                            if ($char === ']') $bracket_count--;
-
-                            // Check for structural issues
-                            if ($brace_count < 0 || $bracket_count < 0) {
-                                error_log('[PDF Builder SAVE] Erreur structurelle détectée à la position ' . $i . ': ' . substr($template_data, max(0, $i-20), 40));
-                                break;
-                            }
-                        }
-                    }
-
-                    error_log('[PDF Builder SAVE] Compteurs finaux - accolades: ' . $brace_count . ', crochets: ' . $bracket_count . ', in_string: ' . ($in_string ? 'oui' : 'non'));
-
-                    // Try to extract a valid JSON subset for debugging
-                    $first_brace = strpos($template_data, '{');
-                    $last_brace = strrpos($template_data, '}');
-
-                    if ($first_brace !== false && $last_brace !== false && $last_brace > $first_brace) {
-                        $potential_json = substr($template_data, $first_brace, $last_brace - $first_brace + 1);
-                        $test_decode = json_decode($potential_json, true);
-                        if ($test_decode !== null) {
-                            error_log('[PDF Builder SAVE] ✅ Sous-ensemble JSON valide trouvé, longueur: ' . strlen($potential_json));
-                        } else {
-                            error_log('[PDF Builder SAVE] ❌ Même le sous-ensemble JSON est invalide: ' . json_last_error_msg());
-                        }
-                    }
-
-                    error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
-                    error_log('[PDF Builder SAVE] About to call wp_send_json_error for invalid JSON');
-                    wp_send_json_error('Données JSON invalides - toutes les corrections ont échoué');
-                    error_log('[PDF Builder SAVE] wp_send_json_error called for invalid JSON - this should not appear');
-                    return;
-                } else {
-                    error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction manuelle des caractères');
-                }
-            } else {
-                error_log('[PDF Builder SAVE] ✅ JSON décodé avec conversion Latin-1 vers UTF-8');
-            }
-        } else {
-            error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction UTF-8');
+            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
+            // error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
+            wp_send_json_error('Données JSON invalides');
+            return;
         }
-    } else {
-        error_log('[PDF Builder SAVE] ✅ JSON décodé normalement');
-    }
         // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
         global $wpdb;
@@ -1900,11 +1734,11 @@ function pdf_builder_save_template_handler() {
         // Check if template exists
         $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
         if (!$existing) {
-            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Template non trouvé: ' . $template_id);
-            error_log('[PDF Builder SAVE] All existing templates: ' . json_encode($wpdb->get_results("SELECT id, name FROM $table_templates", ARRAY_A)));
-            error_log('[PDF Builder SAVE] About to call wp_send_json_error for template not found');
+            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Template non trouvé: ' . $template_id);
+            // Log all existing templates for debugging
+            $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates", ARRAY_A);
+            // error_log('[PDF Builder SAVE] Templates existants: ' . json_encode($all_templates));
             wp_send_json_error('Template non trouvé');
-            error_log('[PDF Builder SAVE] wp_send_json_error called for template not found - this should not appear');
             return;
         }
         // error_log('[PDF Builder SAVE] ✅ Template trouvé');
@@ -1925,32 +1759,26 @@ function pdf_builder_save_template_handler() {
         );
 
         if ($result === false) {
-            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Mise à jour DB échouée pour template ' . $template_id);
-            error_log('[PDF Builder SAVE] DB Error: ' . $wpdb->last_error);
-            error_log('[PDF Builder SAVE] Last query: ' . $wpdb->last_query);
-            error_log('[PDF Builder SAVE] About to call wp_send_json_error for DB error');
+            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Mise à jour DB échouée pour template ' . $template_id);
+            // error_log('[PDF Builder SAVE] Erreur DB: ' . $wpdb->last_error);
+            // error_log('[PDF Builder SAVE] Dernière requête: ' . $wpdb->last_query);
             wp_send_json_error('Erreur lors de la sauvegarde');
-            error_log('[PDF Builder SAVE] wp_send_json_error called for DB error - this should not appear');
             return;
         }
 
         // error_log('[PDF Builder SAVE] ✅ Sauvegarde réussie: template ' . $template_id . ', lignes affectées: ' . $result);
         // error_log('[PDF Builder SAVE] ===== FIN SAUVEGARDE =====');
 
-        error_log('[PDF Builder SAVE] About to call wp_send_json_success');
         wp_send_json_success([
             'message' => 'Template sauvegardé avec succès',
             'template_id' => $template_id,
             'saved_at' => current_time('mysql')
         ]);
-        error_log('[PDF Builder SAVE] wp_send_json_success called - this should not appear');
 
     } catch (Exception $e) {
-        error_log('[PDF Builder SAVE] ❌ EXCEPTION: ' . $e->getMessage());
-        error_log('[PDF Builder SAVE] Exception trace: ' . $e->getTraceAsString());
-        error_log('[PDF Builder SAVE] About to call wp_send_json_error for exception');
+        // error_log('[PDF Builder SAVE] ❌ EXCEPTION: ' . $e->getMessage());
+        // error_log('[PDF Builder SAVE] Trace: ' . $e->getTraceAsString());
         wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
-        error_log('[PDF Builder SAVE] wp_send_json_error called for exception - this should not appear');
     }
 }
 

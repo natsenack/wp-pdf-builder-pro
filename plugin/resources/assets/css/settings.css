@@ -1080,6 +1080,150 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border-radius: 50%;
 }
 
+/* === STYLES MODERNES POUR LES ONGLETS DES PARAMÈTRES GÉNÉRAUX === */
+
+/* Container principal des onglets - Design moderne */
+.nav-tab-wrapper {
+    border-bottom: none;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-tab-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007cba 0%, #005a87 50%, #007cba 100%);
+    opacity: 0.8;
+}
+
+/* Onglets individuels - Style moderne et élégant */
+/* === DESIGN PROFESSIONNEL DES ONGLETS === */
+
+.nav-tab-wrapper {
+    border-bottom: 1px solid #e1e5e9;
+    margin-bottom: 30px;
+    padding: 0;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.nav-tab {
+    border: 1px solid transparent;
+    background: transparent;
+    color: #64748b;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-tab:hover {
+    background: #f8fafc;
+    color: #334155;
+    border-color: #e2e8f0;
+}
+
+/* Onglet actif - Design professionnel sobre */
+.nav-tab-active {
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-bottom: 1px solid #ffffff;
+    margin-bottom: -1px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    font-weight: 600;
+    position: relative;
+}
+
+.nav-tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 1px 1px 0 0;
+}
+
+/* === STYLES POUR LES SOUS-ONGLETS - Design moderne === */
+
+.nav-tab-wrapper.sub-tabs {
+    border-bottom: none;
+    margin-bottom: 20px;
+    margin-top: 15px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e9ecef;
+}
+
+.nav-tab-wrapper.sub-tabs .nav-tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    margin-right: 3px;
+    border-radius: 6px;
+    background: transparent;
+    color: #6c757d;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.nav-tab-wrapper.sub-tabs .nav-tab:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    color: #007cba;
+    border-color: #007cba;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,123,186,0.2);
+}
+
+.nav-tab-wrapper.sub-tabs .nav-tab-active {
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    color: white;
+    border-color: #007cba;
+    font-weight: 600;
+    box-shadow: 0 3px 12px rgba(0,123,186,0.3);
+}
+
+.nav-tab-wrapper.sub-tabs .nav-tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #005a87;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
 
 /* Masquer le menu hamburger sur desktop */
 .mobile-menu-toggle {
@@ -1193,7 +1337,47 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         }
     }
 
-    /* Onglets en mode mobile - déplacés vers settings-tabs.css */
+    /* Onglets en mode mobile */
+    .nav-tabs-container .nav-tab {
+        display: block;
+        width: 100%;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        border-bottom: 1px solid #e9ecef;
+        padding: 15px 18px;
+        text-align: left;
+        white-space: normal;
+        background: transparent;
+        color: #495057;
+        font-size: 14px;
+        font-weight: 500;
+        
+    }
+
+    .nav-tabs-container .nav-tab:last-child {
+        border-bottom: none;
+    }
+
+    .nav-tabs-container .nav-tab:hover {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        color: #007cba;
+        padding-left: 22px;
+    }
+
+    .nav-tabs-container .nav-tab-active {
+        background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+        color: white;
+        border-bottom-color: #007cba;
+        font-weight: 600;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .nav-tabs-container .nav-tab-active:hover {
+        background: linear-gradient(135deg, #005a87 0%, #004080 100%);
+        color: white;
+        padding-left: 18px;
+    }
 }
 
 /* Optimisations pour très petits écrans */
@@ -1226,11 +1410,31 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
         padding-left: 14px;
     }
 
-    /* Animations d'apparition pour les onglets - déplacées vers settings-tabs.css */
+    /* Animations d'apparition pour les onglets */
+    .nav-tab {
+        animation: fadeInUp 0.4s ease-out;
+    }
+
+    .nav-tab:nth-child(1) { animation-delay: 0.1s; }
+    .nav-tab:nth-child(2) { animation-delay: 0.2s; }
+    .nav-tab:nth-child(3) { animation-delay: 0.3s; }
+    .nav-tab:nth-child(4) { animation-delay: 0.4s; }
+    .nav-tab:nth-child(5) { animation-delay: 0.5s; }
+    .nav-tab:nth-child(6) { animation-delay: 0.6s; }
+    .nav-tab:nth-child(7) { animation-delay: 0.7s; }
     .nav-tab:nth-child(8) { animation-delay: 0.8s; }
     .nav-tab:nth-child(9) { animation-delay: 0.9s; }
 
-    /* @keyframes fadeInUp déplacée vers settings-tabs.css */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 }
 
 .hidden-tab {
@@ -2375,6 +2579,19 @@ body.canvas-modal-open {
     display: block !important;
 }
 
+.canvas-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0; /* Important pour que flex fonctionne avec overflow */
+    background-color: #fff;
+}
+
+/* Modal Interactions & Comportement - ajustement du body pour le footer */
+#canvas-interactions-modal .canvas-modal-body {
+    max-height: none;
+}
+
 .canvas-modal-footer {
     display: flex;
     justify-content: flex-end;
@@ -2694,7 +2911,40 @@ select option:disabled {
     z-index: 10;
 }
 
-/* États des onglets avec feedback visuel - styles déplacés vers settings-tabs.css */
+/* États des onglets avec feedback visuel */
+.nav-tab {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007cba, #005a87);
+    
+    transform: translateX(-50%);
+}
+
+.nav-tab:hover::after {
+    width: 80%;
+}
+
+.nav-tab-active::after {
+    width: 100%;
+}
+
+/* Amélioration de l'accessibilité */
+.nav-tab:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+
+.nav-tab:focus:not(.nav-tab-active) {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
 }
 
 /* Animation de transition douce pour les contenus */
@@ -2811,7 +3061,21 @@ select option:disabled {
     display: block !important;
 }
 
-/* Animation d'apparition progressive - déplacée vers settings-tabs.css */
+/* Animation d'apparition progressive */
+#general .tab-content.active {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* Style pour les sections d'information dans l'onglet général */
 #general .general-section {
@@ -3550,106 +3814,21 @@ select option:disabled {
 /* Styles pour les options de sélection multiple */
 .checkbox-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 12px;
     margin-top: 8px;
 }
 
-.checkbox-option {
+.checkbox-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
-    padding: 6px 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #f9f9f9;
-    transition: all 0.2s ease;
 }
 
-.checkbox-option:hover {
-    background: #f0f0f0;
-    border-color: #ccc;
-}
-
-.checkbox-option input[type="checkbox"] {
+.checkbox-item input[type="checkbox"] {
     width: 16px;
     height: 16px;
     accent-color: #007cba;
-    margin: 0;
-}
-
-.checkbox-option input[type="checkbox"]:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.checkbox-option:has(input[type="checkbox"]:disabled) {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.checkbox-option.premium-option {
-    border-color: #ffd700;
-    background: linear-gradient(135deg, #fff8dc 0%, #f9f9f9 100%);
-    position: relative;
-}
-
-.checkbox-option.premium-option::before {
-    content: "⭐";
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ffd700;
-    color: #b8860b;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* Styles pour les options bientôt disponibles */
-.checkbox-option input:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.checkbox-option input:disabled + * {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Styles pour les notifications de sauvegarde */
-.pdf-builder-save-notification {
-    background: #d4edda !important;
-    border: 1px solid #c3e6cb !important;
-    border-radius: 4px !important;
-    padding: 12px 16px !important;
-    margin: 0 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    animation: slideInRight 0.3s ease-out !important;
-}
-
-.pdf-builder-save-notification p {
-    margin: 0 !important;
-    color: #155724 !important;
-    font-weight: 500 !important;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
 }
 
 .checkbox-item label {
@@ -3814,6 +3993,10 @@ select option:disabled {
         padding: 16px 20px;
     }
 
+    .canvas-modal-body {
+        padding: 20px;
+    }
+
     .canvas-modal-footer {
         padding: 16px 20px;
         flex-direction: column;
@@ -3853,6 +4036,10 @@ select option:disabled {
 
     .canvas-modal-header h3 {
         font-size: 18px;
+    }
+
+    .canvas-modal-body {
+        padding: 16px;
     }
 
     .canvas-modal-form .form-row {

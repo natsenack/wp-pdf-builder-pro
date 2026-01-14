@@ -18,9 +18,6 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
     define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 }
 
-// Inclure les stubs pour Intelephense
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/stubs.php';
-
 // ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
@@ -566,7 +563,7 @@ function pdf_builder_load_core()
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
             $localize_data = [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_save_template_nonce'),
+                'nonce' => wp_create_nonce('pdf_builder_ajax'),
                 'version' => PDF_BUILDER_VERSION,
                 'templateId' => $template_id,
                 'isEdit' => $template_id > 0,

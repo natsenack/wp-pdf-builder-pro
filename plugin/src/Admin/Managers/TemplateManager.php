@@ -230,8 +230,12 @@ class TemplateManager
                 return;
             }
 
-            // Note: Nonce check removed to prevent expiration issues during long editing sessions
-            // Permission check provides adequate security for template save operations
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+                // $this->debug_log('Nonce invalide');
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
 
             $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
             $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
@@ -246,23 +250,13 @@ class TemplateManager
             }
 
             // Créer ou mettre à jour le post template
-            $template_type = 'custom'; // Valeur par défaut pour les nouveaux templates
-            
-            // Pour les templates existants, préserver le type actuel
-            if ($template_id) {
-                $existing_type = get_post_meta($template_id, '_pdf_template_type', true);
-                if ($existing_type) {
-                    $template_type = $existing_type;
-                }
-            }
-            
             $post_data = [
                 'post_title' => $template_name,
                 'post_type' => 'pdf_template',
                 'post_status' => 'publish',
                 'meta_input' => [
                     '_pdf_template_data' => $template_data,
-                    '_pdf_template_type' => $template_type,
+                    '_pdf_template_type' => 'custom',
                 ]
             ];
 

@@ -9,8 +9,6 @@ export function useTemplate() {
   const { state, dispatch } = useBuilder();
   const { canvasWidth, canvasHeight } = useCanvasSettings();
 
-  console.log('[useTemplate] Initializing, window.pdfBuilderData:', window.pdfBuilderData);
-
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = useCallback((): string | null => {
     // Priorité 1: Utiliser le templateId des données PHP localisées
@@ -19,9 +17,9 @@ export function useTemplate() {
       return window.pdfBuilderData.templateId.toString();
     }
     
-    // Priorité 2: Utiliser le paramètre URL (template ou template_id pour compatibilité)
+    // Priorité 2: Utiliser le paramètre URL (pour compatibilité)
     const urlParams = new URLSearchParams(window.location.search);
-    const urlTemplateId = urlParams.get('template') || urlParams.get('template_id');
+    const urlTemplateId = urlParams.get('template_id');
     if (urlTemplateId) {
 
       return urlTemplateId;
@@ -483,8 +481,7 @@ export function useTemplate() {
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
-      // ✅ Utiliser l'id du state ou de l'URL
-      const templateId = state.template.id || getTemplateIdFromUrl();
+      const templateId = getTemplateIdFromUrl();
       // console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
 
       if (!templateId) {
@@ -552,9 +549,6 @@ export function useTemplate() {
       formData.append('template_description', state.template.description || '');
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
-
-      console.log('[PDF_BUILDER_FRONTEND] Nonce envoyé:', window.pdfBuilderData?.nonce);
-      console.log('[PDF_BUILDER_FRONTEND] window.pdfBuilderData:', window.pdfBuilderData);
 
       // Ajouter les paramètres du template
       formData.append('show_guides', state.template.showGuides ? '1' : '0');

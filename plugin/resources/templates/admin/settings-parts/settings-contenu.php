@@ -9,8 +9,6 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
-    // AJAX variables are now localized via AdminScriptLoader.php
-
     $settings = get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
@@ -457,15 +455,10 @@
             ?>
 
 <script>
-                (function($) {
+                (function() {
                     'use strict';
 
-                    // console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
-
-                    // Définir ajaxurl si non défini (nécessaire pour les appels AJAX)
-                    if (typeof ajaxurl === 'undefined') {
-                        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-                    }
+                    console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
 
                     // Configuration des modals
                     var modalConfig = {
@@ -477,27 +470,27 @@
 
                     // Fonction simple pour ouvrir une modal
                     function openModal(category) {
-                        // console.log('[PDF Builder] openModal called with category:', category);
+                        console.log('[PDF Builder] openModal called with category:', category);
                         var modalId = modalConfig[category];
-                        // console.log('[PDF Builder] Looking for modal ID:', modalId);
+                        console.log('[PDF Builder] Looking for modal ID:', modalId);
                         if (!modalId) {
                             console.error('[PDF Builder] Unknown category:', category);
                             return;
                         }
 
                         var modal = document.getElementById(modalId);
-                        // console.log('[PDF Builder] Modal element found:', modal);
+                        console.log('[PDF Builder] Modal element found:', modal);
                         if (modal) {
-                            // console.log('[PDF Builder] Setting modal display to flex');
+                            console.log('[PDF Builder] Setting modal display to flex');
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
-                            // console.log('[PDF Builder] Opened modal:', modalId);
+                            console.log('[PDF Builder] Opened modal:', modalId);
                         } else {
                             console.error('[PDF Builder] Modal not found:', modalId);
-                            // console.log('[PDF Builder] Available modal IDs:');
+                            console.log('[PDF Builder] Available modal IDs:');
                             Object.values(modalConfig).forEach(function(id) {
                                 var element = document.getElementById(id);
-                                // console.log('  -', id, ':', element ? 'EXISTS' : 'NOT FOUND');
+                                console.log('  -', id, ':', element ? 'EXISTS' : 'NOT FOUND');
                             });
                         }
                     }
@@ -507,235 +500,35 @@
                         if (modalElement) {
                             modalElement.style.display = 'none';
                             document.body.style.overflow = '';
-                            // console.log('[PDF Builder] Closed modal');
+                            console.log('[PDF Builder] Closed modal');
                         }
                     }
 
                     // Appliquer les paramètres d'une modal
                     function applyModalSettings(category) {
-                        // console.log('[PDF Builder DEBUG] applyModalSettings called with category:', category);
-
                         var modalId = modalConfig[category];
-                        // console.log('[PDF Builder DEBUG] modalId for category:', modalId);
+                        if (!modalId) return;
 
-                        if (!modalId) {
-                            // console.log('[PDF Builder DEBUG] No modalId found for category, returning');
-                            return;
-                        }
-
-                        var modal = document.getElementById(modalId);
-                        // console.log('[PDF Builder DEBUG] Modal element found:', modal ? 'YES' : 'NO');
-
-                        if (!modal) {
-                            // console.log('[PDF Builder DEBUG] Modal element not found, returning');
-                            return;
-                        }
-
-                        // Collecter et synchroniser les valeurs
-                        var inputs = modal.querySelectorAll('input, select, textarea');
-                        // console.log('[PDF Builder DEBUG] Found', inputs.length, 'inputs in modal');
-
-                        var updatedCount = 0;
-
-                        // Grouper les inputs par nom pour gérer les arrays
-                        var inputsByName = {};
-                        inputs.forEach(function(input) {
-                            if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
-                                if (!inputsByName[input.name]) {
-                                    inputsByName[input.name] = [];
-                                }
-                                inputsByName[input.name].push(input);
-                            }
-                        });
-
-                        // console.log('[PDF Builder DEBUG] Inputs grouped by name:', Object.keys(inputsByName));
-
-                        // Traiter chaque groupe d'inputs
-                        var savePromises = [];
-                        Object.keys(inputsByName).forEach(function(inputName) {
-                            // console.log('[PDF Builder DEBUG] Processing input group:', inputName);
-
-                            var inputGroup = inputsByName[inputName];
-                            var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
-
-                            // console.log('[PDF Builder DEBUG] Hidden field found for', inputName + ':', hiddenField ? 'YES' : 'NO');
-
-                            if (hiddenField) {
-                                var newValue;
-
-                                // Gérer les arrays (checkboxes multiples)
-                                if (inputName.includes('[]') && inputGroup.length > 1) {
-                                    // console.log('[PDF Builder DEBUG] Processing array input:', inputName, 'with', inputGroup.length, 'elements');
-
-                                    newValue = [];
-                                    inputGroup.forEach(function(input) {
-                                        if (input.type === 'checkbox' && input.checked) {
-                                            newValue.push(input.value);
-                                            // console.log('[PDF Builder DEBUG] Checkbox checked:', input.value);
-                                        }
-                                    });
-                                    newValue = JSON.stringify(newValue);
-                                    // console.log('[PDF Builder DEBUG] Array value:', newValue);
-
-                                    // Sauvegarder directement les paramètres allowed_* via AJAX
-                                    if (inputName.includes('allowed_')) {
-                                        var optionName = inputName.replace('pdf_builder_canvas_', '').replace('[]', '');
-                                        console.log('[PDF Builder DEBUG] Saving allowed setting via AJAX:', optionName, 'with value:', newValue);
-                                        savePromises.push(saveAllowedSetting(optionName, newValue));
-                                        return; // Ne pas mettre à jour le champ caché pour ces paramètres
-                                    }
-                                } else {
-                                    // Valeur simple
-                                    var input = inputGroup[0];
-                                    newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
-                                    console.log('[PDF Builder DEBUG] Simple value for', inputName + ':', newValue);
-                                }
-
-                                hiddenField.value = newValue;
-                                updatedCount++;
-                                console.log('[PDF Builder] Updated', inputName, 'to', newValue);
-                            } else {
-                                console.log('[PDF Builder DEBUG] No hidden field found for', inputName);
-                                // For array inputs without hidden field, save via AJAX
-                                if (inputName.includes('[]') && inputGroup.length > 1) {
-                                    var values = [];
-                                    inputGroup.forEach(function(input) {
-                                        if (input.type === 'checkbox' && input.checked) {
-                                            values.push(input.value);
-                                            console.log('[PDF Builder DEBUG] Checkbox checked:', input.value);
-                                        }
-                                    });
-                                    var jsonValue = JSON.stringify(values);
-                                    console.log('[PDF Builder DEBUG] Saving array setting via AJAX:', inputName, 'with values:', values);
-                                    var optionName = inputName.replace('pdf_builder_canvas_', '').replace('[]', '');
-                                    savePromises.push(saveAllowedSetting(optionName, jsonValue));
-                                }
-                            }
-                        });
-
-                        console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
-
-                        // Attendre que toutes les sauvegardes AJAX soient terminées avant de recharger
-                        if (savePromises.length > 0) {
-                            $.when.apply($, savePromises).done(function() {
-                                console.log('[PDF Builder DEBUG] All AJAX saves completed, calling reloadAllowedSettings');
-                                reloadAllowedSettings();
-                            }).fail(function() {
-                                console.error('[PDF Builder] Some AJAX saves failed');
-                                reloadAllowedSettings(); // Recharger quand même
-                            });
-                        } else {
-                            reloadAllowedSettings();
-                        }
-                    }
-
-                    // Fonction pour sauvegarder un paramètre allowed_* via AJAX
-                    function saveAllowedSetting(optionName, value) {
-                        console.log('[PDF Builder DEBUG] saveAllowedSetting called with:', optionName, value);
-                        console.log('[PDF Builder DEBUG] pdfBuilderNotifications:', pdfBuilderNotifications);
-
-                        if (!pdfBuilderNotifications || !pdfBuilderNotifications.ajax_url) {
-                            console.error('[PDF Builder] pdfBuilderNotifications not defined or missing ajax_url');
-                            return $.Deferred().reject('pdfBuilderNotifications not available').promise();
-                        }
-
-                        return $.ajax({
-                            url: pdfBuilderNotifications.ajax_url,
-                            method: 'POST',
-                            data: {
-                                action: 'pdf_builder_save_allowed_setting',
-                                setting_key: optionName,
-                                values: JSON.stringify(value),
-                                nonce: pdfBuilderNotifications.ajax_nonce
-                            },
-                            success: function(response) {
-                                console.log('[PDF Builder DEBUG] saveAllowedSetting success:', response);
-                                if (response.success) {
-                                    console.log('[PDF Builder] Successfully saved', optionName);
-                                } else {
-                                    console.error('[PDF Builder] Failed to save', optionName + ':', response.data);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('[PDF Builder] Error saving', optionName + ':', error);
-                            }
-                        });
-                    }
-
-                    // Fonction pour recharger les paramètres depuis le serveur
-                    function reloadAllowedSettings() {
-                        console.log('[PDF Builder DEBUG] reloadAllowedSettings called');
-
-                        var data = {
-                            action: 'pdf_builder_get_allowed_settings',
-                            nonce: (window.pdfBuilderNotifications && window.pdfBuilderNotifications.ajax_nonce) ? window.pdfBuilderNotifications.ajax_nonce : ''
-                        };
-
-                        console.log('[PDF Builder DEBUG] reloadAllowedSettings AJAX data:', data);
-
-                        fetch(ajaxurl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: new URLSearchParams(data)
-                        })
-                        .then(response => {
-                            console.log('[PDF Builder DEBUG] reloadAllowedSettings response status:', response.status);
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('[PDF Builder DEBUG] reloadAllowedSettings response data:', data);
-
-                            if (data.success) {
-                                console.log('[PDF Builder] Reloaded settings:', data.data);
-
-                                // Mettre à jour les checkboxes dans les modales
-                                console.log('[PDF Builder DEBUG] Updating checkboxes...');
-                                updateModalCheckboxes('dpis', data.data.allowed_dpis || []);
-                                updateModalCheckboxes('formats', data.data.allowed_formats || []);
-                                updateModalCheckboxes('orientations', data.data.allowed_orientations || []);
-
-                                // Afficher une notification de succès
-                                console.log('[PDF Builder DEBUG] Showing save notification');
-                                showSaveNotification('Paramètres sauvegardés avec succès !');
-                            } else {
-                                console.error('[PDF Builder] Failed to reload settings:', data.data);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('[PDF Builder] Error reloading settings:', error);
-                        });
-                    }
-
-                    // Fonction pour mettre à jour les checkboxes dans une modal
-                    function updateModalCheckboxes(type, values) {
-                        var modalId = modalConfig.affichage; // Les paramètres allowed sont dans la modal "affichage"
                         var modal = document.getElementById(modalId);
                         if (!modal) return;
 
-                        var checkboxes = modal.querySelectorAll('input[name="pdf_builder_canvas_allowed_' + type + '[]"]');
-                        checkboxes.forEach(function(checkbox) {
-                            var isChecked = values.includes(checkbox.value);
-                            checkbox.checked = isChecked;
-                            console.log('[PDF Builder] Updated checkbox', checkbox.value, 'to', isChecked);
+                        // Collecter et synchroniser les valeurs
+                        var inputs = modal.querySelectorAll('input, select, textarea');
+                        var updatedCount = 0;
+
+                        inputs.forEach(function(input) {
+                            if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
+                                if (hiddenField) {
+                                    var newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+                                    hiddenField.value = newValue;
+                                    updatedCount++;
+                                }
+                            }
                         });
-                    }
 
-                    // Fonction pour afficher une notification de sauvegarde
-                    function showSaveNotification(message) {
-                        console.log('[PDF Builder DEBUG] showSaveNotification called with:', message);
-
-                        // Utiliser le système de notifications unifié du plugin
-                        if (window.pdfBuilderNotify && window.pdfBuilderNotify.success) {
-                            window.pdfBuilderNotify.success(message, {
-                                duration: 3000,
-                                dismissible: true
-                            });
-                        } else {
-                            console.warn('[PDF Builder] Notification system not available, falling back to console');
-                            console.log('[PDF Builder] SUCCESS:', message);
-                        }
+                        closeModal(modal);
+                        console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
                     }
 
                     // Initialisation des événements
@@ -779,7 +572,7 @@
                             }
 
                             // Appliquer paramètres
-                            var applyBtn = e.target.closest('.canvas-modal-save');
+                            var applyBtn = e.target.closest('.canvas-modal-apply');
                             if (applyBtn) {
                                 e.preventDefault();
                                 var category = applyBtn.getAttribute('data-category');
@@ -809,40 +602,6 @@
                         console.log('[PDF Builder] Events initialized');
                     }
 
-                    // Fonction pour afficher une notification de sauvegarde
-                    function showSaveNotification(message) {
-                        console.log('[PDF Builder DEBUG] showSaveNotification called with:', message);
-
-                        // Supprimer les notifications existantes
-                        var existingNotifications = document.querySelectorAll('.pdf-builder-notification');
-                        existingNotifications.forEach(function(notification) {
-                            notification.remove();
-                        });
-
-                        // Créer la nouvelle notification
-                        var notification = document.createElement('div');
-                        notification.className = 'pdf-builder-notification success';
-                        notification.innerHTML = '<span class="notification-icon">✅</span> ' + message;
-
-                        // Ajouter au body
-                        document.body.appendChild(notification);
-
-                        // Afficher avec animation
-                        setTimeout(function() {
-                            notification.classList.add('show');
-                        }, 10);
-
-                        // Masquer automatiquement après 3 secondes
-                        setTimeout(function() {
-                            notification.classList.remove('show');
-                            setTimeout(function() {
-                                if (notification.parentNode) {
-                                    notification.parentNode.removeChild(notification);
-                                }
-                            }, 300);
-                        }, 3000);
-                    }
-
                     // Initialisation au chargement du DOM
                     if (document.readyState === 'loading') {
                         document.addEventListener('DOMContentLoaded', function() {
@@ -863,7 +622,7 @@
                     }
 
                     console.log('[PDF Builder] Canvas modals system ready');
-                })(jQuery);
+                })();
             </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->

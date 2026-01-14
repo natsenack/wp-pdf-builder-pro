@@ -39,68 +39,6 @@ if ($templates_count === 0 && !$is_premium) {
     // Recharger le compteur après création
     $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 }
-
-// Récupérer les DPI autorisés depuis les paramètres du plugin
-$allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
-if (!is_array($allowed_dpis)) {
-    $allowed_dpis = ['96', '150', '300'];
-}
-
-// Récupérer les orientations autorisées depuis les paramètres du plugin
-$allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['portrait']);
-if (!is_array($allowed_orientations)) {
-    $allowed_orientations = ['portrait'];
-}
-
-// Récupérer les formats autorisés depuis les paramètres du plugin
-$allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
-if (!is_array($allowed_formats)) {
-    $allowed_formats = ['A4'];
-}
-
-// Fonction pour récupérer les options de format avec leurs labels
-function get_format_options() {
-    return [
-        'A4' => 'A4 (210×297mm)',
-        'A3' => 'A3 (297×420mm)',
-        'Letter' => 'Letter (8.5×11")',
-        'Legal' => 'Legal (8.5×14")',
-        'EtiquetteColis' => 'Étiquette Colis (10×15cm)'
-    ];
-}
-
-// Fonction pour calculer les dimensions du canvas en pixels selon format, DPI et orientation
-function calculate_canvas_dimensions($format, $dpi, $orientation) {
-    // Dimensions physiques des formats en millimètres
-    $format_dimensions = [
-        'A4' => ['width' => 210, 'height' => 297],
-        'A3' => ['width' => 297, 'height' => 420],
-        'Letter' => ['width' => 215.9, 'height' => 279.4], // 8.5 x 11 pouces en mm
-        'Legal' => ['width' => 215.9, 'height' => 355.6],  // 8.5 x 14 pouces en mm
-        'EtiquetteColis' => ['width' => 100, 'height' => 150] // 10 x 15 cm en mm
-    ];
-    
-    if (!isset($format_dimensions[$format])) {
-        $format = 'A4'; // Format par défaut
-    }
-    
-    $dimensions = $format_dimensions[$format];
-    
-    // Conversion mm vers pouces (1 pouce = 25.4 mm)
-    $width_inches = $dimensions['width'] / 25.4;
-    $height_inches = $dimensions['height'] / 25.4;
-    
-    // Calcul des dimensions en pixels
-    $width_px = round($width_inches * $dpi);
-    $height_px = round($height_inches * $dpi);
-    
-    // Inversion si orientation paysage
-    if ($orientation === 'landscape') {
-        return ['width' => $height_px, 'height' => $width_px];
-    }
-    
-    return ['width' => $width_px, 'height' => $height_px];
-}
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
@@ -128,15 +66,15 @@ var pdfBuilderAjax = {
                     <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
                 </a>
             <?php else: ?>
-                <button class="button" id="upgrade-required-btn"
-                        onclick="showTemplateLimitNotice(); showUpgradeModal('template')"
+                <button class="button button-secondary" id="upgrade-required-btn"
+                        onclick="showUpgradeModal('template_limit')"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button" style="margin-left: 10px;" onclick="showTemplateLimitNotice(); showUpgradeModal('gallery')">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
@@ -153,10 +91,7 @@ var pdfBuilderAjax = {
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
-                <a href="#" onclick="dismissTemplateLimitNotice(); return false;" style="position: absolute; top: 5px; right: 5px; color: #dc3545; font-size: 20px; font-weight: bold; text-decoration: none; line-height: 1;" title="Fermer">
-                    ✕
-                </a>
+            <div class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
                     <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
@@ -167,7 +102,7 @@ var pdfBuilderAjax = {
                         $templates_count
                     ); ?>
                 </p>
-                <a href="#" onclick="showUpgradeModal('template')" class="button button-primary">
+                <a href="#" onclick="showUpgradeModal('template_limit')" class="button button-primary">
                     <span class="dashicons dashicons-star-filled"></span>
                     <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
                 </a>
@@ -183,13 +118,13 @@ var pdfBuilderAjax = {
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border: 1px solid #dee2e6;">
             <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par type</h3>
             <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                <button class="filter-btn button active" data-filter="all" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Tous</button>
-                <button class="filter-btn button" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #e3f2fd; border-color: #2196f3; color: #1565c0;">🧾 Factures</button>
-                <button class="filter-btn button" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #e8f5e8; border-color: #4caf50; color: #2e7d32;">📋 Devis</button>
-                <button class="filter-btn button" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #fff3e0; border-color: #ff9800; color: #e65100;">📦 Commandes</button>
-                <button class="filter-btn button" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #ffebee; border-color: #f44336; color: #b71c1c;">📑 Contrats</button>
-                <button class="filter-btn button" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #f3e5f5; border-color: #9c27b0; color: #6a1b9a;">📰 Newsletters</button>
-                <button class="filter-btn button" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #f5f5f5; border-color: #9e9e9e; color: #424242;">📄 Autres</button>
+                <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
+                <button class="filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
+                <button class="filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                <button class="filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button>
+                <button class="filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button>
+                <button class="filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button>
+                <button class="filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Autres</button>
             </div>
         </div>
 
@@ -273,7 +208,7 @@ var pdfBuilderAjax = {
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
 
-                    echo '<div class="template-card template-type-' . $template_type . '" data-category="' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
@@ -327,15 +262,7 @@ var pdfBuilderAjax = {
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    
-                    // Bouton dupliquer - désactivé pour les utilisateurs gratuits ayant atteint la limite
-                    $duplicate_disabled = (!$is_premium && $templates_count >= 1) ? 'disabled' : '';
-                    $duplicate_title = (!$is_premium && $templates_count >= 1) ? 'Duplication limitée à 1 template (Premium requis)' : 'Dupliquer ce template';
-                    $duplicate_class = (!$is_premium && $templates_count >= 1) ? 'button-disabled' : 'button-primary';
-                    $duplicate_onclick = (!$is_premium && $templates_count >= 1) ? '' : 'onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')"';
-                    
-                    echo '<button class="button ' . $duplicate_class . '" style="flex: 1; font-size: 16px;" ' . $duplicate_onclick . ' ' . $duplicate_disabled . ' title="' . $duplicate_title . '">📋</button>';
-                    
+                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
@@ -365,13 +292,13 @@ var pdfBuilderAjax = {
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
                         <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                            <button class="gallery-filter-btn button active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #6c757d; border-color: #6c757d; color: white;">📄 Tous</button>
-                            <button class="gallery-filter-btn button" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #e3f2fd; border-color: #2196f3; color: #1565c0;">🧾 Factures</button>
-                            <button class="gallery-filter-btn button" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #e8f5e8; border-color: #4caf50; color: #2e7d32;">📋 Devis</button>
+                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">📄 Tous</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
+                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #fff3e0; border-color: #ff9800; color: #e65100;">📦 Commandes</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffebee; border-color: #f44336; color: #b71c1c;">📑 Contrats</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #f3e5f5; border-color: #9c27b0; color: #6a1b9a;">📰 Newsletters</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -475,45 +402,27 @@ var pdfBuilderAjax = {
                         <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
 
                         <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Format</label>
-                            <select id="template-format" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <?php
-                                $format_options = get_format_options();
-                                foreach ($allowed_formats as $format):
-                                    $label = isset($format_options[$format]) ? $format_options[$format] : $format;
-                                ?>
-                                    <option value="<?php echo esc_attr($format); ?>"><?php echo esc_html($label); ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="template-public" style="margin-right: 8px;">
+                                <span>Template public (visible par tous les utilisateurs)</span>
+                            </label>
                         </div>
 
                         <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">DPI (résolution)</label>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <select id="template-dpi" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                    <?php foreach ($allowed_dpis as $dpi): ?>
-                                        <option value="<?php echo esc_attr($dpi); ?>"><?php echo esc_html($dpi); ?> DPI</option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div id="resolution-display" style="background: #f8f9fa; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #666; min-width: 120px; text-align: center;">
-                                    Résolution: -- × -- px
-                                </div>
-                            </div>
+                            <label style="display: block; margin-bottom: 5px;">Format de papier</label>
+                            <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <option value="A4">A4 (594 × 1123 px)</option>
+                                <option value="A3">A3 (840 × 1191 px)</option>
+                                <option value="Letter">Letter (612 × 792 px)</option>
+                                <option value="Legal">Legal (612 × 1008 px)</option>
+                            </select>
                         </div>
 
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">Orientation</label>
                             <select id="template-orientation" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <?php
-                                $orientation_labels = [
-                                    'portrait' => 'Portrait (Vertical)',
-                                    'landscape' => 'Paysage (Horizontal)'
-                                ];
-                                foreach ($allowed_orientations as $orientation):
-                                    $label = isset($orientation_labels[$orientation]) ? $orientation_labels[$orientation] : ucfirst($orientation);
-                                ?>
-                                    <option value="<?php echo esc_attr($orientation); ?>"><?php echo esc_html($label); ?></option>
-                                <?php endforeach; ?>
+                                <option value="portrait">Portrait</option>
+                                <option value="landscape">Paysage</option>
                             </select>
                         </div>
                     </div>
@@ -581,16 +490,6 @@ var pdfBuilderAjax = {
     }
 }
 
-/* Masquer la notification de limite de templates quand elle est dismissed */
-#template-limit-notice.dismissed {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-}
-
 .template-modal-content input[type="checkbox"] {
     width: auto;
     margin: 0;
@@ -628,29 +527,15 @@ var pdfBuilderAjax = {
 
 
 .gallery-filter-btn.active {
-    -webkit-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
-    -moz-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
-    -ms-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
-    -o-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
-    box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
-    font-weight: bold;
+    -webkit-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -moz-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -ms-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -o-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    font-weight: bold !important;
 }
 
-/* Style pour les boutons désactivés (freemium) */
-.button-disabled {
-    background-color: #f0f0f0 !important;
-    border-color: #ddd !important;
-    color: #999 !important;
-    cursor: not-allowed !important;
-    opacity: 0.6 !important;
-}
 
-.button-disabled:hover {
-    background-color: #f0f0f0 !important;
-    border-color: #ddd !important;
-    color: #999 !important;
-    transform: none !important;
-}
 </style>
 
 <!-- Modal d'upgrade pour templates freemium -->
@@ -724,12 +609,9 @@ var pdfBuilderAjax = {
 <script>
 // Fonction pour afficher modal upgrade
 function showUpgradeModal(reason) {
-    console.log('showUpgradeModal called with reason:', reason);
     const modal = document.getElementById('upgrade-modal-' + reason);
-    console.log('Modal element:', modal);
     if (modal) {
         modal.style.display = 'flex';
-        console.log('Modal displayed');
 
         // Tracking pour analytics (si disponible)
         if (typeof gtag !== 'undefined') {
@@ -739,8 +621,6 @@ function showUpgradeModal(reason) {
                 'page': 'templates'
             });
         }
-    } else {
-        console.error('Modal upgrade-modal-' + reason + ' not found');
     }
 }
 
@@ -792,395 +672,5 @@ document.addEventListener('click', function(e) {
         e.target.closest('.modal-overlay').style.display = 'none';
     }
 });
-
-// Fonction pour masquer la notification de limite de templates
-function dismissTemplateLimitNotice() {
-    console.log('dismissTemplateLimitNotice called');
-    const notice = document.getElementById('template-limit-notice');
-    console.log('Notice element:', notice);
-    if (notice) {
-        // Masquer avec une classe CSS au lieu de supprimer du DOM
-        notice.classList.add('dismissed');
-        console.log('Notification masquée avec classe CSS');
-
-        // Sauvegarder l'état de masquage dans localStorage
-        localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
-        console.log('État sauvegardé dans localStorage');
-    } else {
-        console.error('Element template-limit-notice non trouvé');
-    }
-}
-
-// Fonction pour réafficher la notification de limite de templates
-function showTemplateLimitNotice() {
-    console.log('showTemplateLimitNotice called');
-    const notice = document.getElementById('template-limit-notice');
-    if (notice) {
-        // Réafficher en supprimant la classe CSS
-        notice.classList.remove('dismissed');
-        console.log('Notification réaffichée');
-    }
-
-    // Supprimer l'état de masquage de localStorage
-    localStorage.removeItem('pdf_builder_template_limit_dismissed');
-    console.log('État de masquage supprimé du localStorage');
-}
-
-// Vérifier au chargement de la page si la notification a été masquée
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, checking for dismissed notice');
-    const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
-    console.log('Dismissed status:', dismissed);
-    if (dismissed === 'true') {
-        dismissTemplateLimitNotice();
-    }
-
-    // Observer les changements sur la notification
-    const notice = document.getElementById('template-limit-notice');
-    if (notice) {
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    console.log('Notification class changed:', notice.className);
-                    console.log('Has dismissed class:', notice.classList.contains('dismissed'));
-                }
-            });
-        });
-        observer.observe(notice, { attributes: true, attributeFilter: ['class'] });
-        console.log('MutationObserver set up for notification');
-
-        // Vérification périodique pour forcer le masquage si nécessaire
-        setInterval(function() {
-            const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
-            if (dismissed === 'true' && !notice.classList.contains('dismissed')) {
-                console.log('Forcing dismiss class back on notification');
-                notice.classList.add('dismissed');
-            }
-        }, 1000); // Vérifier chaque seconde
-    }
-
-    // Gestion du filtrage des templates
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const templateItems = document.querySelectorAll('.template-card');
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Retirer la classe active de tous les boutons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-
-            // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
-
-            const filterValue = this.getAttribute('data-filter');
-
-            templateItems.forEach(item => {
-                if (filterValue === 'all') {
-                    item.style.display = 'block';
-                } else {
-                    const itemCategory = item.getAttribute('data-category') || 'autre';
-                    if (itemCategory === filterValue) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                }
-            });
-        });
-    });
-});
-
-// Fonctions pour la gestion des paramètres du template
-let currentTemplateId = null;
-
-// Fonction pour calculer et afficher la résolution en temps réel
-function updateResolutionDisplay() {
-    const formatSelect = document.getElementById('template-format');
-    const dpiSelect = document.getElementById('template-dpi');
-    const orientationSelect = document.getElementById('template-orientation');
-    const resolutionDisplay = document.getElementById('resolution-display');
-    
-    if (!formatSelect || !dpiSelect || !orientationSelect || !resolutionDisplay) return;
-    
-    const format = formatSelect.value;
-    const dpi = parseInt(dpiSelect.value);
-    const orientation = orientationSelect.value;
-    
-    if (isNaN(dpi) || dpi <= 0) {
-        resolutionDisplay.textContent = 'Résolution: -- × -- px';
-        return;
-    }
-    
-    // Dimensions physiques des formats en millimètres
-    const formatDimensions = {
-        'A4': { width: 210, height: 297 },
-        'A3': { width: 297, height: 420 },
-        'Letter': { width: 215.9, height: 279.4 }, // 8.5 x 11 pouces en mm
-        'Legal': { width: 215.9, height: 355.6 },  // 8.5 x 14 pouces en mm
-        'EtiquetteColis': { width: 100, height: 150 } // 10 x 15 cm en mm
-    };
-    
-    const dimensions = formatDimensions[format] || formatDimensions['A4'];
-    
-    // Conversion mm vers pouces (1 pouce = 25.4 mm)
-    let widthInches = dimensions.width / 25.4;
-    let heightInches = dimensions.height / 25.4;
-    
-    // Calcul des dimensions en pixels
-    let widthPx = Math.round(widthInches * dpi);
-    let heightPx = Math.round(heightInches * dpi);
-    
-    // Inversion si orientation paysage
-    if (orientation === 'landscape') {
-        [widthPx, heightPx] = [heightPx, widthPx];
-    }
-    
-    resolutionDisplay.textContent = `Résolution: ${widthPx} × ${heightPx} px`;
-}
-
-// Fonction pour mettre à jour les dimensions du canvas dans l'éditeur
-function updateCanvasDimensions() {
-    const formatSelect = document.getElementById('template-format');
-    const dpiSelect = document.getElementById('template-dpi');
-    const orientationSelect = document.getElementById('template-orientation');
-    
-    if (!formatSelect || !dpiSelect || !orientationSelect) return;
-    
-    const format = formatSelect.value;
-    const dpi = parseInt(dpiSelect.value);
-    const orientation = orientationSelect.value;
-    
-    // Dimensions physiques des formats en millimètres
-    const formatDimensions = {
-        'A4': { width: 210, height: 297 },
-        'A3': { width: 297, height: 420 },
-        'Letter': { width: 215.9, height: 279.4 },
-        'Legal': { width: 215.9, height: 355.6 },
-        'EtiquetteColis': { width: 100, height: 150 }
-    };
-    
-    const dimensions = formatDimensions[format] || formatDimensions['A4'];
-    
-    // Conversion mm vers pouces (1 pouce = 25.4 mm)
-    let widthInches = dimensions.width / 25.4;
-    let heightInches = dimensions.height / 25.4;
-    
-    // Calcul des dimensions en pixels
-    let widthPx = Math.round(widthInches * dpi);
-    let heightPx = Math.round(heightInches * dpi);
-    
-    // Inversion si orientation paysage
-    if (orientation === 'landscape') {
-        [widthPx, heightPx] = [heightPx, widthPx];
-    }
-    
-    // Mettre à jour les paramètres du canvas dans l'éditeur
-    if (window.pdfBuilderCanvasSettings) {
-        window.pdfBuilderCanvasSettings.canvas_width = widthPx;
-        window.pdfBuilderCanvasSettings.canvas_height = heightPx;
-        window.pdfBuilderCanvasSettings.canvas_format = format;
-        window.pdfBuilderCanvasSettings.canvas_dpi = dpi;
-        window.pdfBuilderCanvasSettings.canvas_orientation = orientation;
-    }
-    
-    // Mettre à jour les indicateurs dans l'interface canvas
-    updateCanvasIndicators(widthPx, heightPx, dpi, format, dimensions.width, dimensions.height);
-    
-    // Déclencher un événement pour notifier l'éditeur du changement
-    if (window.dispatchEvent) {
-        window.dispatchEvent(new CustomEvent('canvasSettingsChanged', {
-            detail: {
-                width: widthPx,
-                height: heightPx,
-                format: format,
-                dpi: dpi,
-                orientation: orientation
-            }
-        }));
-    }
-}
-
-// Fonction pour mettre à jour les indicateurs de dimensions dans l'interface canvas
-function updateCanvasIndicators(widthPx, heightPx, dpi, format, widthMm, heightMm) {
-    // Mettre à jour les éléments d'indicateur s'ils existent
-    const widthElement = document.getElementById('card-canvas-width');
-    const heightElement = document.getElementById('card-canvas-height');
-    const dpiElement = document.getElementById('card-canvas-dpi');
-    
-    if (widthElement) widthElement.textContent = widthPx;
-    if (heightElement) heightElement.textContent = heightPx;
-    if (dpiElement) dpiElement.textContent = `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`;
-    
-    // Utiliser aussi CanvasPreviewManager si disponible
-    if (window.CanvasPreviewManager) {
-        const widthEl = window.CanvasPreviewManager.getCardElement ? 
-            window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-width') : widthElement;
-        const heightEl = window.CanvasPreviewManager.getCardElement ? 
-            window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-height') : heightElement;
-        const dpiEl = window.CanvasPreviewManager.getCardElement ? 
-            window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-dpi') : dpiElement;
-        
-        if (widthEl) window.CanvasPreviewManager.updateElement(widthEl, 'textContent', widthPx);
-        if (heightEl) window.CanvasPreviewManager.updateElement(heightEl, 'textContent', heightPx);
-        if (dpiEl) window.CanvasPreviewManager.updateElement(dpiEl, 'textContent', `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`);
-    }
-}
-
-// Fonction pour définir les valeurs par défaut selon le format
-function setFormatDefaults(format) {
-    const formatDefaults = {
-        'A4': { dpi: '96', orientation: 'portrait' },
-        'A3': { dpi: '150', orientation: 'portrait' },
-        'Letter': { dpi: '96', orientation: 'portrait' },
-        'Legal': { dpi: '96', orientation: 'portrait' },
-        'EtiquetteColis': { dpi: '150', orientation: 'portrait' }
-    };
-    
-    const defaults = formatDefaults[format] || formatDefaults['A4'];
-    
-    // Mettre à jour les selects
-    const dpiSelect = document.getElementById('template-dpi');
-    const orientationSelect = document.getElementById('template-orientation');
-    
-    if (dpiSelect) dpiSelect.value = defaults.dpi;
-    if (orientationSelect) orientationSelect.value = defaults.orientation;
-    
-    // Mettre à jour l'affichage de la résolution
-    updateResolutionDisplay();
-    
-    // Calculer et mettre à jour les dimensions du canvas pour l'éditeur
-    updateCanvasDimensions();
-}
-
-// Écouteur pour mettre à jour les valeurs quand le format change
-document.addEventListener('change', function(e) {
-    if (e.target && e.target.id === 'template-format') {
-        setFormatDefaults(e.target.value);
-    }
-});
-
-// Écouteur pour mettre à jour la résolution et les dimensions du canvas quand le DPI change
-document.addEventListener('change', function(e) {
-    if (e.target && e.target.id === 'template-dpi') {
-        updateResolutionDisplay();
-        updateCanvasDimensions();
-    }
-});
-
-// Écouteur pour mettre à jour la résolution et les dimensions du canvas quand l'orientation change
-document.addEventListener('change', function(e) {
-    if (e.target && e.target.id === 'template-orientation') {
-        updateResolutionDisplay();
-        updateCanvasDimensions();
-    }
-});
-
-// Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    // Mise à jour initiale si nécessaire
-    updateResolutionDisplay();
-});
-
-function openTemplateSettings(templateId, templateName) {
-    currentTemplateId = templateId;
-    
-    // Afficher le modal
-    document.getElementById('template-settings-modal').style.display = 'flex';
-    
-    // Mettre à jour le titre
-    document.getElementById('template-settings-title').textContent = '⚙️ Paramètres du Template: ' + templateName;
-    
-    // Charger les paramètres actuels
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_load_template_settings',
-            'nonce': pdfBuilderTemplatesNonce,
-            'template_id': templateId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remplir les champs
-            document.getElementById('template-name-input').value = data.data.name || '';
-            document.getElementById('template-description-input').value = data.data.description || '';
-            document.getElementById('template-format').value = data.data.format || 'A4';
-            document.getElementById('template-dpi').value = data.data.dpi || '96';
-            document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
-            document.getElementById('template-category').value = data.data.category || 'autre';
-            
-            // Mettre à jour l'affichage de la résolution
-            updateResolutionDisplay();
-            
-            // Mettre à jour les dimensions du canvas dans l'éditeur
-            updateCanvasDimensions();
-        } else {
-            console.error('Erreur chargement paramètres:', data.data);
-            alert('Erreur lors du chargement des paramètres du template');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur AJAX:', error);
-        alert('Erreur lors du chargement des paramètres du template');
-    });
-}
-
-function closeTemplateSettings() {
-    document.getElementById('template-settings-modal').style.display = 'none';
-    currentTemplateId = null;
-}
-
-function saveTemplateSettings() {
-    if (!currentTemplateId) {
-        alert('Erreur: ID du template manquant');
-        return;
-    }
-    
-    const name = document.getElementById('template-name-input').value.trim();
-    if (!name) {
-        alert('Le nom du template est obligatoire');
-        return;
-    }
-    
-    // Collecter les données
-    const data = {
-        'action': 'pdf_builder_save_template_settings',
-        'nonce': pdfBuilderTemplatesNonce,
-        'template_id': currentTemplateId,
-        'name': name,
-        'description': document.getElementById('template-description-input').value,
-        'format': document.getElementById('template-format').value,
-        'dpi': document.getElementById('template-dpi').value,
-        'orientation': document.getElementById('template-orientation').value,
-        'category': document.getElementById('template-category').value
-    };
-    
-    // Sauvegarder
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Paramètres sauvegardés avec succès');
-            closeTemplateSettings();
-            // Recharger la page pour afficher les changements
-            location.reload();
-        } else {
-            console.error('Erreur sauvegarde:', data.data);
-            alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Erreur AJAX:', error);
-        alert('Erreur lors de la sauvegarde des paramètres');
-    });
-}
-</script>
+</script> 
+ 

@@ -1021,8 +1021,8 @@ Le fichier CSS `pdf-builder-pro-admin.css` contient :
 
 ## 📋 Changelog
 
-### v1.0.0 (03/10/2025)
-- ✅ **Interface ultra-moderne v1.0** avec aperçu temps réel avancé
+### v5.0.0 (03/10/2025)
+- ✅ **Interface ultra-moderne v5.0** avec aperçu temps réel avancé
 - ✅ **Configuration avancée** avec contrôles de zoom, raccourcis clavier
 - ✅ **Mode plein écran immersif** avec contrôles flottants
 - ✅ **Outils professionnels** : grille aimantée, règles, mesures
@@ -1093,30 +1093,7 @@ Console JavaScript affiche toutes les étapes d'initialisation.
 
 ---
 
-**Plugin PDF Builder Pro v1.1.0 - Interface Ultra-Moderne !** 🎉
-
-**Plugin PDF Builder Pro v1.1.0.1 - optimisation du code dans le plugin !** 🛠️
-
-**Plugin PDF Builder Pro v1.1.0.2 - Corrections de Bugs Mineurs !** 🐛
-
-**Plugin PDF Builder Pro v1.1.0.2.1 - correction du systeme de template !** 🔧 
-
-**Plugin PDF Builder Pro v1.1.0.2.2 - correction du systeme de paramètres du plugin !** 🔨
-
-**Plugin PDF Builder Pro v1.1.0.2.3 - correction du systeme de l'éditeur pdf !** 🔨
-
-**Plugin PDF Builder Pro v1.1.0.4 - intégration metabox WooCommerce !** 🛒
-
-**Plugin PDF Builder Pro v1.1.0.5 - Intégration aperçu pdf/png/jpg en temps réel !** 👀
-
-**Plugin PDF Builder Pro v1.1.0.6 - coorection du systeme premium / basic !** 🔧
-
-**Plugin PDF Builder Pro v1.1.0.7 - amélioration de la page des paramètres !** ⚙️
-
-**Plugin PDF Builder Pro v1.1.0.8 - Performance Optimisée & Sécurité Renforcée !** ⚡🔒
-
-**Plugin PDF Builder Pro v1.1.0.10 - Améliorations de Performance !** ⚡
-
-**Plugin PDF Builder Pro v1.2.0 - Sortie officiel du plugin sur wordpress.org et woocommerce !** 🚀
-
-**Plugin PDF Builder Pro v1.2.0.1 - Amélioratioin de la gestion des forms en ajax !** 🛠️
+**Plugin PDF Builder Pro v5.0.0 - Interface Ultra-Moderne !** 🎉
+#   F i x   c a n v a s   p r e v i e w   -   r e a d y   f o r   d e p l o y m e n t 
+ 
+ 

@@ -59,15 +59,58 @@ class PDFEditorPreviewIntegration {
     }
 
     init() {
-        // this.createPreviewButton(); // Supprimé
+        this.createPreviewButton();
         this.bindEvents();
     }
 
-    // createPreviewButton() supprimée - fonction plus utilisée
+    createPreviewButton() {
+        // Créer le bouton d'aperçu dans la barre d'outils
+        this.previewBtn = document.createElement('button');
+        this.previewBtn.id = 'pdf-editor-preview-btn';
+        this.previewBtn.innerHTML = '👁️ Aperçu';
+        this.previewBtn.title = 'Générer un aperçu PDF';
+        this.previewBtn.style.cssText = `
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        `;
+
+        // L'ajouter à la barre d'outils existante
+        const toolbar = document.querySelector('.pdf-editor-toolbar') ||
+                       document.querySelector('#pdf-editor-toolbar') ||
+                       document.querySelector('.toolbar');
+
+        if (toolbar) {
+            toolbar.appendChild(this.previewBtn);
+        } else {
+            // Fallback: l'ajouter au body avec position fixe
+            this.previewBtn.style.position = 'fixed';
+            this.previewBtn.style.top = '10px';
+            this.previewBtn.style.right = '10px';
+            this.previewBtn.style.zIndex = '1000';
+            document.body.appendChild(this.previewBtn);
+        }
+    }
 
     bindEvents() {
-        // Raccourci clavier Ctrl+P (ou Cmd+P sur Mac) - supprimé car bouton supprimé
-        // Code supprimé - plus de raccourci clavier pour la prévisualisation
+        if (this.previewBtn) {
+            this.previewBtn.addEventListener('click', () => {
+                this.generatePreview();
+            });
+        }
+
+        // Raccourci clavier Ctrl+P (ou Cmd+P sur Mac)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                this.generatePreview();
+            }
+        });
     }
 
     async generatePreview() {
@@ -216,6 +259,11 @@ class PDFEditorPreviewIntegration {
         if (window.pdfEditorTemplate) {
             PDFBuilderLogger.debug('Utilisation de window.pdfEditorTemplate');
             return window.pdfEditorTemplate;
+        }
+
+        if (localStorage.getItem('pdf-builder-template')) {
+            PDFBuilderLogger.debug('Utilisation du localStorage');
+            return JSON.parse(localStorage.getItem('pdf-builder-template'));
         }
 
         // Template par défaut pour les tests

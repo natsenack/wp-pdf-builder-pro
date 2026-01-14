@@ -3,6 +3,11 @@
  * Prevents "Too many connections" errors by limiting concurrent requests
  */
 
+// Debug functions
+
+    return false;
+}
+
 (function() {
     'use strict';
 
@@ -55,5 +60,6 @@
         };
     };
 
+    ');
 })();
 

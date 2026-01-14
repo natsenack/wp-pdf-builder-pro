@@ -6,7 +6,7 @@
 (function() {
     'use strict';
 
-    // console.log('🔍 PDF Builder: Starting JavaScript syntax diagnostic...');
+    console.log('🔍 PDF Builder: Starting JavaScript syntax diagnostic...');
 
     // Function to count try/catch blocks in a script
     function analyzeScript(script, index) {
@@ -45,7 +45,7 @@
 
         // Skip scripts that contain HTML templates (Elementor templates)
         if (content.startsWith('<') || content.includes('<div') || content.includes('<span') || content.includes('<a ')) {
-            // console.log(`⏭️ Skipping HTML template script ${index} (${script.src || 'inline'})`);
+            console.log(`⏭️ Skipping HTML template script ${index} (${script.src || 'inline'})`);
             return { index: index, src: script.src || 'inline', syntaxValid: true, error: null, skipped: true };
         }
 
@@ -78,7 +78,7 @@
         let totalCatch = 0;
         let syntaxErrors = [];
 
-        // console.log(`📊 Found ${scripts.length} script tags to analyze`);
+        console.log(`📊 Found ${scripts.length} script tags to analyze`);
 
         scripts.forEach((script, index) => {
             const result = analyzeScript(script, index + 1);
@@ -90,12 +90,12 @@
                 if (!result.balanced) {
                     console.error(`❌ IMBALANCE in script ${index + 1}:`, result);
                 } else {
-                    // console.log(`✅ Balanced script ${index + 1}: try=${result.tryCount}, catch=${result.catchCount}, lines=${result.totalLines}`);
+                    console.log(`✅ Balanced script ${index + 1}: try=${result.tryCount}, catch=${result.catchCount}, lines=${result.totalLines}`);
                 }
 
                 // Check if this script contains line 1889
                 if (result.hasLine1889 && result.line1889) {
-                    // console.log(`🎯 Script ${index + 1} contains line 1889: "${result.line1889}"`);
+                    console.log(`🎯 Script ${index + 1} contains line 1889: "${result.line1889}"`);
                 }
 
                 // Check syntax
@@ -106,8 +106,8 @@
             }
         });
 
-        // console.log(`📈 TOTAL: try=${totalTry}, catch=${totalCatch}, balanced=${totalTry === totalCatch}`);
-        // console.log(`🚨 SYNTAX ERRORS FOUND: ${syntaxErrors.length}`);
+        console.log(`📈 TOTAL: try=${totalTry}, catch=${totalCatch}, balanced=${totalTry === totalCatch}`);
+        console.log(`🚨 SYNTAX ERRORS FOUND: ${syntaxErrors.length}`);
 
         if (syntaxErrors.length > 0) {
             console.error('🚨 CRITICAL: Syntax errors detected:', syntaxErrors);
@@ -116,7 +116,7 @@
         if (totalTry !== totalCatch) {
             console.error('🚨 CRITICAL: Try/Catch imbalance detected across all scripts!');
         } else {
-            // console.log('✅ All scripts appear to have balanced try/catch blocks');
+            console.log('✅ All scripts appear to have balanced try/catch blocks');
         }
 
         // Store results for debugging
@@ -141,12 +141,12 @@
 
     // Also run after delays to catch dynamically loaded scripts
     setTimeout(() => {
-        // console.log('🔄 Running delayed diagnostic (2s)...');
+        console.log('🔄 Running delayed diagnostic (2s)...');
         diagnoseScripts();
     }, 2000);
 
     setTimeout(() => {
-        // console.log('🔄 Running delayed diagnostic (5s)...');
+        console.log('🔄 Running delayed diagnostic (5s)...');
         diagnoseScripts();
     }, 5000);
 

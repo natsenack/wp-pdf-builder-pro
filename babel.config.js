@@ -6,8 +6,7 @@ export default {
         targets: {
           node: 'current',
           browsers: ['last 2 versions']
-        },
-        modules: 'commonjs'
+        }
       }
     ]
   ],
@@ -21,7 +20,5 @@ export default {
         '@babel/plugin-transform-runtime'
       ]
     }
-  },
-  // Disable strict mode to avoid issues with window assignments
-  sourceType: 'script'
+  }
 };

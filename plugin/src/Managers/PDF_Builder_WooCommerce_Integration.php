@@ -6,19 +6,6 @@ namespace PDF_Builder\Managers;
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
-
-/**
- * Check if WooCommerce is active
- */
-if (!function_exists('pdf_builder_is_woocommerce_active')) {
-    function pdf_builder_is_woocommerce_active() {
-        return class_exists('WooCommerce');
-    }
-}
-
-// WooCommerce function stubs for Intelephense
-require_once dirname(__DIR__, 2) . '/woocommerce-stubs.php';
-
 /**
  * PDF Builder Pro - WooCommerce Integration Manager
  * Gestion de l'intégration WooCommerce

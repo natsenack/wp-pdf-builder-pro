@@ -657,14 +657,6 @@ class PdfBuilderAdmin
     }
 
     /**
-     * Récupère l'instance du template processor
-     */
-    public function getTemplateProcessor()
-    {
-        return $this->template_processor;
-    }
-
-    /**
      * Vérifie les permissions d'administration sans mise en cache
      */
     private function checkAdminPermissions()
@@ -879,7 +871,7 @@ class PdfBuilderAdmin
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
         // Script loading is handled by AdminScriptLoader
-        add_action('admin_enqueue_scripts', [$this->script_loader, 'loadAdminScripts'], 20);
+        // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
         // Inclure le gestionnaire de modèles prédéfinis
         include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/predefined-templates-manager.php';

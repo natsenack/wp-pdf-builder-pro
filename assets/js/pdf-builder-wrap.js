@@ -6,54 +6,6 @@
 (function() {
     'use strict';
 
-    // Gestionnaire d'erreurs ultra-précoce pour les erreurs de syntaxe des extensions
-    // Doit être exécuté avant tout autre code pour capturer les erreurs de parsing
-    var originalOnError = window.onerror;
-    window.onerror = function(message, source, lineno, colno, error) {
-        // Intercepter les erreurs de syntaxe des extensions Chrome
-        if (typeof message === 'string' &&
-            (message.includes('Unexpected token \'export\'') ||
-             message.includes('Extension context invalidated') ||
-             message.includes('A listener indicated an asynchronous response by returning true'))) {
-            console.warn('⚠️ Erreur d\'extension interceptée très tôt:', message);
-            return true; // Empêche l'erreur de remonter
-        }
-
-        // Appeler l'ancien gestionnaire si existant
-        if (originalOnError) {
-            return originalOnError(message, source, lineno, colno, error);
-        }
-
-        return false;
-    };
-
-    // Gestionnaire d'erreurs global pour les erreurs d'extensions de navigateur
-    // Intercepte les erreurs courantes des extensions Chrome comme les contextes invalidés ou les canaux de messagerie fermés
-    window.addEventListener('unhandledrejection', function(event) {
-        const error = event.reason;
-        if (error && typeof error.message === 'string' &&
-            (error.message.includes('A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received') ||
-             error.message.includes('Extension context invalidated.') ||
-             error.message.includes('Unexpected token \'export\''))) {
-            console.warn('⚠️ Erreur d\'extension interceptée et ignorée:', error.message);
-            event.preventDefault(); // Empêche l'erreur de remonter
-            return false; // Indique que l'erreur a été gérée
-        }
-    });
-
-    // Gestionnaire d'erreurs global pour les erreurs synchrones d'extensions
-    window.addEventListener('error', function(event) {
-        const error = event.error || event.message;
-        if (error && typeof error === 'string' &&
-            (error.includes('A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received') ||
-             error.includes('Extension context invalidated.') ||
-             error.includes('Unexpected token \'export\''))) {
-            console.warn('⚠️ Erreur d\'extension synchronisée interceptée et ignorée:', error);
-            event.preventDefault(); // Empêche l'erreur de remonter
-            return false; // Indique que l'erreur a été gérée
-        }
-    });
-
     // Create initialized flag
     var isInitialized = false;
     var initialized = {};

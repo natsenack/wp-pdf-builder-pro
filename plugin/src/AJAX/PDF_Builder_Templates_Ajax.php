@@ -24,7 +24,6 @@ class PdfBuilderTemplatesAjax
         add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'saveTemplateSettings'));
         add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'setDefaultTemplate'));
         add_action('wp_ajax_pdf_builder_delete_template', array($this, 'deleteTemplate'));
-        add_action('wp_ajax_pdf_builder_duplicate_template', array($this, 'duplicateTemplate'));
         add_action('wp_ajax_pdf_builder_save_order_status_templates', array($this, 'saveOrderStatusTemplates'));
     }
 
@@ -256,8 +255,8 @@ class PdfBuilderTemplatesAjax
                 'name' => $template['name'],
                 'description' => $template_data['description'] ?? 'Description du template...',
                 'category' => $template_data['category'] ?? 'autre',
-                'format' => $template_data['format'] ?? 'A4',
-                'dpi' => $template_data['dpi'] ?? 96,
+                'is_public' => $template_data['is_public'] ?? false,
+                'paper_size' => $template_data['paper_size'] ?? 'A4',
                 'orientation' => $template_data['orientation'] ?? 'portrait'
             );
             wp_send_json_success($settings);
@@ -285,8 +284,8 @@ class PdfBuilderTemplatesAjax
             $template_id = intval($_POST['template_id'] ?? 0);
             $name = sanitize_text_field($_POST['name'] ?? '');
             $description = sanitize_textarea_field($_POST['description'] ?? '');
-            $format = sanitize_text_field($_POST['format'] ?? 'A4');
-            $dpi = intval($_POST['dpi'] ?? 96);
+            $is_public = intval($_POST['is_public'] ?? 0);
+            $paper_size = sanitize_text_field($_POST['paper_size'] ?? 'A4');
             $orientation = sanitize_text_field($_POST['orientation'] ?? 'portrait');
             $category = sanitize_text_field($_POST['category'] ?? 'autre');
             if (empty($template_id) || empty($name)) {
@@ -327,8 +326,8 @@ class PdfBuilderTemplatesAjax
             // Mettre à jour les paramètres dans template_data
             $template_data['description'] = $description;
             $template_data['category'] = $category;
-            $template_data['format'] = $format;
-            $template_data['dpi'] = $dpi;
+            $template_data['is_public'] = $is_public;
+            $template_data['paper_size'] = $paper_size;
             $template_data['orientation'] = $orientation;
 // Mettre à jour le template
             $result = $wpdb->update($table_templates, array(

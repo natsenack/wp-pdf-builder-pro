@@ -4,10 +4,10 @@
   "type": "module",
   "description": "WordPress PDF Builder Pro - Frontend Assets",
   "scripts": {
-    "build": "echo 'Build skipped - no webpack needed'",
-    "build-prod": "echo 'Build skipped - no webpack needed'",
-    "dev": "echo 'Dev mode skipped - no webpack needed'",
-    "watch": "echo 'Watch mode skipped - no webpack needed'",
+    "build": "webpack --config=dev/config/build/webpack.config.cjs --mode=production",
+    "build-prod": "webpack --config=dev/config/build/webpack.config.cjs --mode=production",
+    "dev": "webpack --config=dev/config/build/webpack.config.cjs --mode=development",
+    "watch": "webpack --config=dev/config/build/webpack.config.cjs --mode=development --watch",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:integration": "node -e \"console.log('Running integration tests...'); console.log('Integration tests completed successfully')\"",
@@ -17,8 +17,8 @@
     "test:resilience": "jest tests/canvas-resilience.test.js"
   },
   "devDependencies": {
-    "@babel/cli": "^7.28.6",
     "@babel/core": "^7.20.0",
+    "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/preset-env": "^7.20.0",
     "@babel/preset-react": "^7.23.3",
