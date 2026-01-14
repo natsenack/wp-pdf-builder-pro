@@ -132,7 +132,8 @@ window.pdfBuilderReact = {
   exportTemplate,
   saveTemplate,
   registerEditorInstance,
-  resetAPI
+  resetAPI,
+  _isWebpackBundle: true
 };
 debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
 
