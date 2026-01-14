@@ -1532,12 +1532,6 @@ class AjaxHandler
                 return;
             }
 
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
-                return;
-            }
-
             // Récupérer les paramètres du canvas
             $canvas_manager = Canvas_Manager::get_instance();
             $settings = $canvas_manager->getAllSettings();
