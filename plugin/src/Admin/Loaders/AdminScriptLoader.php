@@ -258,6 +258,10 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], $version_param, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
 
+        // CSS pour l'éditeur React
+        $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css';
+        wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param);
+
         // Wrapper script (dépend du bundle principal)
         $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
         
