@@ -267,26 +267,26 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
-        // FORCE COMPLETE RELOAD - Use ULTRA aggressive version parameters to bypass ALL caching
-        $ultra_force_suffix = '-ULTRA-FORCE-' . time() . '-' . microtime(true) . '-UNIQUE-' . rand(1000000, 9999999) . '-CACHE-BUST';
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . microtime(true) . '-' . rand(10000, 99999) . '-FORCE-' . uniqid();
+        // FORCE COMPLETE RELOAD - Use NUCLEAR aggressive version parameters to bypass ALL caching
+        $nuclear_suffix = '-NUCLEAR-' . microtime(true) . '-' . time() . '-' . uniqid('NUKE', true) . '-FORCE-RELOAD-' . rand(10000000, 99999999);
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . microtime(true) . '-' . rand(100000, 999999) . '-NUKE-' . uniqid();
 
         // Bundle React principal (contient le code React)
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
-        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], $version_param . $ultra_force_suffix, true);
+        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] ULTRA FORCE Enqueued pdf-builder-react-main: ' . $react_main_url . ' with version: ' . $version_param . $ultra_force_suffix);
+        error_log('[WP AdminScriptLoader] NUCLEAR FORCE Enqueued pdf-builder-react-main: ' . $react_main_url . ' with version: ' . $version_param . $nuclear_suffix);
 
         // CSS pour l'éditeur React
         $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css';
-        wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param . $ultra_force_suffix);
+        wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param . $nuclear_suffix);
 
         // Wrapper script (dépend du bundle principal)
         $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
-        
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-main'], $version_param . $ultra_force_suffix, true);
+
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] ULTRA FORCE Enqueued pdf-builder-react: ' . $react_script_url . ' with version: ' . $version_param . $ultra_force_suffix);
+        error_log('[WP AdminScriptLoader] NUCLEAR FORCE Enqueued pdf-builder-react: ' . $react_script_url . ' with version: ' . $version_param . $nuclear_suffix);
         
         // Localize script data BEFORE enqueuing
         $localize_data = [

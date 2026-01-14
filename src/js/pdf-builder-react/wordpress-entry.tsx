@@ -82,6 +82,8 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
+  // LOG ABSOLU AU DÉBUT - VERSION NUCLEAR
+  console.log('💥💥💥 NUCLEAR_DEBUG_V1: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 💥💥💥');
   console.log('🚀🚀🚀 EXTREME_DEBUG_V3: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚀🚀🚀');
   console.error('UNIQUE_DEBUG: initPDFBuilderReact called at ' + new Date().toISOString());
 
