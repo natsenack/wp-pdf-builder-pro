@@ -28,7 +28,6 @@
 
     // Create initial stub but DON'T assign to window yet
     var stub = createStub();
-    ');
 
     // Check if webpack bundle has replaced the stub
     // Look for the webpack bundle flag
@@ -38,15 +37,14 @@
 
         }
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function' && window.pdfBuilderReact._isWebpackBundle) {
-            ');
             isInitialized = true;
             clearInterval(checkRealModule);
-            
+
             // Dispatch ready event
             try {
                 var event = new Event('pdfBuilderReactReady');
                 document.dispatchEvent(event);
-                
+
             } catch (e) {
                 // console.error('[pdf-builder-wrap] Error dispatching event:', e);
             }
@@ -62,9 +60,8 @@
             if (!window.pdfBuilderReact || !window.pdfBuilderReact._isWebpackBundle) {
                 window.pdfBuilderReact = stub;
                 Object.assign(initialized, window.pdfBuilderReact);
-                ');
             } else {
-                
+
             }
             // Still dispatch event so initialization can proceed
             try {
