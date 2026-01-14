@@ -93,16 +93,16 @@ export const Header = memo(function Header({
   // Debug logging
   useEffect(() => {
     // debugLog('🔄 [PDF Builder] État bouton Enregistrer mis à jour', {
-    //   templateName,
-    //   buttonState: {
-    //     disabled: deferredIsSaving || !deferredIsSaving || deferredIsLoading,
-    //     isSaving: deferredIsSaving,
-    //     isModified: deferredIsModified,
-    //     isLoading: deferredIsLoading,
-    //     canSave: !deferredIsSaving && deferredIsModified && !deferredIsLoading
-    //   },
-    //   timestamp: new Date().toISOString()
-    // });
+      templateName,
+      buttonState: {
+        disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
+        isSaving: deferredIsSaving,
+        isModified: deferredIsModified,
+        isLoading: deferredIsLoading,
+        canSave: !deferredIsSaving && deferredIsModified && !deferredIsLoading
+      },
+      timestamp: new Date().toISOString()
+    });
   }, [deferredIsSaving, deferredIsModified, deferredIsLoading, templateName]);
 
   useEffect(() => {
@@ -513,42 +513,42 @@ export const Header = memo(function Header({
           onClick={async () => {
             const startTime = performance.now();
             // debugLog('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
-            //   templateName,
-            //   isModified: deferredIsModified,
-            //   isSaving: deferredIsSaving,
-            //   isLoading: deferredIsLoading,
-            //   timestamp: new Date().toISOString(),
-            //   // Informations détaillées sur le canvas
-            //   canvasInfo: {
-            //     width: canvasWidth,
-            //     height: canvasHeight,
-            //     showGuides,
-            //     snapToGrid
-            //   },
-            //   // Informations sur les éléments
-            //   elementsInfo: {
-            //     totalElements: state.elements?.length || 0,
-            //     elementTypes: state.elements?.reduce((acc: Record<string, number>, el) => {
-            //       acc[el.type] = (acc[el.type] || 0) + 1;
-            //       return acc;
-            //     }, {}) || {}
-            //   },
-            //   // État du builder
-            //   builderState: {
-            //     template: state.template ? {
-            //       name: state.template.name,
-            //       description: state.template.description,
-            //       hasBackground: !!state.canvas.backgroundColor
-            //     } : null,
-            //     selectedElement: state.selection.selectedElements[0] || null,
-            //     zoom: state.canvas.zoom || 1
-            //   },
-            //   // Paramètres canvas
-            //   canvasSettings: {
-            //     guidesEnabled: canvasSettings.guidesEnabled,
-            //     memoryLimit: canvasSettings.memoryLimitJs
-            //   }
-            // });
+              templateName,
+              isModified: deferredIsModified,
+              isSaving: deferredIsSaving,
+              isLoading: deferredIsLoading,
+              timestamp: new Date().toISOString(),
+              // Informations détaillées sur le canvas
+              canvasInfo: {
+                width: canvasWidth,
+                height: canvasHeight,
+                showGuides,
+                snapToGrid
+              },
+              // Informations sur les éléments
+              elementsInfo: {
+                totalElements: state.elements?.length || 0,
+                elementTypes: state.elements?.reduce((acc: Record<string, number>, el) => {
+                  acc[el.type] = (acc[el.type] || 0) + 1;
+                  return acc;
+                }, {}) || {}
+              },
+              // État du builder
+              builderState: {
+                template: state.template ? {
+                  name: state.template.name,
+                  description: state.template.description,
+                  hasBackground: !!state.canvas.backgroundColor
+                } : null,
+                selectedElement: state.selection.selectedElements[0] || null,
+                zoom: state.canvas.zoom || 1
+              },
+              // Paramètres canvas
+              canvasSettings: {
+                guidesEnabled: canvasSettings.guidesEnabled,
+                memoryLimit: canvasSettings.memoryLimitJs
+              }
+            });
 
             try {
               // debugLog('⏳ [PDF Builder] Début de la sauvegarde...');
@@ -557,31 +557,31 @@ export const Header = memo(function Header({
               const saveDuration = endTime - startTime;
 
               // debugLog('✅ [PDF Builder] Sauvegarde réussie', {
-              //   templateName,
-              //   timestamp: new Date().toISOString(),
-              //   duration: `${saveDuration.toFixed(2)}ms`,
-              //   performance: {
-              //     saveTime: saveDuration,
-              //     elementsCount: state.elements?.length || 0,
-              //     templateSize: JSON.stringify(state.template).length,
-              //     elementsSize: JSON.stringify(state.elements).length
-              //   },
-              //   // Vérification post-sauvegarde
-              //   postSaveState: {
-              //     isModified: false, // Devrait être false après sauvegarde
-              //     isSaving: false
-              //   }
-              // });
+                templateName,
+                timestamp: new Date().toISOString(),
+                duration: `${saveDuration.toFixed(2)}ms`,
+                performance: {
+                  saveTime: saveDuration,
+                  elementsCount: state.elements?.length || 0,
+                  templateSize: JSON.stringify(state.template).length,
+                  elementsSize: JSON.stringify(state.elements).length
+                },
+                // Vérification post-sauvegarde
+                postSaveState: {
+                  isModified: false, // Devrait être false après sauvegarde
+                  isSaving: false
+                }
+              });
 
               // Log des métriques de performance
               // debugLog('📊 [PDF Builder] Métriques de sauvegarde', {
-              //   duration: saveDuration,
-              //   avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
-              //   memoryUsage: (performance as any).memory ? {
-              //     used: (performance as any).memory.usedJSHeapSize,
-              //     total: (performance as any).memory.totalJSHeapSize,
-              //     limit: (performance as any).memory.jsHeapSizeLimit
-              //   } : 'N/A'
+                duration: saveDuration,
+                avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
+                memoryUsage: (performance as any).memory ? {
+                  used: (performance as any).memory.usedJSHeapSize,
+                  total: (performance as any).memory.totalJSHeapSize,
+                  limit: (performance as any).memory.jsHeapSizeLimit
+                } : 'N/A'
               // });
 
             } catch (error) {
@@ -609,21 +609,21 @@ export const Header = memo(function Header({
           disabled={deferredIsSaving || !deferredIsModified || deferredIsLoading}
           onMouseEnter={() => {
             // debugLog('👆 [PDF Builder] Souris sur bouton Enregistrer', {
-            //   templateName,
-            //   buttonState: {
-            //     disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
-            //     isSaving: deferredIsSaving,
-            //     isModified: deferredIsModified,
-            //     isLoading: deferredIsLoading
-            //   },
-            //   timestamp: new Date().toISOString()
+              templateName,
+              buttonState: {
+                disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
+                isSaving: deferredIsSaving,
+                isModified: deferredIsModified,
+                isLoading: deferredIsLoading
+              },
+              timestamp: new Date().toISOString()
             // });
             setHoveredButton('save');
           }}
           onMouseLeave={() => {
             // debugLog('👋 [PDF Builder] Souris quitte bouton Enregistrer', {
-            //   templateName,
-            //   timestamp: new Date().toISOString()
+              templateName,
+              timestamp: new Date().toISOString()
             // });
             setHoveredButton(null);
           }}
