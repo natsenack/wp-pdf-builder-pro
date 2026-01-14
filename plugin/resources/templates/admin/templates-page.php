@@ -121,13 +121,13 @@ var pdfBuilderAjax = {
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border: 1px solid #dee2e6;">
             <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par type</h3>
             <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Tous</button>
-                <button class="filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #e3f2fd; border-color: #2196f3; color: #1565c0;">🧾 Factures</button>
-                <button class="filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #e8f5e8; border-color: #4caf50; color: #2e7d32;">📋 Devis</button>
-                <button class="filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #fff3e0; border-color: #ff9800; color: #e65100;">📦 Commandes</button>
-                <button class="filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #ffebee; border-color: #f44336; color: #b71c1c;">📑 Contrats</button>
-                <button class="filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #f3e5f5; border-color: #9c27b0; color: #6a1b9a;">📰 Newsletters</button>
-                <button class="filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #f5f5f5; border-color: #9e9e9e; color: #424242;">📄 Autres</button>
+                <button class="filter-btn button active" data-filter="all" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Tous</button>
+                <button class="filter-btn button" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #e3f2fd; border-color: #2196f3; color: #1565c0;">🧾 Factures</button>
+                <button class="filter-btn button" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #e8f5e8; border-color: #4caf50; color: #2e7d32;">📋 Devis</button>
+                <button class="filter-btn button" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #fff3e0; border-color: #ff9800; color: #e65100;">📦 Commandes</button>
+                <button class="filter-btn button" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #ffebee; border-color: #f44336; color: #b71c1c;">📑 Contrats</button>
+                <button class="filter-btn button" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #f3e5f5; border-color: #9c27b0; color: #6a1b9a;">📰 Newsletters</button>
+                <button class="filter-btn button" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #f5f5f5; border-color: #9e9e9e; color: #424242;">📄 Autres</button>
             </div>
         </div>
 
@@ -295,13 +295,13 @@ var pdfBuilderAjax = {
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
                         <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                            <button class="gallery-filter-btn active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">📄 Tous</button>
-                            <button class="gallery-filter-btn" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">🧾 Factures</button>
-                            <button class="gallery-filter-btn" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">📋 Devis</button>
+                            <button class="gallery-filter-btn button active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #6c757d; border-color: #6c757d; color: white;">📄 Tous</button>
+                            <button class="gallery-filter-btn button" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #e3f2fd; border-color: #2196f3; color: #1565c0;">🧾 Factures</button>
+                            <button class="gallery-filter-btn button" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #e8f5e8; border-color: #4caf50; color: #2e7d32;">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="gallery-filter-btn" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px;">📦 Commandes</button> -->
-                            <!-- <button class="gallery-filter-btn" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px;">📑 Contrats</button> -->
-                            <!-- <button class="gallery-filter-btn" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px;">📰 Newsletters</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #fff3e0; border-color: #ff9800; color: #e65100;">📦 Commandes</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffebee; border-color: #f44336; color: #b71c1c;">📑 Contrats</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #f3e5f5; border-color: #9c27b0; color: #6a1b9a;">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -546,151 +546,6 @@ var pdfBuilderAjax = {
     -o-box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
     box-shadow: 0 0 0 2px rgba(108,117,125,0.5);
     font-weight: bold;
-}
-
-/* Styles spécifiques pour les boutons de filtrage */
-.gallery-filter-btn[data-filter="all"] {
-    background: #6c757d;
-    border: 1px solid #6c757d;
-    color: white;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-.gallery-filter-btn[data-filter="facture"] {
-    background: #e3f2fd;
-    border: 1px solid #2196f3;
-    color: #1565c0;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-.gallery-filter-btn[data-filter="devis"] {
-    background: #e8f5e8;
-    border: 1px solid #4caf50;
-    color: #2e7d32;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-.gallery-filter-btn[data-filter="commande"] {
-    background: #fff3e0;
-    border: 1px solid #ff9800;
-    color: #e65100;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-.gallery-filter-btn[data-filter="contrat"] {
-    background: #ffebee;
-    border: 1px solid #f44336;
-    color: #b71c1c;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-.gallery-filter-btn[data-filter="newsletter"] {
-    background: #f3e5f5;
-    border: 1px solid #9c27b0;
-    color: #6a1b9a;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-.gallery-filter-btn[data-filter="autre"] {
-    background: #f5f5f5;
-    border: 1px solid #9e9e9e;
-    color: #424242;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 8px 16px;
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-}
-
-/* Styles hover pour les boutons de filtrage */
-.gallery-filter-btn:hover {
-    opacity: 0.8;
-    transform: translateY(-1px);
-    transition: all 0.2s ease;
-    -webkit-transition: all 0.2s ease;
-    -moz-transition: all 0.2s ease;
-    -ms-transition: all 0.2s ease;
-    -o-transition: all 0.2s ease;
 }
 
 
