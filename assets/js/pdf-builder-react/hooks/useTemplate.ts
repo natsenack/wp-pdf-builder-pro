@@ -551,6 +551,9 @@ export function useTemplate() {
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
+      console.log('[PDF_BUILDER_FRONTEND] Nonce envoyé:', window.pdfBuilderData?.nonce);
+      console.log('[PDF_BUILDER_FRONTEND] window.pdfBuilderData:', window.pdfBuilderData);
+
       // Ajouter les paramètres du template
       formData.append('show_guides', state.template.showGuides ? '1' : '0');
       formData.append('snap_to_grid', state.template.snapToGrid ? '1' : '0');
