@@ -1727,24 +1727,55 @@ function pdf_builder_save_template_handler() {
         $template_data = mb_convert_encoding($template_data, 'UTF-8', 'UTF-8');
         $template_data = preg_replace('/[\x00-\x1F\x7F]/', '', $template_data); // Remove control characters
 
-        // Try to decode with different approaches
+        // Try multiple approaches to decode JSON
+        $decoded_data = null;
+        $json_errors = [];
+
+        // Approach 1: Standard decode with error ignore
         $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            // Try to fix common UTF-8 issues
-            $template_data = iconv('UTF-8', 'UTF-8//IGNORE', $template_data);
-            $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
+            $json_errors[] = 'Standard decode: ' . json_last_error_msg();
 
+            // Approach 2: Fix common UTF-8 issues with iconv
+            $clean_json = iconv('UTF-8', 'UTF-8//IGNORE', $template_data);
+            $decoded_data = json_decode($clean_json, true, 512, JSON_INVALID_UTF8_IGNORE);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON après nettoyage: ' . json_last_error_msg());
-                error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
-                error_log('[PDF Builder SAVE] Données JSON (milieu): ' . substr($template_data, 500, 500) . '...');
-                error_log('[PDF Builder SAVE] Données JSON (fin): ' . substr($template_data, -500) . '...');
-                error_log('[PDF Builder SAVE] Longueur totale JSON: ' . strlen($template_data));
-                error_log('[PDF Builder SAVE] About to call wp_send_json_error for invalid JSON');
-                wp_send_json_error('Données JSON invalides');
-                error_log('[PDF Builder SAVE] wp_send_json_error called for invalid JSON - this should not appear');
-                return;
+                $json_errors[] = 'UTF-8 fixed decode: ' . json_last_error_msg();
+
+                // Approach 3: Try to fix specific encoding issues
+                $fixed_json = preg_replace('/Ã©/', 'é', $template_data);
+                $fixed_json = preg_replace('/Ã¨/', 'è', $fixed_json);
+                $fixed_json = preg_replace('/Ãª/', 'ê', $fixed_json);
+                $fixed_json = preg_replace('/Ã«/', 'ë', $fixed_json);
+                $fixed_json = preg_replace('/Ã¢/', 'â', $fixed_json);
+                $fixed_json = preg_replace('/Ã®/', 'î', $fixed_json);
+                $fixed_json = preg_replace('/Ã´/', 'ô', $fixed_json);
+                $fixed_json = preg_replace('/Ã»/', 'û', $fixed_json);
+                $fixed_json = preg_replace('/Ã¼/', 'ü', $fixed_json);
+                $fixed_json = preg_replace('/Ã§/', 'ç', $fixed_json);
+                $fixed_json = preg_replace('/Ã/', 'À', $fixed_json);
+                $fixed_json = preg_replace('/Ã/', 'É', $fixed_json);
+
+                $decoded_data = json_decode($fixed_json, true, 512, JSON_INVALID_UTF8_IGNORE);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $json_errors[] = 'Character fixed decode: ' . json_last_error_msg();
+
+                    // Last resort: try to manually fix the JSON
+                    error_log('[PDF Builder SAVE] ❌ ÉCHEC: Toutes les méthodes de décodage JSON ont échoué');
+                    error_log('[PDF Builder SAVE] Erreurs JSON: ' . implode(', ', $json_errors));
+                    error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
+                    error_log('[PDF Builder SAVE] About to call wp_send_json_error for invalid JSON');
+                    wp_send_json_error('Données JSON invalides - toutes les corrections ont échoué');
+                    error_log('[PDF Builder SAVE] wp_send_json_error called for invalid JSON - this should not appear');
+                    return;
+                } else {
+                    error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction manuelle des caractères');
+                }
+            } else {
+                error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction UTF-8');
             }
+        } else {
+            error_log('[PDF Builder SAVE] ✅ JSON décodé normalement');
         }
         // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
