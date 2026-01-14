@@ -786,4 +786,105 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Fonctions pour la gestion des paramètres du template
+let currentTemplateId = null;
+
+function openTemplateSettings(templateId, templateName) {
+    currentTemplateId = templateId;
+    
+    // Afficher le modal
+    document.getElementById('template-settings-modal').style.display = 'flex';
+    
+    // Mettre à jour le titre
+    document.getElementById('template-settings-title').textContent = '⚙️ Paramètres du Template: ' + templateName;
+    
+    // Charger les paramètres actuels
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_load_template_settings',
+            'nonce': pdfBuilderTemplatesNonce,
+            'template_id': templateId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remplir les champs
+            document.getElementById('template-name-input').value = data.data.name || '';
+            document.getElementById('template-description-input').value = data.data.description || '';
+            document.getElementById('template-public').checked = data.data.is_public || false;
+            document.getElementById('template-paper-size').value = data.data.paper_size || 'A4';
+            document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
+            document.getElementById('template-category').value = data.data.category || 'autre';
+        } else {
+            console.error('Erreur chargement paramètres:', data.data);
+            alert('Erreur lors du chargement des paramètres du template');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        alert('Erreur lors du chargement des paramètres du template');
+    });
+}
+
+function closeTemplateSettings() {
+    document.getElementById('template-settings-modal').style.display = 'none';
+    currentTemplateId = null;
+}
+
+function saveTemplateSettings() {
+    if (!currentTemplateId) {
+        alert('Erreur: ID du template manquant');
+        return;
+    }
+    
+    const name = document.getElementById('template-name-input').value.trim();
+    if (!name) {
+        alert('Le nom du template est obligatoire');
+        return;
+    }
+    
+    // Collecter les données
+    const data = {
+        'action': 'pdf_builder_save_template_settings',
+        'nonce': pdfBuilderTemplatesNonce,
+        'template_id': currentTemplateId,
+        'name': name,
+        'description': document.getElementById('template-description-input').value,
+        'is_public': document.getElementById('template-public').checked ? 1 : 0,
+        'paper_size': document.getElementById('template-paper-size').value,
+        'orientation': document.getElementById('template-orientation').value,
+        'category': document.getElementById('template-category').value
+    };
+    
+    // Sauvegarder
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Paramètres sauvegardés avec succès');
+            closeTemplateSettings();
+            // Recharger la page pour afficher les changements
+            location.reload();
+        } else {
+            console.error('Erreur sauvegarde:', data.data);
+            alert('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        alert('Erreur lors de la sauvegarde des paramètres');
+    });
+}
 </script>
