@@ -8,52 +8,6 @@
     border-radius: 6px;
 }
 
-/* Navigation Tabs */
-.nav-tab-wrapper {
-    background: #f8f9fa;
-    border-bottom: 1px solid #e1e5e9;
-    margin: 0;
-    padding: 0 16px;
-}
-
-.tabs-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0;
-}
-
-.nav-tab {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 16px;
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #646970;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.nav-tab:hover {
-    color: #007cba;
-    border-bottom-color: rgba(0, 123, 186, 0.3);
-}
-
-.nav-tab-active,
-.nav-tab:active {
-    background: #fff;
-    color: #007cba;
-    border-bottom-color: #007cba;
-}
-
-.nav-tab:focus {
-    outline: none;
-}
-
 /* Tab Icons and Text */
 .tab-icon {
     font-size: 14px;
