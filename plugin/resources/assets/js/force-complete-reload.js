@@ -1,15 +1,38 @@
 /**
  * PDF Builder Pro - Force Complete CSS Reload
  * Script pour vérifier et forcer le rechargement complet des ressources CSS
+ * Inclut la gestion des erreurs de messagerie asynchrone
  */
 
 (function($) {
     'use strict';
 
+    // Gestionnaire d'erreurs global pour les erreurs de messagerie asynchrone
+    // Cette erreur survient lorsque des listeners retournent true pour indiquer une réponse asynchrone
+    // mais que le canal de communication se ferme avant que la réponse puisse être envoyée
+    window.addEventListener('unhandledrejection', function(event) {
+        const error = event.reason;
+        if (error && typeof error.message === 'string' && 
+            error.message.includes('A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received')) {
+            console.warn('⚠️ Erreur de messagerie asynchrone interceptée et ignorée:', error.message);
+            event.preventDefault(); // Empêche l'erreur de remonter
+            return false; // Indique que l'erreur a été gérée
+        }
+    });
+
+    // Gestionnaire d'erreurs global pour les erreurs synchrones similaires
+    window.addEventListener('error', function(event) {
+        const error = event.error || event.message;
+        if (error && typeof error === 'string' && 
+            error.includes('A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received')) {
+            console.warn('⚠️ Erreur de messagerie asynchrone synchronisée interceptée et ignorée:', error);
+            event.preventDefault(); // Empêche l'erreur de remonter
+            return false; // Indique que l'erreur a été gérée
+        }
+    });
+
     // Fonction pour vérifier si les fichiers CSS sont bien déployés
     function checkCSSDeployment() {
-        // console.log('🔍 PDF Builder: Vérification du déploiement CSS...');
-        // console.log('📋 pdfBuilderForceReload:', typeof pdfBuilderForceReload !== 'undefined' ? pdfBuilderForceReload : 'NON DÉFINI');
 
         // Vérifier les fichiers CSS attendus
         const cssFiles = [
