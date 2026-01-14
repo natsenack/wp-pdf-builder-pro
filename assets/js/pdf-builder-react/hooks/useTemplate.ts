@@ -17,9 +17,9 @@ export function useTemplate() {
       return window.pdfBuilderData.templateId.toString();
     }
     
-    // Priorité 2: Utiliser le paramètre URL (pour compatibilité)
+    // Priorité 2: Utiliser le paramètre URL (template ou template_id pour compatibilité)
     const urlParams = new URLSearchParams(window.location.search);
-    const urlTemplateId = urlParams.get('template_id');
+    const urlTemplateId = urlParams.get('template') || urlParams.get('template_id');
     if (urlTemplateId) {
 
       return urlTemplateId;
