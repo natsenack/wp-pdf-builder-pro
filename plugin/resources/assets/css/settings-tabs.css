@@ -11,16 +11,17 @@
 }
 
 .nav-tab {
-    display: inline-block;
-    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
     margin: 0;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
-    color: #666;
+    color: #646970;
     text-decoration: none;
-    font-size: 13px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
 }
 
