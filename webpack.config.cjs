@@ -13,11 +13,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
-    library: {
-      type: 'var',
-      name: 'PDFBuilder',
-    },
-    globalObject: 'window',
     clean: true,
   },
   module: {

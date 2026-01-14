@@ -10,31 +10,30 @@ import * as pdfBuilderReactModule from './pdf-builder-react/index.js';
 // Extract the default export - it's already an object with all functions
 const moduleExports = pdfBuilderReactModule.default || pdfBuilderReactModule;
 
-// Export each property individually so webpack creates a plain object
-export const initPDFBuilderReact = moduleExports.initPDFBuilderReact;
-export const loadTemplate = moduleExports.loadTemplate;
-export const getEditorState = moduleExports.getEditorState;
-export const setEditorState = moduleExports.setEditorState;
-export const getCurrentTemplate = moduleExports.getCurrentTemplate;
-export const exportTemplate = moduleExports.exportTemplate;
-export const saveTemplate = moduleExports.saveTemplate;
-export const registerEditorInstance = moduleExports.registerEditorInstance;
-export const resetAPI = moduleExports.resetAPI;
-export const updateCanvasDimensions = moduleExports.updateCanvasDimensions;
-export const _isWebpackBundle = true;
+// Directly assign to window - no exports needed
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = moduleExports;
+  window.pdfBuilderReactWrapper = {
+    initPDFBuilderReact: moduleExports.initPDFBuilderReact,
+    loadTemplate: moduleExports.loadTemplate,
+    getEditorState: moduleExports.getEditorState,
+    setEditorState: moduleExports.setEditorState,
+    getCurrentTemplate: moduleExports.getCurrentTemplate,
+    exportTemplate: moduleExports.exportTemplate,
+    saveTemplate: moduleExports.saveTemplate,
+    registerEditorInstance: moduleExports.registerEditorInstance,
+    resetAPI: moduleExports.resetAPI,
+    updateCanvasDimensions: moduleExports.updateCanvasDimensions,
+    _isWebpackBundle: true,
+  };
 
-// Also signal when loaded
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  try {
-    // Assigner manuellement à window pour s'assurer que c'est disponible
-    window.pdfBuilderReact = moduleExports;
-
-    const event = new Event('pdfBuilderReactLoaded');
-    document.dispatchEvent(event);
-  } catch (e) {
-    console.error('[pdf-builder-wrapper] Error dispatching event:', e);
+  // Signal when loaded
+  if (typeof document !== 'undefined') {
+    try {
+      const event = new Event('pdfBuilderReactLoaded');
+      document.dispatchEvent(event);
+    } catch (e) {
+      console.error('[pdf-builder-wrapper] Error dispatching event:', e);
+    }
   }
 }
-
-// Export default as well for compatibility
-export default moduleExports;
