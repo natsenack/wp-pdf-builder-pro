@@ -1132,11 +1132,15 @@ class PdfBuilderAdmin
             const urlParams = new URLSearchParams(window.location.search);
             const currentPage = urlParams.get('page');
 
+            console.log('[PDF Builder] Page check - current page:', currentPage, 'URL:', window.location.href);
+
             // Ne charger React que sur la page appropriée
             if (currentPage !== 'pdf-builder-react-editor') {
                 console.log('[PDF Builder] Not on React editor page, skipping React initialization');
                 return;
             }
+
+            console.log('[PDF Builder] On React editor page, proceeding with initialization');
 
             // Simple loader management
             const loader = {
@@ -1144,14 +1148,21 @@ class PdfBuilderAdmin
                 editor: null,
 
                 init: function() {
+                    console.log('[PDF Builder] Initializing loader...');
                     this.element = document.getElementById('pdf-builder-loader');
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
+                    console.log('[PDF Builder] Elements found - loader:', !!this.element, 'editor:', !!this.editor);
+
                     if (!this.element || !this.editor) {
                         console.error('[PDF Builder] Loader elements not found');
+                        console.log('[PDF Builder] Available elements with pdf-builder in ID:');
+                        const allElements = document.querySelectorAll('[id*="pdf-builder"]');
+                        allElements.forEach(el => console.log('  -', el.id));
                         return;
                     }
 
+                    console.log('[PDF Builder] Starting React readiness check...');
                     this.startChecking();
                 },
 
@@ -1186,9 +1197,15 @@ class PdfBuilderAdmin
                 },
 
                 isReactReady: function() {
-                    return typeof window.pdfBuilderReact !== 'undefined' &&
-                           window.pdfBuilderReact &&
-                           typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
+                    const hasWindowPdfBuilderReact = typeof window.pdfBuilderReact !== 'undefined';
+                    const hasInitFunction = hasWindowPdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
+
+                    console.log('[PDF Builder] React readiness check:');
+                    console.log('  - window.pdfBuilderReact exists:', hasWindowPdfBuilderReact);
+                    console.log('  - initPDFBuilderReact function exists:', hasInitFunction);
+                    console.log('  - window.pdfBuilderReact:', window.pdfBuilderReact);
+
+                    return hasWindowPdfBuilderReact && hasInitFunction;
                 },
 
                 initializeReact: function() {
