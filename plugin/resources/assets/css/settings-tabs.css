@@ -29,8 +29,7 @@
     color: #0073aa;
 }
 
-.nav-tab.nav-tab-active,
-.nav-tab.nav-tab-active:hover {
+.nav-tab.nav-tab-active {
     color: #0073aa;
     border-bottom-color: #0073aa;
 }

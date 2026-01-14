@@ -507,7 +507,6 @@ input:checked + .toggle-slider:before {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
 }
 
 .cache-performance-status {
