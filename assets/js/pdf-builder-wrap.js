@@ -6,6 +6,27 @@
 (function() {
     'use strict';
 
+    // Gestionnaire d'erreurs ultra-précoce pour les erreurs de syntaxe des extensions
+    // Doit être exécuté avant tout autre code pour capturer les erreurs de parsing
+    var originalOnError = window.onerror;
+    window.onerror = function(message, source, lineno, colno, error) {
+        // Intercepter les erreurs de syntaxe des extensions Chrome
+        if (typeof message === 'string' &&
+            (message.includes('Unexpected token \'export\'') ||
+             message.includes('Extension context invalidated') ||
+             message.includes('A listener indicated an asynchronous response by returning true'))) {
+            console.warn('⚠️ Erreur d\'extension interceptée très tôt:', message);
+            return true; // Empêche l'erreur de remonter
+        }
+
+        // Appeler l'ancien gestionnaire si existant
+        if (originalOnError) {
+            return originalOnError(message, source, lineno, colno, error);
+        }
+
+        return false;
+    };
+
     // Gestionnaire d'erreurs global pour les erreurs d'extensions de navigateur
     // Intercepte les erreurs courantes des extensions Chrome comme les contextes invalidés ou les canaux de messagerie fermés
     window.addEventListener('unhandledrejection', function(event) {
