@@ -17,5 +17,3 @@ const exports = {
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = exports;
 }
-
-module.exports = exports;
