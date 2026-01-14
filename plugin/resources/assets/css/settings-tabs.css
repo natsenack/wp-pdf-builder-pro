@@ -10,21 +10,6 @@
     padding: 0;
 }
 
-.nav-tab {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 16px;
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #646970;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
 .nav-tab:hover {
     color: #0073aa;
 }
