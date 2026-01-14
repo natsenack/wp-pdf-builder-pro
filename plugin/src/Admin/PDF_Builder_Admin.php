@@ -1155,22 +1155,22 @@ class PdfBuilderAdmin
 
                 startChecking: function() {
                     let attempts = 0;
-                    const maxAttempts = 60; // 30 seconds at 500ms intervals
+                    const maxAttempts = 100; // 50 secondes à 500ms
 
                     const checkInterval = setInterval(() => {
                         attempts++;
 
                         if (this.isReactReady()) {
                             clearInterval(checkInterval);
-                            // console.log('[PDF Builder] React is ready, initializing...');
+                            console.log('[PDF Builder] React is ready, initializing...');
                             this.initializeReact();
                             return;
                         }
 
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
-                            // console.warn('[PDF Builder] React loading timeout - showing editor anyway');
-                            this.hide(); // Fallback: show editor even if React init fails
+                            console.warn('[PDF Builder] React loading timeout - showing editor anyway');
+                            this.hide(); // Fallback: montrer l'éditeur même si React n'est pas prêt
                         }
                     }, 500);
                 },

@@ -369,7 +369,13 @@ Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
 Write-Log "Ajout des fichiers modifiés à Git" "INFO"
 Push-Location $WorkingDir
 try {
-    & git add .
+    # Utiliser git add avec gestion des erreurs d'ignore
+    $gitAddResult = & git add . 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        # Si git add échoue à cause des fichiers ignorés, essayer avec --ignore-errors
+        Write-Log "Tentative avec --ignore-errors" "INFO"
+        & git add --ignore-errors . 2>$null
+    }
     
     # Force add critical compiled files
     $criticalCompiledFiles = @(
