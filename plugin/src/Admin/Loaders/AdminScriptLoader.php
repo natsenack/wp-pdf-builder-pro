@@ -268,7 +268,7 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // FORCE COMPLETE RELOAD - Use version parameter instead of changing file names
-        $force_reload_suffix = '-v' . time() . '-cache-bust-' . rand(10000, 99999);
+        $force_reload_suffix = '-FORCED-RELOAD-' . time() . '-UNIQUE-' . rand(100000, 999999);
 
         // Bundle React principal (contient le code React)
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
