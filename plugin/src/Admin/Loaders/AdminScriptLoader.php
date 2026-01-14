@@ -303,15 +303,6 @@ class AdminScriptLoader
             'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0,
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
         ];
-        
-        // Localize script data BEFORE enqueuing
-        $localize_data = [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_templates'),
-            'version' => PDF_BUILDER_PRO_VERSION,
-            'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0,
-            'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
-        ];
 
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
@@ -320,7 +311,7 @@ class AdminScriptLoader
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
-            wp_add_inline_script('pdf-builder-admin', 
+            wp_add_inline_script($dynamic_main_handle, 
                 'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';'
             );
         }
@@ -357,9 +348,9 @@ class AdminScriptLoader
         wp_add_inline_script($dynamic_main_handle, 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
-        wp_script_add_data('pdf-builder-react', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url . ' with version: ' . $version_param . $nuclear_suffix);
+        wp_enqueue_script($dynamic_wrapper_handle, $react_script_url, [$dynamic_main_handle], $version_param . $nuclear_suffix, true);
+        wp_script_add_data($dynamic_wrapper_handle, 'type', 'text/javascript');
+        error_log('[WP AdminScriptLoader] Enqueued ' . $dynamic_wrapper_handle . ': ' . $react_script_url . ' with version: ' . $version_param . $nuclear_suffix);
 
         // Emergency reload script - force page reload if React scripts don't load within 5 seconds
         $emergency_reload_script = "
