@@ -426,11 +426,16 @@ var pdfBuilderAjax = {
 
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">DPI (résolution)</label>
-                            <select id="template-dpi" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <?php foreach ($allowed_dpis as $dpi): ?>
-                                    <option value="<?php echo esc_attr($dpi); ?>"><?php echo esc_html($dpi); ?> DPI</option>
-                                <?php endforeach; ?>
-                            </select>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="template-dpi" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                    <?php foreach ($allowed_dpis as $dpi): ?>
+                                        <option value="<?php echo esc_attr($dpi); ?>"><?php echo esc_html($dpi); ?> DPI</option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div id="resolution-display" style="background: #f8f9fa; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #666; min-width: 120px; text-align: center;">
+                                    Résolution: -- × -- mm
+                                </div>
+                            </div>
                         </div>
 
                         <div style="margin-bottom: 15px;">
@@ -824,6 +829,41 @@ document.addEventListener('DOMContentLoaded', function() {
 // Fonctions pour la gestion des paramètres du template
 let currentTemplateId = null;
 
+// Fonction pour calculer et afficher la résolution en temps réel
+function updateResolutionDisplay() {
+    const dpiSelect = document.getElementById('template-dpi');
+    const resolutionDisplay = document.getElementById('resolution-display');
+    
+    if (!dpiSelect || !resolutionDisplay) return;
+    
+    const dpi = parseInt(dpiSelect.value);
+    if (isNaN(dpi) || dpi <= 0) {
+        resolutionDisplay.textContent = 'Résolution: -- × -- mm';
+        return;
+    }
+    
+    // Dimensions par défaut du canvas (A4 à 96 DPI)
+    const defaultWidthPx = 794;  // largeur en pixels
+    const defaultHeightPx = 1123; // hauteur en pixels
+    
+    // Calculer les dimensions physiques en mm
+    // 1 pouce = 25.4 mm, donc conversion pixels -> mm = (pixels / dpi) * 25.4
+    const widthMm = Math.round((defaultWidthPx / dpi) * 25.4);
+    const heightMm = Math.round((defaultHeightPx / dpi) * 25.4);
+    
+    resolutionDisplay.textContent = `Résolution: ${widthMm} × ${heightMm} mm`;
+}
+
+// Écouteur pour mettre à jour la résolution quand le DPI change
+document.addEventListener('DOMContentLoaded', function() {
+    const dpiSelect = document.getElementById('template-dpi');
+    if (dpiSelect) {
+        dpiSelect.addEventListener('change', updateResolutionDisplay);
+        // Mise à jour initiale
+        updateResolutionDisplay();
+    }
+});
+
 function openTemplateSettings(templateId, templateName) {
     currentTemplateId = templateId;
     
@@ -854,6 +894,9 @@ function openTemplateSettings(templateId, templateName) {
             document.getElementById('template-dpi').value = data.data.dpi || '96';
             document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
             document.getElementById('template-category').value = data.data.category || 'autre';
+            
+            // Mettre à jour l'affichage de la résolution
+            updateResolutionDisplay();
         } else {
             console.error('Erreur chargement paramètres:', data.data);
             alert('Erreur lors du chargement des paramètres du template');
