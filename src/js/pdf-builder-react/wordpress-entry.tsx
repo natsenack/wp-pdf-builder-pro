@@ -56,8 +56,8 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
-  console.error('🚨🚨🚨 EXTREME_DEBUG: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚨🚨🚨');
-  console.log('🚨🚨🚨 EXTREME_DEBUG: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚨🚨🚨');
+  console.error('🚨🚨🚨 EXTREME_DEBUG_V2: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚨🚨🚨');
+  console.log('🚨🚨🚨 EXTREME_DEBUG_V2: initPDFBuilderReact CALLED at ' + new Date().toISOString() + ' 🚨🚨🚨');
   console.error('UNIQUE_DEBUG: initPDFBuilderReact called at ' + new Date().toISOString());
 
   // Debug: Check if container exists
