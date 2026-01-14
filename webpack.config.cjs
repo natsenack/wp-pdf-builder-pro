@@ -6,7 +6,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
-    'pdf-builder-react-wrapper': ['./src/js/pdf-builder-react-wrapper.js', './src/js/pdf-builder-react/index.js'],
+    'pdf-builder-react-wrapper': ['./src/js/pdf-builder-react/index.js', './src/js/pdf-builder-react-wrapper.js'],
     'pdf-preview-api-client': './src/js/pdf-preview-api-client.js',
     'pdf-preview-integration': './src/js/pdf-preview-integration.js',
   },
