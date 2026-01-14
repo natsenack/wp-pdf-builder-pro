@@ -842,9 +842,9 @@ function updateResolutionDisplay() {
         return;
     }
     
-    // Dimensions physiques A4 en pouces
-    const a4WidthInches = 8.27;
-    const a4HeightInches = 11.69;
+    // Dimensions physiques A4 en pouces (valeurs plus précises)
+    const a4WidthInches = 8.2677;
+    const a4HeightInches = 11.6929;
     
     // Calculer les dimensions en pixels pour le DPI actuel
     const widthPx = Math.round(a4WidthInches * dpi);
