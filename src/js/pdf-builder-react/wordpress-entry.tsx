@@ -74,6 +74,7 @@ export function initPDFBuilderReact() {
   console.log('🔍🔍🔍 DETAILED_LOG: Container check result:', !!container);
 
   if (!container) {
+    alert('🚨🚨🚨 ALERT_DEBUG: Container element not found! 🚨🚨🚨');
     console.error('UNIQUE_DEBUG: Container element not found');
     console.log('PDF Builder React: Container element not found');
     console.log('🔧 Available elements with pdf-builder in ID:');
