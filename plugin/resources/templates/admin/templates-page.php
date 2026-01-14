@@ -693,6 +693,7 @@ function dismissTemplateLimitNotice() {
 
         // Sauvegarder l'état de masquage dans localStorage
         localStorage.setItem('pdf_builder_template_limit_dismissed', 'true');
+        console.log('État sauvegardé dans localStorage');
     } else {
         console.error('Element template-limit-notice non trouvé');
     }
@@ -700,7 +701,7 @@ function dismissTemplateLimitNotice() {
 
 // Fonction pour réafficher la notification de limite de templates
 function showTemplateLimitNotice() {
-    console.log('showTemplateLimitNotice called');
+    console.log('showTemplateLimitNotice called - THIS SHOULD NOT HAPPEN');
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
         // Réafficher en supprimant la classe CSS
