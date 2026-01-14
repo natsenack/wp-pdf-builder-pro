@@ -29,11 +29,6 @@
     color: #0073aa;
 }
 
-.nav-tab.nav-tab-active {
-    color: #0073aa;
-    border-bottom-color: #0073aa;
-}
-
 .nav-tab:focus {
     outline: none;
 }
@@ -188,6 +183,7 @@
 
     .nav-tab.nav-tab-active {
         background: #fff;
+        color: #0073aa;
         border-bottom-color: #0073aa;
     }
 }
