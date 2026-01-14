@@ -277,7 +277,15 @@ var pdfBuilderAjax = {
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Dupliquer ce template">📋</button>';
+                    
+                    // Bouton dupliquer - désactivé pour les utilisateurs gratuits ayant atteint la limite
+                    $duplicate_disabled = (!$is_premium && $templates_count >= 1) ? 'disabled' : '';
+                    $duplicate_title = (!$is_premium && $templates_count >= 1) ? 'Duplication limitée à 1 template (Premium requis)' : 'Dupliquer ce template';
+                    $duplicate_class = (!$is_premium && $templates_count >= 1) ? 'button-disabled' : 'button-primary';
+                    $duplicate_onclick = (!$is_premium && $templates_count >= 1) ? '' : 'onclick="duplicateTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')"';
+                    
+                    echo '<button class="button ' . $duplicate_class . '" style="flex: 1; font-size: 16px;" ' . $duplicate_onclick . ' ' . $duplicate_disabled . ' title="' . $duplicate_title . '">📋</button>';
+                    
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
@@ -560,7 +568,21 @@ var pdfBuilderAjax = {
     font-weight: bold;
 }
 
+/* Style pour les boutons désactivés (freemium) */
+.button-disabled {
+    background-color: #f0f0f0 !important;
+    border-color: #ddd !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
 
+.button-disabled:hover {
+    background-color: #f0f0f0 !important;
+    border-color: #ddd !important;
+    color: #999 !important;
+    transform: none !important;
+}
 </style>
 
 <!-- Modal d'upgrade pour templates freemium -->
