@@ -331,6 +331,8 @@ if ($All) {
 # Always include critical compiled files (force add even if not detected as modified)
 $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-react-wrapper.min.js"
+    "plugin/assets/js/pdf-builder-react.min.js"
+    "plugin/assets/css/pdf-builder-react.min.css"
     # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
 )
 foreach ($criticalCompiledFile in $criticalCompiledFiles) {
