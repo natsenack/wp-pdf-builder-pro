@@ -831,17 +831,12 @@ let currentTemplateId = null;
 
 // Fonction pour calculer et afficher la résolution en temps réel
 function updateResolutionDisplay() {
-    console.log('updateResolutionDisplay called');
     const dpiSelect = document.getElementById('template-dpi');
     const resolutionDisplay = document.getElementById('resolution-display');
     
-    if (!dpiSelect || !resolutionDisplay) {
-        console.log('Elements not found');
-        return;
-    }
+    if (!dpiSelect || !resolutionDisplay) return;
     
     const dpi = parseInt(dpiSelect.value);
-    console.log('DPI value:', dpi);
     if (isNaN(dpi) || dpi <= 0) {
         resolutionDisplay.textContent = 'Résolution: -- × -- px';
         return;
@@ -861,7 +856,6 @@ function updateResolutionDisplay() {
 // Écouteur pour mettre à jour la résolution quand le DPI change (délégation d'événement)
 document.addEventListener('change', function(e) {
     if (e.target && e.target.id === 'template-dpi') {
-        console.log('DPI changed to:', e.target.value);
         updateResolutionDisplay();
     }
 });
