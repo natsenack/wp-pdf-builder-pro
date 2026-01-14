@@ -6,7 +6,8 @@ export default {
         targets: {
           node: 'current',
           browsers: ['last 2 versions']
-        }
+        },
+        modules: false
       }
     ]
   ],

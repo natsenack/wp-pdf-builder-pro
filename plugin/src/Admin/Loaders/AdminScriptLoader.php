@@ -304,6 +304,7 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
+        wp_script_add_data('pdf-builder-react', 'type', 'text/javascript');
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
         // Init helper
