@@ -1674,32 +1674,32 @@ function pdf_builder_auto_clear_cache() {
  */
 function pdf_builder_save_template_handler() {
     // Log détaillé du début de la requête
-    // error_log('[PDF Builder SAVE] ===== DÉBUT SAUVEGARDE =====');
-    // error_log('[PDF Builder SAVE] Timestamp: ' . current_time('mysql'));
-    // error_log('[PDF Builder SAVE] User ID: ' . get_current_user_id());
-    // error_log('[PDF Builder SAVE] User capabilities: ' . (current_user_can('manage_options') ? 'HAS_MANAGE_OPTIONS' : 'NO_MANAGE_OPTIONS'));
-    // error_log('[PDF Builder SAVE] REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
-    // error_log('[PDF Builder SAVE] Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'UNKNOWN'));
-    // error_log('[PDF Builder SAVE] POST data keys: ' . implode(', ', array_keys($_POST)));
+    error_log('[PDF Builder SAVE] ===== DÉBUT SAUVEGARDE =====');
+    error_log('[PDF Builder SAVE] Timestamp: ' . current_time('mysql'));
+    error_log('[PDF Builder SAVE] User ID: ' . get_current_user_id());
+    error_log('[PDF Builder SAVE] User capabilities: ' . (current_user_can('manage_options') ? 'HAS_MANAGE_OPTIONS' : 'NO_MANAGE_OPTIONS'));
+    error_log('[PDF Builder SAVE] REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
+    error_log('[PDF Builder SAVE] Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'UNKNOWN'));
+    error_log('[PDF Builder SAVE] POST data keys: ' . implode(', ', array_keys($_POST)));
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
+        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
-    // error_log('[PDF Builder SAVE] ✅ Permissions OK');
+    error_log('[PDF Builder SAVE] ✅ Permissions OK');
 
     // Check nonce
     $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
-    // error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
+    error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
     if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
-        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
-        // error_log('[PDF Builder SAVE] Nonce attendu: pdf_builder_save_template_nonce');
+        error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
+        error_log('[PDF Builder SAVE] Nonce attendu: pdf_builder_save_template_nonce');
         wp_send_json_error('Nonce invalide');
         return;
     }
-    // error_log('[PDF Builder SAVE] ✅ Nonce OK');
+    error_log('[PDF Builder SAVE] ✅ Nonce OK');
 
     try {
         $template_id = intval($_POST['template_id'] ?? 0);
