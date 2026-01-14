@@ -42,7 +42,8 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajaxGeneratePdfFromCanvas']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
         add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
-        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
+        // REMOVED: pdf_builder_save_template is now handled by pdf-builder-pro.php to avoid conflicts
+        // add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
@@ -159,7 +160,7 @@ class AjaxHandler
     {
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
-        
+
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
             $template_manager->ajaxSaveTemplateV3();
             return;
@@ -185,18 +186,9 @@ class AjaxHandler
                 return;
             }
 
-            // Sauvegarder le template
-            // Note: Template manager should be available, this fallback shouldn't be reached
+            // Cette implémentation de secours ne devrait pas être utilisée
+            // Le template manager devrait toujours être disponible
             wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
-
-            if ($result) {
-                wp_send_json_success([
-                    'template_id' => $result,
-                    'message' => 'Template sauvegardé avec succès'
-                ]);
-            } else {
-                wp_send_json_error('Erreur lors de la sauvegarde du template');
-            }
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
