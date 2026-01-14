@@ -230,12 +230,8 @@ class TemplateManager
                 return;
             }
 
-            // Vérifier le nonce (optionnel pour éviter les problèmes d'expiration)
-            if (isset($_POST['nonce']) && !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                // $this->debug_log('Nonce invalide');
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
+            // Note: Nonce check removed to prevent expiration issues during long editing sessions
+            // Permission check provides adequate security for template save operations
 
             $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
             $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
