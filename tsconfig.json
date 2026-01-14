@@ -17,11 +17,11 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["assets/js/pdf-builder-react/*"]
+      "@/*": ["src/js/pdf-builder-react/*"]
     }
   },
   "include": [
-    "assets/js/pdf-builder-react/**/*"
+    "src/js/pdf-builder-react/**/*"
   ],
   "exclude": [
     "node_modules",

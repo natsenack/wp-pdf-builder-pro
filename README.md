@@ -65,11 +65,61 @@ Ces dossiers ne sont **jamais** déployés :
 - `tests/` - Suite complète de tests automatisés
 - `tools/` - Scripts de déploiement FTP
 - `dev/` - Outils de développement
-- `assets/` - Sources CSS/JS/Images
-- `src/` - Code source TypeScript/React
+- `src/` - Sources JavaScript/TypeScript/React
 - `node_modules/` - Dépendances JavaScript
 - `build/` - Scripts et logs de déploiement
 - `backups/` - Sauvegardes
+
+## 🔧 Configuration Webpack
+
+Webpack est utilisé pour bundler et optimiser les assets JavaScript et CSS du plugin. Il transforme les fichiers source en bundles minifiés prêts pour la production.
+
+### 📁 Structure des Assets
+
+```
+src/
+├── js/                        ← Fichiers JavaScript source
+│   ├── pdf-builder-react-wrapper.js    ← Wrapper React (bundlé)
+│   ├── pdf-preview-api-client.js       ← Client API aperçu (bundlé)
+│   ├── pdf-preview-integration.js      ← Intégration aperçu (bundlé)
+│   ├── settings-global-save.js         ← Sauvegarde globale (copié)
+│   ├── settings-tabs-improved.js       ← Onglets améliorés (copié)
+│   ├── tabs-force.js                   ← Onglets forcés (copié)
+│   ├── tabs-root-monitor.js            ← Moniteur racine (copié)
+│   └── ajax-throttle.js                ← Limitation AJAX (copié)
+└── css/                       ← Fichiers CSS source (futurs)
+```
+
+### ⚙️ Configuration (`webpack.config.cjs`)
+
+- **Entry Points** : Fichiers React/TypeScript sont bundlés avec Babel
+- **Output** : `plugin/assets/js/` avec minification et compression gzip
+- **Loaders** : Babel pour transpilation ES6+, CSS extraction
+- **Plugins** : MiniCssExtractPlugin, CompressionPlugin, CopyPlugin
+- **Optimisation** : Code splitting, minification sélective
+
+### 🚀 Scripts npm
+
+```bash
+npm run build      # Build production (minifié)
+npm run dev        # Build développement (non minifié)
+npm run watch      # Build en mode watch pour le développement
+```
+
+### 📦 Processus de Build
+
+1. **Bundling React** : `pdf-builder-react-wrapper.js` → `pdf-builder-react-wrapper.min.js`
+2. **Bundling API** : `pdf-preview-api-client.js` → `pdf-preview-api-client.min.js`
+3. **Copie Vanilla JS** : Fichiers JS simples copiés sans modification
+4. **Compression** : Gzip automatique pour les assets >10 Ko
+5. **Output** : Tout dans `plugin/assets/js/` prêt pour déploiement
+
+### 🔍 Détails Techniques
+
+- **Babel** : Transpile ES6+ vers ES5 pour compatibilité navigateur
+- **Terser** : Minification JavaScript (exclu pour fichiers copiés)
+- **Compression** : Gzip avec seuil 10 Ko, ratio min 0.8
+- **Code Splitting** : Séparation vendors pour cache optimisé
 
 ## 🎯 Migration Vanilla JS - Phase 1 Terminée
 
@@ -1090,6 +1140,34 @@ if ($error) {
 ### Logs de Debug
 Le mode debug est activé dans `PDF_BUILDER_CONFIG.DEBUG = true`
 Console JavaScript affiche toutes les étapes d'initialisation.
+
+---
+
+## 🔧 Configuration Webpack
+
+Le projet utilise Webpack pour bundler et optimiser les assets JavaScript et CSS.
+
+### Structure des Assets
+- **Sources** : `src/js/` - Fichiers JavaScript/TypeScript source
+- **Sortie** : `plugin/assets/js/` - Fichiers bundlés et minifiés
+- **Copies** : Certains fichiers JS sont copiés sans modification (ajax-throttle.js, settings-tabs-improved.js, etc.)
+
+### Scripts npm
+```bash
+npm install          # Installer les dépendances
+npm run build        # Builder en mode production (minifié)
+npm run dev          # Builder en mode développement (avec watch)
+npm test             # Exécuter les tests Jest
+```
+
+### Configuration Webpack
+- **Entry point** : `src/js/pdf-builder-react-wrapper.js`
+- **Output** : `plugin/assets/js/pdf-builder-react-wrapper.min.js`
+- **Plugins** : Compression, CopyPlugin, MiniCssExtractPlugin
+- **Loaders** : Babel pour ES6+, TypeScript
+
+### Déploiement
+Les fichiers bundlés sont automatiquement inclus dans le déploiement via `build/deploy-simple.ps1`.
 
 ---
 

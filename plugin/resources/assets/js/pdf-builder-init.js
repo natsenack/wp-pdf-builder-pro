@@ -3,7 +3,7 @@
  * This file ensures that window.pdfBuilderReact is properly initialized
  * and triggers the initialization event after the bundle loads.
  * 
- * This file MUST load AFTER pdf-builder-react.js
+ * This file MUST load AFTER pdf-builder-react-wrapper.min.js
  */
 
 (function() {

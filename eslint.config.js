@@ -63,7 +63,7 @@ export default [
       '**/*.min.js',
       '**/vendor/**',
       '**/node_modules/**',
-      'plugin/assets/js/pdf-builder-react.js'
+      'plugin/assets/js/pdf-builder-react-wrapper.min.js'
     ]
   }
 ];

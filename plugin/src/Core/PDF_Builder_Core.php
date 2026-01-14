@@ -487,7 +487,7 @@ class PdfBuilderCore
         wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
 
         // Charger seulement l'API globale de PDF Builder React
-        $react_script_url = PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/dist/pdf-builder-react.js';
+        $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
         $cache_bust = time();
         $version_param = $this->version . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);

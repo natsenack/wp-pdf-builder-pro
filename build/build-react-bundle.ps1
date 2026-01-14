@@ -1,3 +1,5 @@
+# OBSOLETE: This script is replaced by Webpack bundling
+# Webpack now handles React bundling and outputs to plugin/assets/js/pdf-builder-react-wrapper.min.js
 # Simple PDF Builder React bundle generator
 # Copies the built React file to the dist directory
 

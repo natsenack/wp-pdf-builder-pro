@@ -550,7 +550,7 @@ function pdf_builder_load_core()
             wp_enqueue_script('react-dom', false, ['react'], false, true);
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)
-            $bundle_url = PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/dist/pdf-builder-react.js';
+            $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
             wp_enqueue_script(
                 'pdf-builder-react-bundle',
                 $bundle_url,

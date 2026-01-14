@@ -5,9 +5,9 @@ module.exports = {
     '<rootDir>/tests/**/*.spec.js'
   ],
   collectCoverageFrom: [
-    'assets/js/**/*.js',
+    'src/js/**/*.js',
     'plugin/resources/assets/js/**/*.js',
-    '!assets/js/**/*.min.js',
+    '!src/js/**/*.min.js',
     '!plugin/resources/assets/js/**/*.min.js',
     '!**/node_modules/**',
     '!**/vendor/**'
@@ -26,9 +26,6 @@ module.exports = {
       statements: 75
     }
   },
-  setupFilesAfterEnv: [
-    '<rootDir>/tests/setup.js'
-  ],
   testTimeout: 10000,
   verbose: true,
   testPathIgnorePatterns: [
@@ -40,7 +37,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '^@/(.*)$': '<rootDir>/assets/js/$1',
+    '^@/(.*)$': '<rootDir>/src/js/$1',
     '^@plugin/(.*)$': '<rootDir>/plugin/resources/assets/js/$1'
   }
 };

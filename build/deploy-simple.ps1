@@ -275,7 +275,7 @@ function Test-DeployedFileIntegrity {
                     Write-Log "Référence à PDF_Builder_Unified_Ajax_Handler manquante dans pdf-builder-pro.php" "WARN"
                 }
             }
-            elseif ($remotePath -eq "config/autoloader.php") {
+            elseif ($remotePath -eq "src/Core/core/autoloader.php") {
                 if ($content -notmatch "PDF_Builder_Unified_Ajax_Handler") {
                     Write-Log "Autoloader ne couvre pas PDF_Builder_Unified_Ajax_Handler" "WARN"
                 }
@@ -330,8 +330,7 @@ if ($All) {
 
 # Always include critical compiled files (force add even if not detected as modified)
 $criticalCompiledFiles = @(
-    "plugin/assets/js/pdf-builder-react.js",
-    "plugin/assets/js/pdf-builder-react.js.map"
+    "plugin/assets/js/pdf-builder-react-wrapper.min.js"
     # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
 )
 foreach ($criticalCompiledFile in $criticalCompiledFiles) {
@@ -346,7 +345,7 @@ foreach ($criticalCompiledFile in $criticalCompiledFiles) {
 }
 
 # Always include critical files
-$criticalFiles = @("pdf-builder-pro.php", "src/Core/PDF_Builder_Unified_Ajax_Handler.php", "config/autoloader.php")
+$criticalFiles = @("pdf-builder-pro.php", "src/Core/PDF_Builder_Unified_Ajax_Handler.php", "src/Core/core/autoloader.php")
 foreach ($criticalFile in $criticalFiles) {
     $criticalPath = Join-Path $PluginDir $criticalFile
     if (Test-Path $criticalPath) {
@@ -374,8 +373,7 @@ try {
     
     # Force add critical compiled files
     $criticalCompiledFiles = @(
-        "plugin/assets/js/pdf-builder-react.js",
-        "plugin/assets/js/pdf-builder-react.js.map"
+        "plugin/assets/js/pdf-builder-react-wrapper.min.js"
         # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
     )
     foreach ($criticalFile in $criticalCompiledFiles) {
