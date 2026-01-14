@@ -195,12 +195,21 @@ export function initPDFBuilderReact() {
 
       // Charger le template via l'API globale
       setTimeout(() => {
-        loadTemplate(existingTemplate);
-        console.log('🔍🔍🔍 DETAILED_LOG: Template load initiated');
+        try {
+          console.log('🔍🔍🔍 DETAILED_LOG: Inside setTimeout, about to call loadTemplate');
+          loadTemplate(existingTemplate);
+          console.log('🔍🔍🔍 DETAILED_LOG: Template load initiated successfully');
+        } catch (templateError) {
+          console.error('UNIQUE_DEBUG: Error in setTimeout loadTemplate:', templateError);
+          console.log('🔍🔍🔍 DETAILED_LOG: Error in setTimeout loadTemplate:', templateError);
+        }
       }, 100);
+    } else {
+      console.log('🔍🔍🔍 DETAILED_LOG: No existing template to load');
     }
 
-    console.log('🔍🔍🔍 DETAILED_LOG: Initialization completed successfully, returning true');
+    console.log('🔍🔍🔍 DETAILED_LOG: About to return true from initPDFBuilderReact');
+    console.error('UNIQUE_DEBUG: About to return true from initPDFBuilderReact');
     return true;
 
   } catch (error) {
