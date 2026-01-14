@@ -847,11 +847,15 @@ function updateResolutionDisplay() {
         return;
     }
     
-    // Dimensions par défaut du canvas (A4 à 96 DPI)
-    const defaultWidthPx = 794;  // largeur en pixels
-    const defaultHeightPx = 1123; // hauteur en pixels
+    // Dimensions physiques A4 en pouces
+    const a4WidthInches = 8.27;
+    const a4HeightInches = 11.69;
     
-    resolutionDisplay.textContent = `Résolution: ${defaultWidthPx} × ${defaultHeightPx} px`;
+    // Calculer les dimensions en pixels pour le DPI actuel
+    const widthPx = Math.round(a4WidthInches * dpi);
+    const heightPx = Math.round(a4HeightInches * dpi);
+    
+    resolutionDisplay.textContent = `Résolution: ${widthPx} × ${heightPx} px`;
 }
 
 // Écouteur pour mettre à jour la résolution quand le DPI change (délégation d'événement)
