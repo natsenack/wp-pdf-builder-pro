@@ -13,7 +13,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
-    libraryTarget: 'window',
+    library: undefined,
+    iife: false,
     clean: true,
   },
   target: 'web',
