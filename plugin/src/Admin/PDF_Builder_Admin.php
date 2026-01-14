@@ -1101,7 +1101,7 @@ class PdfBuilderAdmin
 
             <!-- Main React Editor Container -->
             <div id="pdf-builder-editor-container" style="
-                display: none;
+                display: block;
                 background: #fff;
                 border: 1px solid #ccd0d4;
                 border-radius: 8px;

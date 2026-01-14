@@ -107,7 +107,8 @@ export function initPDFBuilderReact() {
 
   } catch (error) {
     console.error('PDF Builder React: Initialization error:', error);
-    container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
+    // Don't hide the container on error, so we can see it
+    // container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
     // Remove the initialized flag on error
     container.removeAttribute('data-react-initialized');
     return false;
