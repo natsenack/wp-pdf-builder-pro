@@ -1692,6 +1692,14 @@ function pdf_builder_save_template_handler() {
     }
     error_log('[PDF Builder SAVE] ✅ Permissions OK');
 
+    // Log the raw template_data for debugging
+    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+    error_log('[PDF Builder SAVE] Raw template_data length: ' . strlen($template_data));
+    error_log('[PDF Builder SAVE] Raw template_data (first 1000 chars): ' . substr($template_data, 0, 1000));
+    if (strlen($template_data) > 1000) {
+        error_log('[PDF Builder SAVE] Raw template_data (last 1000 chars): ' . substr($template_data, -1000));
+    }
+
     // Check nonce
     $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
     // error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
