@@ -87,26 +87,7 @@
     font-size: 20px;
 }
 
-/* Indicateur de statut discret */
-.cache-performance-status {
-    background: #f0f1f3;
-    color: #3c434a;
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 1px solid #dcdcde;
-    margin-left: auto;
-}
-
-.cache-performance-status:before {
-    content: "●";
-    margin-right: 6px;
-    font-size: 8px;
-    color: #00a32a;
-}
+/* Indicateur de statut discret - déplacé vers la section cache */
 
 /* Contenu des sections */
 .system-section-content {

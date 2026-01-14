@@ -259,24 +259,7 @@
     font-weight: 500;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 782px) {
-    .tabs-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .nav-tab {
-        justify-content: center;
-        padding: 12px 16px;
-        border-bottom: 1px solid #e1e5e9;
-        border-left: 2px solid transparent;
-    }
-
-    .nav-tab-active {
-        border-bottom-color: transparent;
-        border-left-color: #007cba;
-    }
+/* Responsive Design - styles nav-tab déplacés vers settings-tabs.css */
 
     .settings-main .settings-content {
         padding: 16px 12px;
@@ -305,10 +288,7 @@
         padding: 0 12px;
     }
 
-    .nav-tab {
-        padding: 10px 12px;
-        font-size: 13px;
-    }
+    /* nav-tab styles déplacés vers settings-tabs.css */
 
     .tab-icon {
         font-size: 12px;
