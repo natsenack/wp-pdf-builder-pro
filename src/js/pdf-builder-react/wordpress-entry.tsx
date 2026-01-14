@@ -64,10 +64,12 @@ export function initPDFBuilderReact() {
   console.error('UNIQUE_DEBUG: initPDFBuilderReact called at ' + new Date().toISOString());
 
   // Debug: Check if container exists
+  console.log('🔍🔍🔍 DETAILED_LOG: Step 1 - Checking container element');
   const container = document.getElementById('pdf-builder-react-root');
   console.error('UNIQUE_DEBUG: container element: ' + container);
   console.log('🔧 container element:', container);
   console.log('🔧 container found:', !!container);
+  console.log('🔍🔍🔍 DETAILED_LOG: Container check result:', !!container);
 
   if (!container) {
     console.error('UNIQUE_DEBUG: Container element not found');
@@ -75,57 +77,79 @@ export function initPDFBuilderReact() {
     console.log('🔧 Available elements with pdf-builder in ID:');
     const allElements = document.querySelectorAll('[id*="pdf-builder"]');
     allElements.forEach(el => console.log('  -', el.id, el));
+    console.log('🔍🔍🔍 DETAILED_LOG: Returning false due to missing container');
     return false;
   }
 
   // Check if React has already been initialized
+  console.log('🔍🔍🔍 DETAILED_LOG: Step 2 - Checking if already initialized');
   const isInitialized = container.hasAttribute('data-react-initialized');
   console.error('UNIQUE_DEBUG: container already initialized: ' + isInitialized);
   console.log('🔧 container already initialized:', isInitialized);
+  console.log('🔍🔍🔍 DETAILED_LOG: Already initialized check result:', isInitialized);
 
   if (isInitialized) {
     console.error('UNIQUE_DEBUG: React already initialized');
     console.log('🔧 React already initialized');
+    console.log('🔍🔍🔍 DETAILED_LOG: Returning true because already initialized');
     return true;
   }
 
   // Mark as initialized
+  console.log('🔍🔍🔍 DETAILED_LOG: Step 3 - Marking as initialized');
   container.setAttribute('data-react-initialized', 'true');
   console.error('UNIQUE_DEBUG: Marked as initialized');
   console.log('🔧 Marked as initialized');
 
   // Masquer le loading et afficher l'éditeur
+  console.log('🔍🔍🔍 DETAILED_LOG: Step 4 - Hiding loading and showing editor');
   const loadingEl = document.getElementById('pdf-builder-loader');
   const editorEl = document.getElementById('pdf-builder-editor-container');
-
   console.error('UNIQUE_DEBUG: loadingEl found: ' + !!loadingEl + ' editorEl found: ' + !!editorEl);
   console.log('🔧 loadingEl found:', !!loadingEl, 'editorEl found:', !!editorEl);
+  console.log('🔍🔍🔍 DETAILED_LOG: Loading elements check - loadingEl:', !!loadingEl, 'editorEl:', !!editorEl);
 
-  if (loadingEl) loadingEl.style.display = 'none';
-  if (editorEl) editorEl.style.display = 'block';
+  if (loadingEl) {
+    loadingEl.style.display = 'none';
+    console.log('🔍🔍🔍 DETAILED_LOG: Loading element hidden');
+  }
+  if (editorEl) {
+    editorEl.style.display = 'block';
+    console.log('🔍🔍🔍 DETAILED_LOG: Editor element shown');
+  }
 
   try {
+    console.log('🔍🔍🔍 DETAILED_LOG: Step 5 - Entering try block for React initialization');
     console.error('UNIQUE_DEBUG: About to check if React is available');
     console.log('🔧 About to check if React is available');
 
     // Vérifier que React est disponible
+    console.log('🔍🔍🔍 DETAILED_LOG: Checking React availability');
     if (typeof React === 'undefined') {
       console.error('UNIQUE_DEBUG: React is not available');
+      console.log('🔍🔍🔍 DETAILED_LOG: React is undefined, throwing error');
       throw new Error('React is not loaded');
     }
+    console.log('🔍🔍🔍 DETAILED_LOG: React is available');
+
     if (typeof createRoot === 'undefined') {
       console.error('UNIQUE_DEBUG: createRoot is not available');
+      console.log('🔍🔍🔍 DETAILED_LOG: createRoot is undefined, throwing error');
       throw new Error('createRoot is not available');
     }
+    console.log('🔍🔍🔍 DETAILED_LOG: createRoot is available');
 
     console.error('UNIQUE_DEBUG: React is available, about to create React root');
     console.log('🔧 React is available, about to create React root');
+    console.log('🔍🔍🔍 DETAILED_LOG: About to create React root');
     const root = createRoot(container);
     console.error('UNIQUE_DEBUG: Root created successfully');
     console.log('🔧 Root created successfully');
+    console.log('🔍🔍🔍 DETAILED_LOG: React root created successfully');
 
     console.error('UNIQUE_DEBUG: About to render PDFBuilder');
     console.log('🔧 About to render PDFBuilder');
+    console.log('🔍🔍🔍 DETAILED_LOG: About to render PDFBuilder component');
 
     root.render(
       // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
@@ -134,29 +158,39 @@ export function initPDFBuilderReact() {
     );
     console.error('UNIQUE_DEBUG: PDFBuilder rendered successfully');
     console.log('🔧 PDFBuilder rendered successfully');
+    console.log('🔍🔍🔍 DETAILED_LOG: PDFBuilder component rendered successfully');
 
     // Charger les données initiales du template s'il y en a
+    console.log('🔍🔍🔍 DETAILED_LOG: Step 6 - Checking for existing template data');
     const dataWindow = window as unknown as { pdfBuilderData?: { existingTemplate?: unknown } };
     const existingTemplate = dataWindow.pdfBuilderData?.existingTemplate;
+    console.log('🔍🔍🔍 DETAILED_LOG: Existing template found:', !!existingTemplate);
+
     if (existingTemplate) {
       const tpl = existingTemplate as { id?: string; elements?: unknown[] };
+      console.log('🔍🔍🔍 DETAILED_LOG: Loading existing template via API');
 
       // Charger le template via l'API globale
       setTimeout(() => {
         loadTemplate(existingTemplate);
+        console.log('🔍🔍🔍 DETAILED_LOG: Template load initiated');
       }, 100);
     }
 
+    console.log('🔍🔍🔍 DETAILED_LOG: Initialization completed successfully, returning true');
     return true;
 
   } catch (error) {
     console.error('UNIQUE_DEBUG: Error during React initialization:', error);
+    console.log('🔍🔍🔍 DETAILED_LOG: Error caught in try block:', error);
     alert('PDF Builder React: Initialization error: ' + error);
     console.log('PDF Builder React: Initialization error:', error);
     // Don't hide the container on error, so we can see it
     // container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
     // Remove the initialized flag on error
     container.removeAttribute('data-react-initialized');
+    console.log('🔍🔍🔍 DETAILED_LOG: Removed initialized flag due to error');
+    console.log('🔍🔍🔍 DETAILED_LOG: Returning false due to error');
     return false;
   }
 }
