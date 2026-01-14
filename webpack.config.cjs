@@ -13,6 +13,11 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
+    library: {
+      type: 'umd',
+      name: 'PDFBuilder',
+    },
+    globalObject: 'this',
     clean: true,
   },
   module: {
