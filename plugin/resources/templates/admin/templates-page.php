@@ -496,6 +496,11 @@ var pdfBuilderAjax = {
 /* Masquer la notification de limite de templates quand elle est dismissed */
 #template-limit-notice.dismissed {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
 }
 
 .template-modal-content input[type="checkbox"] {
@@ -741,6 +746,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         observer.observe(notice, { attributes: true, attributeFilter: ['class'] });
         console.log('MutationObserver set up for notification');
+
+        // Vérification périodique pour forcer le masquage si nécessaire
+        setInterval(function() {
+            const dismissed = localStorage.getItem('pdf_builder_template_limit_dismissed');
+            if (dismissed === 'true' && !notice.classList.contains('dismissed')) {
+                console.log('Forcing dismiss class back on notification');
+                notice.classList.add('dismissed');
+            }
+        }, 1000); // Vérifier chaque seconde
     }
 });
 </script>
