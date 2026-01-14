@@ -55,17 +55,17 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
-  alert('🔧 initPDFBuilderReact called at ' + new Date().toISOString());
+  console.error('UNIQUE_DEBUG: initPDFBuilderReact called at ' + new Date().toISOString());
   console.log('🔧 initPDFBuilderReact called at ' + new Date().toISOString());
 
   // Debug: Check if container exists
   const container = document.getElementById('pdf-builder-react-root');
-  alert('🔧 container element: ' + container);
+  console.error('UNIQUE_DEBUG: container element: ' + container);
   console.log('🔧 container element:', container);
   console.log('🔧 container found:', !!container);
 
   if (!container) {
-    alert('PDF Builder React: Container element not found');
+    console.error('UNIQUE_DEBUG: Container element not found');
     console.log('PDF Builder React: Container element not found');
     console.log('🔧 Available elements with pdf-builder in ID:');
     const allElements = document.querySelectorAll('[id*="pdf-builder"]');
@@ -75,44 +75,44 @@ export function initPDFBuilderReact() {
 
   // Check if React has already been initialized
   const isInitialized = container.hasAttribute('data-react-initialized');
-  alert('🔧 container already initialized: ' + isInitialized);
+  console.error('UNIQUE_DEBUG: container already initialized: ' + isInitialized);
   console.log('🔧 container already initialized:', isInitialized);
 
   if (isInitialized) {
-    alert('🔧 React already initialized');
+    console.error('UNIQUE_DEBUG: React already initialized');
     console.log('🔧 React already initialized');
     return true;
   }
 
   // Mark as initialized
   container.setAttribute('data-react-initialized', 'true');
-  alert('🔧 Marked as initialized');
+  console.error('UNIQUE_DEBUG: Marked as initialized');
   console.log('🔧 Marked as initialized');
 
   // Masquer le loading et afficher l'éditeur
   const loadingEl = document.getElementById('pdf-builder-loader');
   const editorEl = document.getElementById('pdf-builder-editor-container');
 
-  alert('🔧 loadingEl found: ' + !!loadingEl + ' editorEl found: ' + !!editorEl);
+  console.error('UNIQUE_DEBUG: loadingEl found: ' + !!loadingEl + ' editorEl found: ' + !!editorEl);
   console.log('🔧 loadingEl found:', !!loadingEl, 'editorEl found:', !!editorEl);
 
   if (loadingEl) loadingEl.style.display = 'none';
   if (editorEl) editorEl.style.display = 'block';
 
   try {
-    alert('🔧 About to create React root');
+    console.error('UNIQUE_DEBUG: About to create React root');
     console.log('🔧 About to create React root');
     const root = createRoot(container);
-    alert('🔧 Root created successfully');
+    console.error('UNIQUE_DEBUG: Root created successfully');
     console.log('🔧 Root created successfully');
-    alert('🔧 About to render PDFBuilder');
+    console.error('UNIQUE_DEBUG: About to render PDFBuilder');
     console.log('🔧 About to render PDFBuilder');
     root.render(
       // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
       // In development, it can help catch bugs, but production needs single render
       <PDFBuilder />
     );
-    alert('🔧 PDFBuilder rendered successfully');
+    console.error('UNIQUE_DEBUG: PDFBuilder rendered successfully');
     console.log('🔧 PDFBuilder rendered successfully');
 
     // Charger les données initiales du template s'il y en a
