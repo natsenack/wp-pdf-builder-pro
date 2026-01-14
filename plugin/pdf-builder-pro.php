@@ -1759,12 +1759,6 @@ function pdf_builder_save_template_handler() {
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     $json_errors[] = 'Latin-1 to UTF-8 decode: ' . json_last_error_msg();
 
-                // Approach 3: Try to fix Latin-1 to UTF-8 conversion (Ã© -> é)
-                $latin1_to_utf8 = utf8_encode($template_data);
-                $decoded_data = json_decode($latin1_to_utf8, true, 512, JSON_INVALID_UTF8_IGNORE);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $json_errors[] = 'Latin-1 to UTF-8 decode: ' . json_last_error_msg();
-
                     // Approach 4: Try to fix specific encoding issues
                     $fixed_json = preg_replace('/Ã©/', 'é', $template_data);
                     $fixed_json = preg_replace('/Ã¨/', 'è', $fixed_json);
@@ -1854,11 +1848,14 @@ function pdf_builder_save_template_handler() {
                     error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction manuelle des caractères');
                 }
             } else {
-                error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction UTF-8');
+                error_log('[PDF Builder SAVE] ✅ JSON décodé avec conversion Latin-1 vers UTF-8');
             }
         } else {
-            error_log('[PDF Builder SAVE] ✅ JSON décodé normalement');
+            error_log('[PDF Builder SAVE] ✅ JSON décodé avec correction UTF-8');
         }
+    } else {
+        error_log('[PDF Builder SAVE] ✅ JSON décodé normalement');
+    }
         // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
         global $wpdb;
