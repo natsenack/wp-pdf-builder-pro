@@ -73,7 +73,7 @@ export function debugLog(...args: unknown[]) {
 // Fonction de debug pour les sauvegardes (activable séparément)
 export function debugSave(...args: unknown[]) {
   if (isDebugEnabled()) {
-    console.log(...args);
+    // console.log(...args);
   }
 }
 
