@@ -357,9 +357,9 @@ class AdminScriptLoader
         wp_add_inline_script($dynamic_main_handle, 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-main'], $version_param . $force_reload_suffix, true);
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url . ' with version: ' . $version_param . $force_reload_suffix);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url . ' with version: ' . $version_param . $nuclear_suffix);
 
         // Emergency reload script - force page reload if React scripts don't load within 5 seconds
         $emergency_reload_script = "
