@@ -111,20 +111,26 @@ export function initPDFBuilderReact() {
 // (Déjà déclarée plus haut)
 
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
-window.initPDFBuilderReact = initPDFBuilderReact;
+try {
+  window.initPDFBuilderReact = initPDFBuilderReact;
+} catch (error) {
+  debugWarn('PDF Builder React: Could not assign initPDFBuilderReact to window:', error);
+}
 
 // Exporter l'API complète pour WordPress
-// debugLog('🔧 DEBUG: About to assign window.pdfBuilderReact');
-window.pdfBuilderReact = {
-  initPDFBuilderReact,
-  loadTemplate,
-  getEditorState,
-  setEditorState,
-  getCurrentTemplate,
-  exportTemplate,
-  saveTemplate,
-  registerEditorInstance,
-  resetAPI
-};
-// debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
+try {
+  window.pdfBuilderReact = {
+    initPDFBuilderReact,
+    loadTemplate,
+    getEditorState,
+    setEditorState,
+    getCurrentTemplate,
+    exportTemplate,
+    saveTemplate,
+    registerEditorInstance,
+    resetAPI
+  };
+} catch (error) {
+  debugWarn('PDF Builder React: Could not assign pdfBuilderReact to window:', error);
+}
 

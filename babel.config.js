@@ -20,5 +20,7 @@ export default {
         '@babel/plugin-transform-runtime'
       ]
     }
-  }
+  },
+  // Disable strict mode to avoid issues with window assignments
+  sourceType: 'script'
 };
