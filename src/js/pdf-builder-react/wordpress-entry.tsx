@@ -42,6 +42,7 @@ declare global {
       saveTemplate: typeof saveTemplate;
       registerEditorInstance: typeof registerEditorInstance;
       resetAPI: typeof resetAPI;
+      _isWebpackBundle: true;
     };
     // Notification functions
     showSuccessNotification?: (message: string, duration?: number) => void;
@@ -53,16 +54,25 @@ declare global {
 
 export function initPDFBuilderReact() {
   console.log('🔧 initPDFBuilderReact called');
+
+  // Debug: Check if container exists
   const container = document.getElementById('pdf-builder-react-root');
+  console.log('🔧 container element:', container);
   console.log('🔧 container found:', !!container);
 
   if (!container) {
     console.error('PDF Builder React: Container element not found');
+    console.log('🔧 Available elements with pdf-builder in ID:');
+    const allElements = document.querySelectorAll('[id*="pdf-builder"]');
+    allElements.forEach(el => console.log('  -', el.id, el));
     return false;
   }
 
   // Check if React has already been initialized
-  if (container.hasAttribute('data-react-initialized')) {
+  const isInitialized = container.hasAttribute('data-react-initialized');
+  console.log('🔧 container already initialized:', isInitialized);
+
+  if (isInitialized) {
     console.log('🔧 React already initialized');
     return true;
   }
@@ -96,7 +106,7 @@ export function initPDFBuilderReact() {
     const existingTemplate = dataWindow.pdfBuilderData?.existingTemplate;
     if (existingTemplate) {
       const tpl = existingTemplate as { id?: string; elements?: unknown[] };
-      
+
       // Charger le template via l'API globale
       setTimeout(() => {
         loadTemplate(existingTemplate);
