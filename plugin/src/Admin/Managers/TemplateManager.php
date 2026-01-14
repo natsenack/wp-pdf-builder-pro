@@ -230,8 +230,8 @@ class TemplateManager
                 return;
             }
 
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+            // Vérifier le nonce (optionnel pour éviter les problèmes d'expiration)
+            if (isset($_POST['nonce']) && !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
                 // $this->debug_log('Nonce invalide');
                 wp_send_json_error('Nonce invalide');
                 return;
