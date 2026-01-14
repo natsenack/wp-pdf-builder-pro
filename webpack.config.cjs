@@ -13,8 +13,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
-    library: undefined,
-    iife: false,
+    library: {
+      type: 'var',
+      name: 'PDFBuilderTemp',
+    },
     clean: true,
   },
   target: 'web',
