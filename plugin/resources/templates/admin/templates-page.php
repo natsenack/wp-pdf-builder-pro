@@ -51,6 +51,23 @@ $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['
 if (!is_array($allowed_orientations)) {
     $allowed_orientations = ['portrait'];
 }
+
+// Récupérer les formats autorisés depuis les paramètres du plugin
+$allowed_formats = get_option('pdf_builder_canvas_allowed_formats', ['A4']);
+if (!is_array($allowed_formats)) {
+    $allowed_formats = ['A4'];
+}
+
+// Fonction pour récupérer les options de format avec leurs labels
+function get_format_options() {
+    return [
+        'A4' => 'A4 (210×297mm)',
+        'A3' => 'A3 (297×420mm)',
+        'Letter' => 'Letter (8.5×11")',
+        'Legal' => 'Legal (8.5×14")',
+        'EtiquetteColis' => 'Étiquette Colis (10×15cm)'
+    ];
+}
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
@@ -423,6 +440,19 @@ var pdfBuilderAjax = {
 
                     <div style="margin-bottom: 20px;">
                         <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Format</label>
+                            <select id="template-format" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <?php
+                                $format_options = get_format_options();
+                                foreach ($allowed_formats as $format):
+                                    $label = isset($format_options[$format]) ? $format_options[$format] : $format;
+                                ?>
+                                    <option value="<?php echo esc_attr($format); ?>"><?php echo esc_html($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
 
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px;">DPI (résolution)</label>
@@ -853,6 +883,34 @@ function updateResolutionDisplay() {
     resolutionDisplay.textContent = `Résolution: ${widthPx} × ${heightPx} px`;
 }
 
+// Fonction pour définir les valeurs par défaut selon le format
+function setFormatDefaults(format) {
+    const formatDefaults = {
+        'A4': { dpi: '96', orientation: 'portrait' },
+        'A3': { dpi: '150', orientation: 'portrait' },
+        'Letter': { dpi: '96', orientation: 'portrait' }
+    };
+    
+    const defaults = formatDefaults[format] || formatDefaults['A4'];
+    
+    // Mettre à jour les selects
+    const dpiSelect = document.getElementById('template-dpi');
+    const orientationSelect = document.getElementById('template-orientation');
+    
+    if (dpiSelect) dpiSelect.value = defaults.dpi;
+    if (orientationSelect) orientationSelect.value = defaults.orientation;
+    
+    // Mettre à jour l'affichage de la résolution
+    updateResolutionDisplay();
+}
+
+// Écouteur pour mettre à jour les valeurs quand le format change
+document.addEventListener('change', function(e) {
+    if (e.target && e.target.id === 'template-format') {
+        setFormatDefaults(e.target.value);
+    }
+});
+
 // Écouteur pour mettre à jour la résolution quand le DPI change (délégation d'événement)
 document.addEventListener('change', function(e) {
     if (e.target && e.target.id === 'template-dpi') {
@@ -893,6 +951,7 @@ function openTemplateSettings(templateId, templateName) {
             // Remplir les champs
             document.getElementById('template-name-input').value = data.data.name || '';
             document.getElementById('template-description-input').value = data.data.description || '';
+            document.getElementById('template-format').value = data.data.format || 'A4';
             document.getElementById('template-dpi').value = data.data.dpi || '96';
             document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
             document.getElementById('template-category').value = data.data.category || 'autre';
@@ -934,6 +993,7 @@ function saveTemplateSettings() {
         'template_id': currentTemplateId,
         'name': name,
         'description': document.getElementById('template-description-input').value,
+        'format': document.getElementById('template-format').value,
         'dpi': document.getElementById('template-dpi').value,
         'orientation': document.getElementById('template-orientation').value,
         'category': document.getElementById('template-category').value

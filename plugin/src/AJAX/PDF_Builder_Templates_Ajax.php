@@ -256,6 +256,7 @@ class PdfBuilderTemplatesAjax
                 'name' => $template['name'],
                 'description' => $template_data['description'] ?? 'Description du template...',
                 'category' => $template_data['category'] ?? 'autre',
+                'format' => $template_data['format'] ?? 'A4',
                 'dpi' => $template_data['dpi'] ?? 96,
                 'orientation' => $template_data['orientation'] ?? 'portrait'
             );
@@ -284,6 +285,7 @@ class PdfBuilderTemplatesAjax
             $template_id = intval($_POST['template_id'] ?? 0);
             $name = sanitize_text_field($_POST['name'] ?? '');
             $description = sanitize_textarea_field($_POST['description'] ?? '');
+            $format = sanitize_text_field($_POST['format'] ?? 'A4');
             $dpi = intval($_POST['dpi'] ?? 96);
             $orientation = sanitize_text_field($_POST['orientation'] ?? 'portrait');
             $category = sanitize_text_field($_POST['category'] ?? 'autre');
@@ -325,6 +327,7 @@ class PdfBuilderTemplatesAjax
             // Mettre à jour les paramètres dans template_data
             $template_data['description'] = $description;
             $template_data['category'] = $category;
+            $template_data['format'] = $format;
             $template_data['dpi'] = $dpi;
             $template_data['orientation'] = $orientation;
 // Mettre à jour le template
