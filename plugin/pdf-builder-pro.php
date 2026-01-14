@@ -46,6 +46,13 @@ if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_
     pdf_builder_register_ajax_handlers();
 }
 
+// Désenregistrer les scripts problématiques qui causent des erreurs d'export ES6
+add_action('wp_enqueue_scripts', function() {
+    // Désenregistrer webpage_content_reporter et scripts similaires qui causent des erreurs
+    wp_deregister_script('webpage_content_reporter');
+    wp_dequeue_script('webpage_content_reporter');
+}, 20);
+
 /**
  * Fonction d'activation
  */
