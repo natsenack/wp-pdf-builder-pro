@@ -100,13 +100,28 @@ export function initPDFBuilderReact() {
   if (editorEl) editorEl.style.display = 'block';
 
   try {
-    console.error('UNIQUE_DEBUG: About to create React root');
-    console.log('🔧 About to create React root');
+    console.error('UNIQUE_DEBUG: About to check if React is available');
+    console.log('🔧 About to check if React is available');
+
+    // Vérifier que React est disponible
+    if (typeof React === 'undefined') {
+      console.error('UNIQUE_DEBUG: React is not available');
+      throw new Error('React is not loaded');
+    }
+    if (typeof createRoot === 'undefined') {
+      console.error('UNIQUE_DEBUG: createRoot is not available');
+      throw new Error('createRoot is not available');
+    }
+
+    console.error('UNIQUE_DEBUG: React is available, about to create React root');
+    console.log('🔧 React is available, about to create React root');
     const root = createRoot(container);
     console.error('UNIQUE_DEBUG: Root created successfully');
     console.log('🔧 Root created successfully');
+
     console.error('UNIQUE_DEBUG: About to render PDFBuilder');
     console.log('🔧 About to render PDFBuilder');
+
     root.render(
       // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
       // In development, it can help catch bugs, but production needs single render
@@ -130,6 +145,7 @@ export function initPDFBuilderReact() {
     return true;
 
   } catch (error) {
+    console.error('UNIQUE_DEBUG: Error during React initialization:', error);
     alert('PDF Builder React: Initialization error: ' + error);
     console.log('PDF Builder React: Initialization error:', error);
     // Don't hide the container on error, so we can see it

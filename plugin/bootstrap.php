@@ -541,13 +541,13 @@ function pdf_builder_load_core()
 
     // 🚀 CHARGEMENT OPTIMISÉ DE REACT POUR L'ÉDITEUR
     add_action('admin_enqueue_scripts', function($hook) {
-        // Charger seulement sur la page de l'éditeur React
-        if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
-            // error_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook);
+        // Charger React sur TOUTES les pages admin pour éviter les problèmes de dépendances
+        wp_enqueue_script('react', false, [], false, true);
+        wp_enqueue_script('react-dom', false, ['react'], false, true);
 
-            // Charger React depuis WordPress Core (optimisé)
-            wp_enqueue_script('react', false, [], false, true);
-            wp_enqueue_script('react-dom', false, ['react'], false, true);
+        // Charger seulement le bundle sur la page de l'éditeur React
+        if ($hook === 'pdf-builder_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {
+            // error_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook);
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)
             $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
