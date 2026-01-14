@@ -86,37 +86,37 @@ export function initPDFBuilderReact() {
   // LOG CRITIQUE - DÉBUT
   console.log('💥 NUCLEAR_DEBUG_V1: initPDFBuilderReact STARTED');
 
-  // Step 1: Check container
-  const container = document.getElementById('pdf-builder-react-root');
-  console.log('🔍 Container found:', !!container);
-
-  if (!container) {
-    console.error('❌ FAIL: Container element not found');
-    return false;
-  }
-
-  // Step 2: Check if already initialized
-  const isInitialized = container.hasAttribute('data-react-initialized');
-  console.log('🔍 Already initialized:', isInitialized);
-
-  if (isInitialized) {
-    console.log('✅ SUCCESS: Already initialized');
-    return true;
-  }
-
-  // Step 3: Mark as initialized
-  container.setAttribute('data-react-initialized', 'true');
-  console.log('✅ Container marked as initialized');
-
-  // Step 4: Show editor, hide loading
-  const loadingEl = document.getElementById('pdf-builder-loader');
-  const editorEl = document.getElementById('pdf-builder-editor-container');
-  if (loadingEl) loadingEl.style.display = 'none';
-  if (editorEl) editorEl.style.display = 'block';
-  console.log('🔄 UI updated: loading hidden, editor shown');
-
-  // Step 5: Initialize React
   try {
+    // Step 1: Check container
+    const container = document.getElementById('pdf-builder-react-root');
+    console.log('🔍 Container found:', !!container);
+
+    if (!container) {
+      console.error('❌ FAIL: Container element not found');
+      return false;
+    }
+
+    // Step 2: Check if already initialized
+    const isInitialized = container.hasAttribute('data-react-initialized');
+    console.log('🔍 Already initialized:', isInitialized);
+
+    if (isInitialized) {
+      console.log('✅ SUCCESS: Already initialized');
+      return true;
+    }
+
+    // Step 3: Mark as initialized
+    container.setAttribute('data-react-initialized', 'true');
+    console.log('✅ Container marked as initialized');
+
+    // Step 4: Show editor, hide loading
+    const loadingEl = document.getElementById('pdf-builder-loader');
+    const editorEl = document.getElementById('pdf-builder-editor-container');
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (editorEl) editorEl.style.display = 'block';
+    console.log('🔄 UI updated: loading hidden, editor shown');
+
+    // Step 5: Initialize React
     console.log('⚛️ Checking React availability');
 
     if (typeof React === 'undefined') {
@@ -131,11 +131,22 @@ export function initPDFBuilderReact() {
 
     console.log('✅ React ready, creating root');
     const root = createRoot(container);
+    console.log('✅ Root created successfully');
 
     console.log('🎨 Rendering PDFBuilder component');
-    root.render(<PDFBuilder />);
+    console.log('🎨 PDFBuilder component available:', typeof PDFBuilder);
+    console.log('🎨 PDFBuilder import successful');
 
-    console.log('✅ PDFBuilder rendered successfully');
+    // Try to render with error boundary
+    try {
+      root.render(<PDFBuilder />);
+      console.log('✅ PDFBuilder rendered successfully');
+    } catch (renderError) {
+      console.error('❌ FAIL: PDFBuilder render error:', renderError);
+      console.error('❌ FAIL: Render error stack:', renderError.stack);
+      container.removeAttribute('data-react-initialized');
+      return false;
+    }
 
     // Charger les données initiales du template s'il y en a
     // Step 6: Load template data if available
@@ -161,7 +172,14 @@ export function initPDFBuilderReact() {
 
   } catch (error) {
     console.error('❌ FAIL: React initialization error:', error);
-    container.removeAttribute('data-react-initialized');
+    console.error('❌ FAIL: Error stack:', error.stack);
+
+    // Try to remove initialization flag if container exists
+    const container = document.getElementById('pdf-builder-react-root');
+    if (container) {
+      container.removeAttribute('data-react-initialized');
+    }
+
     return false;
   }
 }

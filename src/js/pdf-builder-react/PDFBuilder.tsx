@@ -54,17 +54,39 @@ export function PDFBuilder({
 
   debugLog('🎨 PDFBuilder: Rendering with dimensions:', dimensions);
 
-  return (
-    <CanvasSettingsProvider>
-      <BuilderProvider>
-        <PDFBuilderContent
-          width={dimensions.width}
-          height={dimensions.height}
-          className={className}
-        />
-      </BuilderProvider>
-    </CanvasSettingsProvider>
-  );
+  try {
+    return (
+      <CanvasSettingsProvider>
+        <BuilderProvider>
+          <PDFBuilderContent
+            width={dimensions.width}
+            height={dimensions.height}
+            className={className}
+          />
+        </BuilderProvider>
+      </CanvasSettingsProvider>
+    );
+  } catch (renderError) {
+    debugLog('❌ PDFBuilder: Render error:', renderError);
+    console.error('❌ PDFBuilder: Render error:', renderError);
+    // Return error UI
+    return (
+      <div style={{
+        padding: '20px',
+        background: '#ffebee',
+        border: '1px solid #f44336',
+        borderRadius: '4px',
+        color: '#c62828'
+      }}>
+        <h3>Erreur de rendu React</h3>
+        <p>Une erreur s'est produite lors du rendu du composant PDFBuilder.</p>
+        <details>
+          <summary>Détails de l'erreur</summary>
+          <pre>{renderError.toString()}</pre>
+        </details>
+      </div>
+    );
+  }
 }
 
 // Export des composants individuels pour une utilisation modulaire
