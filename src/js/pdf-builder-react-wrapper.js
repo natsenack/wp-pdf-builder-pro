@@ -4,6 +4,9 @@
  * This file acts as the true webpack entry point that exports everything to window
  */
 
+// LOG AU DÉBUT ABSOLU DU FICHIER
+console.log('📦📦📦 WRAPPER_FILE_LOADED_V5: pdf-builder-react-wrapper.min.js STARTED EXECUTING at ' + new Date().toISOString());
+
 console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Wrapper script STARTED at ' + new Date().toISOString());
 
 // The module is loaded as part of the entry

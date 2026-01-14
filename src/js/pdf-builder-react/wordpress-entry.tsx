@@ -1,3 +1,6 @@
+// LOG AU DÉBUT ABSOLU DU FICHIER REACT
+console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V5: wordpress-entry.tsx STARTED EXECUTING at ' + new Date().toISOString());
+
 /**
  * PDF Builder React - Point d'entrée WordPress
  * Ce fichier est chargé par WordPress pour initialiser l'éditeur React
