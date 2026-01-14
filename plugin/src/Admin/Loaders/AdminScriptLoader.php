@@ -184,7 +184,7 @@ class AdminScriptLoader
         // Nonce pour les templates
         wp_add_inline_script('pdf-preview-api-client', 'var pdfBuilderTemplatesNonce = "' . wp_create_nonce('pdf_builder_templates') . '";');
 
-        // Scripts pour l'éditeur React
+        // Scripts pour l'éditeur React - CHARGER POUR TOUTES LES PAGES PDF-BUILDER
         if (isset($_GET['page']) && (strpos($_GET['page'], 'pdf-builder') !== false)) {
             // error_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']);
             $this->loadReactEditorScripts();

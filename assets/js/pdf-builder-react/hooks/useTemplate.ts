@@ -9,6 +9,8 @@ export function useTemplate() {
   const { state, dispatch } = useBuilder();
   const { canvasWidth, canvasHeight } = useCanvasSettings();
 
+  console.log('[useTemplate] Initializing, window.pdfBuilderData:', window.pdfBuilderData);
+
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = useCallback((): string | null => {
     // Priorité 1: Utiliser le templateId des données PHP localisées
