@@ -74,7 +74,7 @@ var pdfBuilderAjax = {
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showTemplateLimitNotice(); showUpgradeModal('gallery')">
+            <button id="open-template-gallery" class="button" style="margin-left: 10px;" onclick="showTemplateLimitNotice(); showUpgradeModal('gallery')">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
