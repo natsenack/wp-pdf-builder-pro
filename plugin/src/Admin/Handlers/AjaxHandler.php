@@ -276,7 +276,7 @@ class AjaxHandler
             // Vérifier le nonce depuis les paramètres GET ou POST
             $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
-            if (!wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
+            if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -1536,7 +1536,7 @@ class AjaxHandler
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_template_nonce')) {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
                 return;
             }
