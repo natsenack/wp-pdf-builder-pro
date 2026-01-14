@@ -1,6 +1,29 @@
 // LOG AU DÉBUT ABSOLU DU FICHIER REACT
 console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V5: wordpress-entry.tsx STARTED EXECUTING at ' + new Date().toISOString());
 
+// IMMEDIATE VISUAL INDICATOR - Add visible element to DOM
+const debugDiv = document.createElement('div');
+debugDiv.id = 'pdf-builder-debug-indicator';
+debugDiv.style.cssText = `
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 999999;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid black;
+`;
+debugDiv.textContent = '🚨 REACT SCRIPT LOADED 🚨 ' + new Date().toISOString();
+document.body.appendChild(debugDiv);
+
+// Also add to window
+window['REACT_SCRIPT_LOADED'] = true;
+window['REACT_LOAD_TIME'] = new Date().toISOString();
+
 /**
  * PDF Builder React - Point d'entrée WordPress
  * Ce fichier est chargé par WordPress pour initialiser l'éditeur React

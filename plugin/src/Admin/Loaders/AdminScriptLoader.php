@@ -267,15 +267,14 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
-        // FORCE COMPLETE RELOAD - Use version parameter AND query string to bypass all caching
-        $force_reload_suffix = '-FORCED-RELOAD-' . time() . '-UNIQUE-' . rand(100000, 999999);
-        $random_query = '?nocache=' . time() . rand(1000000, 9999999);
+        // FORCE COMPLETE RELOAD - Use completely different file names to bypass all caching
+        $unique_suffix = '-EMERGENCY-' . time() . '-' . rand(100000, 999999);
 
-        // Bundle React principal (contient le code React)
-        $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_query;
-        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], $version_param . $force_reload_suffix, true);
+        // Bundle React principal (contient le code React) - FORCE NEW FILE NAME
+        $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react' . $unique_suffix . '.min.js';
+        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], null, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main: ' . $react_main_url . ' with version: ' . $version_param . $force_reload_suffix);
+        error_log('[WP AdminScriptLoader] EMERGENCY: Enqueued pdf-builder-react-main: ' . $react_main_url);
 
         // CSS pour l'éditeur React
         $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css' . $random_query;
