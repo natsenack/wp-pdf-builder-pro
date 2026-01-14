@@ -51,6 +51,19 @@ add_action('wp_enqueue_scripts', function() {
     // Désenregistrer webpage_content_reporter et scripts similaires qui causent des erreurs
     wp_deregister_script('webpage_content_reporter');
     wp_dequeue_script('webpage_content_reporter');
+    
+    // Filtrer tous les scripts problématiques
+    global $wp_scripts;
+    if (isset($wp_scripts) && $wp_scripts instanceof WP_Scripts) {
+        $patterns = ['webpage_content_reporter', 'content-reporter', 'snippet', 'isolated'];
+        foreach ($wp_scripts->registered as $handle => $script) {
+            foreach ($patterns as $pattern) {
+                if (stripos($handle, $pattern) !== false) {
+                    wp_dequeue_script($handle);
+                }
+            }
+        }
+    }
 }, 20);
 
 /**
