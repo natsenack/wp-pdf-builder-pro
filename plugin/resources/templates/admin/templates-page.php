@@ -51,6 +51,7 @@ $allowed_orientations = get_option('pdf_builder_canvas_allowed_orientations', ['
 if (!is_array($allowed_orientations)) {
     $allowed_orientations = ['portrait'];
 }
+?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
 <script>
