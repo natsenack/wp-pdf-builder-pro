@@ -39,6 +39,12 @@ if ($templates_count === 0 && !$is_premium) {
     // Recharger le compteur après création
     $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
 }
+
+// Récupérer les DPI autorisés depuis les paramètres du plugin
+$allowed_dpis = get_option('pdf_builder_canvas_allowed_dpis', ['96', '150', '300']);
+if (!is_array($allowed_dpis)) {
+    $allowed_dpis = ['96', '150', '300'];
+}
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
@@ -405,19 +411,11 @@ var pdfBuilderAjax = {
                         <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
 
                         <div style="margin-bottom: 15px;">
-                            <label style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; cursor: pointer;">
-                                <input type="checkbox" id="template-public" style="margin-right: 8px;">
-                                <span>Template public (visible par tous les utilisateurs)</span>
-                            </label>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Format de papier</label>
-                            <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                <option value="A4">A4 (594 × 1123 px)</option>
-                                <option value="A3">A3 (840 × 1191 px)</option>
-                                <option value="Letter">Letter (612 × 792 px)</option>
-                                <option value="Legal">Legal (612 × 1008 px)</option>
+                            <label style="display: block; margin-bottom: 5px;">DPI (résolution)</label>
+                            <select id="template-dpi" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <?php foreach ($allowed_dpis as $dpi): ?>
+                                    <option value="<?php echo esc_attr($dpi); ?>"><?php echo esc_html($dpi); ?> DPI</option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
@@ -817,8 +815,7 @@ function openTemplateSettings(templateId, templateName) {
             // Remplir les champs
             document.getElementById('template-name-input').value = data.data.name || '';
             document.getElementById('template-description-input').value = data.data.description || '';
-            document.getElementById('template-public').checked = data.data.is_public || false;
-            document.getElementById('template-paper-size').value = data.data.paper_size || 'A4';
+            document.getElementById('template-dpi').value = data.data.dpi || '96';
             document.getElementById('template-orientation').value = data.data.orientation || 'portrait';
             document.getElementById('template-category').value = data.data.category || 'autre';
         } else {
@@ -856,8 +853,7 @@ function saveTemplateSettings() {
         'template_id': currentTemplateId,
         'name': name,
         'description': document.getElementById('template-description-input').value,
-        'is_public': document.getElementById('template-public').checked ? 1 : 0,
-        'paper_size': document.getElementById('template-paper-size').value,
+        'dpi': document.getElementById('template-dpi').value,
         'orientation': document.getElementById('template-orientation').value,
         'category': document.getElementById('template-category').value
     };
