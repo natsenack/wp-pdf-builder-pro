@@ -657,6 +657,14 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Récupère l'instance du template processor
+     */
+    public function getTemplateProcessor()
+    {
+        return $this->template_processor;
+    }
+
+    /**
      * Vérifie les permissions d'administration sans mise en cache
      */
     private function checkAdminPermissions()
