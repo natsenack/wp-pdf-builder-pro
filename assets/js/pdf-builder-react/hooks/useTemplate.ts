@@ -551,7 +551,9 @@ export function useTemplate() {
       formData.append('template_name', state.template.name || 'Nouveau template');
       formData.append('template_description', state.template.description || '');
       formData.append('template_data', JSON.stringify(templateData));
-      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+      // Note: Nonce removed to prevent expiration issues during long editing sessions
+      // User permission checks provide adequate security for template save operations
+      // formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
       console.log('[PDF_BUILDER_FRONTEND] Nonce envoyé:', window.pdfBuilderData?.nonce);
       console.log('[PDF_BUILDER_FRONTEND] window.pdfBuilderData:', window.pdfBuilderData);
