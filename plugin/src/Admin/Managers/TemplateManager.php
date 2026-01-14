@@ -246,13 +246,23 @@ class TemplateManager
             }
 
             // Créer ou mettre à jour le post template
+            $template_type = 'custom'; // Valeur par défaut pour les nouveaux templates
+            
+            // Pour les templates existants, préserver le type actuel
+            if ($template_id) {
+                $existing_type = get_post_meta($template_id, '_pdf_template_type', true);
+                if ($existing_type) {
+                    $template_type = $existing_type;
+                }
+            }
+            
             $post_data = [
                 'post_title' => $template_name,
                 'post_type' => 'pdf_template',
                 'post_status' => 'publish',
                 'meta_input' => [
                     '_pdf_template_data' => $template_data,
-                    '_pdf_template_type' => 'custom',
+                    '_pdf_template_type' => $template_type,
                 ]
             ];
 
