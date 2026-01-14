@@ -1723,17 +1723,28 @@ function pdf_builder_save_template_handler() {
         // error_log('[PDF Builder SAVE] ✅ Données de base OK');
 
         // Decode and validate JSON
-        $decoded_data = json_decode($template_data, true);
+        // First, fix potential UTF-8 encoding issues
+        $template_data = mb_convert_encoding($template_data, 'UTF-8', 'UTF-8');
+        $template_data = preg_replace('/[\x00-\x1F\x7F]/', '', $template_data); // Remove control characters
+
+        // Try to decode with different approaches
+        $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
-            error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
-            error_log('[PDF Builder SAVE] Données JSON (milieu): ' . substr($template_data, 500, 500) . '...');
-            error_log('[PDF Builder SAVE] Données JSON (fin): ' . substr($template_data, -500) . '...');
-            error_log('[PDF Builder SAVE] Longueur totale JSON: ' . strlen($template_data));
-            error_log('[PDF Builder SAVE] About to call wp_send_json_error for invalid JSON');
-            wp_send_json_error('Données JSON invalides');
-            error_log('[PDF Builder SAVE] wp_send_json_error called for invalid JSON - this should not appear');
-            return;
+            // Try to fix common UTF-8 issues
+            $template_data = iconv('UTF-8', 'UTF-8//IGNORE', $template_data);
+            $decoded_data = json_decode($template_data, true, 512, JSON_INVALID_UTF8_IGNORE);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON après nettoyage: ' . json_last_error_msg());
+                error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
+                error_log('[PDF Builder SAVE] Données JSON (milieu): ' . substr($template_data, 500, 500) . '...');
+                error_log('[PDF Builder SAVE] Données JSON (fin): ' . substr($template_data, -500) . '...');
+                error_log('[PDF Builder SAVE] Longueur totale JSON: ' . strlen($template_data));
+                error_log('[PDF Builder SAVE] About to call wp_send_json_error for invalid JSON');
+                wp_send_json_error('Données JSON invalides');
+                error_log('[PDF Builder SAVE] wp_send_json_error called for invalid JSON - this should not appear');
+                return;
+            }
         }
         // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
 
