@@ -67,12 +67,7 @@ class PDFEditorPreviewIntegration {
 
     bindEvents() {
         // Raccourci clavier Ctrl+P (ou Cmd+P sur Mac) - supprimé car bouton supprimé
-        // document.addEventListener('keydown', (e) => {
-        //     if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-        //         e.preventDefault();
-                this.generatePreview();
-            }
-        });
+        // Code supprimé - plus de raccourci clavier pour la prévisualisation
     }
 
     async generatePreview() {
