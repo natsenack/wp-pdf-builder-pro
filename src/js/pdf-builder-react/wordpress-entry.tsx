@@ -52,37 +52,44 @@ declare global {
 }
 
 export function initPDFBuilderReact() {
+  console.log('🔧 initPDFBuilderReact called');
   const container = document.getElementById('pdf-builder-react-root');
+  console.log('🔧 container found:', !!container);
 
   if (!container) {
-    debugWarn('PDF Builder React: Container element not found');
+    console.error('PDF Builder React: Container element not found');
     return false;
   }
 
   // Check if React has already been initialized
   if (container.hasAttribute('data-react-initialized')) {
-
+    console.log('🔧 React already initialized');
     return true;
   }
 
   // Mark as initialized
   container.setAttribute('data-react-initialized', 'true');
+  console.log('🔧 Marked as initialized');
 
   // Masquer le loading et afficher l'éditeur
   const loadingEl = document.getElementById('pdf-builder-loader');
   const editorEl = document.getElementById('pdf-builder-editor-container');
 
+  console.log('🔧 loadingEl found:', !!loadingEl, 'editorEl found:', !!editorEl);
+
   if (loadingEl) loadingEl.style.display = 'none';
   if (editorEl) editorEl.style.display = 'block';
 
   try {
+    console.log('🔧 Creating React root');
     const root = createRoot(container);
+    console.log('🔧 Root created, rendering PDFBuilder');
     root.render(
       // ✅ Disabled StrictMode - it causes double rendering which messes up Canvas
       // In development, it can help catch bugs, but production needs single render
       <PDFBuilder />
     );
-
+    console.log('🔧 PDFBuilder rendered successfully');
 
     // Charger les données initiales du template s'il y en a
     const dataWindow = window as unknown as { pdfBuilderData?: { existingTemplate?: unknown } };
@@ -99,7 +106,7 @@ export function initPDFBuilderReact() {
     return true;
 
   } catch (error) {
-    debugError('PDF Builder React: Initialization error:', error);
+    console.error('PDF Builder React: Initialization error:', error);
     container.innerHTML = '<p>Erreur lors de l\'initialisation de l\'éditeur React.</p>';
     // Remove the initialized flag on error
     container.removeAttribute('data-react-initialized');
