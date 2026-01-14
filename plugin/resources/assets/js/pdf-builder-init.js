@@ -12,7 +12,8 @@ window.addEventListener('unhandledrejection', function(event) {
     const error = event.reason;
     if (error && typeof error.message === 'string' &&
         (error.message.includes('A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received') ||
-         error.message.includes('Extension context invalidated.'))) {
+         error.message.includes('Extension context invalidated.') ||
+         error.message.includes('Unexpected token \'export\''))) {
         console.warn('⚠️ Erreur d\'extension interceptée et ignorée:', error.message);
         event.preventDefault(); // Empêche l'erreur de remonter
         return false; // Indique que l'erreur a été gérée
@@ -24,7 +25,8 @@ window.addEventListener('error', function(event) {
     const error = event.error || event.message;
     if (error && typeof error === 'string' &&
         (error.includes('A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received') ||
-         error.includes('Extension context invalidated.'))) {
+         error.includes('Extension context invalidated.') ||
+         error.includes('Unexpected token \'export\''))) {
         console.warn('⚠️ Erreur d\'extension synchronisée interceptée et ignorée:', error);
         event.preventDefault(); // Empêche l'erreur de remonter
         return false; // Indique que l'erreur a été gérée
