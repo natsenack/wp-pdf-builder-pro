@@ -7,7 +7,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   entry: {
     'pdf-builder-react': './src/js/pdf-builder-react/wordpress-entry.tsx',
-    'pdf-builder-react-wrapper': ['./src/js/pdf-builder-react/wordpress-entry.tsx', './src/js/pdf-builder-react-wrapper.js'],
+    'pdf-builder-react-wrapper': './src/js/pdf-builder-react-wrapper.js',
     'pdf-preview-api-client': './src/js/pdf-preview-api-client.js',
     'pdf-preview-integration': './src/js/pdf-preview-integration.js',
   },
@@ -15,7 +15,7 @@ module.exports = {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
     library: '[name]',
-    libraryTarget: 'umd',
+    libraryTarget: 'window',
     clean: true,
   },
   target: 'web',

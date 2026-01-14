@@ -4,57 +4,64 @@
  * This file acts as the true webpack entry point that exports everything to window
  */
 
-// LOG AU DÉBUT ABSOLU DU FICHIER
-console.log('📦📦📦 WRAPPER_FILE_LOADED_V5: pdf-builder-react-wrapper.min.js STARTED EXECUTING at ' + new Date().toISOString());
+(function() {
+    console.log('📦📦📦 WRAPPER_FILE_LOADED_V5: pdf-builder-react-wrapper.min.js STARTED at ' + new Date().toISOString());
 
-console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Wrapper script STARTED at ' + new Date().toISOString());
-
-// The module is loaded as part of the entry
-// const pdfBuilderReactModule = require('my-alias');
-
-// Use the global
-const pdfBuilderReactModule = window.pdfBuilderReact;
-
-console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: window.pdfBuilderReact exists:', !!window.pdfBuilderReact);
-
-// Extract the default export - it's already an object with all functions
-const moduleExports = pdfBuilderReactModule;
-
-console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: moduleExports:', moduleExports);
-
-// Directly assign to window - no exports needed
-if (typeof window !== 'undefined') {
-  console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Assigning to window...');
-
-  window.pdfBuilderReact = moduleExports;
-  window.pdfBuilderReactWrapper = {
-    initPDFBuilderReact: moduleExports.initPDFBuilderReact,
-    loadTemplate: moduleExports.loadTemplate,
-    getEditorState: moduleExports.getEditorState,
-    setEditorState: moduleExports.setEditorState,
-    getCurrentTemplate: moduleExports.getCurrentTemplate,
-    exportTemplate: moduleExports.exportTemplate,
-    saveTemplate: moduleExports.saveTemplate,
-    registerEditorInstance: moduleExports.registerEditorInstance,
-    resetAPI: moduleExports.resetAPI,
-    updateCanvasDimensions: moduleExports.updateCanvasDimensions,
-    _isWebpackBundle: true,
-  };
-
-  console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Assignment completed. window.pdfBuilderReact:', window.pdfBuilderReact);
-  console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: window.pdfBuilderReactWrapper:', window.pdfBuilderReactWrapper);
-
-  // Signal when loaded
-  if (typeof document !== 'undefined') {
-    try {
-      console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Dispatching pdfBuilderReactLoaded event...');
-      const event = new Event('pdfBuilderReactLoaded');
-      document.dispatchEvent(event);
-      console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Event dispatched successfully');
-    } catch (e) {
-      console.error('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Error dispatching event:', e);
+    // Wait for the main React module to be loaded
+    function waitForReactModule() {
+        console.log('🔍 Waiting for pdfBuilderReact module...');
+        
+        if (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
+            console.log('✅ pdfBuilderReact module found, re-exporting...');
+            
+            // Re-export to window
+            window.pdfBuilderReactWrapper = {
+                initPDFBuilderReact: window.pdfBuilderReact.initPDFBuilderReact,
+                loadTemplate: window.pdfBuilderReact.loadTemplate,
+                getEditorState: window.pdfBuilderReact.getEditorState,
+                setEditorState: window.pdfBuilderReact.setEditorState,
+                getCurrentTemplate: window.pdfBuilderReact.getCurrentTemplate,
+                exportTemplate: window.pdfBuilderReact.exportTemplate,
+                saveTemplate: window.pdfBuilderReact.saveTemplate,
+                registerEditorInstance: window.pdfBuilderReact.registerEditorInstance,
+                resetAPI: window.pdfBuilderReact.resetAPI,
+                updateCanvasDimensions: window.pdfBuilderReact.updateCanvasDimensions,
+                _isWebpackBundle: true,
+            };
+            
+            console.log('✅ pdfBuilderReactWrapper assigned');
+            
+            // Signal when loaded
+            try {
+                const event = new Event('pdfBuilderReactLoaded');
+                document.dispatchEvent(event);
+                console.log('✅ pdfBuilderReactLoaded event dispatched');
+            } catch (e) {
+                console.error('Error dispatching event:', e);
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
-  }
+    
+    // Try immediately
+    if (!waitForReactModule()) {
+        // If not available yet, wait for it
+        let attempts = 0;
+        const maxAttempts = 100; // 5 seconds at 50ms intervals
+        
+        const checkInterval = setInterval(function() {
+            attempts++;
+            
+            if (waitForReactModule()) {
+                clearInterval(checkInterval);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                console.error('❌ pdfBuilderReact module not found after 5 seconds');
+            }
+        }, 50);
+    }
+})();
 
-  console.log('🚀🚀🚀 PDF_BUILDER_WRAPPER_V4: Wrapper script COMPLETED at ' + new Date().toISOString());
-}
