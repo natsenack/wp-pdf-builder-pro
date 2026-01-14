@@ -7,7 +7,7 @@ export default {
           node: 'current',
           browsers: ['last 2 versions']
         },
-        modules: false
+        modules: 'commonjs'
       }
     ]
   ],
