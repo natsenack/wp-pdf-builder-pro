@@ -2754,40 +2754,7 @@ select option:disabled {
     z-index: 10;
 }
 
-/* États des onglets avec feedback visuel */
-.nav-tab {
-    position: relative;
-    overflow: hidden;
-}
-
-.nav-tab::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #007cba, #005a87);
-    
-    transform: translateX(-50%);
-}
-
-.nav-tab:hover::after {
-    width: 80%;
-}
-
-.nav-tab-active::after {
-    width: 100%;
-}
-
-/* Amélioration de l'accessibilité */
-.nav-tab:focus {
-    outline: 2px solid #007cba;
-    outline-offset: 2px;
-}
-
-.nav-tab:focus:not(.nav-tab-active) {
-    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+/* États des onglets avec feedback visuel - styles déplacés vers settings-tabs.css */
 }
 
 /* Animation de transition douce pour les contenus */
