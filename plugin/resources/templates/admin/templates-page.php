@@ -68,6 +68,39 @@ function get_format_options() {
         'EtiquetteColis' => 'Étiquette Colis (10×15cm)'
     ];
 }
+
+// Fonction pour calculer les dimensions du canvas en pixels selon format, DPI et orientation
+function calculate_canvas_dimensions($format, $dpi, $orientation) {
+    // Dimensions physiques des formats en millimètres
+    $format_dimensions = [
+        'A4' => ['width' => 210, 'height' => 297],
+        'A3' => ['width' => 297, 'height' => 420],
+        'Letter' => ['width' => 215.9, 'height' => 279.4], // 8.5 x 11 pouces en mm
+        'Legal' => ['width' => 215.9, 'height' => 355.6],  // 8.5 x 14 pouces en mm
+        'EtiquetteColis' => ['width' => 100, 'height' => 150] // 10 x 15 cm en mm
+    ];
+    
+    if (!isset($format_dimensions[$format])) {
+        $format = 'A4'; // Format par défaut
+    }
+    
+    $dimensions = $format_dimensions[$format];
+    
+    // Conversion mm vers pouces (1 pouce = 25.4 mm)
+    $width_inches = $dimensions['width'] / 25.4;
+    $height_inches = $dimensions['height'] / 25.4;
+    
+    // Calcul des dimensions en pixels
+    $width_px = round($width_inches * $dpi);
+    $height_px = round($height_inches * $dpi);
+    
+    // Inversion si orientation paysage
+    if ($orientation === 'landscape') {
+        return ['width' => $height_px, 'height' => $width_px];
+    }
+    
+    return ['width' => $width_px, 'height' => $height_px];
+}
 ?>
 
 <!-- ✅ FIX: Localiser le nonce immédiatement pour le JavaScript inline -->
@@ -861,26 +894,135 @@ let currentTemplateId = null;
 
 // Fonction pour calculer et afficher la résolution en temps réel
 function updateResolutionDisplay() {
+    const formatSelect = document.getElementById('template-format');
     const dpiSelect = document.getElementById('template-dpi');
+    const orientationSelect = document.getElementById('template-orientation');
     const resolutionDisplay = document.getElementById('resolution-display');
     
-    if (!dpiSelect || !resolutionDisplay) return;
+    if (!formatSelect || !dpiSelect || !orientationSelect || !resolutionDisplay) return;
     
+    const format = formatSelect.value;
     const dpi = parseInt(dpiSelect.value);
+    const orientation = orientationSelect.value;
+    
     if (isNaN(dpi) || dpi <= 0) {
         resolutionDisplay.textContent = 'Résolution: -- × -- px';
         return;
     }
     
-    // Dimensions physiques A4 en pouces (valeurs plus précises)
-    const a4WidthInches = 8.2677;
-    const a4HeightInches = 11.6929;
+    // Dimensions physiques des formats en millimètres
+    const formatDimensions = {
+        'A4': { width: 210, height: 297 },
+        'A3': { width: 297, height: 420 },
+        'Letter': { width: 215.9, height: 279.4 }, // 8.5 x 11 pouces en mm
+        'Legal': { width: 215.9, height: 355.6 },  // 8.5 x 14 pouces en mm
+        'EtiquetteColis': { width: 100, height: 150 } // 10 x 15 cm en mm
+    };
     
-    // Calculer les dimensions en pixels pour le DPI actuel
-    const widthPx = Math.round(a4WidthInches * dpi);
-    const heightPx = Math.round(a4HeightInches * dpi);
+    const dimensions = formatDimensions[format] || formatDimensions['A4'];
+    
+    // Conversion mm vers pouces (1 pouce = 25.4 mm)
+    let widthInches = dimensions.width / 25.4;
+    let heightInches = dimensions.height / 25.4;
+    
+    // Calcul des dimensions en pixels
+    let widthPx = Math.round(widthInches * dpi);
+    let heightPx = Math.round(heightInches * dpi);
+    
+    // Inversion si orientation paysage
+    if (orientation === 'landscape') {
+        [widthPx, heightPx] = [heightPx, widthPx];
+    }
     
     resolutionDisplay.textContent = `Résolution: ${widthPx} × ${heightPx} px`;
+}
+
+// Fonction pour mettre à jour les dimensions du canvas dans l'éditeur
+function updateCanvasDimensions() {
+    const formatSelect = document.getElementById('template-format');
+    const dpiSelect = document.getElementById('template-dpi');
+    const orientationSelect = document.getElementById('template-orientation');
+    
+    if (!formatSelect || !dpiSelect || !orientationSelect) return;
+    
+    const format = formatSelect.value;
+    const dpi = parseInt(dpiSelect.value);
+    const orientation = orientationSelect.value;
+    
+    // Dimensions physiques des formats en millimètres
+    const formatDimensions = {
+        'A4': { width: 210, height: 297 },
+        'A3': { width: 297, height: 420 },
+        'Letter': { width: 215.9, height: 279.4 },
+        'Legal': { width: 215.9, height: 355.6 },
+        'EtiquetteColis': { width: 100, height: 150 }
+    };
+    
+    const dimensions = formatDimensions[format] || formatDimensions['A4'];
+    
+    // Conversion mm vers pouces (1 pouce = 25.4 mm)
+    let widthInches = dimensions.width / 25.4;
+    let heightInches = dimensions.height / 25.4;
+    
+    // Calcul des dimensions en pixels
+    let widthPx = Math.round(widthInches * dpi);
+    let heightPx = Math.round(heightInches * dpi);
+    
+    // Inversion si orientation paysage
+    if (orientation === 'landscape') {
+        [widthPx, heightPx] = [heightPx, widthPx];
+    }
+    
+    // Mettre à jour les paramètres du canvas dans l'éditeur
+    if (window.pdfBuilderCanvasSettings) {
+        window.pdfBuilderCanvasSettings.canvas_width = widthPx;
+        window.pdfBuilderCanvasSettings.canvas_height = heightPx;
+        window.pdfBuilderCanvasSettings.canvas_format = format;
+        window.pdfBuilderCanvasSettings.canvas_dpi = dpi;
+        window.pdfBuilderCanvasSettings.canvas_orientation = orientation;
+    }
+    
+    // Mettre à jour les indicateurs dans l'interface canvas
+    updateCanvasIndicators(widthPx, heightPx, dpi, format, dimensions.width, dimensions.height);
+    
+    // Déclencher un événement pour notifier l'éditeur du changement
+    if (window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent('canvasSettingsChanged', {
+            detail: {
+                width: widthPx,
+                height: heightPx,
+                format: format,
+                dpi: dpi,
+                orientation: orientation
+            }
+        }));
+    }
+}
+
+// Fonction pour mettre à jour les indicateurs de dimensions dans l'interface canvas
+function updateCanvasIndicators(widthPx, heightPx, dpi, format, widthMm, heightMm) {
+    // Mettre à jour les éléments d'indicateur s'ils existent
+    const widthElement = document.getElementById('card-canvas-width');
+    const heightElement = document.getElementById('card-canvas-height');
+    const dpiElement = document.getElementById('card-canvas-dpi');
+    
+    if (widthElement) widthElement.textContent = widthPx;
+    if (heightElement) heightElement.textContent = heightPx;
+    if (dpiElement) dpiElement.textContent = `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`;
+    
+    // Utiliser aussi CanvasPreviewManager si disponible
+    if (window.CanvasPreviewManager) {
+        const widthEl = window.CanvasPreviewManager.getCardElement ? 
+            window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-width') : widthElement;
+        const heightEl = window.CanvasPreviewManager.getCardElement ? 
+            window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-height') : heightElement;
+        const dpiEl = window.CanvasPreviewManager.getCardElement ? 
+            window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-dpi') : dpiElement;
+        
+        if (widthEl) window.CanvasPreviewManager.updateElement(widthEl, 'textContent', widthPx);
+        if (heightEl) window.CanvasPreviewManager.updateElement(heightEl, 'textContent', heightPx);
+        if (dpiEl) window.CanvasPreviewManager.updateElement(dpiEl, 'textContent', `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`);
+    }
 }
 
 // Fonction pour définir les valeurs par défaut selon le format
@@ -888,7 +1030,9 @@ function setFormatDefaults(format) {
     const formatDefaults = {
         'A4': { dpi: '96', orientation: 'portrait' },
         'A3': { dpi: '150', orientation: 'portrait' },
-        'Letter': { dpi: '96', orientation: 'portrait' }
+        'Letter': { dpi: '96', orientation: 'portrait' },
+        'Legal': { dpi: '96', orientation: 'portrait' },
+        'EtiquetteColis': { dpi: '150', orientation: 'portrait' }
     };
     
     const defaults = formatDefaults[format] || formatDefaults['A4'];
@@ -902,6 +1046,9 @@ function setFormatDefaults(format) {
     
     // Mettre à jour l'affichage de la résolution
     updateResolutionDisplay();
+    
+    // Calculer et mettre à jour les dimensions du canvas pour l'éditeur
+    updateCanvasDimensions();
 }
 
 // Écouteur pour mettre à jour les valeurs quand le format change
@@ -911,10 +1058,19 @@ document.addEventListener('change', function(e) {
     }
 });
 
-// Écouteur pour mettre à jour la résolution quand le DPI change (délégation d'événement)
+// Écouteur pour mettre à jour la résolution et les dimensions du canvas quand le DPI change
 document.addEventListener('change', function(e) {
     if (e.target && e.target.id === 'template-dpi') {
         updateResolutionDisplay();
+        updateCanvasDimensions();
+    }
+});
+
+// Écouteur pour mettre à jour la résolution et les dimensions du canvas quand l'orientation change
+document.addEventListener('change', function(e) {
+    if (e.target && e.target.id === 'template-orientation') {
+        updateResolutionDisplay();
+        updateCanvasDimensions();
     }
 });
 
@@ -958,6 +1114,9 @@ function openTemplateSettings(templateId, templateName) {
             
             // Mettre à jour l'affichage de la résolution
             updateResolutionDisplay();
+            
+            // Mettre à jour les dimensions du canvas dans l'éditeur
+            updateCanvasDimensions();
         } else {
             console.error('Erreur chargement paramètres:', data.data);
             alert('Erreur lors du chargement des paramètres du template');
