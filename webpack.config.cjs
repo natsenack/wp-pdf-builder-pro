@@ -13,7 +13,12 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'plugin/assets/js'),
     filename: '[name].min.js',
+    libraryTarget: 'window',
     clean: true,
+  },
+  target: 'web',
+  externals: {
+    // Prevent webpack from bundling any CommonJS/AMD modules
   },
   module: {
     rules: [
