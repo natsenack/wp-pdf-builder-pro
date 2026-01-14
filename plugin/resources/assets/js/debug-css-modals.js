@@ -11,9 +11,9 @@
                          (typeof window.PDF_BUILDER_CONFIG !== 'undefined' && window.PDF_BUILDER_CONFIG.debug);
 
     function log(...args) {
-        if (DEBUG_ENABLED) {
-            console.log('🎨 [CSS MODALS DEBUG]:', ...args);
-        }
+        // if (DEBUG_ENABLED) {
+        //     console.log('🎨 [CSS MODALS DEBUG]:', ...args);
+        // }
     }
 
     function warn(...args) {

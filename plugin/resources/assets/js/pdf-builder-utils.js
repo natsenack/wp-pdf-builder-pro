@@ -452,9 +452,9 @@
 
     function initializeUtilities() {
         // Log d'initialisation si debug activé
-        if (window.PDF_BUILDER_CONFIG && window.PDF_BUILDER_CONFIG.debug) {
-            console.log('PDF Builder Utilities initialized');
-        }
+        // if (window.PDF_BUILDER_CONFIG && window.PDF_BUILDER_CONFIG.debug) {
+        //     console.log('PDF Builder Utilities initialized');
+        // }
     }
 
 })(window, document);

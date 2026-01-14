@@ -65,9 +65,9 @@ declare global {
 
 // Fonction de logging conditionnel
 export function debugLog(...args: unknown[]) {
-  if (isDebugEnabled()) {
-    console.log(...args);
-  }
+  // if (isDebugEnabled()) {
+  //   console.log(...args);
+  // }
 }
 
 // Fonction de debug pour les sauvegardes (activable séparément)
@@ -78,21 +78,21 @@ export function debugSave(...args: unknown[]) {
 }
 
 export function debugError(...args: unknown[]) {
-  if (isDebugEnabled()) {
-    console.error(...args);
-  }
+  // if (isDebugEnabled()) {
+  //   console.error(...args);
+  // }
 }
 
 export function debugWarn(...args: unknown[]) {
-  if (isDebugEnabled()) {
-    console.warn(...args);
-  }
+  // if (isDebugEnabled()) {
+  //   console.warn(...args);
+  // }
 }
 
 export function debugTable(data: unknown) {
-  if (isDebugEnabled()) {
-    console.table(data);
-  }
+  // if (isDebugEnabled()) {
+  //   console.table(data);
+  // }
 }
 
 // Keep an internal verbose flag in sync with window.pdfBuilderDebugSettings
@@ -108,13 +108,13 @@ if (typeof window !== 'undefined') {
       try {
         const detail = e && e.detail ? e.detail : window.pdfBuilderDebugSettings;
         window.PDF_BUILDER_VERBOSE = !!(detail && detail.javascript);
-        if (typeof window.console !== 'undefined' && window.PDF_BUILDER_VERBOSE) {
-          console.log('[PDF Builder Debug] pdfBuilder:debugSettingsChanged, verbose set to', window.PDF_BUILDER_VERBOSE);
-        }
+        // if (typeof window.console !== 'undefined' && window.PDF_BUILDER_VERBOSE) {
+        //   console.log('[PDF Builder Debug] pdfBuilder:debugSettingsChanged, verbose set to', window.PDF_BUILDER_VERBOSE);
+        // }
       } catch (err) {
-        if (typeof window.console !== 'undefined') {
-          console.warn('[PDF Builder Debug] Error handling pdfBuilder:debugSettingsChanged', err);
-        }
+        // if (typeof window.console !== 'undefined') {
+        //   console.warn('[PDF Builder Debug] Error handling pdfBuilder:debugSettingsChanged', err);
+        // }
       }
     });
   }

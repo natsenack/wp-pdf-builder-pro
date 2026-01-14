@@ -41,7 +41,7 @@
                     }
                 }
             }
-            console.log.apply(console, ['🎯 PDF BUILDER TABS:'].concat(args));
+            // console.log.apply(console, ['🎯 PDF BUILDER TABS:'].concat(args));
         }
     }
 
