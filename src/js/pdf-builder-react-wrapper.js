@@ -4,11 +4,14 @@
  * This file acts as the true webpack entry point that exports everything to window
  */
 
-// Import the actual React module
-import * as pdfBuilderReactModule from './pdf-builder-react/index.js';
+// The module is loaded as part of the entry
+// const pdfBuilderReactModule = require('my-alias');
+
+// Use the global
+const pdfBuilderReactModule = window.pdfBuilderReact;
 
 // Extract the default export - it's already an object with all functions
-const moduleExports = pdfBuilderReactModule.default || pdfBuilderReactModule;
+const moduleExports = pdfBuilderReactModule;
 
 // Directly assign to window - no exports needed
 if (typeof window !== 'undefined') {
