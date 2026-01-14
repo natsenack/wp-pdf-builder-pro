@@ -208,7 +208,7 @@ class AdminScriptLoader
     {
         error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown'));
 
-        $cache_bust = time();
+        $cache_bust = microtime(true);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
         // AJAX throttle manager
