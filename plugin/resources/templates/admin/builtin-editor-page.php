@@ -66,21 +66,21 @@ function pdf_builder_builtin_templates_list_page()
     // Enqueue les scripts et styles nécessaires
     // wp_enqueue_script('pdf-builder-builtin-editor', plugins_url('resources/assets/js/builtin-editor.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
     // wp_enqueue_style('pdf-builder-builtin-editor', plugins_url('resources/assets/css/builtin-editor.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.1.0');
-// Localiser le script
+    // Localiser le script
     // wp_localize_script('pdf-builder-builtin-editor', 'pdfBuilderBuiltinEditor', array(
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_builtin_editor'),
-        'strings' => array(
-            'save' => __('Sauvegarder', 'pdf-builder-pro'),
-            'saving' => __('Sauvegarde...', 'pdf-builder-pro'),
-            'saved' => __('Sauvegardé !', 'pdf-builder-pro'),
-            'error' => __('Erreur', 'pdf-builder-pro'),
-            'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-            'invalid_json' => __('JSON invalide', 'pdf-builder-pro'),
-            'template_created' => __('Template créé avec succès', 'pdf-builder-pro'),
-            'template_deleted' => __('Template supprimé', 'pdf-builder-pro'),
-        )
-    ));
+    //     'ajaxurl' => admin_url('admin-ajax.php'),
+    //     'nonce' => wp_create_nonce('pdf_builder_builtin_editor'),
+    //     'strings' => array(
+    //         'save' => __('Sauvegarder', 'pdf-builder-pro'),
+    //         'saving' => __('Sauvegarde...', 'pdf-builder-pro'),
+    //         'saved' => __('Sauvegardé !', 'pdf-builder-pro'),
+    //         'error' => __('Erreur', 'pdf-builder-pro'),
+    //         'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+    //         'invalid_json' => __('JSON invalide', 'pdf-builder-pro'),
+    //         'template_created' => __('Template créé avec succès', 'pdf-builder-pro'),
+    //         'template_deleted' => __('Template supprimé', 'pdf-builder-pro'),
+    //     )
+    // ));
 
     ?>
     <div class="wrap">
