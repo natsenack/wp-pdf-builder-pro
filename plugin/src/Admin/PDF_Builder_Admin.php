@@ -1155,6 +1155,28 @@ class PdfBuilderAdmin
                 element: null,
                 editor: null,
 
+                // Helper functions defined first
+                isReactReady: function() {
+                    const hasWindowPdfBuilderReact = typeof window.pdfBuilderReact !== 'undefined';
+                    const hasInitFunction = hasWindowPdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
+
+                    console.log('  - window.pdfBuilderReact exists:', hasWindowPdfBuilderReact);
+                    console.log('  - initPDFBuilderReact function exists:', hasInitFunction);
+                    console.log('  - window.pdfBuilderReact:', window.pdfBuilderReact);
+
+                    return hasWindowPdfBuilderReact && hasInitFunction;
+                },
+
+                isContainerReady: function() {
+                    const container = document.getElementById('pdf-builder-react-root');
+                    const exists = !!container;
+                    console.log('🔥🔥🔥 INIT_LOGS_V4: Container check - exists:', exists);
+                    if (container) {
+                        console.log('🔥🔥🔥 INIT_LOGS_V4: Container details:', container.tagName, container.id, 'display:', container.style.display);
+                    }
+                    return exists;
+                },
+
                 init: function() {
                     this.element = document.getElementById('pdf-builder-loader');
                     this.editor = document.getElementById('pdf-builder-editor-container');
@@ -1211,16 +1233,6 @@ class PdfBuilderAdmin
                             this.showLoadingError();
                         }
                     }, 500);
-                },
-
-                isContainerReady: function() {
-                    const container = document.getElementById('pdf-builder-react-root');
-                    const exists = !!container;
-                    console.log('🔥🔥🔥 INIT_LOGS_V4: Container check - exists:', exists);
-                    if (container) {
-                        console.log('🔥🔥🔥 INIT_LOGS_V4: Container details:', container.tagName, container.id, 'display:', container.style.display);
-                    }
-                    return exists;
                 },
 
                 showLoadingError: function() {
@@ -1317,17 +1329,6 @@ class PdfBuilderAdmin
                     reactScripts.forEach((script, index) => {
                         console.error(`Script ${index + 1}:`, script.src, 'loaded:', !script.hasAttribute('data-error'));
                     });
-                }
-
-                isReactReady: function() {
-                    const hasWindowPdfBuilderReact = typeof window.pdfBuilderReact !== 'undefined';
-                    const hasInitFunction = hasWindowPdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
-
-                    console.log('  - window.pdfBuilderReact exists:', hasWindowPdfBuilderReact);
-                    console.log('  - initPDFBuilderReact function exists:', hasInitFunction);
-                    console.log('  - window.pdfBuilderReact:', window.pdfBuilderReact);
-
-                    return hasWindowPdfBuilderReact && hasInitFunction;
                 },
 
                 initializeReact: function() {
