@@ -72,8 +72,6 @@ export const Header = memo(function Header({
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
-  const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
-  const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [canvasOrientation, setCanvasOrientation] = useState<'portrait' | 'landscape'>(canvasWidth < canvasHeight ? 'portrait' : 'landscape');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
   const [orientationPermissions, setOrientationPermissions] = useState({ allowPortrait: true, allowLandscape: true, defaultOrientation: 'portrait' });
@@ -152,21 +150,6 @@ export const Header = memo(function Header({
   useEffect(() => {
     setEditedCanvasHeight(canvasHeight);
   }, [canvasHeight]);
-
-  useEffect(() => {
-    setEditedShowGuides(showGuides);
-  }, [showGuides]);
-
-  useEffect(() => {
-    // Si les guides sont désactivés globalement, forcer l'état local à false
-    if (!canvasSettings.guidesEnabled) {
-      setEditedShowGuides(false);
-    }
-  }, [canvasSettings.guidesEnabled]);
-
-  useEffect(() => {
-    setEditedSnapToGrid(snapToGrid);
-  }, [snapToGrid]);
 
   // State pour le throttling du scroll
   const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -865,43 +848,6 @@ export const Header = memo(function Header({
                   )}
                 </div>
 
-                <div style={{ marginTop: '12px' }}>
-                  <label style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px', 
-                    fontSize: '12px', 
-                    fontWeight: '500', 
-                    color: canvasSettings.guidesEnabled ? '#555' : '#999',
-                    opacity: canvasSettings.guidesEnabled ? 1 : 0.6
-                  }}>
-                    <input
-                      type="checkbox"
-                      checked={editedShowGuides}
-                      onChange={(e) => setEditedShowGuides(e.target.checked)}
-                      disabled={!canvasSettings.guidesEnabled}
-                      style={{ margin: 0 }}
-                    />
-                    Afficher les guides d&apos;alignement
-                    {!canvasSettings.guidesEnabled && (
-                      <span style={{ fontSize: '10px', color: '#999', fontStyle: 'italic' }}>
-                        (désactivé dans les paramètres)
-                      </span>
-                    )}
-                  </label>
-                </div>
-
-                <div style={{ marginTop: '8px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '500', color: '#555' }}>
-                    <input
-                      type="checkbox"
-                      checked={editedSnapToGrid}
-                      onChange={(e) => setEditedSnapToGrid(e.target.checked)}
-                      style={{ margin: 0 }}
-                    />
-                    Mode grille magnétique
-                  </label>
-                </div>
               </div>
 
               <div>
@@ -982,8 +928,8 @@ export const Header = memo(function Header({
                       description: editedTemplateDescription,
                       canvasWidth: editedCanvasWidth,
                       canvasHeight: editedCanvasHeight,
-                      showGuides: editedShowGuides,
-                      snapToGrid: editedSnapToGrid
+                      showGuides: showGuides,
+                      snapToGrid: snapToGrid
                     });
                     
                     setShowSettingsModal(false);
