@@ -157,27 +157,44 @@ class AjaxHandler
      */
     public function ajaxGetFreshNonce()
     {
-        error_log('[PDF Builder] ajaxGetFreshNonce called');
+        error_log('═══════════════════════════════════════════════════════════════');
+        error_log('[FRESH NONCE] ===== NONCE GENERATION REQUEST =====');
+        error_log('═══════════════════════════════════════════════════════════════');
+        error_log('[FRESH NONCE] Timestamp: ' . current_time('mysql'));
+        error_log('[FRESH NONCE] User ID: ' . get_current_user_id());
         
         // Vérifier les permissions
         if (!is_user_logged_in()) {
-            error_log('[PDF Builder] ajaxGetFreshNonce: User not logged in');
+            error_log('[FRESH NONCE] ERROR: User not logged in');
+            error_log('[FRESH NONCE] $_COOKIE keys: ' . implode(', ', array_keys($_COOKIE)));
             wp_send_json_error('Utilisateur non connecté');
             return;
         }
         
+        error_log('[FRESH NONCE] User IS logged in');
+        error_log('[FRESH NONCE] Checking manage_options capability...');
+        
         if (!current_user_can('manage_options')) {
-            error_log('[PDF Builder] ajaxGetFreshNonce: User cannot manage_options');
+            error_log('[FRESH NONCE] ERROR: User cannot manage_options');
             wp_send_json_error('Permissions insuffisantes');
             return;
         }
-
-        error_log('[PDF Builder] ajaxGetFreshNonce: Generating fresh nonce');
+        
+        error_log('[FRESH NONCE] User HAS manage_options capability');
+        error_log('[FRESH NONCE] ===== GENERATING FRESH NONCE =====');
         
         // Générer un nouveau nonce valide
         $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
         
-        error_log('[PDF Builder] Fresh nonce generated: ' . $fresh_nonce);
+        error_log('[FRESH NONCE] Fresh nonce generated: ' . $fresh_nonce);
+        error_log('[FRESH NONCE] Fresh nonce length: ' . strlen($fresh_nonce));
+        error_log('[FRESH NONCE] Action: pdf_builder_ajax');
+        error_log('[FRESH NONCE] ===== VERIFICATION =====');
+        
+        // Verify it immediately
+        $verify_test = wp_verify_nonce($fresh_nonce, 'pdf_builder_ajax');
+        error_log('[FRESH NONCE] Immediate verification of fresh nonce: ' . var_export($verify_test, true));
+        error_log('[FRESH NONCE] ✓ Fresh nonce ready to send to client');
 
         wp_send_json_success([
             'nonce' => $fresh_nonce,

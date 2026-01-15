@@ -561,29 +561,73 @@ class PdfBuilderTemplateManager
     public function ajax_auto_save_template()
     {
         try {
+            // ============ ULTRA-DETAILED NONCE LOGGING ============
+            error_log('═══════════════════════════════════════════════════════════════');
+            error_log('[SAVE TEMPLATE ATTEMPT] ===== DÉBUT DIAGNOSTIC NONCE =====');
+            error_log('═══════════════════════════════════════════════════════════════');
+            error_log('[SAVE] Timestamp: ' . current_time('mysql'));
+            error_log('[SAVE] Action: pdf_builder_save_template');
+            error_log('[SAVE] METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            error_log('[SAVE] Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'NOT SET'));
+            
+            // Log toutes les clés $_POST
+            error_log('[SAVE] $_POST keys: ' . implode(', ', array_keys($_POST)));
+            error_log('[SAVE] $_POST nonce present: ' . (isset($_POST['nonce']) ? 'YES' : 'NO'));
+            error_log('[SAVE] $_REQUEST nonce present: ' . (isset($_REQUEST['nonce']) ? 'YES' : 'NO'));
+            
+            // Log la session
+            error_log('[SAVE] $_COOKIE keys: ' . implode(', ', array_keys($_COOKIE)));
+            error_log('[SAVE] Session: ' . session_id());
+            
             // Vérification des permissions
+            error_log('[SAVE] Checking permissions...');
+            error_log('[SAVE] User ID: ' . get_current_user_id());
+            error_log('[SAVE] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
+            error_log('[SAVE] Has manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
+            
             if (!\current_user_can('manage_options')) {
+                error_log('[SAVE] ERROR: User does not have manage_options capability');
                 \wp_send_json_error('Permissions insuffisantes');
             }
             
-            // Vérifier le nonce
+            // Vérifier le nonce - ULTRA DÉTAILLÉ
+            error_log('[SAVE] ===== NONCE VERIFICATION PROCESS =====');
             if (!isset($_REQUEST['nonce'])) {
-                error_log('[PDF Builder] Nonce manquant dans la requête');
+                error_log('[SAVE] ERROR: Nonce NOT found in $_REQUEST');
+                error_log('[SAVE] $_REQUEST contents: ' . json_encode($_REQUEST, JSON_UNESCAPED_SLASHES));
                 \wp_send_json_error('Sécurité: Nonce manquant');
             }
             
             $nonce = $_REQUEST['nonce'];
-            $nonce_verify = \wp_verify_nonce($nonce, 'pdf_builder_ajax');
+            error_log('[SAVE] Nonce value received: ' . $nonce);
+            error_log('[SAVE] Nonce length: ' . strlen($nonce));
+            error_log('[SAVE] Nonce action to verify against: pdf_builder_ajax');
             
-            error_log('[PDF Builder] Nonce verification result: ' . ($nonce_verify ? 'VALID' : 'INVALID'));
-            error_log('[PDF Builder] Nonce value: ' . $nonce);
-            error_log('[PDF Builder] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
-            error_log('[PDF Builder] Current user can manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
+            // Appeler wp_verify_nonce
+            $nonce_verify = \wp_verify_nonce($nonce, 'pdf_builder_ajax');
+            error_log('[SAVE] wp_verify_nonce result: ' . var_export($nonce_verify, true));
+            error_log('[SAVE] Result interpretation: ' . ($nonce_verify === 1 ? 'VALID (fresh)' : ($nonce_verify === 2 ? 'VALID (expired)' : 'INVALID/FALSE')));
+            
+            // Log des valeurs de nonce stockées en session
+            if (isset($_COOKIE['wordpress_' . COOKIEHASH])) {
+                error_log('[SAVE] WordPress session cookie present: YES');
+            } else {
+                error_log('[SAVE] WordPress session cookie present: NO - THIS COULD BE THE ISSUE!');
+            }
             
             if (!$nonce_verify) {
-                error_log('[PDF Builder] Nonce failed verification - returning error');
+                error_log('[SAVE] ❌ NONCE VERIFICATION FAILED');
+                error_log('[SAVE] This means wp_verify_nonce() returned 0 or false');
+                error_log('[SAVE] Possible causes:');
+                error_log('[SAVE]   1. Nonce expired (12-24 hours)');
+                error_log('[SAVE]   2. Nonce value incorrect');
+                error_log('[SAVE]   3. Action string mismatch (expected: pdf_builder_ajax)');
+                error_log('[SAVE]   4. User session lost');
+                error_log('[SAVE]   5. WordPress session/nonce storage corrupted');
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
+            
+            error_log('[SAVE] ✓ Nonce verification PASSED');
 
             // Récupération des données
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
