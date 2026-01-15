@@ -4,25 +4,9 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = {
-  entry: {
-    'pdf-builder-react': './src/js/pdf-builder-react/wordpress-entry.tsx',
-    'pdf-builder-react-wrapper': './src/js/pdf-builder-react-wrapper.js',
-    'pdf-preview-api-client': './src/js/pdf-preview-api-client.js',
-    'pdf-preview-integration': './src/js/pdf-preview-integration.js',
-  },
-  output: {
-    path: path.resolve(__dirname, 'plugin/assets/js'),
-    filename: '[name].min.js',
-    library: '[name]',
-    libraryTarget: 'umd',
-    globalObject: 'typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {}',
-    clean: true,
-  },
+// Define different configurations for each entry point
+const baseConfig = {
   target: 'web',
-  externals: {
-    // Prevent webpack from bundling any CommonJS/AMD modules
-  },
   module: {
     rules: [
       {
@@ -97,11 +81,61 @@ module.exports = {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all',
+          priority: 10,
         },
       },
     },
   },
-  mode: 'production',
-  devtool: false,
 };
+
+// Export individual configs for each entry point
+module.exports = [
+  {
+    ...baseConfig,
+    entry: { 'pdf-builder-react': './src/js/pdf-builder-react/wordpress-entry.tsx' },
+    output: {
+      path: path.resolve(__dirname, 'plugin/assets/js'),
+      filename: '[name].min.js',
+      library: 'pdfBuilderReact',
+      libraryTarget: 'umd',
+      globalObject: 'typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {}',
+      clean: false,
+    },
+  },
+  {
+    ...baseConfig,
+    entry: { 'pdf-builder-react-wrapper': './src/js/pdf-builder-react-wrapper.js' },
+    output: {
+      path: path.resolve(__dirname, 'plugin/assets/js'),
+      filename: '[name].min.js',
+      library: 'pdfBuilderReactWrapper',
+      libraryTarget: 'umd',
+      globalObject: 'typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {}',
+      clean: false,
+    },
+  },
+  {
+    ...baseConfig,
+    entry: { 'pdf-preview-api-client': './src/js/pdf-preview-api-client.js' },
+    output: {
+      path: path.resolve(__dirname, 'plugin/assets/js'),
+      filename: '[name].min.js',
+      library: 'pdfPreviewApiClient',
+      libraryTarget: 'umd',
+      globalObject: 'typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {}',
+      clean: false,
+    },
+  },
+  {
+    ...baseConfig,
+    entry: { 'pdf-preview-integration': './src/js/pdf-preview-integration.js' },
+    output: {
+      path: path.resolve(__dirname, 'plugin/assets/js'),
+      filename: '[name].min.js',
+      library: 'pdfPreviewIntegration',
+      libraryTarget: 'umd',
+      globalObject: 'typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {}',
+      clean: false,
+    },
+  },
+];
