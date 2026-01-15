@@ -1,33 +1,16 @@
 /**
- * Force Complete Reload Script
- * Bloque la page en cas d'erreur et affiche les messages d'erreur
+ * Force Complete Reload Script - DISABLED
+ * Système de blocage d'erreurs sans auto-reload
+ * Ne s'exécute que si des erreurs sont détectées
  */
 
 (function() {
   'use strict';
 
-  console.log('[PDF Builder] force-complete-reload.js loaded');
+  console.log('[PDF Builder] force-complete-reload.js loaded - DISABLED AUTO-RELOAD');
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initErrorBlocker);
-  } else {
-    initErrorBlocker();
-  }
-
-  function initErrorBlocker() {
-    console.log('[PDF Builder] Initializing error blocker');
-    
-    const errorKey = 'pdfBuilderErrors';
-    const errors = JSON.parse(localStorage.getItem(errorKey) || '[]');
-    
-    // S'il y a des erreurs, afficher l'overlay de blocage
-    if (errors.length > 0) {
-      console.log('[PDF Builder] Errors detected, blocking page');
-      showErrorOverlay(errors);
-      localStorage.removeItem(errorKey);
-      return;
-    }
-  }
+  // NE PAS exécuter automatiquement
+  // Attendre que js-syntax-check.js détecte les erreurs
 
   function showErrorOverlay(errors) {
     // Créer l'overlay de blocage
@@ -134,8 +117,18 @@
       localStorage.setItem(errorKey, JSON.stringify(errors));
     },
     
+    showErrors: function(errors) {
+      if (errors && errors.length > 0) {
+        showErrorOverlay(errors);
+      }
+    },
+    
     reload: function() {
-      initErrorBlocker();
+      // Ne rien faire - pas de reload automatique
+      console.log('[PDF Builder] Reload requested but auto-reload is disabled');
+    }
+  };
+})();
     }
   };
 })();

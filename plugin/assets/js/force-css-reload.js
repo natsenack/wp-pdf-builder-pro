@@ -1,30 +1,30 @@
 /**
- * Force CSS Reload Script
- * Nettoie le cache des styles et force le rechargement
+ * Force CSS Reload Script - DISABLED
+ * Seulement logger les CSS chargés, pas de modification
  */
 
 (function() {
   'use strict';
 
-  console.log('[PDF Builder] force-css-reload.js loaded');
+  console.log('[PDF Builder] force-css-reload.js loaded - PASSIVE MODE');
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initForceReload);
+    document.addEventListener('DOMContentLoaded', logCSSFiles);
   } else {
-    initForceReload();
+    logCSSFiles();
   }
 
-  function initForceReload() {
-    console.log('[PDF Builder] Initializing force CSS reload');
+  function logCSSFiles() {
+    console.log('[PDF Builder] Logging CSS files loaded');
     
     const links = document.querySelectorAll('link[rel="stylesheet"]');
+    let count = 0;
     links.forEach(link => {
       if (link.href.includes('pdf-builder')) {
-        const timestamp = new Date().getTime();
-        const separator = link.href.includes('?') ? '&' : '?';
-        link.href = link.href + separator + 't=' + timestamp;
-        console.log('[PDF Builder] Reloaded CSS:', link.href);
+        console.log('[PDF Builder] CSS loaded:', link.href);
+        count++;
       }
     });
+    console.log('[PDF Builder] Total PDF Builder CSS files:', count);
   }
 })();
