@@ -567,6 +567,22 @@ export function useTemplate() {
       formData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
       formData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
 
+      // 🔍 ULTRA-DETAILED FORMDATA LOGGING
+      console.log('🔍 [useTemplate] ===== FORMDATA CONTENTS (BEFORE FETCH) =====');
+      console.log('🔍 [useTemplate] FormData entries:');
+      const formDataEntries: [string, any][] = [];
+      formData.forEach((value: any, key: string) => {
+        if (key === 'template_data') {
+          console.log(`🔍 [useTemplate] FormData["${key}"] = ${String(value).substring(0, 100)}... (${String(value).length} chars)`);
+          formDataEntries.push([key, `[DATA - ${String(value).length} chars]`]);
+        } else {
+          console.log(`🔍 [useTemplate] FormData["${key}"] = ${String(value)}`);
+          formDataEntries.push([key, value]);
+        }
+      });
+      console.log('🔍 [useTemplate] Total FormData entries:', formDataEntries.length);
+      console.log('🔍 [useTemplate] FormData summary:', Object.fromEntries(formDataEntries.filter(([k]) => k !== 'template_data')));
+
       // console.log('[PDF_BUILDER_FRONTEND] Data to send:');
       // console.log('- Template ID:', templateId);
       // console.log('- Template Name:', state.template.name || 'Nouveau template');
