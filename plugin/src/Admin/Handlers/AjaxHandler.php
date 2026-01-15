@@ -251,7 +251,8 @@ class AjaxHandler
         // Implémentation de secours
         try {
             // Valider les permissions et nonce de manière unifiée
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            // 🔧 CORRECTION: Accepter les éditeurs aussi (MIN_CAPABILITY au lieu de ADMIN_CAPABILITY)
+            $validation = NonceManager::validateRequest(NonceManager::MIN_CAPABILITY);
             if (!$validation['success']) {
                 if ($validation['code'] === 'nonce_invalid') {
                     NonceManager::sendNonceErrorResponse();
@@ -292,7 +293,8 @@ class AjaxHandler
     {
         try {
             // Valider les permissions et nonce de manière unifiée
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            // 🔧 CORRECTION: Accepter les éditeurs aussi (MIN_CAPABILITY au lieu de ADMIN_CAPABILITY)
+            $validation = NonceManager::validateRequest(NonceManager::MIN_CAPABILITY);
             if (!$validation['success']) {
                 if ($validation['code'] === 'nonce_invalid') {
                     NonceManager::sendNonceErrorResponse();
