@@ -11,10 +11,18 @@
     function waitForReactModule() {
         console.log('🔍 Waiting for pdfBuilderReact module...');
         
-        if (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
+        // Check for either the exported module or window object
+        var module = window['pdf-builder-react'] || window.pdfBuilderReact;
+        
+        if (module && module.initPDFBuilderReact) {
             console.log('✅ pdfBuilderReact module found, re-exporting...');
             
-            // Re-export to window
+            // Ensure it's on window.pdfBuilderReact
+            if (!window.pdfBuilderReact) {
+                window.pdfBuilderReact = module;
+            }
+            
+            // Re-export to window.pdfBuilderReactWrapper
             window.pdfBuilderReactWrapper = {
                 initPDFBuilderReact: window.pdfBuilderReact.initPDFBuilderReact,
                 loadTemplate: window.pdfBuilderReact.loadTemplate,
@@ -33,7 +41,7 @@
             
             // Signal when loaded
             try {
-                const event = new Event('pdfBuilderReactLoaded');
+                var event = new Event('pdfBuilderReactLoaded');
                 document.dispatchEvent(event);
                 console.log('✅ pdfBuilderReactLoaded event dispatched');
             } catch (e) {
@@ -49,10 +57,10 @@
     // Try immediately
     if (!waitForReactModule()) {
         // If not available yet, wait for it
-        let attempts = 0;
-        const maxAttempts = 100; // 5 seconds at 50ms intervals
+        var attempts = 0;
+        var maxAttempts = 100; // 5 seconds at 50ms intervals
         
-        const checkInterval = setInterval(function() {
+        var checkInterval = setInterval(function() {
             attempts++;
             
             if (waitForReactModule()) {
