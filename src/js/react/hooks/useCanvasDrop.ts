@@ -195,9 +195,9 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       return;
     }
     
-    // Simple check - if we have a relatedTarget, assume drag is leaving
-    // This is a simplified approach to avoid DOM type issues
-    if (e.relatedTarget) {
+    // Vérifier que le curseur sort vraiment du wrapper
+    const target = e.currentTarget as HTMLElement;
+    if (!target.contains(e.relatedTarget as HTMLElement)) {
       debugLog('[CanvasDrop] Drag leave detected');
       setIsDragOver(false);
     }

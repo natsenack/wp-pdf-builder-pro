@@ -2844,29 +2844,38 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        width={width}
-        height={height}
-        className={className}
-        onClick={handleCanvasClick}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onContextMenu={handleCanvasContextMenu}
+      <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
-          width: `${displayWidth}px`,
-          height: `${displayHeight}px`,
+          display: 'inline-block',
           border: borderStyle,
-          cursor: 'crosshair',
-          backgroundColor: canvasSettings?.canvasBackgroundColor || '#ffffff',
-          boxShadow: canvasSettings?.shadowEnabled ? '2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
-          transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+          borderRadius: '4px',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+          boxShadow: isDragOver ? '0 0 0 2px rgba(0, 122, 204, 0.2)' : 'none'
         }}
-      />
+      >
+        <canvas
+          ref={canvasRef}
+          width={width}
+          height={height}
+          className={className}
+          onClick={handleCanvasClick}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onContextMenu={handleCanvasContextMenu}
+          style={{
+            width: `${displayWidth}px`,
+            height: `${displayHeight}px`,
+            cursor: 'crosshair',
+            backgroundColor: canvasSettings?.canvasBackgroundColor || '#ffffff',
+            boxShadow: canvasSettings?.shadowEnabled ? '2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
+            display: 'block'
+          }}
+        />
+      </div>
       {contextMenu.isVisible && (
         <ContextMenu
           items={getContextMenuItems(contextMenu.elementId)}
