@@ -202,10 +202,15 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       return;
     }
     
+    // IMPORTANT: Must call preventDefault to allow drop
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = 'copy';
+    
+    console.log('[CanvasDrop] Drag over, dropEffect set to copy');
 
     if (!isDragOver) {
+      console.log('[CanvasDrop] Drag over started - element hovering canvas');
       debugLog('[CanvasDrop] Drag over started - element hovering canvas');
       setIsDragOver(true);
     }
@@ -219,15 +224,27 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
     // Vérifier que le curseur sort vraiment du wrapper
     const target = e.currentTarget as HTMLElement;
     if (!target.contains(e.relatedTarget as HTMLElement)) {
+      console.log('[CanvasDrop] Drag leave detected - element left canvas');
       debugLog('[CanvasDrop] Drag leave detected - element left canvas');
       setIsDragOver(false);
     }
+  }, [dragEnabled]);
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    if (!dragEnabled) {
+      return;
+    }
+    
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('[CanvasDrop] Drag enter detected');
   }, [dragEnabled]);
 
   return {
     handleDrop,
     handleDragOver,
     handleDragLeave,
+    handleDragEnter,
     isDragOver
   };
 };

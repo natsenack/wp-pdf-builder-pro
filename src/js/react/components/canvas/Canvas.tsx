@@ -1449,7 +1449,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   }, [canvasSettings?.canvasBackgroundColor]);
 
   // Utiliser les hooks pour les interactions
-  const { handleDrop, handleDragOver, handleDragLeave, isDragOver } = useCanvasDrop({
+  const { handleDrop, handleDragOver, handleDragLeave, handleDragEnter, isDragOver } = useCanvasDrop({
     canvasRef: canvasWrapperRef,
     canvasWidth: width,
     canvasHeight: height,
@@ -2847,15 +2847,19 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     <>
       <div
         ref={canvasWrapperRef}
+        onDragEnter={handleDragEnter}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
-          display: 'inline-block',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           border: borderStyle,
           borderRadius: '4px',
           transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-          boxShadow: isDragOver ? '0 0 0 2px rgba(0, 122, 204, 0.2)' : 'none'
+          boxShadow: isDragOver ? '0 0 0 2px rgba(0, 122, 204, 0.2)' : 'none',
+          pointerEvents: 'auto'
         }}
       >
         <canvas
