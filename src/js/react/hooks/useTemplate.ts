@@ -584,15 +584,13 @@ export function useTemplate() {
 
           try {
             // Récupérer un nouveau nonce
+            const nonceFormData = new FormData();
+            nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
+            nonceFormData.append('nonce', currentNonce);
+
             const nonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                action: 'pdf_builder_get_fresh_nonce',
-                nonce: currentNonce
-              })
+              body: nonceFormData
             });
 
             if (nonceResponse.ok) {
@@ -606,7 +604,7 @@ export function useTemplate() {
                 }
 
                 // Refaire la sauvegarde avec le nouveau nonce
-                return await saveTemplate(templateId, canvasWidth, canvasHeight);
+                return await saveTemplate();
               }
             }
           } catch (nonceError) {
