@@ -76,6 +76,7 @@ export const Header = memo(function Header({
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [canvasOrientation, setCanvasOrientation] = useState<'portrait' | 'landscape'>(canvasWidth < canvasHeight ? 'portrait' : 'landscape');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
+  const [orientationPermissions, setOrientationPermissions] = useState({ allowPortrait: true, allowLandscape: true, defaultOrientation: 'portrait' });
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
   const {
@@ -105,6 +106,31 @@ export const Header = memo(function Header({
       timestamp: new Date().toISOString()
     });
   }, [deferredIsSaving, deferredIsModified, deferredIsLoading, templateName]);
+
+  // Charger les permissions d'orientation du canvas
+  useEffect(() => {
+    const loadOrientationPermissions = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_get_canvas_orientations');
+        formData.append('nonce', (window as any).pdf_builder_ajax_nonce || '');
+
+        const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (data.success && data.data) {
+          setOrientationPermissions(data.data);
+        }
+      } catch (error) {
+        debugError('Erreur lors du chargement des permissions d\'orientation', error);
+      }
+    };
+
+    loadOrientationPermissions();
+  }, []);
 
   useEffect(() => {
 
@@ -819,9 +845,18 @@ export const Header = memo(function Header({
                       backgroundColor: '#ffffff'
                     }}
                   >
-                    <option value="portrait">Portrait (794×1123 px)</option>
-                    <option value="landscape">Paysage (1123×794 px)</option>
+                    {orientationPermissions.allowPortrait && (
+                      <option value="portrait">Portrait (794×1123 px)</option>
+                    )}
+                    {orientationPermissions.allowLandscape && (
+                      <option value="landscape">Paysage (1123×794 px)</option>
+                    )}
                   </select>
+                  {(!orientationPermissions.allowPortrait || !orientationPermissions.allowLandscape) && (
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '4px', fontStyle: 'italic' }}>
+                      Certaines orientations sont désactivées dans les paramètres du plugin.
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ marginTop: '12px' }}>

@@ -56,6 +56,7 @@ class AjaxHandler
         // Hooks AJAX canvas
         add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
         add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
+        add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
     }
 
     /**
@@ -1520,4 +1521,43 @@ class AjaxHandler
             return sanitize_text_field($value);
         }
     }
+
+    /**
+     * Récupérer les permissions d'orientation du canvas
+     */
+    public function ajaxGetCanvasOrientations()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Récupérer les paramètres
+            $settings = get_option('pdf_builder_settings', []);
+            
+            $orientations = [
+                'allowPortrait' => isset($settings['pdf_builder_canvas_allow_portrait']) && $settings['pdf_builder_canvas_allow_portrait'] === '1',
+                'allowLandscape' => isset($settings['pdf_builder_canvas_allow_landscape']) && $settings['pdf_builder_canvas_allow_landscape'] === '1',
+                'defaultOrientation' => $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait'
+            ];
+
+            // S'assurer qu'au moins une orientation est activée
+            if (!$orientations['allowPortrait'] && !$orientations['allowLandscape']) {
+                $orientations['allowPortrait'] = true; // Portrait par défaut
+            }
+
+            wp_send_json_success($orientations);
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
 }
+
