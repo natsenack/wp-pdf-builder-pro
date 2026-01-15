@@ -1,0 +1,1747 @@
+.context-menu {
+  position: fixed !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  z-index: 9999 !important;
+  min-width: 200px !important;
+  max-width: 280px !important;
+  padding: 8px 0 !important;
+  animation: contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform-origin: top left !important;
+}
+
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-height: 36px;
+  border: none;
+  background: transparent;
+}
+
+.context-menu-item:hover:not(.disabled) {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.context-menu-item:active:not(.disabled) {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  transform: translateX(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.context-menu-item.disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.context-menu-item.disabled:hover {
+  background-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.context-menu-icon {
+  margin-right: 12px;
+  width: 18px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.context-menu-label {
+  flex: 1;
+  font-weight: 500;
+  color: #334155;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  margin: 6px 0;
+  border: none;
+}
+
+.context-menu {
+  position: fixed !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  z-index: 9999 !important;
+  min-width: 200px !important;
+  max-width: 280px !important;
+  padding: 8px 0 !important;
+  animation: contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform-origin: top left !important;
+}
+
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-height: 36px;
+  border: none;
+  background: transparent;
+}
+
+.context-menu-item:hover:not(.disabled) {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.context-menu-item:active:not(.disabled) {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  transform: translateX(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.context-menu-item.disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.context-menu-item.disabled:hover {
+  background-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.context-menu-icon {
+  margin-right: 12px;
+  width: 18px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.context-menu-label {
+  flex: 1;
+  font-weight: 500;
+  color: #334155;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  margin: 6px 0;
+  border: none;
+}
+
+/**
+ * SaveIndicator.css
+ * Styles pour l'indicateur de sauvegarde en haut à droite
+ */
+
+.save-indicator {
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 280px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  transform: translateY(-10px);
+  transform: none;
+}
+
+.save-indicator--saving,
+.save-indicator--saved,
+.save-indicator--error {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  animation: slideInDown 0.3s ease-out forwards;
+}
+
+/* States */
+.save-indicator--saving {
+  border-color: #0073aa;
+  background: #f0f6fc;
+}
+
+.save-indicator--saved {
+  border-color: #46b450;
+  background: #f0fdf4;
+}
+
+.save-indicator--error {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+/* Content */
+.save-indicator__content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Spinner */
+.save-indicator__spinner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.save-indicator__spinner-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0073aa;
+  animation: pulse 1.4s infinite;
+}
+
+.save-indicator__spinner-dot--1 {
+  animation-delay: 0s;
+}
+
+.save-indicator__spinner-dot--2 {
+  animation-delay: 0.2s;
+}
+
+.save-indicator__spinner-dot--3 {
+  animation-delay: 0.4s;
+}
+
+/* Icon */
+.save-indicator__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.save-indicator--saving .save-indicator__icon {
+  color: #0073aa;
+}
+
+.save-indicator--saved .save-indicator__icon {
+  color: #46b450;
+}
+
+.save-indicator--error .save-indicator__icon {
+  color: #dc2626;
+}
+
+/* Text */
+.save-indicator__text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.save-indicator--saving .save-indicator__text {
+  color: #0073aa;
+}
+
+.save-indicator--saved .save-indicator__text {
+  color: #46b450;
+}
+
+.save-indicator--error .save-indicator__text {
+  color: #dc2626;
+}
+
+/* Retry button */
+.save-indicator__retry-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.save-indicator__retry-btn:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: #991b1b;
+}
+
+.save-indicator__retry-btn:active {
+  transform: scale(0.95);
+}
+
+/* Error message */
+.save-indicator__error-message {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border: 1px solid #dc2626;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #7f1d1d;
+  word-break: break-word;
+  max-height: 100px;
+  overflow-y: auto;
+  z-index: -1;
+}
+
+/* Animation */
+@keyframes slideInDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.3;
+  }
+}
+
+/* Barre de progression */
+.save-indicator__progress-bar {
+  width: 60px;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-left: 8px;
+}
+
+.save-indicator__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0073aa 0%, #00a0d2 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .save-indicator {
+    padding: 10px 12px;
+    font-size: 12px;
+    max-width: calc(100vw - 40px);
+  }
+
+  .save-indicator--top-right,
+  .save-indicator--top-left {
+    top: 10px;
+  }
+
+  .save-indicator--bottom-right,
+  .save-indicator--bottom-left {
+    bottom: 10px;
+  }
+
+  .save-indicator--top-right,
+  .save-indicator--bottom-right {
+    right: 10px;
+  }
+
+  .save-indicator--top-left,
+  .save-indicator--bottom-left {
+    left: 10px;
+  }
+}
+
+/**
+ * SaveTooltip.css
+ * Styles pour la notification de sauvegarde en survol
+ */
+
+.save-tooltip {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  user-select: none;
+}
+
+/* Indicateur */
+.save-tooltip__indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid rgba(59, 130, 246, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* États de l'indicateur */
+.save-tooltip--saving .save-tooltip__indicator {
+  border-color: #0073aa;
+  background: #f0f6fc;
+  animation: pulse-save 1s ease-in-out infinite;
+}
+
+.save-tooltip--saved .save-tooltip__indicator {
+  border-color: #00a32a;
+  background: #f0f8f1;
+}
+
+.save-tooltip--error .save-tooltip__indicator {
+  border-color: #d63638;
+  background: #fdf7f7;
+}
+
+@keyframes pulse-save {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(0, 115, 170, 0.3);
+  }
+}
+
+/* Spinner */
+.save-tooltip__spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.save-tooltip__spinner-dot {
+  width: 4px;
+  height: 4px;
+  background: #0073aa;
+  border-radius: 50%;
+  position: absolute;
+  animation: spinner-rotate 1.2s linear infinite;
+}
+
+.save-tooltip__spinner-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.save-tooltip__spinner-dot:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.save-tooltip__spinner-dot:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+@keyframes spinner-rotate {
+  0% {
+    transform: rotate(0deg) translateY(-8px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: rotate(360deg) translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Icônes */
+.save-tooltip__icon {
+  display: block;
+  color: currentColor;
+}
+
+.save-tooltip--saving .save-tooltip__icon {
+  color: #0073aa;
+}
+
+.save-tooltip--saved .save-tooltip__icon {
+  color: #00a32a;
+}
+
+.save-tooltip--error .save-tooltip__icon {
+  color: #d63638;
+}
+
+.save-tooltip--idle .save-tooltip__icon {
+  color: #4b5563;
+}
+
+/* Tooltip popup */
+.save-tooltip__popup {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 250px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.save-tooltip__label {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Barre de progression */
+.save-tooltip__progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.save-tooltip__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0073aa 0%, #00a0d2 100%);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Bouton Sauvegarder maintenant */
+.save-tooltip__button {
+  width: 100%;
+  padding: 8px 12px;
+  background: #0073aa;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.save-tooltip__button:hover {
+  background: #005a87;
+}
+
+.save-tooltip__button:active {
+  background: #004466;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .save-tooltip {
+    top: 10px;
+    right: 10px;
+  }
+
+  .save-tooltip__indicator {
+    width: 36px;
+    height: 36px;
+  }
+
+  .save-tooltip__popup {
+    min-width: 200px;
+    top: 45px;
+    right: -20px;
+  }
+}
+
+/**
+ * PDF Builder Pro - Notifications CSS
+ * Styles modernes et responsives pour le système de notifications
+ * Version: 1.0.0
+ * Updated: 2025-11-29
+ */
+
+/* Conteneur principal des notifications */
+.pdf-builder-notifications-container {
+    position: fixed;
+    z-index: 999999;
+    pointer-events: none;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Positionnements */
+.pdf-builder-notifications-container[data-position="top-left"] {
+    top: 35px;
+    left: 20px;
+    right: auto;
+    bottom: auto;
+}
+
+.pdf-builder-notifications-container[data-position="top-right"] {
+    top: 35px;
+    right: 20px;
+    left: auto;
+    bottom: auto;
+}
+
+.pdf-builder-notifications-container[data-position="bottom-left"] {
+    bottom: 20px;
+    left: 20px;
+    top: auto;
+    right: auto;
+}
+
+.pdf-builder-notifications-container[data-position="bottom-right"] {
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    left: auto;
+}
+
+.pdf-builder-notifications-container[data-position="top-center"] {
+    top: 20px;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translateX(-50%);
+}
+
+.pdf-builder-notifications-container[data-position="bottom-center"] {
+    bottom: 20px;
+    left: 50%;
+    right: auto;
+    top: auto;
+    transform: translateX(-50%);
+}
+
+/* Notification individuelle */
+.pdf-builder-notification {
+    position: relative;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    min-height: 50px;
+}
+
+.pdf-builder-notification.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.pdf-builder-notification.dismissible:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations d'entrée/sortie */
+.pdf-builder-notification-slide {
+    animation: slideIn 0.3s ease-out;
+}
+
+.pdf-builder-notification-slide.dismissing {
+    animation: slideOut 0.3s ease-in forwards;
+}
+
+.pdf-builder-notification-fade {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.pdf-builder-notification-fade.dismissing {
+    animation: fadeOut 0.3s ease-in forwards;
+}
+
+.pdf-builder-notification-bounce {
+    animation: bounceIn 0.5s ease-out;
+}
+
+.pdf-builder-notification-bounce.dismissing {
+    animation: bounceOut 0.3s ease-in forwards;
+}
+
+/* Contenu de la notification */
+.notification-content {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    position: relative;
+}
+
+.notification-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.notification-message {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    word-wrap: break-word;
+}
+
+/* Bouton de fermeture */
+.notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    color: inherit;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.notification-close .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Barre de progression */
+.notification-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.notification-progress {
+    height: 100%;
+    width: 100%;
+    transition: width linear;
+}
+
+/* Bouton "Tout fermer" */
+.notifications-dismiss-all {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #666;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.notifications-dismiss-all:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #333;
+}
+
+.notifications-dismiss-all .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+/* États spéciaux */
+.pdf-builder-notification.dismissing {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+}
+
+/* Types de notifications avec couleurs spécifiques */
+.pdf-builder-notification-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-left-color: #28a745 !important;
+}
+
+.pdf-builder-notification-error {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-left-color: #dc3545 !important;
+}
+
+.pdf-builder-notification-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border-left-color: #ffc107 !important;
+}
+
+.pdf-builder-notification-info {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+    border-left-color: #17a2b8 !important;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounceOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .pdf-builder-notifications-container {
+        max-width: calc(100vw - 40px);
+        width: calc(100vw - 40px);
+    }
+
+    .pdf-builder-notifications-container[data-position="top-left"],
+    .pdf-builder-notifications-container[data-position="top-right"],
+    .pdf-builder-notifications-container[data-position="bottom-left"],
+    .pdf-builder-notifications-container[data-position="bottom-right"] {
+        left: 20px !important;
+        right: 20px !important;
+        width: auto !important;
+    }
+
+    .pdf-builder-notifications-container[data-position="top-center"],
+    .pdf-builder-notifications-container[data-position="bottom-center"] {
+        left: 20px !important;
+        right: 20px !important;
+        transform: none !important;
+        width: auto !important;
+    }
+
+    .notification-content {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .notification-icon {
+        font-size: 16px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .notification-message {
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    .notification-close {
+        padding: 2px;
+    }
+
+    .notification-close .dashicons {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pdf-builder-notifications-container {
+        max-width: calc(100vw - 20px);
+        width: calc(100vw - 20px);
+    }
+
+    .pdf-builder-notifications-container[data-position="top-left"],
+    .pdf-builder-notifications-container[data-position="top-right"],
+    .pdf-builder-notifications-container[data-position="bottom-left"],
+    .pdf-builder-notifications-container[data-position="bottom-right"],
+    .pdf-builder-notifications-container[data-position="top-center"],
+    .pdf-builder-notifications-container[data-position="bottom-center"] {
+        left: 10px !important;
+        right: 10px !important;
+    }
+
+    .notification-content {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .notification-message {
+        font-size: 12px;
+    }
+
+    .notifications-dismiss-all {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}
+
+/* Accessibilité */
+.pdf-builder-notification[aria-live] {
+    position: relative;
+}
+
+.pdf-builder-notification[aria-live] .notification-close {
+    position: relative;
+    z-index: 1;
+}
+
+/* Support pour les navigateurs plus anciens */
+@supports not (backdrop-filter: blur(10px)) {
+    .pdf-builder-notification {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: none;
+    }
+}
+
+/* Mode sombre support */
+@media (prefers-color-scheme: dark) {
+    .pdf-builder-notification {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .notification-close:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .notifications-dismiss-all {
+        background: rgba(0, 0, 0, 0.8);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #ccc;
+    }
+
+    .notifications-dismiss-all:hover {
+        background: rgba(0, 0, 0, 0.9);
+        color: #fff;
+    }
+}
+
+/* Animations pour les interactions */
+.pdf-builder-notification:hover .notification-progress {
+    animation-play-state: paused;
+}
+
+/* Focus pour l'accessibilité */
+.notification-close:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.notifications-dismiss-all:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+/* PDF Builder Pro Admin Styles */
+/* Cross-browser compatibility with vendor prefixes */
+
+/* PDF Preview Modal Styles */
+.pdf-preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  align-items: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  -o-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  -o-justify-content: center;
+  z-index: 10000;
+}
+
+.pdf-preview-modal-content {
+  background: white;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  -ms-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  -o-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 800px;
+  height: 600px;
+  display: flex;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  -o-flex-direction: column;
+  overflow: hidden;
+}
+
+.pdf-preview-modal-header {
+  display: flex;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  justify-content: space-between;
+  -webkit-justify-content: space-between;
+  -moz-justify-content: space-between;
+  -ms-justify-content: space-between;
+  -o-justify-content: space-between;
+  align-items: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  -o-align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e1e1e1;
+  background: rgba(219, 234, 254, 0.9);
+}
+
+.pdf-preview-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.pdf-preview-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #4b5563;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  align-items: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  -o-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  -o-justify-content: center;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  transition: background-color 0.2s;
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  -o-transition: background-color 0.2s;
+}
+
+.pdf-preview-modal-close:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.pdf-preview-modal-body {
+  flex: 1;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  -o-flex: 1;
+  overflow: auto;
+  padding: 20px;
+  background: #fff;
+}
+
+.pdf-preview-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  -o-flex-direction: column;
+  align-items: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  -o-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  -o-justify-content: center;
+  z-index: 10;
+}
+
+.pdf-preview-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  animation: spin 1s linear infinite;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  -o-animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); -webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -ms-transform: rotate(0deg); -o-transform: rotate(0deg); }
+  100% { transform: rotate(360deg); -webkit-transform: rotate(360deg); -moz-transform: rotate(360deg); -ms-transform: rotate(360deg); -o-transform: rotate(360deg); }
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@-moz-keyframes spin {
+  0% { -moz-transform: rotate(0deg); }
+  100% { -moz-transform: rotate(360deg); }
+}
+
+@-o-keyframes spin {
+  0% { -o-transform: rotate(0deg); }
+  100% { -o-transform: rotate(360deg); }
+}
+
+.pdf-preview-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.pdf-preview-error p {
+  margin: 0 0 10px 0;
+  font-weight: bold;
+}
+
+.error-message {
+  font-family: monospace;
+  background: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  word-break: break-all;
+}
+
+.pdf-preview-error-close {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.pdf-preview-error-close:hover {
+  background: #c82333;
+}
+
+/* Masquer les notifications WordPress et autres plugins dans le PDF Builder */
+/* Cible les pages du PDF Builder Pro */
+body.toplevel_page_wp-pdf-builder-pro .notice,
+body.toplevel_page_wp-pdf-builder-pro .notice-info,
+body.toplevel_page_wp-pdf-builder-pro .notice-warning,
+body.toplevel_page_wp-pdf-builder-pro .notice-error,
+body.toplevel_page_wp-pdf-builder-pro .notice-success,
+body.toplevel_page_wp-pdf-builder-pro .updated,
+body.toplevel_page_wp-pdf-builder-pro .update-nag,
+/* Masquer spécifiquement dans les metaboxes du PDF Builder */
+#wp-pdf-builder-pro-metabox .notice,
+#wp-pdf-builder-pro-metabox .notice-info,
+#wp-pdf-builder-pro-metabox .notice-warning,
+#wp-pdf-builder-pro-metabox .notice-error,
+#wp-pdf-builder-pro-metabox .notice-success,
+#wp-pdf-builder-pro-metabox .updated,
+#wp-pdf-builder-pro-metabox .error {
+  display: none !important;
+}
+
+
+
+.context-menu {
+  position: fixed !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  z-index: 9999 !important;
+  min-width: 200px !important;
+  max-width: 280px !important;
+  padding: 8px 0 !important;
+  animation: contextMenuFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform-origin: top left !important;
+}
+
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-height: 36px;
+  border: none;
+  background: transparent;
+}
+
+.context-menu-item:hover:not(.disabled) {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.context-menu-item:active:not(.disabled) {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  transform: translateX(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.context-menu-item.disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.context-menu-item.disabled:hover {
+  background-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.context-menu-icon {
+  margin-right: 12px;
+  width: 18px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.context-menu-label {
+  flex: 1;
+  font-weight: 500;
+  color: #334155;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  margin: 6px 0;
+  border: none;
+}
+
+
+/**
+ * PDF Builder Pro - Styles ultra-minimalistes pour les onglets de paramètres
+ */
+
+/* Styles pour les onglets WordPress - Design ultra-minimal */
+.nav-tab-wrapper {
+    background: #f1f1f1;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.nav-tab {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #666;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.nav-tab:hover {
+    color: #0073aa;
+}
+
+.nav-tab.nav-tab-active,
+.nav-tab.nav-tab-active:hover {
+    color: #0073aa;
+    border-bottom-color: #0073aa;
+}
+
+.nav-tab:focus {
+    outline: none;
+}
+
+/* Styles pour le contenu des onglets */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Styles pour les sections dans les onglets */
+.tab-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.tab-section h3 {
+    border-bottom: 1px solid #ddd;
+    margin: 0 0 15px 0;
+    padding-bottom: 8px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.tab-section h4 {
+    margin: 15px 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Styles pour les formulaires dans les onglets */
+.form-table {
+    margin-bottom: 15px;
+}
+
+.form-table th {
+    font-weight: 600;
+    padding: 8px 8px 8px 0;
+    text-align: left;
+    vertical-align: top;
+    width: 180px;
+}
+
+.form-table td {
+    padding: 8px 0;
+}
+
+.form-table input[type="text"],
+.form-table input[type="password"],
+.form-table input[type="email"],
+.form-table input[type="number"],
+.form-table select,
+.form-table textarea {
+    max-width: 350px;
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+}
+
+/* Styles pour les boutons */
+.button-primary {
+    background: #0073aa;
+    border: 1px solid #0073aa;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    margin: 0;
+    padding: 4px 10px;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+.button-primary:hover,
+.button-primary:focus {
+    background: #005177;
+    border-color: #005177;
+}
+
+.button-secondary {
+    background: #f7f7f7;
+    border: 1px solid #ccc;
+    color: #555;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    margin: 0 0 0 8px;
+    padding: 4px 10px;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+.button-secondary:hover,
+.button-secondary:focus {
+    background: #e9e9e9;
+    border-color: #999;
+}
+
+/* Styles pour les messages */
+.notice {
+    background: #fff;
+    border-left: 4px solid #00a0d2;
+    margin: 15px 0;
+    padding: 8px 12px;
+}
+
+.notice-success {
+    border-left-color: #46b450;
+}
+
+.notice-error {
+    border-left-color: #dc3232;
+}
+
+.notice-warning {
+    border-left-color: #ffb900;
+}
+
+.notice-info {
+    border-left-color: #00a0d2;
+}
+
+/* Styles responsives minimaux */
+@media screen and (max-width: 782px) {
+    .nav-tab-wrapper {
+        margin-bottom: 15px;
+    }
+
+    .nav-tab {
+        display: block;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 12px;
+        text-align: left;
+    }
+
+    .nav-tab:last-child {
+        border-bottom: none;
+    }
+
+    .nav-tab:hover {
+        background: #f9f9f9;
+    }
+
+    .nav-tab.nav-tab-active {
+        background: #fff;
+        border-bottom-color: #0073aa;
+    }
+}
+/**
+ * PDF Builder Pro V2 - Main CSS Entry Point
+ * Imports all component and builder styles
+ */
+
+/* ============================================================================
+   BUILDER COMPONENTS STYLES
+   ============================================================================ */
+
+/* ============================================================================
+   ADMIN & NOTIFICATION STYLES
+   ============================================================================ */
+
+/* ============================================================================
+   MAIN APPLICATION STYLES
+   ============================================================================ */
+
+:root {
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+  --light-bg: #f5f5f5;
+  --border-color: #e5e5e5;
+  --text-color: #333;
+  --text-light: #666;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--light-bg);
+  color: var(--text-color);
+}
+
+.pdf-builder-container {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  background: white;
+}
+
+.pdf-builder-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.pdf-builder-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.pdf-builder-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* SIDEBAR */
+.pdf-builder-sidebar {
+  width: 300px;
+  background: white;
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* CANVAS */
+.pdf-builder-canvas {
+  flex: 1;
+  display: flex;
+  background: var(--light-bg);
+  overflow: auto;
+  padding: 20px;
+}
+
+/* PROPERTIES PANEL */
+.pdf-builder-properties {
+  width: 280px;
+  background: white;
+  border-left: 1px solid var(--border-color);
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* TOOLBAR */
+.pdf-builder-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: white;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pdf-builder-toolbar button {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.pdf-builder-toolbar button:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+

@@ -1,0 +1,196 @@
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+
+const isDev = process.env.NODE_ENV === 'development';
+
+// Output vers le dossier assets du plugin pour déploiement facile
+const outputPath = path.resolve(__dirname, 'plugin/assets/js');
+
+module.exports = {
+  mode: isDev ? 'development' : 'production',
+  entry: {
+    'pdf-builder-react': './src/js/react/index.tsx',
+  },
+  output: {
+    path: outputPath,
+    filename: '[name].min.js',
+    library: {
+      type: 'umd',
+      name: 'pdfBuilderReact',
+    },
+    globalObject: 'typeof window !== "undefined" ? window : global',
+    clean: true,
+    assetModuleFilename: '../assets/[name][ext]',
+  },
+  devtool: isDev ? 'eval-source-map' : false,
+  performance: {
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
+    hints: isDev ? false : 'warning',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                useBuiltIns: 'entry',
+                corejs: 3,
+                modules: false,
+              }],
+              ['@babel/preset-react', { runtime: 'automatic' }],
+              '@babel/preset-typescript',
+            ],
+            plugins: [
+              '@babel/plugin-proposal-class-properties',
+              '@babel/plugin-syntax-optional-chaining',
+            ],
+            cacheDirectory: true,
+          },
+        },
+      },
+      {
+        test: /\.css$/,
+        use: [
+          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDev,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: '../fonts/[name][ext]',
+        },
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    alias: {
+      '@components': path.resolve(__dirname, 'src/js/react/components/'),
+      '@hooks': path.resolve(__dirname, 'src/js/react/hooks/'),
+      '@utils': path.resolve(__dirname, 'src/js/react/utils/'),
+      '@contexts': path.resolve(__dirname, 'src/js/react/contexts/'),
+      '@types': path.resolve(__dirname, 'src/js/react/types/'),
+      '@styles': path.resolve(__dirname, 'src/js/react/styles/'),
+    },
+  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '../css/[name].min.css',
+      chunkFilename: '../css/[name].chunk.css',
+    }),
+    ...(!isDev ? [new CompressionPlugin({
+      algorithm: 'gzip',
+      test: /\.(js|css)$/,
+      threshold: 10240,
+      minRatio: 0.8,
+      filename: '[path][base].gz',
+    })] : []),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'src/js/react/styles/',
+          to: path.resolve(__dirname, 'plugin/assets/css/'),
+          filter: async (resourcePath) => {
+            return resourcePath.endsWith('.css');
+          },
+        },
+      ],
+    }),
+  ],
+  optimization: {
+    minimize: !isDev,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: !isDev,
+            drop_debugger: true,
+            passes: 2,
+            pure_funcs: isDev ? [] : ['console.log', 'console.info', 'console.debug'],
+          },
+          mangle: {
+            properties: false,
+          },
+          output: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+    ],
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          priority: 10,
+          reuseExistingChunk: true,
+        },
+        common: {
+          minChunks: 2,
+          priority: 5,
+          reuseExistingChunk: true,
+        },
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'react-vendor',
+          priority: 20,
+        },
+      },
+    },
+  },
+  cache: {
+    type: 'filesystem',
+    cacheDirectory: path.resolve(__dirname, '.webpack_cache'),
+  },
+  stats: {
+    colors: true,
+    modules: false,
+    children: false,
+    chunks: false,
+    chunkModules: false,
+    errors: true,
+    errorDetails: true,
+    warnings: true,
+    publicPath: true,
+    performance: true,
+    timings: true,
+  },
+};
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          priority: 10,
+          enforce: true,
+        },
+      },
+    },
+  },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 1000000,
+    maxAssetSize: 1000000,
+  },
+};
