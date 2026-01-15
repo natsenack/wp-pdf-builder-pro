@@ -11,6 +11,7 @@ $canvas_defaults = [
     'height' => '1123',
     'dpi' => '96',
     'format' => 'A4',
+    'orientation' => 'portrait',
     'bg_color' => '#ffffff',
     'border_color' => '#cccccc',
     'border_width' => '1',
@@ -80,6 +81,13 @@ function get_canvas_modal_value($key, $default = '') {
                         <option value="A3" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3</option>
                         <option value="Letter" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter</option>
                         <option value="Legal" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="modal_canvas_orientation">Orientation</label>
+                    <select id="modal_canvas_orientation" name="pdf_builder_canvas_orientation">
+                        <option value="portrait" <?php selected(get_canvas_modal_value('orientation', 'portrait'), 'portrait'); ?>>Portrait (794×1123 px)</option>
+                        <option value="landscape" <?php selected(get_canvas_modal_value('orientation', 'portrait'), 'landscape'); ?>>Paysage (1123×794 px)</option>
                     </select>
                 </div>
                 <div class="setting-group">
