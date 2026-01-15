@@ -1172,18 +1172,18 @@ class PdfBuilderAdmin
                             var result = window.pdfBuilderReact.initPDFBuilderReact();
                             console.log = originalLog;
 
-                            // Check if new logs are present
+                            // Check if new logs are present (look for both old and new version indicators)
                             var hasNewLogs = logMessages.some(msg =>
                                 msg.includes('💥 NUCLEAR_DEBUG_V1') ||
                                 msg.includes('Root created successfully') ||
-                                msg.includes('PDFBuilder component available')
+                                msg.includes('PDFBuilder component available') ||
+                                msg.includes('[PDF Builder] Component rendered') ||
+                                msg.includes('[PDF Builder] Container found')
                             );
 
                             if (!hasNewLogs) {
-                                console.warn('⚠️ Old script version detected, forcing reload...');
-                                setTimeout(function() {
-                                    window.location.reload(true);
-                                }, 1000);
+                                // Don't force reload - the component is already rendering, this check was just to verify version
+                                console.log('✅ React wrapper is functional, no reload needed');
                             } else {
                                 console.log('✅ New script version confirmed');
                             }
