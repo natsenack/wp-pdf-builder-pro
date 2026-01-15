@@ -594,15 +594,15 @@ export function useTemplate() {
 
             if (freshNonce) {
               console.log('✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative...');
-              // Refaire le CHARGEMENT (pas la sauvegarde!) avec le nouveau nonce
-              return await loadExistingTemplate(templateId);
+              // ✅ CORRECTION: Refaire la SAUVEGARDE (pas le chargement!) avec le nouveau nonce
+              return await saveTemplate();
             }
           } catch (nonceError) {
             console.error('❌ [useTemplate] Échec récupération nonce:', nonceError);
           }
         }
 
-        throw new Error(result.data || 'Erreur lors du chargement du template');
+        throw new Error(result.data || 'Erreur lors de la sauvegarde du template');
       }
 
       // Sauvegarde réussie

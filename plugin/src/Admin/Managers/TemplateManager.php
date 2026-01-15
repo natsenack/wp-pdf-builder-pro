@@ -223,17 +223,19 @@ class TemplateManager
         try {
             // $this->debug_log('TemplateManager ajaxSaveTemplateV3 called');
             
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                // $this->debug_log('Permissions insuffisantes');
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                // $this->debug_log('Nonce invalide');
-                wp_send_json_error('Nonce invalide');
+            // 🔧 CORRECTION: Utiliser NonceManager unifié pour sécurité cohérente
+            // Accepter les éditeurs ET les admins pour la sauvegarde
+            // (Les deux peuvent créer/éditer les PDF templates)
+            $validation = \PDF_Builder\Admin\Handlers\NonceManager::validateRequest(
+                \PDF_Builder\Admin\Handlers\NonceManager::MIN_CAPABILITY
+            );
+            
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    \PDF_Builder\Admin\Handlers\NonceManager::sendNonceErrorResponse();
+                } else {
+                    \PDF_Builder\Admin\Handlers\NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -294,15 +296,18 @@ class TemplateManager
     public function ajaxLoadTemplate()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // 🔧 CORRECTION: Utiliser NonceManager unifié pour sécurité cohérente
+            // Accepter les éditeurs ET les admins pour le chargement
+            $validation = \PDF_Builder\Admin\Handlers\NonceManager::validateRequest(
+                \PDF_Builder\Admin\Handlers\NonceManager::MIN_CAPABILITY
+            );
+            
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    \PDF_Builder\Admin\Handlers\NonceManager::sendNonceErrorResponse();
+                } else {
+                    \PDF_Builder\Admin\Handlers\NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
