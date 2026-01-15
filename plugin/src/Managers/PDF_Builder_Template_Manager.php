@@ -567,7 +567,21 @@ class PdfBuilderTemplateManager
             }
             
             // Vérifier le nonce
-            if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_ajax')) {
+            if (!isset($_REQUEST['nonce'])) {
+                error_log('[PDF Builder] Nonce manquant dans la requête');
+                \wp_send_json_error('Sécurité: Nonce manquant');
+            }
+            
+            $nonce = $_REQUEST['nonce'];
+            $nonce_verify = \wp_verify_nonce($nonce, 'pdf_builder_ajax');
+            
+            error_log('[PDF Builder] Nonce verification result: ' . ($nonce_verify ? 'VALID' : 'INVALID'));
+            error_log('[PDF Builder] Nonce value: ' . $nonce);
+            error_log('[PDF Builder] User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
+            error_log('[PDF Builder] Current user can manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
+            
+            if (!$nonce_verify) {
+                error_log('[PDF Builder] Nonce failed verification - returning error');
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
 

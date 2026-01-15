@@ -157,14 +157,27 @@ class AjaxHandler
      */
     public function ajaxGetFreshNonce()
     {
+        error_log('[PDF Builder] ajaxGetFreshNonce called');
+        
         // Vérifier les permissions
-        if (!is_user_logged_in() || !current_user_can('manage_options')) {
+        if (!is_user_logged_in()) {
+            error_log('[PDF Builder] ajaxGetFreshNonce: User not logged in');
+            wp_send_json_error('Utilisateur non connecté');
+            return;
+        }
+        
+        if (!current_user_can('manage_options')) {
+            error_log('[PDF Builder] ajaxGetFreshNonce: User cannot manage_options');
             wp_send_json_error('Permissions insuffisantes');
             return;
         }
 
+        error_log('[PDF Builder] ajaxGetFreshNonce: Generating fresh nonce');
+        
         // Générer un nouveau nonce valide
         $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
+        
+        error_log('[PDF Builder] Fresh nonce generated: ' . $fresh_nonce);
 
         wp_send_json_success([
             'nonce' => $fresh_nonce,
