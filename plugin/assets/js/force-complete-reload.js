@@ -1,6 +1,6 @@
 /**
  * Force Complete Reload Script
- * Force un rechargement complet de la page si besoin
+ * Bloque la page en cas d'erreur et affiche les messages d'erreur
  */
 
 (function() {
@@ -9,45 +9,133 @@
   console.log('[PDF Builder] force-complete-reload.js loaded');
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initForceCompleteReload);
+    document.addEventListener('DOMContentLoaded', initErrorBlocker);
   } else {
-    initForceCompleteReload();
+    initErrorBlocker();
   }
 
-  function initForceCompleteReload() {
-    console.log('[PDF Builder] Checking for reload trigger');
+  function initErrorBlocker() {
+    console.log('[PDF Builder] Initializing error blocker');
     
-    // Vérifier si on a un tag de reload dans localStorage
-    const reloadKey = 'pdfBuilderForceReload';
-    const lastReload = localStorage.getItem(reloadKey);
-    const now = new Date().getTime();
+    const errorKey = 'pdfBuilderErrors';
+    const errors = JSON.parse(localStorage.getItem(errorKey) || '[]');
     
-    if (lastReload && (now - parseInt(lastReload)) < 60000) {
-      console.log('[PDF Builder] Recently reloaded, skipping');
-      localStorage.removeItem(reloadKey);
+    // S'il y a des erreurs, afficher l'overlay de blocage
+    if (errors.length > 0) {
+      console.log('[PDF Builder] Errors detected, blocking page');
+      showErrorOverlay(errors);
+      localStorage.removeItem(errorKey);
       return;
     }
+  }
 
-    // Forcer le rechargement CSS
-    const links = document.querySelectorAll('link[rel="stylesheet"]');
-    links.forEach(link => {
-      if (link.href.includes('pdf-builder')) {
-        const timestamp = new Date().getTime();
-        const separator = link.href.includes('?') ? '&' : '?';
-        const newHref = link.href.split('?')[0].split('&')[0] + separator + 't=' + timestamp;
-        link.href = newHref;
-        console.log('[PDF Builder] Forced CSS reload:', link.href);
-      }
+  function showErrorOverlay(errors) {
+    // Créer l'overlay de blocage
+    const overlay = document.createElement('div');
+    overlay.id = 'pdf-builder-error-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999999;
+    `;
+
+    const errorBox = document.createElement('div');
+    errorBox.style.cssText = `
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      max-width: 600px;
+      max-height: 70vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    `;
+
+    let errorHTML = `
+      <h2 style="color: #d32f2f; margin-bottom: 20px;">⚠️ Erreurs détectées</h2>
+      <p style="color: #666; margin-bottom: 20px;">La page a rencontré des problèmes lors du chargement. Les erreurs suivantes ont été enregistrées:</p>
+      <div style="background: #f5f5f5; padding: 15px; border-left: 4px solid #d32f2f; margin-bottom: 20px;">
+    `;
+
+    errors.forEach((error, index) => {
+      errorHTML += `
+        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #ddd;">
+          <strong style="color: #d32f2f;">Erreur ${index + 1}:</strong><br>
+          <code style="display: block; background: white; padding: 10px; margin-top: 5px; font-size: 12px; white-space: pre-wrap; word-break: break-all;">
+            ${escapeHtml(error)}
+          </code>
+        </div>
+      `;
     });
 
-    // Stocker le timestamp du dernier reload
-    localStorage.setItem(reloadKey, now.toString());
+    errorHTML += `
+      </div>
+      <p style="color: #999; font-size: 12px; margin-bottom: 20px;">
+        <em>Temps: ${new Date().toLocaleString()}</em>
+      </p>
+      <div style="display: flex; gap: 10px;">
+        <button id="pdf-builder-retry-btn" style="flex: 1; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+          ↻ Réessayer
+        </button>
+        <button id="pdf-builder-continue-btn" style="flex: 1; padding: 12px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+          Continuer quand même
+        </button>
+      </div>
+    `;
+
+    errorBox.innerHTML = errorHTML;
+    overlay.appendChild(errorBox);
+    document.body.appendChild(overlay);
+
+    // Ajouter les event listeners
+    document.getElementById('pdf-builder-retry-btn').addEventListener('click', function() {
+      location.reload();
+    });
+
+    document.getElementById('pdf-builder-continue-btn').addEventListener('click', function() {
+      overlay.remove();
+      console.log('[PDF Builder] User chose to continue despite errors');
+    });
+
+    // Bloquer les clics sur la page
+    document.addEventListener('click', function(e) {
+      if (e.target.id !== 'pdf-builder-retry-btn' && e.target.id !== 'pdf-builder-continue-btn') {
+        if (!e.target.closest('#pdf-builder-error-overlay')) {
+          e.stopPropagation();
+        }
+      }
+    }, true);
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
   }
 
   // Exposition globale pour accès externe
   window.pdfBuilderForceReload = {
+    addError: function(error) {
+      const errorKey = 'pdfBuilderErrors';
+      const errors = JSON.parse(localStorage.getItem(errorKey) || '[]');
+      errors.push(error);
+      localStorage.setItem(errorKey, JSON.stringify(errors));
+    },
+    
     reload: function() {
-      initForceCompleteReload();
+      initErrorBlocker();
     }
   };
 })();
