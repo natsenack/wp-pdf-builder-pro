@@ -4,6 +4,7 @@ import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugError, debugWarn } from '../utils/debug';
 import { normalizeElementsBeforeSave, normalizeElementsAfterLoad, debugElementState } from '../utils/elementNormalization';
+import { ClientNonceManager } from '../utils/ClientNonceManager';
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -211,7 +212,9 @@ export function useTemplate() {
       }
 
       const cacheBreaker = Date.now();
-      const url = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`;
+      const url = ClientNonceManager.addToUrl(
+        `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&t=${cacheBreaker}`
+      );
 
       console.log('🔄 [useTemplate] About to fetch URL:', url);
       console.log('🔄 [useTemplate] Fetch options:', fetchOptions);
@@ -422,7 +425,9 @@ export function useTemplate() {
             cache: 'reload'
           };
 
-          const fallbackUrl = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&fallback=1&t=${Date.now()}`;
+          const fallbackUrl = ClientNonceManager.addToUrl(
+            `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&fallback=1&t=${Date.now()}`
+          );
 
           const fallbackResponse = await fetch(fallbackUrl, fallbackOptions);
 
@@ -501,18 +506,18 @@ export function useTemplate() {
 
       // console.log('[PDF_BUILDER_FRONTEND] Template name:', state.template.name);
 
-      if (!window.pdfBuilderData?.ajaxUrl) {
+      if (!ClientNonceManager.getAjaxUrl()) {
         throw new Error('URL AJAX non disponible');
       }
 
-      if (!window.pdfBuilderData?.nonce) {
+      if (!ClientNonceManager.isValid()) {
         console.error('🔴 [useTemplate] ERREUR: Nonce non disponible', window.pdfBuilderData);
         throw new Error('Nonce non disponible');
       }
 
-      console.log('🟢 [useTemplate] AJAX URL available:', !!window.pdfBuilderData?.ajaxUrl);
-      console.log('🟢 [useTemplate] Nonce available:', !!window.pdfBuilderData?.nonce);
-      console.log('🟢 [useTemplate] Nonce value:', window.pdfBuilderData?.nonce);
+      console.log('🟢 [useTemplate] AJAX URL available:', !!ClientNonceManager.getAjaxUrl());
+      console.log('🟢 [useTemplate] Nonce available:', ClientNonceManager.isValid());
+      console.log('🟢 [useTemplate] Nonce value:', ClientNonceManager.getCurrentNonce());
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
       // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
@@ -555,8 +560,9 @@ export function useTemplate() {
       formData.append('template_name', state.template.name || 'Nouveau template');
       formData.append('template_description', state.template.description || '');
       formData.append('template_data', JSON.stringify(templateData));
-      const currentNonce = window.pdfBuilderData?.nonce || '';
-      formData.append('nonce', currentNonce);
+      
+      // Utiliser le gestionnaire de nonce unifié
+      ClientNonceManager.addToFormData(formData);
 
       // Ajouter les paramètres du template
       formData.append('show_guides', state.template.showGuides ? '1' : '0');
@@ -566,7 +572,7 @@ export function useTemplate() {
       formData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
       formData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
 
-      const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
+      const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: 'POST',
         body: formData
       });
@@ -579,33 +585,17 @@ export function useTemplate() {
 
       if (!result.success) {
         // Gestion d'erreur nonce - tentative de récupération automatique
-        if (result.data && result.data.includes('Nonce invalide')) {
+        if (result.data && (result.data.includes('Nonce invalide') || result.data.code === 'nonce_invalid')) {
           console.log('🔄 [useTemplate] Nonce invalide détecté, récupération automatique...');
 
           try {
-            // Récupérer un nouveau nonce
-            const nonceFormData = new FormData();
-            nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
-            nonceFormData.append('nonce', currentNonce);
+            // Récupérer un nouveau nonce via le gestionnaire unifié
+            const freshNonce = await ClientNonceManager.refreshNonce(ClientNonceManager.getCurrentNonce() || undefined);
 
-            const nonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
-              method: 'POST',
-              body: nonceFormData
-            });
-
-            if (nonceResponse.ok) {
-              const nonceResult = await nonceResponse.json();
-              if (nonceResult.success && nonceResult.data?.nonce) {
-                console.log('✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative...');
-
-                // Mettre à jour le nonce global
-                if (window.pdfBuilderData) {
-                  window.pdfBuilderData.nonce = nonceResult.data.nonce;
-                }
-
-                // Refaire la sauvegarde avec le nouveau nonce
-                return await saveTemplate();
-              }
+            if (freshNonce) {
+              console.log('✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative...');
+              // Refaire la sauvegarde avec le nouveau nonce
+              return await saveTemplate();
             }
           } catch (nonceError) {
             console.error('❌ [useTemplate] Échec récupération nonce:', nonceError);

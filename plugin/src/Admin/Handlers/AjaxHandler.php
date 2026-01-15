@@ -66,15 +66,14 @@ class AjaxHandler
     public function ajaxGeneratePdfFromCanvas()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -157,44 +156,21 @@ class AjaxHandler
      */
     public function ajaxGetFreshNonce()
     {
-        error_log('═══════════════════════════════════════════════════════════════');
-        error_log('[FRESH NONCE] ===== NONCE GENERATION REQUEST =====');
-        error_log('═══════════════════════════════════════════════════════════════');
-        error_log('[FRESH NONCE] Timestamp: ' . current_time('mysql'));
-        error_log('[FRESH NONCE] User ID: ' . get_current_user_id());
+        NonceManager::logInfo('Demande de génération de nonce frais');
         
-        // Vérifier les permissions
-        if (!is_user_logged_in()) {
-            error_log('[FRESH NONCE] ERROR: User not logged in');
-            error_log('[FRESH NONCE] $_COOKIE keys: ' . implode(', ', array_keys($_COOKIE)));
-            wp_send_json_error('Utilisateur non connecté');
+        // Vérifier les permissions uniquement (pas besoin de nonce valide pour en demander un)
+        if (!NonceManager::checkPermissions(NonceManager::MIN_CAPABILITY)) {
+            NonceManager::logInfo('Permissions insuffisantes pour générer un nonce');
+            NonceManager::sendPermissionErrorResponse();
             return;
         }
         
-        error_log('[FRESH NONCE] User IS logged in');
-        error_log('[FRESH NONCE] Checking manage_options capability...');
-        
-        if (!current_user_can('edit_posts')) {
-            error_log('[FRESH NONCE] ERROR: User cannot edit_posts');
-            wp_send_json_error('Permissions insuffisantes');
-            return;
-        }
-        
-        error_log('[FRESH NONCE] User HAS manage_options capability');
-        error_log('[FRESH NONCE] ===== GENERATING FRESH NONCE =====');
+        NonceManager::logInfo('Génération d\'un nonce frais');
         
         // Générer un nouveau nonce valide
-        $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
+        $fresh_nonce = NonceManager::createNonce();
         
-        error_log('[FRESH NONCE] Fresh nonce generated: ' . $fresh_nonce);
-        error_log('[FRESH NONCE] Fresh nonce length: ' . strlen($fresh_nonce));
-        error_log('[FRESH NONCE] Action: pdf_builder_ajax');
-        error_log('[FRESH NONCE] ===== VERIFICATION =====');
-        
-        // Verify it immediately
-        $verify_test = wp_verify_nonce($fresh_nonce, 'pdf_builder_ajax');
-        error_log('[FRESH NONCE] Immediate verification of fresh nonce: ' . var_export($verify_test, true));
-        error_log('[FRESH NONCE] ✓ Fresh nonce ready to send to client');
+        NonceManager::logInfo('Nonce frais généré avec succès');
 
         wp_send_json_success([
             'nonce' => $fresh_nonce,
@@ -217,15 +193,14 @@ class AjaxHandler
 
         // Implémentation de secours
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -275,15 +250,14 @@ class AjaxHandler
 
         // Implémentation de secours
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -317,19 +291,19 @@ class AjaxHandler
     public function ajaxGetTemplate()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
-
-            // Vérifier le nonce depuis les paramètres GET ou POST
-            $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
+            
+            // Récupérer le template_id depuis GET ou POST
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
-            if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
 
             if (!$template_id) {
                 wp_send_json_error('ID de template manquant');
@@ -395,20 +369,16 @@ class AjaxHandler
     public function ajaxGenerateOrderPdf()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
-
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
 
             if (!$order_id || !$template_id) {
                 wp_send_json_error('ID de commande ou template manquant');
@@ -438,15 +408,14 @@ class AjaxHandler
     public function ajaxCheckDatabase()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -482,15 +451,14 @@ class AjaxHandler
     public function ajaxRepairDatabase()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -513,15 +481,14 @@ class AjaxHandler
     public function ajaxExecuteSqlRepair()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error('Nonce invalide');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
@@ -552,17 +519,16 @@ class AjaxHandler
     public function ajaxSaveSettings()
     {
         try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
-
-            // Vérifier le nonce (temporarily disabled for debugging)
-            // if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-            //     wp_send_json_error('Nonce invalide');
-            //     return;
-            // }
 
             // Sauvegarder les paramètres généraux
             $settings = [
@@ -592,15 +558,14 @@ class AjaxHandler
             // Rate limiting basique
             $this->checkRateLimit();
 
-            // Vérifier les permissions de base
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error(['message' => 'Permissions insuffisantes']);
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-                wp_send_json_error(['message' => 'Nonce invalide']);
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    wp_send_json_error(['message' => 'Nonce invalide', 'nonce' => NonceManager::createNonce()]);
+                } else {
+                    wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                }
                 return;
             }
 
