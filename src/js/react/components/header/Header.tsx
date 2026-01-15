@@ -974,6 +974,8 @@ export const Header = memo(function Header({
                     onUpdateTemplateSettings({
                       name: editedTemplateName,
                       description: editedTemplateDescription,
+                      canvasWidth: editedCanvasWidth,
+                      canvasHeight: editedCanvasHeight,
                       showGuides: editedShowGuides,
                       snapToGrid: editedSnapToGrid
                     });
