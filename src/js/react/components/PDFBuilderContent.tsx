@@ -102,6 +102,19 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
   debugLog('🎨 PDFBuilderContent: Canvas settings:', canvasSettings);
 
+  // Vérifier les erreurs de chargement des paramètres du canvas
+  useEffect(() => {
+    if (canvasSettings.error) {
+      debugError('❌ PDFBuilderContent: Canvas settings error:', canvasSettings.error);
+      
+      // Afficher une notification d'erreur
+      if (typeof window !== 'undefined' && window.showErrorNotification) {
+        debugLog('🔔 PDFBuilderContent: Showing canvas settings error notification');
+        window.showErrorNotification(`Erreur lors du chargement des paramètres: ${canvasSettings.error}`);
+      }
+    }
+  }, [canvasSettings.error]);
+
   // Injection des utilitaires responsives
   useEffect(() => {
     debugLog('🔧 PDFBuilderContent: Injecting responsive utils');

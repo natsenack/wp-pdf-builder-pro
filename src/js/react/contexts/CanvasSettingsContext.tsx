@@ -163,18 +163,15 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
   try {
     const windowSettings = window.pdfBuilderData?.canvasSettings || window.pdfBuilderCanvasSettings;
     
-    // Debug: Check if window settings exist - FORCE LOG
-    
-    
-    if (typeof window !== 'undefined' && window.pdfBuilderCanvasSettings) {
-      
-      
-    } else {
-      
+    // Debug: Check if window settings exist
+    if (typeof window !== 'undefined') {
+      console.log('[CanvasSettings] window.pdfBuilderData exists:', !!window.pdfBuilderData);
+      console.log('[CanvasSettings] window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+      console.log('[CanvasSettings] windowSettings:', windowSettings);
     }
     
     if (!windowSettings) {
-      
+      console.log('[CanvasSettings] No window settings found, using defaults');
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
@@ -184,13 +181,19 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       };
     }
 
+    // Vérifier que windowSettings est un objet
+    if (typeof windowSettings !== 'object' || windowSettings === null) {
+      console.error('[CanvasSettings] windowSettings is not an object:', windowSettings);
+      throw new Error('Les paramètres du canvas ne sont pas un objet valide');
+    }
+
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {
       // Dimensions
-      canvasWidth: (windowSettings.canvas_width as number) ?? DEFAULT_SETTINGS.canvasWidth,
-      canvasHeight: (windowSettings.canvas_height as number) ?? DEFAULT_SETTINGS.canvasHeight,
-      canvasUnit: (windowSettings.canvas_unit as 'px' | 'mm' | 'cm' | 'in') ?? DEFAULT_SETTINGS.canvasUnit,
-      canvasOrientation: (windowSettings.canvas_orientation as 'portrait' | 'landscape') ?? DEFAULT_SETTINGS.canvasOrientation,
+      canvasWidth: (windowSettings.default_canvas_width as number) ?? DEFAULT_SETTINGS.canvasWidth,
+      canvasHeight: (windowSettings.default_canvas_height as number) ?? DEFAULT_SETTINGS.canvasHeight,
+      canvasUnit: (windowSettings.default_canvas_unit as 'px' | 'mm' | 'cm' | 'in') ?? DEFAULT_SETTINGS.canvasUnit,
+      canvasOrientation: (windowSettings.default_canvas_orientation as 'portrait' | 'landscape') ?? DEFAULT_SETTINGS.canvasOrientation,
       
       // Couleurs
       canvasBackgroundColor: (windowSettings.canvas_background_color as string) ?? DEFAULT_SETTINGS.canvasBackgroundColor,
@@ -217,7 +220,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       guidesEnabled: windowSettings.show_guides === true || windowSettings.show_guides === '1',
       
       // 🔍 Zoom & Navigation
-      navigationEnabled: windowSettings.navigation_enabled === true || windowSettings.navigation_enabled === '1',
+      navigationEnabled: windowSettings.pan_with_mouse === true || windowSettings.pan_with_mouse === '1',
       zoomDefault: (() => {
         const minZoom = Math.max(1, (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin);
         const maxZoom = Math.max(minZoom, (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax);
@@ -233,7 +236,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       zoomStep: Math.max(1, (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep),
       
       // Sélection
-      selectionDragEnabled: windowSettings.drag_enabled === true || windowSettings.drag_enabled === '1',
+      selectionDragEnabled: true, // Default to enabled
       selectionMultiSelectEnabled: windowSettings.multi_select === true || windowSettings.multi_select === '1',
       selectionRotationEnabled: windowSettings.enable_rotation === true || windowSettings.enable_rotation === '1',
       selectionCopyPasteEnabled: windowSettings.copy_paste_enabled === true || windowSettings.copy_paste_enabled === '1',
@@ -249,13 +252,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       exportIncludeMetadata: windowSettings.include_metadata === true || windowSettings.include_metadata === '1',
       
       // Historique
-      historyUndoLevels: (windowSettings.history_undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
-      historyRedoLevels: (windowSettings.history_redo_levels as number) ?? DEFAULT_SETTINGS.historyRedoLevels,
+      historyUndoLevels: (windowSettings.undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
+      historyRedoLevels: (windowSettings.redo_levels as number) ?? DEFAULT_SETTINGS.historyRedoLevels,
       // Performance & Lazy Loading
-      lazyLoadingEditor: windowSettings.lazy_loading_editor === true || windowSettings.lazy_loading_editor === '1',
-      lazyLoadingPlugin: windowSettings.lazy_loading_plugin === true || windowSettings.lazy_loading_plugin === '1',
+      lazyLoadingEditor: false, // Default to disabled
+      lazyLoadingPlugin: false, // Default to disabled
       debugMode: windowSettings.debug_mode === true || windowSettings.debug_mode === '1',
-      memoryLimitJs: (windowSettings.memory_limit_js as number) ?? DEFAULT_SETTINGS.memoryLimitJs,
+      memoryLimitJs: DEFAULT_SETTINGS.memoryLimitJs, // Use default
       
       isLoading: false,
       isReady: true,
@@ -269,7 +272,8 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     
     return newSettings;
   } catch (_err) {
-    const errorMsg = _err instanceof Error ? _err.message : 'Unknown error';
+    const errorMsg = _err instanceof Error ? _err.message : 'Erreur inconnue';
+    console.error('[CanvasSettings] Error loading settings:', _err);
     
     return {
       ...DEFAULT_SETTINGS,

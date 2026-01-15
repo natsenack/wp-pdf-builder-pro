@@ -63,10 +63,10 @@ class Canvas_Manager
     {
         // Charger depuis les options séparées pour cohérence avec les modales
         $this->settings = [
-            'default_canvas_format' => get_option('pdf_builder_canvas_canvas_format', 'A4'),
+            'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
             'default_canvas_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
             'default_canvas_unit' => get_option('pdf_builder_canvas_unit', 'px'),
-            'default_canvas_dpi' => intval(get_option('pdf_builder_canvas_canvas_dpi', 96)),
+            'default_canvas_dpi' => intval(get_option('pdf_builder_canvas_dpi', 96)),
             'default_canvas_width' => intval(get_option('pdf_builder_canvas_width', 794)),
             'default_canvas_height' => intval(get_option('pdf_builder_canvas_height', 1123)),
             'canvas_background_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
