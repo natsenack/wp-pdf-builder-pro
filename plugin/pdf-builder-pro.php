@@ -674,17 +674,19 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_export_diagnostic', 'pdf_builder_ajax_handler_dispatch');
     add_action('wp_ajax_pdf_builder_view_logs', 'pdf_builder_ajax_handler_dispatch');
 
-    // Handlers de templates - maintenant gérés par le système de gestion de templates
-    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_save_template_handler');
-    add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_load_template_handler');
-    add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_auto_save_template_handler');
-    add_action('wp_ajax_pdf_builder_load_template_settings', 'pdf_builder_load_template_settings_handler');
-    add_action('wp_ajax_pdf_builder_save_template_settings', 'pdf_builder_save_template_settings_handler');
-    add_action('wp_ajax_pdf_builder_delete_template', 'pdf_builder_delete_template_handler');
-    add_action('wp_ajax_pdf_builder_set_default_template', 'pdf_builder_set_default_template_handler');
-    add_action('wp_ajax_pdf_builder_duplicate_template', 'pdf_builder_duplicate_template_handler');
-    add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_load_predefined_into_editor_handler');
-    add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_check_template_limit_handler');
+    // Handlers de templates - MAINTENANT GÉRÉS par AjaxHandler.php et NonceManager
+    // Ces enregistrements legacy sont DÉSACTIVÉS pour éviter les collisions
+    // Les handlers sont maintenant centralisés dans plugin/src/Admin/Handlers/AjaxHandler.php
+    // add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_save_template_handler');
+    // add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_load_template_handler');
+    // add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_auto_save_template_handler');
+    // add_action('wp_ajax_pdf_builder_load_template_settings', 'pdf_builder_load_template_settings_handler');
+    // add_action('wp_ajax_pdf_builder_save_template_settings', 'pdf_builder_save_template_settings_handler');
+    // add_action('wp_ajax_pdf_builder_delete_template', 'pdf_builder_delete_template_handler');
+    // add_action('wp_ajax_pdf_builder_set_default_template', 'pdf_builder_set_default_template_handler');
+    // add_action('wp_ajax_pdf_builder_duplicate_template', 'pdf_builder_duplicate_template_handler');
+    // add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_load_predefined_into_editor_handler');
+    // add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_check_template_limit_handler');
 
     // Handler de diagnostic pour tester le système AJAX
     add_action('wp_ajax_pdf_builder_diagnostic', 'pdf_builder_diagnostic_ajax_handler');
