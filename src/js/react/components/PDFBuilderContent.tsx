@@ -309,8 +309,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               {/* ✅ ONLY render Canvas when template is loaded OR it's a new template */}
               {!isLoading && (
                 <>
-                  {debugLog('🎨 PDFBuilderContent: Rendering Canvas component')}
-                  <Canvas width={width} height={height} />
+                  {debugLog('🎨 PDFBuilderContent: Rendering Canvas component', { canvasWidth, canvasHeight })}
+                  <Canvas width={canvasWidth || width} height={canvasHeight || height} />
                 </>
               )}
             </div>

@@ -828,13 +828,19 @@ export const Header = memo(function Header({
                       const orientation = e.target.value as 'portrait' | 'landscape';
                       setCanvasOrientation(orientation);
                       // Mettre à jour les dimensions en fonction de l'orientation
-                      if (orientation === 'portrait') {
-                        setEditedCanvasWidth(794);
-                        setEditedCanvasHeight(1123);
-                      } else {
-                        setEditedCanvasWidth(1123);
-                        setEditedCanvasHeight(794);
+                      let newWidth = 794;
+                      let newHeight = 1123;
+                      if (orientation === 'landscape') {
+                        newWidth = 1123;
+                        newHeight = 794;
                       }
+                      setEditedCanvasWidth(newWidth);
+                      setEditedCanvasHeight(newHeight);
+                      // Mettre à jour le template immédiatement
+                      onUpdateTemplateSettings({
+                        canvasWidth: newWidth,
+                        canvasHeight: newHeight
+                      });
                     }}
                     style={{
                       width: '100%',
