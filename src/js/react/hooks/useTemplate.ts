@@ -582,6 +582,9 @@ export function useTemplate() {
       }
 
       const result = await response.json();
+      console.log('📡 [saveTemplate] Réponse serveur:', result);
+      console.log('📡 [saveTemplate] result.success:', result.success);
+      console.log('📡 [saveTemplate] result.data:', result.data);
 
       if (!result.success) {
         // Gestion d'erreur nonce - tentative de récupération automatique
@@ -591,6 +594,7 @@ export function useTemplate() {
           try {
             // ✅ CORRECTION: Utiliser le nonce frais fourni par le serveur dans la réponse d'erreur
             let freshNonce = result.data?.nonce;
+            console.log('🔍 [useTemplate] Nonce frais depuis serveur:', freshNonce);
             
             if (!freshNonce) {
               // Fallback: si le serveur n'a pas fourni de nonce, en récupérer un nouveau

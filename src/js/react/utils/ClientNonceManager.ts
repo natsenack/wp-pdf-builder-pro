@@ -115,8 +115,14 @@ export class ClientNonceManager {
    */
   static addToFormData(formData: FormData, nonce?: string): FormData {
     const nonceToUse = nonce || this.getCurrentNonce();
+    console.log('🔍 [ClientNonceManager.addToFormData] Nonce à ajouter:', nonceToUse);
+    console.log('🔍 [ClientNonceManager.addToFormData] window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
+    console.log('🔍 [ClientNonceManager.addToFormData] window.pdfBuilderNonce:', window.pdfBuilderNonce);
     if (nonceToUse) {
       formData.append('nonce', nonceToUse);
+      console.log('✅ [ClientNonceManager.addToFormData] Nonce ajouté au FormData');
+    } else {
+      console.error('❌ [ClientNonceManager.addToFormData] PAS DE NONCE TROUVÉ!');
     }
     return formData;
   }
