@@ -45,6 +45,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
+        add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'ajaxGetFreshNonce']);
 
         // Hooks AJAX de maintenance
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajaxCheckDatabase']);
@@ -149,6 +150,26 @@ class AjaxHandler
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du téléchargement: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Récupérer un nouveau nonce (pour les cas où le nonce est expiré)
+     */
+    public function ajaxGetFreshNonce()
+    {
+        // Vérifier les permissions
+        if (!is_user_logged_in() || !current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        // Générer un nouveau nonce valide
+        $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
+
+        wp_send_json_success([
+            'nonce' => $fresh_nonce,
+            'message' => 'Nouveau nonce généré avec succès'
+        ]);
     }
 
     /**
