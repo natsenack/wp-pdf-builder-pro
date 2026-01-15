@@ -93,6 +93,7 @@ export function initPDFBuilderReact() {
 
     if (!container) {
       console.error('❌ FAIL: Container element not found');
+      console.error('❌ RETURNING FALSE: No container');
       return false;
     }
 
@@ -118,20 +119,37 @@ export function initPDFBuilderReact() {
 
     // Step 5: Initialize React
     console.log('⚛️ Checking React availability');
+    console.log('⚛️ typeof React:', typeof React);
+    console.log('⚛️ typeof createRoot:', typeof createRoot);
+    console.log('⚛️ React object:', React);
+    console.log('⚛️ createRoot object:', createRoot);
 
     if (typeof React === 'undefined') {
       console.error('❌ FAIL: React not loaded');
+      console.error('❌ RETURNING FALSE: React undefined');
       return false;
     }
 
     if (typeof createRoot === 'undefined') {
       console.error('❌ FAIL: createRoot not available');
+      console.error('❌ RETURNING FALSE: createRoot undefined');
       return false;
     }
 
     console.log('✅ React ready, creating root');
-    const root = createRoot(container);
-    console.log('✅ Root created successfully');
+    let root;
+    try {
+      root = createRoot(container);
+      console.log('✅ Root created successfully');
+    } catch (rootError) {
+      const rootErr = rootError instanceof Error ? rootError : new Error(String(rootError));
+      console.error('❌ FAIL: createRoot error:', rootErr);
+      console.error('❌ FAIL: createRoot error message:', rootErr.message);
+      console.error('❌ FAIL: createRoot error stack:', rootErr.stack);
+      console.error('❌ RETURNING FALSE: createRoot failed');
+      container.removeAttribute('data-react-initialized');
+      return false;
+    }
 
     console.log('🎨 Rendering PDFBuilder component');
     console.log('🎨 PDFBuilder component available:', typeof PDFBuilder);
