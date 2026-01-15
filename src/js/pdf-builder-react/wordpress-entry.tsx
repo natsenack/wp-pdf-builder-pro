@@ -25,6 +25,46 @@ document.body.appendChild(debugDiv);
 (window as any)['REACT_SCRIPT_LOADED'] = true;
 (window as any)['REACT_LOAD_TIME'] = new Date().toISOString();
 
+// ESSENTIAL: Create a debug log container for ALL messages
+const createDebugConsole = () => {
+  let debugConsole = document.getElementById('pdf-builder-debug-console');
+  if (!debugConsole) {
+    debugConsole = document.createElement('div');
+    debugConsole.id = 'pdf-builder-debug-console';
+    debugConsole.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: #000;
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 5px;
+      z-index: 999999;
+      font-size: 11px;
+      font-family: monospace;
+      max-width: 500px;
+      max-height: 400px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 2px solid #00ff00;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+      word-break: break-word;
+      white-space: pre-wrap;
+    `;
+    document.body.appendChild(debugConsole);
+  }
+  return debugConsole;
+};
+
+const logToDebugConsole = (msg: string) => {
+  const debugConsole = createDebugConsole();
+  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+  debugConsole.innerHTML += `[${timestamp}] ${msg}\n`;
+  debugConsole.scrollTop = debugConsole.scrollHeight;
+};
+
+logToDebugConsole('✅ Debug console created');
+
 /**
  * PDF Builder React - Point d'entrée WordPress
  * Ce fichier est chargé par WordPress pour initialiser l'éditeur React
@@ -49,35 +89,10 @@ import {
   resetAPI
 } from './api/global-api';
 
-// DEBUG HELPER FUNCTION - AFTER IMPORTS
+// DEBUG HELPER FUNCTION - AFTER IMPORTS (Use the global console)
 const addDebugToDOM = (msg: string) => {
-  try {
-    let debugContainer = document.getElementById('pdf-builder-debug-logs');
-    if (!debugContainer) {
-      debugContainer = document.createElement('div');
-      debugContainer.id = 'pdf-builder-debug-logs';
-      debugContainer.style.cssText = `
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        background: #1a1a1a;
-        color: #00ff00;
-        padding: 10px;
-        border-radius: 5px;
-        z-index: 999999;
-        font-size: 12px;
-        font-family: monospace;
-        max-width: 400px;
-        max-height: 300px;
-        overflow-y: auto;
-        border: 2px solid #00ff00;
-      `;
-      document.body.appendChild(debugContainer);
-    }
-    debugContainer.innerHTML += msg + '<br>';
-  } catch (e) {
-    console.error('Debug add error:', e);
-  }
+  logToDebugConsole(msg);
+  console.log('[PDF-BUILDER-DEBUG]', msg);
 };
 
 // Fonction d'initialisation appelée par WordPress
