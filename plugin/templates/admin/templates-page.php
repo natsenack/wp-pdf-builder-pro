@@ -690,8 +690,6 @@ function closeTemplateSettingsModal() {
 }
 
 function loadTemplateSettings(templateId) {
-    console.log('Loading template settings for ID:', templateId);
-
     // Définir l'ID du template
     document.getElementById('settings-template-id').value = templateId;
 
@@ -707,14 +705,9 @@ function loadTemplateSettings(templateId) {
             'nonce': pdfBuilderTemplatesNonce
         })
     })
-    .then(response => {
-        console.log('AJAX response status:', response.status);
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log('AJAX response data:', data);
         if (data.success && data.template) {
-            console.log('Template data received:', data.template);
             // Remplir le formulaire avec les données du template
             document.getElementById('template-name').value = data.template.name || '';
             document.getElementById('template-description').value = data.template.description || '';
@@ -725,13 +718,12 @@ function loadTemplateSettings(templateId) {
             document.getElementById('template-created-date').textContent = data.template.created_at || '-';
             document.getElementById('template-updated-date').textContent = data.template.updated_at || '-';
         } else {
-            console.error('Error loading template settings:', data.message || 'Unknown error');
             alert('Erreur lors du chargement des paramètres: ' + (data.message || 'Erreur inconnue'));
             closeTemplateSettingsModal();
         }
     })
     .catch(error => {
-        console.error('AJAX error:', error);
+        console.error('Erreur AJAX:', error);
         alert('Erreur lors du chargement des paramètres du template');
         closeTemplateSettingsModal();
     });
