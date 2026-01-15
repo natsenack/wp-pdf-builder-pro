@@ -67,6 +67,18 @@ const baseConfig = {
     minimizer: [
       new TerserPlugin({
         exclude: /tabs-force\.js$|settings-tabs-improved\.js$|settings-global-save\.js$|tabs-root-monitor\.js$|ajax-throttle\.js$/,
+        terserOptions: {
+          compress: {
+            drop_console: false,  // KEEP console logs
+            drop_debugger: true,
+            passes: 2,
+          },
+          mangle: false,  // Keep function names readable for debugging
+          output: {
+            comments: false,
+          },
+        },
+        extractComments: false,
       }),
       new CompressionPlugin({
         algorithm: 'gzip',
