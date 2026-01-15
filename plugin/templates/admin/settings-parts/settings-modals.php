@@ -12,6 +12,8 @@ $canvas_defaults = [
     'dpi' => '96',
     'format' => 'A4',
     'orientation' => 'portrait',
+    'allow_portrait' => '1',
+    'allow_landscape' => '1',
     'bg_color' => '#ffffff',
     'border_color' => '#cccccc',
     'border_width' => '1',
@@ -84,11 +86,19 @@ function get_canvas_modal_value($key, $default = '') {
                     </select>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_orientation">Orientation</label>
-                    <select id="modal_canvas_orientation" name="pdf_builder_canvas_orientation">
-                        <option value="portrait" <?php selected(get_canvas_modal_value('orientation', 'portrait'), 'portrait'); ?>>Portrait (794×1123 px)</option>
-                        <option value="landscape" <?php selected(get_canvas_modal_value('orientation', 'portrait'), 'landscape'); ?>>Paysage (1123×794 px)</option>
-                    </select>
+                    <label>Orientations disponibles</label>
+                    <div style="display: flex; gap: 16px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <input type="checkbox" id="modal_canvas_orientation_portrait" name="pdf_builder_canvas_allow_portrait"
+                                   value="1" <?php checked(get_canvas_modal_value('allow_portrait', '1'), '1'); ?>>
+                            Portrait (794×1123 px)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                            <input type="checkbox" id="modal_canvas_orientation_landscape" name="pdf_builder_canvas_allow_landscape"
+                                   value="1" <?php checked(get_canvas_modal_value('allow_landscape', '1'), '1'); ?>>
+                            Paysage (1123×794 px)
+                        </label>
+                    </div>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_bg_color">Couleur de fond</label>
