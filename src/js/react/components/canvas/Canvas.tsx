@@ -1454,7 +1454,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     canvasWidth: width,
     canvasHeight: height,
     elements: state.elements || [],
-    dragEnabled: canvasSettings?.selectionDragEnabled ?? true
+    dragEnabled: true
   });
 
   const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu, selectionState } = useCanvasInteraction({
