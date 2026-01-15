@@ -253,11 +253,39 @@ class PdfBuilderTemplatesAjax
             $template_data = json_decode($template['template_data'] ?? '{}', true);
             error_log('PDF Builder: Template data decoded: ' . print_r($template_data, true));
 
+            // Si description ou category ne sont pas dans template_data, essayer de les deviner
+            $description = $template_data['description'] ?? '';
+            $category = $template_data['category'] ?? 'autre';
+
+            // Si pas de description, en créer une par défaut basée sur le nom
+            if (empty($description)) {
+                $template_name_lower = strtolower($template['name']);
+                if (strpos($template_name_lower, 'facture') !== false || strpos($template_name_lower, 'invoice') !== false) {
+                    $description = 'Template de facture personnalisé';
+                    $category = 'facture';
+                } elseif (strpos($template_name_lower, 'devis') !== false || strpos($template_name_lower, 'quote') !== false) {
+                    $description = 'Template de devis personnalisé';
+                    $category = 'devis';
+                } elseif (strpos($template_name_lower, 'commande') !== false || strpos($template_name_lower, 'order') !== false) {
+                    $description = 'Template de commande personnalisé';
+                    $category = 'commande';
+                } elseif (strpos($template_name_lower, 'contrat') !== false || strpos($template_name_lower, 'contract') !== false) {
+                    $description = 'Template de contrat personnalisé';
+                    $category = 'contrat';
+                } elseif (strpos($template_name_lower, 'newsletter') !== false) {
+                    $description = 'Template de newsletter personnalisé';
+                    $category = 'newsletter';
+                } else {
+                    $description = 'Template personnalisé';
+                    $category = 'autre';
+                }
+            }
+
             $settings = array(
                 'id' => $template['id'],
                 'name' => $template['name'],
-                'description' => $template_data['description'] ?? '',
-                'category' => $template_data['category'] ?? 'autre',
+                'description' => $description,
+                'category' => $category,
                 'is_default' => $template['is_default'],
                 'created_at' => $template['created_at'],
                 'updated_at' => $template['updated_at'],
