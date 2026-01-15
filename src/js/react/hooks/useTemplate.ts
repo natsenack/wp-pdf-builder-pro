@@ -585,12 +585,20 @@ export function useTemplate() {
 
       if (!result.success) {
         // Gestion d'erreur nonce - tentative de récupération automatique
-        if (result.data && (result.data.includes('Nonce invalide') || result.data.code === 'nonce_invalid')) {
+        if (result.data?.code === 'nonce_invalid') {
           console.log('🔄 [useTemplate] Nonce invalide détecté, récupération automatique...');
 
           try {
-            // Récupérer un nouveau nonce via le gestionnaire unifié
-            const freshNonce = await ClientNonceManager.refreshNonce(ClientNonceManager.getCurrentNonce() || undefined);
+            // ✅ CORRECTION: Utiliser le nonce frais fourni par le serveur dans la réponse d'erreur
+            let freshNonce = result.data?.nonce;
+            
+            if (!freshNonce) {
+              // Fallback: si le serveur n'a pas fourni de nonce, en récupérer un nouveau
+              freshNonce = await ClientNonceManager.refreshNonce(ClientNonceManager.getCurrentNonce() || undefined);
+            } else {
+              // Utiliser le nonce frais du serveur
+              ClientNonceManager.setNonce(freshNonce);
+            }
 
             if (freshNonce) {
               console.log('✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative...');
