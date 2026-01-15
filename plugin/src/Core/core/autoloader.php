@@ -38,6 +38,8 @@ class PdfBuilderAutoloader
     private static $legacy_classes = [
         'PDF_Builder_Unified_Ajax_Handler' => 'src/Core/PDF_Builder_Unified_Ajax_Handler.php',
     ];
+
+    /**
      * Initialize the autoloader
      */
     public static function init($base_path)
