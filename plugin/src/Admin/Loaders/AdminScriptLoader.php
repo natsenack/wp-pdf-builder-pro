@@ -343,7 +343,9 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        // Emergency reload script - force page reload if React scripts don't load within 5 seconds
+        // Emergency reload script - DISABLED - Don't force reload
+        // The React wrapper handles its own initialization without hard reload requirements
+        /*
         $emergency_reload_script = "
             (function() {
                 var startTime = Date.now();
@@ -362,6 +364,7 @@ class AdminScriptLoader
             })();
         ";
         wp_add_inline_script('pdf-builder-react-main', $emergency_reload_script, 'after');
+        */
 
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
