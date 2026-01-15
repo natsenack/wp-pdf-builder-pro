@@ -672,5 +672,100 @@ document.addEventListener('click', function(e) {
         e.target.closest('.modal-overlay').style.display = 'none';
     }
 });
+
+// Fonctions pour gérer les templates
+function openTemplateSettings(templateId, templateName) {
+    // Ouvrir une modale ou rediriger vers les paramètres du template
+    alert('Paramètres du template "' + templateName + '" (ID: ' + templateId + ') - Fonctionnalité à implémenter');
+}
+
+function duplicateTemplate(templateId, templateName) {
+    if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
+        // Créer une requête AJAX pour dupliquer le template
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_duplicate_template',
+                'template_id': templateId,
+                'nonce': pdfBuilderTemplatesNonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Template dupliqué avec succès !');
+                location.reload();
+            } else {
+                alert('Erreur lors de la duplication: ' + (data.message || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            alert('Erreur lors de la duplication du template');
+        });
+    }
+}
+
+function confirmDeleteTemplate(templateId, templateName) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action ne peut pas être annulée.')) {
+        // Créer une requête AJAX pour supprimer le template
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_delete_template',
+                'template_id': templateId,
+                'nonce': pdfBuilderTemplatesNonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Template supprimé avec succès !');
+                location.reload();
+            } else {
+                alert('Erreur lors de la suppression: ' + (data.message || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            alert('Erreur lors de la suppression du template');
+        });
+    }
+}
+
+function toggleDefaultTemplate(templateId, templateType, templateName) {
+    // Créer une requête AJAX pour basculer le statut par défaut
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_toggle_default_template',
+            'template_id': templateId,
+            'template_type': templateType,
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Statut du template mis à jour !');
+            location.reload();
+        } else {
+            alert('Erreur lors de la mise à jour: ' + (data.message || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        alert('Erreur lors de la mise à jour du template');
+    });
+}
 </script> 
  
