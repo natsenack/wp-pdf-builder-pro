@@ -767,5 +767,11 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         alert('Erreur lors de la mise à jour du template');
     });
 }
+
+function selectPredefinedTemplate(templateSlug) {
+    // Rediriger vers l'éditeur avec le template prédéfini sélectionné
+    const editorUrl = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
+    window.location.href = editorUrl;
+}
 </script> 
  
