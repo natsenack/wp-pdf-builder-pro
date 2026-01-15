@@ -1181,6 +1181,7 @@ const MAX_CACHE_ITEMS = 100; // Max 100 images in cache
 
 export const Canvas = function Canvas({ width, height, className }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
   
   // ✅ Track derniers éléments rendus pour éviter double rendu
   const lastRenderedElementsRef = useRef<string>('');
@@ -1449,7 +1450,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver, handleDragLeave, isDragOver } = useCanvasDrop({
-    canvasRef,
+    canvasRef: canvasWrapperRef,
     canvasWidth: width,
     canvasHeight: height,
     elements: state.elements || [],
@@ -2845,6 +2846,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   return (
     <>
       <div
+        ref={canvasWrapperRef}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}

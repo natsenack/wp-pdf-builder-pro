@@ -36,12 +36,12 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
 
   // ✅ Calcul correct des coordonnées avec zoom/pan
   const calculateDropPosition = useCallback((clientX: number, clientY: number, elementWidth: number = 100, elementHeight: number = 50) => {
-    const canvas = canvasRef.current;
-    if (!canvas) {
-      throw new Error('Canvas ref not available');
+    const wrapper = canvasRef.current;
+    if (!wrapper) {
+      throw new Error('Canvas wrapper ref not available');
     }
 
-    const rect = canvas.getBoundingClientRect();
+    const rect = wrapper.getBoundingClientRect();
 
     // Validation du rectangle canvas
     if (rect.width <= 0 || rect.height <= 0) {
@@ -72,6 +72,8 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
     // S'assurer que l'élément reste dans les limites du canvas
     const clampedX = Math.max(0, Math.min(centeredX, canvasWidth - elementWidth));
     const clampedY = Math.max(0, Math.min(centeredY, canvasHeight - elementHeight));
+
+    debugLog(`[CanvasDrop] Position calculation: client(${clientX}, ${clientY}) -> canvas(${canvasX}, ${canvasY}) -> transformed(${transformedX}, ${transformedY}) -> final(${clampedX}, ${clampedY})`);
 
     return {
       x: clampedX,
@@ -135,11 +137,12 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       // Parsing des données de drag
       const rawData = e.dataTransfer.getData('application/json');
       if (!rawData) {
+        debugWarn('[CanvasDrop] No drag data received');
         throw new Error('No drag data received');
       }
 
       const dragData = JSON.parse(rawData);
-      debugLog(`[CanvasDrop] Parsed drag data: ${dragData.type} (${dragData.label})`);
+      debugLog(`[CanvasDrop] Parsed drag data:`, dragData);
 
       // Validation des données
       if (!validateDragData(dragData)) {
@@ -150,12 +153,14 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       const elementWidth = (dragData.defaultProps.width as number) || 100;
       const elementHeight = (dragData.defaultProps.height as number) || 50;
 
+      debugLog(`[CanvasDrop] Element dimensions: ${elementWidth}x${elementHeight}`);
+
       const position = calculateDropPosition(e.clientX, e.clientY, elementWidth, elementHeight);
-      debugLog(`[CanvasDrop] Calculated drop position: (${position.x}, ${position.y}) from client coords (${e.clientX}, ${e.clientY})`);
+      debugLog(`[CanvasDrop] Calculated drop position:`, position);
 
       // Création de l'élément
       const newElement = createElementFromDragData(dragData, position);
-      debugLog(`[CanvasDrop] Created element: ${newElement.id} (${newElement.type})`);
+      debugLog(`[CanvasDrop] Created element:`, { id: newElement.id, type: newElement.type, x: newElement.x, y: newElement.y });
 
       // Vérification des conflits d'ID
       const existingElement = elements.find(el => el.id === newElement.id);
@@ -176,7 +181,6 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (!dragEnabled) {
-      debugLog('[CanvasDrop] Drag over ignored - drag disabled');
       return;
     }
     
@@ -184,21 +188,20 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
     e.dataTransfer.dropEffect = 'copy';
 
     if (!isDragOver) {
-      debugLog('[CanvasDrop] Drag over started');
+      debugLog('[CanvasDrop] Drag over started - element hovering canvas');
       setIsDragOver(true);
     }
   }, [isDragOver, dragEnabled]);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     if (!dragEnabled) {
-      debugLog('[CanvasDrop] Drag leave ignored - drag disabled');
       return;
     }
     
     // Vérifier que le curseur sort vraiment du wrapper
     const target = e.currentTarget as HTMLElement;
     if (!target.contains(e.relatedTarget as HTMLElement)) {
-      debugLog('[CanvasDrop] Drag leave detected');
+      debugLog('[CanvasDrop] Drag leave detected - element left canvas');
       setIsDragOver(false);
     }
   }, [dragEnabled]);
