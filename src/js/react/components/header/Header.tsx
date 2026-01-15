@@ -74,6 +74,7 @@ export const Header = memo(function Header({
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
+  const [canvasOrientation, setCanvasOrientation] = useState<'portrait' | 'landscape'>(canvasWidth < canvasHeight ? 'portrait' : 'landscape');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
@@ -789,6 +790,38 @@ export const Header = memo(function Header({
                     </div>
                   </div>
 
+                </div>
+
+                <div style={{ marginTop: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                    Orientation du canvas
+                  </label>
+                  <select
+                    value={canvasOrientation}
+                    onChange={(e) => {
+                      const orientation = e.target.value as 'portrait' | 'landscape';
+                      setCanvasOrientation(orientation);
+                      // Mettre à jour les dimensions en fonction de l'orientation
+                      if (orientation === 'portrait') {
+                        setEditedCanvasWidth(794);
+                        setEditedCanvasHeight(1123);
+                      } else {
+                        setEditedCanvasWidth(1123);
+                        setEditedCanvasHeight(794);
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ddd',
+                      borderRadius: '3px',
+                      fontSize: '12px',
+                      backgroundColor: '#ffffff'
+                    }}
+                  >
+                    <option value="portrait">Portrait (794×1123 px)</option>
+                    <option value="landscape">Paysage (1123×794 px)</option>
+                  </select>
                 </div>
 
                 <div style={{ marginTop: '12px' }}>

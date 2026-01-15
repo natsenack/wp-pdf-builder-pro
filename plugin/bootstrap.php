@@ -1519,6 +1519,11 @@ function pdf_builder_initialize_canvas_defaults() {
         'pdf_builder_canvas_width' => 794,
         'pdf_builder_canvas_height' => 1123,
 
+        // Affichage & Dimensions
+        'pdf_builder_canvas_allow_portrait' => '1',
+        'pdf_builder_canvas_allow_landscape' => '1',
+        'pdf_builder_canvas_default_orientation' => 'portrait',
+
         // Apparence
         'pdf_builder_canvas_bg_color' => '#ffffff',
         'pdf_builder_canvas_border_color' => '#cccccc',

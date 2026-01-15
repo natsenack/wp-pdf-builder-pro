@@ -98,6 +98,14 @@ class SettingsManager
             [$this, 'renderCanvasSection'],
             'pdf_builder_settings'
         );
+
+        add_settings_field(
+            'canvas_display_dimensions',
+            __('🎨 Affichage & Dimensions', 'pdf-builder-pro'),
+            [$this, 'renderCanvasDisplayDimensionsField'],
+            'pdf_builder_settings',
+            'pdf_builder_canvas'
+        );
     }
 
 
@@ -328,6 +336,43 @@ class SettingsManager
             'performance' => $this->getPerformanceSettings(),
             'canvas' => $this->getCanvasSettings(),
         ];
+    }
+
+    /**
+     * Champ Affichage & Dimensions du Canvas
+     */
+    public function renderCanvasDisplayDimensionsField()
+    {
+        $settings = get_option('pdf_builder_settings', []);
+        $allow_portrait = $settings['pdf_builder_canvas_allow_portrait'] ?? '1';
+        $allow_landscape = $settings['pdf_builder_canvas_allow_landscape'] ?? '1';
+        $default_orientation = $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait';
+
+        echo '<fieldset>';
+        echo '<legend style="font-weight: 600; margin-bottom: 10px;">' . __('Autorisations d\'orientation du canvas', 'pdf-builder-pro') . '</legend>';
+        
+        echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_allow_portrait" value="1" ' . checked($allow_portrait, '1', false) . '>';
+        echo __('Autoriser l\'orientation Portrait (794×1123 px)', 'pdf-builder-pro');
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_allow_landscape" value="1" ' . checked($allow_landscape, '1', false) . '>';
+        echo __('Autoriser l\'orientation Paysage (1123×794 px)', 'pdf-builder-pro');
+        echo '</label>';
+
+        echo '<div style="margin-top: 12px; padding: 10px; background-color: #f0f0f0; border-left: 3px solid #0073aa; border-radius: 3px;">';
+        echo '<label style="display: block; margin-bottom: 8px;">';
+        echo '<strong>' . __('Orientation par défaut', 'pdf-builder-pro') . '</strong>';
+        echo '</label>';
+        echo '<select name="pdf_builder_canvas_default_orientation" style="padding: 6px 8px;">';
+        echo '<option value="portrait" ' . selected($default_orientation, 'portrait', false) . '>' . __('Portrait', 'pdf-builder-pro') . '</option>';
+        echo '<option value="landscape" ' . selected($default_orientation, 'landscape', false) . '>' . __('Paysage', 'pdf-builder-pro') . '</option>';
+        echo '</select>';
+        echo '<p class="description">' . __('Cette orientation sera appliquée par défaut lors de la création d\'un nouveau template.', 'pdf-builder-pro') . '</p>';
+        echo '</div>';
+
+        echo '</fieldset>';
     }
 
     /**
