@@ -30,7 +30,14 @@ class PdfBuilderAutoloader
         'PDF_Builder\Interfaces\\' => 'src/Interfaces/',
         'PDF_Builder\Templates\\' => 'resources/templates/',
         'PDF_Builder\Core\\' => 'src/Core/core/',
-    ];    /**
+    ];
+
+    /**
+     * Legacy global classes mapping
+     */
+    private static $legacy_classes = [
+        'PDF_Builder_Unified_Ajax_Handler' => 'src/Core/PDF_Builder_Unified_Ajax_Handler.php',
+    ];
      * Initialize the autoloader
      */
     public static function init($base_path)
@@ -58,6 +65,15 @@ class PdfBuilderAutoloader
         // Fallback: if any class contains 'Dompdf' and is in PDF_Builder namespace, skip it
         if (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false) {
             return false;
+        }
+
+        // Check for legacy global classes first
+        if (isset(self::$legacy_classes[$class])) {
+            $file = self::$base_path . self::$legacy_classes[$class];
+            if (file_exists($file)) {
+                require_once $file;
+                return true;
+            }
         }
 
         // Check if the class uses our namespace prefix
