@@ -1,7 +1,10 @@
-// LOG AU DÉBUT ABSOLU DU FICHIER REACT - CONSOLE LOGS
+// ABSOLUTE START - TRY CATCH WRAPPING ENTIRE MODULE
 console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V6: wordpress-entry.tsx STARTED EXECUTING');
 console.error('🚨🚨🚨 CRITICAL: React script execution started');
 debugger;  // Force debugger if console is open
+
+// WRAP ENTIRE MODULE IN TRY-CATCH TO SURVIVE EXTENSION ERRORS
+try {
 
 // IMMEDIATE VISUAL INDICATOR - Add visible element to DOM VERY EARLY
 try {
@@ -339,3 +342,29 @@ window.pdfBuilderReact = {
   _isWebpackBundle: true
 };
 
+} catch (moduleError) {
+  // CATCH EXTENSION ERROR - Even if something breaks, create minimal API
+  console.error('🔥🔥🔥 MODULE-LEVEL ERROR CAUGHT (likely extension issue):', moduleError);
+  console.error('🔥 Error:', moduleError instanceof Error ? moduleError.message : String(moduleError));
+  console.error('🔥 Stack:', moduleError instanceof Error ? moduleError.stack : 'No stack');
+  
+  // Create minimal API stub so wrapper doesn't hang
+  window.initPDFBuilderReact = function() {
+    console.error('❌ initPDFBuilderReact is stub (module error)');
+    const container = document.getElementById('pdf-builder-react-root');
+    if (container) {
+      container.innerHTML = '<div style="padding: 20px; background: #ffcccc; border: 1px solid #ff0000; color: #c62828;"><h3>Erreur: Module React n\'a pas pu charger</h3><p style="font-size: 12px;">Erreur d\'extension détectée. Consultez la console pour les détails.</p></div>';
+    }
+    return false;
+  };
+
+  window.pdfBuilderReact = {
+    initPDFBuilderReact: window.initPDFBuilderReact,
+    _isWebpackBundle: true,
+    _error: moduleError,
+    _errorMessage: moduleError instanceof Error ? moduleError.message : String(moduleError)
+  };
+  
+  console.log('✅ Minimal API created (stub mode)');
+}
+// END OUTER TRY-CATCH
