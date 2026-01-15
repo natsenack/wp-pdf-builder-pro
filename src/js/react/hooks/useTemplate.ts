@@ -506,11 +506,13 @@ export function useTemplate() {
       }
 
       if (!window.pdfBuilderData?.nonce) {
+        console.error('🔴 [useTemplate] ERREUR: Nonce non disponible', window.pdfBuilderData);
         throw new Error('Nonce non disponible');
       }
 
-      // console.log('[PDF_BUILDER_FRONTEND] AJAX URL available:', !!window.pdfBuilderData?.ajaxUrl);
-      // console.log('[PDF_BUILDER_FRONTEND] Nonce available:', !!window.pdfBuilderData?.nonce);
+      console.log('🟢 [useTemplate] AJAX URL available:', !!window.pdfBuilderData?.ajaxUrl);
+      console.log('🟢 [useTemplate] Nonce available:', !!window.pdfBuilderData?.nonce);
+      console.log('🟢 [useTemplate] Nonce value:', window.pdfBuilderData?.nonce);
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
       // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
@@ -553,7 +555,9 @@ export function useTemplate() {
       formData.append('template_name', state.template.name || 'Nouveau template');
       formData.append('template_description', state.template.description || '');
       formData.append('template_data', JSON.stringify(templateData));
-      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+      const currentNonce = window.pdfBuilderData?.nonce || '';
+      formData.append('nonce', currentNonce);
+      console.log('🟡 [useTemplate] Nonce envoyé:', currentNonce);
 
       // Ajouter les paramètres du template
       formData.append('show_guides', state.template.showGuides ? '1' : '0');
@@ -583,17 +587,20 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      // console.log('[PDF_BUILDER_FRONTEND] Server response:', result);
+      console.log('🔵 [useTemplate] Server response:', result);
 
       if (!result.success) {
+        console.error('🔴 [useTemplate] Server returned error:', result.data);
         debugError('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
         const errorMessage = result.data || 'Unknown error during save';
         
         // 🔄 DÉTECTION ERREUR NONCE + RETRY
         if (errorMessage.includes('Nonce invalide') || errorMessage.includes('nonce')) {
+          console.warn('🟠 [useTemplate] Erreur de nonce détectée, tentative de récupération d\'un nouveau nonce');
           debugError('[PDF_BUILDER_FRONTEND] Erreur de nonce détectée, tentative de récupération d\'un nouveau nonce');
           
           try {
+            console.log('🟡 [useTemplate] Appel à pdf_builder_get_fresh_nonce...');
             // Récupérer un nouveau nonce du serveur
             const nonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
               method: 'POST',
@@ -604,8 +611,10 @@ export function useTemplate() {
             
             if (nonceResponse.ok) {
               const nonceResult = await nonceResponse.json();
+              console.log('🟢 [useTemplate] Réponse nonce reçue:', nonceResult);
               
               if (nonceResult.success && nonceResult.data?.nonce) {
+                console.log('🟢 [useTemplate] Nouveau nonce obtenu:', nonceResult.data.nonce);
                 debugError('[PDF_BUILDER_FRONTEND] Nouveau nonce obtenu, relance de la sauvegarde');
                 
                 // Mettre à jour le nonce global
@@ -636,8 +645,10 @@ export function useTemplate() {
                 
                 if (retryResponse.ok) {
                   const retryResult = await retryResponse.json();
+                  console.log('🟢 [useTemplate] Retry response:', retryResult);
                   
                   if (retryResult.success) {
+                    console.log('🟢 [useTemplate] Sauvegarde réussie après retry!');
                     dispatch({
                       type: 'SAVE_TEMPLATE',
                       payload: {
