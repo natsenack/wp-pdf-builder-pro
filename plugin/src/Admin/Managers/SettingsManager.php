@@ -663,6 +663,8 @@ class SettingsManager
             'pdf_builder_canvas_performance_monitoring' => 'bool',
             'pdf_builder_canvas_error_reporting' => 'bool',
             'pdf_builder_canvas_memory_limit_php' => 'intval',
+            'pdf_builder_canvas_allow_portrait' => 'bool',
+            'pdf_builder_canvas_allow_landscape' => 'bool',
         ];
 
         foreach ($canvas_fields as $field => $type) {
