@@ -675,8 +675,103 @@ document.addEventListener('click', function(e) {
 
 // Fonctions pour gérer les templates
 function openTemplateSettings(templateId, templateName) {
-    // Ouvrir une modale ou rediriger vers les paramètres du template
-    alert('Paramètres du template "' + templateName + '" (ID: ' + templateId + ') - Fonctionnalité à implémenter');
+    // Ouvrir le modal des paramètres du template
+    document.getElementById('template-settings-modal').style.display = 'flex';
+
+    // Définir le titre du modal
+    document.getElementById('template-settings-title').textContent = 'Configuration de "' + templateName + '"';
+
+    // Charger les données du template
+    loadTemplateSettings(templateId);
+}
+
+function closeTemplateSettingsModal() {
+    document.getElementById('template-settings-modal').style.display = 'none';
+}
+
+function loadTemplateSettings(templateId) {
+    // Définir l'ID du template
+    document.getElementById('settings-template-id').value = templateId;
+
+    // Faire une requête AJAX pour charger les paramètres du template
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_load_template_settings',
+            'template_id': templateId,
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.template) {
+            // Remplir le formulaire avec les données du template
+            document.getElementById('template-name').value = data.template.name || '';
+            document.getElementById('template-description').value = data.template.description || '';
+            document.getElementById('template-category').value = data.template.category || 'autre';
+            document.getElementById('template-is-default').checked = data.template.is_default == 1;
+
+            // Informations système
+            document.getElementById('template-created-date').textContent = data.template.created_at || '-';
+            document.getElementById('template-updated-date').textContent = data.template.updated_at || '-';
+        } else {
+            alert('Erreur lors du chargement des paramètres: ' + (data.message || 'Erreur inconnue'));
+            closeTemplateSettingsModal();
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        alert('Erreur lors du chargement des paramètres du template');
+        closeTemplateSettingsModal();
+    });
+}
+
+function saveTemplateSettings() {
+    const templateId = document.getElementById('settings-template-id').value;
+    const templateName = document.getElementById('template-name').value;
+    const templateDescription = document.getElementById('template-description').value;
+    const templateCategory = document.getElementById('template-category').value;
+    const isDefault = document.getElementById('template-is-default').checked ? 1 : 0;
+
+    // Validation de base
+    if (!templateName.trim()) {
+        alert('Veuillez entrer un nom pour le template.');
+        return;
+    }
+
+    // Faire une requête AJAX pour sauvegarder les paramètres
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_save_template_settings',
+            'template_id': templateId,
+            'template_name': templateName,
+            'template_description': templateDescription,
+            'template_category': templateCategory,
+            'is_default': isDefault,
+            'nonce': pdfBuilderTemplatesNonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Paramètres du template sauvegardés avec succès !');
+            closeTemplateSettingsModal();
+            location.reload(); // Recharger la page pour voir les changements
+        } else {
+            alert('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur AJAX:', error);
+        alert('Erreur lors de la sauvegarde des paramètres du template');
+    });
 }
 
 function duplicateTemplate(templateId, templateName) {
@@ -773,5 +868,95 @@ function selectPredefinedTemplate(templateSlug) {
     const editorUrl = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
     window.location.href = editorUrl;
 }
-</script> 
+</script>
+
+<!-- Modal des paramètres du template -->
+<div id="template-settings-modal" class="template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.3); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.3); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.3); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+
+        <!-- Header du modal -->
+        <div class="template-modal-header" style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; justify-content: space-between; -webkit-justify-content: space-between; -moz-justify-content: space-between; -ms-justify-content: space-between; -o-justify-content: space-between; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div>
+                <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Paramètres du Template</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;" id="template-settings-title">Configuration du template</p>
+            </div>
+            <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; -ms-border-radius: 50%; -o-border-radius: 50%; width: 40px; height: 40px; display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; justify-content: center; -webkit-justify-content: center; -moz-justify-content: center; -ms-justify-content: center; -o-justify-content: center;">×</button>
+        </div>
+
+        <!-- Corps du modal -->
+        <div class="template-modal-body" style="padding: 30px; max-height: calc(80vh - 140px); overflow-y: auto;">
+
+            <!-- Formulaire des paramètres -->
+            <form id="template-settings-form">
+
+                <!-- ID caché du template -->
+                <input type="hidden" id="settings-template-id" name="template_id" value="">
+
+                <!-- Nom du template -->
+                <div class="settings-field" style="margin-bottom: 20px;">
+                    <label for="template-name" style="display: block; margin-bottom: 8px; font-weight: 600; color: #23282d;">📝 Nom du Template</label>
+                    <input type="text" id="template-name" name="template_name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease; -webkit-transition: border-color 0.3s ease; -moz-transition: border-color 0.3s ease; -o-transition: border-color 0.3s ease;" placeholder="Entrez le nom du template">
+                </div>
+
+                <!-- Description du template -->
+                <div class="settings-field" style="margin-bottom: 20px;">
+                    <label for="template-description" style="display: block; margin-bottom: 8px; font-weight: 600; color: #23282d;">📖 Description</label>
+                    <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease; -webkit-transition: border-color 0.3s ease; -moz-transition: border-color 0.3s ease; -o-transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template"></textarea>
+                </div>
+
+                <!-- Catégorie du template -->
+                <div class="settings-field" style="margin-bottom: 20px;">
+                    <label for="template-category" style="display: block; margin-bottom: 8px; font-weight: 600; color: #23282d;">🏷️ Catégorie</label>
+                    <select id="template-category" name="template_category" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; font-size: 14px; background: white; transition: border-color 0.3s ease; -webkit-transition: border-color 0.3s ease; -moz-transition: border-color 0.3s ease; -o-transition: border-color 0.3s ease;">
+                        <option value="facture">🧾 Facture</option>
+                        <option value="devis">📋 Devis</option>
+                        <option value="commande">📦 Commande</option>
+                        <option value="contrat">📑 Contrat</option>
+                        <option value="newsletter">📰 Newsletter</option>
+                        <option value="autre">📄 Autre</option>
+                    </select>
+                </div>
+
+                <!-- Template par défaut -->
+                <div class="settings-field" style="margin-bottom: 20px;">
+                    <label style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; cursor: pointer; font-weight: 600; color: #23282d;">
+                        <input type="checkbox" id="template-is-default" name="is_default" value="1" style="margin-right: 10px; transform: scale(1.2); -webkit-transform: scale(1.2); -moz-transform: scale(1.2); -ms-transform: scale(1.2); -o-transform: scale(1.2);">
+                        ⭐ Définir comme template par défaut
+                    </label>
+                    <p style="margin: 5px 0 0 26px; color: #666; font-size: 12px;">Ce template sera sélectionné par défaut pour ce type de document</p>
+                </div>
+
+                <!-- Informations système (readonly) -->
+                <div class="settings-section" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e8ed;">
+                    <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">ℹ️ Informations Système</h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DATE DE CRÉATION</label>
+                            <span id="template-created-date" style="color: #23282d; font-size: 14px;">-</span>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DERNIÈRE MODIFICATION</label>
+                            <span id="template-updated-date" style="color: #23282d; font-size: 14px;">-</span>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- Footer du modal -->
+        <div class="template-modal-footer" style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; justify-content: flex-end; -webkit-justify-content: flex-end; -moz-justify-content: flex-end; -ms-justify-content: flex-end; -o-justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+            <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Annuler</button>
+            <button onclick="saveTemplateSettings()" class="button button-primary" style="padding: 10px 30px; background: #667eea; border-color: #667eea;">
+                <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
+                Sauvegarder
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script> 
  

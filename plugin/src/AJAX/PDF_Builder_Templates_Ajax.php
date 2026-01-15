@@ -252,14 +252,16 @@ class PdfBuilderTemplatesAjax
             // Extraire les informations depuis template_data si elles existent
             $template_data = json_decode($template['template_data'] ?? '{}', true);
             $settings = array(
+                'id' => $template['id'],
                 'name' => $template['name'],
-                'description' => $template_data['description'] ?? 'Description du template...',
+                'description' => $template_data['description'] ?? '',
                 'category' => $template_data['category'] ?? 'autre',
-                'is_public' => $template_data['is_public'] ?? false,
-                'paper_size' => $template_data['paper_size'] ?? 'A4',
-                'orientation' => $template_data['orientation'] ?? 'portrait'
+                'is_default' => $template['is_default'],
+                'created_at' => $template['created_at'],
+                'updated_at' => $template['updated_at'],
+                'template_data' => $template_data
             );
-            wp_send_json_success($settings);
+            wp_send_json_success(array('template' => $settings));
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
@@ -282,12 +284,10 @@ class PdfBuilderTemplatesAjax
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
-            $name = sanitize_text_field($_POST['name'] ?? '');
-            $description = sanitize_textarea_field($_POST['description'] ?? '');
-            $is_public = intval($_POST['is_public'] ?? 0);
-            $paper_size = sanitize_text_field($_POST['paper_size'] ?? 'A4');
-            $orientation = sanitize_text_field($_POST['orientation'] ?? 'portrait');
-            $category = sanitize_text_field($_POST['category'] ?? 'autre');
+            $name = sanitize_text_field($_POST['template_name'] ?? '');
+            $description = sanitize_textarea_field($_POST['template_description'] ?? '');
+            $category = sanitize_text_field($_POST['template_category'] ?? 'autre');
+            $is_default = intval($_POST['is_default'] ?? 0);
             if (empty($template_id) || empty($name)) {
                 wp_send_json_error('Données manquantes');
             }
@@ -326,15 +326,14 @@ class PdfBuilderTemplatesAjax
             // Mettre à jour les paramètres dans template_data
             $template_data['description'] = $description;
             $template_data['category'] = $category;
-            $template_data['is_public'] = $is_public;
-            $template_data['paper_size'] = $paper_size;
-            $template_data['orientation'] = $orientation;
-// Mettre à jour le template
+
+            // Mettre à jour le template
             $result = $wpdb->update($table_templates, array(
                     'name' => $name,
                     'template_data' => wp_json_encode($template_data),
+                    'is_default' => $is_default,
                     'updated_at' => current_time('mysql')
-                ), array('id' => $template_id), array('%s', '%s', '%s'), array('%d'));
+                ), array('id' => $template_id), array('%s', '%s', '%d', '%s'), array('%d'));
             if ($result === false) {
                 wp_send_json_error('Erreur lors de la mise à jour du template');
             }
