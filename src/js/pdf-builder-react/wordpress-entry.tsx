@@ -33,7 +33,6 @@ document.body.appendChild(debugDiv);
 // DEBUG: Log when script starts loading
 console.log('🔧 DEBUG: wordpress-entry.tsx script started loading at ' + new Date().toISOString());
 console.error('UNIQUE_GLOBAL_DEBUG: wordpress-entry.tsx script started loading at ' + new Date().toISOString());
-debugLog('🔧 DEBUG: pdf-builder-react-wrapper.min.js script started loading');
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -49,6 +48,37 @@ import {
   saveTemplate,
   resetAPI
 } from './api/global-api';
+
+// DEBUG HELPER FUNCTION - AFTER IMPORTS
+const addDebugToDOM = (msg: string) => {
+  try {
+    let debugContainer = document.getElementById('pdf-builder-debug-logs');
+    if (!debugContainer) {
+      debugContainer = document.createElement('div');
+      debugContainer.id = 'pdf-builder-debug-logs';
+      debugContainer.style.cssText = `
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        background: #1a1a1a;
+        color: #00ff00;
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 999999;
+        font-size: 12px;
+        font-family: monospace;
+        max-width: 400px;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 2px solid #00ff00;
+      `;
+      document.body.appendChild(debugContainer);
+    }
+    debugContainer.innerHTML += msg + '<br>';
+  } catch (e) {
+    console.error('Debug add error:', e);
+  }
+};
 
 // Fonction d'initialisation appelée par WordPress
 declare global {
@@ -85,30 +115,36 @@ declare global {
 export function initPDFBuilderReact() {
   // LOG CRITIQUE - DÉBUT
   console.log('💥 NUCLEAR_DEBUG_V1: initPDFBuilderReact STARTED');
+  addDebugToDOM('💥 initPDFBuilderReact STARTED at ' + new Date().toISOString());
 
   try {
     // Step 1: Check container
     const container = document.getElementById('pdf-builder-react-root');
     console.log('🔍 Container found:', !!container);
+    addDebugToDOM('🔍 Container found: ' + !!container);
 
     if (!container) {
       console.error('❌ FAIL: Container element not found');
       console.error('❌ RETURNING FALSE: No container');
+      addDebugToDOM('❌ RETURNING FALSE: No container');
       return false;
     }
 
     // Step 2: Check if already initialized
     const isInitialized = container.hasAttribute('data-react-initialized');
     console.log('🔍 Already initialized:', isInitialized);
+    addDebugToDOM('🔍 Already initialized: ' + isInitialized);
 
     if (isInitialized) {
       console.log('✅ SUCCESS: Already initialized');
+      addDebugToDOM('✅ Already initialized, returning true');
       return true;
     }
 
     // Step 3: Mark as initialized
     container.setAttribute('data-react-initialized', 'true');
     console.log('✅ Container marked as initialized');
+    addDebugToDOM('✅ Marked as initialized');
 
     // Step 4: Show editor, hide loading
     const loadingEl = document.getElementById('pdf-builder-loader');
@@ -116,37 +152,44 @@ export function initPDFBuilderReact() {
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
     console.log('🔄 UI updated: loading hidden, editor shown');
+    addDebugToDOM('🔄 UI updated');
 
     // Step 5: Initialize React
     console.log('⚛️ Checking React availability');
+    addDebugToDOM('⚛️ Checking React');
     console.log('⚛️ typeof React:', typeof React);
+    addDebugToDOM('⚛️ typeof React: ' + typeof React);
     console.log('⚛️ typeof createRoot:', typeof createRoot);
-    console.log('⚛️ React object:', React);
-    console.log('⚛️ createRoot object:', createRoot);
+    addDebugToDOM('⚛️ typeof createRoot: ' + typeof createRoot);
 
     if (typeof React === 'undefined') {
       console.error('❌ FAIL: React not loaded');
       console.error('❌ RETURNING FALSE: React undefined');
+      addDebugToDOM('❌ RETURNING FALSE: React undefined');
       return false;
     }
 
     if (typeof createRoot === 'undefined') {
       console.error('❌ FAIL: createRoot not available');
       console.error('❌ RETURNING FALSE: createRoot undefined');
+      addDebugToDOM('❌ RETURNING FALSE: createRoot undefined');
       return false;
     }
 
     console.log('✅ React ready, creating root');
+    addDebugToDOM('✅ React ready, creating root');
     let root;
     try {
       root = createRoot(container);
       console.log('✅ Root created successfully');
+      addDebugToDOM('✅ Root created');
     } catch (rootError) {
       const rootErr = rootError instanceof Error ? rootError : new Error(String(rootError));
       console.error('❌ FAIL: createRoot error:', rootErr);
       console.error('❌ FAIL: createRoot error message:', rootErr.message);
       console.error('❌ FAIL: createRoot error stack:', rootErr.stack);
       console.error('❌ RETURNING FALSE: createRoot failed');
+      addDebugToDOM('❌ createRoot failed: ' + rootErr.message);
       container.removeAttribute('data-react-initialized');
       return false;
     }
@@ -154,22 +197,26 @@ export function initPDFBuilderReact() {
     console.log('🎨 Rendering PDFBuilder component');
     console.log('🎨 PDFBuilder component available:', typeof PDFBuilder);
     console.log('🎨 PDFBuilder import successful');
+    addDebugToDOM('🎨 Rendering PDFBuilder');
 
     // Try to render with error boundary
     try {
       console.log('🎨 Attempting to render PDFBuilder...');
       root.render(<PDFBuilder />);
       console.log('✅ PDFBuilder rendered successfully');
+      addDebugToDOM('✅ PDFBuilder rendered');
     } catch (renderError) {
       const error = renderError instanceof Error ? renderError : new Error(String(renderError));
       console.error('❌ FAIL: PDFBuilder render error:', error);
       console.error('❌ FAIL: Render error stack:', error.stack);
       console.error('❌ FAIL: Render error message:', error.message);
       console.error('❌ FAIL: Render error name:', error.name);
+      addDebugToDOM('❌ Render error: ' + error.message);
 
       // Try to render a simple fallback component
       try {
         console.log('🔄 Trying fallback render...');
+        addDebugToDOM('🔄 Trying fallback render');
         root.render(
           <div style={{ padding: '20px', background: '#ffebee', border: '1px solid #f44336', borderRadius: '4px', color: '#c62828' }}>
             <h3>Erreur de rendu React</h3>
@@ -181,10 +228,12 @@ export function initPDFBuilderReact() {
           </div>
         );
         console.log('✅ Fallback render successful');
+        addDebugToDOM('✅ Fallback render successful');
         return true; // Return true since we rendered something
       } catch (fallbackError) {
         const fallbackErr = fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError));
         console.error('❌ FAIL: Fallback render also failed:', fallbackErr);
+        addDebugToDOM('❌ Fallback also failed: ' + fallbackErr.message);
         container.removeAttribute('data-react-initialized');
         return false;
       }
@@ -197,25 +246,31 @@ export function initPDFBuilderReact() {
 
     if (existingTemplate) {
       console.log('📄 Loading existing template');
+      addDebugToDOM('📄 Loading existing template');
       setTimeout(() => {
         try {
           loadTemplate(existingTemplate);
           console.log('✅ Template loaded');
+          addDebugToDOM('✅ Template loaded');
         } catch (templateError) {
           console.error('❌ Template load error:', templateError);
+          addDebugToDOM('❌ Template load error');
         }
       }, 100);
     } else {
       console.log('📄 No existing template');
+      addDebugToDOM('📄 No existing template');
     }
 
     console.log('🎉 SUCCESS: initPDFBuilderReact completed');
+    addDebugToDOM('🎉 SUCCESS: completed');
     return true;
 
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
     console.error('❌ FAIL: React initialization error:', err);
     console.error('❌ FAIL: Error stack:', err.stack);
+    addDebugToDOM('❌ EXCEPTION: ' + err.message);
 
     // Try to remove initialization flag if container exists
     const container = document.getElementById('pdf-builder-react-root');
