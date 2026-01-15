@@ -174,8 +174,8 @@ class AjaxHandler
         error_log('[FRESH NONCE] User IS logged in');
         error_log('[FRESH NONCE] Checking manage_options capability...');
         
-        if (!current_user_can('manage_options')) {
-            error_log('[FRESH NONCE] ERROR: User cannot manage_options');
+        if (!current_user_can('edit_posts')) {
+            error_log('[FRESH NONCE] ERROR: User cannot edit_posts');
             wp_send_json_error('Permissions insuffisantes');
             return;
         }
