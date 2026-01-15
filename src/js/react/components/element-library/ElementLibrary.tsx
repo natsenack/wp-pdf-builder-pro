@@ -392,16 +392,22 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
 
   const handleDragStart = (e: DragEvent, element: Record<string, unknown>) => {
     // Stocker les données de l'élément dans le transfert
-    e.dataTransfer.setData('application/json', JSON.stringify({
+    const dragData = {
       type: element.type,
       label: element.label,
       defaultProps: element.defaultProps
-    }));
-    e.dataTransfer.effectAllowed = 'copy';
+    };
+    const jsonData = JSON.stringify(dragData);
+    console.log('[ElementLibrary] Drag started:', { type: element.type, jsonLength: jsonData.length });
+    e.dataTransfer?.setData('application/json', jsonData);
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'copy';
+    }
   };
 
   const handleDragEnd = (_e: DragEvent) => {
     // Drag terminé
+    console.log('[ElementLibrary] Drag ended');
   };
 
   return (

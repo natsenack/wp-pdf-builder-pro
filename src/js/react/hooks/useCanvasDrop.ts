@@ -122,30 +122,42 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
   }, [generateElementId]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
+    console.log('[CanvasDrop] handleDrop called, dragEnabled:', dragEnabled);
+    
     if (!dragEnabled) {
       debugLog('[CanvasDrop] Drop ignored - drag disabled');
+      console.log('[CanvasDrop] Drop ignored - drag disabled');
       return;
     }
     
     e.preventDefault();
+    e.stopPropagation();
+    console.log('[CanvasDrop] Drop event prevented and propagation stopped');
+    
     setIsDragOver(false);
 
     debugLog('[CanvasDrop] Processing drop event');
+    console.log('[CanvasDrop] Processing drop event');
 
     try {
 
       // Parsing des données de drag
       const rawData = e.dataTransfer.getData('application/json');
+      console.log('[CanvasDrop] Raw data received:', { length: rawData.length, preview: rawData.substring(0, 100) });
+      
       if (!rawData) {
+        console.warn('[CanvasDrop] No drag data received');
         debugWarn('[CanvasDrop] No drag data received');
         throw new Error('No drag data received');
       }
 
       const dragData = JSON.parse(rawData);
+      console.log('[CanvasDrop] Parsed drag data:', dragData);
       debugLog(`[CanvasDrop] Parsed drag data:`, dragData);
 
       // Validation des données
       if (!validateDragData(dragData)) {
+        console.error('[CanvasDrop] Drag data validation failed');
         throw new Error('Invalid drag data structure');
       }
 
@@ -153,24 +165,30 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       const elementWidth = (dragData.defaultProps.width as number) || 100;
       const elementHeight = (dragData.defaultProps.height as number) || 50;
 
+      console.log('[CanvasDrop] Element dimensions:', { elementWidth, elementHeight });
       debugLog(`[CanvasDrop] Element dimensions: ${elementWidth}x${elementHeight}`);
 
       const position = calculateDropPosition(e.clientX, e.clientY, elementWidth, elementHeight);
+      console.log('[CanvasDrop] Calculated position:', position);
       debugLog(`[CanvasDrop] Calculated drop position:`, position);
 
       // Création de l'élément
       const newElement = createElementFromDragData(dragData, position);
+      console.log('[CanvasDrop] Created element:', { id: newElement.id, type: newElement.type, x: newElement.x, y: newElement.y });
       debugLog(`[CanvasDrop] Created element:`, { id: newElement.id, type: newElement.type, x: newElement.x, y: newElement.y });
 
       // Vérification des conflits d'ID
       const existingElement = elements.find(el => el.id === newElement.id);
       if (existingElement) {
         newElement.id = generateElementId(dragData.type);
+        console.log('[CanvasDrop] ID conflict resolved, new ID:', newElement.id);
         debugWarn(`[CanvasDrop] ID conflict resolved, new ID: ${newElement.id}`);
       }
 
       // Ajout au state
+      console.log('[CanvasDrop] Dispatching ADD_ELEMENT action:', newElement);
       dispatch({ type: 'ADD_ELEMENT', payload: newElement });
+      console.log('[CanvasDrop] Dispatch completed');
       debugLog(`[CanvasDrop] Element added to canvas successfully`);
 
     } catch (error) {
