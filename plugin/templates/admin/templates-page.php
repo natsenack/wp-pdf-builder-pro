@@ -956,7 +956,5 @@ function selectPredefinedTemplate(templateSlug) {
         </div>
 
     </div>
-</div>
-
-<script> 
+</div> 
  
