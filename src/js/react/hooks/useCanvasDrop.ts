@@ -198,7 +198,10 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
   }, [validateDragData, calculateDropPosition, createElementFromDragData, elements, dispatch, generateElementId, dragEnabled]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
+    console.log('[CanvasDrop] 🔴 handleDragOver called! dragEnabled:', dragEnabled);
+    
     if (!dragEnabled) {
+      console.log('[CanvasDrop] 🔴 dragEnabled is false, aborting');
       return;
     }
     
@@ -231,7 +234,10 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
   }, [dragEnabled]);
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
+    console.log('[CanvasDrop] 🔴 handleDragEnter called! dragEnabled:', dragEnabled, 'e:', e);
+    
     if (!dragEnabled) {
+      console.log('[CanvasDrop] 🔴 dragEnabled is false, aborting');
       return;
     }
     
