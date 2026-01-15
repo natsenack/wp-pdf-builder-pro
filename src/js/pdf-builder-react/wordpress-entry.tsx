@@ -1,27 +1,72 @@
-// LOG AU DÉBUT ABSOLU DU FICHIER REACT
-console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V5: wordpress-entry.tsx STARTED EXECUTING at ' + new Date().toISOString());
-console.error('🚨🚨🚨 CRITICAL: React script execution started - if you see this, script is running');
+// LOG AU DÉBUT ABSOLU DU FICHIER REACT - CONSOLE LOGS
+console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V6: wordpress-entry.tsx STARTED EXECUTING');
+console.error('🚨🚨🚨 CRITICAL: React script execution started');
+debugger;  // Force debugger if console is open
 
-// IMMEDIATE VISUAL INDICATOR - Add visible element to DOM
-const debugDiv = document.createElement('div');
-debugDiv.id = 'pdf-builder-debug-indicator';
-debugDiv.style.cssText = `
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: red;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 999999;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid black;
-`;
-debugDiv.textContent = '🚨 REACT SCRIPT LOADED 🚨 ' + new Date().toISOString();
-document.body.appendChild(debugDiv);
+// IMMEDIATE VISUAL INDICATOR - Add visible element to DOM VERY EARLY
+try {
+  const debugDiv = document.createElement('div');
+  debugDiv.id = 'pdf-builder-debug-indicator';
+  debugDiv.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #00FF00;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 999999;
+    font-size: 14px;
+    font-weight: bold;
+    border: 3px solid #00FF00;
+    box-shadow: 0 0 20px #00FF00;
+  `;
+  debugDiv.textContent = '✅ REACT LOADED ✅ ' + new Date().toISOString().substring(11, 19);
+  if (document.body) {
+    document.body.appendChild(debugDiv);
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.appendChild(debugDiv);
+    });
+  }
+  console.log('✅ Debug div added to DOM');
+} catch (e) {
+  console.error('❌ Failed to add debug div:', e);
+}
 
-// Also add to window
+// IMPORTS - Log after each one to identify which import fails
+console.log('📦 About to import React...');
+import React from 'react';
+console.log('✅ React imported successfully');
+
+console.log('📦 About to import createRoot...');
+import { createRoot } from 'react-dom/client';
+console.log('✅ createRoot imported successfully');
+
+console.log('📦 About to import PDFBuilder...');
+import { PDFBuilder } from './PDFBuilder';
+console.log('✅ PDFBuilder imported successfully');
+
+console.log('📦 About to import debug utilities...');
+import { debugError, debugWarn, debugLog } from './utils/debug';
+console.log('✅ Debug utilities imported successfully');
+
+console.log('📦 About to import API functions...');
+import {
+  registerEditorInstance,
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  resetAPI
+} from './api/global-api';
+console.log('✅ API functions imported successfully');
+
+console.log('✅✅✅ ALL IMPORTS COMPLETED SUCCESSFULLY ✅✅✅');
+
+// Set window flags to indicate module is loaded
 (window as any)['REACT_SCRIPT_LOADED'] = true;
 (window as any)['REACT_LOAD_TIME'] = new Date().toISOString();
 
@@ -64,30 +109,7 @@ const logToDebugConsole = (msg: string) => {
 };
 
 logToDebugConsole('✅ Debug console created');
-
-/**
- * PDF Builder React - Point d'entrée WordPress
- * Ce fichier est chargé par WordPress pour initialiser l'éditeur React
- */
-
-// DEBUG: Log when script starts loading
-console.log('🔧 DEBUG: wordpress-entry.tsx script started loading at ' + new Date().toISOString());
-console.error('UNIQUE_GLOBAL_DEBUG: wordpress-entry.tsx script started loading at ' + new Date().toISOString());
-
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { PDFBuilder } from './PDFBuilder';
-import { debugError, debugWarn, debugLog } from './utils/debug';
-import {
-  registerEditorInstance,
-  loadTemplate,
-  getEditorState,
-  setEditorState,
-  getCurrentTemplate,
-  exportTemplate,
-  saveTemplate,
-  resetAPI
-} from './api/global-api';
+console.log('✅ Debug console functions ready');
 
 // DEBUG HELPER FUNCTION - AFTER IMPORTS (Use the global console)
 const addDebugToDOM = (msg: string) => {
