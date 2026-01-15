@@ -557,7 +557,6 @@ export function useTemplate() {
       formData.append('template_data', JSON.stringify(templateData));
       const currentNonce = window.pdfBuilderData?.nonce || '';
       formData.append('nonce', currentNonce);
-      console.log('🟡 [useTemplate] Nonce envoyé:', currentNonce);
 
       // Ajouter les paramètres du template
       formData.append('show_guides', state.template.showGuides ? '1' : '0');
@@ -567,126 +566,58 @@ export function useTemplate() {
       formData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
       formData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
 
-      // 🔍 ULTRA-DETAILED FORMDATA LOGGING
-      console.log('🔍 [useTemplate] ===== FORMDATA CONTENTS (BEFORE FETCH) =====');
-      console.log('🔍 [useTemplate] FormData entries:');
-      const formDataEntries: [string, any][] = [];
-      formData.forEach((value: any, key: string) => {
-        if (key === 'template_data') {
-          console.log(`🔍 [useTemplate] FormData["${key}"] = ${String(value).substring(0, 100)}... (${String(value).length} chars)`);
-          formDataEntries.push([key, `[DATA - ${String(value).length} chars]`]);
-        } else {
-          console.log(`🔍 [useTemplate] FormData["${key}"] = ${String(value)}`);
-          formDataEntries.push([key, value]);
-        }
-      });
-      console.log('🔍 [useTemplate] Total FormData entries:', formDataEntries.length);
-      console.log('🔍 [useTemplate] FormData summary:', Object.fromEntries(formDataEntries.filter(([k]) => k !== 'template_data')));
-
-      // console.log('[PDF_BUILDER_FRONTEND] Data to send:');
-      // console.log('- Template ID:', templateId);
-      // console.log('- Template Name:', state.template.name || 'Nouveau template');
-      // console.log('- Elements count:', normalizedElements.length);
-      // console.log('- Canvas size:', canvasWidth, 'x', canvasHeight);
-      // console.log('- Template data size:', JSON.stringify(templateData).length, 'characters');
-      // console.log('- Nonce:', window.pdfBuilderData?.nonce ? 'Present' : 'Missing');
-
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
-
-      // console.log('[PDF_BUILDER_FRONTEND] HTTP Response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log('🔵 [useTemplate] Server response:', result);
 
       if (!result.success) {
-        console.error('🔴 [useTemplate] Server returned error:', result.data);
-        debugError('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
-        const errorMessage = result.data || 'Unknown error during save';
-        
-        // 🔄 DÉTECTION ERREUR NONCE + RETRY
-        if (errorMessage.includes('Nonce invalide') || errorMessage.includes('nonce')) {
-          console.warn('🟠 [useTemplate] Erreur de nonce détectée, tentative de récupération d\'un nouveau nonce');
-          debugError('[PDF_BUILDER_FRONTEND] Erreur de nonce détectée, tentative de récupération d\'un nouveau nonce');
-          
+        // Gestion d'erreur nonce - tentative de récupération automatique
+        if (result.data && result.data.includes('Nonce invalide')) {
+          console.log('🔄 [useTemplate] Nonce invalide détecté, récupération automatique...');
+
           try {
-            console.log('🟡 [useTemplate] Appel à pdf_builder_get_fresh_nonce...');
-            // Récupérer un nouveau nonce du serveur
+            // Récupérer un nouveau nonce
             const nonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
               method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
               body: new URLSearchParams({
-                action: 'pdf_builder_get_fresh_nonce'
+                action: 'pdf_builder_get_fresh_nonce',
+                nonce: currentNonce
               })
             });
-            
+
             if (nonceResponse.ok) {
               const nonceResult = await nonceResponse.json();
-              console.log('🟢 [useTemplate] Réponse nonce reçue:', nonceResult);
-              
               if (nonceResult.success && nonceResult.data?.nonce) {
-                console.log('🟢 [useTemplate] Nouveau nonce obtenu:', nonceResult.data.nonce);
-                debugError('[PDF_BUILDER_FRONTEND] Nouveau nonce obtenu, relance de la sauvegarde');
-                
+                console.log('✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative...');
+
                 // Mettre à jour le nonce global
                 if (window.pdfBuilderData) {
                   window.pdfBuilderData.nonce = nonceResult.data.nonce;
                 }
-                
-                // Créer une nouvelle FormData avec le nouveau nonce
-                const retryFormData = new FormData();
-                retryFormData.append('action', 'pdf_builder_save_template');
-                retryFormData.append('template_id', templateId);
-                retryFormData.append('template_name', state.template.name || 'Nouveau template');
-                retryFormData.append('template_description', state.template.description || '');
-                retryFormData.append('template_data', JSON.stringify(templateData));
-                retryFormData.append('nonce', nonceResult.data.nonce);
-                retryFormData.append('show_guides', state.template.showGuides ? '1' : '0');
-                retryFormData.append('snap_to_grid', state.template.snapToGrid ? '1' : '0');
-                retryFormData.append('margin_top', (state.template.marginTop || 0).toString());
-                retryFormData.append('margin_bottom', (state.template.marginBottom || 0).toString());
-                retryFormData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
-                retryFormData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
-                
-                // Relancer la sauvegarde
-                const retryResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
-                  method: 'POST',
-                  body: retryFormData
-                });
-                
-                if (retryResponse.ok) {
-                  const retryResult = await retryResponse.json();
-                  console.log('🟢 [useTemplate] Retry response:', retryResult);
-                  
-                  if (retryResult.success) {
-                    console.log('🟢 [useTemplate] Sauvegarde réussie après retry!');
-                    dispatch({
-                      type: 'SAVE_TEMPLATE',
-                      payload: {
-                        id: retryResult.data.template_id || retryResult.data.id,
-                        name: retryResult.data.name
-                      }
-                    });
-                    return; // ✅ Sauvegarde réussie après retry
-                  }
-                }
+
+                // Refaire la sauvegarde avec le nouveau nonce
+                return await saveTemplate(templateId, canvasWidth, canvasHeight);
               }
             }
-          } catch (retryError) {
-            debugError('[PDF_BUILDER_FRONTEND] Erreur lors de la tentative de récupération du nonce:', retryError);
+          } catch (nonceError) {
+            console.error('❌ [useTemplate] Échec récupération nonce:', nonceError);
           }
         }
-        
-        throw new Error(errorMessage);
+
+        throw new Error(result.data || 'Erreur lors de la sauvegarde');
       }
 
-      // console.log('[PDF_BUILDER_FRONTEND] Save successful! Template ID:', result.data?.template_id);
-
+      // Sauvegarde réussie
       dispatch({
         type: 'SAVE_TEMPLATE',
         payload: {
@@ -694,6 +625,8 @@ export function useTemplate() {
           name: result.data.name
         }
       });
+
+      return true;
 
     } catch (error) {
       debugError('[PDF_BUILDER_FRONTEND] Save failed:', error);
