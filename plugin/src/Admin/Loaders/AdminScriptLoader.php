@@ -343,10 +343,6 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        wp_enqueue_script($dynamic_wrapper_handle, $react_script_url, [$dynamic_main_handle], $version_param . $nuclear_suffix, true);
-        wp_script_add_data($dynamic_wrapper_handle, 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued ' . $dynamic_wrapper_handle . ': ' . $react_script_url . ' with version: ' . $version_param . $nuclear_suffix);
-
         // Emergency reload script - force page reload if React scripts don't load within 5 seconds
         $emergency_reload_script = "
             (function() {
@@ -365,11 +361,11 @@ class AdminScriptLoader
                 }, 100);
             })();
         ";
-        wp_add_inline_script('pdf-builder-react', $emergency_reload_script, 'after');
+        wp_add_inline_script('pdf-builder-react-main', $emergency_reload_script, 'after');
 
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
-        wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
+        wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-main'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 
         // Scripts de l'API Preview
@@ -399,8 +395,8 @@ class AdminScriptLoader
             }
         }, 100);
         ";
-        wp_add_inline_script('pdf-builder-react', $init_script, 'after');
-        // error_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react');
+        wp_add_inline_script('pdf-builder-react-main', $init_script, 'after');
+        // error_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react-main');
 
         // Script de diagnostic supplémentaire qui s'exécute plus tôt
         $diagnostic_script = "
