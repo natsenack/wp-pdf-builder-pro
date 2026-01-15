@@ -205,7 +205,7 @@ const initialState: BuilderState = {
     name: 'Nouveau template',
     description: '',
     tags: [],
-    canvasWidth: 794,  // A4 width in PX (plus large)
+    canvasWidth: 794,  // A4 width in PX (portrait)
     canvasHeight: 1123, // A4 height in PX
     marginTop: 28,     // ~10mm in PX
     marginBottom: 28,  // ~10mm in PX
