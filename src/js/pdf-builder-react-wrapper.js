@@ -5,24 +5,25 @@
  */
 
 (function() {
-    console.log('📦📦📦 WRAPPER_FILE_LOADED_V5: pdf-builder-react-wrapper.min.js STARTED at ' + new Date().toISOString());
+    console.log('📦📦📦 WRAPPER_FILE_LOADED_V6: pdf-builder-react-wrapper.min.js STARTED at ' + new Date().toISOString());
 
     // Wait for the main React module to be loaded
     function waitForReactModule() {
         console.log('🔍 Waiting for pdfBuilderReact module...');
         
-        // Check for either the exported module or window object
-        var module = window['pdf-builder-react'] || window.pdfBuilderReact;
+        // Check for the module exported by webpack UMD
+        // Webpack now exports to window.pdfBuilderReact directly with the new config
+        var module = window.pdfBuilderReact;
         
         if (module && module.initPDFBuilderReact) {
-            console.log('✅ pdfBuilderReact module found, re-exporting...');
+            console.log('✅ pdfBuilderReact module found at window.pdfBuilderReact, re-exporting...');
             
-            // Ensure it's on window.pdfBuilderReact
+            // Ensure it's on window.pdfBuilderReact (already is from webpack UMD)
             if (!window.pdfBuilderReact) {
                 window.pdfBuilderReact = module;
             }
             
-            // Re-export to window.pdfBuilderReactWrapper
+            // Re-export to window.pdfBuilderReactWrapper for compatibility
             window.pdfBuilderReactWrapper = {
                 initPDFBuilderReact: window.pdfBuilderReact.initPDFBuilderReact,
                 loadTemplate: window.pdfBuilderReact.loadTemplate,
@@ -72,4 +73,5 @@
         }, 50);
     }
 })();
+
 
