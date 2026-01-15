@@ -4,18 +4,20 @@
  * Ne s'exécute que si des erreurs sont détectées
  */
 
-(function() {
-  'use strict';
+(function () {
+  "use strict";
 
-  console.log('[PDF Builder] force-complete-reload.js loaded - DISABLED AUTO-RELOAD');
+  console.log(
+    "[PDF Builder] force-complete-reload.js loaded - DISABLED AUTO-RELOAD"
+  );
 
   // NE PAS exécuter automatiquement
   // Attendre que js-syntax-check.js détecte les erreurs
 
   function showErrorOverlay(errors) {
     // Créer l'overlay de blocage
-    const overlay = document.createElement('div');
-    overlay.id = 'pdf-builder-error-overlay';
+    const overlay = document.createElement("div");
+    overlay.id = "pdf-builder-error-overlay";
     overlay.style.cssText = `
       position: fixed;
       top: 0;
@@ -29,7 +31,7 @@
       z-index: 999999;
     `;
 
-    const errorBox = document.createElement('div');
+    const errorBox = document.createElement("div");
     errorBox.style.cssText = `
       background: white;
       padding: 40px;
@@ -77,55 +79,66 @@
     document.body.appendChild(overlay);
 
     // Ajouter les event listeners
-    document.getElementById('pdf-builder-retry-btn').addEventListener('click', function() {
-      location.reload();
-    });
+    document
+      .getElementById("pdf-builder-retry-btn")
+      .addEventListener("click", function () {
+        location.reload();
+      });
 
-    document.getElementById('pdf-builder-continue-btn').addEventListener('click', function() {
-      overlay.remove();
-      console.log('[PDF Builder] User chose to continue despite errors');
-    });
+    document
+      .getElementById("pdf-builder-continue-btn")
+      .addEventListener("click", function () {
+        overlay.remove();
+        console.log("[PDF Builder] User chose to continue despite errors");
+      });
 
     // Bloquer les clics sur la page
-    document.addEventListener('click', function(e) {
-      if (e.target.id !== 'pdf-builder-retry-btn' && e.target.id !== 'pdf-builder-continue-btn') {
-        if (!e.target.closest('#pdf-builder-error-overlay')) {
-          e.stopPropagation();
+    document.addEventListener(
+      "click",
+      function (e) {
+        if (
+          e.target.id !== "pdf-builder-retry-btn" &&
+          e.target.id !== "pdf-builder-continue-btn"
+        ) {
+          if (!e.target.closest("#pdf-builder-error-overlay")) {
+            e.stopPropagation();
+          }
         }
-      }
-    }, true);
+      },
+      true
+    );
   }
 
   function escapeHtml(text) {
-    if (!text) return '';
+    if (!text) return "";
     const map = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;'
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return text.replace(/[&<>"']/g, (m) => map[m]);
   }
 
   // Exposition globale pour accès externe
   window.pdfBuilderForceReload = {
-    addError: function(error) {
-      const errorKey = 'pdfBuilderErrors';
-      const errors = JSON.parse(localStorage.getItem(errorKey) || '[]');
+    addError: function (error) {
+      const errorKey = "pdfBuilderErrors";
+      const errors = JSON.parse(localStorage.getItem(errorKey) || "[]");
       errors.push(error);
       localStorage.setItem(errorKey, JSON.stringify(errors));
     },
-    
-    showErrors: function(errors) {
+
+    showErrors: function (errors) {
       if (errors && errors.length > 0) {
         showErrorOverlay(errors);
       }
     },
-    
-    reload: function() {
+
+    reload: function () {
       // Ne rien faire - pas de reload automatique
-      console.log('[PDF Builder] Reload requested but auto-reload is disabled');
-    }
+      console.log("[PDF Builder] Reload requested but auto-reload is disabled");
+    },
   };
 })();

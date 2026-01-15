@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, FC, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  FC,
+  ReactNode,
+} from "react";
 
 interface EditorContextType {
   selectedElement: string | null;
@@ -20,16 +26,18 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [snapToGrid, setSnapToGrid] = useState(true);
 
   return (
-    <EditorContext.Provider value={{
-      selectedElement,
-      setSelectedElement,
-      scale,
-      setScale,
-      showGrid,
-      setShowGrid,
-      snapToGrid,
-      setSnapToGrid,
-    }}>
+    <EditorContext.Provider
+      value={{
+        selectedElement,
+        setSelectedElement,
+        scale,
+        setScale,
+        showGrid,
+        setShowGrid,
+        snapToGrid,
+        setSnapToGrid,
+      }}
+    >
       {children}
     </EditorContext.Provider>
   );
@@ -38,7 +46,7 @@ export const EditorProvider: FC<{ children: ReactNode }> = ({ children }) => {
 export const useEditor = () => {
   const context = useContext(EditorContext);
   if (!context) {
-    throw new Error('useEditor must be used within EditorProvider');
+    throw new Error("useEditor must be used within EditorProvider");
   }
   return context;
 };

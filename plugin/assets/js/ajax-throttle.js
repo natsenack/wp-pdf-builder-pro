@@ -2,33 +2,33 @@
  * AJAX Throttle - Throttle les requêtes AJAX
  */
 
-window.pdfBuilderAjaxThrottle = (function() {
+window.pdfBuilderAjaxThrottle = (function () {
   const pending = {};
 
   return {
-    request: function(action, data) {
+    request: function (action, data) {
       if (pending[action]) {
-        console.log('[PDF Builder] AJAX throttled:', action);
+        console.log("[PDF Builder] AJAX throttled:", action);
         return pending[action];
       }
 
       pending[action] = fetch(pdfBuilderAjax.ajaxurl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
           action: action,
           nonce: pdfBuilderAjax.nonce,
-          ...data
-        })
+          ...data,
+        }),
       }).finally(() => {
         delete pending[action];
       });
 
       return pending[action];
-    }
+    },
   };
 })();
 
-console.log('[PDF Builder] AJAX Throttle loaded');
+console.log("[PDF Builder] AJAX Throttle loaded");

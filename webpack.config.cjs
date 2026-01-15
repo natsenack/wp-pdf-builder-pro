@@ -1,35 +1,35 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === "development";
 
 // Output vers le dossier assets du plugin pour déploiement facile
-const outputPath = path.resolve(__dirname, 'plugin/assets/js');
+const outputPath = path.resolve(__dirname, "plugin/assets/js");
 
 module.exports = {
-  mode: isDev ? 'development' : 'production',
+  mode: isDev ? "development" : "production",
   entry: {
-    'pdf-builder-react': './src/js/react/index.tsx',
+    "pdf-builder-react": "./src/js/react/index.tsx",
   },
   output: {
     path: outputPath,
-    filename: '[name].min.js',
+    filename: "[name].min.js",
     library: {
-      type: 'umd',
-      name: 'pdfBuilderReact',
+      type: "umd",
+      name: "pdfBuilderReact",
     },
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: true,
-    assetModuleFilename: '../assets/[name][ext]',
+    assetModuleFilename: "../assets/[name][ext]",
   },
-  devtool: isDev ? 'eval-source-map' : false,
+  devtool: isDev ? "eval-source-map" : false,
   performance: {
     maxEntrypointSize: 512000,
     maxAssetSize: 512000,
-    hints: isDev ? false : 'warning',
+    hints: isDev ? false : "warning",
   },
   module: {
     rules: [
@@ -37,16 +37,19 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
             presets: [
-              ['@babel/preset-env', {
-                useBuiltIns: 'entry',
-                corejs: 3,
-                modules: false,
-              }],
-              ['@babel/preset-react', { runtime: 'automatic' }],
-              '@babel/preset-typescript',
+              [
+                "@babel/preset-env",
+                {
+                  useBuiltIns: "entry",
+                  corejs: 3,
+                  modules: false,
+                },
+              ],
+              ["@babel/preset-react", { runtime: "automatic" }],
+              "@babel/preset-typescript",
             ],
             cacheDirectory: true,
           },
@@ -55,9 +58,9 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+          isDev ? "style-loader" : MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: isDev,
             },
@@ -66,37 +69,41 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        type: 'asset/resource',
+        type: "asset/resource",
         generator: {
-          filename: '../fonts/[name][ext]',
+          filename: "../fonts/[name][ext]",
         },
       },
     ],
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
     alias: {
-      '@components': path.resolve(__dirname, 'src/js/react/components/'),
-      '@hooks': path.resolve(__dirname, 'src/js/react/hooks/'),
-      '@utils': path.resolve(__dirname, 'src/js/react/utils/'),
-      '@contexts': path.resolve(__dirname, 'src/js/react/contexts/'),
-      '@types': path.resolve(__dirname, 'src/js/react/types/'),
-      '@styles': path.resolve(__dirname, 'src/js/react/styles/'),
+      "@components": path.resolve(__dirname, "src/js/react/components/"),
+      "@hooks": path.resolve(__dirname, "src/js/react/hooks/"),
+      "@utils": path.resolve(__dirname, "src/js/react/utils/"),
+      "@contexts": path.resolve(__dirname, "src/js/react/contexts/"),
+      "@types": path.resolve(__dirname, "src/js/react/types/"),
+      "@styles": path.resolve(__dirname, "src/js/react/styles/"),
     },
   },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: '../css/[name].min.css',
-      chunkFilename: '../css/[name].chunk.css',
+      filename: "../css/[name].min.css",
+      chunkFilename: "../css/[name].chunk.css",
     }),
-    ...(!isDev ? [new CompressionPlugin({
-      algorithm: 'gzip',
-      test: /\.(js|css)$/,
-      threshold: 10240,
-      minRatio: 0.8,
-      filename: '[path][base].gz',
-    })] : []),
+    ...(!isDev
+      ? [
+          new CompressionPlugin({
+            algorithm: "gzip",
+            test: /\.(js|css)$/,
+            threshold: 10240,
+            minRatio: 0.8,
+            filename: "[path][base].gz",
+          }),
+        ]
+      : []),
   ],
   optimization: {
     minimize: !isDev,
@@ -107,7 +114,9 @@ module.exports = {
             drop_console: !isDev,
             drop_debugger: true,
             passes: 2,
-            pure_funcs: isDev ? [] : ['console.log', 'console.info', 'console.debug'],
+            pure_funcs: isDev
+              ? []
+              : ["console.log", "console.info", "console.debug"],
           },
           mangle: {
             properties: false,
@@ -119,19 +128,19 @@ module.exports = {
         extractComments: false,
       }),
     ],
-    runtimeChunk: 'single',
+    runtimeChunk: "single",
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
+          name: "vendors",
           priority: 10,
           reuseExistingChunk: true,
         },
         react: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: 'react-vendor',
+          name: "react-vendor",
           priority: 20,
         },
         common: {
@@ -143,8 +152,8 @@ module.exports = {
     },
   },
   cache: {
-    type: 'filesystem',
-    cacheDirectory: path.resolve(__dirname, '.webpack_cache'),
+    type: "filesystem",
+    cacheDirectory: path.resolve(__dirname, ".webpack_cache"),
   },
   stats: {
     colors: true,

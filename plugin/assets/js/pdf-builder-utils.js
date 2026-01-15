@@ -4,19 +4,19 @@
  */
 
 window.pdfBuilderUtils = {
-  log: function(msg, data) {
-    console.log('[PDF Builder]', msg, data);
+  log: function (msg, data) {
+    console.log("[PDF Builder]", msg, data);
   },
-  error: function(msg, error) {
-    console.error('[PDF Builder]', msg, error);
+  error: function (msg, error) {
+    console.error("[PDF Builder]", msg, error);
   },
-  debounce: function(func, wait) {
+  debounce: function (func, wait) {
     let timeout;
-    return function() {
+    return function () {
       clearTimeout(timeout);
       timeout = setTimeout(func, wait);
     };
-  }
+  },
 };
 
-console.log('[PDF Builder] Utils loaded');
+console.log("[PDF Builder] Utils loaded");
