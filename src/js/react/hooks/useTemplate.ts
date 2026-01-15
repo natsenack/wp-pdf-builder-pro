@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
@@ -11,13 +11,18 @@ export function useTemplate() {
 
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = useCallback((): string | null => {
-    // Priorité 1: Utiliser le templateId des données PHP localisées
+    // Priorité 1: Utiliser le templateId du state template (après sauvegarde)
+    if (state.template.id) {
+      return state.template.id.toString();
+    }
+    
+    // Priorité 2: Utiliser le templateId des données PHP localisées
     if (window.pdfBuilderData?.templateId) {
 
       return window.pdfBuilderData.templateId.toString();
     }
     
-    // Priorité 2: Utiliser le paramètre URL (pour compatibilité)
+    // Priorité 3: Utiliser le paramètre URL (pour compatibilité)
     const urlParams = new URLSearchParams(window.location.search);
     const urlTemplateId = urlParams.get('template_id');
     if (urlTemplateId) {
@@ -27,7 +32,7 @@ export function useTemplate() {
     
 
     return null;
-  }, []);
+  }, [state.template.id]);
 
   const isEditingExistingTemplate = (): boolean => {
     return getTemplateIdFromUrl() !== null;
@@ -621,7 +626,7 @@ export function useTemplate() {
     dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: settings });
   }, [dispatch]);
 
-  return {
+  return useMemo(() => ({
     templateName: state.template.name,
     templateDescription: state.template.description,
     templateTags: state.template.tags,
@@ -642,6 +647,6 @@ export function useTemplate() {
     newTemplate,
     setTemplateModified,
     updateTemplateSettings
-  };
+  }), [state.template.id, state.template.name, state.template.description, state.template.tags, state.template.canvasWidth, state.template.canvasHeight, state.template.marginTop, state.template.marginBottom, state.template.showGuides, state.template.snapToGrid, state.template.isNew, state.template.isModified, state.template.isSaving, state.template.isLoading, state.template.lastSaved, saveTemplate, previewTemplate, newTemplate, setTemplateModified, updateTemplateSettings, getTemplateIdFromUrl]);
 }
 
