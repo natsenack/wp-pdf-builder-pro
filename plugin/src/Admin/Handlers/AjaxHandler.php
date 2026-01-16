@@ -26,6 +26,15 @@ class AjaxHandler
     public function __construct($admin)
     {
         $this->admin = $admin;
+
+        // Ensure NonceManager is loaded
+        if (!class_exists('PDF_Builder\Admin\Handlers\NonceManager')) {
+            $nonce_manager_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Handlers/NonceManager.php';
+            if (file_exists($nonce_manager_file)) {
+                require_once $nonce_manager_file;
+            }
+        }
+
         $this->registerHooks();
     }
 
