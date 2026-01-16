@@ -126,29 +126,31 @@ export const Header = memo(function Header({
 
   // Charger les permissions d'orientation du canvas
   useEffect(() => {
-    const loadOrientationPermissions = async () => {
+    const loadOrientationPermissions = () => {
       try {
-        const formData = new FormData();
-        formData.append("action", "pdf_builder_get_canvas_orientations");
-        formData.append("nonce", (window as any).pdf_builder_ajax_nonce || "");
+        // Utiliser les variables window directement au lieu d'un appel AJAX
+        const availableOrientations = (window as any).availableOrientations || ['portrait', 'landscape'];
+        
+        const orientationPermissions = {
+          allowPortrait: availableOrientations.includes('portrait'),
+          allowLandscape: availableOrientations.includes('landscape'),
+          defaultOrientation: (window as any).pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait',
+          availableOrientations: availableOrientations
+        };
 
-        const response = await fetch(
-          (window as any).ajaxurl || "/wp-admin/admin-ajax.php",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        const data = await response.json();
-        if (data.success && data.data) {
-          setOrientationPermissions(data.data);
-        }
+        setOrientationPermissions(orientationPermissions);
       } catch (error) {
         debugError(
           "Erreur lors du chargement des permissions d'orientation",
           error
         );
+        // Fallback en cas d'erreur
+        setOrientationPermissions({
+          allowPortrait: true,
+          allowLandscape: true,
+          defaultOrientation: 'portrait',
+          availableOrientations: ['portrait', 'landscape']
+        });
       }
     };
 

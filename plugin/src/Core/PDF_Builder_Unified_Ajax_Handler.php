@@ -38,6 +38,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
         // add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
 
+        // Actions canvas
+        add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'handle_get_canvas_orientations']);
+
         // Actions de cache
         add_action('wp_ajax_pdf_builder_get_cache_metrics', [$this, 'handle_get_cache_metrics']);
         add_action('wp_ajax_pdf_builder_test_cache_integration', [$this, 'handle_test_cache_integration']);
@@ -300,6 +303,44 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             error_log('[PDF Builder AJAX] Erreur sauvegarde Canvas: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Handler pour récupérer les orientations disponibles du canvas
+     */
+    public function handle_get_canvas_orientations() {
+        if (!$this->nonce_manager->validate_ajax_request('pdf_builder_ajax')) {
+            return;
+        }
+
+        try {
+            // Récupérer les orientations disponibles depuis les paramètres canvas
+            $available_orientations_string = get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
+            
+            if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
+                $available_orientations = explode(',', $available_orientations_string);
+            } elseif (is_array($available_orientations_string)) {
+                $available_orientations = $available_orientations_string;
+            } else {
+                $available_orientations = [$available_orientations_string];
+            }
+            
+            $available_orientations = array_map('strval', $available_orientations);
+
+            // Retourner les permissions d'orientation
+            $orientation_permissions = [
+                'allowPortrait' => in_array('portrait', $available_orientations),
+                'allowLandscape' => in_array('landscape', $available_orientations),
+                'defaultOrientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
+                'availableOrientations' => $available_orientations
+            ];
+
+            wp_send_json_success($orientation_permissions);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur récupération orientations: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }

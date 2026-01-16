@@ -187,7 +187,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
   try {
     const windowSettings =
       window.pdfBuilderData?.canvasSettings || window.pdfBuilderCanvasSettings;
-    const templateData = window.pdfBuilderData?.existingTemplate;
 
     // Debug: Check if window settings exist
     if (typeof window !== "undefined") {
@@ -246,7 +245,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
         (windowSettings.default_canvas_unit as "px" | "mm" | "cm" | "in") ??
         DEFAULT_SETTINGS.canvasUnit,
       canvasOrientation:
-        (templateData?.canvas_orientation as "portrait" | "landscape") ??
         (windowSettings.default_canvas_orientation as
           | "portrait"
           | "landscape") ?? DEFAULT_SETTINGS.canvasOrientation,

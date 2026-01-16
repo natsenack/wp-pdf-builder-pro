@@ -317,6 +317,52 @@ class AdminScriptLoader
             );
         }
 
+        // Ajouter les options disponibles pour les sélecteurs (DPI, formats, orientations)
+        $available_dpi_string = get_option('pdf_builder_canvas_dpi', '72,96,150');
+        if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== false) {
+            $available_dpis = explode(',', $available_dpi_string);
+        } elseif (is_array($available_dpi_string)) {
+            $available_dpis = $available_dpi_string;
+        } else {
+            $available_dpis = [$available_dpi_string];
+        }
+        $available_dpis = array_map('strval', $available_dpis);
+
+        $available_formats_string = get_option('pdf_builder_canvas_formats', 'A4');
+        if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
+            $available_formats = explode(',', $available_formats_string);
+        } elseif (is_array($available_formats_string)) {
+            $available_formats = $available_formats_string;
+        } else {
+            $available_formats = [$available_formats_string];
+        }
+        $available_formats = array_map('strval', $available_formats);
+
+        $available_orientations_string = get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
+        if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
+            $available_orientations = explode(',', $available_orientations_string);
+        } elseif (is_array($available_orientations_string)) {
+            $available_orientations = $available_orientations_string;
+        } else {
+            $available_orientations = [$available_orientations_string];
+        }
+        $available_orientations = array_map('strval', $available_orientations);
+
+        $localize_data['availableDpis'] = $available_dpis;
+        $localize_data['availableFormats'] = $available_formats;
+        $localize_data['availableOrientations'] = $available_orientations;
+
+        // Définir aussi window variables pour la compatibilité
+        wp_add_inline_script('pdf-builder-react-main', 
+            'window.availableDpis = ' . wp_json_encode($available_dpis) . ';'
+        );
+        wp_add_inline_script('pdf-builder-react-main', 
+            'window.availableFormats = ' . wp_json_encode($available_formats) . ';'
+        );
+        wp_add_inline_script('pdf-builder-react-main', 
+            'window.availableOrientations = ' . wp_json_encode($available_orientations) . ';'
+        );
+
         // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
 
         // Charger les données du template si template_id est fourni
