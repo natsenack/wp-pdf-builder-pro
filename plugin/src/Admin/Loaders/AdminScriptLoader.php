@@ -300,8 +300,9 @@ class AdminScriptLoader
         $nuclear_suffix = '-ULTRA-NUCLEAR-' . microtime(true) . '-' . time() . '-' . uniqid('ULTRA-NUKE', true) . '-FORCE-RELOAD-' . rand(10000000, 99999999);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . microtime(true) . '-' . rand(100000, 999999) . '-ULTRA-NUKE-' . uniqid();
 
-        // Add random query parameter to URLs to bypass ALL caching
-        $random_param = '?t=' . microtime(true) . '&r=' . rand(1000000, 9999999) . '&nuke=' . uniqid('NUKE', true) . '&ultra=' . time();
+        // DISABLED: Random query parameters cause 404 errors - WordPress handles versioning properly
+        // $random_param = '?t=' . microtime(true) . '&r=' . rand(1000000, 9999999) . '&nuke=' . uniqid('NUKE', true) . '&ultra=' . time();
+        $random_param = ''; // Disabled to prevent 404 errors
 
         // Load React vendors bundle (React, ReactDOM, dependencies)
         $react_vendors_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js' . $random_param;
