@@ -59,7 +59,7 @@ function get_canvas_modal_value($key, $default = '') {
             <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
                 <h3 style="margin: 0;"><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
                 <?php if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()): ?>
-                <div class="premium-header-notice" style="padding: 6px 12px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 12px; color: #856404; flex: 1;">
+                <div class="premium-header-notice" style="padding: 6px 12px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 12px; color: #856404; flex: 1; max-width: 52%">
                     <strong>🔒 Fonction Premium</strong> - Débloquez la personnalisation avancée du canvas (couleurs, bordures, formats étendus)
                     <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500; margin-left: 8px;">Passer en Premium →</a>
                 </div>
@@ -201,7 +201,10 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond du canvas</label>
+                    <label style="display: flex; align-items: center; justify-content: space-between;">
+                        <span><span style="font-size: 16px;">🎨</span> Couleur de Fond du canvas</span>
+                        <span class="premium-badge" style="background: linear-gradient(135deg, #ffd700, #ffb347); color: #8b4513; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #daa520;">⭐ PREMIUM</span>
+                    </label>
                     <?php $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user(); ?>
                     <?php if ($is_premium): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
@@ -222,7 +225,10 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔳</span> Bordure du canvas</label>
+                    <label style="display: flex; align-items: center; justify-content: space-between;">
+                        <span><span style="font-size: 16px;">🔳</span> Bordure du canvas</span>
+                        <span class="premium-badge" style="background: linear-gradient(135deg, #ffd700, #ffb347); color: #8b4513; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #daa520;">⭐ PREMIUM</span>
+                    </label>
                     <?php if ($is_premium): ?>
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
                         <div style="flex: 1;">
