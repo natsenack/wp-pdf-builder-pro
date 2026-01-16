@@ -320,6 +320,15 @@ function Invoke-Deployment {
         Pop-Location
     }
 
+    # Redétecter les fichiers après compilation Webpack (pour inclure les assets régénérés)
+    Write-Host "`n2b. Redétection des fichiers après compilation..." -ForegroundColor Magenta
+    $redetectionStart = Get-Date
+    Show-ProgressBar -Current 0 -Total 1 -Activity "Redétection fichiers" -Status "Analyse en cours..." -StartTime $redetectionStart
+    $filesToDeploy = Get-FilesToDeploy
+    Show-ProgressBar -Current 1 -Total 1 -Activity "Redétection fichiers" -Status "Terminé" -StartTime $redetectionStart
+    Write-Host "" # Nouvelle ligne
+    Write-Log "$($filesToDeploy.Count) fichier(s) redétecté(s) après compilation" "SUCCESS"
+
     # Upload des fichiers (OPTIMISÉ AVEC PARALLÉLISME ET PROGRESSION)
     Write-Host "`n3. Upload FTP..." -ForegroundColor Magenta
     $uploadCount = 0
