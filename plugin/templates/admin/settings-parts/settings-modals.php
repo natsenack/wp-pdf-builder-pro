@@ -72,9 +72,41 @@ function get_canvas_modal_value($key, $default = '') {
                            value="<?php echo esc_attr(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_dpi">DPI</label>
-                    <input type="number" id="modal_canvas_dpi" name="pdf_builder_canvas_dpi"
-                           value="<?php echo esc_attr(get_canvas_modal_value('dpi', $canvas_defaults['dpi'])); ?>">
+                    <label>Résolution DPI</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                        <?php
+                        $current_dpi = get_canvas_modal_value('dpi', $canvas_defaults['dpi']);
+                        $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+                        
+                        $dpi_options = [
+                            ['value' => '72', 'label' => '72 DPI - Écran (faible qualité)', 'premium' => false],
+                            ['value' => '96', 'label' => '96 DPI - Web (qualité standard)', 'premium' => false],
+                            ['value' => '150', 'label' => '150 DPI - Impression moyenne', 'premium' => false],
+                            ['value' => '300', 'label' => '300 DPI - Haute qualité', 'premium' => true],
+                            ['value' => '600', 'label' => '600 DPI - Professionnel', 'premium' => true]
+                        ];
+                        
+                        foreach ($dpi_options as $option) {
+                            $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
+                            $checked = ($current_dpi == $option['value']) ? 'checked' : '';
+                            $premium_class = $option['premium'] ? 'premium-option' : '';
+                            $premium_badge = $option['premium'] ? ' <span class="premium-badge">⭐ PREMIUM</span>' : '';
+                            
+                            echo '<label style="display: flex; align-items: center; gap: 8px; margin: 0; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '">';
+                            echo '<input type="radio" name="pdf_builder_canvas_dpi" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . ' style="margin: 0;">';
+                            echo '<span>' . $option['label'] . $premium_badge . '</span>';
+                            echo '</label>';
+                        }
+                        ?>
+                        
+                        <?php if (!$is_premium): ?>
+                        <div style="margin-top: 12px; padding: 12px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 12px;">
+                            <strong>🔒 Résolutions Premium</strong><br>
+                            Les résolutions 300 DPI et 600 DPI sont réservées aux utilisateurs Premium.<br>
+                            <a href="#" onclick="showUpgradeModal('canvas_dpi')" style="color: #856404; text-decoration: underline;">Passer en Premium</a> pour accéder à ces fonctionnalités.
+                        </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_format">Format</label>
@@ -338,9 +370,104 @@ function get_canvas_modal_value($key, $default = '') {
 
 <style>
 /* Styles pour les modals - utilisant les classes définies dans settings-contenu.php */
+
+/* Styles pour les options premium */
+.premium-option {
+    position: relative;
+}
+
+.premium-badge {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #856404;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 1px solid #ffeaa7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.premium-option input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.premium-option input:disabled + span {
+    color: #6c757d;
+}
+
+/* Amélioration du style des radio buttons DPI */
+.setting-group input[type="radio"] {
+    transform: scale(1.2);
+    margin-right: 8px;
+}
+
+.setting-group input[type="radio"]:checked {
+    accent-color: #007cba;
+}
 </style>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+<script>
+/**
+ * Fonction pour afficher le modal de mise à niveau
+ */
+function showUpgradeModal(feature) {
+    // Créer le modal de mise à niveau s'il n'existe pas
+    if (!document.getElementById('upgrade-modal-overlay')) {
+        var modalHTML = `
+            <div id="upgrade-modal-overlay" class="canvas-modal-overlay" style="display: flex; z-index: 10002;">
+                <div class="canvas-modal-container" style="max-width: 500px;">
+                    <div class="canvas-modal-header">
+                        <h3>🔒 Fonctionnalité Premium</h3>
+                        <button type="button" class="canvas-modal-close" onclick="closeUpgradeModal()">&times;</button>
+                    </div>
+                    <div class="canvas-modal-body" style="text-align: center; padding: 30px;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">⭐</div>
+                        <h4 style="margin-bottom: 15px; color: #23282d;">Débloquez cette fonctionnalité Premium</h4>
+                        <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">
+                            Cette fonctionnalité est réservée aux utilisateurs Premium de PDF Builder Pro.
+                        </p>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                            <h5 style="margin: 0 0 10px 0; color: #23282d;">Avantages Premium :</h5>
+                            <ul style="text-align: left; color: #666; margin: 0; padding-left: 20px;">
+                                <li>✅ Résolutions DPI élevées (300 & 600 DPI)</li>
+                                <li>✅ Templates illimités</li>
+                                <li>✅ Support prioritaire</li>
+                                <li>✅ Mises à jour gratuites à vie</li>
+                                <li>✅ Fonctionnalités avancées</li>
+                            </ul>
+                        </div>
+                        <div style="background: #e8f5e8; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <strong style="color: #155724; font-size: 18px;">69€ à vie</strong>
+                            <br><small style="color: #155724;">Paiement unique, pas d'abonnement</small>
+                        </div>
+                        <a href="https://pdf-builder-pro.com/premium" target="_blank" class="button button-primary" style="background: #28a745; border-color: #28a745; padding: 12px 24px; font-size: 16px;">
+                            🚀 Passer en Premium - 69€
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    } else {
+        document.getElementById('upgrade-modal-overlay').style.display = 'flex';
+    }
+}
+
+/**
+ * Fonction pour fermer le modal de mise à niveau
+ */
+function closeUpgradeModal() {
+    var modal = document.getElementById('upgrade-modal-overlay');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+
 <?php
 
 
