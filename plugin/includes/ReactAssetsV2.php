@@ -11,7 +11,7 @@ namespace PDFBuilderPro\V2;
 class ReactAssets {
     
     public static function register() {
-        add_action('admin_enqueue_scripts', [self::class, 'enqueue_scripts']);
+        add_action('admin_enqueue_scripts', [self::class, 'enqueue_scripts'], 1);
     }
     
     /**
