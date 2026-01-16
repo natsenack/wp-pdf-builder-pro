@@ -238,6 +238,15 @@ function pdf_builder_load_settings_assets($hook) {
         true // Chargé dans le footer
     );
 
+    // Charger le script des paramètres canvas
+    wp_enqueue_script(
+        'pdf-builder-canvas-settings',
+        PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.js',
+        array('jquery', 'pdf-builder-settings-main'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true // Chargé dans le footer
+    );
+
     // Localiser le script principal avec les données AJAX
     wp_localize_script('pdf-builder-settings-main', 'pdf_builder_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php'),
