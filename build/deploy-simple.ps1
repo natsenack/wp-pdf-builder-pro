@@ -156,7 +156,7 @@ function Send-FtpFile {
 
 # Fonction pour obtenir la liste des fichiers à déployer
 function Get-FilesToDeploy {
-    $files = @()
+    $files = New-Object System.Collections.ArrayList
 
     if ($All) {
         Write-Log "Mode COMPLET: tous les fichiers du plugin" "INFO"
@@ -181,10 +181,12 @@ function Get-FilesToDeploy {
             $exclusions += 'vendor'
         }
 
-        $files = Get-ChildItem -Path $Script:PluginDir -Recurse -File | Where-Object {
+        $files = @(Get-ChildItem -Path $Script:PluginDir -Recurse -File | Where-Object {
             $path = $_.FullName
             -not ($exclusions | Where-Object { $path -match $_ })
-        }
+        })
+        # Convertir en ArrayList pour éviter les problèmes avec +=
+        $files = New-Object System.Collections.ArrayList(,$files)
     } else {
         Write-Log "Mode NORMAL: fichiers modifiés récemment" "INFO"
 
@@ -196,7 +198,9 @@ function Get-FilesToDeploy {
             $untracked = & git ls-files --others --exclude-standard 2>$null
             $allFiles = ($modified + $staged + $untracked) | Select-Object -Unique |
                        Where-Object { $_ -like "plugin/*" -and (Test-Path (Join-Path $Script:WorkingDir $_)) }
-            $files = $allFiles | ForEach-Object { Get-Item (Join-Path $Script:WorkingDir $_) }
+            $files = @($allFiles | ForEach-Object { Get-Item (Join-Path $Script:WorkingDir $_) })
+            # Convertir en ArrayList
+            $files = New-Object System.Collections.ArrayList(,$files)
         } catch {
             Write-Log "Git non disponible, utilisation du mode timestamp" "WARN"
         } finally {
@@ -206,8 +210,10 @@ function Get-FilesToDeploy {
         # Fallback: fichiers modifiés dans les dernières 24h
         if ($files.Count -eq 0) {
             $cutoffTime = (Get-Date).AddHours(-24)
-            $files = Get-ChildItem -Path $Script:PluginDir -Recurse -File |
-                    Where-Object { $_.LastWriteTime -gt $cutoffTime }
+            $files = @(Get-ChildItem -Path $Script:PluginDir -Recurse -File |
+                    Where-Object { $_.LastWriteTime -gt $cutoffTime })
+            # Convertir en ArrayList
+            $files = New-Object System.Collections.ArrayList(,$files)
         }
     }
 
@@ -225,8 +231,15 @@ function Get-FilesToDeploy {
         $criticalPath = Join-Path $Script:PluginDir $criticalFile
         if (Test-Path $criticalPath) {
             $fileItem = Get-Item $criticalPath
-            if ($files.FullName -notcontains $fileItem.FullName) {
-                $files += $fileItem
+            $exists = $false
+            foreach ($existingFile in $files) {
+                if ($existingFile.FullName -eq $fileItem.FullName) {
+                    $exists = $true
+                    break
+                }
+            }
+            if (-not $exists) {
+                $files.Add($fileItem) | Out-Null
                 Write-Log "Fichier critique ajouté: $criticalFile" "INFO"
             }
         }
@@ -432,7 +445,7 @@ function Invoke-Deployment {
         $completedJobs = $runningJobs | Where-Object { $_.State -ne "Running" }
         foreach ($job in $completedJobs) {
             $result = Receive-Job $job
-            $jobResults += $result
+            $jobResults.Add($result) | Out-Null
             Remove-Job $job
             $runningJobs.Remove($job) | Out-Null
 
@@ -496,11 +509,24 @@ function Invoke-GitCommitAndPush {
         if ($status) {
             Write-Log "Fichiers modifiés détectés, commit en cours..." "INFO"
 
+            # Afficher les fichiers qui seront ajoutés
+            $modifiedFiles = & git diff --name-only
+            $newFiles = & git ls-files --others --exclude-standard
+            Write-Host "📁 Fichiers à commiter:" -ForegroundColor Cyan
+            if ($modifiedFiles) {
+                $modifiedFiles | ForEach-Object { Write-Host "  ✏️  $_" -ForegroundColor Yellow }
+            }
+            if ($newFiles) {
+                $newFiles | ForEach-Object { Write-Host "  ➕ $_" -ForegroundColor Green }
+            }
+
             # Ajouter tous les fichiers
+            Write-Log "Ajout des fichiers au staging..." "INFO"
             & git add .
             if ($LASTEXITCODE -ne 0) {
                 throw "Erreur lors de git add"
             }
+            Write-Host "✅ Fichiers ajoutés au staging" -ForegroundColor Green
 
             # Commit
             & git commit -m $commitMessage
