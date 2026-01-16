@@ -2,15 +2,17 @@
   "folders": [
     {
       "path": ".",
-      "name": "wp-pdf-builder-pro-V2"
+      "name": "📦 V2 (Production Ready)"
     },
     {
       "path": "../wp-pdf-builder-proV1",
-      "name": "wp-pdf-builder-pro-V1 (Legacy)"
+      "name": "📚 V1 (Legacy Reference)"
     }
   ],
   "settings": {
     "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "typescript.tsserver.log": "off",
     "search.exclude": {
       "**/node_modules": true,
       "dist": true,
@@ -18,7 +20,12 @@
     },
     "files.exclude": {
       "**/.DS_Store": true
-    }
+    },
+    "files.watcherExclude": {
+      "**/node_modules/**": true,
+      "**/.git/**": true
+    },
+    "powershell.cwd": "📦 V2 (Production Ready)"
   },
   "extensions": {
     "recommendations": [
