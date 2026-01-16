@@ -419,7 +419,7 @@ try {
     $gitAddResult = & git add -A 2>&1
 
     # Vérifier si c'est juste un avertissement de fins de ligne (non bloquant)
-    $isOnlyLineEndingWarning = $gitAddResult -match "LF will be replaced by CRLF"
+    $isOnlyLineEndingWarning = $gitAddResult -match "LF will be replaced by CRLF" -or $gitAddResult -match "warning:.*LF will be replaced by CRLF"
 
     # Git add peut réussir même avec des avertissements de fins de ligne
     if ($LASTEXITCODE -eq 0) {
