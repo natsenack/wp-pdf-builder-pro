@@ -18,6 +18,9 @@ class ReactAssets {
      * Enregistre les scripts et styles React V2
      */
     public static function enqueue_scripts($page) {
+        // Assurer que wp-util est chargé sur toutes les pages admin pour éviter les erreurs "wp is not defined"
+        wp_enqueue_script('wp-util');
+        
         // Charger seulement sur la page du PDF Builder
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
             return;
