@@ -508,14 +508,20 @@ function Invoke-GitCommitAndPush {
                 throw "Erreur lors du commit"
             }
 
-            # Push
-            & git push
-            if ($LASTEXITCODE -ne 0) {
-                throw "Erreur lors du push"
+            # Vérifier si un remote est configuré avant le push
+            $remotes = & git remote
+            if ($remotes) {
+                Write-Log "Remote détecté, tentative de push..." "INFO"
+                & git push
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Erreur lors du push"
+                }
+                Write-Host "✅ Commit et push réussis !" -ForegroundColor Green
+                Write-Log "Commit et push Git réussis" "SUCCESS"
+            } else {
+                Write-Host "✅ Commit local réussi (pas de remote configuré)" -ForegroundColor Green
+                Write-Log "Commit Git réussi (pas de remote configuré)" "SUCCESS"
             }
-
-            Write-Host "✅ Commit et push réussis !" -ForegroundColor Green
-            Write-Log "Commit et push Git réussis" "SUCCESS"
         } else {
             Write-Log "Aucun fichier modifié, skip commit/push" "INFO"
         }
