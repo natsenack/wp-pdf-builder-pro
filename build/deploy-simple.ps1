@@ -519,7 +519,7 @@ function Invoke-GitCommitAndPush {
             if (-not $stagedFiles) {
                 # Aucun fichier dans le staging, ajouter tous les fichiers modifiés
                 Write-Log "Ajout de tous les fichiers au staging..." "INFO"
-                & git add .
+                & git add -A
                 if ($LASTEXITCODE -ne 0) {
                     throw "Erreur lors de git add"
                 }
@@ -530,7 +530,7 @@ function Invoke-GitCommitAndPush {
                 $modifiedFiles = & git diff --name-only
                 if ($modifiedFiles) {
                     Write-Log "Ajout des fichiers modifiés restants..." "INFO"
-                    & git add .
+                    & git add -A
                     if ($LASTEXITCODE -ne 0) {
                         throw "Erreur lors de git add pour les fichiers restants"
                     }
