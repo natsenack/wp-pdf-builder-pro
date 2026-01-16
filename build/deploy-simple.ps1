@@ -527,17 +527,30 @@ foreach ($file in $filesToDeploy) {
 }
 
 Write-Log "Création de $($directoriesToCreate.Count) répertoire(s)" "INFO"
-$dirProgressId = 2
-Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "Initialisation..." -PercentComplete 0
-$dirCompleted = 0
+
+# Filtrer les répertoires qui existent déjà pour optimisation
+Write-Log "Filtrage des répertoires existants..." "INFO"
+$directoriesToCreateFiltered = @()
 foreach ($dir in $directoriesToCreate) {
-    $dirPercent = [math]::Round(($dirCompleted / $directoriesToCreate.Count) * 100)
-    Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "$dir" -PercentComplete $dirPercent
-    
-    # Vérifier si le répertoire existe déjà (optimisation pour mode normal)
     if (Test-FtpDirectoryExists $dir) {
         Write-Log "Répertoire existe déjà: $dir" "INFO"
     } else {
+        $directoriesToCreateFiltered += $dir
+    }
+}
+$directoriesToCreate = $directoriesToCreateFiltered
+Write-Log "$($directoriesToCreate.Count) répertoire(s) à créer après filtrage" "INFO"
+
+if ($directoriesToCreate.Count -eq 0) {
+    Write-Host "   ✅ Tous les répertoires existent déjà - aucune création nécessaire" -ForegroundColor Green
+} else {
+    $dirProgressId = 2
+    Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "Initialisation..." -PercentComplete 0
+    $dirCompleted = 0
+    foreach ($dir in $directoriesToCreate) {
+        $dirPercent = [math]::Round(($dirCompleted / $directoriesToCreate.Count) * 100)
+        Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "$dir" -PercentComplete $dirPercent
+        
         Write-Log "Création répertoire: $dir" "INFO"
         try {
             $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
@@ -557,11 +570,11 @@ foreach ($dir in $directoriesToCreate) {
                 Write-Log "Échec création répertoire $dir : $($_.Exception.Message)" "ERROR"
             }
         }
+        $dirCompleted++
     }
-    $dirCompleted++
+    Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Completed
+    Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 }
-Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Completed
-Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 
 # Upload avec parallélisation
 Write-Host "`n3.2 Upload des fichiers..." -ForegroundColor Magenta
