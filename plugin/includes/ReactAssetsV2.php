@@ -38,7 +38,7 @@ class ReactAssets {
         wp_enqueue_script(
             'pdf-builder-react-vendors-v2',
             $plugin_url . 'assets/js/vendors.min.js',
-            [],
+            ['wp-util'],
             $version,
             true
         );
@@ -47,7 +47,7 @@ class ReactAssets {
         wp_enqueue_script(
             'pdf-builder-react-app-v2',
             $plugin_url . 'assets/js/pdf-builder-react.min.js',
-            ['pdf-builder-react-vendors-v2'],
+            ['pdf-builder-react-vendors-v2', 'wp-util'],
             $version,
             true
         );
@@ -56,7 +56,7 @@ class ReactAssets {
         wp_enqueue_script(
             'pdf-builder-react-wrapper-v2',
             $plugin_url . 'assets/js/pdf-builder-react-wrapper.js',
-            ['pdf-builder-react-app-v2'],
+            ['pdf-builder-react-app-v2', 'wp-util'],
             $version,
             true
         );
