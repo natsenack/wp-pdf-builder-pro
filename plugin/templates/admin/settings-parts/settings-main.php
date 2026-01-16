@@ -226,6 +226,7 @@
 
         $(document).on('click', '#generate_license_key_btn', function(e) {
             e.preventDefault();
+            console.log('🔑 PDF Builder Debug - Generate license key button clicked');
             generateTestLicenseKey();
         });
 
@@ -453,7 +454,9 @@
     }
 
     function generateTestLicenseKey() {
-        console.log('PDF Builder Debug - generateTestLicenseKey called');
+        console.log('🚀 PDF Builder Debug - generateTestLicenseKey called');
+        console.log('PDF Builder Debug - pdfBuilderAjax:', window.pdfBuilderAjax);
+        console.log('PDF Builder Debug - ajaxurl:', ajaxurl);
         makeAjaxCall('pdf_builder_generate_test_license_key', {}, function(response) {
             const newKey = response.data?.license_key || '';
             if (newKey) {
