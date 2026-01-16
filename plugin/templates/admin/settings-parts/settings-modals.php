@@ -59,7 +59,7 @@ function get_canvas_modal_value($key, $default = '') {
             <div style="flex: 1;">
                 <h3><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
                 <?php if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()): ?>
-                <div class="premium-header-notice" style="margin-top: 8px; padding: 8px 12px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 13px; color: #856404;">
+                <div class="premium-header-notice" style="margin-left: 32px; margin-top: -4px; padding: 6px 10px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 12px; color: #856404; display: inline-block;">
                     <strong>🔒 Fonction Premium</strong> - Débloquez la personnalisation avancée du canvas (couleurs, bordures, formats étendus)<br>
                     <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
                 </div>
