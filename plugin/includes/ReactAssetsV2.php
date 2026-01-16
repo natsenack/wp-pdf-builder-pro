@@ -24,13 +24,17 @@ class ReactAssets {
      * Enregistre les scripts et styles React V2
      */
     public static function enqueue_scripts($page) {
-        // Assurer que wp-util est chargé sur toutes les pages admin
+        // Assurer que wp-util et wp-api sont chargés sur toutes les pages admin
         wp_enqueue_script('wp-util');
-        
+        wp_enqueue_script('wp-api');
+
         // Charger seulement sur la page du PDF Builder
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
             return;
         }
+
+        // Charger la médiathèque WordPress pour les composants qui en ont besoin
+        wp_enqueue_media();
         
         $plugin_url = plugin_dir_url(__FILE__);
         $version = '2.0.0';
