@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
  * Version: 1.1.0
  */
 
+if (!class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
 class PDF_Builder_License_Manager
 {
     /**
@@ -242,3 +243,4 @@ class PDF_Builder_License_Manager
         ];
     }
 }
+
