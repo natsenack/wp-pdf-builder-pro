@@ -56,21 +56,18 @@ function get_canvas_modal_value($key, $default = '') {
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
-            <h3><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
+            <div style="flex: 1;">
+                <h3><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
+                <?php if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()): ?>
+                <div class="premium-header-notice" style="margin-top: 8px; padding: 8px 12px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 13px; color: #856404;">
+                    <strong>🔒 Fonction Premium</strong> - Débloquez la personnalisation avancée du canvas (couleurs, bordures, formats étendus)<br>
+                    <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
+                </div>
+                <?php endif; ?>
+            </div>
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
-            <?php $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user(); ?>
-            <?php if (!$is_premium): ?>
-            <div class="premium-notice-banner" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #ffc107; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
-                <div style="font-size: 24px;">⭐</div>
-                <div style="flex: 1;">
-                    <strong style="color: #856404; font-size: 14px;">🔒 Fonctions Premium Disponibles</strong><br>
-                    <span style="color: #856404; font-size: 12px;">Débloquez la personnalisation avancée : couleur de fond, bordures et ombres du canvas</span>
-                </div>
-                <a href="#" onclick="showUpgradeModal('canvas_premium_features')" style="background: #ffc107; color: #212529; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: background 0.2s ease;" onmouseover="this.style.background='#e0a800'" onmouseout="this.style.background='#ffc107'">Découvrir Premium →</a>
-            </div>
-            <?php endif; ?>
             <div class="modal-settings-grid">
                 <div class="setting-group" style="grid-column: span 2;">
                     <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas</label>
@@ -130,14 +127,6 @@ function get_canvas_modal_value($key, $default = '') {
                         <div class="info-box">
                             <strong>ℹ️ Information:</strong> Les résolutions sélectionnées seront disponibles dans les paramètres des templates.
                         </div>
-
-                        <?php if (!$is_premium): ?>
-                        <div class="warning-box">
-                            <strong>🔒 Résolutions Premium</strong><br>
-                            Débloquez les résolutions 300 DPI et 600 DPI avec la version Premium.<br>
-                            <a href="#" onclick="showUpgradeModal('canvas_dpi')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
-                        </div>
-                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="setting-group">
@@ -190,14 +179,6 @@ function get_canvas_modal_value($key, $default = '') {
                         <div class="info-box">
                             <strong>ℹ️ Information:</strong> Les formats sélectionnés seront disponibles dans les paramètres des templates.
                         </div>
-
-                        <?php if (!$is_premium): ?>
-                        <div class="warning-box">
-                            <strong>🔒 Formats Premium</strong><br>
-                            Débloquez tous les formats avancés (A3, Letter, Legal, Étiquette) avec la version Premium.<br>
-                            <a href="#" onclick="showUpgradeModal('canvas_formats')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
-                        </div>
-                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="setting-group">
