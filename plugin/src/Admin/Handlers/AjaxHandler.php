@@ -1614,22 +1614,26 @@ class AjaxHandler
                 $current_value = get_option($option_key, 'NOT_SET');
                 error_log("PDF Builder - Current value for $option_key: " . (is_array($current_value) ? json_encode($current_value) : $current_value));
 
-                $saved = update_option($option_key, $value);
-                error_log("PDF Builder - update_option result for $key: " . ($saved ? 'SUCCESS' : 'FAILED'));
+                // Tenter de sauvegarder
+                $update_result = update_option($option_key, $value);
+                error_log("PDF Builder - update_option result for $key: " . ($update_result ? 'SUCCESS' : 'FAILED'));
 
-                // Si update_option échoue, essayer add_option
-                if (!$saved) {
-                    $added = add_option($option_key, $value, '', 'no');
-                    error_log("PDF Builder - add_option result for $key: " . ($added ? 'SUCCESS' : 'FAILED'));
-                    $saved = $added;
+                // Si update_option échoue (option n'existe pas), essayer add_option
+                if (!$update_result) {
+                    $add_result = add_option($option_key, $value, '', 'no');
+                    error_log("PDF Builder - add_option result for $key: " . ($add_result ? 'SUCCESS' : 'FAILED'));
                 }
 
-                // Vérifier si la valeur a changé après sauvegarde
-                $new_value = get_option($option_key, 'NOT_SET_AFTER');
-                error_log("PDF Builder - Value after save for $option_key: " . (is_array($new_value) ? json_encode($new_value) : $new_value));
+                // Vérifier si la valeur a été correctement sauvegardée en la relisant
+                $saved_value = get_option($option_key, 'NOT_SET_AFTER');
+                error_log("PDF Builder - Value after save for $option_key: " . (is_array($saved_value) ? json_encode($saved_value) : $saved_value));
 
-                if ($saved) {
+                // Considérer comme sauvegardé si la valeur correspond à ce qu'on voulait sauvegarder
+                if ($saved_value === $value || (is_array($value) && $saved_value == $value)) {
                     $saved_count++;
+                    error_log("PDF Builder - Confirmed save successful for $key");
+                } else {
+                    error_log("PDF Builder - Save verification failed for $key - expected: " . (is_array($value) ? json_encode($value) : $value) . ", got: " . (is_array($saved_value) ? json_encode($saved_value) : $saved_value));
                 }
             }
 
