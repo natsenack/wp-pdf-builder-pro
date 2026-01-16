@@ -1078,34 +1078,96 @@ function displayTemplateSettings(template) {
                     <!-- Format de papier -->
                     <div>
                         <label for="template-format" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">📄 FORMAT DE PAPIER</label>
-                        <select id="template-format" name="canvas_format" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
-                            <option value="A3" ${templateFormat === 'A3' ? 'selected' : ''}>A3</option>
-                            <option value="A4" ${templateFormat === 'A4' ? 'selected' : ''}>A4</option>
-                            <option value="A5" ${templateFormat === 'A5' ? 'selected' : ''}>A5</option>
-                            <option value="Letter" ${templateFormat === 'Letter' ? 'selected' : ''}>Letter</option>
-                            <option value="Legal" ${templateFormat === 'Legal' ? 'selected' : ''}>Legal</option>
-                        </select>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <?php
+                            $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+                            $current_format = $templateFormat;
+                            
+                            $format_options = [
+                                ['value' => 'A4', 'label' => 'A4', 'premium' => false],
+                                ['value' => 'A3', 'label' => 'A3', 'premium' => false],
+                                ['value' => 'A5', 'label' => 'A5', 'premium' => false],
+                                ['value' => 'Letter', 'label' => 'Letter', 'premium' => false],
+                                ['value' => 'Legal', 'label' => 'Legal', 'premium' => false]
+                            ];
+                            
+                            foreach ($format_options as $option) {
+                                // Tous les formats sont gratuits pour l'instant
+                                $checked = ($current_format == $option['value']) ? 'checked' : '';
+                                
+                                echo '<label style="display: flex; align-items: center; gap: 6px; margin: 0; font-size: 11px;">';
+                                echo '<input type="radio" name="canvas_format" value="' . $option['value'] . '" ' . $checked . ' style="margin: 0; transform: scale(0.8);">';
+                                echo '<span>' . $option['label'] . '</span>';
+                                echo '</label>';
+                            }
+                            ?>
+                        </div>
                     </div>
 
                     <!-- Orientation -->
                     <div>
                         <label for="template-orientation" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🔄 ORIENTATION</label>
-                        <select id="template-orientation" name="canvas_orientation" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
-                            <option value="portrait" ${templateOrientation === 'portrait' ? 'selected' : ''}>Portrait</option>
-                            <option value="landscape" ${templateOrientation === 'landscape' ? 'selected' : ''}>Paysage</option>
-                        </select>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <?php
+                            $current_orientation = $templateOrientation;
+                            
+                            $orientation_options = [
+                                ['value' => 'portrait', 'label' => 'Portrait', 'premium' => false],
+                                ['value' => 'landscape', 'label' => 'Paysage', 'premium' => false]
+                            ];
+                            
+                            foreach ($orientation_options as $option) {
+                                // Toutes les orientations sont gratuites pour l'instant
+                                $checked = ($current_orientation == $option['value']) ? 'checked' : '';
+                                
+                                echo '<label style="display: flex; align-items: center; gap: 6px; margin: 0; font-size: 11px;">';
+                                echo '<input type="radio" name="canvas_orientation" value="' . $option['value'] . '" ' . $checked . ' style="margin: 0; transform: scale(0.8);">';
+                                echo '<span>' . $option['label'] . '</span>';
+                                echo '</label>';
+                            }
+                            ?>
+                        </div>
                     </div>
 
                     <!-- Résolution DPI -->
                     <div style="grid-column: span 2;">
                         <label for="template-dpi" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🎯 RÉSOLUTION (DPI)</label>
-                        <select id="template-dpi" name="canvas_dpi" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
-                            <option value="72" ${templateDpi == 72 ? 'selected' : ''}>72 DPI - Écran (faible qualité)</option>
-                            <option value="96" ${templateDpi == 96 ? 'selected' : ''}>96 DPI - Web (qualité standard)</option>
-                            <option value="150" ${templateDpi == 150 ? 'selected' : ''}>150 DPI - Impression moyenne</option>
-                            <option value="300" ${templateDpi == 300 ? 'selected' : ''}>300 DPI - Haute qualité</option>
-                            <option value="600" ${templateDpi == 600 ? 'selected' : ''}>600 DPI - Professionnel</option>
-                        </select>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <?php
+                            $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+                            $current_dpi = $templateDpi;
+                            
+                            $dpi_options = [
+                                ['value' => '72', 'label' => '72 DPI - Écran (faible qualité)', 'premium' => false],
+                                ['value' => '96', 'label' => '96 DPI - Web (qualité standard)', 'premium' => false],
+                                ['value' => '150', 'label' => '150 DPI - Impression moyenne', 'premium' => false],
+                                ['value' => '300', 'label' => '300 DPI - Haute qualité', 'premium' => true],
+                                ['value' => '600', 'label' => '600 DPI - Professionnel', 'premium' => true]
+                            ];
+                            
+                            foreach ($dpi_options as $option) {
+                                // Ne montrer que les options autorisées selon la licence
+                                if ($option['premium'] && !$is_premium) {
+                                    continue;
+                                }
+                                
+                                $checked = ($current_dpi == $option['value']) ? 'checked' : '';
+                                $premium_badge = $option['premium'] ? ' <span style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #856404; font-size: 10px; font-weight: bold; padding: 1px 4px; border-radius: 8px;">⭐ PREMIUM</span>' : '';
+                                
+                                echo '<label style="display: flex; align-items: center; gap: 6px; margin: 0; font-size: 11px;">';
+                                echo '<input type="radio" name="canvas_dpi" value="' . $option['value'] . '" ' . $checked . ' style="margin: 0; transform: scale(0.8);">';
+                                echo '<span>' . $option['label'] . $premium_badge . '</span>';
+                                echo '</label>';
+                            }
+                            
+                            if (!$is_premium) {
+                                echo '<div style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 3px; font-size: 10px;">';
+                                echo '<strong>🔒 Premium requis</strong><br>';
+                                echo 'Résolutions 300-600 DPI disponibles avec la licence Premium.';
+                                echo '</div>';
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1179,9 +1241,13 @@ function saveTemplateSettings() {
     formData.append('is_default', document.getElementById('template-is-default').checked ? '1' : '0');
     
     // Ajouter les paramètres canvas
-    formData.append('canvas_format', document.getElementById('template-format').value);
-    formData.append('canvas_orientation', document.getElementById('template-orientation').value);
-    formData.append('canvas_dpi', document.getElementById('template-dpi').value);
+    var canvasFormat = document.querySelector('input[name="canvas_format"]:checked');
+    var canvasOrientation = document.querySelector('input[name="canvas_orientation"]:checked');
+    var canvasDpi = document.querySelector('input[name="canvas_dpi"]:checked');
+    
+    formData.append('canvas_format', canvasFormat ? canvasFormat.value : 'A4');
+    formData.append('canvas_orientation', canvasOrientation ? canvasOrientation.value : 'portrait');
+    formData.append('canvas_dpi', canvasDpi ? canvasDpi.value : '96');
     
     // Désactiver le bouton de sauvegarde
     var saveButton = document.querySelector('#template-settings-modal .button-primary');

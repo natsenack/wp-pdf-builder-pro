@@ -87,13 +87,16 @@ function get_canvas_modal_value($key, $default = '') {
                         ];
                         
                         foreach ($dpi_options as $option) {
-                            $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
+                            // Ne montrer que les options autorisées selon la licence
+                            if ($option['premium'] && !$is_premium) {
+                                continue;
+                            }
+                            
                             $checked = ($current_dpi == $option['value']) ? 'checked' : '';
-                            $premium_class = $option['premium'] ? 'premium-option' : '';
                             $premium_badge = $option['premium'] ? ' <span class="premium-badge">⭐ PREMIUM</span>' : '';
                             
-                            echo '<label style="display: flex; align-items: center; gap: 8px; margin: 0; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '">';
-                            echo '<input type="radio" name="pdf_builder_canvas_dpi" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . ' style="margin: 0;">';
+                            echo '<label style="display: flex; align-items: center; gap: 8px; margin: 0;" class="dpi-option">';
+                            echo '<input type="radio" name="pdf_builder_canvas_dpi" value="' . $option['value'] . '" ' . $checked . ' style="margin: 0;">';
                             echo '<span>' . $option['label'] . $premium_badge . '</span>';
                             echo '</label>';
                         }
