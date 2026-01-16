@@ -377,6 +377,9 @@ try {
         # Si git add échoue à cause des fichiers ignorés, essayer avec --ignore-errors
         Write-Log "Tentative avec --ignore-errors" "INFO"
         & git add --ignore-errors . 2>$null
+    } elseif ($gitAddResult -and $gitAddResult -notmatch "^warning:") {
+        # Log only if there are actual errors (not just warnings)
+        Write-Log "Erreur git add: $gitAddResult" "ERROR"
     }
     
     # Force add critical compiled files
