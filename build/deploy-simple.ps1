@@ -578,7 +578,10 @@ foreach ($file in $filesToDeploy) {
     if ($file.PSObject.Properties.Match('RelativePath').Count -gt 0) {
         $relativePath = $file.RelativePath
     } else {
+        Write-Log "DEBUG: PluginDir = '$PluginDir'" "INFO"
+        Write-Log "DEBUG: File.FullName = '$($file.FullName)'" "INFO"
         $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
+        Write-Log "DEBUG: RelativePath after replace = '$relativePath'" "INFO"
     }
     $ftpFilePath = $relativePath
     $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
