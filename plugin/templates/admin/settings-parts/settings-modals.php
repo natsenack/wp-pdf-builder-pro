@@ -61,19 +61,22 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
-                <div class="setting-group">
-                    <label style="color: #666; font-weight: 500;">Largeur (px)</label>
-                    <div style="padding: 10px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; font-family: monospace; font-size: 14px; color: #495057; text-align: center;">
-                        <?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?> px
+                <div class="setting-group" style="grid-column: span 2;">
+                    <label style="color: #666; font-weight: 500; margin-bottom: 8px; display: block;">📐 Dimensions du Canvas</label>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div style="flex: 1;">
+                            <span style="font-size: 12px; color: #666; margin-right: 8px;">Largeur:</span>
+                            <span style="font-family: monospace; font-size: 14px; font-weight: 600; color: #495057;">
+                                <?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>px
+                            </span>
+                        </div>
+                        <div style="flex: 1;">
+                            <span style="font-size: 12px; color: #666; margin-right: 8px;">Hauteur:</span>
+                            <span style="font-family: monospace; font-size: 14px; font-weight: 600; color: #495057;">
+                                <?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>px
+                            </span>
+                        </div>
                     </div>
-                    <small style="color: #6c757d; font-size: 11px; margin-top: 4px; display: block;">Dimension horizontale du canvas</small>
-                </div>
-                <div class="setting-group">
-                    <label style="color: #666; font-weight: 500;">Hauteur (px)</label>
-                    <div style="padding: 10px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; font-family: monospace; font-size: 14px; color: #495057; text-align: center;">
-                        <?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?> px
-                    </div>
-                    <small style="color: #6c757d; font-size: 11px; margin-top: 4px; display: block;">Dimension verticale du canvas</small>
                 </div>
                 <div class="setting-group">
                     <label>Résolutions DPI disponibles</label>
@@ -389,6 +392,13 @@ function get_canvas_modal_value($key, $default = '') {
 
 <style>
 /* Styles pour les modals - utilisant les classes définies dans settings-contenu.php */
+
+/* Overflow pour le contenu des modals */
+.canvas-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
 /* Styles pour les options premium */
 .premium-option {
