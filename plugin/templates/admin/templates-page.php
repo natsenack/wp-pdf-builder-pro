@@ -409,7 +409,7 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
             <div class="template-modal-content" style="background: #fff; border-radius: 8px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
                 <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--pdf-border); padding-bottom: 15px;">
                     <h2 id="template-settings-title" style="margin: 0; color: var(--pdf-text);">⚙️ Paramètres du Template</h2>
-                    <button onclick="closeTemplateSettings()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 0;">×</button>
+                    <button onclick="closeTemplateSettingsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 0;">×</button>
                 </div>
 
                 <div id="template-settings-content">
@@ -485,7 +485,7 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
                 </div>
 
                 <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--pdf-border); padding-top: 15px; margin-top: 25px;">
-                    <button onclick="closeTemplateSettings()" class="button button-secondary">Annuler</button>
+                    <button onclick="closeTemplateSettingsModal()" class="button button-secondary">Annuler</button>
                     <button onclick="saveTemplateSettings()" class="button button-primary">💾 Enregistrer</button>
                 </div>
             </div>
