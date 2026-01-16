@@ -17,6 +17,12 @@ class ReactAssets {
                 echo '<script>window.wp = window.wp || {};</script>';
             }
         }, 0);
+        add_action('admin_print_scripts', function() {
+            global $wp_scripts;
+            if (isset($wp_scripts->registered['general_script'])) {
+                $wp_scripts->registered['general_script']->deps[] = 'wp-util';
+            }
+        });
     }
     
     /**
