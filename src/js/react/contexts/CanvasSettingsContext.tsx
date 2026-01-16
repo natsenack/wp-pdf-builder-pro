@@ -162,12 +162,17 @@ interface CanvasSettingsProviderProps {
 function loadSettingsFromWindowObj(): CanvasSettingsContextType {
   try {
     const windowSettings = window.pdfBuilderData?.canvasSettings || window.pdfBuilderCanvasSettings;
-    
+
     // Debug: Check if window settings exist
     if (typeof window !== 'undefined') {
+      console.log('[CanvasSettings] loadSettingsFromWindowObj called');
       console.log('[CanvasSettings] window.pdfBuilderData exists:', !!window.pdfBuilderData);
       console.log('[CanvasSettings] window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
-      console.log('[CanvasSettings] windowSettings:', windowSettings);
+      console.log('[CanvasSettings] windowSettings type:', typeof windowSettings);
+      console.log('[CanvasSettings] windowSettings value:', windowSettings);
+      if (windowSettings && typeof windowSettings === 'object') {
+        console.log('[CanvasSettings] windowSettings keys:', Object.keys(windowSettings));
+      }
     }
     
     if (!windowSettings) {
