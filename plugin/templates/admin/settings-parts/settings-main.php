@@ -234,8 +234,9 @@
             copyLicenseKey();
         });
 
-        $(document).on('click', '#delete_license_key_btn', function(e) {
-            e.preventDefault();
+        $(document).on('click', '#delete_license_key_btn', function(e) {            console.log('🔑 PDF Builder Debug - Generate license key button clicked');
+            console.log('🔑 PDF Builder Debug - Event target:', e.target);
+            console.log('🔑 PDF Builder Debug - Button exists:', $('#generate_license_key_btn').length);            e.preventDefault();
             deleteTestLicenseKey();
         });
 
@@ -325,28 +326,38 @@
     // === FONCTIONS UTILITAIRES ===
 
     function makeAjaxCall(action, data, successCallback, errorCallback) {
-        console.log('PDF Builder Debug - pdfBuilderAjax:', window.pdfBuilderAjax);
-        console.log('PDF Builder Debug - ajaxurl:', ajaxurl);
+        console.log('📡 PDF Builder Debug - makeAjaxCall called with action:', action);
+        console.log('📡 PDF Builder Debug - pdfBuilderAjax:', window.pdfBuilderAjax);
+        console.log('📡 PDF Builder Debug - ajaxurl:', ajaxurl);
         const ajaxData = {
             action: action,
             nonce: pdfBuilderAjax?.nonce || '',
             ...data
         };
-        console.log('PDF Builder Debug - ajaxData:', ajaxData);
+        console.log('📡 PDF Builder Debug - Final ajaxData:', ajaxData);
+        console.log('📡 PDF Builder Debug - Making AJAX request to:', pdfBuilderAjax?.ajaxurl || ajaxurl);
 
         $.ajax({
             url: pdfBuilderAjax?.ajaxurl || ajaxurl,
             type: 'POST',
             data: ajaxData,
             success: function(response) {
+                console.log('📡 PDF Builder Debug - AJAX request successful');
+                console.log('📡 PDF Builder Debug - Raw response:', response);
                 if (response.success) {
+                    console.log('📡 PDF Builder Debug - Response success = true');
                     if (successCallback) successCallback(response);
                 } else {
+                    console.log('📡 PDF Builder Debug - Response success = false');
                     console.error('❌ AJAX Error:', response.data?.message || 'Unknown error');
                     if (errorCallback) errorCallback(response);
                 }
             },
             error: function(xhr, status, error) {
+                console.log('📡 PDF Builder Debug - AJAX request failed');
+                console.log('📡 PDF Builder Debug - XHR status:', xhr.status);
+                console.log('📡 PDF Builder Debug - Status:', status);
+                console.log('📡 PDF Builder Debug - Error:', error);
                 console.error('❌ AJAX Request failed:', status, error);
                 if (errorCallback) errorCallback({message: 'Request failed'});
             }
@@ -455,17 +466,29 @@
 
     function generateTestLicenseKey() {
         console.log('🚀 PDF Builder Debug - generateTestLicenseKey called');
-        console.log('PDF Builder Debug - pdfBuilderAjax:', window.pdfBuilderAjax);
-        console.log('PDF Builder Debug - ajaxurl:', ajaxurl);
+        console.log('🚀 PDF Builder Debug - Current timestamp:', new Date().toISOString());
+        console.log('🚀 PDF Builder Debug - pdfBuilderAjax exists:', typeof window.pdfBuilderAjax !== 'undefined');
+        console.log('🚀 PDF Builder Debug - pdfBuilderAjax:', window.pdfBuilderAjax);
+        console.log('🚀 PDF Builder Debug - ajaxurl:', ajaxurl);
+        console.log('🚀 PDF Builder Debug - Calling makeAjaxCall...');
+
         makeAjaxCall('pdf_builder_generate_test_license_key', {}, function(response) {
+            console.log('✅ PDF Builder Debug - AJAX success callback called');
+            console.log('✅ PDF Builder Debug - Response:', response);
             const newKey = response.data?.license_key || '';
+            console.log('✅ PDF Builder Debug - New key:', newKey);
             if (newKey) {
+                console.log('✅ PDF Builder Debug - Setting key in input field');
                 $('#license_test_key').val(newKey);
                 $('#delete_license_key_btn').show();
                 $('#license_key_status').html('<span style="color: #28a745;">✓ Clé générée avec succès</span>');
                 showSuccess('Clé de test générée avec succès');
+            } else {
+                console.log('❌ PDF Builder Debug - No key in response');
             }
         }, function(error) {
+            console.log('❌ PDF Builder Debug - AJAX error callback called');
+            console.log('❌ PDF Builder Debug - Error:', error);
             $('#license_key_status').html('<span style="color: #dc3545;">❌ Erreur lors de la génération</span>');
             showError('Erreur lors de la génération de la clé de test');
         });
@@ -679,16 +702,29 @@
     // === INITIALISATION ===
 
     function initializeDeveloperSections() {
+        console.log('🔧 PDF Builder Debug - initializeDeveloperSections called');
+        console.log('🔧 PDF Builder Debug - Developer enabled checkbox exists:', $('#developer_enabled').length);
+        console.log('🔧 PDF Builder Debug - Generate license button exists:', $('#generate_license_key_btn').length);
+        console.log('🔧 PDF Builder Debug - License test key input exists:', $('#license_test_key').length);
+
         // Masquer les sections développeur si le mode n'est pas activé
         const developerEnabled = $('#developer_enabled').is(':checked');
+        console.log('🔧 PDF Builder Debug - Developer mode enabled:', developerEnabled);
+
         if (!developerEnabled) {
             $('.developer-section-hidden').hide();
+            console.log('🔧 PDF Builder Debug - Developer sections hidden');
+        } else {
+            console.log('🔧 PDF Builder Debug - Developer sections shown');
         }
 
         // Masquer le bouton de suppression si pas de clé
         const licenseKey = $('#license_test_key').val();
         if (!licenseKey) {
             $('#delete_license_key_btn').hide();
+            console.log('🔧 PDF Builder Debug - Delete button hidden (no key)');
+        } else {
+            console.log('🔧 PDF Builder Debug - Delete button shown (key exists)');
         }
 
         console.log('🔧 Developer sections initialized');
