@@ -294,6 +294,26 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                     <?php endif; ?>
                 </div>
+                <div class="setting-group">
+                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond du Conteneur <span class="premium-badge">⭐ PREMIUM</span></label>
+                    <?php if ($is_premium): ?>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="color" id="modal_canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color"
+                               value="<?php echo esc_attr(get_canvas_modal_value('container_bg_color', $canvas_defaults['container_bg_color'])); ?>"
+                               style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer; padding: 5px;">
+                        <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('container_bg_color', $canvas_defaults['container_bg_color'])); ?>"
+                               style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
+                    </div>
+                    <?php else: ?>
+                    <div style="display: flex; gap: 12px; align-items: center; opacity: 0.6; pointer-events: none;">
+                        <input type="color" id="modal_canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color"
+                               value="#f8f9fa" disabled
+                               style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: not-allowed; padding: 5px;">
+                        <input type="text" readonly value="#f8f9fa"
+                               style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
+                    </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
         <div class="canvas-modal-footer">
@@ -440,6 +460,14 @@ function get_canvas_modal_value($key, $default = '') {
                         <option value="jpg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'jpg'); ?>>JPG</option>
                         <option value="svg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'svg'); ?>>SVG</option>
                     </select>
+                </div>
+                <div class="setting-group">
+                    <label for="modal_canvas_export_transparent">Fond transparent</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="modal_canvas_export_transparent" name="pdf_builder_canvas_export_transparent"
+                               value="1" <?php checked(get_canvas_modal_value('export_transparent', $canvas_defaults['export_transparent']), '1'); ?>>
+                        <label for="modal_canvas_export_transparent"></label>
+                    </div>
                 </div>
             </div>
         </div>
