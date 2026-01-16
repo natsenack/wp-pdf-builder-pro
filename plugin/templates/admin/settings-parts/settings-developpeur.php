@@ -719,4 +719,154 @@
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
+<script type="text/javascript">
+(function($) {
+    'use strict';
+
+    $(document).ready(function() {
+        // Gestionnaire pour le bouton de génération de clé de test
+        $('#generate_license_key_btn').on('click', function(e) {
+            e.preventDefault();
+            const $btn = $(this);
+            const $input = $('#license_test_key');
+            const $status = $('#license_key_status');
+            const nonce = $('#generate_license_key_nonce').val();
+
+            // Désactiver le bouton pendant la génération
+            $btn.prop('disabled', true).text('🔄 Génération...');
+            $status.html('<span style="color: #007cba;">Génération en cours...</span>');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_generate_test_license_key',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $input.val(response.data.license_key);
+                        $status.html('<span style="color: #28a745;">✅ Clé générée avec succès ! Expire le ' + response.data.expires + '</span>');
+                        // Activer le bouton copier
+                        $('#copy_license_key_btn').prop('disabled', false);
+                        $('#delete_license_key_btn').show();
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    // Réactiver le bouton
+                    $btn.prop('disabled', false).text('🔑 Générer');
+                }
+            });
+        });
+
+        // Gestionnaire pour le bouton copier
+        $('#copy_license_key_btn').on('click', function(e) {
+            e.preventDefault();
+            const $input = $('#license_test_key');
+            const key = $input.val();
+
+            if (key) {
+                navigator.clipboard.writeText(key).then(function() {
+                    $('#license_key_status').html('<span style="color: #28a745;">✅ Clé copiée dans le presse-papiers !</span>');
+                    setTimeout(function() {
+                        $('#license_key_status').html('');
+                    }, 3000);
+                }).catch(function(err) {
+                    $('#license_key_status').html('<span style="color: #dc3545;">❌ Erreur lors de la copie</span>');
+                });
+            }
+        });
+
+        // Gestionnaire pour le bouton supprimer
+        $('#delete_license_key_btn').on('click', function(e) {
+            e.preventDefault();
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette clé de test ?')) {
+                return;
+            }
+
+            const $btn = $(this);
+            const $input = $('#license_test_key');
+            const $status = $('#license_key_status');
+            const nonce = $('#generate_license_key_nonce').val();
+
+            $btn.prop('disabled', true).text('🗑️ Suppression...');
+
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_delete_test_license_key',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $input.val('');
+                        $status.html('<span style="color: #28a745;">✅ Clé supprimée avec succès !</span>');
+                        $('#copy_license_key_btn').prop('disabled', true);
+                        $btn.hide();
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🗑️ Supprimer');
+                }
+            });
+        });
+
+        // Gestionnaire pour le toggle du mode test
+        $('#license_test_mode').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            const nonce = $('#toggle_license_test_mode_nonce').val();
+
+            $('#license_test_mode_status').html('<span style="color: #007cba;">Mise à jour en cours...</span>');
+
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_toggle_test_mode',
+                    enabled: isChecked ? 1 : 0,
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const statusText = isChecked ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif';
+                        const statusClass = isChecked ? 'license-test-mode-active' : 'license-test-mode-inactive';
+                        $('#license_test_mode_status').removeClass('license-test-mode-active license-test-mode-inactive').addClass(statusClass).html(statusText);
+
+                        if (isChecked && response.data.test_key) {
+                            $('#license_test_key').val(response.data.test_key);
+                            $('#copy_license_key_btn').prop('disabled', false);
+                            $('#delete_license_key_btn').show();
+                        } else if (!isChecked) {
+                            $('#license_test_key').val('');
+                            $('#copy_license_key_btn').prop('disabled', true);
+                            $('#delete_license_key_btn').hide();
+                        }
+                    } else {
+                        $('#license_test_mode_status').html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Remettre le checkbox dans l'état précédent
+                        $('#license_test_mode').prop('checked', !isChecked);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#license_test_mode_status').html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    $('#license_test_mode').prop('checked', !isChecked);
+                }
+            });
+        });
+    });
+})(jQuery);
+</script>
+
 
