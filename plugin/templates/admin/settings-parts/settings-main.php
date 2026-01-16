@@ -324,11 +324,14 @@
     // === FONCTIONS UTILITAIRES ===
 
     function makeAjaxCall(action, data, successCallback, errorCallback) {
+        console.log('PDF Builder Debug - pdfBuilderAjax:', window.pdfBuilderAjax);
+        console.log('PDF Builder Debug - ajaxurl:', ajaxurl);
         const ajaxData = {
             action: action,
             nonce: pdfBuilderAjax?.nonce || '',
             ...data
         };
+        console.log('PDF Builder Debug - ajaxData:', ajaxData);
 
         $.ajax({
             url: pdfBuilderAjax?.ajaxurl || ajaxurl,
@@ -450,6 +453,7 @@
     }
 
     function generateTestLicenseKey() {
+        console.log('PDF Builder Debug - generateTestLicenseKey called');
         makeAjaxCall('pdf_builder_generate_test_license_key', {}, function(response) {
             const newKey = response.data?.license_key || '';
             if (newKey) {
