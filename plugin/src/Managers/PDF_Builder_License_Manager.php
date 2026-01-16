@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder License Manager
  * Gestion centralisée des licences freemium
+ *
+ * Version: 1.1.0
  */
 
 
