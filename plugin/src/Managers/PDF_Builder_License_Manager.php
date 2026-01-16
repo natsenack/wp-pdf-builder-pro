@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  * Version: 1.1.0
  */
 
-class PdfBuilderLicenseManager
+class PDF_Builder_License_Manager
 {
     /**
      * Instance unique
