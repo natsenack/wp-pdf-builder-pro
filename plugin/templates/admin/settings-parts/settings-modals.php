@@ -60,6 +60,17 @@ function get_canvas_modal_value($key, $default = '') {
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
+            <?php $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user(); ?>
+            <?php if (!$is_premium): ?>
+            <div class="premium-notice-banner" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #ffc107; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 24px;">⭐</div>
+                <div style="flex: 1;">
+                    <strong style="color: #856404; font-size: 14px;">🔒 Fonctions Premium Disponibles</strong><br>
+                    <span style="color: #856404; font-size: 12px;">Débloquez la personnalisation avancée : couleur de fond, bordures et ombres du canvas</span>
+                </div>
+                <a href="#" onclick="showUpgradeModal('canvas_premium_features')" style="background: #ffc107; color: #212529; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: background 0.2s ease;" onmouseover="this.style.background='#e0a800'" onmouseout="this.style.background='#ffc107'">Découvrir Premium →</a>
+            </div>
+            <?php endif; ?>
             <div class="modal-settings-grid">
                 <div class="setting-group" style="grid-column: span 2;">
                     <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas</label>
@@ -227,11 +238,6 @@ function get_canvas_modal_value($key, $default = '') {
                         <input type="text" readonly value="#ffffff"
                                style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
                     </div>
-                    <div class="warning-box" style="margin-top: 8px;">
-                        <strong>🔒 Fonction Premium</strong><br>
-                        Personnalisez la couleur de fond du canvas avec la version Premium.<br>
-                        <a href="#" onclick="showUpgradeModal('canvas_bg_color')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
-                    </div>
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
@@ -281,11 +287,6 @@ function get_canvas_modal_value($key, $default = '') {
                                    value="0" disabled>
                             <label for="modal_canvas_shadow_enabled"></label>
                         </div>
-                    </div>
-                    <div class="warning-box" style="margin-top: 8px;">
-                        <strong>🔒 Fonction Premium</strong><br>
-                        Personnalisez la bordure et l'ombre du canvas avec la version Premium.<br>
-                        <a href="#" onclick="showUpgradeModal('canvas_border')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
                     </div>
                     <?php endif; ?>
                 </div>
