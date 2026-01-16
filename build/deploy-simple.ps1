@@ -27,19 +27,25 @@ $FtpConfig = @{
     RemotePath = "/wp-content/plugins/wp-pdf-builder-pro"
 }
 
+# Définir les variables globales pour l'accès depuis les fonctions
+$global:FtpHost = $FtpConfig.Host
+$global:FtpUser = $FtpConfig.User
+$global:FtpPass = $FtpConfig.Pass
+$global:FtpPath = $FtpConfig.RemotePath
+
 # Vérifier la sécurité de la configuration
-if ($FtpPass -eq "iZ6vU3zV2y" -or $FtpPass -eq "CHANGE_THIS_PASSWORD") {
+if ($global:FtpPass -eq "iZ6vU3zV2y" -or $global:FtpPass -eq "CHANGE_THIS_PASSWORD") {
     Write-Host "⚠️  ATTENTION: Le mot de passe FTP est encore la valeur par défaut !" -ForegroundColor Red
     Write-Host "   Veuillez modifier le fichier ftp-config.json avec vos vraies credentials." -ForegroundColor Red
     Write-Host "   Le script va continuer mais le déploiement risque d'échouer." -ForegroundColor Yellow
     Start-Sleep -Seconds 3
 }
 
-# Variables de configuration (non globales)
-$FtpHost = $FtpConfig.Host
-$FtpUser = $FtpConfig.User
-$FtpPass = $FtpConfig.Pass
-$FtpPath = $FtpConfig.RemotePath
+# Variables de configuration (maintenant définies comme globales ci-dessus)
+$FtpHost = $global:FtpHost
+$FtpUser = $global:FtpUser
+$FtpPass = $global:FtpPass
+$FtpPath = $global:FtpPath
 
 # Détecter automatiquement le répertoire de travail
 $WorkingDir = Split-Path $PSScriptRoot -Parent
@@ -125,8 +131,8 @@ function Get-FtpFiles {
     param([string]$remotePath = "")
     $files = @()
     try {
-        $basePath = if ($FtpPath) { "$FtpHost/$FtpPath" } else { $FtpHost }
-        $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$remotePath"
+        $basePath = if ($global:FtpPath) { "$global:FtpHost/$global:FtpPath" } else { $global:FtpHost }
+        $ftpUri = "ftp://$global:FtpUser`:$global:FtpPass@$basePath/$remotePath"
         $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $ftpRequest.UseBinary = $true
@@ -161,8 +167,8 @@ function Get-FtpFiles {
 function Remove-FtpFile {
     param([string]$remotePath)
     try {
-        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-        $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$remotePath"
+        $basePath = if ($global:FtpPath) { "$global:FtpHost$global:FtpPath" } else { $global:FtpHost }
+        $ftpUri = "ftp://$global:FtpUser`:$global:FtpPass@$basePath/$remotePath"
         $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
         $ftpRequest.UseBinary = $true
@@ -178,8 +184,8 @@ function Remove-FtpFile {
 function Test-DeployedFileIntegrity {
     param([string]$remotePath, [string]$expectedContent = "")
     try {
-        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-        $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$remotePath"
+        $basePath = if ($global:FtpPath) { "$global:FtpHost$global:FtpPath" } else { $global:FtpHost }
+        $ftpUri = "ftp://$global:FtpUser`:$global:FtpPass@$basePath/$remotePath"
         
         # Vérifier la date de modification du fichier sur le serveur
         $dateRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
@@ -360,10 +366,9 @@ if ($All) {
 
 # Always include critical compiled files (force add even if not detected as modified)
 $criticalCompiledFiles = @(
-    "plugin/assets/js/pdf-builder-react-wrapper.min.js"
     "plugin/assets/js/pdf-builder-react.min.js"
     "plugin/assets/css/pdf-builder-react.min.css"
-    # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
+    "plugin/assets/js/settings-main.js"
 )
 foreach ($criticalCompiledFile in $criticalCompiledFiles) {
     $criticalCompiledPath = Join-Path $WorkingDir $criticalCompiledFile
@@ -414,12 +419,11 @@ Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
 Write-Log "Ajout des fichiers modifiés à Git" "INFO"
 Push-Location $WorkingDir
 try {
-    # Utiliser git add -A pour ajouter tous les changements (nouveaux, modifiés, supprimés)
-    # dans tout le repository, en ignorant les avertissements de fins de ligne
+    # Utiliser git add -A pour ajouter tous les changements
     $gitAddResult = & git add -A 2>&1
 
     # Vérifier si c'est juste un avertissement de fins de ligne (non bloquant)
-    $isOnlyLineEndingWarning = $gitAddResult -match "LF will be replaced by CRLF" -or $gitAddResult -match "warning:.*LF will be replaced by CRLF"
+    $isOnlyLineEndingWarning = $gitAddResult -match "LF will be replaced by CRLF" -or $gitAddResult -match "CRLF will be replaced by LF"
 
     # Git add peut réussir même avec des avertissements de fins de ligne
     if ($LASTEXITCODE -eq 0) {
@@ -452,7 +456,7 @@ $maxConcurrent = 5  # Nombre maximum d'uploads simultanés
 if (!$SkipConnectionTest) {
     Write-Log "Test de connexion FTP" "INFO"
     try {
-        $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost/"
+        $ftpUri = "ftp://$global:FtpUser`:$global:FtpPass@$global:FtpHost/"
         $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $ftpRequest.Timeout = 5000
@@ -467,8 +471,8 @@ if (!$SkipConnectionTest) {
 }
 
 # Créer le répertoire de base si nécessaire
-Write-Log "Création du répertoire de base: $FtpPath" "INFO"
-$pathWithoutLeadingSlash = $FtpPath.TrimStart('/')
+Write-Log "Création du répertoire de base: $global:FtpPath" "INFO"
+$pathWithoutLeadingSlash = $global:FtpPath.TrimStart('/')
 $pathSegments = $pathWithoutLeadingSlash -split '/'
 $currentPath = ""
 
@@ -478,9 +482,9 @@ foreach ($segment in $pathSegments) {
     if (!(Test-FtpDirectoryExists $currentPath)) {
         Write-Log "Création répertoire: $currentPath" "INFO"
         try {
-            $ftpUri = "ftp://$FtpHost$currentPath/"
+            $ftpUri = "ftp://$global:FtpHost$currentPath/"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($global:FtpUser, $global:FtpPass)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $ftpRequest.UseBinary = $true
             $ftpRequest.UsePassive = $true
@@ -538,8 +542,8 @@ if ($directoriesToCreate.Count -eq 0) {
         
         Write-Log "Création répertoire: $dir" "INFO"
         try {
-            $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-            $dirUri = "ftp://$FtpUser`:$FtpPass@$basePath$dir/"
+            $basePath = if ($global:FtpPath) { "$global:FtpHost$global:FtpPath" } else { $global:FtpHost }
+            $dirUri = "ftp://$global:FtpUser`:$global:FtpPass@$basePath$dir/"
             $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
             $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $dirRequest.UseBinary = $true
@@ -591,8 +595,8 @@ foreach ($file in $filesToDeploy) {
 
     # Upload séquentiel
     try {
-        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-        $ftpUri = "ftp://$FtpUser`:$FtpPass@$basePath/$ftpFilePath"
+        $basePath = if ($global:FtpPath) { "$global:FtpHost$global:FtpPath" } else { $global:FtpHost }
+        $ftpUri = "ftp://$global:FtpUser`:$global:FtpPass@$basePath/$ftpFilePath"
 
         $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
         $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
