@@ -291,10 +291,17 @@ class AjaxHandler
     public function ajaxGetTemplate()
     {
         try {
+            // Debug logging
+            error_log('[PDF Builder] ajaxGetTemplate called at ' . current_time('Y-m-d H:i:s'));
+            error_log('[PDF Builder] REQUEST_METHOD: ' . (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN'));
+            error_log('[PDF Builder] template_id GET: ' . (isset($_GET['template_id']) ? $_GET['template_id'] : 'NOT SET'));
+            error_log('[PDF Builder] template_id POST: ' . (isset($_POST['template_id']) ? $_POST['template_id'] : 'NOT SET'));
+
             // Valider les permissions et nonce de manière unifiée
             // 🔧 CORRECTION: Accepter les éditeurs aussi (MIN_CAPABILITY au lieu de ADMIN_CAPABILITY)
             $validation = NonceManager::validateRequest(NonceManager::MIN_CAPABILITY);
             if (!$validation['success']) {
+                error_log('[PDF Builder] Nonce validation failed: ' . $validation['message']);
                 if ($validation['code'] === 'nonce_invalid') {
                     NonceManager::sendNonceErrorResponse();
                 } else {
@@ -302,25 +309,38 @@ class AjaxHandler
                 }
                 return;
             }
-            
+
+            error_log('[PDF Builder] Nonce validation passed');
+
             // Récupérer le template_id depuis GET ou POST
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
 
             if (!$template_id) {
+                error_log('[PDF Builder] No template_id provided');
                 wp_send_json_error('ID de template manquant');
                 return;
             }
 
+            error_log('[PDF Builder] Processing template_id: ' . $template_id);
+
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
                 // Fallback: charger le template directement
+                error_log('[PDF Builder] template_processor not available, using fallback');
                 return $this->fallbackLoadTemplate($template_id);
             }
+
+            error_log('[PDF Builder] Using template_processor to load template');
 
             // Charger le template en utilisant le template processor
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
 
             if ($template) {
+                error_log('[PDF Builder] Template loaded successfully via template_processor');
+            } else {
+                error_log('[PDF Builder] Template loading failed via template_processor, trying fallback');
+                return $this->fallbackLoadTemplate($template_id);
+            }
                 // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
                 $template_name = '';
                 $db_template = null;
@@ -1071,20 +1091,26 @@ class AjaxHandler
     private function fallbackLoadTemplate($template_id)
     {
         try {
+            error_log('[PDF Builder] fallbackLoadTemplate called for template_id: ' . $template_id);
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier que la table existe
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+                error_log('[PDF Builder] Templates table does not exist: ' . $table_templates);
                 wp_send_json_error('Table des templates introuvable');
                 return;
             }
 
+            error_log('[PDF Builder] Templates table exists, querying for template_id: ' . $template_id);
             $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
+                error_log('[PDF Builder] Template not found in database');
                 wp_send_json_error('Template introuvable');
                 return;
             }
+
+            error_log('[PDF Builder] Template found, attempting JSON decode');
 
             // Essayer de décoder le JSON
             $template_data = json_decode($template['template_data'], true);
