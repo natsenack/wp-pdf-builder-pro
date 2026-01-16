@@ -1,6 +1,6 @@
 /**
  * PDF Builder Pro V2 - React Initialization Script
- * 
+ *
  * Ce script initialise l'éditeur React une fois que tous les bundles sont chargés
  */
 
@@ -41,7 +41,7 @@
             try {
                 // Initialiser l'éditeur React
                 const success = window.pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
-                
+
                 if (success) {
                     console.log('[PDF Builder] ✅ PDFBuilderReact initialized successfully');
                 } else {

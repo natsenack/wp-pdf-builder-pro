@@ -13,6 +13,11 @@ module.exports = {
   mode: isDev ? "development" : "production",
   entry: {
     "pdf-builder-react": "./src/js/react/index.tsx",
+    "settings-tabs": "./src/js/admin/settings-tabs.js",
+    "settings-main": "./src/js/admin/settings-main.js",
+    "canvas-settings": "./src/js/admin/canvas-settings.js",
+    "pdf-builder-react-init": "./src/js/admin/pdf-builder-react-init.js",
+    "pdf-builder-react-wrapper": "./src/js/admin/pdf-builder-react-wrapper.js",
   },
   output: {
     path: outputPath,
