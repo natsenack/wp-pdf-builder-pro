@@ -586,7 +586,8 @@ function get_canvas_modal_value($key, $default = '') {
     background: #dee2e6;
     border-radius: 12px; /* Moitié de la hauteur pour un cercle parfait */
     transition: 0.3s;
-    border: 1px solid #adb5bd; /* Bordure subtile */3
+    border: 1px solid #adb5bd; /* Bordure subtile */
+    height: 22px;
     
 }
 
