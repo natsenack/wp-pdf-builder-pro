@@ -566,8 +566,8 @@ function get_canvas_modal_value($key, $default = '') {
 .toggle-switch {
     position: relative;
     display: inline-block;
-    width: 52px;
-    height: 28px;
+    width: 50px;
+    height: 24px;
 }
 
 .toggle-switch input {
@@ -584,29 +584,31 @@ function get_canvas_modal_value($key, $default = '') {
     right: 0;
     bottom: 0;
     background: #dee2e6;
-    border-radius: 28px;
+    border-radius: 12px; /* Moitié de la hauteur pour un cercle parfait */
     transition: 0.3s;
+    border: 1px solid #adb5bd; /* Bordure subtile */
 }
 
 .toggle-switch label:before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 2px; /* Ajusté pour centrer */
+    top: 2px; /* Ajusté pour centrer */
     background: white;
     border-radius: 50%;
     transition: 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Ombre subtile */
 }
 
 .toggle-switch input:checked + label {
     background: #6c757d;
+    border-color: #5a6268;
 }
 
 .toggle-switch input:checked + label:before {
-    transform: translateX(24px);
+    transform: translateX(26px); /* Translation ajustée pour la nouvelle largeur */
 }
 
 /* Checkboxes améliorés */
