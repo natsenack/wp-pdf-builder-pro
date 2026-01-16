@@ -62,14 +62,18 @@ function get_canvas_modal_value($key, $default = '') {
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
-                    <label for="modal_canvas_width">Largeur (px)</label>
-                    <input type="number" id="modal_canvas_width" name="pdf_builder_canvas_width"
-                           value="<?php echo esc_attr(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>">
+                    <label style="color: #666; font-weight: 500;">Largeur (px)</label>
+                    <div style="padding: 10px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; font-family: monospace; font-size: 14px; color: #495057; text-align: center;">
+                        <?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?> px
+                    </div>
+                    <small style="color: #6c757d; font-size: 11px; margin-top: 4px; display: block;">Dimension horizontale du canvas</small>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_height">Hauteur (px)</label>
-                    <input type="number" id="modal_canvas_height" name="pdf_builder_canvas_height"
-                           value="<?php echo esc_attr(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>">
+                    <label style="color: #666; font-weight: 500;">Hauteur (px)</label>
+                    <div style="padding: 10px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; font-family: monospace; font-size: 14px; color: #495057; text-align: center;">
+                        <?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?> px
+                    </div>
+                    <small style="color: #6c757d; font-size: 11px; margin-top: 4px; display: block;">Dimension verticale du canvas</small>
                 </div>
                 <div class="setting-group">
                     <label>Résolutions DPI disponibles</label>
