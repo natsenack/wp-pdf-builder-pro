@@ -179,7 +179,7 @@ function get_canvas_modal_value($key, $default = '') {
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
                             <input type="color" id="modal_canvas_border_color" name="pdf_builder_canvas_border_color"
                                    value="<?php echo esc_attr(get_canvas_modal_value('border_color', $canvas_defaults['border_color'])); ?>"
-                                   style="width: 100%; height: 36px; border: none; border-radius: 6px; cursor: pointer;">
+                                   style="width: 100%; height: 36px; border: none; border-radius: 6px; cursor: pointer; padding: 5px;">
                         </div>
                         <div style="flex: 1;">
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Épaisseur</label>
@@ -511,7 +511,7 @@ function get_canvas_modal_value($key, $default = '') {
 .modal-settings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    gap: 10px;
     margin-bottom: 0;
 }
 
@@ -520,7 +520,7 @@ function get_canvas_modal_value($key, $default = '') {
     background: #f8f9fa;
     border: 1px solid #e1e5e9;
     border-radius: 12px;
-    padding: 20px;
+    padding: 5px;
     transition: all 0.2s ease;
     position: relative;
 }
