@@ -563,10 +563,20 @@
                             canvasData['pdf_builder_canvas_formats'] = formatValues.join(',');
                         }
 
+                        // Gérer spécifiquement les checkboxes Orientations (tableau)
+                        var orientationCheckboxes = modal.querySelectorAll('input[name="pdf_builder_canvas_orientations[]"]:checked');
+                        if (orientationCheckboxes.length > 0) {
+                            var orientationValues = [];
+                            orientationCheckboxes.forEach(function(checkbox) {
+                                orientationValues.push(checkbox.value);
+                            });
+                            canvasData['pdf_builder_canvas_orientations'] = orientationValues.join(',');
+                        }
+
                         // Gérer les autres inputs normalement
                         inputs.forEach(function(input) {
-                            // Ignorer les checkboxes DPI et Formats déjà traitées
-                            if (input.name === 'pdf_builder_canvas_dpi[]' || input.name === 'pdf_builder_canvas_formats[]') {
+                            // Ignorer les checkboxes DPI, Formats et Orientations déjà traitées
+                            if (input.name === 'pdf_builder_canvas_dpi[]' || input.name === 'pdf_builder_canvas_formats[]' || input.name === 'pdf_builder_canvas_orientations[]') {
                                 return;
                             }
 

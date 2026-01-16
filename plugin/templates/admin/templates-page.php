@@ -64,6 +64,18 @@ if (is_string($available_formats_string) && strpos($available_formats_string, ',
 }
 $available_formats = array_map('strval', $available_formats); // S'assurer que ce sont des chaînes
 
+// Récupérer les orientations disponibles depuis les paramètres canvas
+$available_orientations_string = get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
+if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
+    $available_orientations = explode(',', $available_orientations_string);
+} elseif (is_array($available_orientations_string)) {
+    $available_orientations = $available_orientations_string;
+} else {
+    // Valeur unique, la convertir en tableau
+    $available_orientations = [$available_orientations_string];
+}
+$available_orientations = array_map('strval', $available_orientations); // S'assurer que ce sont des chaînes
+
 // Définir les options DPI avec leurs labels
 $dpi_options = [
     72 => '72 DPI - Écran (faible qualité)',
@@ -80,6 +92,12 @@ $format_options = [
     'Letter' => '🇺🇸 Letter (8.5×11")',
     'Legal' => '⚖️ Legal (8.5×14")',
     'Label' => '📦 Étiquette Colis (100×150mm)'
+];
+
+// Définir les options d'orientation avec leurs labels
+$orientation_options = [
+    'portrait' => '📱 Portrait (Vertical)',
+    'landscape' => '🖥️ Paysage (Horizontal)'
 ];
 ?>
 
@@ -99,6 +117,10 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
 // Variables pour les formats disponibles
 var availableFormats = <?php echo json_encode($available_formats); ?>;
 var formatOptions = <?php echo json_encode($format_options); ?>;
+
+// Variables pour les orientations disponibles
+var availableOrientations = <?php echo json_encode($available_orientations); ?>;
+var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 </script>
 
 <div class="wrap">
@@ -1282,9 +1304,10 @@ function displayTemplateSettings(template) {
                     <div>
                         <label for="template-orientation" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🔄 ORIENTATION</label>
                         <select id="template-orientation" name="canvas_orientation" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
-                            <option value="portrait" ${templateOrientation === 'portrait' ? 'selected' : ''}>Portrait</option>
-                            <option value="landscape" ${templateOrientation === 'landscape' ? 'selected' : ''}>Paysage</option>
                         </select>
+                        <div id="template-orientation-warning" style="margin-top: 5px; color: #dc3545; font-size: 11px; display: none;">
+                            ⚠️ Aucune orientation configurée dans les paramètres canvas
+                        </div>
                     </div>
 
                     <!-- Résolution DPI -->
@@ -1396,6 +1419,36 @@ function displayTemplateSettings(template) {
             option.textContent = 'Aucun format disponible';
             formatSelect.appendChild(option);
             formatWarning.style.display = 'block';
+        }
+    }
+
+    // Remplir le select Orientation avec les options disponibles
+    var orientationSelect = document.getElementById('template-orientation');
+    var orientationWarning = document.getElementById('template-orientation-warning');
+    
+    if (orientationSelect) {
+        orientationSelect.innerHTML = ''; // Vider les options existantes
+        
+        if (availableOrientations && availableOrientations.length > 0) {
+            availableOrientations.forEach(function(orientationValue) {
+                if (orientationOptions && orientationOptions[orientationValue]) {
+                    var option = document.createElement('option');
+                    option.value = orientationValue;
+                    option.textContent = orientationOptions[orientationValue];
+                    if (templateOrientation == orientationValue) {
+                        option.selected = true;
+                    }
+                    orientationSelect.appendChild(option);
+                }
+            });
+            orientationWarning.style.display = 'none';
+        } else {
+            // Aucune option disponible
+            var option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Aucune orientation disponible';
+            orientationSelect.appendChild(option);
+            orientationWarning.style.display = 'block';
         }
     }
 }

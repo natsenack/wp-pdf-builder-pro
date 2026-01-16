@@ -183,21 +183,44 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles</label>
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
-                        <label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e1e5e9'">
-                            <input type="checkbox" id="modal_canvas_orientation_portrait" name="pdf_builder_canvas_allow_portrait" value="1" <?php checked(get_canvas_modal_value('allow_portrait', '1'), '1'); ?>>
-                            <div>
-                                <div style="font-weight: 500; color: #2c3e50;">📱 Portrait</div>
-                                <div style="font-size: 12px; color: #6c757d;">794×1123 px • Vertical</div>
-                            </div>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e1e5e9'">
-                            <input type="checkbox" id="modal_canvas_orientation_landscape" name="pdf_builder_canvas_allow_landscape" value="1" <?php checked(get_canvas_modal_value('allow_landscape', '1'), '1'); ?>>
-                            <div>
-                                <div style="font-weight: 500; color: #2c3e50;">🖥️ Paysage</div>
-                                <div style="font-size: 12px; color: #6c757d;">1123×794 px • Horizontal</div>
-                            </div>
-                        </label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                        <?php
+                        // Récupérer les orientations actuellement sélectionnées
+                        $current_orientations_string = get_canvas_modal_value('orientations', 'portrait,landscape');
+                        $current_orientations = [];
+
+                        // Convertir la valeur actuelle en tableau
+                        if (is_string($current_orientations_string) && strpos($current_orientations_string, ',') !== false) {
+                            $current_orientations = explode(',', $current_orientations_string);
+                        } elseif (is_array($current_orientations_string)) {
+                            $current_orientations = $current_orientations_string;
+                        } else {
+                            // Valeur unique, la convertir en tableau
+                            $current_orientations = [$current_orientations_string];
+                        }
+                        $current_orientations = array_map('strval', $current_orientations); // S'assurer que ce sont des chaînes
+
+                        $orientation_options = [
+                            ['value' => 'portrait', 'label' => 'Portrait', 'desc' => '794×1123 px • Vertical', 'icon' => '📱'],
+                            ['value' => 'landscape', 'label' => 'Paysage', 'desc' => '1123×794 px • Horizontal', 'icon' => '🖥️']
+                        ];
+
+                        foreach ($orientation_options as $option) {
+                            $checked = in_array($option['value'], $current_orientations) ? 'checked' : '';
+
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['value'] === 'portrait' ? 'opacity: 1;' : '') . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<input type="checkbox" name="pdf_builder_canvas_orientations[]" value="' . $option['value'] . '" ' . $checked . '>';
+                            echo '<div style="flex: 1;">';
+                            echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
+                            echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
+                            echo '</div>';
+                            echo '</label>';
+                        }
+                        ?>
+
+                        <div class="info-box">
+                            <strong>ℹ️ Information:</strong> Les orientations sélectionnées seront disponibles dans les paramètres des templates.
+                        </div>
                     </div>
                 </div>
                 <div class="setting-group">
