@@ -956,5 +956,332 @@ function selectPredefinedTemplate(templateSlug) {
         </div>
 
     </div>
-</div> 
- 
+</div>
+
+<!-- JavaScript pour la gestion des templates -->
+<script>
+var currentTemplateId = null;
+
+// Fonction pour ouvrir les paramètres du template
+function openTemplateSettings(templateId, templateName) {
+    console.log('Opening template settings for:', templateId, templateName);
+    currentTemplateId = templateId;
+    
+    // Afficher la modale
+    document.getElementById('template-settings-modal').style.display = 'flex';
+    
+    // Mettre à jour le titre
+    document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de "' + templateName + '"';
+    
+    // Charger les paramètres du template
+    loadTemplateSettings(templateId);
+}
+
+// Fonction pour fermer la modale des paramètres
+function closeTemplateSettingsModal() {
+    document.getElementById('template-settings-modal').style.display = 'none';
+    currentTemplateId = null;
+}
+
+// Fonction pour charger les paramètres du template via AJAX
+function loadTemplateSettings(templateId) {
+    console.log('Loading template settings for ID:', templateId);
+    
+    // Afficher un indicateur de chargement
+    document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
+    
+    // Préparer les données AJAX
+    var data = {
+        action: 'pdf_builder_load_template_settings',
+        template_id: templateId,
+        nonce: pdfBuilderTemplatesNonce
+    };
+    
+    // Faire la requête AJAX
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: data,
+        success: function(response) {
+            console.log('Template settings loaded:', response);
+            if (response.success && response.data && response.data.template) {
+                displayTemplateSettings(response.data.template);
+            } else {
+                var errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du chargement des paramètres';
+                document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>' + errorMsg + '</p></div>';
+                
+                // Afficher une notification d'erreur
+                if (typeof window.showErrorNotification !== 'undefined') {
+                    window.showErrorNotification('Erreur lors du chargement des paramètres: ' + errorMsg);
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error loading template settings:', xhr, status, error);
+            document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
+            
+            // Afficher une notification d'erreur
+            if (typeof window.showErrorNotification !== 'undefined') {
+                window.showErrorNotification('Erreur de communication lors du chargement des paramètres');
+            }
+        }
+    });
+}
+
+// Fonction pour afficher les paramètres du template dans la modale
+function displayTemplateSettings(template) {
+    console.log('Displaying template settings:', template);
+    
+    var content = document.getElementById('template-settings-content');
+    
+    // Créer le formulaire HTML
+    content.innerHTML = `
+        <form id="template-settings-form">
+            <!-- Nom du template -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label for="template-name" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📝 Nom du template</label>
+                <input type="text" id="template-name" name="template_name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;" placeholder="Entrez le nom du template" value="${template.name || ''}">
+            </div>
+
+            <!-- Description du template -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label for="template-description" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📖 Description</label>
+                <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template">${template.description || ''}</textarea>
+            </div>
+
+            <!-- Catégorie du template -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label for="template-category" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">🏷️ Catégorie</label>
+                <select id="template-category" name="template_category" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; background: white; transition: border-color 0.3s ease;">
+                    <option value="facture">🧾 Facture</option>
+                    <option value="devis">📋 Devis</option>
+                    <option value="commande">📦 Commande</option>
+                    <option value="contrat">📑 Contrat</option>
+                    <option value="newsletter">📰 Newsletter</option>
+                    <option value="autre">📄 Autre</option>
+                </select>
+            </div>
+
+            <!-- Template par défaut -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; cursor: pointer; font-weight: 600; color: #23282d;">
+                    <input type="checkbox" id="template-is-default" name="is_default" value="1" style="margin-right: 10px; transform: scale(1.2);" ${template.is_default ? 'checked' : ''}>
+                    ⭐ Définir comme template par défaut
+                </label>
+                <p style="margin: 5px 0 0 26px; color: #666; font-size: 12px;">Ce template sera sélectionné par défaut pour ce type de document</p>
+            </div>
+
+            <!-- Informations système (readonly) -->
+            <div class="settings-section" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e8ed;">
+                <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">ℹ️ Informations Système</h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DATE DE CRÉATION</label>
+                        <span id="template-created-date" style="color: #23282d; font-size: 14px;">${template.created_at ? new Date(template.created_at).toLocaleDateString('fr-FR') : '-'}</span>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DERNIÈRE MODIFICATION</label>
+                        <span id="template-updated-date" style="color: #23282d; font-size: 14px;">${template.updated_at ? new Date(template.updated_at).toLocaleDateString('fr-FR') : '-'}</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    `;
+    
+    // Sélectionner la bonne catégorie après avoir créé le HTML
+    setTimeout(function() {
+        var categorySelect = document.getElementById('template-category');
+        if (categorySelect) {
+            categorySelect.value = template.category || 'autre';
+        }
+    }, 100);
+}
+
+// Fonction pour sauvegarder les paramètres du template
+function saveTemplateSettings() {
+    if (!currentTemplateId) {
+        alert('Erreur: Aucun template sélectionné');
+        return;
+    }
+    
+    console.log('Saving template settings for ID:', currentTemplateId);
+    
+    // Récupérer les valeurs du formulaire
+    var formData = new FormData();
+    formData.append('action', 'pdf_builder_save_template_settings');
+    formData.append('template_id', currentTemplateId);
+    formData.append('nonce', pdfBuilderTemplatesNonce);
+    formData.append('template_name', document.getElementById('template-name').value);
+    formData.append('template_description', document.getElementById('template-description').value);
+    formData.append('template_category', document.getElementById('template-category').value);
+    formData.append('is_default', document.getElementById('template-is-default').checked ? '1' : '0');
+    
+    // Désactiver le bouton de sauvegarde
+    var saveButton = document.querySelector('#template-settings-modal .button-primary');
+    var originalText = saveButton.innerHTML;
+    saveButton.innerHTML = '<span class="dashicons dashicons-update" style="margin-right: 5px;"></span> Sauvegarde...';
+    saveButton.disabled = true;
+    
+    // Faire la requête AJAX
+    fetch(ajaxurl, {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        console.log('Template settings saved:', data);
+        
+        if (data.success) {
+            // Fermer la modale
+            closeTemplateSettingsModal();
+            
+            // Afficher une notification de succès
+            if (typeof window.showSuccessNotification !== 'undefined') {
+                window.showSuccessNotification('Paramètres du template sauvegardés avec succès');
+            } else {
+                alert('Paramètres sauvegardés avec succès !');
+            }
+            
+            // Recharger la page pour voir les changements
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+            
+        } else {
+            var errorMsg = data.data && data.data.message ? data.data.message : 'Erreur lors de la sauvegarde';
+            
+            // Afficher une notification d'erreur
+            if (typeof window.showErrorNotification !== 'undefined') {
+                window.showErrorNotification('Erreur lors de la sauvegarde: ' + errorMsg);
+            } else {
+                alert('Erreur lors de la sauvegarde: ' + errorMsg);
+            }
+        }
+    })
+    .catch(function(error) {
+        console.error('Error saving template settings:', error);
+        
+        // Afficher une notification d'erreur
+        if (typeof window.showErrorNotification !== 'undefined') {
+            window.showErrorNotification('Erreur de communication lors de la sauvegarde');
+        } else {
+            alert('Erreur de communication lors de la sauvegarde');
+        }
+    })
+    .finally(function() {
+        // Réactiver le bouton
+        saveButton.innerHTML = originalText;
+        saveButton.disabled = false;
+    });
+}
+
+// Fonctions utilitaires pour les templates
+function duplicateTemplate(templateId, templateName) {
+    if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
+        // Implémentation de la duplication
+        console.log('Duplicating template:', templateId, templateName);
+        // TODO: Implémenter la duplication via AJAX
+        alert('Fonction de duplication à implémenter');
+    }
+}
+
+function confirmDeleteTemplate(templateId, templateName) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action est irréversible.')) {
+        // Implémentation de la suppression
+        console.log('Deleting template:', templateId, templateName);
+        // TODO: Implémenter la suppression via AJAX
+        alert('Fonction de suppression à implémenter');
+    }
+}
+
+function toggleDefaultTemplate(templateId, templateType, templateName) {
+    console.log('Toggling default template:', templateId, templateType, templateName);
+    // TODO: Implémenter le changement de template par défaut
+    alert('Fonction de changement de template par défaut à implémenter');
+}
+
+// Fonctions pour la galerie de modèles
+function closeTemplateGallery() {
+    document.getElementById('template-gallery-modal').style.display = 'none';
+}
+
+function selectPredefinedTemplate(slug) {
+    console.log('Selecting predefined template:', slug);
+    // TODO: Implémenter la sélection de modèle prédéfini
+    alert('Fonction de sélection de modèle prédéfini à implémenter');
+}
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('PDF Builder Templates page loaded');
+    
+    // Gestionnaire pour le bouton "Créer un template"
+    var createBtn = document.getElementById('create-template-btn');
+    if (createBtn) {
+        createBtn.addEventListener('click', function() {
+            window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>';
+        });
+    }
+    
+    // Gestionnaire pour le bouton "Parcourir les modèles"
+    var galleryBtn = document.getElementById('open-template-gallery');
+    if (galleryBtn) {
+        galleryBtn.addEventListener('click', function() {
+            document.getElementById('template-gallery-modal').style.display = 'flex';
+        });
+    }
+    
+    // Gestionnaires pour les filtres
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Retirer la classe active de tous les boutons
+            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+            
+            var filter = this.getAttribute('data-filter');
+            filterTemplates(filter);
+        });
+    });
+    
+    // Gestionnaires pour les filtres de la galerie
+    var galleryFilterBtns = document.querySelectorAll('.gallery-filter-btn');
+    galleryFilterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Retirer la classe active de tous les boutons
+            galleryFilterBtns.forEach(function(b) { b.classList.remove('active'); });
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+            
+            var filter = this.getAttribute('data-filter');
+            filterGalleryTemplates(filter);
+        });
+    });
+});
+
+function filterTemplates(filter) {
+    var cards = document.querySelectorAll('.template-card');
+    cards.forEach(function(card) {
+        if (filter === 'all' || card.classList.contains('template-type-' + filter)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function filterGalleryTemplates(filter) {
+    var cards = document.querySelectorAll('.predefined-template-card');
+    cards.forEach(function(card) {
+        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
