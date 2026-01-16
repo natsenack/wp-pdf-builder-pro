@@ -209,6 +209,15 @@ function pdf_builder_load_settings_assets($hook) {
         true // Chargé dans le footer
     );
 
+    // Charger le script principal des paramètres
+    wp_enqueue_script(
+        'pdf-builder-settings-main',
+        PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true // Chargé dans le footer
+    );
+
     error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 
