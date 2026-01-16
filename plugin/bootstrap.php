@@ -510,6 +510,49 @@ function pdf_builder_load_core()
 
     // Charger les handlers AJAX pour les paramètres
 
+    // ============================================================================
+    // ✅ INITIALISATION DE L'OBJET WP POUR COMPATIBILITÉ
+    // ============================================================================
+
+    /**
+     * Initialise l'objet wp global pour éviter les erreurs "wp is not defined"
+     * Cette fonction s'exécute très tôt pour garantir la disponibilité de wp
+     */
+    add_action('admin_enqueue_scripts', function() {
+        // Ajouter un script inline qui définit wp si il n'existe pas
+        wp_add_inline_script('jquery', '
+            if (typeof window.wp === "undefined") {
+                window.wp = {
+                    api: {
+                        models: {},
+                        collections: {},
+                        views: {}
+                    },
+                    ajax: {
+                        send: function() { return { done: function() {}, fail: function() {} }; }
+                    },
+                    media: {
+                        controller: {
+                            Library: function() {},
+                            FeaturedImage: function() {}
+                        },
+                        view: {
+                            MediaFrame: {
+                                Select: function() {},
+                                Post: function() {}
+                            }
+                        }
+                    },
+                    util: {
+                        parseArgs: function() { return {}; }
+                    },
+                    template: function() { return ""; }
+                };
+                console.log("[PDF Builder] Objet wp initialisé pour compatibilité");
+            }
+        ', 'before');
+    }, 0); // Priorité 0 pour s'exécuter en premier
+
     // Enregistrer les scripts pour la page de paramètres
     add_action('admin_enqueue_scripts', function() {
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {

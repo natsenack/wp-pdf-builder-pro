@@ -27,6 +27,23 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger la médiathèque WordPress si nécessaire
     wp_enqueue_media();
 
+    // S'assurer que l'objet wp global est disponible pour tous les scripts admin
+    add_action('admin_enqueue_scripts', function() {
+        ?>
+        <script type="text/javascript">
+        // S'assurer que l'objet wp est défini avant que d'autres scripts ne s'exécutent
+        if (typeof window.wp === 'undefined') {
+            window.wp = window.wp || {};
+            console.log('[PDF Builder Settings] Initialized wp object');
+        }
+        // Initialiser les propriétés communes de wp si elles n'existent pas
+        window.wp = window.wp || {};
+        window.wp.media = window.wp.media || null;
+        window.wp.ajax = window.wp.ajax || { settings: {} };
+        </script>
+        <?php
+    }, 1); // Priorité 1 pour s'exécuter très tôt
+
     // ACTIVATION DES STYLES CSS PERSONNALISES
     // Styles pour les paramètres du plugin PDF Builder Pro
 

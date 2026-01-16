@@ -28,6 +28,19 @@ class ReactAssets {
         wp_enqueue_script('wp-util');
         wp_enqueue_script('wp-api');
 
+        // S'assurer que l'objet wp global est disponible
+        add_action('admin_enqueue_scripts', function() {
+            ?>
+            <script type="text/javascript">
+            // S'assurer que l'objet wp est défini avant que d'autres scripts ne s'exécutent
+            if (typeof window.wp === 'undefined') {
+                window.wp = window.wp || {};
+                console.log('[PDF Builder] Initialized wp object');
+            }
+            </script>
+            <?php
+        }, 1); // Priorité 1 pour s'exécuter très tôt
+
         // Charger seulement sur la page du PDF Builder
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
             return;
