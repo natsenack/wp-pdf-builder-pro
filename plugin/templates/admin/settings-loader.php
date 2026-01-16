@@ -241,6 +241,8 @@ function pdf_builder_load_global_admin_assets($hook) {
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'
+    );
+
     // Charger le script des outils développeur
     wp_enqueue_script(
         'pdf-builder-developer-tools',
