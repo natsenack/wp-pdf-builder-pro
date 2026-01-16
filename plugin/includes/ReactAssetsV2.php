@@ -81,8 +81,66 @@ class ReactAssets {
         // Wrapper d'initialisation
         wp_enqueue_script(
             'pdf-builder-react-wrapper-v2',
-            $plugin_url . 'assets/js/pdf-builder-react-wrapper.js',
+            $plugin_url . 'assets/js/pdf-builder-react-wrapper.min.js',
             ['pdf-builder-react-app-v2', 'wp-util'],
+            $version,
+            true
+        );
+        
+        // Scripts utilitaires supplémentaires
+        wp_enqueue_script(
+            'pdf-builder-ajax-throttle',
+            $plugin_url . 'assets/js/ajax-throttle.min.js',
+            ['jquery'],
+            $version,
+            true
+        );
+        
+        wp_enqueue_script(
+            'pdf-builder-notifications',
+            $plugin_url . 'assets/js/notifications.min.js',
+            ['jquery'],
+            $version,
+            true
+        );
+        
+        wp_enqueue_script(
+            'pdf-builder-wrap',
+            $plugin_url . 'assets/js/pdf-builder-wrap.min.js',
+            ['jquery'],
+            $version,
+            true
+        );
+        
+        wp_enqueue_script(
+            'pdf-builder-init',
+            $plugin_url . 'assets/js/pdf-builder-init.min.js',
+            ['jquery'],
+            $version,
+            true
+        );
+        
+        wp_enqueue_script(
+            'pdf-preview-api-client',
+            $plugin_url . 'assets/js/pdf-preview-api-client.min.js',
+            ['jquery'],
+            $version,
+            true
+        );
+        
+        wp_enqueue_script(
+            'pdf-preview-integration',
+            $plugin_url . 'assets/js/pdf-preview-integration.min.js',
+            ['jquery', 'pdf-preview-api-client'],
+            $version,
+            true
+        );
+        
+        // React init script (dépendance finale)
+        wp_enqueue_script(
+            'pdf-builder-react-init',
+            $plugin_url . 'assets/js/pdf-builder-react-init.min.js',
+            ['pdf-builder-react-wrapper-v2', 'pdf-preview-integration'],
             $version,
             true
         );

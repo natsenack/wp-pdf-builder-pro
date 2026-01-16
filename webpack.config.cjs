@@ -18,6 +18,12 @@ module.exports = {
     "canvas-settings": "./src/js/admin/canvas-settings.js",
     "pdf-builder-react-init": "./src/js/admin/pdf-builder-react-init.js",
     "pdf-builder-react-wrapper": "./src/js/admin/pdf-builder-react-wrapper.js",
+    "ajax-throttle": "./src/js/admin/ajax-throttle.js",
+    "notifications": "./src/js/admin/notifications.js",
+    "pdf-builder-wrap": "./src/js/admin/pdf-builder-wrap.js",
+    "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
+    "pdf-preview-api-client": "./src/js/admin/pdf-preview-api-client.js",
+    "pdf-preview-integration": "./src/js/admin/pdf-preview-integration.js",
   },
   output: {
     path: outputPath,
