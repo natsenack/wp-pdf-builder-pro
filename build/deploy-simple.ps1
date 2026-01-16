@@ -414,9 +414,9 @@ Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
 Write-Log "Ajout des fichiers modifiés à Git" "INFO"
 Push-Location $WorkingDir
 try {
-    # Utiliser git add --ignore-errors pour ajouter tous les fichiers non ignorés
-    # et gérer les avertissements de fins de ligne
-    $gitAddResult = & git add --ignore-errors . 2>&1
+    # Utiliser git add -A pour ajouter tous les changements (nouveaux, modifiés, supprimés)
+    # dans tout le repository, en ignorant les avertissements de fins de ligne
+    $gitAddResult = & git add -A 2>&1
     
     # Debug: afficher le résultat pour comprendre le format
     Write-Log "Debug git add result: '$gitAddResult'" "INFO"
