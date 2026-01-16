@@ -790,54 +790,17 @@ export const Header = memo(function Header({
 
       {/* Modale des paramètres du template */}
       {showSettingsModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "8px",
-              padding: "24px",
-              maxWidth: "500px",
-              width: "90%",
-              maxHeight: "80vh",
-              overflowY: "auto",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "20px",
-                borderBottom: "1px solid #e0e0e0",
-                paddingBottom: "16px",
-              }}
-            >
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  color: "#1a1a1a",
-                }}
-              >
-                Paramètres du template
+        <div className="canvas-modal-overlay" style={{ display: "flex" }}>
+          <div className="canvas-modal-container">
+            <div className="canvas-modal-header">
+              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "600" }}>
+                <span style={{ fontSize: "24px" }}>📄</span> Paramètres du template
               </h3>
               <button
+                type="button"
+                className="canvas-modal-close"
                 onClick={() => setShowSettingsModal(false)}
+                title="Fermer"
                 style={{
                   background: "none",
                   border: "none",
@@ -846,313 +809,135 @@ export const Header = memo(function Header({
                   color: "#666",
                   padding: "4px",
                 }}
-                title="Fermer"
               >
-                ×
+                &times;
               </button>
             </div>
-
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-            >
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#333",
-                  }}
-                >
-                  Nom du modèle
-                </label>
+            <div className="canvas-modal-body">
+              <div className="setting-group">
+                <label className="setting-label">Nom du template</label>
                 <input
                   type="text"
                   value={editedTemplateName}
                   onChange={(e) => setEditedTemplateName(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="setting-input"
                   placeholder="Entrez le nom du template"
                 />
               </div>
 
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#333",
-                  }}
-                >
-                  Description
-                </label>
+              <div className="setting-group">
+                <label className="setting-label">Description</label>
                 <textarea
                   value={editedTemplateDescription}
                   onChange={(e) => setEditedTemplateDescription(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    minHeight: "60px",
-                    resize: "vertical",
-                  }}
+                  className="setting-textarea"
                   placeholder="Description du template..."
+                  rows={3}
                 />
               </div>
 
-              <div
-                style={{
-                  borderTop: "1px solid #e0e0e0",
-                  paddingTop: "16px",
-                  marginTop: "16px",
-                }}
-              >
-                <h4
-                  style={{
-                    margin: "0 0 12px 0",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: "#333",
-                  }}
-                >
-                  Paramètres avancés
-                </h4>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "12px",
-                  }}
-                >
-                  <div>
-                    <label
-                      style={{
-                        display: "block",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        marginBottom: "4px",
-                        color: "#555",
-                      }}
-                    >
-                      Largeur du canvas (px)
-                    </label>
-                    <input
-                      type="number"
-                      value={editedCanvasWidth}
-                      disabled={true}
-                      style={{
-                        width: "100%",
-                        padding: "6px 8px",
-                        border: "1px solid #ccc",
-                        borderRadius: "3px",
-                        fontSize: "12px",
-                        backgroundColor: "#f5f5f5",
-                        color: "#999",
-                        cursor: "not-allowed",
-                      }}
-                    />
-                    <div
-                      style={{
-                        fontSize: "10px",
-                        color: "#999",
-                        marginTop: "2px",
-                      }}
-                    >
-                      Non modifiable
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      style={{
-                        display: "block",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        marginBottom: "4px",
-                        color: "#555",
-                      }}
-                    >
-                      Hauteur du canvas (px)
-                    </label>
-                    <input
-                      type="number"
-                      value={editedCanvasHeight}
-                      disabled={true}
-                      style={{
-                        width: "100%",
-                        padding: "6px 8px",
-                        border: "1px solid #ccc",
-                        borderRadius: "3px",
-                        fontSize: "12px",
-                        backgroundColor: "#f5f5f5",
-                        color: "#999",
-                        cursor: "not-allowed",
-                      }}
-                    />
-                    <div
-                      style={{
-                        fontSize: "10px",
-                        color: "#999",
-                        marginTop: "2px",
-                      }}
-                    >
-                      Non modifiable
-                    </div>
-                  </div>
+              <div className="setting-group">
+                <label className="setting-label">Dimensions du canvas</label>
+                <div className="setting-input-group">
+                  <input
+                    type="number"
+                    value={editedCanvasWidth}
+                    disabled={true}
+                    className="setting-input setting-input-disabled"
+                    placeholder="Largeur"
+                  />
+                  <span className="setting-input-separator">×</span>
+                  <input
+                    type="number"
+                    value={editedCanvasHeight}
+                    disabled={true}
+                    className="setting-input setting-input-disabled"
+                    placeholder="Hauteur"
+                  />
+                  <span className="setting-unit">px</span>
                 </div>
-
-                <div style={{ marginTop: "12px" }}>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      marginBottom: "4px",
-                      color: "#555",
-                    }}
-                  >
-                    Orientation du canvas
-                  </label>
-                  <select
-                    value={canvasOrientation}
-                    onChange={(e) => {
-                      const orientation = e.target.value as
-                        | "portrait"
-                        | "landscape";
-                      setCanvasOrientation(orientation);
-                      // Mettre à jour les dimensions en fonction de l'orientation
-                      let newWidth = 794;
-                      let newHeight = 1123;
-                      if (orientation === "landscape") {
-                        newWidth = 1123;
-                        newHeight = 794;
-                      }
-                      setEditedCanvasWidth(newWidth);
-                      setEditedCanvasHeight(newHeight);
-                      // Mettre à jour le template immédiatement
-                      onUpdateTemplateSettings({
-                        canvasWidth: newWidth,
-                        canvasHeight: newHeight,
-                      });
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "6px 8px",
-                      border: "1px solid #ddd",
-                      borderRadius: "3px",
-                      fontSize: "12px",
-                      backgroundColor: "#ffffff",
-                    }}
-                  >
-                    {orientationPermissions.allowPortrait && (
-                      <option value="portrait">Portrait (794×1123 px)</option>
-                    )}
-                    {orientationPermissions.allowLandscape && (
-                      <option value="landscape">Paysage (1123×794 px)</option>
-                    )}
-                  </select>
-                  {(!orientationPermissions.allowPortrait ||
-                    !orientationPermissions.allowLandscape) && (
-                    <div
-                      style={{
-                        fontSize: "10px",
-                        color: "#999",
-                        marginTop: "4px",
-                        fontStyle: "italic",
-                      }}
-                    >
-                      Certaines orientations sont désactivées dans les
-                      paramètres du plugin.
-                    </div>
-                  )}
-                </div>
+                <div className="setting-hint">Les dimensions sont contrôlées par l'orientation</div>
               </div>
 
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#333",
+              <div className="setting-group">
+                <label className="setting-label">Orientation</label>
+                <select
+                  value={canvasOrientation}
+                  onChange={(e) => {
+                    const orientation = e.target.value as "portrait" | "landscape";
+                    setCanvasOrientation(orientation);
+                    // Mettre à jour les dimensions en fonction de l'orientation
+                    let newWidth = 794;
+                    let newHeight = 1123;
+                    if (orientation === "landscape") {
+                      newWidth = 1123;
+                      newHeight = 794;
+                    }
+                    setEditedCanvasWidth(newWidth);
+                    setEditedCanvasHeight(newHeight);
+                    // Mettre à jour le template immédiatement
+                    onUpdateTemplateSettings({
+                      canvasWidth: newWidth,
+                      canvasHeight: newHeight,
+                    });
                   }}
+                  className="setting-select"
                 >
-                  Statut
-                </label>
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {orientationPermissions.allowPortrait && (
+                    <option value="portrait">Portrait (794×1123 px)</option>
+                  )}
+                  {orientationPermissions.allowLandscape && (
+                    <option value="landscape">Paysage (1123×794 px)</option>
+                  )}
+                </select>
+                {(!orientationPermissions.allowPortrait ||
+                  !orientationPermissions.allowLandscape) && (
+                  <div className="setting-hint">
+                    Certaines orientations sont désactivées dans les paramètres du plugin.
+                  </div>
+                )}
+              </div>
+
+              <div className="setting-group">
+                <label className="setting-label">Options d'affichage</label>
+                <div className="setting-checkbox-group">
+                  <label className="setting-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={showGuides}
+                      onChange={(e) => setShowGuides(e.target.checked)}
+                      className="setting-checkbox"
+                    />
+                    Afficher les guides
+                  </label>
+                  <label className="setting-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={snapToGrid}
+                      onChange={(e) => setSnapToGrid(e.target.checked)}
+                      className="setting-checkbox"
+                    />
+                    Aimantation à la grille
+                  </label>
+                </div>
+              <div className="setting-group">
+                <label className="setting-label">Statut</label>
+                <div className="setting-status-tags">
                   {isNewTemplate && (
-                    <span
-                      style={{
-                        padding: "4px 8px",
-                        backgroundColor: "#e3f2fd",
-                        color: "#1565c0",
-                        borderRadius: "12px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Nouveau template
-                    </span>
+                    <span className="status-tag status-new">Nouveau template</span>
                   )}
                   {deferredIsModified && (
-                    <span
-                      style={{
-                        padding: "4px 8px",
-                        backgroundColor: "#fff3e0",
-                        color: "#f57c00",
-                        borderRadius: "12px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Modifié
-                    </span>
+                    <span className="status-tag status-modified">Modifié</span>
                   )}
                   {isEditingExistingTemplate && (
-                    <span
-                      style={{
-                        padding: "4px 8px",
-                        backgroundColor: "#f3e5f5",
-                        color: "#7b1fa2",
-                        borderRadius: "12px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Édition existante
-                    </span>
+                    <span className="status-tag status-editing">Édition existante</span>
                   )}
                 </div>
               </div>
 
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#333",
-                  }}
-                >
-                  Informations système
-                </label>
-                <div
-                  style={{ fontSize: "13px", color: "#666", lineHeight: "1.5" }}
-                >
+              <div className="setting-group">
+                <label className="setting-label">Informations système</label>
+                <div className="setting-info">
                   <div>Template ID: {templateName || "N/A"}</div>
                   <div>
                     Dernière modification: {new Date().toLocaleString("fr-FR")}
@@ -1168,56 +953,33 @@ export const Header = memo(function Header({
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: "12px",
-                  marginTop: "20px",
-                }}
+            </div>
+            <div className="canvas-modal-footer">
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="canvas-modal-btn canvas-modal-btn-secondary"
               >
-                <button
-                  onClick={() => setShowSettingsModal(false)}
-                  style={{
-                    padding: "8px 16px",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    backgroundColor: "#f8f8f8",
-                    color: "#333",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                  }}
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={() => {
-                    // Sauvegarder les paramètres du template
-                    onUpdateTemplateSettings({
-                      name: editedTemplateName,
-                      description: editedTemplateDescription,
-                      canvasWidth: editedCanvasWidth,
-                      canvasHeight: editedCanvasHeight,
-                      showGuides: showGuides,
-                      snapToGrid: snapToGrid,
-                    });
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  // Sauvegarder les paramètres du template
+                  onUpdateTemplateSettings({
+                    name: editedTemplateName,
+                    description: editedTemplateDescription,
+                    canvasWidth: editedCanvasWidth,
+                    canvasHeight: editedCanvasHeight,
+                    showGuides: showGuides,
+                    snapToGrid: snapToGrid,
+                  });
 
-                    setShowSettingsModal(false);
-                  }}
-                  style={{
-                    padding: "8px 16px",
-                    border: "none",
-                    borderRadius: "4px",
-                    backgroundColor: "#4CAF50",
-                    color: "#ffffff",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                >
-                  Sauvegarder
-                </button>
-              </div>
+                  setShowSettingsModal(false);
+                }}
+                className="canvas-modal-btn canvas-modal-btn-primary"
+              >
+                Sauvegarder
+              </button>
+            </div>
             </div>
           </div>
         </div>
