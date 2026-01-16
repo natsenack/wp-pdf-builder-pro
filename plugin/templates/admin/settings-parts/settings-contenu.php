@@ -553,10 +553,20 @@
                             canvasData['pdf_builder_canvas_dpi'] = dpiValues.join(',');
                         }
 
+                        // Gérer spécifiquement les checkboxes Formats (tableau)
+                        var formatCheckboxes = modal.querySelectorAll('input[name="pdf_builder_canvas_formats[]"]:checked');
+                        if (formatCheckboxes.length > 0) {
+                            var formatValues = [];
+                            formatCheckboxes.forEach(function(checkbox) {
+                                formatValues.push(checkbox.value);
+                            });
+                            canvasData['pdf_builder_canvas_formats'] = formatValues.join(',');
+                        }
+
                         // Gérer les autres inputs normalement
                         inputs.forEach(function(input) {
-                            // Ignorer les checkboxes DPI déjà traitées
-                            if (input.name === 'pdf_builder_canvas_dpi[]') {
+                            // Ignorer les checkboxes DPI et Formats déjà traitées
+                            if (input.name === 'pdf_builder_canvas_dpi[]' || input.name === 'pdf_builder_canvas_formats[]') {
                                 return;
                             }
 

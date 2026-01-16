@@ -52,6 +52,18 @@ if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== f
 }
 $available_dpis = array_map('intval', $available_dpis); // S'assurer que ce sont des entiers
 
+// Récupérer les formats disponibles depuis les paramètres canvas
+$available_formats_string = get_option('pdf_builder_canvas_formats', 'A4');
+if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
+    $available_formats = explode(',', $available_formats_string);
+} elseif (is_array($available_formats_string)) {
+    $available_formats = $available_formats_string;
+} else {
+    // Valeur unique, la convertir en tableau
+    $available_formats = [$available_formats_string];
+}
+$available_formats = array_map('strval', $available_formats); // S'assurer que ce sont des chaînes
+
 // Définir les options DPI avec leurs labels
 $dpi_options = [
     72 => '72 DPI - Écran (faible qualité)',
@@ -59,6 +71,15 @@ $dpi_options = [
     150 => '150 DPI - Impression moyenne',
     300 => '300 DPI - Haute qualité',
     600 => '600 DPI - Professionnel'
+];
+
+// Définir les options de format avec leurs labels
+$format_options = [
+    'A4' => '📄 A4 (210×297mm)',
+    'A3' => '📃 A3 (297×420mm)',
+    'Letter' => '🇺🇸 Letter (8.5×11")',
+    'Legal' => '⚖️ Legal (8.5×14")',
+    'Label' => '📦 Étiquette Colis (100×150mm)'
 ];
 ?>
 
@@ -74,6 +95,10 @@ var pdfBuilderAjax = {
 // Variables pour les DPI disponibles
 var availableDpis = <?php echo json_encode($available_dpis); ?>;
 var dpiOptions = <?php echo json_encode($dpi_options); ?>;
+
+// Variables pour les formats disponibles
+var availableFormats = <?php echo json_encode($available_formats); ?>;
+var formatOptions = <?php echo json_encode($format_options); ?>;
 </script>
 
 <div class="wrap">
@@ -1247,12 +1272,10 @@ function displayTemplateSettings(template) {
                     <div>
                         <label for="template-format" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">📄 FORMAT DE PAPIER</label>
                         <select id="template-format" name="canvas_format" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
-                            <option value="A3" ${templateFormat === 'A3' ? 'selected' : ''}>A3</option>
-                            <option value="A4" ${templateFormat === 'A4' ? 'selected' : ''}>A4</option>
-                            <option value="A5" ${templateFormat === 'A5' ? 'selected' : ''}>A5</option>
-                            <option value="Letter" ${templateFormat === 'Letter' ? 'selected' : ''}>Letter</option>
-                            <option value="Legal" ${templateFormat === 'Legal' ? 'selected' : ''}>Legal</option>
                         </select>
+                        <div id="template-format-warning" style="margin-top: 5px; color: #dc3545; font-size: 11px; display: none;">
+                            ⚠️ Aucun format configuré dans les paramètres canvas
+                        </div>
                     </div>
 
                     <!-- Orientation -->
@@ -1343,6 +1366,36 @@ function displayTemplateSettings(template) {
             option.textContent = 'Aucune résolution disponible';
             dpiSelect.appendChild(option);
             dpiWarning.style.display = 'block';
+        }
+    }
+
+    // Remplir le select Format avec les options disponibles
+    var formatSelect = document.getElementById('template-format');
+    var formatWarning = document.getElementById('template-format-warning');
+    
+    if (formatSelect) {
+        formatSelect.innerHTML = ''; // Vider les options existantes
+        
+        if (availableFormats && availableFormats.length > 0) {
+            availableFormats.forEach(function(formatValue) {
+                if (formatOptions && formatOptions[formatValue]) {
+                    var option = document.createElement('option');
+                    option.value = formatValue;
+                    option.textContent = formatOptions[formatValue];
+                    if (templateFormat == formatValue) {
+                        option.selected = true;
+                    }
+                    formatSelect.appendChild(option);
+                }
+            });
+            formatWarning.style.display = 'none';
+        } else {
+            // Aucune option disponible
+            var option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Aucun format disponible';
+            formatSelect.appendChild(option);
+            formatWarning.style.display = 'block';
         }
     }
 }

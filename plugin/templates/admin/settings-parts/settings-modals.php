@@ -130,13 +130,64 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📄</span> Format du Document</label>
-                    <select id="modal_canvas_format" name="pdf_builder_canvas_format">
-                        <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>📄 A4 (210×297mm)</option>
-                        <option value="A3" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>📃 A3 (297×420mm)</option>
-                        <option value="Letter" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>🇺🇸 Letter (8.5×11")</option>
-                        <option value="Legal" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>⚖️ Legal (8.5×14")</option>
-                    </select>
+                    <label><span style="font-size: 16px;">📄</span> Formats de Document Disponibles</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                        <?php
+                        // Récupérer les formats actuellement sélectionnés
+                        $current_formats_string = get_option('pdf_builder_canvas_formats', 'A4');
+                        $current_formats = [];
+
+                        // Convertir la valeur actuelle en tableau
+                        if (is_string($current_formats_string) && strpos($current_formats_string, ',') !== false) {
+                            $current_formats = explode(',', $current_formats_string);
+                        } elseif (is_array($current_formats_string)) {
+                            $current_formats = $current_formats_string;
+                        } else {
+                            // Valeur unique, la convertir en tableau
+                            $current_formats = [$current_formats_string];
+                        }
+                        $current_formats = array_map('strval', $current_formats); // S'assurer que ce sont des chaînes
+
+                        $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+
+                        $format_options = [
+                            ['value' => 'A4', 'label' => 'A4 (210×297mm)', 'desc' => 'Format standard européen', 'icon' => '📄', 'premium' => false],
+                            ['value' => 'A3', 'label' => 'A3 (297×420mm)', 'desc' => 'Format double A4', 'icon' => '📃', 'premium' => true],
+                            ['value' => 'Letter', 'label' => 'Letter (8.5×11")', 'desc' => 'Format américain standard', 'icon' => '🇺🇸', 'premium' => true],
+                            ['value' => 'Legal', 'label' => 'Legal (8.5×14")', 'desc' => 'Format américain légal', 'icon' => '⚖️', 'premium' => true],
+                            ['value' => 'Label', 'label' => 'Étiquette Colis (100×150mm)', 'desc' => 'Format pour étiquettes de colis', 'icon' => '📦', 'premium' => true]
+                        ];
+
+                        foreach ($format_options as $option) {
+                            $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
+                            $checked = in_array($option['value'], $current_formats) ? 'checked' : '';
+                            $premium_class = $option['premium'] ? 'premium-option' : '';
+
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<input type="checkbox" name="pdf_builder_canvas_formats[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
+                            echo '<div style="flex: 1;">';
+                            echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
+                            echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
+                            echo '</div>';
+                            if ($option['premium']) {
+                                echo '<span class="premium-badge">⭐ PREMIUM</span>';
+                            }
+                            echo '</label>';
+                        }
+                        ?>
+
+                        <div class="info-box">
+                            <strong>ℹ️ Information:</strong> Les formats sélectionnés seront disponibles dans les paramètres des templates.
+                        </div>
+
+                        <?php if (!$is_premium): ?>
+                        <div class="warning-box">
+                            <strong>🔒 Formats Premium</strong><br>
+                            Débloquez tous les formats avancés (A3, Letter, Legal, Étiquette) avec la version Premium.<br>
+                            <a href="#" onclick="showUpgradeModal('canvas_formats')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles</label>
@@ -158,7 +209,9 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond</label>
+                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond du canvas</label>
+                    <?php $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user(); ?>
+                    <?php if ($is_premium): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
                                value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
@@ -166,9 +219,24 @@ function get_canvas_modal_value($key, $default = '') {
                         <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
                                style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
                     </div>
+                    <?php else: ?>
+                    <div style="display: flex; gap: 12px; align-items: center; opacity: 0.6; pointer-events: none;">
+                        <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
+                               value="#ffffff" disabled
+                               style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: not-allowed; padding: 5px;">
+                        <input type="text" readonly value="#ffffff"
+                               style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
+                    </div>
+                    <div class="warning-box" style="margin-top: 8px;">
+                        <strong>🔒 Fonction Premium</strong><br>
+                        Personnalisez la couleur de fond du canvas avec la version Premium.<br>
+                        <a href="#" onclick="showUpgradeModal('canvas_bg_color')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔳</span> Bordure</label>
+                    <label><span style="font-size: 16px;">🔳</span> Bordure du canvas</label>
+                    <?php if ($is_premium): ?>
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
                         <div style="flex: 1;">
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
@@ -191,6 +259,35 @@ function get_canvas_modal_value($key, $default = '') {
                             <label for="modal_canvas_shadow_enabled"></label>
                         </div>
                     </div>
+                    <?php else: ?>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px; opacity: 0.6; pointer-events: none;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
+                            <input type="color" id="modal_canvas_border_color" name="pdf_builder_canvas_border_color"
+                                   value="#cccccc" disabled
+                                   style="width: 60px; height: 36px; border: none; border-radius: 6px; cursor: not-allowed; padding: 5px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Épaisseur</label>
+                            <input type="number" id="modal_canvas_border_width" name="pdf_builder_canvas_border_width"
+                                   value="1" disabled
+                                   min="0" max="20" style="width: 100%;">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; opacity: 0.6; pointer-events: none;">
+                        <label for="modal_canvas_shadow_enabled" style="font-weight: 500; cursor: pointer; flex: 1;">Ombre activée</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="modal_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled"
+                                   value="0" disabled>
+                            <label for="modal_canvas_shadow_enabled"></label>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 8px;">
+                        <strong>🔒 Fonction Premium</strong><br>
+                        Personnalisez la bordure et l'ombre du canvas avec la version Premium.<br>
+                        <a href="#" onclick="showUpgradeModal('canvas_border')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
