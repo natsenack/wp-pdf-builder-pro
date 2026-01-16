@@ -218,6 +218,12 @@ function pdf_builder_load_settings_assets($hook) {
         true // Chargé dans le footer
     );
 
+    // Localiser le script principal avec les données AJAX
+    wp_localize_script('pdf-builder-settings-main', 'pdf_builder_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_ajax')
+    ));
+
     error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 
