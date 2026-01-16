@@ -56,31 +56,30 @@ function get_canvas_modal_value($key, $default = '') {
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
-            <h3>Paramètres d'Affichage</h3>
+            <h3><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group" style="grid-column: span 2;">
-                    <label style="color: #666; font-weight: 500; margin-bottom: 8px; display: block;">📐 Dimensions du Canvas</label>
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <div style="flex: 1;">
-                            <span style="font-size: 12px; color: #666; margin-right: 8px;">Largeur:</span>
-                            <span style="font-family: monospace; font-size: 14px; font-weight: 600; color: #495057;">
-                                <?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>px
-                            </span>
-                        </div>
-                        <div style="flex: 1;">
-                            <span style="font-size: 12px; color: #666; margin-right: 8px;">Hauteur:</span>
-                            <span style="font-family: monospace; font-size: 14px; font-weight: 600; color: #495057;">
-                                <?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>px
-                            </span>
+                    <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas</label>
+                    <div class="dimensions-display">
+                        <div style="display: flex; justify-content: center; gap: 40px;">
+                            <div>
+                                <div class="dim-label">Largeur</div>
+                                <div class="dim-value"><?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>px</div>
+                            </div>
+                            <div style="width: 1px; background: rgba(255,255,255,0.3); height: 40px; margin: auto 0;"></div>
+                            <div>
+                                <div class="dim-label">Hauteur</div>
+                                <div class="dim-value"><?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>px</div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label>Résolutions DPI disponibles</label>
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <label><span style="font-size: 16px;">🔍</span> Résolutions DPI</label>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
                         <?php
                         $current_dpi_string = get_canvas_modal_value('dpi', $canvas_defaults['dpi']);
                         // Convertir la valeur actuelle en tableau (peut être une chaîne ou un tableau sérialisé)
@@ -97,91 +96,112 @@ function get_canvas_modal_value($key, $default = '') {
                         $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 
                         $dpi_options = [
-                            ['value' => '72', 'label' => '72 DPI - Écran (faible qualité)', 'premium' => false],
-                            ['value' => '96', 'label' => '96 DPI - Web (qualité standard)', 'premium' => false],
-                            ['value' => '150', 'label' => '150 DPI - Impression moyenne', 'premium' => false],
-                            ['value' => '300', 'label' => '300 DPI - Haute qualité', 'premium' => true],
-                            ['value' => '600', 'label' => '600 DPI - Professionnel', 'premium' => true]
+                            ['value' => '72', 'label' => '72 DPI - Écran', 'desc' => 'Faible qualité', 'premium' => false],
+                            ['value' => '96', 'label' => '96 DPI - Web', 'desc' => 'Qualité standard', 'premium' => false],
+                            ['value' => '150', 'label' => '150 DPI - Impression', 'desc' => 'Moyenne qualité', 'premium' => false],
+                            ['value' => '300', 'label' => '300 DPI - Haute qualité', 'desc' => 'Professionnel', 'premium' => true],
+                            ['value' => '600', 'label' => '600 DPI - Ultra HD', 'desc' => 'Maximum', 'premium' => true]
                         ];
 
                         foreach ($dpi_options as $option) {
                             $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
                             $checked = in_array($option['value'], $current_dpis) ? 'checked' : '';
                             $premium_class = $option['premium'] ? 'premium-option' : '';
-                            $premium_badge = $option['premium'] ? ' <span class="premium-badge">⭐ PREMIUM</span>' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 8px; margin: 0; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '">';
-                            echo '<input type="checkbox" name="pdf_builder_canvas_dpi[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . ' style="margin: 0;">';
-                            echo '<span>' . $option['label'] . $premium_badge . '</span>';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<input type="checkbox" name="pdf_builder_canvas_dpi[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
+                            echo '<div style="flex: 1;">';
+                            echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['label'] . '</div>';
+                            echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
+                            echo '</div>';
+                            if ($option['premium']) {
+                                echo '<span class="premium-badge">⭐ PREMIUM</span>';
+                            }
                             echo '</label>';
                         }
                         ?>
 
-                        <div style="margin-top: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
-                            <strong>ℹ️ Info:</strong> Les résolutions sélectionnées ici seront disponibles dans les paramètres des templates.
+                        <div class="info-box">
+                            <strong>ℹ️ Information:</strong> Les résolutions sélectionnées seront disponibles dans les paramètres des templates.
                         </div>
 
                         <?php if (!$is_premium): ?>
-                        <div style="margin-top: 12px; padding: 12px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 12px;">
+                        <div class="warning-box">
                             <strong>🔒 Résolutions Premium</strong><br>
-                            Les résolutions 300 DPI et 600 DPI sont réservées aux utilisateurs Premium.<br>
-                            <a href="#" onclick="showUpgradeModal('canvas_dpi')" style="color: #856404; text-decoration: underline;">Passer en Premium</a> pour accéder à ces fonctionnalités.
+                            Débloquez les résolutions 300 DPI et 600 DPI avec la version Premium.<br>
+                            <a href="#" onclick="showUpgradeModal('canvas_dpi')" style="color: #856404; text-decoration: underline; font-weight: 500;">Découvrir Premium →</a>
                         </div>
                         <?php endif; ?>
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_format">Format</label>
+                    <label><span style="font-size: 16px;">📄</span> Format du Document</label>
                     <select id="modal_canvas_format" name="pdf_builder_canvas_format">
-                        <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>A4</option>
-                        <option value="A3" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>A3</option>
-                        <option value="Letter" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>Letter</option>
-                        <option value="Legal" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>Legal</option>
+                        <option value="A4" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A4'); ?>>📄 A4 (210×297mm)</option>
+                        <option value="A3" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'A3'); ?>>📃 A3 (297×420mm)</option>
+                        <option value="Letter" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Letter'); ?>>🇺🇸 Letter (8.5×11")</option>
+                        <option value="Legal" <?php selected(get_canvas_modal_value('format', $canvas_defaults['format']), 'Legal'); ?>>⚖️ Legal (8.5×14")</option>
                     </select>
                 </div>
                 <div class="setting-group">
-                    <label>Orientations disponibles</label>
-                    <div style="display: flex; gap: 16px; margin-top: 8px;">
-                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
-                            <input type="checkbox" id="modal_canvas_orientation_portrait" name="pdf_builder_canvas_allow_portrait"
-                                   value="1" <?php checked(get_canvas_modal_value('allow_portrait', '1'), '1'); ?>>
-                            Portrait (794×1123 px)
+                    <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles</label>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e1e5e9'">
+                            <input type="checkbox" id="modal_canvas_orientation_portrait" name="pdf_builder_canvas_allow_portrait" value="1" <?php checked(get_canvas_modal_value('allow_portrait', '1'), '1'); ?>>
+                            <div>
+                                <div style="font-weight: 500; color: #2c3e50;">📱 Portrait</div>
+                                <div style="font-size: 12px; color: #6c757d;">794×1123 px • Vertical</div>
+                            </div>
                         </label>
-                        <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
-                            <input type="checkbox" id="modal_canvas_orientation_landscape" name="pdf_builder_canvas_allow_landscape"
-                                   value="1" <?php checked(get_canvas_modal_value('allow_landscape', '1'), '1'); ?>>
-                            Paysage (1123×794 px)
+                        <label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e1e5e9'">
+                            <input type="checkbox" id="modal_canvas_orientation_landscape" name="pdf_builder_canvas_allow_landscape" value="1" <?php checked(get_canvas_modal_value('allow_landscape', '1'), '1'); ?>>
+                            <div>
+                                <div style="font-weight: 500; color: #2c3e50;">🖥️ Paysage</div>
+                                <div style="font-size: 12px; color: #6c757d;">1123×794 px • Horizontal</div>
+                            </div>
                         </label>
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_bg_color">Couleur de fond</label>
-                    <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
-                           value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>">
+                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond</label>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
+                               value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
+                               style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
+                        <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
+                               style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
+                    </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_border_color">Couleur bordure</label>
-                    <input type="color" id="modal_canvas_border_color" name="pdf_builder_canvas_border_color"
-                           value="<?php echo esc_attr(get_canvas_modal_value('border_color', $canvas_defaults['border_color'])); ?>">
-                </div>
-                <div class="setting-group">
-                    <label for="modal_canvas_border_width">Épaisseur bordure (px)</label>
-                    <input type="number" id="modal_canvas_border_width" name="pdf_builder_canvas_border_width"
-                           value="<?php echo esc_attr(get_canvas_modal_value('border_width', $canvas_defaults['border_width'])); ?>">
-                </div>
-                <div class="setting-group">
-                    <label for="modal_canvas_shadow_enabled">Ombre activée</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="modal_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('shadow_enabled', $canvas_defaults['shadow_enabled']), '1'); ?>>
-                        <label for="modal_canvas_shadow_enabled"></label>
+                    <label><span style="font-size: 16px;">🔳</span> Bordure</label>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
+                            <input type="color" id="modal_canvas_border_color" name="pdf_builder_canvas_border_color"
+                                   value="<?php echo esc_attr(get_canvas_modal_value('border_color', $canvas_defaults['border_color'])); ?>"
+                                   style="width: 100%; height: 36px; border: none; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Épaisseur</label>
+                            <input type="number" id="modal_canvas_border_width" name="pdf_builder_canvas_border_width"
+                                   value="<?php echo esc_attr(get_canvas_modal_value('border_width', $canvas_defaults['border_width'])); ?>"
+                                   min="0" max="20" style="width: 100%;">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <label for="modal_canvas_shadow_enabled" style="font-weight: 500; cursor: pointer; flex: 1;">Ombre activée</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="modal_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled"
+                                   value="1" <?php checked(get_canvas_modal_value('shadow_enabled', $canvas_defaults['shadow_enabled']), '1'); ?>>
+                            <label for="modal_canvas_shadow_enabled"></label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">Appliquer</button>
+            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">✅ Appliquer</button>
         </div>
     </div>
 </div>
@@ -190,13 +210,13 @@ function get_canvas_modal_value($key, $default = '') {
 <div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" style="display: none;">
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
-            <h3>Paramètres de Navigation</h3>
+            <h3><span style="font-size: 24px;">🧭</span> Paramètres de Navigation</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
-                    <label for="modal_canvas_grid_enabled">Grille activée</label>
+                    <label><span style="font-size: 16px;">📐</span> Grille activée</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
                                value="1" <?php checked(get_canvas_modal_value('grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
@@ -204,12 +224,12 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_grid_size">Taille grille (px)</label>
+                    <label><span style="font-size: 16px;">📏</span> Taille grille (px)</label>
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
                            value="<?php echo esc_attr(get_canvas_modal_value('grid_size', $canvas_defaults['grid_size'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_guides_enabled">Guides activés</label>
+                    <label><span style="font-size: 16px;">📍</span> Guides activés</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
                                value="1" <?php checked(get_canvas_modal_value('guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
@@ -217,7 +237,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_snap_to_grid">Accrochage à la grille</label>
+                    <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
                                value="1" <?php checked(get_canvas_modal_value('snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
@@ -225,7 +245,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_min">Zoom minimum (%)</label>
+                    <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%)</label>
                     <input type="number" id="modal_canvas_zoom_min" name="pdf_builder_canvas_zoom_min"
                            value="<?php echo esc_attr(get_canvas_modal_value('zoom_min', $canvas_defaults['zoom_min'])); ?>">
                 </div>
@@ -247,8 +267,8 @@ function get_canvas_modal_value($key, $default = '') {
             </div>
         </div>
         <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">Appliquer</button>
+            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">✅ Appliquer</button>
         </div>
     </div>
 </div>
@@ -257,13 +277,13 @@ function get_canvas_modal_value($key, $default = '') {
 <div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" style="display: none;">
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
-            <h3>Paramètres de Comportement</h3>
+            <h3><span style="font-size: 24px;">🎯</span> Paramètres de Comportement</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
-                    <label for="modal_canvas_drag_enabled">Glisser activé</label>
+                    <label><span style="font-size: 16px;">✋</span> Glisser activé</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled"
                                value="1" <?php checked(get_canvas_modal_value('drag_enabled', $canvas_defaults['drag_enabled']), '1'); ?>>
@@ -271,7 +291,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_resize_enabled">Redimensionnement activé</label>
+                    <label><span style="font-size: 16px;">📐</span> Redimensionnement activé</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled"
                                value="1" <?php checked(get_canvas_modal_value('resize_enabled', $canvas_defaults['resize_enabled']), '1'); ?>>
@@ -279,7 +299,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_rotate_enabled">Rotation activée</label>
+                    <label><span style="font-size: 16px;">🔄</span> Rotation activée</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled"
                                value="1" <?php checked(get_canvas_modal_value('rotate_enabled', $canvas_defaults['rotate_enabled']), '1'); ?>>
@@ -287,7 +307,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_multi_select">Sélection multiple</label>
+                    <label><span style="font-size: 16px;">☑️</span> Sélection multiple</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_multi_select" name="pdf_builder_canvas_multi_select"
                                value="1" <?php checked(get_canvas_modal_value('multi_select', $canvas_defaults['multi_select']), '1'); ?>>
@@ -295,7 +315,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_selection_mode">Mode de sélection</label>
+                    <label><span style="font-size: 16px;">🎯</span> Mode de sélection</label>
                     <select id="modal_canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
                         <option value="single" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'single'); ?>>Simple</option>
                         <option value="multiple" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'multiple'); ?>>Multiple</option>
@@ -327,8 +347,8 @@ function get_canvas_modal_value($key, $default = '') {
             </div>
         </div>
         <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">Appliquer</button>
+            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">✅ Appliquer</button>
         </div>
     </div>
 </div>
@@ -337,28 +357,28 @@ function get_canvas_modal_value($key, $default = '') {
 <div id="canvas-systeme-modal-overlay" class="canvas-modal-overlay" style="display: none;">
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
-            <h3>Paramètres Système</h3>
+            <h3><span style="font-size: 24px;">⚙️</span> Paramètres Système</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
-                    <label for="modal_canvas_fps_target">FPS cible</label>
+                    <label><span style="font-size: 16px;">🎮</span> FPS cible</label>
                     <input type="number" id="modal_canvas_fps_target" name="pdf_builder_canvas_fps_target"
                            value="<?php echo esc_attr(get_canvas_modal_value('fps_target', $canvas_defaults['fps_target'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_memory_limit_js">Limite mémoire JS (MB)</label>
+                    <label><span style="font-size: 16px;">🧠</span> Limite mémoire JS (MB)</label>
                     <input type="number" id="modal_canvas_memory_limit_js" name="pdf_builder_canvas_memory_limit_js"
                            value="<?php echo esc_attr(get_canvas_modal_value('memory_limit_js', $canvas_defaults['memory_limit_js'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_response_timeout">Timeout réponse (ms)</label>
+                    <label><span style="font-size: 16px;">⏱️</span> Timeout réponse (ms)</label>
                     <input type="number" id="modal_canvas_response_timeout" name="pdf_builder_canvas_response_timeout"
                            value="<?php echo esc_attr(get_canvas_modal_value('response_timeout', $canvas_defaults['response_timeout'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_debug_enabled">Debug activé</label>
+                    <label><span style="font-size: 16px;">🐛</span> Debug activé</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled"
                                value="1" <?php checked(get_canvas_modal_value('debug_enabled', $canvas_defaults['debug_enabled']), '1'); ?>>
@@ -366,7 +386,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_performance_monitoring">Monitoring performance</label>
+                    <label><span style="font-size: 16px;">📊</span> Monitoring performance</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring"
                                value="1" <?php checked(get_canvas_modal_value('performance_monitoring', $canvas_defaults['performance_monitoring']), '1'); ?>>
@@ -374,7 +394,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_error_reporting">Rapport d'erreurs</label>
+                    <label><span style="font-size: 16px;">🚨</span> Rapport d'erreurs</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_error_reporting" name="pdf_builder_canvas_error_reporting"
                                value="1" <?php checked(get_canvas_modal_value('error_reporting', $canvas_defaults['error_reporting']), '1'); ?>>
@@ -384,20 +404,260 @@ function get_canvas_modal_value($key, $default = '') {
             </div>
         </div>
         <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel">Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">Appliquer</button>
+            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">✅ Appliquer</button>
         </div>
     </div>
 </div>
 
 <style>
-/* Styles pour les modals - utilisant les classes définies dans settings-contenu.php */
+/* ===== STYLES HARMONIEUX POUR LES MODALS ===== */
 
-/* Overflow pour le contenu des modals */
+/* Styles de base des modals */
+.canvas-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+.canvas-modal-container {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 800px;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Animations d'entrée */
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header du modal */
+.canvas-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.canvas-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.canvas-modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.canvas-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Corps du modal */
 .canvas-modal-body {
+    padding: 32px;
     max-height: 60vh;
     overflow-y: auto;
     overflow-x: hidden;
+    background: #fafbfc;
+}
+
+/* Grille de paramètres harmonieuse */
+.modal-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 0;
+}
+
+/* Groupes de paramètres */
+.setting-group {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.setting-group:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.setting-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Styles pour les inputs */
+.setting-group input[type="text"],
+.setting-group input[type="number"],
+.setting-group input[type="color"],
+.setting-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.setting-group input:focus,
+.setting-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Toggle switches améliorés */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccc;
+    border-radius: 28px;
+    transition: 0.3s;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + label {
+    background: #667eea;
+}
+
+.toggle-switch input:checked + label:before {
+    transform: translateX(24px);
+}
+
+/* Checkboxes améliorés */
+.setting-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Footer du modal */
+.canvas-modal-footer {
+    background: #f8f9fa;
+    padding: 24px 32px;
+    border-top: 1px solid #e1e5e9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.canvas-modal-footer .button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.canvas-modal-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.canvas-modal-cancel:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.canvas-modal-apply {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.canvas-modal-apply:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
 /* Styles pour les options premium */
@@ -410,12 +670,13 @@ function get_canvas_modal_value($key, $default = '') {
     color: #856404;
     font-size: 10px;
     font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
     border: 1px solid #ffeaa7;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-left: 8px;
 }
 
 .premium-option input:disabled {
@@ -427,14 +688,75 @@ function get_canvas_modal_value($key, $default = '') {
     color: #6c757d;
 }
 
+/* Info boxes */
+.setting-group .info-box {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #e8f4fd;
+    border: 1px solid #b3d9ff;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1e5b8b;
+    line-height: 1.4;
+}
+
+.setting-group .warning-box {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #856404;
+    line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .canvas-modal-container {
+        width: 95vw;
+        margin: 20px;
+    }
+
+    .canvas-modal-header,
+    .canvas-modal-body,
+    .canvas-modal-footer {
+        padding: 20px;
+    }
+
+    .modal-settings-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
 /* Amélioration du style des radio buttons DPI */
 .setting-group input[type="radio"] {
     transform: scale(1.2);
     margin-right: 8px;
+    accent-color: #667eea;
 }
 
-.setting-group input[type="radio"]:checked {
-    accent-color: #007cba;
+/* Styles pour les dimensions (affichage spécial) */
+.dimensions-display {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dimensions-display .dim-label {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
+.dimensions-display .dim-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Monaco', 'Menlo', monospace;
 }
 </style>
 
