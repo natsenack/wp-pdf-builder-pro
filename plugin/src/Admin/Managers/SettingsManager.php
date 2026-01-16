@@ -282,7 +282,7 @@ class SettingsManager
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->get_message());
+            wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -322,7 +322,7 @@ class SettingsManager
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->get_message());
+            wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 

@@ -3,10 +3,8 @@
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 12px !important;
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
   z-index: 9999 !important;
   min-width: 200px !important;
   max-width: 280px !important;
@@ -79,7 +77,13 @@
 
 .context-menu-separator {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #e2e8f0 20%,
+    #e2e8f0 80%,
+    transparent 100%
+  );
   margin: 6px 0;
   border: none;
 }
@@ -89,10 +93,8 @@
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 12px !important;
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
   z-index: 9999 !important;
   min-width: 200px !important;
   max-width: 280px !important;
@@ -165,7 +167,13 @@
 
 .context-menu-separator {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #e2e8f0 20%,
+    #e2e8f0 80%,
+    transparent 100%
+  );
   margin: 6px 0;
   border: none;
 }
@@ -185,7 +193,8 @@
   border: 1px solid #e0e0e0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   z-index: 999999;
   display: flex;
   align-items: center;
@@ -471,7 +480,8 @@
 }
 
 @keyframes pulse-save {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
   }
   50% {
@@ -574,7 +584,8 @@
   color: #333;
   font-weight: 500;
   margin-bottom: 8px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Barre de progression */
@@ -606,7 +617,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 .save-tooltip__button:hover {
@@ -645,445 +657,445 @@
 
 /* Conteneur principal des notifications */
 .pdf-builder-notifications-container {
-    position: fixed;
-    z-index: 999999;
-    pointer-events: none;
-    max-width: 400px;
-    width: 100%;
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+  max-width: 400px;
+  width: 100%;
 }
 
 /* Positionnements */
 .pdf-builder-notifications-container[data-position="top-left"] {
-    top: 35px;
-    left: 20px;
-    right: auto;
-    bottom: auto;
+  top: 35px;
+  left: 20px;
+  right: auto;
+  bottom: auto;
 }
 
 .pdf-builder-notifications-container[data-position="top-right"] {
-    top: 35px;
-    right: 20px;
-    left: auto;
-    bottom: auto;
+  top: 35px;
+  right: 20px;
+  left: auto;
+  bottom: auto;
 }
 
 .pdf-builder-notifications-container[data-position="bottom-left"] {
-    bottom: 20px;
-    left: 20px;
-    top: auto;
-    right: auto;
+  bottom: 20px;
+  left: 20px;
+  top: auto;
+  right: auto;
 }
 
 .pdf-builder-notifications-container[data-position="bottom-right"] {
-    bottom: 20px;
-    right: 20px;
-    top: auto;
-    left: auto;
+  bottom: 20px;
+  right: 20px;
+  top: auto;
+  left: auto;
 }
 
 .pdf-builder-notifications-container[data-position="top-center"] {
-    top: 20px;
-    left: 50%;
-    right: auto;
-    bottom: auto;
-    transform: translateX(-50%);
+  top: 20px;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateX(-50%);
 }
 
 .pdf-builder-notifications-container[data-position="bottom-center"] {
-    bottom: 20px;
-    left: 50%;
-    right: auto;
-    top: auto;
-    transform: translateX(-50%);
+  bottom: 20px;
+  left: 50%;
+  right: auto;
+  top: auto;
+  transform: translateX(-50%);
 }
 
 /* Notification individuelle */
 .pdf-builder-notification {
-    position: relative;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-left: 4px solid;
-    pointer-events: auto;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
-    min-height: 50px;
+  position: relative;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  min-height: 50px;
 }
 
 .pdf-builder-notification.visible {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .pdf-builder-notification.dismissible:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Animations d'entrée/sortie */
 .pdf-builder-notification-slide {
-    animation: slideIn 0.3s ease-out;
+  animation: slideIn 0.3s ease-out;
 }
 
 .pdf-builder-notification-slide.dismissing {
-    animation: slideOut 0.3s ease-in forwards;
+  animation: slideOut 0.3s ease-in forwards;
 }
 
 .pdf-builder-notification-fade {
-    animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .pdf-builder-notification-fade.dismissing {
-    animation: fadeOut 0.3s ease-in forwards;
+  animation: fadeOut 0.3s ease-in forwards;
 }
 
 .pdf-builder-notification-bounce {
-    animation: bounceIn 0.5s ease-out;
+  animation: bounceIn 0.5s ease-out;
 }
 
 .pdf-builder-notification-bounce.dismissing {
-    animation: bounceOut 0.3s ease-in forwards;
+  animation: bounceOut 0.3s ease-in forwards;
 }
 
 /* Contenu de la notification */
 .notification-content {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    gap: 12px;
-    position: relative;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  position: relative;
 }
 
 .notification-icon {
-    font-size: 18px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
+  font-size: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
 }
 
 .notification-message {
-    flex: 1;
-    font-size: 14px;
-    line-height: 1.4;
-    font-weight: 500;
-    word-wrap: break-word;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+  word-wrap: break-word;
 }
 
 /* Bouton de fermeture */
 .notification-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    color: inherit;
-    opacity: 0.7;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: inherit;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .notification-close:hover {
-    opacity: 1;
-    background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .notification-close .dashicons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 /* Barre de progression */
 .notification-progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background-color: rgba(255, 255, 255, 0.3);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .notification-progress {
-    height: 100%;
-    width: 100%;
-    transition: width linear;
+  height: 100%;
+  width: 100%;
+  transition: width linear;
 }
 
 /* Bouton "Tout fermer" */
 .notifications-dismiss-all {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #666;
-    transition: all 0.2s ease;
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .notifications-dismiss-all:hover {
-    background: rgba(255, 255, 255, 1);
-    color: #333;
+  background: rgba(255, 255, 255, 1);
+  color: #333;
 }
 
 .notifications-dismiss-all .dashicons {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
 }
 
 /* États spéciaux */
 .pdf-builder-notification.dismissing {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
 }
 
 /* Types de notifications avec couleurs spécifiques */
 .pdf-builder-notification-success {
-    background-color: #d4edda !important;
-    color: #155724 !important;
-    border-left-color: #28a745 !important;
+  background-color: #d4edda !important;
+  color: #155724 !important;
+  border-left-color: #28a745 !important;
 }
 
 .pdf-builder-notification-error {
-    background-color: #f8d7da !important;
-    color: #721c24 !important;
-    border-left-color: #dc3545 !important;
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border-left-color: #dc3545 !important;
 }
 
 .pdf-builder-notification-warning {
-    background-color: #fff3cd !important;
-    color: #856404 !important;
-    border-left-color: #ffc107 !important;
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+  border-left-color: #ffc107 !important;
 }
 
 .pdf-builder-notification-info {
-    background-color: #d1ecf1 !important;
-    color: #0c5460 !important;
-    border-left-color: #17a2b8 !important;
+  background-color: #d1ecf1 !important;
+  color: #0c5460 !important;
+  border-left-color: #17a2b8 !important;
 }
 
 /* Animations */
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideOut {
-    from {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.95);
-    }
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes bounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    70% {
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes bounceOut {
-    0% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .pdf-builder-notifications-container {
-        max-width: calc(100vw - 40px);
-        width: calc(100vw - 40px);
-    }
+  .pdf-builder-notifications-container {
+    max-width: calc(100vw - 40px);
+    width: calc(100vw - 40px);
+  }
 
-    .pdf-builder-notifications-container[data-position="top-left"],
-    .pdf-builder-notifications-container[data-position="top-right"],
-    .pdf-builder-notifications-container[data-position="bottom-left"],
-    .pdf-builder-notifications-container[data-position="bottom-right"] {
-        left: 20px !important;
-        right: 20px !important;
-        width: auto !important;
-    }
+  .pdf-builder-notifications-container[data-position="top-left"],
+  .pdf-builder-notifications-container[data-position="top-right"],
+  .pdf-builder-notifications-container[data-position="bottom-left"],
+  .pdf-builder-notifications-container[data-position="bottom-right"] {
+    left: 20px !important;
+    right: 20px !important;
+    width: auto !important;
+  }
 
-    .pdf-builder-notifications-container[data-position="top-center"],
-    .pdf-builder-notifications-container[data-position="bottom-center"] {
-        left: 20px !important;
-        right: 20px !important;
-        transform: none !important;
-        width: auto !important;
-    }
+  .pdf-builder-notifications-container[data-position="top-center"],
+  .pdf-builder-notifications-container[data-position="bottom-center"] {
+    left: 20px !important;
+    right: 20px !important;
+    transform: none !important;
+    width: auto !important;
+  }
 
-    .notification-content {
-        padding: 10px 12px;
-        gap: 8px;
-    }
+  .notification-content {
+    padding: 10px 12px;
+    gap: 8px;
+  }
 
-    .notification-icon {
-        font-size: 16px;
-        width: 20px;
-        height: 20px;
-    }
+  .notification-icon {
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+  }
 
-    .notification-message {
-        font-size: 13px;
-        line-height: 1.3;
-    }
+  .notification-message {
+    font-size: 13px;
+    line-height: 1.3;
+  }
 
-    .notification-close {
-        padding: 2px;
-    }
+  .notification-close {
+    padding: 2px;
+  }
 
-    .notification-close .dashicons {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
-    }
+  .notification-close .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
 }
 
 @media (max-width: 480px) {
-    .pdf-builder-notifications-container {
-        max-width: calc(100vw - 20px);
-        width: calc(100vw - 20px);
-    }
+  .pdf-builder-notifications-container {
+    max-width: calc(100vw - 20px);
+    width: calc(100vw - 20px);
+  }
 
-    .pdf-builder-notifications-container[data-position="top-left"],
-    .pdf-builder-notifications-container[data-position="top-right"],
-    .pdf-builder-notifications-container[data-position="bottom-left"],
-    .pdf-builder-notifications-container[data-position="bottom-right"],
-    .pdf-builder-notifications-container[data-position="top-center"],
-    .pdf-builder-notifications-container[data-position="bottom-center"] {
-        left: 10px !important;
-        right: 10px !important;
-    }
+  .pdf-builder-notifications-container[data-position="top-left"],
+  .pdf-builder-notifications-container[data-position="top-right"],
+  .pdf-builder-notifications-container[data-position="bottom-left"],
+  .pdf-builder-notifications-container[data-position="bottom-right"],
+  .pdf-builder-notifications-container[data-position="top-center"],
+  .pdf-builder-notifications-container[data-position="bottom-center"] {
+    left: 10px !important;
+    right: 10px !important;
+  }
 
-    .notification-content {
-        padding: 8px 10px;
-        gap: 6px;
-    }
+  .notification-content {
+    padding: 8px 10px;
+    gap: 6px;
+  }
 
-    .notification-message {
-        font-size: 12px;
-    }
+  .notification-message {
+    font-size: 12px;
+  }
 
-    .notifications-dismiss-all {
-        padding: 6px 10px;
-        font-size: 11px;
-    }
+  .notifications-dismiss-all {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
 }
 
 /* Accessibilité */
 .pdf-builder-notification[aria-live] {
-    position: relative;
+  position: relative;
 }
 
 .pdf-builder-notification[aria-live] .notification-close {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 /* Support pour les navigateurs plus anciens */
 @supports not (backdrop-filter: blur(10px)) {
-    .pdf-builder-notification {
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: none;
-    }
+  .pdf-builder-notification {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: none;
+  }
 }
 
 /* Mode sombre support */
 @media (prefers-color-scheme: dark) {
-    .pdf-builder-notification {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+  .pdf-builder-notification {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-    .notification-close:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
+  .notification-close:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 
-    .notifications-dismiss-all {
-        background: rgba(0, 0, 0, 0.8);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #ccc;
-    }
+  .notifications-dismiss-all {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ccc;
+  }
 
-    .notifications-dismiss-all:hover {
-        background: rgba(0, 0, 0, 0.9);
-        color: #fff;
-    }
+  .notifications-dismiss-all:hover {
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+  }
 }
 
 /* Animations pour les interactions */
 .pdf-builder-notification:hover .notification-progress {
-    animation-play-state: paused;
+  animation-play-state: paused;
 }
 
 /* Focus pour l'accessibilité */
 .notification-close:focus {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 .notifications-dismiss-all:focus {
-    outline: 2px solid #007cba;
-    outline-offset: 2px;
+  outline: 2px solid #007cba;
+  outline-offset: 2px;
 }
 /* PDF Builder Pro Admin Styles */
 /* Cross-browser compatibility with vendor prefixes */
@@ -1269,23 +1281,47 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); -webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -ms-transform: rotate(0deg); -o-transform: rotate(0deg); }
-  100% { transform: rotate(360deg); -webkit-transform: rotate(360deg); -moz-transform: rotate(360deg); -ms-transform: rotate(360deg); -o-transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+  }
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @-moz-keyframes spin {
-  0% { -moz-transform: rotate(0deg); }
-  100% { -moz-transform: rotate(360deg); }
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
 }
 
 @-o-keyframes spin {
-  0% { -o-transform: rotate(0deg); }
-  100% { -o-transform: rotate(360deg); }
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(360deg);
+  }
 }
 
 .pdf-preview-error {
@@ -1346,17 +1382,13 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
   display: none !important;
 }
 
-
-
 .context-menu {
   position: fixed !important;
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 12px !important;
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
   z-index: 9999 !important;
   min-width: 200px !important;
   max-width: 280px !important;
@@ -1429,7 +1461,13 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
 
 .context-menu-separator {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #e2e8f0 20%,
+    #e2e8f0 80%,
+    transparent 100%
+  );
   margin: 6px 0;
   border: none;
 }
@@ -1440,281 +1478,284 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
 
 /* Styles de base des modals */
 .canvas-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    animation: modalFadeIn 0.2s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: modalFadeIn 0.2s ease-out;
 }
 
 .canvas-modal-container {
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    max-width: 90vw;
-    max-height: 90vh;
-    width: 500px;
-    overflow: hidden;
-    animation: modalSlideIn 0.3s ease-out;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 500px;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Animations d'entrée */
 @keyframes modalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Header du modal */
 .canvas-modal-header {
-    background: #f8f9fa;
-    color: #2c3e50;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #e1e5e9;
-    margin-bottom: 0px;
+  background: #f8f9fa;
+  color: #2c3e50;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e1e5e9;
+  margin-bottom: 0px;
 }
 
 .canvas-modal-header h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .canvas-modal-close {
-    background: #e9ecef;
-    border: none;
-    color: #6c757d;
-    font-size: 24px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+  background: #e9ecef;
+  border: none;
+  color: #6c757d;
+  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .canvas-modal-close:hover {
-    background: #dee2e6;
-    color: #495057;
+  background: #dee2e6;
+  color: #495057;
 }
 
 /* Corps du modal */
 .canvas-modal-body {
-    padding: 20px 24px;
-    max-height: 60vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #ffffff;
+  padding: 20px 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;
 }
 
 /* Groupes de paramètres */
 .setting-group {
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-    transition: all 0.2s ease;
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
 }
 
 .setting-group:hover {
-    border-color: #6c757d;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #6c757d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .setting-label {
-    display: block;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 8px;
-    font-size: 14px;
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 /* Styles pour les inputs */
 .setting-input,
 .setting-textarea,
 .setting-select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    background: white;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
 }
 
 .setting-input:focus,
 .setting-textarea:focus,
 .setting-select:focus {
-    outline: none;
-    border-color: #6c757d;
-    box-shadow: 0 0 0 2px rgba(108, 117, 125, 0.1);
+  outline: none;
+  border-color: #6c757d;
+  box-shadow: 0 0 0 2px rgba(108, 117, 125, 0.1);
 }
 
 .setting-textarea {
-    resize: vertical;
-    min-height: 80px;
+  resize: vertical;
+  min-height: 80px;
 }
 
 .setting-input-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .setting-input-separator {
-    color: #666;
-    font-weight: bold;
+  color: #666;
+  font-weight: bold;
 }
 
 .setting-unit {
-    color: #666;
-    font-size: 12px;
+  color: #666;
+  font-size: 12px;
 }
 
 .setting-input-disabled {
-    background-color: #f5f5f5;
-    color: #999;
-    cursor: not-allowed;
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
 }
 
 /* Checkboxes */
 .setting-checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .setting-checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
 }
 
 .setting-checkbox {
-    width: 16px;
-    height: 16px;
-    accent-color: #4CAF50;
-    cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: #4caf50;
+  cursor: pointer;
 }
 
 /* Status tags */
 .setting-status-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .status-tag {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .status-new {
-    background-color: #e3f2fd;
-    color: #1565c0;
+  background-color: #e3f2fd;
+  color: #1565c0;
 }
 
 .status-modified {
-    background-color: #fff3e0;
-    color: #f57c00;
+  background-color: #fff3e0;
+  color: #f57c00;
 }
 
 .status-editing {
-    background-color: #f3e5f5;
-    color: #7b1fa2;
+  background-color: #f3e5f5;
+  color: #7b1fa2;
 }
 
 /* Info text */
 .setting-info {
-    font-size: 13px;
-    color: #666;
-    line-height: 1.5;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
 }
 
 .setting-info div {
-    margin-bottom: 4px;
+  margin-bottom: 4px;
 }
 
 /* Hints */
 .setting-hint {
-    font-size: 12px;
-    color: #999;
-    font-style: italic;
-    margin-top: 4px;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+  margin-top: 4px;
 }
 
 /* Footer du modal */
 .canvas-modal-footer {
-    background: #f8f9fa;
-    padding: 16px 24px;
-    border-top: 1px solid #e1e5e9;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
+  background: #f8f9fa;
+  padding: 16px 24px;
+  border-top: 1px solid #e1e5e9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .canvas-modal-btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: 500;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
-    min-width: 80px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  min-width: 80px;
 }
 
 .canvas-modal-btn-secondary {
-    background: #f8f8f8;
-    color: #333;
-    border: 1px solid #ddd;
+  background: #f8f8f8;
+  color: #333;
+  border: 1px solid #ddd;
 }
 
 .canvas-modal-btn-secondary:hover {
-    background: #e9ecef;
+  background: #e9ecef;
 }
 
 .canvas-modal-btn-primary {
-    background: #4CAF50;
-    color: white;
+  background: #4caf50;
+  color: white;
 }
 
 .canvas-modal-btn-primary:hover {
-    background: #45a049;
+  background: #45a049;
 }
-
 
 /**
  * PDF Builder Pro - Styles ultra-minimalistes pour les onglets de paramètres
@@ -1722,86 +1763,86 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
 
 /* Styles pour les onglets WordPress - Design ultra-minimal */
 .nav-tab-wrapper {
-    background: #f1f1f1;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding: 0;
+  background: #f1f1f1;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 0;
 }
 
 .nav-tab {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #666;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: normal;
-    cursor: pointer;
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #666;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: normal;
+  cursor: pointer;
 }
 
 .nav-tab:hover {
-    color: #0073aa;
+  color: #0073aa;
 }
 
 .nav-tab.nav-tab-active,
 .nav-tab.nav-tab-active:hover {
-    color: #0073aa;
-    border-bottom-color: #0073aa;
+  color: #0073aa;
+  border-bottom-color: #0073aa;
 }
 
 .nav-tab:focus {
-    outline: none;
+  outline: none;
 }
 
 /* Styles pour le contenu des onglets */
 .tab-content {
-    display: none;
+  display: none;
 }
 
 .tab-content.active {
-    display: block;
+  display: block;
 }
 
 /* Styles pour les sections dans les onglets */
 .tab-section {
-    background: #fff;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    padding: 15px;
+  background: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 15px;
 }
 
 .tab-section h3 {
-    border-bottom: 1px solid #ddd;
-    margin: 0 0 15px 0;
-    padding-bottom: 8px;
-    font-size: 15px;
-    font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 15px 0;
+  padding-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .tab-section h4 {
-    margin: 15px 0 8px 0;
-    font-size: 13px;
-    font-weight: 600;
+  margin: 15px 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 /* Styles pour les formulaires dans les onglets */
 .form-table {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .form-table th {
-    font-weight: 600;
-    padding: 8px 8px 8px 0;
-    text-align: left;
-    vertical-align: top;
-    width: 180px;
+  font-weight: 600;
+  padding: 8px 8px 8px 0;
+  text-align: left;
+  vertical-align: top;
+  width: 180px;
 }
 
 .form-table td {
-    padding: 8px 0;
+  padding: 8px 0;
 }
 
 .form-table input[type="text"],
@@ -1810,104 +1851,104 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
 .form-table input[type="number"],
 .form-table select,
 .form-table textarea {
-    max-width: 350px;
-    width: 100%;
-    padding: 4px 6px;
-    border: 1px solid #ddd;
+  max-width: 350px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #ddd;
 }
 
 /* Styles pour les boutons */
 .button-primary {
-    background: #0073aa;
-    border: 1px solid #0073aa;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
-    padding: 4px 10px;
-    text-decoration: none;
-    vertical-align: top;
+  background: #0073aa;
+  border: 1px solid #0073aa;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: normal;
+  margin: 0;
+  padding: 4px 10px;
+  text-decoration: none;
+  vertical-align: top;
 }
 
 .button-primary:hover,
 .button-primary:focus {
-    background: #005177;
-    border-color: #005177;
+  background: #005177;
+  border-color: #005177;
 }
 
 .button-secondary {
-    background: #f7f7f7;
-    border: 1px solid #ccc;
-    color: #555;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0 0 0 8px;
-    padding: 4px 10px;
-    text-decoration: none;
-    vertical-align: top;
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+  color: #555;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: normal;
+  margin: 0 0 0 8px;
+  padding: 4px 10px;
+  text-decoration: none;
+  vertical-align: top;
 }
 
 .button-secondary:hover,
 .button-secondary:focus {
-    background: #e9e9e9;
-    border-color: #999;
+  background: #e9e9e9;
+  border-color: #999;
 }
 
 /* Styles pour les messages */
 .notice {
-    background: #fff;
-    border-left: 4px solid #00a0d2;
-    margin: 15px 0;
-    padding: 8px 12px;
+  background: #fff;
+  border-left: 4px solid #00a0d2;
+  margin: 15px 0;
+  padding: 8px 12px;
 }
 
 .notice-success {
-    border-left-color: #46b450;
+  border-left-color: #46b450;
 }
 
 .notice-error {
-    border-left-color: #dc3232;
+  border-left-color: #dc3232;
 }
 
 .notice-warning {
-    border-left-color: #ffb900;
+  border-left-color: #ffb900;
 }
 
 .notice-info {
-    border-left-color: #00a0d2;
+  border-left-color: #00a0d2;
 }
 
 /* Styles responsives minimaux */
 @media screen and (max-width: 782px) {
-    .nav-tab-wrapper {
-        margin-bottom: 15px;
-    }
+  .nav-tab-wrapper {
+    margin-bottom: 15px;
+  }
 
-    .nav-tab {
-        display: block;
-        width: 100%;
-        border: none;
-        border-bottom: 1px solid #ddd;
-        padding: 10px 12px;
-        text-align: left;
-    }
+  .nav-tab {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+  }
 
-    .nav-tab:last-child {
-        border-bottom: none;
-    }
+  .nav-tab:last-child {
+    border-bottom: none;
+  }
 
-    .nav-tab:hover {
-        background: #f9f9f9;
-    }
+  .nav-tab:hover {
+    background: #f9f9f9;
+  }
 
-    .nav-tab.nav-tab-active {
-        background: #fff;
-        border-bottom-color: #0073aa;
-    }
+  .nav-tab.nav-tab-active {
+    background: #fff;
+    border-bottom-color: #0073aa;
+  }
 }
 /**
  * PDF Builder Pro V2 - Main CSS Entry Point
@@ -1939,18 +1980,24 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
   --text-light: #666;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-html, body {
-  margin: 0; padding: 0;
+html,
+body {
+  margin: 0;
+  padding: 0;
   font-family: system-ui, -apple-system, sans-serif;
   background: var(--light-bg);
   color: var(--text-color);
 }
 
 .pdf-builder-container {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   background: white;
 }
 
@@ -1958,7 +2005,7 @@ html, body {
   padding: 12px;
   border-bottom: 1px solid var(--border-color);
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .pdf-builder-header h1 {
@@ -2025,4 +2072,3 @@ html, body {
   border-color: var(--primary-color);
   color: var(--primary-color);
 }
-

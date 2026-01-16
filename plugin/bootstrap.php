@@ -19,6 +19,21 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
+// 🔧 CHARGEMENT DES STUBS POUR INTELEPHENSE (DÉVELOPPEMENT UNIQUEMENT)
+// ============================================================================
+
+/**
+ * Charger les stubs WordPress pour Intelephense (analyse statique)
+ * Ces fichiers ne sont utilisés que pour le développement et ne sont pas déployés
+ */
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'wordpress-stubs.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'wordpress-stubs.php';
+}
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'woocommerce-stubs.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'woocommerce-stubs.php';
+}
+
+// ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
 

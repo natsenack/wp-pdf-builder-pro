@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 }
 // Import the Security Manager from global namespace
 use \PDF_Builder_Security_Manager;
+use Exception;
 /**
  * Classe pour gérer l'onboarding et les tutoriels
  */

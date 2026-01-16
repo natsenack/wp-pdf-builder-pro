@@ -7,6 +7,8 @@
 
 namespace PDF_Builder\AJAX;
 
+use Exception;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -523,6 +525,7 @@ class PdfBuilderTemplatesAjax
             $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id));
             if (!$existing) {
                 wp_send_json_error('Template non trouvé');
+                return;
             }
 
             // Créer une copie du template
