@@ -377,11 +377,20 @@ try {
         # Si git add échoue à cause des fichiers ignorés, essayer avec --ignore-errors
         Write-Log "Tentative avec --ignore-errors" "INFO"
         & git add --ignore-errors . 2>$null
-    } elseif ($gitAddResult -and $gitAddResult -notmatch "^warning:") {
-        # Log only if there are actual errors (not just warnings)
-        Write-Log "Erreur git add: $gitAddResult" "ERROR"
+    } else {
+        # Vérifier s'il y a des vraies erreurs (pas seulement des avertissements)
+        $errorMessages = @()
+        foreach ($result in $gitAddResult) {
+            $message = $result.ToString()
+            if ($message -and $message -notmatch "^warning:" -and $message -notmatch "^\s*$") {
+                $errorMessages += $message
+            }
+        }
+        if ($errorMessages.Count -gt 0) {
+            Write-Log "Erreur git add: $($errorMessages -join '; ')" "ERROR"
+        }
     }
-    
+
     # Force add critical compiled files
     $criticalCompiledFiles = @(
         "plugin/assets/js/pdf-builder-react-wrapper.min.js"
@@ -393,7 +402,7 @@ try {
             Write-Log "Fichier critique ajouté à Git: $criticalFile" "INFO"
         }
     }
-    
+
     Write-Log "Git add réussi" "SUCCESS"
 } catch {
     Write-Log "Erreur git add: $($_.Exception.Message)" "ERROR"

@@ -155,28 +155,28 @@ function pdf_builder_load_settings_assets($hook) {
         'all'
     );
 
-    // Script pour forcer le rechargement CSS (en cas de cache persistant)
-    wp_enqueue_script(
-        'pdf-builder-force-css-reload',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/force-css-reload.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true
-    );
+    // Script pour forcer le rechargement CSS (en cas de cache persistant) - SUPPRIMÉ
+    // wp_enqueue_script(
+    //     'pdf-builder-force-css-reload',
+    //     PDF_BUILDER_PLUGIN_URL . 'assets/js/force-css-reload.js',
+    //     array('jquery'),
+    //     PDF_BUILDER_VERSION . '-' . time(),
+    //     true
+    // );
 
-    // Script pour vérifier et forcer le rechargement COMPLET des CSS
-    wp_enqueue_script(
-        'pdf-builder-force-complete-reload',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/force-complete-reload.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . rand(100000, 999999),
-        true
-    );
+    // Script pour vérifier et forcer le rechargement COMPLET des CSS - SUPPRIMÉ
+    // wp_enqueue_script(
+    //     'pdf-builder-force-complete-reload',
+    //     PDF_BUILDER_PLUGIN_URL . 'assets/js/force-complete-reload.js',
+    //     array('jquery'),
+    //     PDF_BUILDER_VERSION . '-' . time() . '-' . uniqid() . '-' . rand(100000, 999999),
+    //     true
+    // );
 
-    // Localiser le script force-complete-reload avec l'URL du plugin
-    wp_localize_script('pdf-builder-force-complete-reload', 'pdfBuilderForceReload', array(
-        'pluginUrl' => PDF_BUILDER_PLUGIN_URL
-    ));
+    // Localiser le script force-complete-reload avec l'URL du plugin - SUPPRIMÉ
+    // wp_localize_script('pdf-builder-force-complete-reload', 'pdfBuilderForceReload', array(
+    //     'pluginUrl' => PDF_BUILDER_PLUGIN_URL
+    // ));
 
     // Charger les styles pour l'onglet principal
     wp_enqueue_style(
@@ -211,23 +211,23 @@ function pdf_builder_load_settings_assets($hook) {
     // DEBUG: Après localization
     error_log('PDF Builder - Après wp_localize_script');
 
-    // Charger le système de notifications
-    if (class_exists('PDF_Builder_Notification_Manager')) {
-        $notification_manager = PDF_Builder_Notification_Manager::get_instance();
-        $notification_manager->enqueue_scripts();
-        error_log('PDF Builder - Système de notifications chargé');
-    } else {
-        error_log('PDF Builder - ERREUR: Classe PDF_Builder_Notification_Manager non trouvée');
-    }
+    // Charger le système de notifications - SUPPRIMÉ
+    // if (class_exists('PDF_Builder_Notification_Manager')) {
+    //     $notification_manager = PDF_Builder_Notification_Manager::get_instance();
+    //     $notification_manager->enqueue_scripts();
+    //     error_log('PDF Builder - Système de notifications chargé');
+    // } else {
+    //     error_log('PDF Builder - ERREUR: Classe PDF_Builder_Notification_Manager non trouvée');
+    // }
 
-    // Charger le script de vérification de syntaxe JavaScript
-    wp_enqueue_script(
-        'pdf-builder-js-syntax-check',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/js-syntax-check.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
+    // Charger le script de vérification de syntaxe JavaScript - SUPPRIMÉ
+    // wp_enqueue_script(
+    //     'pdf-builder-js-syntax-check',
+    //     PDF_BUILDER_PLUGIN_URL . 'assets/js/js-syntax-check.js',
+    //     array('jquery'),
+    //     PDF_BUILDER_VERSION . '-' . time(),
+    //     true // Chargé dans le footer
+    // );
 
     // Charger le script principal des paramètres
     wp_enqueue_script(
@@ -272,20 +272,20 @@ function pdf_builder_load_global_admin_assets($hook) {
         'all'
     );
 
-    // Charger le script des outils développeur
-    wp_enqueue_script(
-        'pdf-builder-developer-tools',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/developer-tools.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
+    // Charger le script des outils développeur - SUPPRIMÉ
+    // wp_enqueue_script(
+    //     'pdf-builder-developer-tools',
+    //     PDF_BUILDER_PLUGIN_URL . 'assets/js/developer-tools.js',
+    //     array('jquery'),
+    //     PDF_BUILDER_VERSION . '-' . time(),
+    //     true // Chargé dans le footer
+    // );
 
-    // Localiser le script des outils développeur avec les données AJAX
-    wp_localize_script('pdf-builder-developer-tools', 'pdf_builder_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_ajax')
-    ));
+    // Localiser le script des outils développeur avec les données AJAX - SUPPRIMÉ
+    // wp_localize_script('pdf-builder-developer-tools', 'pdf_builder_ajax', array(
+    //     'ajax_url' => admin_url('admin-ajax.php'),
+    //     'nonce' => wp_create_nonce('pdf_builder_ajax')
+    // ));
 }
 
 // Enregistrer le hook pour les assets globaux
