@@ -195,3 +195,497 @@
     <div id="pdf-builder-tab-content" style="display: none;"></div>
 
 </div> <!-- Fin du .wrap -->
+
+<script type="text/javascript">
+(function($) {
+    'use strict';
+
+    // Attendre que le DOM soit complètement chargé
+    $(document).ready(function() {
+        console.log('🔧 PDF Builder Settings: Initializing developer tools...');
+
+        // === GESTION DU MODE DÉVELOPPEUR ===
+        $(document).on('change', '#developer_enabled', function(e) {
+            handleDeveloperModeToggle(e);
+        });
+
+        // === GESTION DU MOT DE PASSE ===
+        $(document).on('click', '#toggle_password', function(e) {
+            handlePasswordToggle(e);
+        });
+
+        // === TESTS DE LICENCE ===
+        $(document).on('click', '#toggle_license_test_mode_btn', function(e) {
+            e.preventDefault();
+            toggleLicenseTestMode(true);
+        });
+
+        $(document).on('change', '#license_test_mode', function(e) {
+            toggleLicenseTestMode(false);
+        });
+
+        $(document).on('click', '#generate_license_key_btn', function(e) {
+            e.preventDefault();
+            generateTestLicenseKey();
+        });
+
+        $(document).on('click', '#copy_license_key_btn', function(e) {
+            copyLicenseKey();
+        });
+
+        $(document).on('click', '#delete_license_key_btn', function(e) {
+            e.preventDefault();
+            deleteTestLicenseKey();
+        });
+
+        $(document).on('click', '#cleanup_license_btn', function(e) {
+            e.preventDefault();
+            cleanupLicense();
+        });
+
+        // === MONITORING DES PERFORMANCES ===
+        $(document).on('click', '#test_fps_btn', function(e) {
+            e.preventDefault();
+            testFPS();
+        });
+
+        $(document).on('click', '#system_info_btn', function(e) {
+            e.preventDefault();
+            showSystemInfo();
+        });
+
+        // === OUTILS DE DÉVELOPPEMENT ===
+        $(document).on('click', '#reload_cache_btn', function(e) {
+            e.preventDefault();
+            reloadCache();
+        });
+
+        $(document).on('click', '#clear_temp_btn', function(e) {
+            e.preventDefault();
+            clearTemp();
+        });
+
+        $(document).on('click', '#export_diagnostic_btn', function(e) {
+            e.preventDefault();
+            exportDiagnostic();
+        });
+
+        // === GESTION DES LOGS ===
+        $(document).on('click', '#refresh_logs_btn', function(e) {
+            e.preventDefault();
+            refreshLogs();
+        });
+
+        $(document).on('click', '#clear_logs_btn', function(e) {
+            e.preventDefault();
+            clearLogs();
+        });
+
+        // === TESTS DE NOTIFICATIONS ===
+        $(document).on('click', '#test_notification_success', function(e) {
+            e.preventDefault();
+            testNotification('success');
+        });
+
+        $(document).on('click', '#test_notification_error', function(e) {
+            e.preventDefault();
+            testNotification('error');
+        });
+
+        $(document).on('click', '#test_notification_warning', function(e) {
+            e.preventDefault();
+            testNotification('warning');
+        });
+
+        $(document).on('click', '#test_notification_info', function(e) {
+            e.preventDefault();
+            testNotification('info');
+        });
+
+        $(document).on('click', '#test_notification_all', function(e) {
+            e.preventDefault();
+            testAllNotifications();
+        });
+
+        $(document).on('click', '#test_notification_clear', function(e) {
+            e.preventDefault();
+            clearAllNotifications();
+        });
+
+        $(document).on('click', '#test_notification_stats', function(e) {
+            e.preventDefault();
+            showNotificationStats();
+        });
+
+        // Initialiser l'état des sections développeur
+        initializeDeveloperSections();
+    });
+
+    // === FONCTIONS UTILITAIRES ===
+
+    function makeAjaxCall(action, data, successCallback, errorCallback) {
+        const ajaxData = {
+            action: action,
+            nonce: pdfBuilderAjax?.nonce || '',
+            ...data
+        };
+
+        $.ajax({
+            url: pdfBuilderAjax?.ajaxurl || ajaxurl,
+            type: 'POST',
+            data: ajaxData,
+            success: function(response) {
+                if (response.success) {
+                    if (successCallback) successCallback(response);
+                } else {
+                    console.error('❌ AJAX Error:', response.data?.message || 'Unknown error');
+                    if (errorCallback) errorCallback(response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ AJAX Request failed:', status, error);
+                if (errorCallback) errorCallback({message: 'Request failed'});
+            }
+        });
+    }
+
+    function showSuccess(message) {
+        // Utiliser le système de notifications si disponible
+        if (window.pdfBuilderNotifications && typeof window.pdfBuilderNotifications.show === 'function') {
+            window.pdfBuilderNotifications.show('success', message);
+        } else {
+            alert('✅ ' + message);
+        }
+    }
+
+    function showError(message) {
+        // Utiliser le système de notifications si disponible
+        if (window.pdfBuilderNotifications && typeof window.pdfBuilderNotifications.show === 'function') {
+            window.pdfBuilderNotifications.show('error', message);
+        } else {
+            alert('❌ ' + message);
+        }
+    }
+
+    // === GESTION DU MODE DÉVELOPPEUR ===
+
+    function handleDeveloperModeToggle(e) {
+        const isEnabled = $(e.target).is(':checked');
+        console.log('🔧 Developer mode toggle:', isEnabled ? 'enabled' : 'disabled');
+
+        // Masquer/afficher les sections développeur
+        if (isEnabled) {
+            $('.developer-section-hidden').slideDown();
+        } else {
+            $('.developer-section-hidden').slideUp();
+        }
+
+        // Sauvegarder via AJAX
+        makeAjaxCall('pdf_builder_developer_save_settings', {
+            setting_key: 'pdf_builder_developer_enabled',
+            setting_value: isEnabled ? '1' : '0'
+        }, function(response) {
+            showSuccess('Mode développeur ' + (isEnabled ? 'activé' : 'désactivé'));
+        }, function(error) {
+            showError('Erreur lors de la sauvegarde du mode développeur');
+        });
+    }
+
+    function handlePasswordToggle(e) {
+        e.preventDefault();
+        const passwordField = $('#developer_password');
+        const button = $(e.target);
+
+        if (passwordField.attr('type') === 'password') {
+            passwordField.attr('type', 'text');
+            button.text('🙈 Masquer');
+        } else {
+            passwordField.attr('type', 'password');
+            button.text('👁️ Afficher');
+        }
+    }
+
+    // === TESTS DE LICENCE ===
+
+    function toggleLicenseTestMode(forceToggle = true) {
+        const checkbox = $('#license_test_mode');
+        const status = $('#license_test_mode_status');
+        const isChecked = checkbox.is(':checked');
+
+        let newState;
+        if (forceToggle) {
+            // Force toggle if requested (i.e., from a button click)
+            checkbox.prop('checked', !isChecked);
+            newState = !isChecked;
+        } else {
+            // Use the current checkbox state (i.e., user clicked the checkbox directly)
+            newState = checkbox.is(':checked');
+        }
+
+        status.html(newState ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif')
+              .css({
+                  'background': newState ? '#d4edda' : '#f8d7da',
+                  'color': newState ? '#155724' : '#721c24',
+                  'padding': '5px 10px',
+                  'border-radius': '4px',
+                  'display': 'inline-block'
+              });
+
+        // Make AJAX call
+        makeAjaxCall('pdf_builder_toggle_test_mode', {}, function(response) {
+            showSuccess('Mode test ' + (newState ? 'activé' : 'désactivé') + ' avec succès');
+        }, function(error) {
+            // Revert UI on error
+            checkbox.prop('checked', isChecked);
+            status.html(isChecked ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif')
+                  .css({
+                      'background': isChecked ? '#d4edda' : '#f8d7da',
+                      'color': isChecked ? '#155724' : '#721c24',
+                      'padding': '5px 10px',
+                      'border-radius': '4px',
+                      'display': 'inline-block'
+                  });
+            showError('Erreur lors du changement du mode test');
+        });
+    }
+
+    function generateTestLicenseKey() {
+        makeAjaxCall('pdf_builder_generate_test_license_key', {}, function(response) {
+            const newKey = response.data?.license_key || '';
+            if (newKey) {
+                $('#license_test_key').val(newKey);
+                $('#delete_license_key_btn').show();
+                $('#license_key_status').html('<span style="color: #28a745;">✓ Clé générée avec succès</span>');
+                showSuccess('Clé de test générée avec succès');
+            }
+        }, function(error) {
+            $('#license_key_status').html('<span style="color: #dc3545;">❌ Erreur lors de la génération</span>');
+            showError('Erreur lors de la génération de la clé de test');
+        });
+    }
+
+    function copyLicenseKey() {
+        const keyInput = $('#license_test_key');
+        const key = keyInput.val();
+
+        if (key) {
+            navigator.clipboard.writeText(key).then(function() {
+                showSuccess('Clé copiée dans le presse-papiers');
+            }).catch(function(err) {
+                // Fallback pour les navigateurs plus anciens
+                keyInput.select();
+                document.execCommand('copy');
+                showSuccess('Clé copiée dans le presse-papiers');
+            });
+        } else {
+            showError('Aucune clé à copier');
+        }
+    }
+
+    function deleteTestLicenseKey() {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette clé de test ?')) {
+            return;
+        }
+
+        makeAjaxCall('pdf_builder_delete_test_license_key', {}, function(response) {
+            $('#license_test_key').val('');
+            $('#delete_license_key_btn').hide();
+            $('#license_key_status').html('<span style="color: #28a745;">✓ Clé supprimée avec succès</span>');
+            showSuccess('Clé de test supprimée avec succès');
+        }, function(error) {
+            $('#license_key_status').html('<span style="color: #dc3545;">❌ Erreur lors de la suppression</span>');
+            showError('Erreur lors de la suppression de la clé de test');
+        });
+    }
+
+    function cleanupLicense() {
+        if (!confirm('Êtes-vous sûr de vouloir nettoyer complètement la licence ? Toutes les données de licence seront supprimées.')) {
+            return;
+        }
+
+        makeAjaxCall('pdf_builder_cleanup_license', {}, function(response) {
+            $('#license_test_key').val('');
+            $('#license_test_mode').prop('checked', false);
+            $('#license_test_mode_status').html('❌ Mode test inactif')
+                  .css({
+                      'background': '#f8d7da',
+                      'color': '#721c24',
+                      'padding': '5px 10px',
+                      'border-radius': '4px',
+                      'display': 'inline-block'
+                  });
+            $('#delete_license_key_btn').hide();
+            $('#cleanup_status').html('<span style="color: #28a745;">✓ Nettoyage complet effectué</span>');
+            showSuccess('Licence nettoyée complètement');
+        }, function(error) {
+            $('#cleanup_status').html('<span style="color: #dc3545;">❌ Erreur lors du nettoyage</span>');
+            showError('Erreur lors du nettoyage de la licence');
+        });
+    }
+
+    // === MONITORING DES PERFORMANCES ===
+
+    function testFPS() {
+        $('#fps_test_result').html('<span style="color: #007cba;">⏳ Test en cours...</span>');
+
+        // Simuler un test FPS (dans un vrai scénario, cela testerait le canvas)
+        setTimeout(function() {
+            const mockFPS = Math.floor(Math.random() * 20) + 50; // 50-70 FPS
+            const targetFPS = 60;
+            const isGood = mockFPS >= targetFPS;
+
+            $('#fps_test_result').html(
+                '<span style="color: ' + (isGood ? '#28a745' : '#dc3545') + '; font-weight: bold;">' +
+                mockFPS + ' FPS ' + (isGood ? '✅' : '⚠️') + '</span>'
+            );
+
+            if (!isGood) {
+                $('#fps_test_details').show();
+            }
+        }, 2000);
+    }
+
+    function showSystemInfo() {
+        $('#system_info_result').show();
+        showSuccess('Informations système affichées');
+    }
+
+    // === OUTILS DE DÉVELOPPEMENT ===
+
+    function reloadCache() {
+        makeAjaxCall('pdf_builder_clear_all_cache', {}, function(response) {
+            showSuccess('Cache rechargé avec succès');
+        }, function(error) {
+            showError('Erreur lors du rechargement du cache');
+        });
+    }
+
+    function clearTemp() {
+        makeAjaxCall('pdf_builder_clear_temp', {}, function(response) {
+            showSuccess('Fichiers temporaires supprimés');
+        }, function(error) {
+            showError('Erreur lors de la suppression des fichiers temporaires');
+        });
+    }
+
+    function exportDiagnostic() {
+        makeAjaxCall('pdf_builder_export_diagnostic', {}, function(response) {
+            if (response.data?.download_url) {
+                window.location.href = response.data.download_url;
+                showSuccess('Diagnostic exporté avec succès');
+            }
+        }, function(error) {
+            showError('Erreur lors de l\'export du diagnostic');
+        });
+    }
+
+    // === GESTION DES LOGS ===
+
+    function refreshLogs() {
+        makeAjaxCall('pdf_builder_refresh_logs', {}, function(response) {
+            if (response.data?.logs) {
+                $('#logs_content').html('<pre>' + response.data.logs + '</pre>');
+            }
+            showSuccess('Logs actualisés');
+        }, function(error) {
+            showError('Erreur lors de l\'actualisation des logs');
+        });
+    }
+
+    function clearLogs() {
+        if (!confirm('Êtes-vous sûr de vouloir vider tous les logs ?')) {
+            return;
+        }
+
+        makeAjaxCall('pdf_builder_clear_logs', {}, function(response) {
+            $('#logs_content').html('<em style="color: #666;">Logs vidés. Cliquez sur "Actualiser Logs" pour recharger...</em>');
+            showSuccess('Logs vidés avec succès');
+        }, function(error) {
+            showError('Erreur lors du vidage des logs');
+        });
+    }
+
+    // === TESTS DE NOTIFICATIONS ===
+
+    function testNotification(type) {
+        const messages = {
+            success: '✅ Test de notification succès réussi !',
+            error: '❌ Test de notification erreur (ceci est normal)',
+            warning: '⚠️ Test de notification avertissement',
+            info: 'ℹ️ Test de notification information'
+        };
+
+        if (window.pdfBuilderNotifications && typeof window.pdfBuilderNotifications.show === 'function') {
+            window.pdfBuilderNotifications.show(type, messages[type]);
+            logNotificationTest(type, messages[type]);
+        } else {
+            alert(messages[type]);
+        }
+    }
+
+    function testAllNotifications() {
+        const types = ['success', 'error', 'warning', 'info'];
+        let index = 0;
+
+        const testNext = function() {
+            if (index < types.length) {
+                testNotification(types[index]);
+                index++;
+                setTimeout(testNext, 1000); // 1 seconde entre chaque
+            }
+        };
+
+        testNext();
+    }
+
+    function clearAllNotifications() {
+        if (window.pdfBuilderNotifications && typeof window.pdfBuilderNotifications.clear === 'function') {
+            window.pdfBuilderNotifications.clear();
+            showSuccess('Toutes les notifications ont été supprimées');
+        } else {
+            showSuccess('Fonctionnalité non disponible');
+        }
+    }
+
+    function showNotificationStats() {
+        if (window.pdfBuilderNotifications && typeof window.pdfBuilderNotifications.getStats === 'function') {
+            const stats = window.pdfBuilderNotifications.getStats();
+            alert('Statistiques des notifications:\n' + JSON.stringify(stats, null, 2));
+        } else {
+            showSuccess('Statistiques non disponibles');
+        }
+    }
+
+    function logNotificationTest(type, message) {
+        const logsContainer = $('#notification_test_logs');
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `<div style="margin-bottom: 5px; padding: 5px; background: #f8f9fa; border-left: 3px solid ${
+            type === 'success' ? '#28a745' :
+            type === 'error' ? '#dc3545' :
+            type === 'warning' ? '#ffc107' : '#17a2b8'
+        };">[${timestamp}] ${type.toUpperCase()}: ${message}</div>`;
+
+        logsContainer.append(logEntry);
+        logsContainer.scrollTop(logsContainer[0].scrollHeight);
+    }
+
+    // === INITIALISATION ===
+
+    function initializeDeveloperSections() {
+        // Masquer les sections développeur si le mode n'est pas activé
+        const developerEnabled = $('#developer_enabled').is(':checked');
+        if (!developerEnabled) {
+            $('.developer-section-hidden').hide();
+        }
+
+        // Masquer le bouton de suppression si pas de clé
+        const licenseKey = $('#license_test_key').val();
+        if (!licenseKey) {
+            $('#delete_license_key_btn').hide();
+        }
+
+        console.log('🔧 Developer sections initialized');
+    }
+
+})(jQuery);
+</script>

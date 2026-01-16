@@ -1,1 +1,21 @@
 node_modules
+
+# Composer
+plugin/vendor/
+plugin/composer.phar
+plugin/composer-setup.php
+plugin/composer.lock
+plugin/composer.json
+
+# Build outputs
+dist/
+build/*.log
+
+# IDE
+.vscode/settings.json
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

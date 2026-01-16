@@ -75,7 +75,7 @@
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
                             <input type="hidden" name="pdf_builder_settings[pdf_builder_license_test_mode]" value="0">
                             <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode]" value="1" <?php checked($license_test_mode, '1'); ?> class="hidden-element" />
-                            <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_toggle_test_mode'); ?>" />
+                            <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -99,9 +99,9 @@
                             </div>
                             <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
                             <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                            <input type="hidden" id="generate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_generate_test_license_key'); ?>" />
-                            <input type="hidden" id="delete_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>" />
-                            <input type="hidden" id="validate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_validate_test_license_key'); ?>" />
+                            <input type="hidden" id="generate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                            <input type="hidden" id="delete_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                            <input type="hidden" id="validate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -112,7 +112,7 @@
                             </button>
                             <p class="description">Supprime tous les paramètres de licence et réinitialise à l'état libre. Utile pour les tests.</p>
                             <span id="cleanup_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                            <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_cleanup_license'); ?>" />
+                            <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
                         </td>
                     </tr>
                 </table>

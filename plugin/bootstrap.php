@@ -19,21 +19,6 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
-// 🔧 CHARGEMENT DES STUBS POUR INTELEPHENSE (DÉVELOPPEMENT UNIQUEMENT)
-// ============================================================================
-
-/**
- * Charger les stubs WordPress pour Intelephense (analyse statique)
- * Ces fichiers ne sont utilisés que pour le développement et ne sont pas déployés
- */
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'wordpress-stubs.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'wordpress-stubs.php';
-}
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'woocommerce-stubs.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'woocommerce-stubs.php';
-}
-
-// ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
 
@@ -1243,6 +1228,9 @@ function pdf_builder_init_canvas_defaults()
     }
 }
 
+// Defer the call to ensure WordPress is fully loaded
+add_action('init', 'pdf_builder_init_canvas_defaults');
+
 // AJAX handler pour obtenir un nonce frais
 function pdf_builder_ajax_get_fresh_nonce()
 {
@@ -1595,7 +1583,7 @@ function pdf_builder_initialize_canvas_defaults() {
 }
 
 // Initialiser les paramètres canvas par défaut
-pdf_builder_initialize_canvas_defaults();
+add_action('init', 'pdf_builder_initialize_canvas_defaults');
 
 // ============================================================================
 // INITIALISER LE SYSTÈME DE MIGRATION (DÉPLACÉ PLUS HAUT)
@@ -1624,7 +1612,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
         // Vérifier le nonce
         $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
-        $nonce_valid = wp_verify_nonce($nonce_value, 'pdf_builder_settings_ajax');
+        $nonce_valid = wp_verify_nonce($nonce_value, 'pdf_builder_ajax');
         // error_log('PDF Builder Développeur: Résultat de vérification du nonce: ' . ($nonce_valid ? 'VALIDE' : 'INVALIDE'));
 
         if (!$nonce_valid) {
