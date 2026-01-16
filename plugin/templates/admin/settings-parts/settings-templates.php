@@ -10,8 +10,8 @@
 
     // Vérifier si l'utilisateur a une licence premium
     $is_premium = false;
-    if (class_exists('PDF_Builder\Managers\PdfBuilderLicenseManager')) {
-        $license_manager = PDF_Builder\Managers\PdfBuilderLicenseManager::getInstance();
+    if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+        $license_manager = PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
         $is_premium = $license_manager->isPremium();
     }
 
