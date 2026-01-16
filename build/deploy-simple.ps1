@@ -514,21 +514,29 @@ function Invoke-GitCommitAndPush {
             & git status --short
             Write-Host ""
 
-            # Ajouter tous les fichiers modifiés
-            Write-Log "Ajout de tous les fichiers au staging..." "INFO"
-            & git add .
-            if ($LASTEXITCODE -ne 0) {
-                throw "Erreur lors de git add"
+            # Vérifier s'il y a des fichiers déjà dans le staging
+            $stagedFiles = & git diff --cached --name-only
+            if (-not $stagedFiles) {
+                # Aucun fichier dans le staging, ajouter tous les fichiers modifiés
+                Write-Log "Ajout de tous les fichiers au staging..." "INFO"
+                & git add .
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Erreur lors de git add"
+                }
+                Write-Host "✅ Tous les fichiers ajoutés au staging" -ForegroundColor Green
+            } else {
+                Write-Host "✅ Fichiers déjà dans le staging" -ForegroundColor Green
             }
-            Write-Host "✅ Tous les fichiers ajoutés au staging" -ForegroundColor Green
 
             # Afficher ce qui va être committé
             Write-Host "📦 Fichiers qui seront committés:" -ForegroundColor Cyan
             & git status --short
             Write-Host ""
 
-            # Commit
-            & git commit -m $commitMessage
+            # Commit avec message protégé par des guillemets
+            $commitCmd = "git commit -m `"$commitMessage`""
+            Write-Log "Exécution: $commitCmd" "INFO"
+            & git commit -m "$commitMessage"
             if ($LASTEXITCODE -ne 0) {
                 throw "Erreur lors du commit"
             }
