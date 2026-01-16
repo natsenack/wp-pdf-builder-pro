@@ -12,7 +12,7 @@ import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
 import createLogger from '@utils/logger';
-import { getDOMContainer, showInitIndicator } from '@utils/dom';
+import { getDOMContainer } from '@utils/dom';
 import '../../css/main.css';
 
 const logger = createLogger('PDFBuilderReact');
@@ -39,9 +39,6 @@ function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): bo
   logger.info(`Initializing PDF Builder in container: ${containerId}`);
   
   try {
-    // Show loading indicator
-    showInitIndicator();
-
     // Get container
     const container = getDOMContainer(containerId);
     if (!container) {

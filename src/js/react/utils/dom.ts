@@ -36,37 +36,8 @@ export const createErrorElement = (message: string): HTMLElement => {
   return div;
 };
 
-export const showInitIndicator = (): void => {
-  const indicator = document.createElement('div');
-  indicator.id = 'pdf-builder-init-indicator';
-  indicator.style.cssText = `
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 12px 16px;
-    border-radius: 6px;
-    z-index: 999999;
-    font-size: 12px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    font-family: system-ui, -apple-system, sans-serif;
-  `;
-  indicator.textContent = '✅ PDF Builder V2 Loaded';
-  
-  if (document.body) {
-    document.body.appendChild(indicator);
-  } else {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.appendChild(indicator);
-    }, { once: true });
-  }
-};
-
 export default {
   getDOMContainer,
   waitForDOM,
   createErrorElement,
-  showInitIndicator,
 };
