@@ -188,9 +188,9 @@ function Get-FilesToDeploy {
         # Convertir en ArrayList pour éviter les problèmes avec +=
         $files = New-Object System.Collections.ArrayList(,$files)
     } else {
-        Write-Log "Mode NORMAL: fichiers modifiés récemment" "INFO"
+        Write-Log "Mode NORMAL: fichiers modifiés récemment + fichiers critiques" "INFO"
 
-        # Utiliser Git si disponible
+        # Utiliser Git si disponible pour détecter les fichiers modifiés
         try {
             Push-Location $Script:WorkingDir
             $modified = & git diff --name-only 2>$null
@@ -201,19 +201,22 @@ function Get-FilesToDeploy {
             $files = @($allFiles | ForEach-Object { Get-Item (Join-Path $Script:WorkingDir $_) })
             # Convertir en ArrayList
             $files = New-Object System.Collections.ArrayList(,$files)
+            Write-Log "Git a détecté $($files.Count) fichier(s) modifié(s)" "INFO"
         } catch {
             Write-Log "Git non disponible, utilisation du mode timestamp" "WARN"
+            $files = New-Object System.Collections.ArrayList
         } finally {
             Pop-Location
         }
 
-        # Fallback: fichiers modifiés dans les dernières 24h
+        # Si Git n'a rien trouvé ou est indisponible, utiliser un fallback plus restrictif (dernières 2h au lieu de 24h)
         if ($files.Count -eq 0) {
-            $cutoffTime = (Get-Date).AddHours(-24)
+            $cutoffTime = (Get-Date).AddHours(-2)  # Réduit de 24h à 2h pour éviter de déployer trop de fichiers
             $files = @(Get-ChildItem -Path $Script:PluginDir -Recurse -File |
-                    Where-Object { $_.LastWriteTime -gt $cutoffTime })
+                    Where-Object { $_.LastWriteTime -gt $cutoffTime -and -not ($exclusions | Where-Object { $_.FullName -match $_ }) })
             # Convertir en ArrayList
             $files = New-Object System.Collections.ArrayList(,$files)
+            Write-Log "Fallback activé: $($files.Count) fichier(s) modifié(s) dans les 2 dernières heures" "INFO"
         }
     }
 
