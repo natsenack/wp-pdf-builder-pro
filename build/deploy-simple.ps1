@@ -507,26 +507,25 @@ function Invoke-GitCommitAndPush {
         # Vérifier l'état du repository
         $status = & git status --porcelain
         if ($status) {
-            Write-Log "Fichiers modifiés détectés, commit en cours..." "INFO"
+            Write-Log "Fichiers modifiés détectés, préparation du commit..." "INFO"
 
-            # Afficher les fichiers qui seront ajoutés
-            $modifiedFiles = & git diff --name-only
-            $newFiles = & git ls-files --others --exclude-standard
-            Write-Host "📁 Fichiers à commiter:" -ForegroundColor Cyan
-            if ($modifiedFiles) {
-                $modifiedFiles | ForEach-Object { Write-Host "  ✏️  $_" -ForegroundColor Yellow }
-            }
-            if ($newFiles) {
-                $newFiles | ForEach-Object { Write-Host "  ➕ $_" -ForegroundColor Green }
-            }
+            # Afficher l'état actuel
+            Write-Host "📊 État Git actuel:" -ForegroundColor Cyan
+            & git status --short
+            Write-Host ""
 
-            # Ajouter tous les fichiers
-            Write-Log "Ajout des fichiers au staging..." "INFO"
+            # Ajouter tous les fichiers modifiés
+            Write-Log "Ajout de tous les fichiers au staging..." "INFO"
             & git add .
             if ($LASTEXITCODE -ne 0) {
                 throw "Erreur lors de git add"
             }
-            Write-Host "✅ Fichiers ajoutés au staging" -ForegroundColor Green
+            Write-Host "✅ Tous les fichiers ajoutés au staging" -ForegroundColor Green
+
+            # Afficher ce qui va être committé
+            Write-Host "📦 Fichiers qui seront committés:" -ForegroundColor Cyan
+            & git status --short
+            Write-Host ""
 
             # Commit
             & git commit -m $commitMessage

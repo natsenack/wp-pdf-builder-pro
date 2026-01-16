@@ -241,7 +241,20 @@ function pdf_builder_load_global_admin_assets($hook) {
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'
+    // Charger le script des outils développeur
+    wp_enqueue_script(
+        'pdf-builder-developer-tools',
+        PDF_BUILDER_PLUGIN_URL . 'assets/js/developer-tools.js',
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true // Chargé dans le footer
     );
+
+    // Localiser le script des outils développeur avec les données AJAX
+    wp_localize_script('pdf-builder-developer-tools', 'pdf_builder_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_ajax')
+    ));
 }
 
 // Enregistrer le hook pour les assets globaux
