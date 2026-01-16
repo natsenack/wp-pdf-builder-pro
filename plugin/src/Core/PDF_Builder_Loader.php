@@ -181,11 +181,11 @@ class PDF_Builder_Loader {
     private function load_managers() {
         $managers = [
             'PDF_Builder_Backup_Restore_Manager.php',
-            'PDF_Builder_Canvas_Manager.php',
-            'PDF_Builder_Drag_Drop_Manager.php',
-            'PDF_Builder_Feature_Manager.php',
-            'PDF_Builder_License_Manager.php',
-            'PDF_Builder_Logger.php',
+            // 'PDF_Builder_Canvas_Manager.php', // Chargé dans bootstrap.php
+            // 'PDF_Builder_Drag_Drop_Manager.php', // Chargé dans bootstrap.php
+            // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
+            // 'PDF_Builder_License_Manager.php', // Chargé dans bootstrap.php
+            // 'PDF_Builder_Logger.php', // Chargé dans bootstrap.php
             'PDF_Builder_PDF_Generator.php',
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
