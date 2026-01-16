@@ -417,22 +417,21 @@ try {
     # Utiliser git add -A pour ajouter tous les changements (nouveaux, modifiés, supprimés)
     # dans tout le repository, en ignorant les avertissements de fins de ligne
     $gitAddResult = & git add -A 2>&1
-    
-    # Debug: afficher le résultat pour comprendre le format
-    Write-Log "Debug git add result: '$gitAddResult'" "INFO"
-    
+
     # Vérifier si c'est juste un avertissement de fins de ligne (non bloquant)
     $isOnlyLineEndingWarning = $gitAddResult -match "LF will be replaced by CRLF"
-    
-    Write-Log "Debug: isOnlyLineEndingWarning = $isOnlyLineEndingWarning, LASTEXITCODE = $LASTEXITCODE" "INFO"
-    
-    if ($LASTEXITCODE -ne 0 -and -not $isOnlyLineEndingWarning) {
+
+    # Git add peut réussir même avec des avertissements de fins de ligne
+    if ($LASTEXITCODE -eq 0) {
+        if ($isOnlyLineEndingWarning) {
+            Write-Log "Git add réussi (avertissement fins de ligne ignoré)" "SUCCESS"
+        } else {
+            Write-Log "Git add réussi" "SUCCESS"
+        }
+    } else {
+        # Si git add a vraiment échoué (pas juste un avertissement)
         Write-Log "Erreur git add: $gitAddResult" "ERROR"
         throw "Git add failed"
-    } elseif ($isOnlyLineEndingWarning) {
-        Write-Log "Git add réussi (avertissement fins de ligne ignoré)" "SUCCESS"
-    } else {
-        Write-Log "Git add réussi" "SUCCESS"
     }
 } catch {
     Write-Log "Erreur git add: $($_.Exception.Message)" "ERROR"
