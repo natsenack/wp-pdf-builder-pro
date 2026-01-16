@@ -23,6 +23,7 @@ class NonceManager {
 ```
 
 **Méthodes principales :**
+
 - `createNonce(): string` - Génère un nonce valide
 - `verifyNonce(?string $nonce)` - Vérifie un nonce (retourne 1, 2 ou false)
 - `getNonceFromRequest(): ?string` - Récupère le nonce de la requête (GET ou POST)
@@ -38,6 +39,7 @@ class NonceManager {
 Tous les endpoints AJAX utilisant les nonces ont été modernisés pour utiliser `NonceManager` :
 
 **Avant :**
+
 ```php
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
     wp_send_json_error('Permissions insuffisantes');
@@ -50,6 +52,7 @@ if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_aj
 ```
 
 **Après :**
+
 ```php
 $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
 if (!$validation['success']) {
@@ -63,6 +66,7 @@ if (!$validation['success']) {
 ```
 
 **Endpoints mise à jour :**
+
 - `ajaxGeneratePdfFromCanvas()`
 - `ajaxDownloadPdf()`
 - `ajaxSaveTemplateV3()`
@@ -84,13 +88,14 @@ Classe centralisée pour la gestion des nonces côté client :
 
 ```typescript
 class ClientNonceManager {
-  static readonly NONCE_ACTION = 'pdf_builder_ajax';
-  static readonly STORAGE_KEY = 'pdfBuilderNonce';
+  static readonly NONCE_ACTION = "pdf_builder_ajax";
+  static readonly STORAGE_KEY = "pdfBuilderNonce";
   static readonly NONCE_TTL = 43200; // 12 heures
 }
 ```
 
 **Méthodes principales :**
+
 - `getCurrentNonce(): string | null` - Obtient le nonce actuel
 - `getAjaxUrl(): string` - Obtient l'URL AJAX
 - `setNonce(nonce: string): void` - Met à jour le nonce globalement
@@ -107,30 +112,39 @@ class ClientNonceManager {
 Le hook a été modernisé pour utiliser `ClientNonceManager` :
 
 **Avant :**
+
 ```typescript
-const currentNonce = window.pdfBuilderData?.nonce || '';
-formData.append('nonce', currentNonce);
-const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
-  method: 'POST',
-  body: formData
+const currentNonce = window.pdfBuilderData?.nonce || "";
+formData.append("nonce", currentNonce);
+const response = await fetch(window.pdfBuilderData?.ajaxUrl || "", {
+  method: "POST",
+  body: formData,
 });
 ```
 
 **Après :**
+
 ```typescript
-import { ClientNonceManager } from '../utils/ClientNonceManager';
+import { ClientNonceManager } from "../utils/ClientNonceManager";
 
 ClientNonceManager.addToFormData(formData);
 const response = await fetch(ClientNonceManager.getAjaxUrl(), {
-  method: 'POST',
-  body: formData
+  method: "POST",
+  body: formData,
 });
 ```
 
 **Gestion des erreurs nonce améliorée :**
+
 ```typescript
-if (result.data && (result.data.includes('Nonce invalide') || result.data.code === 'nonce_invalid')) {
-  const freshNonce = await ClientNonceManager.refreshNonce(ClientNonceManager.getCurrentNonce() || undefined);
+if (
+  result.data &&
+  (result.data.includes("Nonce invalide") ||
+    result.data.code === "nonce_invalid")
+) {
+  const freshNonce = await ClientNonceManager.refreshNonce(
+    ClientNonceManager.getCurrentNonce() || undefined
+  );
   if (freshNonce) {
     return await saveTemplate(); // Retry
   }
@@ -140,16 +154,19 @@ if (result.data && (result.data.includes('Nonce invalide') || result.data.code =
 ## Flux de sécurité unifié
 
 ### 1. Initialisation
+
 - **Backend :** `NonceManager::createNonce()` génère un nonce valide
 - **Localization :** Le nonce est transmis au frontend via `wp_localize_script()`
 - **Frontend :** `ClientNonceManager::getCurrentNonce()` récupère le nonce
 
 ### 2. Requête AJAX
+
 - **Client :** `ClientNonceManager::addToFormData(formData)` ajoute le nonce
 - **Serveur :** `NonceManager::validateRequest()` valide le nonce et les permissions
 - **Réponse :** Succès ou erreur avec code d'erreur spécifique
 
 ### 3. Rafraîchissement (si expiration)
+
 - **Client :** Détecte `'Nonce invalide'` dans la réponse
 - **Client :** Appelle `ClientNonceManager::refreshNonce()`
 - **Serveur :** Endpoint `pdf_builder_get_fresh_nonce` génère un nouveau nonce
@@ -159,22 +176,25 @@ if (result.data && (result.data.includes('Nonce invalide') || result.data.code =
 ## Avantages de l'unification
 
 ### Sécurité
+
 ✅ Action nonce cohérente (`pdf_builder_ajax`) partout  
 ✅ Permissions standardisées (pas de mix `manage_options`/`edit_posts`)  
 ✅ Logging unifié et traçable  
-✅ Gestion d'erreur nonce centralisée  
+✅ Gestion d'erreur nonce centralisée
 
 ### Maintenabilité
+
 ✅ Logique de nonce centralisée (un seul point de modification)  
 ✅ Code plus lisible avec `NonceManager::validateRequest()`  
 ✅ Moins de code dupliqué (permissions + nonce)  
-✅ Facilite l'audit de sécurité  
+✅ Facilite l'audit de sécurité
 
 ### Expérience utilisateur
+
 ✅ Rafraîchissement automatique de nonce  
 ✅ Pas d'interruption lors de l'expiration du nonce  
 ✅ Gestion d'erreur cohérente côté client  
-✅ Feedback utilisateur amélioré  
+✅ Feedback utilisateur amélioré
 
 ## Configuration
 
@@ -201,15 +221,17 @@ static readonly NONCE_TTL = 43200;
 ## Logging et débogage
 
 ### Logs PHP
+
 ```php
 NonceManager::logInfo('Demande de génération de nonce frais');
 // Sortie : [PDF Builder] [NonceManager] [INFO] Demande de génération de nonce frais
 ```
 
 ### Logs TypeScript
+
 ```typescript
-ClientNonceManager.log('Nonce rafraîchi avec succès');
-ClientNonceManager.logError('Erreur lors du rafraîchissement');
+ClientNonceManager.log("Nonce rafraîchi avec succès");
+ClientNonceManager.logError("Erreur lors du rafraîchissement");
 ```
 
 ## Migration des anciens codes
@@ -217,6 +239,7 @@ ClientNonceManager.logError('Erreur lors du rafraîchissement');
 Si vous avez du code utilisant l'ancien système, migrez comme suit :
 
 ### PHP
+
 ```php
 // ❌ Ancien
 if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
@@ -232,23 +255,26 @@ if (!$validation['success']) {
 ```
 
 ### TypeScript
+
 ```typescript
 // ❌ Ancien
 const nonce = window.pdfBuilderData?.nonce;
-formData.append('nonce', nonce);
+formData.append("nonce", nonce);
 
 // ✅ Nouveau
-import { ClientNonceManager } from '../utils/ClientNonceManager';
+import { ClientNonceManager } from "../utils/ClientNonceManager";
 ClientNonceManager.addToFormData(formData);
 ```
 
 ## Fichiers modifiés
 
 ### Backend
+
 - `plugin/src/Admin/Handlers/NonceManager.php` (nouveau)
 - `plugin/src/Admin/Handlers/AjaxHandler.php` (mise à jour)
 
 ### Frontend
+
 - `src/js/react/utils/ClientNonceManager.ts` (nouveau)
 - `src/js/react/hooks/useTemplate.ts` (mise à jour)
 

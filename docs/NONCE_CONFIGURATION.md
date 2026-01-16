@@ -44,21 +44,21 @@ class NonceManager {
 
 ```typescript
 export class ClientNonceManager {
-    /**
-     * Action nonce unifié
-     * DOIT correspondre à NonceManager::NONCE_ACTION du backend
-     */
-    static readonly NONCE_ACTION = 'pdf_builder_ajax';
+  /**
+   * Action nonce unifié
+   * DOIT correspondre à NonceManager::NONCE_ACTION du backend
+   */
+  static readonly NONCE_ACTION = "pdf_builder_ajax";
 
-    /**
-     * Clé pour stocker le nonce en session storage
-     */
-    static readonly STORAGE_KEY = 'pdfBuilderNonce';
+  /**
+   * Clé pour stocker le nonce en session storage
+   */
+  static readonly STORAGE_KEY = "pdfBuilderNonce";
 
-    /**
-     * TTL du nonce en secondes (même valeur que backend)
-     */
-    static readonly NONCE_TTL = 43200; // 12 heures
+  /**
+   * TTL du nonce en secondes (même valeur que backend)
+   */
+  static readonly NONCE_TTL = 43200; // 12 heures
 }
 ```
 
@@ -119,8 +119,8 @@ wp_localize_script('pdf-builder-react', 'pdfBuilderData', [
 
 ```typescript
 // Le frontend récupère automatiquement via:
-window.pdfBuilderData?.nonce  // Défini par wp_localize_script
-window.pdfBuilderNonce        // Fallback (non utilisé dans la v2)
+window.pdfBuilderData?.nonce; // Défini par wp_localize_script
+window.pdfBuilderNonce; // Fallback (non utilisé dans la v2)
 ```
 
 ---
@@ -158,42 +158,50 @@ ajaxUnifiedHandler()             // Handler unifié
 ### Scénario 1: Changer l'action du nonce
 
 **Avant :**
+
 ```php
 const NONCE_ACTION = 'pdf_builder_ajax';
 ```
 
 **Après :**
+
 ```php
 const NONCE_ACTION = 'ma_nouvelle_action';
 ```
 
 **À faire aussi :**
+
 - Mettre à jour `ClientNonceManager.ts` avec la même valeur
 - Mettre à jour la localisation PHP si elle utilise la constante
 - Re-déployer le code
 
 **Impact :**
+
 - ⚠️ Les anciens nonces deviennent invalides
 - ⚠️ Les sessions existantes doivent se reconnecter
 
 ### Scénario 2: Changer le TTL du nonce
 
 **Avant :**
+
 ```php
 const NONCE_TTL = 43200; // 12 heures
 ```
 
 **Après :**
+
 ```php
 const NONCE_TTL = 86400; // 24 heures
 ```
 
 **À faire aussi :**
+
 - Mettre à jour `ClientNonceManager.ts`
 - Re-déployer
 - Documenter le changement
 
 **Impact :**
+
 - ✓ Les nonces restent valides plus longtemps
 - ⚠️ Légère diminution de sécurité
 - ✓ Meilleure UX (moins de rafraîchissements)
@@ -201,21 +209,25 @@ const NONCE_TTL = 86400; // 24 heures
 ### Scénario 3: Changer les permissions requises
 
 **Avant :**
+
 ```php
 const MIN_CAPABILITY = 'edit_posts';
 ```
 
 **Après :**
+
 ```php
 const MIN_CAPABILITY = 'read'; // Tous les utilisateurs connectés
 ```
 
 **À faire aussi :**
+
 - Évaluer l'impact sécurité
 - Mettre à jour la documentation
 - Tester avec différents rôles utilisateur
 
 **Impact :**
+
 - ⚠️ Plus d'utilisateurs peuvent accéder
 - ⚠️ Vérifier les implications sécurité
 - ✓ Plus inclusif
@@ -224,14 +236,14 @@ const MIN_CAPABILITY = 'read'; // Tous les utilisateurs connectés
 
 ## Mapping des capacités WordPress
 
-| Capacité | Rôle | Description |
-|----------|------|-------------|
-| `manage_options` | Administrateur | Accès complet au site |
-| `edit_posts` | Éditeur, Auteur | Peut créer/modifier des posts |
-| `edit_pages` | Éditeur, Auteur | Peut créer/modifier des pages |
-| `read` | Tout utilisateur connecté | Accès minimal |
-| `upload_files` | Éditeur, Auteur | Peut télécharger des fichiers |
-| `create_users` | Administrateur | Peut créer des utilisateurs |
+| Capacité         | Rôle                      | Description                   |
+| ---------------- | ------------------------- | ----------------------------- |
+| `manage_options` | Administrateur            | Accès complet au site         |
+| `edit_posts`     | Éditeur, Auteur           | Peut créer/modifier des posts |
+| `edit_pages`     | Éditeur, Auteur           | Peut créer/modifier des pages |
+| `read`           | Tout utilisateur connecté | Accès minimal                 |
+| `upload_files`   | Éditeur, Auteur           | Peut télécharger des fichiers |
+| `create_users`   | Administrateur            | Peut créer des utilisateurs   |
 
 ---
 
@@ -240,6 +252,7 @@ const MIN_CAPABILITY = 'read'; // Tous les utilisateurs connectés
 ### Problème: "Nonce invalide" systématique
 
 **Diagnostic :**
+
 ```php
 // Ajouter dans AjaxHandler.php temporairement
 NonceManager::logInfo('Action: ' . NonceManager::NONCE_ACTION);
@@ -247,14 +260,16 @@ NonceManager::logInfo('Nonce reçu: ' . $_POST['nonce'] ?? 'MANQUANT');
 ```
 
 **Vérifications :**
+
 - [ ] `NonceManager::NONCE_ACTION` = `ClientNonceManager::NONCE_ACTION`
-- [ ] Le nonce est dans $_POST ou $_GET
+- [ ] Le nonce est dans $\_POST ou $\_GET
 - [ ] La localisation PHP est correcte
 - [ ] Pas de cache JavaScript
 
 ### Problème: Permissions refusées incorrectement
 
 **Diagnostic :**
+
 ```php
 // Ajouter temporairement
 NonceManager::logInfo('User ID: ' . get_current_user_id());
@@ -263,6 +278,7 @@ NonceManager::logInfo('Can manage_options: ' . (current_user_can('manage_options
 ```
 
 **Vérifications :**
+
 - [ ] Utilisateur est connecté
 - [ ] Rôle utilisateur correct
 - [ ] Capacité existe pour ce rôle
@@ -272,6 +288,7 @@ NonceManager::logInfo('Can manage_options: ' . (current_user_can('manage_options
 **Symptôme :** Nonce expire pendant les opérations longues
 
 **Solution :**
+
 ```php
 // Augmenter le TTL
 const NONCE_TTL = 86400; // 24 heures
@@ -320,18 +337,21 @@ define('WP_DEBUG_DISPLAY', false);
 ## Checklist de validation de configuration
 
 ### Installation
+
 - [ ] `NonceManager.php` présent
 - [ ] `ClientNonceManager.ts` présent
 - [ ] Constantes synchronisées (backend/frontend)
 - [ ] Build TypeScript réussi
 
 ### Runtime
+
 - [ ] `wp_localize_script` appelée correctement
 - [ ] `window.pdfBuilderData.nonce` disponible
 - [ ] AJAX URL localisée
 - [ ] Logging activé en dev
 
 ### Sécurité
+
 - [ ] Capacités correctes par endpoint
 - [ ] TTL approprié pour le use-case
 - [ ] Nonce action unique
@@ -341,12 +361,12 @@ define('WP_DEBUG_DISPLAY', false);
 
 ## Performance
 
-| Métrique | Valeur | Notes |
-|----------|--------|-------|
-| Temps création nonce | <1ms | PHP standard |
-| Temps vérification nonce | <1ms | PHP standard |
-| Overhead mémoire | <1KB | Par nonce |
-| Appels AJAX/s | 1000+ | Sans problème |
+| Métrique                 | Valeur | Notes         |
+| ------------------------ | ------ | ------------- |
+| Temps création nonce     | <1ms   | PHP standard  |
+| Temps vérification nonce | <1ms   | PHP standard  |
+| Overhead mémoire         | <1KB   | Par nonce     |
+| Appels AJAX/s            | 1000+  | Sans problème |
 
 ---
 
@@ -380,6 +400,7 @@ const NONCE_STORAGE_BACKEND = 'wordpress'; // ou 'redis'
 ### Contacter le support
 
 Pour des questions sur la configuration :
+
 1. Vérifier la documentation ici
 2. Consulter les logs
 3. Vérifier les tests
@@ -387,6 +408,7 @@ Pour des questions sur la configuration :
 ### Bugs à rapporter
 
 Si vous trouvez un bug avec la configuration :
+
 - Inclure les constantes utilisées
 - Inclure les logs pertinents
 - Inclure les étapes pour reproduire

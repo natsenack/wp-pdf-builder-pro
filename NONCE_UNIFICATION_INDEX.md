@@ -3,18 +3,21 @@
 ## 🎯 Démarrer ici
 
 ### Pour les développeurs
+
 1. **[NONCE_UNIFICATION_COMPLETED.md](NONCE_UNIFICATION_COMPLETED.md)** ← LIRE EN PREMIER
    - Vue d'ensemble complète
    - Status et livrables
    - Prochaines étapes
 
 ### Pour les administrateurs
+
 2. **[docs/NONCE_CONFIGURATION.md](docs/NONCE_CONFIGURATION.md)**
    - Configuration système
    - Dépannage
    - Évolution future
 
 ### Pour les testeurs
+
 3. **[docs/NONCE_TESTING_GUIDE.md](docs/NONCE_TESTING_GUIDE.md)**
    - Tests manuels (8 scénarios)
    - Tests automatisés
@@ -26,23 +29,23 @@
 
 ### Concepts et architecture
 
-| Document | Audience | Contenu |
-|----------|----------|---------|
-| [**NONCE_SYSTEM_UNIFICATION.md**](docs/NONCE_SYSTEM_UNIFICATION.md) | Architectes, Lead Dev | Architecture, flux, avantages |
-| [**NONCE_BEFORE_AFTER_COMPARISON.md**](NONCE_BEFORE_AFTER_COMPARISON.md) | Tech Lead, Managers | Comparaison visuelle, ROI |
-| [**UNIFIED_NONCE_SYSTEM_SUMMARY.md**](UNIFIED_NONCE_SYSTEM_SUMMARY.md) | Stakeholders | Résumé exécutif |
+| Document                                                                 | Audience              | Contenu                       |
+| ------------------------------------------------------------------------ | --------------------- | ----------------------------- |
+| [**NONCE_SYSTEM_UNIFICATION.md**](docs/NONCE_SYSTEM_UNIFICATION.md)      | Architectes, Lead Dev | Architecture, flux, avantages |
+| [**NONCE_BEFORE_AFTER_COMPARISON.md**](NONCE_BEFORE_AFTER_COMPARISON.md) | Tech Lead, Managers   | Comparaison visuelle, ROI     |
+| [**UNIFIED_NONCE_SYSTEM_SUMMARY.md**](UNIFIED_NONCE_SYSTEM_SUMMARY.md)   | Stakeholders          | Résumé exécutif               |
 
 ### Configuration et déploiement
 
-| Document | Audience | Contenu |
-|----------|----------|---------|
-| [**NONCE_CONFIGURATION.md**](docs/NONCE_CONFIGURATION.md) | DevOps, Sysadmin | Constantes, configuration, env |
-| [**NONCE_UNIFICATION_COMPLETED.md**](NONCE_UNIFICATION_COMPLETED.md) | Tous | Status déploiement, métriques |
+| Document                                                             | Audience         | Contenu                        |
+| -------------------------------------------------------------------- | ---------------- | ------------------------------ |
+| [**NONCE_CONFIGURATION.md**](docs/NONCE_CONFIGURATION.md)            | DevOps, Sysadmin | Constantes, configuration, env |
+| [**NONCE_UNIFICATION_COMPLETED.md**](NONCE_UNIFICATION_COMPLETED.md) | Tous             | Status déploiement, métriques  |
 
 ### Tests et validation
 
-| Document | Audience | Contenu |
-|----------|----------|---------|
+| Document                                                  | Audience     | Contenu                          |
+| --------------------------------------------------------- | ------------ | -------------------------------- |
 | [**NONCE_TESTING_GUIDE.md**](docs/NONCE_TESTING_GUIDE.md) | QA, Testeurs | Tests manuels, auto, intégration |
 
 ---
@@ -52,48 +55,58 @@
 ### Backend (PHP)
 
 **Q: Où est le gestionnaire de nonce?**
+
 - A: `plugin/src/Admin/Handlers/NonceManager.php`
 - Doc: [NONCE_SYSTEM_UNIFICATION.md#backend-php](docs/NONCE_SYSTEM_UNIFICATION.md)
 
 **Q: Comment vérifier un nonce dans un endpoint?**
+
 - A: `NonceManager::validateRequest()`
 - Doc: [NONCE_CONFIGURATION.md#modification-des-constantes](docs/NONCE_CONFIGURATION.md)
 
 **Q: Quelles sont les constantes?**
+
 - A: `NONCE_ACTION`, `MIN_CAPABILITY`, `ADMIN_CAPABILITY`
 - Doc: [NONCE_CONFIGURATION.md#constantes-définies](docs/NONCE_CONFIGURATION.md)
 
 ### Frontend (TypeScript)
 
 **Q: Où est le gestionnaire de nonce client?**
+
 - A: `src/js/react/utils/ClientNonceManager.ts`
 - Doc: [NONCE_SYSTEM_UNIFICATION.md#frontend-typescriptreact](docs/NONCE_SYSTEM_UNIFICATION.md)
 
 **Q: Comment ajouter le nonce à une requête?**
+
 - A: `ClientNonceManager.addToFormData(formData)`
 - Doc: [NONCE_BEFORE_AFTER_COMPARISON.md#frontend-typescriptreact](NONCE_BEFORE_AFTER_COMPARISON.md)
 
 **Q: Comment rafraîchir le nonce?**
+
 - A: `await ClientNonceManager.refreshNonce()`
 - Doc: [NONCE_SYSTEM_UNIFICATION.md#flux-de-sécurité-unifié](docs/NONCE_SYSTEM_UNIFICATION.md)
 
 ### Sécurité
 
 **Q: Quelles sont les capacités utilisateur?**
+
 - A: `edit_posts` (éditeur) et `manage_options` (admin)
 - Doc: [NONCE_CONFIGURATION.md#mapping-des-capacités-wordpress](docs/NONCE_CONFIGURATION.md)
 
 **Q: Comment tester la sécurité?**
+
 - A: Voir Test 4 dans NONCE_TESTING_GUIDE.md
 - Doc: [NONCE_TESTING_GUIDE.md#test-4--accès-sans-permission](docs/NONCE_TESTING_GUIDE.md)
 
 ### Maintenance
 
 **Q: Comment ajouter un nouvel endpoint?**
+
 - A: Utiliser `NonceManager::validateRequest()` en 1 ligne
 - Doc: [NONCE_CONFIGURATION.md#scénario-3-changer-les-permissions-requises](docs/NONCE_CONFIGURATION.md)
 
 **Q: Comment modifier le TTL du nonce?**
+
 - A: Changer `NONCE_TTL` dans `NonceManager.php`
 - Doc: [NONCE_CONFIGURATION.md#scénario-2-changer-le-ttl-du-nonce](docs/NONCE_CONFIGURATION.md)
 
@@ -199,16 +212,19 @@ Documentation
 ## 📞 Support et ressources
 
 ### Interne
+
 - **Code** : Regarder `NonceManager.php` et `ClientNonceManager.ts`
 - **Logs** : Vérifier `wp-content/debug.log`
 - **Tests** : Exécuter la suite dans `docs/NONCE_TESTING_GUIDE.md`
 
 ### Documentation
+
 - Architecture: [NONCE_SYSTEM_UNIFICATION.md](docs/NONCE_SYSTEM_UNIFICATION.md)
 - Configuration: [NONCE_CONFIGURATION.md](docs/NONCE_CONFIGURATION.md)
 - Tests: [NONCE_TESTING_GUIDE.md](docs/NONCE_TESTING_GUIDE.md)
 
 ### Comparaison
+
 - Avant/Après: [NONCE_BEFORE_AFTER_COMPARISON.md](NONCE_BEFORE_AFTER_COMPARISON.md)
 - Résumé: [UNIFIED_NONCE_SYSTEM_SUMMARY.md](UNIFIED_NONCE_SYSTEM_SUMMARY.md)
 

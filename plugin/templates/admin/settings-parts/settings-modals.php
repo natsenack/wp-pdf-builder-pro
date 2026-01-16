@@ -586,7 +586,8 @@ function get_canvas_modal_value($key, $default = '') {
     background: #dee2e6;
     border-radius: 12px; /* Moitié de la hauteur pour un cercle parfait */
     transition: 0.3s;
-    border: 1px solid #adb5bd; /* Bordure subtile */
+    border: 1px solid #adb5bd; /* Bordure subtile */3
+    
 }
 
 .toggle-switch label:before {
@@ -605,10 +606,12 @@ function get_canvas_modal_value($key, $default = '') {
 .toggle-switch input:checked + label {
     background: #6c757d;
     border-color: #5a6268;
+    height: 22px;
 }
 
 .toggle-switch input:checked + label:before {
     transform: translateX(26px); /* Translation ajustée pour la nouvelle largeur */
+    vertical-align: middle;
 }
 
 /* Checkboxes améliorés */

@@ -9,6 +9,7 @@ Déploiement : 66 fichiers (39.5s)
 ## Objectif réalisé
 
 Unifier complètement le système de gestion des nonces (jetons CSRF) dans PDF Builder Pro V2 pour assurer :
+
 - ✅ Cohérence backend/frontend
 - ✅ Sécurité renforcée
 - ✅ Code maintenable et centralisé
@@ -18,13 +19,16 @@ Unifier complètement le système de gestion des nonces (jetons CSRF) dans PDF B
 ## Fichiers créés
 
 ### Backend (PHP)
+
 1. **`plugin/src/Admin/Handlers/NonceManager.php`** (nouveau)
    - Classe centralisée pour la gestion des nonces
    - Constantes unifiées (action, TTL, permissions)
    - Méthodes utilitaires pour validation et logging
 
 ### Frontend (TypeScript)
+
 2. **`src/js/react/utils/ClientNonceManager.ts`** (nouveau)
+
    - Gestionnaire de nonce côté client
    - Synchronisation avec le backend
    - Rafraîchissement automatique
@@ -39,6 +43,7 @@ Unifier complètement le système de gestion des nonces (jetons CSRF) dans PDF B
 ## Fichiers modifiés
 
 ### Backend (PHP)
+
 - **`plugin/src/Admin/Handlers/AjaxHandler.php`**
   - 12 endpoints AJAX mis à jour
   - Passage de 72 lignes de vérification redondantes à 1 appel `NonceManager::validateRequest()`
@@ -46,6 +51,7 @@ Unifier complètement le système de gestion des nonces (jetons CSRF) dans PDF B
   - Gestion d'erreur cohérente
 
 ### Frontend (TypeScript)
+
 - **`src/js/react/hooks/useTemplate.ts`**
   - Import de `ClientNonceManager`
   - Remplacement de 8 références directes au nonce
@@ -55,6 +61,7 @@ Unifier complètement le système de gestion des nonces (jetons CSRF) dans PDF B
 ## Améliorations techniques
 
 ### Avant
+
 ```php
 // Code dupliqué partout
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
@@ -68,6 +75,7 @@ if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_aj
 ```
 
 ### Après
+
 ```php
 // Une seule ligne
 $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
@@ -119,7 +127,7 @@ NONCE_TTL = 43200 (12 heures)
 ✅ Logging traçable  
 ✅ Gestion d'erreur sécurisée  
 ✅ Rafraîchissement automatique sans interruption  
-✅ Protection CSRF complète  
+✅ Protection CSRF complète
 
 ## Déploiement
 
@@ -132,6 +140,7 @@ NONCE_TTL = 43200 (12 heures)
 ```
 
 Fichiers critiques vérifiés :
+
 - ✅ `src/Core/PDF_Builder_Unified_Ajax_Handler.php`
 - ✅ `pdf-builder-pro.php`
 - ✅ `src/Core/core/autoloader.php`
@@ -148,6 +157,7 @@ Fichiers critiques vérifiés :
 ## Maintenance future
 
 **Pour modifier les constantes :**
+
 ```php
 // NonceManager.php
 const NONCE_ACTION = 'votre_action';
@@ -155,11 +165,13 @@ const MIN_CAPABILITY = 'votre_capacité';
 ```
 
 **Pour ajouter une validation personnalisée :**
+
 ```php
 $result = NonceManager::validateRequest('edit_pages');
 ```
 
 **Pour logger :**
+
 ```php
 NonceManager::logInfo('Message à logger');
 ```
@@ -167,6 +179,7 @@ NonceManager::logInfo('Message à logger');
 ## Documentation
 
 Voir [NONCE_SYSTEM_UNIFICATION.md](NONCE_SYSTEM_UNIFICATION.md) pour :
+
 - Architecture complète
 - Guide de migration du code ancien
 - Exemples de code

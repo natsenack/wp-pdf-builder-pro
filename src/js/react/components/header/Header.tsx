@@ -1,16 +1,29 @@
-import React, { useState, useEffect, useCallback, memo, useDeferredValue } from 'react';
-import { TemplateState } from '../../types/elements';
-import { useBuilder } from '../../contexts/builder/BuilderContext';
-import { usePreview } from '../../hooks/usePreview';
-import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
-import { debugLog, debugError } from '../../utils/debug';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  memo,
+  useDeferredValue,
+} from "react";
+import { TemplateState } from "../../types/elements";
+import { useBuilder } from "../../contexts/builder/BuilderContext";
+import { usePreview } from "../../hooks/usePreview";
+import { useCanvasSettings } from "../../contexts/CanvasSettingsContext";
+import { debugLog, debugError } from "../../utils/debug";
 
 // Extension de Window pour l'API Preview
 declare global {
   interface Window {
     pdfPreviewAPI?: {
-      generateEditorPreview: (templateData: Record<string, unknown>, options?: { format?: string; quality?: number }) => Promise<Record<string, unknown>>;
-      generateOrderPreview: (templateData: Record<string, unknown>, orderId: number, options?: { format?: string; quality?: number }) => Promise<Record<string, unknown>>;
+      generateEditorPreview: (
+        templateData: Record<string, unknown>,
+        options?: { format?: string; quality?: number }
+      ) => Promise<Record<string, unknown>>;
+      generateOrderPreview: (
+        templateData: Record<string, unknown>,
+        orderId: number,
+        options?: { format?: string; quality?: number }
+      ) => Promise<Record<string, unknown>>;
     };
   }
 }
@@ -48,18 +61,17 @@ export const Header = memo(function Header({
   onSave,
   onPreview: _onPreview,
   onNewTemplate,
-  onUpdateTemplateSettings
+  onUpdateTemplateSettings,
 }: HeaderProps) {
   // Use deferred values for frequently changing props to prevent cascading re-renders
   const deferredIsModified = useDeferredValue(isModified);
   const deferredIsSaving = useDeferredValue(isSaving);
   const deferredIsLoading = useDeferredValue(isLoading);
-  const deferredIsEditingExistingTemplate = useDeferredValue(isEditingExistingTemplate);
-    // Debug logging
-  useEffect(() => {
-
-  }, []);
-
+  const deferredIsEditingExistingTemplate = useDeferredValue(
+    isEditingExistingTemplate
+  );
+  // Debug logging
+  useEffect(() => {}, []);
 
   const { state } = useBuilder();
   const canvasSettings = useCanvasSettings();
@@ -69,12 +81,19 @@ export const Header = memo(function Header({
   const [copySuccess, setCopySuccess] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
-  const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
+  const [editedTemplateDescription, setEditedTemplateDescription] =
+    useState(templateDescription);
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
-  const [canvasOrientation, setCanvasOrientation] = useState<'portrait' | 'landscape'>(canvasWidth < canvasHeight ? 'portrait' : 'landscape');
+  const [canvasOrientation, setCanvasOrientation] = useState<
+    "portrait" | "landscape"
+  >(canvasWidth < canvasHeight ? "portrait" : "landscape");
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
-  const [orientationPermissions, setOrientationPermissions] = useState({ allowPortrait: true, allowLandscape: true, defaultOrientation: 'portrait' });
+  const [orientationPermissions, setOrientationPermissions] = useState({
+    allowPortrait: true,
+    allowLandscape: true,
+    defaultOrientation: "portrait",
+  });
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
   const {
@@ -87,21 +106,21 @@ export const Header = memo(function Header({
     format: previewFormat,
     setFormat: setPreviewFormat,
     generatePreview,
-    clearPreview
+    clearPreview,
   } = usePreview();
 
   // Debug logging
   useEffect(() => {
-    debugLog('🔄 [PDF Builder] État bouton Enregistrer mis à jour', {
+    debugLog("🔄 [PDF Builder] État bouton Enregistrer mis à jour", {
       templateName,
       buttonState: {
         disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
         isSaving: deferredIsSaving,
         isModified: deferredIsModified,
         isLoading: deferredIsLoading,
-        canSave: !deferredIsSaving && deferredIsModified && !deferredIsLoading
+        canSave: !deferredIsSaving && deferredIsModified && !deferredIsLoading,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }, [deferredIsSaving, deferredIsModified, deferredIsLoading, templateName]);
 
@@ -110,29 +129,33 @@ export const Header = memo(function Header({
     const loadOrientationPermissions = async () => {
       try {
         const formData = new FormData();
-        formData.append('action', 'pdf_builder_get_canvas_orientations');
-        formData.append('nonce', (window as any).pdf_builder_ajax_nonce || '');
+        formData.append("action", "pdf_builder_get_canvas_orientations");
+        formData.append("nonce", (window as any).pdf_builder_ajax_nonce || "");
 
-        const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
-          method: 'POST',
-          body: formData
-        });
+        const response = await fetch(
+          (window as any).ajaxurl || "/wp-admin/admin-ajax.php",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         const data = await response.json();
         if (data.success && data.data) {
           setOrientationPermissions(data.data);
         }
       } catch (error) {
-        debugError('Erreur lors du chargement des permissions d\'orientation', error);
+        debugError(
+          "Erreur lors du chargement des permissions d'orientation",
+          error
+        );
       }
     };
 
     loadOrientationPermissions();
   }, []);
 
-  useEffect(() => {
-
-  }, [showPreviewModal]);
+  useEffect(() => {}, [showPreviewModal]);
 
   // Synchroniser les états locaux avec les props quand elles changent
   useEffect(() => {
@@ -152,153 +175,184 @@ export const Header = memo(function Header({
   }, [canvasHeight]);
 
   // State pour le throttling du scroll
-  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   // Optimisation: mémoriser le handler de scroll avec throttling
   const handleScroll = useCallback(() => {
     if (scrollTimeout) return; // Si un timeout est déjà en cours, ignorer
 
-    setScrollTimeout(setTimeout(() => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      // Le header devient fixe après 120px de scroll
-      setIsHeaderFixed(scrollTop > 120);
-      setScrollTimeout(null);
-    }, 50)); // Délai de 50ms pour éviter les changements trop fréquents
+    setScrollTimeout(
+      setTimeout(() => {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        // Le header devient fixe après 120px de scroll
+        setIsHeaderFixed(scrollTop > 120);
+        setScrollTimeout(null);
+      }, 50)
+    ); // Délai de 50ms pour éviter les changements trop fréquents
   }, [scrollTimeout]);
 
   // Effet pour gérer le scroll et rendre le header fixe
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
   // Effet pour fermer le dropdown des modèles prédéfinis quand on clique ailleurs
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       const target = event.target as HTMLElement;
-      if (showPredefinedTemplates && !target.closest('[data-predefined-dropdown]')) {
+      if (
+        showPredefinedTemplates &&
+        !target.closest("[data-predefined-dropdown]")
+      ) {
         setShowPredefinedTemplates(false);
       }
     };
 
     if (showPredefinedTemplates) {
-      document.addEventListener('mousedown', handleClickOutside, { passive: true });
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside, {
+        passive: true,
+      });
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showPredefinedTemplates]);
 
   const buttonBaseStyles = {
-    padding: '10px 16px',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '14px',
-    fontWeight: '500',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    whiteSpace: 'nowrap' as const
+    padding: "10px 16px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    whiteSpace: "nowrap" as const,
   };
 
   const primaryButtonStyles = {
     ...buttonBaseStyles,
-    backgroundColor: '#4CAF50',
-    color: '#fff',
-    boxShadow: hoveredButton === 'save' ? '0 4px 12px rgba(76, 175, 80, 0.3)' : 'none'
+    backgroundColor: "#4CAF50",
+    color: "#fff",
+    boxShadow:
+      hoveredButton === "save" ? "0 4px 12px rgba(76, 175, 80, 0.3)" : "none",
   };
 
   const secondaryButtonStyles = {
     ...buttonBaseStyles,
-    backgroundColor: '#fff',
-    border: '1px solid #ddd',
-    color: '#333',
-    boxShadow: hoveredButton === 'preview-image' || hoveredButton === 'preview-pdf' || hoveredButton === 'new' ? '0 2px 8px rgba(0, 0, 0, 0.1)' : 'none'
+    backgroundColor: "#fff",
+    border: "1px solid #ddd",
+    color: "#333",
+    boxShadow:
+      hoveredButton === "preview-image" ||
+      hoveredButton === "preview-pdf" ||
+      hoveredButton === "new"
+        ? "0 2px 8px rgba(0, 0, 0, 0.1)"
+        : "none",
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: isHeaderFixed ? '16px' : '12px',
-      paddingLeft: isHeaderFixed ? '16px' : '12px',
-      paddingRight: isHeaderFixed ? '16px' : '12px',
-      backgroundColor: '#ffffff',
-      borderBottom: '2px solid #e0e0e0',
-      borderRadius: '0px',
-      boxShadow: isHeaderFixed
-        ? '0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)'
-        : 'none',
-      gap: '16px',
-      position: isHeaderFixed ? 'fixed' : 'relative',
-      top: isHeaderFixed ? '32px' : 'auto',
-      left: isHeaderFixed ? '160px' : 'auto',
-      right: isHeaderFixed ? '0' : 'auto',
-      width: isHeaderFixed ? 'calc(100% - 160px)' : 'auto',
-      zIndex: 1000,
-      boxSizing: 'border-box',
-      transition: 'all 0.25s ease-in-out'
-    }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: isHeaderFixed ? "16px" : "12px",
+        paddingLeft: isHeaderFixed ? "16px" : "12px",
+        paddingRight: isHeaderFixed ? "16px" : "12px",
+        backgroundColor: "#ffffff",
+        borderBottom: "2px solid #e0e0e0",
+        borderRadius: "0px",
+        boxShadow: isHeaderFixed
+          ? "0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1)"
+          : "none",
+        gap: "16px",
+        position: isHeaderFixed ? "fixed" : "relative",
+        top: isHeaderFixed ? "32px" : "auto",
+        left: isHeaderFixed ? "160px" : "auto",
+        right: isHeaderFixed ? "0" : "auto",
+        width: isHeaderFixed ? "calc(100% - 160px)" : "auto",
+        zIndex: 1000,
+        boxSizing: "border-box",
+        transition: "all 0.25s ease-in-out",
+      }}
+    >
       {/* Left Section - Title and Status */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        minWidth: 0,
-        flex: 1
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          gap: '12px',
-          minWidth: 0
-        }}>
-          <h2 style={{
-            margin: 0,
-            fontSize: '20px',
-            fontWeight: '600',
-            color: '#1a1a1a',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}>
-            {templateName || 'Sans titre'}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          minWidth: 0,
+          flex: 1,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: "12px",
+            minWidth: 0,
+          }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "20px",
+              fontWeight: "600",
+              color: "#1a1a1a",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {templateName || "Sans titre"}
           </h2>
 
           {/* Status Badges */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            flexShrink: 0
-          }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              flexShrink: 0,
+            }}
+          >
             {deferredIsModified && (
-              <span style={{
-                fontSize: '12px',
-                padding: '4px 10px',
-                backgroundColor: '#fff3cd',
-                color: '#856404',
-                borderRadius: '4px',
-                fontWeight: '500',
-                border: '1px solid #ffeaa7',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <span style={{ fontSize: '16px' }}>●</span>
+              <span
+                style={{
+                  fontSize: "12px",
+                  padding: "4px 10px",
+                  backgroundColor: "#fff3cd",
+                  color: "#856404",
+                  borderRadius: "4px",
+                  fontWeight: "500",
+                  border: "1px solid #ffeaa7",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <span style={{ fontSize: "16px" }}>●</span>
                 Modifié
               </span>
             )}
             {isNewTemplate && (
-              <span style={{
-                fontSize: '12px',
-                padding: '4px 10px',
-                backgroundColor: '#d1ecf1',
-                color: '#0c5460',
-                borderRadius: '4px',
-                fontWeight: '500',
-                border: '1px solid #bee5eb'
-              }}>
+              <span
+                style={{
+                  fontSize: "12px",
+                  padding: "4px 10px",
+                  backgroundColor: "#d1ecf1",
+                  color: "#0c5460",
+                  borderRadius: "4px",
+                  fontWeight: "500",
+                  border: "1px solid #bee5eb",
+                }}
+              >
                 Nouveau
               </span>
             )}
@@ -307,20 +361,22 @@ export const Header = memo(function Header({
       </div>
 
       {/* Right Section - Action Buttons */}
-      <div style={{
-        display: 'flex',
-        gap: '10px',
-        flexShrink: 0,
-        alignItems: 'center'
-      }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          flexShrink: 0,
+          alignItems: "center",
+        }}
+      >
         <button
           onClick={onNewTemplate}
-          onMouseEnter={() => setHoveredButton('new')}
+          onMouseEnter={() => setHoveredButton("new")}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
+            pointerEvents: isSaving ? "none" : "auto",
           }}
           title="Créer un nouveau template"
         >
@@ -328,141 +384,185 @@ export const Header = memo(function Header({
           <span>Nouveau</span>
         </button>
 
-        <div style={{ position: 'relative' }} data-predefined-dropdown>
+        <div style={{ position: "relative" }} data-predefined-dropdown>
           <button
             onClick={() => setShowPredefinedTemplates(!showPredefinedTemplates)}
-            onMouseEnter={() => setHoveredButton('predefined')}
+            onMouseEnter={() => setHoveredButton("predefined")}
             onMouseLeave={() => setHoveredButton(null)}
             style={{
               ...secondaryButtonStyles,
               opacity: isSaving ? 0.6 : 1,
-              pointerEvents: isSaving ? 'none' : 'auto'
+              pointerEvents: isSaving ? "none" : "auto",
             }}
             title="Modèles prédéfinis"
           >
             <span>🎨</span>
             <span>Modèles Prédéfinis</span>
-            <span style={{ marginLeft: '4px', fontSize: '12px' }}>▼</span>
+            <span style={{ marginLeft: "4px", fontSize: "12px" }}>▼</span>
           </button>
 
           {showPredefinedTemplates && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              background: 'white',
-              border: '1px solid #e0e0e0',
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              zIndex: 1001,
-              minWidth: '280px',
-              maxHeight: '400px',
-              overflowY: 'auto'
-            }}>
-              <div style={{
-                padding: '12px 16px',
-                borderBottom: '1px solid #e0e0e0',
-                background: '#f8f9fa',
-                fontWeight: '600',
-                fontSize: '14px',
-                color: '#23282d'
-              }}>
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                right: 0,
+                background: "white",
+                border: "1px solid #e0e0e0",
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                zIndex: 1001,
+                minWidth: "280px",
+                maxHeight: "400px",
+                overflowY: "auto",
+              }}
+            >
+              <div
+                style={{
+                  padding: "12px 16px",
+                  borderBottom: "1px solid #e0e0e0",
+                  background: "#f8f9fa",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  color: "#23282d",
+                }}
+              >
                 🎨 Modèles Prédéfinis
               </div>
 
               {/* Liste des modèles prédéfinis */}
-              <div style={{ padding: '8px 0' }}>
+              <div style={{ padding: "8px 0" }}>
                 <div
                   style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #f0f0f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
+                    padding: "12px 16px",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #f0f0f0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
                   }}
                   onClick={() => {
                     // Ouvrir la page des templates prédéfinis
-                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    window.open(
+                      "/wp-admin/admin.php?page=pdf-builder-templates",
+                      "_blank"
+                    );
                     setShowPredefinedTemplates(false);
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f8f9fa")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
                 >
-                  <span style={{ fontSize: '20px' }}>🧾</span>
+                  <span style={{ fontSize: "20px" }}>🧾</span>
                   <div>
-                    <div style={{ fontWeight: '500', color: '#23282d' }}>Facture Professionnelle</div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>Template professionnel pour factures</div>
+                    <div style={{ fontWeight: "500", color: "#23282d" }}>
+                      Facture Professionnelle
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#666" }}>
+                      Template professionnel pour factures
+                    </div>
                   </div>
                 </div>
 
                 <div
                   style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #f0f0f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
+                    padding: "12px 16px",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #f0f0f0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
                   }}
                   onClick={() => {
                     // Ouvrir la page des templates prédéfinis
-                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    window.open(
+                      "/wp-admin/admin.php?page=pdf-builder-templates",
+                      "_blank"
+                    );
                     setShowPredefinedTemplates(false);
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f8f9fa")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
                 >
-                  <span style={{ fontSize: '20px' }}>📋</span>
+                  <span style={{ fontSize: "20px" }}>📋</span>
                   <div>
-                    <div style={{ fontWeight: '500', color: '#23282d' }}>Devis Commercial</div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>Template professionnel pour devis</div>
+                    <div style={{ fontWeight: "500", color: "#23282d" }}>
+                      Devis Commercial
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#666" }}>
+                      Template professionnel pour devis
+                    </div>
                   </div>
                 </div>
 
                 <div
                   style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #f0f0f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
+                    padding: "12px 16px",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #f0f0f0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
                   }}
                   onClick={() => {
                     // Ouvrir la page des templates prédéfinis
-                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    window.open(
+                      "/wp-admin/admin.php?page=pdf-builder-templates",
+                      "_blank"
+                    );
                     setShowPredefinedTemplates(false);
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f8f9fa")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
                 >
-                  <span style={{ fontSize: '20px' }}>📦</span>
+                  <span style={{ fontSize: "20px" }}>📦</span>
                   <div>
-                    <div style={{ fontWeight: '500', color: '#23282d' }}>Bon de Commande</div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>Template professionnel pour commandes</div>
+                    <div style={{ fontWeight: "500", color: "#23282d" }}>
+                      Bon de Commande
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#666" }}>
+                      Template professionnel pour commandes
+                    </div>
                   </div>
                 </div>
 
                 <div
                   style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    color: '#007cba',
-                    fontWeight: '500'
+                    padding: "12px 16px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    color: "#007cba",
+                    fontWeight: "500",
                   }}
                   onClick={() => {
                     // Ouvrir la page des templates prédéfinis
-                    window.open('/wp-admin/admin.php?page=pdf-builder-templates', '_blank');
+                    window.open(
+                      "/wp-admin/admin.php?page=pdf-builder-templates",
+                      "_blank"
+                    );
                     setShowPredefinedTemplates(false);
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f8f9fa")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
                 >
-                  <span style={{ fontSize: '16px' }}>📚</span>
+                  <span style={{ fontSize: "16px" }}>📚</span>
                   <span>Voir tous les modèles...</span>
                 </div>
               </div>
@@ -474,12 +574,12 @@ export const Header = memo(function Header({
           onClick={() => {
             openPreviewModal();
           }}
-          onMouseEnter={() => setHoveredButton('preview')}
+          onMouseEnter={() => setHoveredButton("preview")}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
+            pointerEvents: isSaving ? "none" : "auto",
           }}
           title="Générer un aperçu du PDF (Image ou PDF)"
         >
@@ -487,16 +587,18 @@ export const Header = memo(function Header({
           <span>Aperçu</span>
         </button>
 
-        <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
+        <div
+          style={{ width: "1px", height: "24px", backgroundColor: "#e0e0e0" }}
+        />
 
         <button
           onClick={() => setShowJsonModal(true)}
-          onMouseEnter={() => setHoveredButton('json')}
+          onMouseEnter={() => setHoveredButton("json")}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
+            pointerEvents: isSaving ? "none" : "auto",
           }}
           title="Voir et copier le JSON du canvas"
         >
@@ -506,12 +608,12 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => setShowSettingsModal(true)}
-          onMouseEnter={() => setHoveredButton('settings')}
+          onMouseEnter={() => setHoveredButton("settings")}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
+            pointerEvents: isSaving ? "none" : "auto",
           }}
           title="Paramètres du template"
         >
@@ -522,7 +624,7 @@ export const Header = memo(function Header({
         <button
           onClick={async () => {
             const startTime = performance.now();
-            debugLog('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
+            debugLog("🚀 [PDF Builder] Bouton Enregistrer cliqué", {
               templateName,
               isModified: deferredIsModified,
               isSaving: deferredIsSaving,
@@ -533,40 +635,43 @@ export const Header = memo(function Header({
                 width: canvasWidth,
                 height: canvasHeight,
                 showGuides,
-                snapToGrid
+                snapToGrid,
               },
               // Informations sur les éléments
               elementsInfo: {
                 totalElements: state.elements?.length || 0,
-                elementTypes: state.elements?.reduce((acc: Record<string, number>, el) => {
-                  acc[el.type] = (acc[el.type] || 0) + 1;
-                  return acc;
-                }, {}) || {}
+                elementTypes:
+                  state.elements?.reduce((acc: Record<string, number>, el) => {
+                    acc[el.type] = (acc[el.type] || 0) + 1;
+                    return acc;
+                  }, {}) || {},
               },
               // État du builder
               builderState: {
-                template: state.template ? {
-                  name: state.template.name,
-                  description: state.template.description,
-                  hasBackground: !!state.canvas.backgroundColor
-                } : null,
+                template: state.template
+                  ? {
+                      name: state.template.name,
+                      description: state.template.description,
+                      hasBackground: !!state.canvas.backgroundColor,
+                    }
+                  : null,
                 selectedElement: state.selection.selectedElements[0] || null,
-                zoom: state.canvas.zoom || 1
+                zoom: state.canvas.zoom || 1,
               },
               // Paramètres canvas
               canvasSettings: {
                 guidesEnabled: canvasSettings.guidesEnabled,
-                memoryLimit: canvasSettings.memoryLimitJs
-              }
+                memoryLimit: canvasSettings.memoryLimitJs,
+              },
             });
 
             try {
-              debugLog('⏳ [PDF Builder] Début de la sauvegarde...');
+              debugLog("⏳ [PDF Builder] Début de la sauvegarde...");
               await onSave();
               const endTime = performance.now();
               const saveDuration = endTime - startTime;
 
-              debugLog('✅ [PDF Builder] Sauvegarde réussie', {
+              debugLog("✅ [PDF Builder] Sauvegarde réussie", {
                 templateName,
                 timestamp: new Date().toISOString(),
                 duration: `${saveDuration.toFixed(2)}ms`,
@@ -574,129 +679,170 @@ export const Header = memo(function Header({
                   saveTime: saveDuration,
                   elementsCount: state.elements?.length || 0,
                   templateSize: JSON.stringify(state.template).length,
-                  elementsSize: JSON.stringify(state.elements).length
+                  elementsSize: JSON.stringify(state.elements).length,
                 },
                 // Vérification post-sauvegarde
                 postSaveState: {
                   isModified: false, // Devrait être false après sauvegarde
-                  isSaving: false
-                }
+                  isSaving: false,
+                },
               });
 
               // Log des métriques de performance
-              debugLog('📊 [PDF Builder] Métriques de sauvegarde', {
+              debugLog("📊 [PDF Builder] Métriques de sauvegarde", {
                 duration: saveDuration,
-                avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
-                memoryUsage: (performance as any).memory ? {
-                  used: (performance as any).memory.usedJSHeapSize,
-                  total: (performance as any).memory.totalJSHeapSize,
-                  limit: (performance as any).memory.jsHeapSizeLimit
-                } : 'N/A'
+                avgTimePerElement: state.elements?.length
+                  ? saveDuration / state.elements.length
+                  : 0,
+                memoryUsage: (performance as any).memory
+                  ? {
+                      used: (performance as any).memory.usedJSHeapSize,
+                      total: (performance as any).memory.totalJSHeapSize,
+                      limit: (performance as any).memory.jsHeapSizeLimit,
+                    }
+                  : "N/A",
               });
-
             } catch (error) {
               const endTime = performance.now();
               const failedDuration = endTime - startTime;
 
-              debugError('❌ [PDF Builder] Erreur lors de la sauvegarde:', {
-                error: error instanceof Error ? {
-                  message: error.message,
-                  stack: error.stack,
-                  name: error.name
-                } : error,
+              debugError("❌ [PDF Builder] Erreur lors de la sauvegarde:", {
+                error:
+                  error instanceof Error
+                    ? {
+                        message: error.message,
+                        stack: error.stack,
+                        name: error.name,
+                      }
+                    : error,
                 templateName,
                 timestamp: new Date().toISOString(),
                 duration: `${failedDuration.toFixed(2)}ms`,
                 context: {
                   isModified: deferredIsModified,
                   isSaving: deferredIsSaving,
-                  elementsCount: state.elements?.length || 0
-                }
+                  elementsCount: state.elements?.length || 0,
+                },
               });
-              alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
+              alert(
+                "Erreur lors de la sauvegarde: " +
+                  (error instanceof Error ? error.message : "Erreur inconnue")
+              );
             }
           }}
-          disabled={deferredIsSaving || !deferredIsModified || deferredIsLoading}
+          disabled={
+            deferredIsSaving || !deferredIsModified || deferredIsLoading
+          }
           onMouseEnter={() => {
-            debugLog('👆 [PDF Builder] Souris sur bouton Enregistrer', {
+            debugLog("👆 [PDF Builder] Souris sur bouton Enregistrer", {
               templateName,
               buttonState: {
-                disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
+                disabled:
+                  deferredIsSaving || !deferredIsModified || deferredIsLoading,
                 isSaving: deferredIsSaving,
                 isModified: deferredIsModified,
-                isLoading: deferredIsLoading
+                isLoading: deferredIsLoading,
               },
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             });
-            setHoveredButton('save');
+            setHoveredButton("save");
           }}
           onMouseLeave={() => {
-            debugLog('👋 [PDF Builder] Souris quitte bouton Enregistrer', {
+            debugLog("👋 [PDF Builder] Souris quitte bouton Enregistrer", {
               templateName,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             });
             setHoveredButton(null);
           }}
           style={{
             ...primaryButtonStyles,
-            opacity: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 0.6 : 1,
-            pointerEvents: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 'none' : 'auto'
+            opacity:
+              deferredIsSaving || !deferredIsModified || deferredIsLoading
+                ? 0.6
+                : 1,
+            pointerEvents:
+              deferredIsSaving || !deferredIsModified || deferredIsLoading
+                ? "none"
+                : "auto",
           }}
           title={
-            deferredIsLoading ? 'Chargement du template...' :
-            deferredIsModified ? (deferredIsEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') :
-            'Aucune modification'
+            deferredIsLoading
+              ? "Chargement du template..."
+              : deferredIsModified
+              ? deferredIsEditingExistingTemplate
+                ? "Modifier le template"
+                : "Enregistrer les modifications"
+              : "Aucune modification"
           }
         >
-          <span>{deferredIsSaving ? '⟳' : '💾'}</span>
-          <span>{deferredIsSaving ? 'Enregistrement...' : (deferredIsEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
+          <span>{deferredIsSaving ? "⟳" : "💾"}</span>
+          <span>
+            {deferredIsSaving
+              ? "Enregistrement..."
+              : deferredIsEditingExistingTemplate
+              ? "Modifier"
+              : "Enregistrer"}
+          </span>
         </button>
       </div>
 
       {/* Modale des paramètres du template */}
       {showSettingsModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            padding: '24px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-              borderBottom: '1px solid #e0e0e0',
-              paddingBottom: '16px'
-            }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#1a1a1a' }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              padding: "24px",
+              maxWidth: "500px",
+              width: "90%",
+              maxHeight: "80vh",
+              overflowY: "auto",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+                borderBottom: "1px solid #e0e0e0",
+                paddingBottom: "16px",
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  color: "#1a1a1a",
+                }}
+              >
                 Paramètres du template
               </h3>
               <button
                 onClick={() => setShowSettingsModal(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: '#666',
-                  padding: '4px'
+                  background: "none",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  color: "#666",
+                  padding: "4px",
                 }}
                 title="Fermer"
               >
@@ -704,9 +850,19 @@ export const Header = memo(function Header({
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#333",
+                  }}
+                >
                   Nom du modèle
                 </label>
                 <input
@@ -714,45 +870,80 @@ export const Header = memo(function Header({
                   value={editedTemplateName}
                   onChange={(e) => setEditedTemplateName(e.target.value)}
                   style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    backgroundColor: '#ffffff'
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    fontSize: "14px",
+                    backgroundColor: "#ffffff",
                   }}
                   placeholder="Entrez le nom du template"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#333",
+                  }}
+                >
                   Description
                 </label>
                 <textarea
                   value={editedTemplateDescription}
                   onChange={(e) => setEditedTemplateDescription(e.target.value)}
                   style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    minHeight: '60px',
-                    resize: 'vertical'
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    fontSize: "14px",
+                    minHeight: "60px",
+                    resize: "vertical",
                   }}
                   placeholder="Description du template..."
                 />
               </div>
 
-              <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px', marginTop: '16px' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+              <div
+                style={{
+                  borderTop: "1px solid #e0e0e0",
+                  paddingTop: "16px",
+                  marginTop: "16px",
+                }}
+              >
+                <h4
+                  style={{
+                    margin: "0 0 12px 0",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: "#333",
+                  }}
+                >
                   Paramètres avancés
                 </h4>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "12px",
+                  }}
+                >
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        marginBottom: "4px",
+                        color: "#555",
+                      }}
+                    >
                       Largeur du canvas (px)
                     </label>
                     <input
@@ -760,23 +951,37 @@ export const Header = memo(function Header({
                       value={editedCanvasWidth}
                       disabled={true}
                       style={{
-                        width: '100%',
-                        padding: '6px 8px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                        fontSize: '12px',
-                        backgroundColor: '#f5f5f5',
-                        color: '#999',
-                        cursor: 'not-allowed'
+                        width: "100%",
+                        padding: "6px 8px",
+                        border: "1px solid #ccc",
+                        borderRadius: "3px",
+                        fontSize: "12px",
+                        backgroundColor: "#f5f5f5",
+                        color: "#999",
+                        cursor: "not-allowed",
                       }}
                     />
-                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        color: "#999",
+                        marginTop: "2px",
+                      }}
+                    >
                       Non modifiable
                     </div>
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        marginBottom: "4px",
+                        color: "#555",
+                      }}
+                    >
                       Hauteur du canvas (px)
                     </label>
                     <input
@@ -784,36 +989,51 @@ export const Header = memo(function Header({
                       value={editedCanvasHeight}
                       disabled={true}
                       style={{
-                        width: '100%',
-                        padding: '6px 8px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                        fontSize: '12px',
-                        backgroundColor: '#f5f5f5',
-                        color: '#999',
-                        cursor: 'not-allowed'
+                        width: "100%",
+                        padding: "6px 8px",
+                        border: "1px solid #ccc",
+                        borderRadius: "3px",
+                        fontSize: "12px",
+                        backgroundColor: "#f5f5f5",
+                        color: "#999",
+                        cursor: "not-allowed",
                       }}
                     />
-                    <div style={{ fontSize: '10px', color: '#999', marginTop: '2px' }}>
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        color: "#999",
+                        marginTop: "2px",
+                      }}
+                    >
                       Non modifiable
                     </div>
                   </div>
-
                 </div>
 
-                <div style={{ marginTop: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
+                <div style={{ marginTop: "12px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      marginBottom: "4px",
+                      color: "#555",
+                    }}
+                  >
                     Orientation du canvas
                   </label>
                   <select
                     value={canvasOrientation}
                     onChange={(e) => {
-                      const orientation = e.target.value as 'portrait' | 'landscape';
+                      const orientation = e.target.value as
+                        | "portrait"
+                        | "landscape";
                       setCanvasOrientation(orientation);
                       // Mettre à jour les dimensions en fonction de l'orientation
                       let newWidth = 794;
                       let newHeight = 1123;
-                      if (orientation === 'landscape') {
+                      if (orientation === "landscape") {
                         newWidth = 1123;
                         newHeight = 794;
                       }
@@ -822,16 +1042,16 @@ export const Header = memo(function Header({
                       // Mettre à jour le template immédiatement
                       onUpdateTemplateSettings({
                         canvasWidth: newWidth,
-                        canvasHeight: newHeight
+                        canvasHeight: newHeight,
                       });
                     }}
                     style={{
-                      width: '100%',
-                      padding: '6px 8px',
-                      border: '1px solid #ddd',
-                      borderRadius: '3px',
-                      fontSize: '12px',
-                      backgroundColor: '#ffffff'
+                      width: "100%",
+                      padding: "6px 8px",
+                      border: "1px solid #ddd",
+                      borderRadius: "3px",
+                      fontSize: "12px",
+                      backgroundColor: "#ffffff",
                     }}
                   >
                     {orientationPermissions.allowPortrait && (
@@ -841,53 +1061,75 @@ export const Header = memo(function Header({
                       <option value="landscape">Paysage (1123×794 px)</option>
                     )}
                   </select>
-                  {(!orientationPermissions.allowPortrait || !orientationPermissions.allowLandscape) && (
-                    <div style={{ fontSize: '10px', color: '#999', marginTop: '4px', fontStyle: 'italic' }}>
-                      Certaines orientations sont désactivées dans les paramètres du plugin.
+                  {(!orientationPermissions.allowPortrait ||
+                    !orientationPermissions.allowLandscape) && (
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        color: "#999",
+                        marginTop: "4px",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Certaines orientations sont désactivées dans les
+                      paramètres du plugin.
                     </div>
                   )}
                 </div>
-
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#333",
+                  }}
+                >
                   Statut
                 </label>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {isNewTemplate && (
-                    <span style={{
-                      padding: '4px 8px',
-                      backgroundColor: '#e3f2fd',
-                      color: '#1565c0',
-                      borderRadius: '12px',
-                      fontSize: '12px',
-                      fontWeight: '500'
-                    }}>
+                    <span
+                      style={{
+                        padding: "4px 8px",
+                        backgroundColor: "#e3f2fd",
+                        color: "#1565c0",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                      }}
+                    >
                       Nouveau template
                     </span>
                   )}
                   {deferredIsModified && (
-                    <span style={{
-                      padding: '4px 8px',
-                      backgroundColor: '#fff3e0',
-                      color: '#f57c00',
-                      borderRadius: '12px',
-                      fontSize: '12px',
-                      fontWeight: '500'
-                    }}>
+                    <span
+                      style={{
+                        padding: "4px 8px",
+                        backgroundColor: "#fff3e0",
+                        color: "#f57c00",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                      }}
+                    >
                       Modifié
                     </span>
                   )}
                   {isEditingExistingTemplate && (
-                    <span style={{
-                      padding: '4px 8px',
-                      backgroundColor: '#f3e5f5',
-                      color: '#7b1fa2',
-                      borderRadius: '12px',
-                      fontSize: '12px',
-                      fontWeight: '500'
-                    }}>
+                    <span
+                      style={{
+                        padding: "4px 8px",
+                        backgroundColor: "#f3e5f5",
+                        color: "#7b1fa2",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                      }}
+                    >
                       Édition existante
                     </span>
                   )}
@@ -895,27 +1137,53 @@ export const Header = memo(function Header({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#333",
+                  }}
+                >
                   Informations système
                 </label>
-                <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.5' }}>
-                  <div>Template ID: {templateName || 'N/A'}</div>
-                  <div>Dernière modification: {new Date().toLocaleString('fr-FR')}</div>
-                  <div>État: {deferredIsSaving ? 'Enregistrement...' : deferredIsModified ? 'Modifié' : 'Sauvegardé'}</div>
+                <div
+                  style={{ fontSize: "13px", color: "#666", lineHeight: "1.5" }}
+                >
+                  <div>Template ID: {templateName || "N/A"}</div>
+                  <div>
+                    Dernière modification: {new Date().toLocaleString("fr-FR")}
+                  </div>
+                  <div>
+                    État:{" "}
+                    {deferredIsSaving
+                      ? "Enregistrement..."
+                      : deferredIsModified
+                      ? "Modifié"
+                      : "Sauvegardé"}
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '20px' }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "12px",
+                  marginTop: "20px",
+                }}
+              >
                 <button
                   onClick={() => setShowSettingsModal(false)}
                   style={{
-                    padding: '8px 16px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    backgroundColor: '#f8f8f8',
-                    color: '#333',
-                    cursor: 'pointer',
-                    fontSize: '14px'
+                    padding: "8px 16px",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    backgroundColor: "#f8f8f8",
+                    color: "#333",
+                    cursor: "pointer",
+                    fontSize: "14px",
                   }}
                 >
                   Annuler
@@ -929,20 +1197,20 @@ export const Header = memo(function Header({
                       canvasWidth: editedCanvasWidth,
                       canvasHeight: editedCanvasHeight,
                       showGuides: showGuides,
-                      snapToGrid: snapToGrid
+                      snapToGrid: snapToGrid,
                     });
-                    
+
                     setShowSettingsModal(false);
                   }}
                   style={{
-                    padding: '8px 16px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    backgroundColor: '#4CAF50',
-                    color: '#ffffff',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500'
+                    padding: "8px 16px",
+                    border: "none",
+                    borderRadius: "4px",
+                    backgroundColor: "#4CAF50",
+                    color: "#ffffff",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
                   }}
                 >
                   Sauvegarder
@@ -955,50 +1223,63 @@ export const Header = memo(function Header({
 
       {/* Modale JSON brut du template */}
       {showJsonModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1001
-        }}>
-          <div style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            padding: '24px',
-            maxWidth: '90vw',
-            width: '100%',
-            maxHeight: '85vh',
-            display: 'flex',
-            flexDirection: 'column',
-            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)'
-          }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              padding: "24px",
+              maxWidth: "90vw",
+              width: "100%",
+              maxHeight: "85vh",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
+            }}
+          >
             {/* Header */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '16px',
-              borderBottom: '1px solid #e0e0e0',
-              paddingBottom: '12px'
-            }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#1a1a1a' }}>
-                📋 JSON Brut du Template (ID: {templateName || 'N/A'})
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "16px",
+                borderBottom: "1px solid #e0e0e0",
+                paddingBottom: "12px",
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  color: "#1a1a1a",
+                }}
+              >
+                📋 JSON Brut du Template (ID: {templateName || "N/A"})
               </h3>
               <button
                 onClick={() => setShowJsonModal(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: '#666',
-                  padding: '4px'
+                  background: "none",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  color: "#666",
+                  padding: "4px",
                 }}
                 title="Fermer"
               >
@@ -1007,81 +1288,103 @@ export const Header = memo(function Header({
             </div>
 
             {/* JSON Content */}
-            <div style={{
-              flex: 1,
-              overflow: 'auto',
-              backgroundColor: '#f5f5f5',
-              borderRadius: '6px',
-              padding: '16px',
-              fontFamily: "'Courier New', monospace",
-              fontSize: '12px',
-              lineHeight: '1.5',
-              color: '#333',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              border: '1px solid #ddd',
-              marginBottom: '16px'
-            }}>
-              {JSON.stringify({ 
-                ...state.template, 
-                elements: state.elements 
-              }, null, 2)}
+            <div
+              style={{
+                flex: 1,
+                overflow: "auto",
+                backgroundColor: "#f5f5f5",
+                borderRadius: "6px",
+                padding: "16px",
+                fontFamily: "'Courier New', monospace",
+                fontSize: "12px",
+                lineHeight: "1.5",
+                color: "#333",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                border: "1px solid #ddd",
+                marginBottom: "16px",
+              }}
+            >
+              {JSON.stringify(
+                {
+                  ...state.template,
+                  elements: state.elements,
+                },
+                null,
+                2
+              )}
             </div>
 
             {/* Footer with Buttons */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'flex-end',
-              alignItems: 'center'
-            }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}
+            >
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(JSON.stringify({ 
-                    ...state.template, 
-                    elements: state.elements 
-                  }, null, 2));
+                  navigator.clipboard.writeText(
+                    JSON.stringify(
+                      {
+                        ...state.template,
+                        elements: state.elements,
+                      },
+                      null,
+                      2
+                    )
+                  );
                   setCopySuccess(true);
                   setTimeout(() => setCopySuccess(false), 2000);
                 }}
                 style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#0073aa',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  opacity: copySuccess ? 0.7 : 1
+                  padding: "8px 16px",
+                  backgroundColor: "#0073aa",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  opacity: copySuccess ? 0.7 : 1,
                 }}
                 title="Copier le JSON"
               >
-                {copySuccess ? '✅ Copié!' : '📋 Copier JSON'}
+                {copySuccess ? "✅ Copié!" : "📋 Copier JSON"}
               </button>
               <button
                 onClick={() => {
-                  const jsonString = JSON.stringify({ 
-                    ...state.template, 
-                    elements: state.elements 
-                  }, null, 2);
-                  const blob = new Blob([jsonString], { type: 'application/json' });
+                  const jsonString = JSON.stringify(
+                    {
+                      ...state.template,
+                      elements: state.elements,
+                    },
+                    null,
+                    2
+                  );
+                  const blob = new Blob([jsonString], {
+                    type: "application/json",
+                  });
                   const url = URL.createObjectURL(blob);
-                  const link = document.createElement('a');
+                  const link = document.createElement("a");
                   link.href = url;
-                  link.download = `template-${templateName || 'export'}-${new Date().getTime()}.json`;
+                  link.download = `template-${
+                    templateName || "export"
+                  }-${new Date().getTime()}.json`;
                   link.click();
                   URL.revokeObjectURL(url);
                 }}
                 style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#10a37f',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
+                  padding: "8px 16px",
+                  backgroundColor: "#10a37f",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
                 }}
                 title="Télécharger le JSON"
               >
@@ -1090,14 +1393,14 @@ export const Header = memo(function Header({
               <button
                 onClick={() => setShowJsonModal(false)}
                 style={{
-                  padding: '8px 16px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  backgroundColor: '#f8f8f8',
-                  color: '#333',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
+                  padding: "8px 16px",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  backgroundColor: "#f8f8f8",
+                  color: "#333",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
                 }}
               >
                 Fermer
@@ -1109,40 +1412,48 @@ export const Header = memo(function Header({
 
       {/* Modale d'aperçu PDF */}
       {showPreviewModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1001
-        }}>
-          <div style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            padding: '24px',
-            maxWidth: '90vw',
-            width: '600px',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px'
-            }}>
-              <h3 style={{
-                margin: 0,
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#1a1a1a'
-              }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              padding: "24px",
+              maxWidth: "90vw",
+              width: "600px",
+              maxHeight: "90vh",
+              overflow: "auto",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  color: "#1a1a1a",
+                }}
+              >
                 Aperçu du PDF
               </h3>
               <button
@@ -1151,17 +1462,17 @@ export const Header = memo(function Header({
                   clearPreview();
                 }}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: '#666',
-                  padding: '0',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  background: "none",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  color: "#666",
+                  padding: "0",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
                 title="Fermer"
               >
@@ -1170,37 +1481,45 @@ export const Header = memo(function Header({
             </div>
 
             {/* Options de format */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#333',
-                marginBottom: '8px'
-              }}>
+            <div style={{ marginBottom: "20px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  color: "#333",
+                  marginBottom: "8px",
+                }}
+              >
                 Format d&apos;export :
               </label>
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: "flex", gap: "10px" }}>
                 {[
-                  { value: 'png', label: 'PNG', icon: '🖼️' },
-                  { value: 'jpg', label: 'JPG', icon: '📷' },
-                  { value: 'pdf', label: 'PDF', icon: '📄' }
-                ].map(format => (
+                  { value: "png", label: "PNG", icon: "🖼️" },
+                  { value: "jpg", label: "JPG", icon: "📷" },
+                  { value: "pdf", label: "PDF", icon: "📄" },
+                ].map((format) => (
                   <button
                     key={format.value}
-                    onClick={() => setPreviewFormat(format.value as 'png' | 'jpg' | 'pdf')}
+                    onClick={() =>
+                      setPreviewFormat(format.value as "png" | "jpg" | "pdf")
+                    }
                     style={{
-                      padding: '8px 16px',
-                      border: `2px solid ${previewFormat === format.value ? '#007cba' : '#ddd'}`,
-                      borderRadius: '6px',
-                      backgroundColor: previewFormat === format.value ? '#f0f8ff' : '#fff',
-                      color: previewFormat === format.value ? '#007cba' : '#333',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
+                      padding: "8px 16px",
+                      border: `2px solid ${
+                        previewFormat === format.value ? "#007cba" : "#ddd"
+                      }`,
+                      borderRadius: "6px",
+                      backgroundColor:
+                        previewFormat === format.value ? "#f0f8ff" : "#fff",
+                      color:
+                        previewFormat === format.value ? "#007cba" : "#333",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
                     }}
                   >
                     <span>{format.icon}</span>
@@ -1211,30 +1530,33 @@ export const Header = memo(function Header({
             </div>
 
             {/* Bouton de génération */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: "20px" }}>
               <button
                 onClick={async () => {
-                  await generatePreview({
-                    ...state.template,
-                    elements: state.elements
-                  }, {
-                    format: previewFormat,
-                    quality: 150
-                  });
+                  await generatePreview(
+                    {
+                      ...state.template,
+                      elements: state.elements,
+                    },
+                    {
+                      format: previewFormat,
+                      quality: 150,
+                    }
+                  );
                 }}
                 disabled={isGeneratingPreview}
                 style={{
-                  padding: '12px 24px',
-                  backgroundColor: isGeneratingPreview ? '#ccc' : '#007cba',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: isGeneratingPreview ? 'not-allowed' : 'pointer',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
+                  padding: "12px 24px",
+                  backgroundColor: isGeneratingPreview ? "#ccc" : "#007cba",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: isGeneratingPreview ? "not-allowed" : "pointer",
+                  fontSize: "16px",
+                  fontWeight: "500",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
                 {isGeneratingPreview ? (
@@ -1253,44 +1575,48 @@ export const Header = memo(function Header({
 
             {/* Affichage de l'erreur */}
             {previewError && (
-              <div style={{
-                padding: '12px',
-                backgroundColor: '#f8d7da',
-                border: '1px solid #f5c6cb',
-                borderRadius: '4px',
-                color: '#721c24',
-                marginBottom: '20px'
-              }}>
+              <div
+                style={{
+                  padding: "12px",
+                  backgroundColor: "#f8d7da",
+                  border: "1px solid #f5c6cb",
+                  borderRadius: "4px",
+                  color: "#721c24",
+                  marginBottom: "20px",
+                }}
+              >
                 <strong>Erreur:</strong> {previewError}
               </div>
             )}
 
             {/* Affichage de l'aperçu */}
             {previewImageUrl && (
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ textAlign: "center" }}>
                 <img
                   src={previewImageUrl}
                   alt="Aperçu du PDF"
                   style={{
-                    maxWidth: '100%',
-                    maxHeight: '400px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                    maxWidth: "100%",
+                    maxHeight: "400px",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                   }}
                 />
-                <div style={{ marginTop: '10px' }}>
+                <div style={{ marginTop: "10px" }}>
                   <a
                     href={previewImageUrl}
-                    download={`apercu-${templateName || 'template'}.${previewFormat}`}
+                    download={`apercu-${
+                      templateName || "template"
+                    }.${previewFormat}`}
                     style={{
-                      padding: '8px 16px',
-                      backgroundColor: '#28a745',
-                      color: '#fff',
-                      textDecoration: 'none',
-                      borderRadius: '4px',
-                      fontSize: '14px',
-                      fontWeight: '500'
+                      padding: "8px 16px",
+                      backgroundColor: "#28a745",
+                      color: "#fff",
+                      textDecoration: "none",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
                     }}
                   >
                     💾 Télécharger
@@ -1301,9 +1627,6 @@ export const Header = memo(function Header({
           </div>
         </div>
       )}
-
     </div>
   );
 });
-
-

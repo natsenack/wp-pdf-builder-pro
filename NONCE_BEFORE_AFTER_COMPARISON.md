@@ -7,6 +7,7 @@ Ce document montre les améliorations apportées à la gestion des nonces dans l
 ## Architecture système
 
 ### AVANT : Incohérent et fragmenté
+
 ```
 Frontend (React)
 ├── useTemplate.ts
@@ -30,6 +31,7 @@ Backend (PHP)
 ```
 
 ### APRÈS : Unifié et centralisé
+
 ```
 Frontend (React)
 ├── ClientNonceManager (NEW)
@@ -64,6 +66,7 @@ Backend (PHP)
 ### Vérification du nonce - Backend
 
 #### ❌ AVANT (13 lignes)
+
 ```php
 // Copié-collé partout
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
@@ -81,6 +84,7 @@ if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_aj
 ```
 
 #### ✅ APRÈS (5 lignes)
+
 ```php
 // Une seule ligne
 $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
@@ -99,6 +103,7 @@ if (!$validation['success']) {
 ### Récupération du nonce - Frontend
 
 #### ❌ AVANT (3 approches différentes)
+
 ```typescript
 // Approche 1 : Accès direct
 const nonce = window.pdfBuilderData?.nonce;
@@ -107,23 +112,24 @@ const nonce = window.pdfBuilderData?.nonce;
 const nonce = window.pdfBuilderNonce;
 
 // Approche 3 : Combiné avec vérifications
-const currentNonce = window.pdfBuilderData?.nonce || '';
+const currentNonce = window.pdfBuilderData?.nonce || "";
 
 // Utilisation incohérente
-formData.append('nonce', currentNonce);
+formData.append("nonce", currentNonce);
 const url = `${ajaxUrl}?nonce=${nonce}&...`;
 ```
 
 #### ✅ APRÈS (Unifié)
+
 ```typescript
-import { ClientNonceManager } from '../utils/ClientNonceManager';
+import { ClientNonceManager } from "../utils/ClientNonceManager";
 
 // Accès centralisé
 const nonce = ClientNonceManager.getCurrentNonce();
 
 // Validation centralisée
 if (!ClientNonceManager.isValid()) {
-    throw new Error('Nonce non disponible');
+  throw new Error("Nonce non disponible");
 }
 
 // Utilisation uniforme
@@ -136,46 +142,48 @@ const url = ClientNonceManager.addToUrl(baseUrl);
 ### Rafraîchissement du nonce
 
 #### ❌ AVANT (22 lignes, code dupliqué)
+
 ```typescript
-if (result.data && result.data.includes('Nonce invalide')) {
-    console.log('🔄 Nonce invalide détecté...');
-    
-    try {
-        // Créer FormData manuellement
-        const nonceFormData = new FormData();
-        nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
-        nonceFormData.append('nonce', currentNonce);
-        
-        // Fetch manuel
-        const nonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
-            method: 'POST',
-            body: nonceFormData
-        });
-        
-        // Gestion d'erreur manuelle
-        if (nonceResponse.ok) {
-            const nonceResult = await nonceResponse.json();
-            if (nonceResult.success && nonceResult.data?.nonce) {
-                // Mettre à jour manuellement
-                if (window.pdfBuilderData) {
-                    window.pdfBuilderData.nonce = nonceResult.data.nonce;
-                }
-                return await saveTemplate();
-            }
+if (result.data && result.data.includes("Nonce invalide")) {
+  console.log("🔄 Nonce invalide détecté...");
+
+  try {
+    // Créer FormData manuellement
+    const nonceFormData = new FormData();
+    nonceFormData.append("action", "pdf_builder_get_fresh_nonce");
+    nonceFormData.append("nonce", currentNonce);
+
+    // Fetch manuel
+    const nonceResponse = await fetch(window.pdfBuilderData?.ajaxUrl || "", {
+      method: "POST",
+      body: nonceFormData,
+    });
+
+    // Gestion d'erreur manuelle
+    if (nonceResponse.ok) {
+      const nonceResult = await nonceResponse.json();
+      if (nonceResult.success && nonceResult.data?.nonce) {
+        // Mettre à jour manuellement
+        if (window.pdfBuilderData) {
+          window.pdfBuilderData.nonce = nonceResult.data.nonce;
         }
-    } catch (error) {
-        console.error('Erreur:', error);
+        return await saveTemplate();
+      }
     }
+  } catch (error) {
+    console.error("Erreur:", error);
+  }
 }
 ```
 
 #### ✅ APRÈS (5 lignes, automatisé)
+
 ```typescript
-if (result.data?.code === 'nonce_invalid') {
-    const freshNonce = await ClientNonceManager.refreshNonce();
-    if (freshNonce) {
-        return await saveTemplate(); // Retry automatique
-    }
+if (result.data?.code === "nonce_invalid") {
+  const freshNonce = await ClientNonceManager.refreshNonce();
+  if (freshNonce) {
+    return await saveTemplate(); // Retry automatique
+  }
 }
 ```
 
@@ -183,18 +191,19 @@ if (result.data?.code === 'nonce_invalid') {
 
 ## Statistiques de refactoring
 
-| Métrique | Avant | Après | Amélioration |
-|----------|-------|-------|--------------|
-| Endpoints AJAX | 12 | 12 | ✓ Simplifiés |
-| Lignes de validation | ~156 | ~5 par endpoint | -96% |
-| Fichiers avec validation nonce | Tous | 1 (NonceManager) | -99% |
-| Points d'entrée nonce (frontend) | 5+ | 1 (ClientNonceManager) | -80% |
-| Logging inconsistant | Beaucoup | Standardisé | ✓ Unifié |
-| Duplication de code | Haute | Éliminée | 100% |
+| Métrique                         | Avant    | Après                  | Amélioration |
+| -------------------------------- | -------- | ---------------------- | ------------ |
+| Endpoints AJAX                   | 12       | 12                     | ✓ Simplifiés |
+| Lignes de validation             | ~156     | ~5 par endpoint        | -96%         |
+| Fichiers avec validation nonce   | Tous     | 1 (NonceManager)       | -99%         |
+| Points d'entrée nonce (frontend) | 5+       | 1 (ClientNonceManager) | -80%         |
+| Logging inconsistant             | Beaucoup | Standardisé            | ✓ Unifié     |
+| Duplication de code              | Haute    | Éliminée               | 100%         |
 
 ## Impact sur les endpoints AJAX
 
 ### Avant (Exemple: ajaxGenerateOrderPdf)
+
 ```php
 public function ajaxGenerateOrderPdf()
 {
@@ -222,6 +231,7 @@ public function ajaxGenerateOrderPdf()
 ```
 
 ### Après (Même endpoint)
+
 ```php
 public function ajaxGenerateOrderPdf()
 {
@@ -251,24 +261,25 @@ public function ajaxGenerateOrderPdf()
 
 ### Endpoints AJAX modernisés
 
-| Endpoint | Avant | Après | Type |
-|----------|-------|-------|------|
-| `ajaxGeneratePdfFromCanvas` | ✗ | ✓ | Unifié |
-| `ajaxDownloadPdf` | ✗ | ✓ | Unifié |
-| `ajaxSaveTemplateV3` | ✗ | ✓ | Unifié |
-| `ajaxLoadTemplate` | ✗ | ✓ | Unifié |
-| `ajaxGetTemplate` | ✗ | ✓ | Unifié |
-| `ajaxGenerateOrderPdf` | ✗ | ✓ | Unifié |
-| `ajaxGetFreshNonce` | ✗ | ✓ | Unifié |
-| `ajaxCheckDatabase` | ✗ | ✓ | Unifié |
-| `ajaxRepairDatabase` | ✗ | ✓ | Unifié |
-| `ajaxExecuteSqlRepair` | ✗ | ✓ | Unifié |
-| `ajaxSaveSettings` | ✗ | ✓ | Unifié |
-| `ajaxUnifiedHandler` | ✗ | ✓ | Unifié |
+| Endpoint                    | Avant | Après | Type   |
+| --------------------------- | ----- | ----- | ------ |
+| `ajaxGeneratePdfFromCanvas` | ✗     | ✓     | Unifié |
+| `ajaxDownloadPdf`           | ✗     | ✓     | Unifié |
+| `ajaxSaveTemplateV3`        | ✗     | ✓     | Unifié |
+| `ajaxLoadTemplate`          | ✗     | ✓     | Unifié |
+| `ajaxGetTemplate`           | ✗     | ✓     | Unifié |
+| `ajaxGenerateOrderPdf`      | ✗     | ✓     | Unifié |
+| `ajaxGetFreshNonce`         | ✗     | ✓     | Unifié |
+| `ajaxCheckDatabase`         | ✗     | ✓     | Unifié |
+| `ajaxRepairDatabase`        | ✗     | ✓     | Unifié |
+| `ajaxExecuteSqlRepair`      | ✗     | ✓     | Unifié |
+| `ajaxSaveSettings`          | ✗     | ✓     | Unifié |
+| `ajaxUnifiedHandler`        | ✗     | ✓     | Unifié |
 
 ## Logging
 
 ### Avant
+
 ```
 [PHP] Diverses sorties error_log() sans format
 [JS] console.log() ad-hoc sans préfixe consistent
@@ -276,6 +287,7 @@ Impossible de filtrer les logs de nonce
 ```
 
 ### Après
+
 ```
 [PHP] [PDF Builder] [NonceManager] [INFO] Message
 [JS] [ClientNonceManager] Message
@@ -284,20 +296,21 @@ Facilement filtrable avec grep/recherche
 
 ## Avantages résumés
 
-| Catégorie | Avant | Après |
-|-----------|-------|-------|
-| **Sécurité** | Basique | Renforcée + Centralisée |
-| **Maintenance** | Difficile | Facile |
-| **Duplication** | Forte | Éliminée |
-| **Cohérence** | Faible | Complète |
-| **Débogage** | Compliqué | Simplifié |
-| **Évolutivité** | Fragile | Robuste |
-| **Performance** | Bonne | Inchangée (+ optimisée) |
-| **Test** | Complexe | Facile |
+| Catégorie       | Avant     | Après                   |
+| --------------- | --------- | ----------------------- |
+| **Sécurité**    | Basique   | Renforcée + Centralisée |
+| **Maintenance** | Difficile | Facile                  |
+| **Duplication** | Forte     | Éliminée                |
+| **Cohérence**   | Faible    | Complète                |
+| **Débogage**    | Compliqué | Simplifié               |
+| **Évolutivité** | Fragile   | Robuste                 |
+| **Performance** | Bonne     | Inchangée (+ optimisée) |
+| **Test**        | Complexe  | Facile                  |
 
 ## Migration pour les développeurs
 
 ### Pour modifier le comportement du nonce
+
 ```php
 // AVANT : Modification partout (12 endpoints)
 // APRÈS : Modification unique
@@ -305,6 +318,7 @@ NonceManager::validateRequest(VOTRE_CAPACITÉ);
 ```
 
 ### Pour tester
+
 ```php
 // AVANT : Mocker la fonction wp_verify_nonce
 // APRÈS : Tester NonceManager directement
@@ -312,6 +326,7 @@ NonceManager::verifyNonce($test_nonce);
 ```
 
 ### Pour ajouter un nouvel endpoint
+
 ```php
 public function newEndpoint() {
     // Une seule ligne !
@@ -320,7 +335,7 @@ public function newEndpoint() {
         NonceManager::sendNonceErrorResponse();
         return;
     }
-    
+
     // Votre code ici...
 }
 ```
@@ -333,4 +348,4 @@ public function newEndpoint() {
 ✅ **Performance :** Inchangée, légèrement optimisée  
 ✅ **Évolutivité :** Simple à étendre  
 ✅ **Logging :** Traçable et filtrable  
-✅ **Test :** Facile à tester  
+✅ **Test :** Facile à tester

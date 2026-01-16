@@ -32,12 +32,12 @@ export class ClientNonceManager {
   /**
    * Action nonce unifié - doit correspondre au backend
    */
-  static readonly NONCE_ACTION = 'pdf_builder_ajax';
+  static readonly NONCE_ACTION = "pdf_builder_ajax";
 
   /**
    * Clé pour stocker le nonce
    */
-  static readonly STORAGE_KEY = 'pdfBuilderNonce';
+  static readonly STORAGE_KEY = "pdfBuilderNonce";
 
   /**
    * TTL du nonce en secondes (12 heures)
@@ -55,7 +55,7 @@ export class ClientNonceManager {
    * Obtenir l'URL AJAX
    */
   static getAjaxUrl(): string {
-    return window.pdfBuilderData?.ajaxUrl || '';
+    return window.pdfBuilderData?.ajaxUrl || "";
   }
 
   /**
@@ -77,19 +77,19 @@ export class ClientNonceManager {
    */
   static async refreshNonce(currentNonce?: string): Promise<string | null> {
     const formData = new FormData();
-    formData.append('action', 'pdf_builder_get_fresh_nonce');
+    formData.append("action", "pdf_builder_get_fresh_nonce");
     if (currentNonce) {
-      formData.append('nonce', currentNonce);
+      formData.append("nonce", currentNonce);
     }
 
     try {
       const response = await fetch(this.getAjaxUrl(), {
-        method: 'POST',
-        body: formData
+        method: "POST",
+        body: formData,
       });
 
       if (!response.ok) {
-        console.error('❌ [ClientNonceManager] Erreur HTTP:', response.status);
+        console.error("❌ [ClientNonceManager] Erreur HTTP:", response.status);
         return null;
       }
 
@@ -98,14 +98,17 @@ export class ClientNonceManager {
       if (result.success && result.data?.nonce) {
         const freshNonce = result.data.nonce;
         this.setNonce(freshNonce);
-        console.log('✅ [ClientNonceManager] Nonce rafraîchi avec succès');
+        console.log("✅ [ClientNonceManager] Nonce rafraîchi avec succès");
         return freshNonce;
       } else {
-        console.error('❌ [ClientNonceManager] Erreur:', result.data?.message);
+        console.error("❌ [ClientNonceManager] Erreur:", result.data?.message);
         return null;
       }
     } catch (error) {
-      console.error('❌ [ClientNonceManager] Exception lors du rafraîchissement:', error);
+      console.error(
+        "❌ [ClientNonceManager] Exception lors du rafraîchissement:",
+        error
+      );
       return null;
     }
   }
@@ -115,14 +118,27 @@ export class ClientNonceManager {
    */
   static addToFormData(formData: FormData, nonce?: string): FormData {
     const nonceToUse = nonce || this.getCurrentNonce();
-    console.log('🔍 [ClientNonceManager.addToFormData] Nonce à ajouter:', nonceToUse);
-    console.log('🔍 [ClientNonceManager.addToFormData] window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
-    console.log('🔍 [ClientNonceManager.addToFormData] window.pdfBuilderNonce:', window.pdfBuilderNonce);
+    console.log(
+      "🔍 [ClientNonceManager.addToFormData] Nonce à ajouter:",
+      nonceToUse
+    );
+    console.log(
+      "🔍 [ClientNonceManager.addToFormData] window.pdfBuilderData?.nonce:",
+      window.pdfBuilderData?.nonce
+    );
+    console.log(
+      "🔍 [ClientNonceManager.addToFormData] window.pdfBuilderNonce:",
+      window.pdfBuilderNonce
+    );
     if (nonceToUse) {
-      formData.append('nonce', nonceToUse);
-      console.log('✅ [ClientNonceManager.addToFormData] Nonce ajouté au FormData');
+      formData.append("nonce", nonceToUse);
+      console.log(
+        "✅ [ClientNonceManager.addToFormData] Nonce ajouté au FormData"
+      );
     } else {
-      console.error('❌ [ClientNonceManager.addToFormData] PAS DE NONCE TROUVÉ!');
+      console.error(
+        "❌ [ClientNonceManager.addToFormData] PAS DE NONCE TROUVÉ!"
+      );
     }
     return formData;
   }
@@ -136,7 +152,7 @@ export class ClientNonceManager {
       return url;
     }
 
-    const separator = url.includes('?') ? '&' : '?';
+    const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}nonce=${encodeURIComponent(nonceToUse)}`;
   }
 
@@ -153,7 +169,7 @@ export class ClientNonceManager {
       nonce,
       action: this.NONCE_ACTION,
       ajaxUrl: this.getAjaxUrl(),
-      timestamp: Math.floor(Date.now() / 1000)
+      timestamp: Math.floor(Date.now() / 1000),
     };
   }
 

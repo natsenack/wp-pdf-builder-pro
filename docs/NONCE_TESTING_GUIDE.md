@@ -18,12 +18,14 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 **Objectif :** Confirmer que le nonce est chargé correctement au démarrage
 
 **Étapes :**
+
 1. Allez à la page d'édition d'un template
 2. Ouvrez la console navigateur (F12)
 3. Exécutez : `console.log(window.pdfBuilderData?.nonce)`
 4. Vérifiez que vous voyez une chaîne de caractères (ex: `abcd1234efgh5678`)
 
 **Résultat attendu :**
+
 ```javascript
 // Output: "a1b2c3d4e5f6g7h8..."
 ```
@@ -35,6 +37,7 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 **Objectif :** Vérifier que la sauvegarde fonctionne avec les permissions d'admin
 
 **Étapes :**
+
 1. Connecté comme administrateur
 2. Ouvrez ou créez un template
 3. Modifiez quelque chose (ex: ajoutez un élément)
@@ -42,11 +45,13 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 5. Vérifiez que la sauvegarde réussit
 
 **Résultat attendu :**
+
 ```
 ✅ Template sauvegardé avec succès
 ```
 
 **Logs à vérifier :**
+
 ```bash
 # Dans debug.log
 [PDF Builder] [NonceManager] [INFO] Demande de génération de nonce frais
@@ -60,6 +65,7 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 **Objectif :** Vérifier que les utilisateurs avec `edit_posts` peuvent sauvegarder
 
 **Étapes :**
+
 1. Créez un utilisateur avec rôle "Contributeur" (a `edit_posts`)
 2. Connectez-vous avec cet utilisateur
 3. Ouvrez un template existant
@@ -67,6 +73,7 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 5. Sauvegardez
 
 **Résultat attendu :**
+
 ```
 ✅ Template sauvegardé avec succès
 ```
@@ -78,17 +85,20 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 **Objectif :** Vérifier que l'accès est refusé sans `edit_posts`
 
 **Étapes :**
+
 1. Créez un utilisateur avec rôle "Abonné" (SANS `edit_posts`)
 2. Connectez-vous avec cet utilisateur
 3. Essayez d'accéder à `/wp-admin/?page=pdf-builder-pro`
 4. Essayez de faire une action AJAX
 
 **Résultat attendu :**
+
 ```
 ❌ Permissions insuffisantes
 ```
 
 **Logs :**
+
 ```bash
 [PDF Builder] [NonceManager] [INFO] Permissions insuffisantes pour générer un nonce
 ```
@@ -100,10 +110,12 @@ Ce guide vous aide à tester et valider le nouveau système de nonce unifié dan
 **Objectif :** Vérifier que le nonce expiré est rafraîchi automatiquement
 
 **Étapes :**
+
 1. Dans la console du navigateur, exécutez :
+
 ```javascript
 // Simuler un nonce expiré
-window.pdfBuilderData.nonce = 'nonce_invalide_delibere';
+window.pdfBuilderData.nonce = "nonce_invalide_delibere";
 ```
 
 2. Tentez de sauvegarder un template
@@ -111,6 +123,7 @@ window.pdfBuilderData.nonce = 'nonce_invalide_delibere';
 4. Le template devrait être sauvegardé (avec nouveau nonce)
 
 **Résultat attendu :**
+
 ```
 🔄 [useTemplate] Nonce invalide détecté, récupération automatique...
 ✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative...
@@ -124,11 +137,13 @@ window.pdfBuilderData.nonce = 'nonce_invalide_delibere';
 **Objectif :** Confirmer que le logging est unifié et traçable
 
 **Étapes :**
+
 1. Effectuez 3-4 opérations AJAX (sauvegarde, chargement, etc.)
 2. Vérifiez le fichier `wp-content/debug.log`
 3. Recherchez les entrées `[PDF Builder] [NonceManager]`
 
 **Résultat attendu :**
+
 ```bash
 # Logs trouvés :
 [PDF Builder] [NonceManager] [INFO] Génération d'un nonce frais
@@ -142,22 +157,27 @@ window.pdfBuilderData.nonce = 'nonce_invalide_delibere';
 **Objectif :** Vérifier que le système gère les requêtes simultanées
 
 **Étapes :**
+
 1. Dans la console du navigateur, exécutez :
+
 ```javascript
 // Faire 5 requêtes simultanées
 for (let i = 0; i < 5; i++) {
-    fetch(window.pdfBuilderData?.ajaxUrl, {
-        method: 'POST',
-        body: new FormData()
-            .append('action', 'pdf_builder_check_database')
-            .append('nonce', window.pdfBuilderData?.nonce)
-    }).then(r => r.json()).then(d => console.log(d));
+  fetch(window.pdfBuilderData?.ajaxUrl, {
+    method: "POST",
+    body: new FormData()
+      .append("action", "pdf_builder_check_database")
+      .append("nonce", window.pdfBuilderData?.nonce),
+  })
+    .then((r) => r.json())
+    .then((d) => console.log(d));
 }
 ```
 
 2. Vérifiez que toutes les requêtes réussissent
 
 **Résultat attendu :**
+
 ```
 ✅ 5 réponses réussies
 Pas d'erreur de nonce
@@ -170,22 +190,30 @@ Pas d'erreur de nonce
 **Objectif :** Confirmer que le nonce fonctionne en GET et POST
 
 **Étapes (GET) :**
+
 1. Exécutez dans la console :
+
 ```javascript
-const url = window.pdfBuilderData?.ajaxUrl + 
-    '?action=pdf_builder_get_template' +
-    '&template_id=1' +
-    '&nonce=' + window.pdfBuilderData?.nonce;
-fetch(url).then(r => r.json()).then(console.log);
+const url =
+  window.pdfBuilderData?.ajaxUrl +
+  "?action=pdf_builder_get_template" +
+  "&template_id=1" +
+  "&nonce=" +
+  window.pdfBuilderData?.nonce;
+fetch(url)
+  .then((r) => r.json())
+  .then(console.log);
 ```
 
 2. Vérifiez que vous récupérez les données
 
 **Étapes (POST) :**
+
 1. Effectuez une sauvegarde normale
 2. Vérifiez que le nonce est dans le FormData
 
 **Résultat attendu :**
+
 ```
 ✅ GET : Nonce valide
 ✅ POST : Nonce valide
@@ -206,19 +234,19 @@ namespace PDF_Builder\Tests;
 use PDF_Builder\Admin\Handlers\NonceManager;
 
 class TestNonceManager extends \WP_UnitTestCase {
-    
+
     public function test_create_nonce() {
         $nonce = NonceManager::createNonce();
         $this->assertIsString($nonce);
         $this->assertGreaterThan(0, strlen($nonce));
     }
-    
+
     public function test_verify_nonce() {
         $nonce = NonceManager::createNonce();
         $result = NonceManager::verifyNonce($nonce);
         $this->assertNotFalse($result);
     }
-    
+
     public function test_validate_request_permissions() {
         // Sans permission
         if (!current_user_can('edit_posts')) {
@@ -227,7 +255,7 @@ class TestNonceManager extends \WP_UnitTestCase {
             $this->assertEquals('permission_denied', $result['code']);
         }
     }
-    
+
     public function test_get_nonce_from_request() {
         $_POST['nonce'] = 'test_nonce_value';
         $nonce = NonceManager::getNonceFromRequest();
@@ -241,45 +269,44 @@ class TestNonceManager extends \WP_UnitTestCase {
 ```typescript
 // Fichier test: src/js/react/utils/__tests__/ClientNonceManager.test.ts
 
-import { ClientNonceManager } from '../ClientNonceManager';
+import { ClientNonceManager } from "../ClientNonceManager";
 
-describe('ClientNonceManager', () => {
-    
-    beforeEach(() => {
-        window.pdfBuilderData = {
-            nonce: 'test_nonce_123',
-            ajaxUrl: 'http://example.com/admin-ajax.php'
-        };
-    });
-    
-    test('getCurrentNonce should return nonce', () => {
-        const nonce = ClientNonceManager.getCurrentNonce();
-        expect(nonce).toBe('test_nonce_123');
-    });
-    
-    test('getAjaxUrl should return ajax URL', () => {
-        const url = ClientNonceManager.getAjaxUrl();
-        expect(url).toBe('http://example.com/admin-ajax.php');
-    });
-    
-    test('isValid should check nonce validity', () => {
-        expect(ClientNonceManager.isValid()).toBe(true);
-        
-        window.pdfBuilderData!.nonce = '';
-        expect(ClientNonceManager.isValid()).toBe(false);
-    });
-    
-    test('addToFormData should append nonce', () => {
-        const formData = new FormData();
-        ClientNonceManager.addToFormData(formData);
-        expect(formData.get('nonce')).toBe('test_nonce_123');
-    });
-    
-    test('addToUrl should append nonce to URL', () => {
-        const url = ClientNonceManager.addToUrl('http://example.com?action=test');
-        expect(url).toContain('nonce=');
-        expect(url).toContain('test_nonce_123');
-    });
+describe("ClientNonceManager", () => {
+  beforeEach(() => {
+    window.pdfBuilderData = {
+      nonce: "test_nonce_123",
+      ajaxUrl: "http://example.com/admin-ajax.php",
+    };
+  });
+
+  test("getCurrentNonce should return nonce", () => {
+    const nonce = ClientNonceManager.getCurrentNonce();
+    expect(nonce).toBe("test_nonce_123");
+  });
+
+  test("getAjaxUrl should return ajax URL", () => {
+    const url = ClientNonceManager.getAjaxUrl();
+    expect(url).toBe("http://example.com/admin-ajax.php");
+  });
+
+  test("isValid should check nonce validity", () => {
+    expect(ClientNonceManager.isValid()).toBe(true);
+
+    window.pdfBuilderData!.nonce = "";
+    expect(ClientNonceManager.isValid()).toBe(false);
+  });
+
+  test("addToFormData should append nonce", () => {
+    const formData = new FormData();
+    ClientNonceManager.addToFormData(formData);
+    expect(formData.get("nonce")).toBe("test_nonce_123");
+  });
+
+  test("addToUrl should append nonce to URL", () => {
+    const url = ClientNonceManager.addToUrl("http://example.com?action=test");
+    expect(url).toContain("nonce=");
+    expect(url).toContain("test_nonce_123");
+  });
 });
 ```
 
@@ -354,25 +381,29 @@ describe('ClientNonceManager', () => {
 ### Problème: "Nonce invalide" persistant
 
 **Cause possible :**
+
 - Nonce expiré après 12 heures
 - Session utilisateur expirée
 - Mismatch entre l'action du nonce
 
 **Solution :**
+
 ```javascript
 // Forcer un rafraîchissement
 const fresh = await ClientNonceManager.refreshNonce();
-console.log('Nouveau nonce:', fresh);
+console.log("Nouveau nonce:", fresh);
 ```
 
 ### Problème: "Permissions insuffisantes"
 
 **Cause possible :**
+
 - Utilisateur n'a pas la capacité `edit_posts`
 - Session corrompue
 - Rôle utilisateur incorrect
 
 **Solution :**
+
 ```php
 // Vérifier les permissions dans les logs
 [PDF Builder] [NonceManager] [INFO] Permissions insuffisantes pour...
@@ -381,11 +412,13 @@ console.log('Nouveau nonce:', fresh);
 ### Problème: Logs manquants
 
 **Cause possible :**
+
 - `WP_DEBUG` non activé
 - Fichier `debug.log` non accessible
 - Permissions insuffisantes sur le fichier
 
 **Solution :**
+
 ```php
 // Ajouter à wp-config.php
 define('WP_DEBUG', true);
