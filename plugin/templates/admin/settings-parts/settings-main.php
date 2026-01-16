@@ -202,45 +202,58 @@
 
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
-        console.log('🔧 PDF Builder Settings: Initializing developer tools...');
+        console.log('� PDF Builder Settings: Document ready fired');
+        console.log('🚀 PDF Builder Settings: jQuery version:', $.fn.jquery);
+        console.log('🚀 PDF Builder Settings: Current URL:', window.location.href);
+        console.log('🚀 PDF Builder Settings: Initializing developer tools...');
 
         // === GESTION DU MODE DÉVELOPPEUR ===
         $(document).on('change', '#developer_enabled', function(e) {
+            console.log('🔧 Developer mode toggle event fired');
             handleDeveloperModeToggle(e);
         });
 
         // === GESTION DU MOT DE PASSE ===
         $(document).on('click', '#toggle_password', function(e) {
+            console.log('🔑 Password toggle clicked');
             handlePasswordToggle(e);
         });
 
         // === TESTS DE LICENCE ===
         $(document).on('click', '#toggle_license_test_mode_btn', function(e) {
+            console.log('🔑 License test mode toggle clicked');
             e.preventDefault();
             toggleLicenseTestMode(true);
         });
 
         $(document).on('change', '#license_test_mode', function(e) {
+            console.log('🔑 License test mode changed');
             toggleLicenseTestMode(false);
         });
 
         $(document).on('click', '#generate_license_key_btn', function(e) {
-            e.preventDefault();
             console.log('🔑 PDF Builder Debug - Generate license key button clicked');
+            console.log('🔑 PDF Builder Debug - Event object:', e);
+            console.log('🔑 PDF Builder Debug - Event target:', e.target);
+            console.log('🔑 PDF Builder Debug - Button exists check:', $('#generate_license_key_btn').length);
+            e.preventDefault();
             generateTestLicenseKey();
         });
 
         $(document).on('click', '#copy_license_key_btn', function(e) {
+            console.log('🔑 Copy license key clicked');
             copyLicenseKey();
         });
 
-        $(document).on('click', '#delete_license_key_btn', function(e) {            console.log('🔑 PDF Builder Debug - Generate license key button clicked');
-            console.log('🔑 PDF Builder Debug - Event target:', e.target);
-            console.log('🔑 PDF Builder Debug - Button exists:', $('#generate_license_key_btn').length);            e.preventDefault();
+        $(document).on('click', '#delete_license_key_btn', function(e) {
+            console.log('🔑 Delete license key clicked - Event target:', e.target);
+            console.log('🔑 Delete license key clicked - Button exists:', $('#generate_license_key_btn').length);
+            e.preventDefault();
             deleteTestLicenseKey();
         });
 
         $(document).on('click', '#cleanup_license_btn', function(e) {
+            console.log('🔑 Cleanup license clicked');
             e.preventDefault();
             cleanupLicense();
         });
@@ -320,7 +333,9 @@
         });
 
         // Initialiser l'état des sections développeur
+        console.log('🚀 PDF Builder Settings: About to call initializeDeveloperSections');
         initializeDeveloperSections();
+        console.log('🚀 PDF Builder Settings: initializeDeveloperSections completed');
     });
 
     // === FONCTIONS UTILITAIRES ===
@@ -703,31 +718,38 @@
 
     function initializeDeveloperSections() {
         console.log('🔧 PDF Builder Debug - initializeDeveloperSections called');
+        console.log('🔧 PDF Builder Debug - Checking DOM elements...');
         console.log('🔧 PDF Builder Debug - Developer enabled checkbox exists:', $('#developer_enabled').length);
         console.log('🔧 PDF Builder Debug - Generate license button exists:', $('#generate_license_key_btn').length);
         console.log('🔧 PDF Builder Debug - License test key input exists:', $('#license_test_key').length);
+        console.log('🔧 PDF Builder Debug - Developer sections hidden class count:', $('.developer-section-hidden').length);
 
         // Masquer les sections développeur si le mode n'est pas activé
         const developerEnabled = $('#developer_enabled').is(':checked');
         console.log('🔧 PDF Builder Debug - Developer mode enabled:', developerEnabled);
 
         if (!developerEnabled) {
+            console.log('🔧 PDF Builder Debug - Hiding developer sections');
             $('.developer-section-hidden').hide();
             console.log('🔧 PDF Builder Debug - Developer sections hidden');
         } else {
+            console.log('🔧 PDF Builder Debug - Showing developer sections');
+            $('.developer-section-hidden').show();
             console.log('🔧 PDF Builder Debug - Developer sections shown');
         }
 
         // Masquer le bouton de suppression si pas de clé
         const licenseKey = $('#license_test_key').val();
+        console.log('🔧 PDF Builder Debug - Current license key value:', licenseKey);
         if (!licenseKey) {
+            console.log('🔧 PDF Builder Debug - Hiding delete button (no key)');
             $('#delete_license_key_btn').hide();
-            console.log('🔧 PDF Builder Debug - Delete button hidden (no key)');
         } else {
-            console.log('🔧 PDF Builder Debug - Delete button shown (key exists)');
+            console.log('🔧 PDF Builder Debug - Showing delete button (key exists)');
+            $('#delete_license_key_btn').show();
         }
 
-        console.log('🔧 Developer sections initialized');
+        console.log('🔧 PDF Builder Debug - Developer sections initialization complete');
     }
 
 })(jQuery);
