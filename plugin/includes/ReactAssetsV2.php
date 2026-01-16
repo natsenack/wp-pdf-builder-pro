@@ -21,6 +21,9 @@ class ReactAssets {
         // Assurer que wp-util est chargé sur toutes les pages admin pour éviter les erreurs "wp is not defined"
         wp_enqueue_script('wp-util');
         
+        // Définir wp global tôt pour éviter les erreurs de plugins tiers
+        wp_add_inline_script('jquery', 'window.wp = window.wp || {};', 'before');
+        
         // Charger seulement sur la page du PDF Builder
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
             return;
