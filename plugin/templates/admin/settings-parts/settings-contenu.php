@@ -518,7 +518,30 @@
                         var inputs = modal.querySelectorAll('input, select, textarea');
                         var updatedCount = 0;
 
+                        // Gérer spécifiquement les checkboxes DPI (tableau)
+                        var dpiCheckboxes = modal.querySelectorAll('input[name="pdf_builder_canvas_dpi[]"]:checked');
+                        if (dpiCheckboxes.length > 0) {
+                            var dpiValues = [];
+                            dpiCheckboxes.forEach(function(checkbox) {
+                                dpiValues.push(checkbox.value);
+                            });
+                            var dpiString = dpiValues.join(',');
+                            
+                            var hiddenDpiField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_dpi]"]');
+                            if (hiddenDpiField) {
+                                hiddenDpiField.value = dpiString;
+                                updatedCount++;
+                                console.log('[PDF Builder] Updated DPI settings:', dpiString);
+                            }
+                        }
+
+                        // Gérer les autres inputs normalement
                         inputs.forEach(function(input) {
+                            // Ignorer les checkboxes DPI déjà traitées
+                            if (input.name === 'pdf_builder_canvas_dpi[]') {
+                                return;
+                            }
+                            
                             if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
                                 var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
                                 if (hiddenField) {

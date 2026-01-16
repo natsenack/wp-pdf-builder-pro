@@ -72,12 +72,23 @@ function get_canvas_modal_value($key, $default = '') {
                            value="<?php echo esc_attr(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label>Résolution DPI</label>
+                    <label>Résolutions DPI disponibles</label>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
                         <?php
-                        $current_dpi = get_canvas_modal_value('dpi', $canvas_defaults['dpi']);
+                        $current_dpi_string = get_canvas_modal_value('dpi', $canvas_defaults['dpi']);
+                        // Convertir la valeur actuelle en tableau (peut être une chaîne ou un tableau sérialisé)
+                        if (is_string($current_dpi_string) && strpos($current_dpi_string, ',') !== false) {
+                            $current_dpis = explode(',', $current_dpi_string);
+                        } elseif (is_array($current_dpi_string)) {
+                            $current_dpis = $current_dpi_string;
+                        } else {
+                            // Valeur unique, la convertir en tableau
+                            $current_dpis = [$current_dpi_string];
+                        }
+                        $current_dpis = array_map('strval', $current_dpis); // S'assurer que ce sont des chaînes
+
                         $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
-                        
+
                         $dpi_options = [
                             ['value' => '72', 'label' => '72 DPI - Écran (faible qualité)', 'premium' => false],
                             ['value' => '96', 'label' => '96 DPI - Web (qualité standard)', 'premium' => false],
@@ -85,23 +96,24 @@ function get_canvas_modal_value($key, $default = '') {
                             ['value' => '300', 'label' => '300 DPI - Haute qualité', 'premium' => true],
                             ['value' => '600', 'label' => '600 DPI - Professionnel', 'premium' => true]
                         ];
-                        
+
                         foreach ($dpi_options as $option) {
-                            // Ne montrer que les options autorisées selon la licence
-                            if ($option['premium'] && !$is_premium) {
-                                continue;
-                            }
-                            
-                            $checked = ($current_dpi == $option['value']) ? 'checked' : '';
+                            $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
+                            $checked = in_array($option['value'], $current_dpis) ? 'checked' : '';
+                            $premium_class = $option['premium'] ? 'premium-option' : '';
                             $premium_badge = $option['premium'] ? ' <span class="premium-badge">⭐ PREMIUM</span>' : '';
-                            
-                            echo '<label style="display: flex; align-items: center; gap: 8px; margin: 0;" class="dpi-option">';
-                            echo '<input type="radio" name="pdf_builder_canvas_dpi" value="' . $option['value'] . '" ' . $checked . ' style="margin: 0;">';
+
+                            echo '<label style="display: flex; align-items: center; gap: 8px; margin: 0; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '">';
+                            echo '<input type="checkbox" name="pdf_builder_canvas_dpi[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . ' style="margin: 0;">';
                             echo '<span>' . $option['label'] . $premium_badge . '</span>';
                             echo '</label>';
                         }
                         ?>
-                        
+
+                        <div style="margin-top: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
+                            <strong>ℹ️ Info:</strong> Les résolutions sélectionnées ici seront disponibles dans les paramètres des templates.
+                        </div>
+
                         <?php if (!$is_premium): ?>
                         <div style="margin-top: 12px; padding: 12px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 12px;">
                             <strong>🔒 Résolutions Premium</strong><br>
