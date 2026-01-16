@@ -23,7 +23,7 @@
     error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
 
     // Vérifier le statut premium de l'utilisateur
-    $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+    $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
 
     // Calculer les métriques de cache
     $cache_file_count = 0;

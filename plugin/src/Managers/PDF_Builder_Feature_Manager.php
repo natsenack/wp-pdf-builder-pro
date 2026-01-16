@@ -96,7 +96,27 @@ class PdfBuilderFeatureManager
             'premium' => true,
             'name' => 'Analytics avancés',
             'description' => 'Tableaux de bord détaillés et rapports'
-        ]
+        ],
+
+        // CANVAS DISPLAY SETTINGS - Premium features
+        'high_dpi' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Résolutions élevées',
+            'description' => 'DPI 300 et 600 pour haute qualité'
+        ],
+        'extended_formats' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Formats étendus',
+            'description' => 'A3, Letter, Legal, Étiquettes'
+        ],
+        'custom_colors' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Couleurs personnalisées',
+            'description' => 'Fond et bordures du canvas'
+        ],
     ];
 
     /**

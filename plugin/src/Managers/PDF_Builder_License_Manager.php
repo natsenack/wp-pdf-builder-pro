@@ -89,6 +89,14 @@ class PdfBuilderLicenseManager
     }
 
     /**
+     * Alias pour isPremium() - pour compatibilité
+     */
+    public function is_premium()
+    {
+        return $this->isPremium();
+    }
+
+    /**
      * Obtenir le statut de la licence
      */
     public function getLicenseStatus()

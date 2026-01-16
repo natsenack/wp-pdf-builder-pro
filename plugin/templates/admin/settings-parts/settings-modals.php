@@ -58,7 +58,7 @@ function get_canvas_modal_value($key, $default = '') {
         <div class="canvas-modal-header">
             <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
                 <h3 style="margin: 0;"><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
-                <?php if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()): ?>
+                <?php if (!\PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium()): ?>
                 <div class="premium-header-notice" style="padding: 6px 12px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 12px; color: #856404; flex: 1; max-width: 52%">
                     <strong>🔒 Fonction Premium</strong> - Débloquez la personnalisation avancée du canvas (couleurs, bordures, formats étendus)
                     <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500; margin-left: 8px;">Passer en Premium →</a>
@@ -96,7 +96,8 @@ function get_canvas_modal_value($key, $default = '') {
                         }
                         $current_dpis = array_map('strval', $current_dpis); // S'assurer que ce sont des chaînes
 
-                        $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+                        $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
+                        $can_use_high_dpi = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('high_dpi');
 
                         $dpi_options = [
                             ['value' => '72', 'label' => '72 DPI - Écran', 'desc' => 'Faible qualité', 'premium' => false],
@@ -107,11 +108,11 @@ function get_canvas_modal_value($key, $default = '') {
                         ];
 
                         foreach ($dpi_options as $option) {
-                            $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
+                            $disabled = ($option['premium'] && !$can_use_high_dpi) ? 'disabled' : '';
                             $checked = in_array($option['value'], $current_dpis) ? 'checked' : '';
                             $premium_class = $option['premium'] ? 'premium-option' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$can_use_high_dpi ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
                             echo '<input type="checkbox" name="pdf_builder_canvas_dpi[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
                             echo '<div style="flex: 1;">';
                             echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['label'] . '</div>';
@@ -148,7 +149,8 @@ function get_canvas_modal_value($key, $default = '') {
                         }
                         $current_formats = array_map('strval', $current_formats); // S'assurer que ce sont des chaînes
 
-                        $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+                        $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
+                        $can_use_extended_formats = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('extended_formats');
 
                         $format_options = [
                             ['value' => 'A4', 'label' => 'A4 (210×297mm)', 'desc' => 'Format standard européen', 'icon' => '📄', 'premium' => false],
@@ -159,11 +161,11 @@ function get_canvas_modal_value($key, $default = '') {
                         ];
 
                         foreach ($format_options as $option) {
-                            $disabled = ($option['premium'] && !$is_premium) ? 'disabled' : '';
+                            $disabled = ($option['premium'] && !$can_use_extended_formats) ? 'disabled' : '';
                             $checked = in_array($option['value'], $current_formats) ? 'checked' : '';
                             $premium_class = $option['premium'] ? 'premium-option' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$is_premium ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$can_use_extended_formats ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
                             echo '<input type="checkbox" name="pdf_builder_canvas_formats[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
                             echo '<div style="flex: 1;">';
                             echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
@@ -225,8 +227,8 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🎨</span> Couleur de Fond du canvas <span class="premium-badge">⭐ PREMIUM</span></label>
-                    <?php $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user(); ?>
-                    <?php if ($is_premium): ?>
+                    <?php $can_use_custom_colors = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('custom_colors'); ?>
+                    <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
                                value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
@@ -246,7 +248,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🔳</span> Bordure du canvas <span class="premium-badge">⭐ PREMIUM</span></label>
-                    <?php if ($is_premium): ?>
+                    <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
                         <div style="flex: 1;">
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
@@ -296,7 +298,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🎨</span> Couleur de Fond du Conteneur <span class="premium-badge">⭐ PREMIUM</span></label>
-                    <?php if ($is_premium): ?>
+                    <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color"
                                value="<?php echo esc_attr(get_canvas_modal_value('container_bg_color', $canvas_defaults['container_bg_color'])); ?>"

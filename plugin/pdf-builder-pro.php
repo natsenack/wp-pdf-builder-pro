@@ -369,7 +369,7 @@ function pdf_builder_create_backup_ajax() {
     }
 
     // Check if user is premium
-    if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+    if (!\PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium()) {
         // error_log('PDF Builder: [CREATE BACKUP] User is not premium');
         wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
@@ -465,7 +465,7 @@ function pdf_builder_list_backups_ajax() {
     }
 
     // Check if user is premium
-    if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+    if (!\PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium()) {
         // error_log('PDF Builder: [BACKUP LIST] User is not premium');
         wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;
@@ -557,7 +557,7 @@ function pdf_builder_restore_backup_ajax() {
     }
 
     // Check if user is premium
-    if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+    if (!\PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium()) {
         // error_log('PDF Builder: [RESTORE BACKUP] User is not premium');
         wp_send_json_error('La fonctionnalité de sauvegarde n\'est disponible que dans la version premium');
         return;

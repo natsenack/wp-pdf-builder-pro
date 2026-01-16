@@ -32,7 +32,7 @@ class TemplateDefaults
         }
 
         // Vérifier si l'utilisateur est premium
-        if (\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()) {
+        if (\PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium()) {
             return true; // Pas besoin de templates par défaut pour premium
         }
 

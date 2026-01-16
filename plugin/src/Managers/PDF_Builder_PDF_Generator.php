@@ -619,10 +619,8 @@ class PdfBuilderPdfGenerator
      */
     private function isUserPremium()
     {
-        if (!class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
-            return false;
-        }
-        return \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+        return $license_manager->is_premium();
     }
 
     /**
