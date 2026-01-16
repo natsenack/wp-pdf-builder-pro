@@ -57,7 +57,10 @@ class PDF_Builder_Security_Validator {
      */
     public static function validateNonce() {
         // Validation temporaire - À remplacer par une vraie vérification nonce
-        return isset($_POST['nonce']) && wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax');
+        $nonce_received = isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT_SET';
+        $nonce_valid = wp_verify_nonce($nonce_received, 'pdf_builder_ajax');
+        error_log('PDF Builder - Nonce validation: received=' . $nonce_received . ', valid=' . ($nonce_valid ? 'YES' : 'NO'));
+        return $nonce_valid;
     }
 
     /**

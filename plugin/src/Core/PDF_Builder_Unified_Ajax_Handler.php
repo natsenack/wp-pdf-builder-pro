@@ -1901,9 +1901,16 @@ class PDF_Builder_Unified_Ajax_Handler {
       * Handler pour générer une clé de licence de test
       */
      public function handle_generate_test_license_key() {
+         // Debug: Log the request
+         error_log('PDF Builder - Generate test license key called');
+         error_log('POST data: ' . print_r($_POST, true));
+
          if (!$this->nonce_manager->validate_ajax_request()) {
+             error_log('PDF Builder - Nonce validation failed');
              return;
          }
+
+         error_log('PDF Builder - Nonce validation passed');
 
          try {
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
@@ -1914,6 +1921,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             $settings['pdf_builder_license_test_key_expires'] = $expires_in_30_days;
             update_option('pdf_builder_settings', $settings);
 
+            error_log('PDF Builder - Test license key generated: ' . $test_key);
+
             wp_send_json_success([
                 'message' => 'Clé de test générée avec succès.',
                 'license_key' => $test_key,
@@ -1921,7 +1930,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             ]);
 
          } catch (Exception $e) {
-             // error_log('[PDF Builder AJAX] Erreur génération clé test: ' . $e->getMessage());
+             error_log('[PDF Builder AJAX] Erreur génération clé test: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
