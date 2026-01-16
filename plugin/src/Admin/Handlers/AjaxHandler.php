@@ -1601,8 +1601,25 @@ class AjaxHandler
             $saved_count = 0;
             foreach ($canvas_settings as $key => $value) {
                 $option_key = $key; // La clé est déjà préfixée
+
+                // Vérifier la valeur actuelle avant sauvegarde
+                $current_value = get_option($option_key, 'NOT_SET');
+                error_log("PDF Builder - Current value for $option_key: " . (is_array($current_value) ? json_encode($current_value) : $current_value));
+
                 $saved = update_option($option_key, $value);
-                error_log("PDF Builder - Saving canvas setting: $key = $value, result: " . ($saved ? 'SUCCESS' : 'FAILED'));
+                error_log("PDF Builder - update_option result for $key: " . ($saved ? 'SUCCESS' : 'FAILED'));
+
+                // Si update_option échoue, essayer add_option
+                if (!$saved) {
+                    $added = add_option($option_key, $value, '', 'no');
+                    error_log("PDF Builder - add_option result for $key: " . ($added ? 'SUCCESS' : 'FAILED'));
+                    $saved = $added;
+                }
+
+                // Vérifier si la valeur a changé après sauvegarde
+                $new_value = get_option($option_key, 'NOT_SET_AFTER');
+                error_log("PDF Builder - Value after save for $option_key: " . (is_array($new_value) ? json_encode($new_value) : $new_value));
+
                 if ($saved) {
                     $saved_count++;
                 }
