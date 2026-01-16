@@ -16,7 +16,13 @@ src/js/
     ├── settings-main.js
     ├── canvas-settings.js
     ├── pdf-builder-react-init.js
-    └── pdf-builder-react-wrapper.js
+    ├── pdf-builder-react-wrapper.js
+    ├── ajax-throttle.js
+    ├── notifications.js
+    ├── pdf-builder-wrap.js
+    ├── pdf-builder-init.js
+    ├── pdf-preview-api-client.js
+    └── pdf-preview-integration.js
 ```
 
 ### Builds (`plugin/assets/js/`)
@@ -31,7 +37,13 @@ plugin/assets/js/
 ├── settings-main.min.js          # Paramètres principaux
 ├── canvas-settings.min.js        # Paramètres canvas
 ├── pdf-builder-react-init.min.js # Initialisation React
-└── pdf-builder-react-wrapper.min.js # Wrapper React
+├── pdf-builder-react-wrapper.min.js # Wrapper React
+├── ajax-throttle.min.js          # Limitation appels AJAX
+├── notifications.min.js          # Système notifications
+├── pdf-builder-wrap.min.js       # Utilitaires wrapper
+├── pdf-builder-init.min.js       # Initialisation générale
+├── pdf-preview-api-client.min.js # Client API preview
+└── pdf-preview-integration.min.js # Intégration preview
 ```
 
 ## Workflow de développement
@@ -67,3 +79,22 @@ L'extension **Webpack** (`jeremyrajan.webpack`) est installée pour :
 - Créer des configurations Webpack
 - Support ES6 avec Babel
 - Intégration transparente avec VS Code
+
+## Fonctionnalités des modules
+
+### Scripts d'administration
+- **ajax-throttle.js** : Limitation des appels AJAX pour éviter la surcharge serveur
+- **notifications.js** : Système de notifications utilisateur avec UI basique
+- **pdf-builder-wrap.js** : Utilitaires généraux (debounce, throttle, DOM helpers)
+- **pdf-builder-init.js** : Initialisation générale et détection de contexte
+- **pdf-preview-api-client.js** : Client API pour les appels de génération de preview PDF
+- **pdf-preview-integration.js** : Intégration des fonctionnalités de preview
+
+### Scripts React
+- **pdf-builder-react-init.js** : Initialisation de l'application React
+- **pdf-builder-react-wrapper.js** : Wrapper et gestion du cycle de vie React
+
+### Scripts paramètres
+- **settings-tabs.js** : Navigation par onglets dans les paramètres
+- **settings-main.js** : Logique principale des paramètres
+- **canvas-settings.js** : Paramètres spécifiques au canvas d'édition
