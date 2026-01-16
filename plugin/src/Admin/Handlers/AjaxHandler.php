@@ -1576,6 +1576,8 @@ class AjaxHandler
         try {
             // Log des données reçues pour débogage
             error_log('PDF Builder - handleSaveCanvasModalSettings - POST data: ' . print_r($_POST, true));
+            error_log('PDF Builder - handleSaveCanvasModalSettings - REQUEST data: ' . print_r($_REQUEST, true));
+            error_log('PDF Builder - handleSaveCanvasModalSettings - Raw input: ' . file_get_contents('php://input'));
 
             // Collecter et sanitiser tous les paramètres canvas depuis $_POST
             $canvas_settings = [];
@@ -1583,9 +1585,15 @@ class AjaxHandler
             foreach ($_POST as $key => $value) {
                 // Ne traiter que les clés qui commencent par pdf_builder_canvas_
                 if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    error_log("PDF Builder - Processing canvas key: $key, raw value: " . (is_array($value) ? json_encode($value) : $value));
                     $sanitized_value = $this->sanitizeFieldValue($key, $value);
+                    error_log("PDF Builder - Sanitized value for $key: '" . $sanitized_value . "' (type: " . gettype($sanitized_value) . ")");
+
                     if ($sanitized_value !== '') {
                         $canvas_settings[$key] = $sanitized_value;
+                        error_log("PDF Builder - Added to canvas_settings: $key => $sanitized_value");
+                    } else {
+                        error_log("PDF Builder - Skipped empty sanitized value for: $key");
                     }
                 }
             }
