@@ -197,15 +197,18 @@
 </div> <!-- Fin du .wrap -->
 
 <script type="text/javascript">
-(function($) {
-    'use strict';
+try {
+    console.log('🔥 PDF BUILDER SCRIPT LOADED - BASIC TEST');
+    (function($) {
+        'use strict';
+        console.log('🔥 PDF BUILDER SCRIPT - JQUERY WRAPPER EXECUTED');
 
-    // Attendre que le DOM soit complètement chargé
-    $(document).ready(function() {
-        console.log('� PDF Builder Settings: Document ready fired');
-        console.log('🚀 PDF Builder Settings: jQuery version:', $.fn.jquery);
-        console.log('🚀 PDF Builder Settings: Current URL:', window.location.href);
-        console.log('🚀 PDF Builder Settings: Initializing developer tools...');
+        // Attendre que le DOM soit complètement chargé
+        $(document).ready(function() {
+            console.log('🚀 PDF Builder Settings: Document ready fired');
+            console.log('🚀 PDF Builder Settings: jQuery version:', $.fn.jquery);
+            console.log('🚀 PDF Builder Settings: Current URL:', window.location.href);
+            console.log('🚀 PDF Builder Settings: Initializing developer tools...');
 
         // === GESTION DU MODE DÉVELOPPEUR ===
         $(document).on('change', '#developer_enabled', function(e) {
@@ -753,4 +756,8 @@
     }
 
 })(jQuery);
+} catch (error) {
+    console.error('🔥 PDF BUILDER SCRIPT ERROR:', error);
+    console.error('🔥 Error stack:', error.stack);
+}
 </script>
