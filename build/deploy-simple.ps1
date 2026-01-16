@@ -519,27 +519,15 @@ foreach ($file in $filesToDeploy) {
         $currentPath = ""
         foreach ($segment in $segments) {
             $currentPath += "/$segment"
-            if ($directoriesToCreate -notcontains $currentPath) {
+            # Vérifier immédiatement si le répertoire existe déjà avant de l'ajouter
+            if ($directoriesToCreate -notcontains $currentPath -and -not (Test-FtpDirectoryExists $currentPath)) {
                 $directoriesToCreate += $currentPath
             }
         }
     }
 }
 
-Write-Log "Création de $($directoriesToCreate.Count) répertoire(s)" "INFO"
-
-# Filtrer les répertoires qui existent déjà pour optimisation
-Write-Log "Filtrage des répertoires existants..." "INFO"
-$directoriesToCreateFiltered = @()
-foreach ($dir in $directoriesToCreate) {
-    if (Test-FtpDirectoryExists $dir) {
-        Write-Log "Répertoire existe déjà: $dir" "INFO"
-    } else {
-        $directoriesToCreateFiltered += $dir
-    }
-}
-$directoriesToCreate = $directoriesToCreateFiltered
-Write-Log "$($directoriesToCreate.Count) répertoire(s) à créer après filtrage" "INFO"
+Write-Log "Création de $($directoriesToCreate.Count) répertoire(s) après vérification d'existence" "INFO"
 
 if ($directoriesToCreate.Count -eq 0) {
     Write-Host "   ✅ Tous les répertoires existent déjà - aucune création nécessaire" -ForegroundColor Green
