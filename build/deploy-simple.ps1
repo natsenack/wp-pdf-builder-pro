@@ -391,10 +391,23 @@ foreach ($criticalFile in $criticalFiles) {
 
 Write-Log "$($filesToDeploy.Count) fichier(s) détecté(s)" "SUCCESS"
 
-# 2 COMPILATION (IGNORÉE - WEBPACK DÉSACTIVÉ)
+# 2 COMPILATION WEBPACK
 Write-Host "`n2 Compilation..." -ForegroundColor Magenta
-Write-Log "Compilation webpack désactivée" "INFO"
-Write-Log "Les fichiers existants seront déployés tels quels" "INFO"
+Write-Log "Début de la compilation Webpack" "INFO"
+Push-Location $WorkingDir
+try {
+    & npm run build
+    if ($LASTEXITCODE -ne 0) {
+        Write-Log "Erreur lors de la compilation Webpack" "ERROR"
+        exit 1
+    }
+    Write-Log "Compilation Webpack réussie" "SUCCESS"
+} catch {
+    Write-Log "Exception lors de la compilation: $($_.Exception.Message)" "ERROR"
+    exit 1
+} finally {
+    Pop-Location
+}
 
 # 2.5 GIT ADD DES FICHIERS MODIFIÉS
 Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
@@ -520,23 +533,29 @@ $dirCompleted = 0
 foreach ($dir in $directoriesToCreate) {
     $dirPercent = [math]::Round(($dirCompleted / $directoriesToCreate.Count) * 100)
     Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "$dir" -PercentComplete $dirPercent
-    Write-Log "Création répertoire: $dir" "INFO"
-    try {
-        $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
-        $dirUri = "ftp://$FtpUser`:$FtpPass@$basePath$dir/"
-        $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
-        $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-        $dirRequest.UseBinary = $true
-        $dirRequest.UsePassive = $true
-        $dirRequest.Timeout = 10000  # Réduit pour accélérer
-        $dirResponse = $dirRequest.GetResponse()
-        $dirResponse.Close()
-        Write-Log "Répertoire créé: $dir" "SUCCESS"
-    } catch {
-        if ($_.Exception.Message -match "550") {
-            Write-Log "Répertoire existe déjà: $dir" "INFO"
-        } else {
-            Write-Log "Échec création répertoire $dir : $($_.Exception.Message)" "ERROR"
+    
+    # Vérifier si le répertoire existe déjà (optimisation pour mode normal)
+    if (Test-FtpDirectoryExists $dir) {
+        Write-Log "Répertoire existe déjà: $dir" "INFO"
+    } else {
+        Write-Log "Création répertoire: $dir" "INFO"
+        try {
+            $basePath = if ($FtpPath) { "$FtpHost$FtpPath" } else { $FtpHost }
+            $dirUri = "ftp://$FtpUser`:$FtpPass@$basePath$dir/"
+            $dirRequest = [System.Net.FtpWebRequest]::Create($dirUri)
+            $dirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+            $dirRequest.UseBinary = $true
+            $dirRequest.UsePassive = $true
+            $dirRequest.Timeout = 10000  # Réduit pour accélérer
+            $dirResponse = $dirRequest.GetResponse()
+            $dirResponse.Close()
+            Write-Log "Répertoire créé: $dir" "SUCCESS"
+        } catch {
+            if ($_.Exception.Message -match "550") {
+                Write-Log "Répertoire existe déjà: $dir" "INFO"
+            } else {
+                Write-Log "Échec création répertoire $dir : $($_.Exception.Message)" "ERROR"
+            }
         }
     }
     $dirCompleted++
