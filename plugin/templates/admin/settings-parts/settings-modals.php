@@ -79,7 +79,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔍</span> Résolutions DPI</label>
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+                    <div style="display: flex; flex-direction: column; margin-top: 8px;">
                         <?php
                         $current_dpi_string = get_canvas_modal_value('dpi', $canvas_defaults['dpi']);
                         // Convertir la valeur actuelle en tableau (peut être une chaîne ou un tableau sérialisé)
@@ -167,7 +167,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
                                value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
-                               style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
+                               style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer; padding: 5px;">
                         <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
                                style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
                     </div>
