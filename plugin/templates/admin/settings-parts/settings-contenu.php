@@ -566,6 +566,8 @@
                             }
                         });
 
+                        console.log('[PDF Builder] Canvas data to save:', canvasData);
+
                         if (Object.keys(canvasData).length === 0) {
                             console.log('[PDF Builder] Aucune donnée canvas à sauvegarder');
                             closeModal(modal);

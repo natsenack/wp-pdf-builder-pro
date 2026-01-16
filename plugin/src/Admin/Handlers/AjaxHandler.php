@@ -1574,6 +1574,9 @@ class AjaxHandler
     private function handleSaveCanvasModalSettings()
     {
         try {
+            // Log des données reçues pour débogage
+            error_log('PDF Builder - handleSaveCanvasModalSettings - POST data: ' . print_r($_POST, true));
+
             // Collecter et sanitiser tous les paramètres canvas depuis $_POST
             $canvas_settings = [];
 
@@ -1587,6 +1590,8 @@ class AjaxHandler
                 }
             }
 
+            error_log('PDF Builder - Canvas settings to save: ' . print_r($canvas_settings, true));
+
             if (empty($canvas_settings)) {
                 wp_send_json_error(['message' => 'Aucune donnée canvas valide à sauvegarder']);
                 return;
@@ -1597,10 +1602,13 @@ class AjaxHandler
             foreach ($canvas_settings as $key => $value) {
                 $option_key = $key; // La clé est déjà préfixée
                 $saved = update_option($option_key, $value);
+                error_log("PDF Builder - Saving canvas setting: $key = $value, result: " . ($saved ? 'SUCCESS' : 'FAILED'));
                 if ($saved) {
                     $saved_count++;
                 }
             }
+
+            error_log("PDF Builder - Total canvas settings saved: $saved_count / " . count($canvas_settings));
 
             if ($saved_count > 0) {
                 wp_send_json_success([

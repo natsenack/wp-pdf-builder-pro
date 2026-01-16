@@ -242,8 +242,7 @@ class PDF_Builder_Notification_Manager {
         $notification = $this->show_notification($message, $type, ['duration' => $duration]);
 
         wp_send_json_success([
-            'notification' => $notification,
-            'rendered' => $this->render_single_notification($notification)
+            'notification' => $notification
         ]);
     }
 
