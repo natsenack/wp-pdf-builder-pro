@@ -12,6 +12,9 @@ class ReactAssets {
     
     public static function register() {
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_scripts'], 1);
+        add_action('admin_head', function() {
+            echo '<script>window.wp = window.wp || {};</script>';
+        }, 1);
     }
     
     /**
