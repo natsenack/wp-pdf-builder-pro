@@ -3,10 +3,6 @@
     {
       "path": ".",
       "name": "📦 V2 (Production Ready)"
-    },
-    {
-      "path": "../wp-pdf-builder-proV1",
-      "name": "📚 V1 (Legacy Reference)"
     }
   ],
   "settings": {
