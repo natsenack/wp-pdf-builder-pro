@@ -425,6 +425,17 @@ var pdfBuilderAjax = {
                                 <option value="landscape">Paysage</option>
                             </select>
                         </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px;">Résolution (DPI)</label>
+                            <select id="template-dpi" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <option value="72">72 DPI (Écran)</option>
+                                <option value="96">96 DPI (Web)</option>
+                                <option value="150">150 DPI (Impression moyenne)</option>
+                                <option value="300">300 DPI (Impression haute qualité)</option>
+                                <option value="600">600 DPI (Impression professionnelle)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 20px;">
@@ -1034,6 +1045,16 @@ function displayTemplateSettings(template) {
     
     var content = document.getElementById('template-settings-content');
     
+    // Valeurs par défaut depuis les paramètres du canvas
+    var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
+    var canvasOrientation = template.canvas_settings?.default_canvas_orientation || 'portrait';
+    var canvasDpi = template.canvas_settings?.default_canvas_dpi || 96;
+    
+    // Valeurs depuis template_data si elles existent
+    var templateFormat = template.template_data?.canvas_format || canvasFormat;
+    var templateOrientation = template.template_data?.canvas_orientation || canvasOrientation;
+    var templateDpi = template.template_data?.canvas_dpi || canvasDpi;
+    
     // Créer le formulaire HTML
     content.innerHTML = `
         <form id="template-settings-form">
@@ -1047,6 +1068,46 @@ function displayTemplateSettings(template) {
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-description" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📖 Description</label>
                 <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template">${template.description || ''}</textarea>
+            </div>
+
+            <!-- Paramètres avancés -->
+            <div class="settings-section" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e1e8ed;">
+                <h4 style="margin: 0 0 15px 0; color: #23282d; font-size: 14px; font-weight: 600;">⚙️ Paramètres avancés</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <!-- Format de papier -->
+                    <div>
+                        <label for="template-format" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">📄 FORMAT DE PAPIER</label>
+                        <select id="template-format" name="canvas_format" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
+                            <option value="A3" ${templateFormat === 'A3' ? 'selected' : ''}>A3</option>
+                            <option value="A4" ${templateFormat === 'A4' ? 'selected' : ''}>A4</option>
+                            <option value="A5" ${templateFormat === 'A5' ? 'selected' : ''}>A5</option>
+                            <option value="Letter" ${templateFormat === 'Letter' ? 'selected' : ''}>Letter</option>
+                            <option value="Legal" ${templateFormat === 'Legal' ? 'selected' : ''}>Legal</option>
+                        </select>
+                    </div>
+
+                    <!-- Orientation -->
+                    <div>
+                        <label for="template-orientation" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🔄 ORIENTATION</label>
+                        <select id="template-orientation" name="canvas_orientation" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
+                            <option value="portrait" ${templateOrientation === 'portrait' ? 'selected' : ''}>Portrait</option>
+                            <option value="landscape" ${templateOrientation === 'landscape' ? 'selected' : ''}>Paysage</option>
+                        </select>
+                    </div>
+
+                    <!-- Résolution DPI -->
+                    <div style="grid-column: span 2;">
+                        <label for="template-dpi" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🎯 RÉSOLUTION (DPI)</label>
+                        <select id="template-dpi" name="canvas_dpi" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
+                            <option value="72" ${templateDpi == 72 ? 'selected' : ''}>72 DPI - Écran (faible qualité)</option>
+                            <option value="96" ${templateDpi == 96 ? 'selected' : ''}>96 DPI - Web (qualité standard)</option>
+                            <option value="150" ${templateDpi == 150 ? 'selected' : ''}>150 DPI - Impression moyenne</option>
+                            <option value="300" ${templateDpi == 300 ? 'selected' : ''}>300 DPI - Haute qualité</option>
+                            <option value="600" ${templateDpi == 600 ? 'selected' : ''}>600 DPI - Professionnel</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <!-- Catégorie du template -->
@@ -1116,6 +1177,11 @@ function saveTemplateSettings() {
     formData.append('template_description', document.getElementById('template-description').value);
     formData.append('template_category', document.getElementById('template-category').value);
     formData.append('is_default', document.getElementById('template-is-default').checked ? '1' : '0');
+    
+    // Ajouter les paramètres canvas
+    formData.append('canvas_format', document.getElementById('template-format').value);
+    formData.append('canvas_orientation', document.getElementById('template-orientation').value);
+    formData.append('canvas_dpi', document.getElementById('template-dpi').value);
     
     // Désactiver le bouton de sauvegarde
     var saveButton = document.querySelector('#template-settings-modal .button-primary');

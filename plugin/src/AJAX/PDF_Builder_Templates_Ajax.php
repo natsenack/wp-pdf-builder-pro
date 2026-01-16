@@ -281,6 +281,10 @@ class PdfBuilderTemplatesAjax
                 }
             }
 
+            // Récupérer les paramètres du canvas pour les options disponibles
+            $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::getInstance();
+            $canvas_settings = $canvas_manager->getAllSettings();
+
             $settings = array(
                 'id' => $template['id'],
                 'name' => $template['name'],
@@ -289,7 +293,16 @@ class PdfBuilderTemplatesAjax
                 'is_default' => $template['is_default'],
                 'created_at' => $template['created_at'],
                 'updated_at' => $template['updated_at'],
-                'template_data' => $template_data
+                'template_data' => $template_data,
+                // Paramètres du canvas disponibles
+                'canvas_settings' => array(
+                    'default_canvas_format' => $canvas_settings['default_canvas_format'] ?? 'A4',
+                    'default_canvas_orientation' => $canvas_settings['default_canvas_orientation'] ?? 'portrait',
+                    'default_canvas_dpi' => $canvas_settings['default_canvas_dpi'] ?? 96,
+                    'available_formats' => ['A3', 'A4', 'A5', 'Letter', 'Legal'],
+                    'available_orientations' => ['portrait', 'landscape'],
+                    'available_dpi' => [72, 96, 150, 300, 600]
+                )
             );
 
             error_log('PDF Builder: Settings to return: ' . print_r($settings, true));
@@ -426,6 +439,91 @@ class PdfBuilderTemplatesAjax
             ));
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la modification du statut: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Sauvegarde les paramètres d'un template
+     */
+    public function saveTemplateSettings()
+    {
+        try {
+            // Vérification des permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                wp_send_json_error('Nonce invalide');
+            }
+
+            $template_id = intval($_POST['template_id'] ?? 0);
+            $template_name = sanitize_text_field($_POST['template_name'] ?? '');
+            $template_description = sanitize_text_field($_POST['template_description'] ?? '');
+            $template_category = sanitize_text_field($_POST['template_category'] ?? 'autre');
+            $is_default = intval($_POST['is_default'] ?? 0);
+            
+            // Nouveaux paramètres canvas
+            $canvas_format = sanitize_text_field($_POST['canvas_format'] ?? 'A4');
+            $canvas_orientation = sanitize_text_field($_POST['canvas_orientation'] ?? 'portrait');
+            $canvas_dpi = intval($_POST['canvas_dpi'] ?? 96);
+
+            if (empty($template_id) || empty($template_name)) {
+                wp_send_json_error('ID du template ou nom manquant');
+            }
+
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Récupérer les données actuelles du template
+            $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id));
+            if (!$existing) {
+                wp_send_json_error('Template non trouvé');
+            }
+
+            // Décoder les données JSON actuelles
+            $template_data = json_decode($existing->template_data ?? '{}', true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $template_data = array();
+            }
+
+            // Mettre à jour les données du template avec les nouveaux paramètres canvas
+            $template_data['category'] = $template_category;
+            $template_data['canvas_format'] = $canvas_format;
+            $template_data['canvas_orientation'] = $canvas_orientation;
+            $template_data['canvas_dpi'] = $canvas_dpi;
+
+            // Si on définit comme défaut, retirer le statut par défaut des autres templates
+            if ($is_default) {
+                $wpdb->update($table_templates, array('is_default' => 0), array('is_default' => 1), array('%d'), array('%d'));
+            }
+
+            // Mettre à jour le template
+            $result = $wpdb->update(
+                $table_templates,
+                array(
+                    'name' => $template_name,
+                    'template_data' => wp_json_encode($template_data),
+                    'is_default' => $is_default,
+                    'updated_at' => current_time('mysql')
+                ),
+                array('id' => $template_id),
+                array('%s', '%s', '%d', '%s'),
+                array('%d')
+            );
+
+            if ($result === false) {
+                wp_send_json_error('Erreur lors de la sauvegarde des paramètres du template');
+            }
+
+            wp_send_json_success(array(
+                'message' => 'Paramètres du template sauvegardés avec succès',
+                'template_id' => $template_id
+            ));
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 
