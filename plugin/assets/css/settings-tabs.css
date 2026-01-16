@@ -1,48 +1,75 @@
 /**
- * PDF Builder Pro - Styles ultra-minimalistes pour les onglets de paramètres
+ * PDF Builder Pro - Styles des onglets de paramètres avec les couleurs du plugin
  */
 
-/* Styles pour les onglets WordPress - Design ultra-minimal */
+/* Variables de couleur du plugin */
+:root {
+    --pdf-primary: #0066cc;
+    --pdf-secondary: #f0f0f0;
+    --pdf-border: #ddd;
+    --pdf-text: #333;
+    --pdf-text-light: #666;
+    --pdf-hover: #0052a3;
+    --pdf-active-bg: #f8f9f9;
+}
+
+/* Styles pour les onglets WordPress - Design avec couleurs du plugin */
 .nav-tab-wrapper {
-    background: #f1f1f1;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
+    background: var(--pdf-secondary);
+    border-bottom: 2px solid var(--pdf-primary);
+    margin-bottom: 25px;
     padding: 0;
+    border-radius: 6px 6px 0 0;
 }
 
 .nav-tab {
     display: inline-block;
-    padding: 8px 12px;
+    padding: 12px 18px;
     margin: 0;
     background: transparent;
     border: none;
-    border-bottom: 2px solid transparent;
-    color: #666;
+    border-bottom: 3px solid transparent;
+    color: var(--pdf-text-light);
     text-decoration: none;
-    font-size: 13px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .nav-tab:hover {
-    color: #0073aa;
+    color: var(--pdf-primary);
+    background: rgba(0, 102, 204, 0.05);
 }
 
 .nav-tab:active {
-    background-color: #e0e0e0;
+    background-color: var(--pdf-active-bg);
     transform: translateY(1px);
 }
 
 .nav-tab.nav-tab-active,
 .nav-tab.nav-tab-active:hover {
-    color: #0073aa;
-    border-bottom-color: #0073aa;
-    background-color: #f8f8f8;
+    color: var(--pdf-primary);
+    border-bottom-color: var(--pdf-primary);
+    background: white;
+    font-weight: 600;
+}
+
+.nav-tab.nav-tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--pdf-primary);
+    border-radius: 2px 2px 0 0;
 }
 
 .nav-tab:focus {
-    outline: none;
+    outline: 2px solid var(--pdf-primary);
+    outline-offset: 2px;
 }
 
 /* Styles pour le contenu des onglets */
@@ -56,41 +83,50 @@
 
 /* Styles pour les sections dans les onglets */
 .tab-section {
-    background: #fff;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    padding: 15px;
+    background: white;
+    border: 2px solid var(--pdf-border);
+    border-top: 4px solid var(--pdf-primary);
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
 }
 
 .tab-section h3 {
-    border-bottom: 1px solid #ddd;
-    margin: 0 0 15px 0;
-    padding-bottom: 8px;
-    font-size: 15px;
+    border-bottom: 2px solid var(--pdf-primary);
+    margin: 0 0 18px 0;
+    padding-bottom: 10px;
+    font-size: 16px;
     font-weight: 600;
+    color: var(--pdf-primary);
 }
 
 .tab-section h4 {
-    margin: 15px 0 8px 0;
-    font-size: 13px;
+    margin: 20px 0 10px 0;
+    font-size: 14px;
     font-weight: 600;
+    color: var(--pdf-text);
+    border-left: 3px solid var(--pdf-primary);
+    padding-left: 12px;
 }
 
 /* Styles pour les formulaires dans les onglets */
 .form-table {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 .form-table th {
     font-weight: 600;
-    padding: 8px 8px 8px 0;
+    padding: 10px 12px 10px 0;
     text-align: left;
     vertical-align: top;
-    width: 180px;
+    width: 200px;
+    color: var(--pdf-text);
+    font-size: 14px;
 }
 
 .form-table td {
-    padding: 8px 0;
+    padding: 10px 0;
 }
 
 .form-table input[type="text"],
@@ -101,88 +137,135 @@
 .form-table textarea {
     max-width: 350px;
     width: 100%;
-    padding: 4px 6px;
-    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border: 2px solid var(--pdf-border);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-table input[type="text"]:focus,
+.form-table input[type="password"]:focus,
+.form-table input[type="email"]:focus,
+.form-table input[type="number"]:focus,
+.form-table select:focus,
+.form-table textarea:focus {
+    outline: none;
+    border-color: var(--pdf-primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+.form-table textarea {
+    max-width: 350px;
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid var(--pdf-border);
+    border-radius: 4px;
+    font-size: 14px;
+    min-height: 80px;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.form-table textarea:focus {
+    outline: none;
+    border-color: var(--pdf-primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
 /* Styles pour les boutons */
 .button-primary {
-    background: #0073aa;
-    border: 1px solid #0073aa;
+    background: var(--pdf-primary);
+    border: 2px solid var(--pdf-primary);
     color: #fff;
     cursor: pointer;
     display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
+    font-size: 13px;
+    font-weight: 600;
     margin: 0;
-    padding: 4px 10px;
+    padding: 8px 16px;
     text-decoration: none;
     vertical-align: top;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
 }
 
 .button-primary:hover,
 .button-primary:focus {
-    background: #005177;
-    border-color: #005177;
+    background: var(--pdf-hover);
+    border-color: var(--pdf-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
 }
 
 .button-secondary {
-    background: #f7f7f7;
-    border: 1px solid #ccc;
-    color: #555;
+    background: white;
+    border: 2px solid var(--pdf-border);
+    color: var(--pdf-text);
     cursor: pointer;
     display: inline-block;
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0 0 0 8px;
-    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0 0 0 10px;
+    padding: 8px 16px;
     text-decoration: none;
     vertical-align: top;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 .button-secondary:hover,
 .button-secondary:focus {
-    background: #e9e9e9;
-    border-color: #999;
+    background: var(--pdf-secondary);
+    border-color: var(--pdf-primary);
+    color: var(--pdf-primary);
 }
 
 /* Styles pour les messages */
 .notice {
-    background: #fff;
-    border-left: 4px solid #00a0d2;
-    margin: 15px 0;
-    padding: 8px 12px;
+    background: white;
+    border-left: 4px solid var(--pdf-primary);
+    margin: 18px 0;
+    padding: 12px 16px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 102, 204, 0.1);
 }
 
 .notice-success {
-    border-left-color: #46b450;
+    border-left-color: #28a745;
+    background: linear-gradient(90deg, #f8fff9 0%, #ffffff 100%);
 }
 
 .notice-error {
-    border-left-color: #dc3232;
+    border-left-color: #dc3545;
+    background: linear-gradient(90deg, #fff8f8 0%, #ffffff 100%);
 }
 
 .notice-warning {
-    border-left-color: #ffb900;
+    border-left-color: #ffc107;
+    background: linear-gradient(90deg, #fffef8 0%, #ffffff 100%);
 }
 
 .notice-info {
-    border-left-color: #00a0d2;
+    border-left-color: var(--pdf-primary);
+    background: linear-gradient(90deg, #f8fbff 0%, #ffffff 100%);
 }
 
 /* Styles responsives minimaux */
 @media screen and (max-width: 782px) {
     .nav-tab-wrapper {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+        border-radius: 0;
     }
 
     .nav-tab {
         display: block;
         width: 100%;
         border: none;
-        border-bottom: 1px solid #ddd;
-        padding: 10px 12px;
+        border-bottom: 1px solid var(--pdf-border);
+        padding: 14px 16px;
         text-align: left;
+        font-size: 15px;
     }
 
     .nav-tab:last-child {
@@ -190,11 +273,21 @@
     }
 
     .nav-tab:hover {
-        background: #f9f9f9;
+        background: rgba(0, 102, 204, 0.05);
+        border-left: 4px solid var(--pdf-primary);
+        padding-left: 12px;
     }
 
     .nav-tab.nav-tab-active {
-        background: #fff;
-        border-bottom-color: #0073aa;
+        background: white;
+        border-bottom-color: var(--pdf-primary);
+        border-left: 4px solid var(--pdf-primary);
+        padding-left: 12px;
+        font-weight: 600;
+    }
+
+    .tab-section {
+        margin-bottom: 20px;
+        padding: 16px;
     }
 }
