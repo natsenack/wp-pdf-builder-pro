@@ -452,88 +452,79 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
         </div>
 
         <!-- Modale des paramètres du template -->
-        <div id="template-settings-modal" class="template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;">
-            <div class="template-modal-content" style="background: #fff; border-radius: 8px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--pdf-border); padding-bottom: 15px;">
-                    <h2 id="template-settings-title" style="margin: 0; color: var(--pdf-text);">⚙️ Paramètres du Template</h2>
-                    <button onclick="closeTemplateSettingsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 0;">×</button>
+        <div id="template-settings-modal" class="canvas-modal-overlay" style="display: none;">
+            <div class="canvas-modal-container">
+                <div class="canvas-modal-header">
+                    <h3 id="template-settings-title">⚙️ Paramètres du Template</h3>
+                    <button onclick="closeTemplateSettingsModal()" class="canvas-modal-close">&times;</button>
                 </div>
 
-                <div id="template-settings-content">
-                    <div class="template-settings-section">
-                        <h4>Informations générales</h4>
-
-                        <div class="template-settings-field">
-                            <label for="template-name-input">Nom du template</label>
-                            <input type="text" id="template-name-input" class="template-settings-field">
-                        </div>
-
-                        <div class="template-settings-field">
-                            <label for="template-description-input">Description</label>
-                            <textarea id="template-description-input" rows="3" class="template-settings-field"></textarea>
-                        </div>
+                <div id="template-settings-content" class="canvas-modal-body">
+                    <div class="setting-group">
+                        <label class="setting-label">Nom du template</label>
+                        <input type="text" id="template-name-input" class="setting-input">
                     </div>
 
-                    <div class="template-settings-section">
-                        <h4>Paramètres avancés</h4>
+                    <div class="setting-group">
+                        <label class="setting-label">Description</label>
+                        <textarea id="template-description-input" rows="3" class="setting-textarea"></textarea>
+                    </div>
 
-                        <div class="template-settings-field">
-                            <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" id="template-public" style="margin-right: 8px;">
-                                <span>Template public (visible par tous les utilisateurs)</span>
+                    <div class="setting-group">
+                        <label class="setting-label">Template public</label>
+                        <div class="setting-checkbox-group">
+                            <label class="setting-checkbox-label">
+                                <input type="checkbox" id="template-public" class="setting-checkbox">
+                                Visible par tous les utilisateurs
                             </label>
                         </div>
-
-                        <div class="template-settings-field">
-                            <label for="template-paper-size">Format de papier</label>
-                            <select id="template-paper-size" class="template-settings-field">
-                                <option value="A4">A4 (594 × 1123 px)</option>
-                                <option value="A3">A3 (840 × 1191 px)</option>
-                                <option value="Letter">Letter (612 × 792 px)</option>
-                                <option value="Legal">Legal (612 × 1008 px)</option>
-                            </select>
-                        </div>
-
-                        <div class="template-settings-field">
-                            <label for="template-orientation">Orientation</label>
-                            <select id="template-orientation" class="template-settings-field">
-                                <option value="portrait">Portrait</option>
-                                <option value="landscape">Paysage</option>
-                            </select>
-                        </div>
-
-                        <div class="template-settings-field">
-                            <label for="template-dpi">Résolution (DPI)</label>
-                            <select id="template-dpi" class="template-settings-field">
-                                <option value="72">72 DPI (Écran)</option>
-                                <option value="96">96 DPI (Web)</option>
-                                <option value="150">150 DPI (Impression moyenne)</option>
-                                <option value="300">300 DPI (Impression haute qualité)</option>
-                                <option value="600">600 DPI (Impression professionnelle)</option>
-                            </select>
-                        </div>
                     </div>
 
-                    <div class="template-settings-section">
-                        <h4>Classification</h4>
+                    <div class="setting-group">
+                        <label class="setting-label">Format de papier</label>
+                        <select id="template-paper-size" class="setting-select">
+                            <option value="A4">A4 (594 × 1123 px)</option>
+                            <option value="A3">A3 (840 × 1191 px)</option>
+                            <option value="Letter">Letter (612 × 792 px)</option>
+                            <option value="Legal">Legal (612 × 1008 px)</option>
+                        </select>
+                    </div>
 
-                        <div class="template-settings-field">
-                            <label for="template-category">Catégorie</label>
-                            <select id="template-category" class="template-settings-field">
-                                <option value="facture">Facture</option>
-                                <option value="devis">Devis</option>
-                                <option value="commande">Bon de commande</option>
-                                <option value="contrat">Contrat</option>
-                                <option value="newsletter">Newsletter</option>
-                                <option value="autre">Autre</option>
-                            </select>
-                        </div>
+                    <div class="setting-group">
+                        <label class="setting-label">Orientation</label>
+                        <select id="template-orientation" class="setting-select">
+                            <option value="portrait">Portrait</option>
+                            <option value="landscape">Paysage</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Résolution (DPI)</label>
+                        <select id="template-dpi" class="setting-select">
+                            <option value="72">72 DPI (Écran)</option>
+                            <option value="96">96 DPI (Web)</option>
+                            <option value="150">150 DPI (Impression moyenne)</option>
+                            <option value="300">300 DPI (Impression haute qualité)</option>
+                            <option value="600">600 DPI (Impression professionnelle)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Catégorie</label>
+                        <select id="template-category" class="setting-select">
+                            <option value="facture">Facture</option>
+                            <option value="devis">Devis</option>
+                            <option value="commande">Bon de commande</option>
+                            <option value="contrat">Contrat</option>
+                            <option value="newsletter">Newsletter</option>
+                            <option value="autre">Autre</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--pdf-border); padding-top: 15px; margin-top: 25px;">
-                    <button onclick="closeTemplateSettingsModal()" class="button button-secondary">Annuler</button>
-                    <button onclick="saveTemplateSettings()" class="button button-primary">💾 Enregistrer</button>
+                <div class="canvas-modal-footer">
+                    <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary">Annuler</button>
+                    <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary">💾 Enregistrer</button>
                 </div>
             </div>
         </div>

@@ -104,6 +104,16 @@ class AdminScriptLoader
                 PDF_BUILDER_PRO_VERSION
             );
 
+            // Charger les styles canvas-modal pour les pages templates et settings
+            if (strpos($hook, 'templates') !== false || strpos($hook, 'settings') !== false) {
+                wp_enqueue_style(
+                    'pdf-builder-react',
+                    PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css',
+                    [],
+                    PDF_BUILDER_PRO_VERSION
+                );
+            }
+
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour les notifications
             $settings = get_option('pdf_builder_settings', array());
             $debug_settings = [

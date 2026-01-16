@@ -27,8 +27,8 @@ module.exports = {
   },
   devtool: isDev ? "eval-source-map" : false,
   performance: {
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000,
+    maxEntrypointSize: 1024000, // 1MB
+    maxAssetSize: 1024000, // 1MB
     hints: isDev ? false : "warning",
   },
   module: {
