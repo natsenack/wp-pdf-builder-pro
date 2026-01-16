@@ -6,14 +6,13 @@ namespace PDF_Builder\Managers;
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
 /**
  * PDF Builder License Manager
  * Gestion centralisée des licences freemium
  *
  * Version: 1.1.0
  */
-
-
 
 class PdfBuilderLicenseManager
 {
@@ -70,7 +69,7 @@ class PdfBuilderLicenseManager
         if ($this->license_status === 'active') {
             return true;
         }
-        
+
         // Vérifier les clés de test (mode développeur)
         $test_key = get_option('pdf_builder_license_test_key', '');
         if (!empty($test_key)) {
@@ -86,7 +85,7 @@ class PdfBuilderLicenseManager
                 return true;
             }
         }
-        
+
         return false;
     }
 
