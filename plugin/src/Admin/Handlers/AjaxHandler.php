@@ -346,10 +346,7 @@ class AjaxHandler
 
             if ($template) {
                 error_log('[PDF Builder] Template loaded successfully via template_processor');
-            } else {
-                error_log('[PDF Builder] Template loading failed via template_processor, trying fallback');
-                return $this->fallbackLoadTemplate($template_id);
-            }
+
                 // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
                 $template_name = '';
                 $db_template = null;
@@ -385,7 +382,8 @@ class AjaxHandler
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
-                wp_send_json_error('Template introuvable');
+                error_log('[PDF Builder] Template loading failed via template_processor, trying fallback');
+                return $this->fallbackLoadTemplate($template_id);
             }
 
         } catch (Exception $e) {
