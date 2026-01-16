@@ -414,27 +414,26 @@ Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
 Write-Log "Ajout des fichiers modifiés à Git" "INFO"
 Push-Location $WorkingDir
 try {
-    # Utiliser git add avec gestion des erreurs d'ignore
-    $gitAddResult = & git add . 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        # Si git add échoue à cause des fichiers ignorés, essayer avec --ignore-errors
-        Write-Log "Tentative avec --ignore-errors" "INFO"
-        & git add --ignore-errors . 2>$null
-    }
+    # Utiliser git add --ignore-errors pour ajouter tous les fichiers non ignorés
+    # et gérer les avertissements de fins de ligne
+    $gitAddResult = & git add --ignore-errors . 2>&1
     
-    # Force add critical compiled files
-    $criticalCompiledFiles = @(
-        "plugin/assets/js/pdf-builder-react-wrapper.min.js"
-        # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
-    )
-    foreach ($criticalFile in $criticalCompiledFiles) {
-        if (Test-Path $criticalFile) {
-            & git add $criticalFile 2>$null
-            Write-Log "Fichier critique ajouté à Git: $criticalFile" "INFO"
-        }
-    }
+    # Debug: afficher le résultat pour comprendre le format
+    Write-Log "Debug git add result: '$gitAddResult'" "INFO"
     
-    Write-Log "Git add réussi" "SUCCESS"
+    # Vérifier si c'est juste un avertissement de fins de ligne (non bloquant)
+    $isOnlyLineEndingWarning = $gitAddResult -match "LF will be replaced by CRLF"
+    
+    Write-Log "Debug: isOnlyLineEndingWarning = $isOnlyLineEndingWarning, LASTEXITCODE = $LASTEXITCODE" "INFO"
+    
+    if ($LASTEXITCODE -ne 0 -and -not $isOnlyLineEndingWarning) {
+        Write-Log "Erreur git add: $gitAddResult" "ERROR"
+        throw "Git add failed"
+    } elseif ($isOnlyLineEndingWarning) {
+        Write-Log "Git add réussi (avertissement fins de ligne ignoré)" "SUCCESS"
+    } else {
+        Write-Log "Git add réussi" "SUCCESS"
+    }
 } catch {
     Write-Log "Erreur git add: $($_.Exception.Message)" "ERROR"
 } finally {
@@ -519,8 +518,7 @@ foreach ($file in $filesToDeploy) {
         $currentPath = ""
         foreach ($segment in $segments) {
             $currentPath += "/$segment"
-            # Vérifier immédiatement si le répertoire existe déjà avant de l'ajouter
-            if ($directoriesToCreate -notcontains $currentPath -and -not (Test-FtpDirectoryExists $currentPath)) {
+            if ($directoriesToCreate -notcontains $currentPath) {
                 $directoriesToCreate += $currentPath
             }
         }
