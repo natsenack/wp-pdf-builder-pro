@@ -197,7 +197,7 @@ function Get-FilesToDeploy {
             $staged = & git diff --cached --name-only 2>$null
             $untracked = & git ls-files --others --exclude-standard 2>$null
             $allFiles = ($modified + $staged + $untracked) | Select-Object -Unique |
-                       Where-Object { $_ -like "plugin/*" -and (Test-Path (Join-Path $Script:WorkingDir $_)) }
+                       Where-Object { ($_ -like "plugin/*" -or $_ -like "build/*") -and (Test-Path (Join-Path $Script:WorkingDir $_)) }
             $files = @($allFiles | ForEach-Object { Get-Item (Join-Path $Script:WorkingDir $_) })
             # Convertir en ArrayList
             $files = New-Object System.Collections.ArrayList(,$files)
@@ -526,6 +526,16 @@ function Invoke-GitCommitAndPush {
                 Write-Host "✅ Tous les fichiers ajoutés au staging" -ForegroundColor Green
             } else {
                 Write-Host "✅ Fichiers déjà dans le staging" -ForegroundColor Green
+                # Vérifier s'il y a encore des fichiers modifiés non stagés (comme le script lui-même)
+                $modifiedFiles = & git diff --name-only
+                if ($modifiedFiles) {
+                    Write-Log "Ajout des fichiers modifiés restants..." "INFO"
+                    & git add .
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "Erreur lors de git add pour les fichiers restants"
+                    }
+                    Write-Host "✅ Fichiers modifiés restants ajoutés" -ForegroundColor Green
+                }
             }
 
             # Afficher ce qui va être committé
