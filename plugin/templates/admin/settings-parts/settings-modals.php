@@ -201,10 +201,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><span style="font-size: 16px;">🎨</span> Couleur de Fond du canvas</span>
-                        <span class="premium-badge" style="background: linear-gradient(135deg, #ffd700, #ffb347); color: #8b4513; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #daa520;">⭐ PREMIUM</span>
-                    </label>
+                    <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🎨</span> Couleur de Fond du canvas <span style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 8px;">⭐ PREMIUM</span></label>
                     <?php $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user(); ?>
                     <?php if ($is_premium): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
@@ -225,10 +222,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label style="display: flex; align-items: center; justify-content: space-between;">
-                        <span><span style="font-size: 16px;">🔳</span> Bordure du canvas</span>
-                        <span class="premium-badge" style="background: linear-gradient(135deg, #ffd700, #ffb347); color: #8b4513; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #daa520;">⭐ PREMIUM</span>
-                    </label>
+                    <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🔳</span> Bordure du canvas <span style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 8px;">⭐ PREMIUM</span></label>
                     <?php if ($is_premium): ?>
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
                         <div style="flex: 1;">
