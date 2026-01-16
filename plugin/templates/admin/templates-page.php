@@ -304,26 +304,26 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
         <!-- Modale de la galerie de modèles prédéfinis -->
         <div id="template-gallery-modal" class="template-gallery-modal template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
             <div class="template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
-                <div class="template-modal-header" style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; justify-content: space-between; -webkit-justify-content: space-between; -moz-justify-content: space-between; -ms-justify-content: space-between; -o-justify-content: space-between; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
-                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Choisissez un modèle professionnel pour commencer</p>
+                        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-secondary);">Choisissez un modèle professionnel pour commencer</p>
                     </div>
-                    <button onclick="closeTemplateGallery()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; -ms-border-radius: 50%; -o-border-radius: 50%; width: 40px; height: 40px; display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; justify-content: center; -webkit-justify-content: center; -moz-justify-content: center; -ms-justify-content: center; -o-justify-content: center;">×</button>
+                    <button onclick="closeTemplateGallery()" style="background: var(--pdf-border); border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                 </div>
 
                 <div style="padding: 30px; max-height: calc(90vh - 120px); overflow-y: auto;">
                     <!-- Filtres de catégorie -->
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
-                        <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                            <button class="gallery-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px;">📄 Tous</button>
-                            <button class="gallery-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
-                            <button class="gallery-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -ms-border-radius: 20px; -o-border-radius: 20px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
+                            <button class="gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
+                            <button class="gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 8px 16px; border-radius: 20px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
+                            <!-- <button class="gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -407,35 +407,39 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
         <!-- Modale des paramètres du template -->
         <div id="template-settings-modal" class="template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;">
             <div class="template-modal-content" style="background: #fff; border-radius: 8px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                    <h2 id="template-settings-title" style="margin: 0; color: #23282d;">⚙️ Paramètres du Template</h2>
-                    <button onclick="closeTemplateSettings()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0;">×</button>
+                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--pdf-border); padding-bottom: 15px;">
+                    <h2 id="template-settings-title" style="margin: 0; color: var(--pdf-text);">⚙️ Paramètres du Template</h2>
+                    <button onclick="closeTemplateSettings()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 0;">×</button>
                 </div>
 
                 <div id="template-settings-content">
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #23282d;">Nom du template</label>
-                        <input type="text" id="template-name-input" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <div class="template-settings-section">
+                        <h4>Informations générales</h4>
+
+                        <div class="template-settings-field">
+                            <label for="template-name-input">Nom du template</label>
+                            <input type="text" id="template-name-input" class="template-settings-field">
+                        </div>
+
+                        <div class="template-settings-field">
+                            <label for="template-description-input">Description</label>
+                            <textarea id="template-description-input" rows="3" class="template-settings-field"></textarea>
+                        </div>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #23282d;">Description</label>
-                        <textarea id="template-description-input" rows="3" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical;"></textarea>
-                    </div>
+                    <div class="template-settings-section">
+                        <h4>Paramètres avancés</h4>
 
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #23282d;">Paramètres avancés</label>
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; cursor: pointer;">
+                        <div class="template-settings-field">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
                                 <input type="checkbox" id="template-public" style="margin-right: 8px;">
                                 <span>Template public (visible par tous les utilisateurs)</span>
                             </label>
                         </div>
 
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Format de papier</label>
-                            <select id="template-paper-size" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <div class="template-settings-field">
+                            <label for="template-paper-size">Format de papier</label>
+                            <select id="template-paper-size" class="template-settings-field">
                                 <option value="A4">A4 (594 × 1123 px)</option>
                                 <option value="A3">A3 (840 × 1191 px)</option>
                                 <option value="Letter">Letter (612 × 792 px)</option>
@@ -443,17 +447,17 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
                             </select>
                         </div>
 
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Orientation</label>
-                            <select id="template-orientation" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <div class="template-settings-field">
+                            <label for="template-orientation">Orientation</label>
+                            <select id="template-orientation" class="template-settings-field">
                                 <option value="portrait">Portrait</option>
                                 <option value="landscape">Paysage</option>
                             </select>
                         </div>
 
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px;">Résolution (DPI)</label>
-                            <select id="template-dpi" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <div class="template-settings-field">
+                            <label for="template-dpi">Résolution (DPI)</label>
+                            <select id="template-dpi" class="template-settings-field">
                                 <option value="72">72 DPI (Écran)</option>
                                 <option value="96">96 DPI (Web)</option>
                                 <option value="150">150 DPI (Impression moyenne)</option>
@@ -463,29 +467,33 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #23282d;">Catégorie</label>
-                        <select id="template-category" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                            <option value="facture">Facture</option>
-                            <option value="devis">Devis</option>
-                            <option value="commande">Bon de commande</option>
-                            <option value="contrat">Contrat</option>
-                            <option value="newsletter">Newsletter</option>
-                            <option value="autre">Autre</option>
-                        </select>
+                    <div class="template-settings-section">
+                        <h4>Classification</h4>
+
+                        <div class="template-settings-field">
+                            <label for="template-category">Catégorie</label>
+                            <select id="template-category" class="template-settings-field">
+                                <option value="facture">Facture</option>
+                                <option value="devis">Devis</option>
+                                <option value="commande">Bon de commande</option>
+                                <option value="contrat">Contrat</option>
+                                <option value="newsletter">Newsletter</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="template-modal-footer" style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: end; -webkit-justify-content: flex-end; -moz-box-pack: end; -ms-flex-pack: end; justify-content: flex-end; -webkit-gap: 10px; -moz-gap: 10px; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+                <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--pdf-border); padding-top: 15px; margin-top: 25px;">
                     <button onclick="closeTemplateSettings()" class="button button-secondary">Annuler</button>
                     <button onclick="saveTemplateSettings()" class="button button-primary">💾 Enregistrer</button>
                 </div>
             </div>
         </div>
 
-        <div id="no-templates" style="display: none; text-align: center; padding: 40px; color: #666;">
+        <div id="no-templates" style="display: none; text-align: center; padding: 40px; color: var(--pdf-secondary);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
-            <h3><?php _e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
+            <h3 style="color: var(--pdf-text);"><?php _e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
             <p><?php _e('Créez votre premier template pour commencer à concevoir des PDF personnalisés.', 'pdf-builder-pro'); ?></p>
         </div>
     </div>
@@ -494,6 +502,18 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
 <!-- ✅ JavaScript déplacé vers settings-main.php pour éviter les conflits de navigation -->
 
 <style>
+/* Variables CSS pour la cohérence avec le reste du plugin */
+:root {
+    --pdf-primary: #007cba;      /* Bleu WordPress */
+    --pdf-success: #28a745;      /* Vert succès */
+    --pdf-danger: #dc3545;       /* Rouge danger */
+    --pdf-warning: #ffc107;      /* Jaune warning */
+    --pdf-secondary: #6c757d;    /* Gris secondaire */
+    --pdf-light: #f8f9fa;        /* Fond clair */
+    --pdf-border: #dee2e6;       /* Bordure */
+    --pdf-text: #495057;         /* Texte principal */
+}
+
 .template-modal {
     animation: modalFadeIn 0.3s ease-out;
 }
@@ -529,29 +549,30 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
 .template-modal-content input[type="checkbox"] {
     width: auto;
     margin: 0;
+    accent-color: var(--pdf-primary);
 }
 
 .template-modal-content select:hover,
 .template-modal-content input:hover,
 .template-modal-content textarea:hover {
-    border-color: #007cba;
+    border-color: var(--pdf-primary);
 }
 
 .template-modal-content select:focus,
 .template-modal-content input:focus,
 .template-modal-content textarea:focus {
-    border-color: #007cba;
-    -webkit-box-shadow: 0 0 0 1px #007cba;
-    -moz-box-shadow: 0 0 0 1px #007cba;
-    -ms-box-shadow: 0 0 0 1px #007cba;
-    -o-box-shadow: 0 0 0 1px #007cba;
-    box-shadow: 0 0 0 1px #007cba;
+    border-color: var(--pdf-primary);
+    -webkit-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
+    -moz-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
+    -ms-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
+    -o-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
+    box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
     outline: none;
 }
 
 .button-danger {
-    background: #dc3545 !important;
-    border-color: #dc3545 !important;
+    background: var(--pdf-danger) !important;
+    border-color: var(--pdf-danger) !important;
     color: #fff !important;
 }
 
@@ -560,17 +581,139 @@ var dpiOptions = <?php echo json_encode($dpi_options); ?>;
     border-color: #bd2130 !important;
 }
 
+.button-success {
+    background: var(--pdf-success) !important;
+    border-color: var(--pdf-success) !important;
+    color: #fff !important;
+}
 
+.button-success:hover {
+    background: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+
+.button-warning {
+    background: var(--pdf-warning) !important;
+    border-color: var(--pdf-warning) !important;
+    color: #212529 !important;
+}
+
+.button-warning:hover {
+    background: #e0a800 !important;
+    border-color: #d39e00 !important;
+}
 
 .gallery-filter-btn.active {
-    -webkit-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    -moz-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    -ms-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    -o-box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
-    box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    -webkit-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
+    -moz-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
+    -ms-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
+    -o-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
     font-weight: bold !important;
 }
 
+/* Styles pour les badges de type de template */
+.template-type-badge {
+    background: var(--pdf-primary) !important;
+}
+
+.template-type-badge.facture { background: #007cba !important; }
+.template-type-badge.devis { background: #28a745 !important; }
+.template-type-badge.commande { background: #ffc107 !important; color: #212529 !important; }
+.template-type-badge.contrat { background: #dc3545 !important; }
+.template-type-badge.newsletter { background: #6f42c1 !important; }
+.template-type-badge.autre { background: var(--pdf-secondary) !important; }
+
+/* Styles pour les boutons de filtre de galerie */
+.gallery-filter-btn {
+    font-size: 12px !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    transition: all 0.2s ease !important;
+}
+
+.gallery-filter-btn.facture {
+    background: var(--pdf-primary) !important;
+    border-color: var(--pdf-primary) !important;
+    color: white !important;
+}
+
+.gallery-filter-btn.devis {
+    background: var(--pdf-success) !important;
+    border-color: var(--pdf-success) !important;
+    color: white !important;
+}
+
+.gallery-filter-btn.commande {
+    background: var(--pdf-warning) !important;
+    border-color: var(--pdf-warning) !important;
+    color: #212529 !important;
+}
+
+.gallery-filter-btn.contrat {
+    background: var(--pdf-danger) !important;
+    border-color: var(--pdf-danger) !important;
+    color: white !important;
+}
+
+.gallery-filter-btn.newsletter {
+    background: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    color: white !important;
+}
+
+/* Styles pour les éléments d'état */
+.template-status-active { color: var(--pdf-success) !important; }
+.template-status-inactive { color: var(--pdf-secondary) !important; }
+.template-status-error { color: var(--pdf-danger) !important; }
+
+/* Styles pour les modals de paramètres */
+.template-settings-section {
+    border: 1px solid var(--pdf-border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: var(--pdf-light);
+}
+
+.template-settings-section h4 {
+    color: var(--pdf-text);
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--pdf-primary);
+    padding-bottom: 8px;
+}
+
+.template-settings-field {
+    margin-bottom: 15px;
+}
+
+.template-settings-field label {
+    display: block;
+    font-weight: 600;
+    color: var(--pdf-text);
+    margin-bottom: 5px;
+}
+
+.template-settings-field input[type="text"],
+.template-settings-field input[type="number"],
+.template-settings-field textarea,
+.template-settings-field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--pdf-border);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.template-settings-field input:focus,
+.template-settings-field textarea:focus,
+.template-settings-field select:focus {
+    border-color: var(--pdf-primary);
+    box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
+    outline: none;
+}
 
 </style>
 

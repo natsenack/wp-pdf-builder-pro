@@ -411,7 +411,7 @@ function get_canvas_modal_value($key, $default = '') {
 </div>
 
 <style>
-/* ===== STYLES HARMONIEUX POUR LES MODALS ===== */
+/* ===== STYLES SOBRES ET PROFESSIONNELS ===== */
 
 /* Styles de base des modals */
 .canvas-modal-overlay {
@@ -460,13 +460,13 @@ function get_canvas_modal_value($key, $default = '') {
 
 /* Header du modal */
 .canvas-modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #f8f9fa;
+    color: #2c3e50;
     padding: 24px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #e1e5e9;
 }
 
 .canvas-modal-header h3 {
@@ -479,9 +479,9 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 .canvas-modal-close {
-    background: rgba(255, 255, 255, 0.1);
+    background: #e9ecef;
     border: none;
-    color: white;
+    color: #6c757d;
     font-size: 24px;
     width: 40px;
     height: 40px;
@@ -494,8 +494,8 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 .canvas-modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
+    background: #dee2e6;
+    color: #495057;
 }
 
 /* Corps du modal */
@@ -504,7 +504,7 @@ function get_canvas_modal_value($key, $default = '') {
     max-height: 60vh;
     overflow-y: auto;
     overflow-x: hidden;
-    background: #fafbfc;
+    background: #ffffff;
 }
 
 /* Grille de paramètres harmonieuse */
@@ -517,7 +517,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 /* Groupes de paramètres */
 .setting-group {
-    background: white;
+    background: #f8f9fa;
     border: 1px solid #e1e5e9;
     border-radius: 12px;
     padding: 20px;
@@ -526,8 +526,8 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 .setting-group:hover {
-    border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    border-color: #6c757d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .setting-group label {
@@ -558,8 +558,8 @@ function get_canvas_modal_value($key, $default = '') {
 .setting-group input:focus,
 .setting-group select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #6c757d;
+    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
 }
 
 /* Toggle switches améliorés */
@@ -583,7 +583,7 @@ function get_canvas_modal_value($key, $default = '') {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #ccc;
+    background: #dee2e6;
     border-radius: 28px;
     transition: 0.3s;
 }
@@ -602,7 +602,7 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 .toggle-switch input:checked + label {
-    background: #667eea;
+    background: #6c757d;
 }
 
 .toggle-switch input:checked + label:before {
@@ -613,7 +613,7 @@ function get_canvas_modal_value($key, $default = '') {
 .setting-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: #667eea;
+    accent-color: #6c757d;
     border-radius: 4px;
     cursor: pointer;
 }
@@ -646,18 +646,15 @@ function get_canvas_modal_value($key, $default = '') {
 
 .canvas-modal-cancel:hover {
     background: #5a6268;
-    transform: translateY(-1px);
 }
 
 .canvas-modal-apply {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #6c757d;
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .canvas-modal-apply:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    background: #5a6268;
 }
 
 /* Styles pour les options premium */
@@ -666,7 +663,7 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 .premium-badge {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    background: #fff3cd;
     color: #856404;
     font-size: 10px;
     font-weight: bold;
@@ -675,7 +672,6 @@ function get_canvas_modal_value($key, $default = '') {
     border: 1px solid #ffeaa7;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-left: 8px;
 }
 
@@ -692,7 +688,7 @@ function get_canvas_modal_value($key, $default = '') {
 .setting-group .info-box {
     margin-top: 16px;
     padding: 12px 16px;
-    background: #e8f4fd;
+    background: #e7f3ff;
     border: 1px solid #b3d9ff;
     border-radius: 8px;
     font-size: 13px;
@@ -734,17 +730,18 @@ function get_canvas_modal_value($key, $default = '') {
 .setting-group input[type="radio"] {
     transform: scale(1.2);
     margin-right: 8px;
-    accent-color: #667eea;
+    accent-color: #6c757d;
 }
 
 /* Styles pour les dimensions (affichage spécial) */
 .dimensions-display {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #f8f9fa;
+    color: #2c3e50;
     padding: 16px 20px;
     border-radius: 12px;
     text-align: center;
     margin-bottom: 20px;
+    border: 1px solid #e1e5e9;
 }
 
 .dimensions-display .dim-label {
