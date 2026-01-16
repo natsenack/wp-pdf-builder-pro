@@ -327,11 +327,6 @@ function pdf_builder_load_core()
         PDF_Builder_Migration_System::getInstance();
     }
 
-    // Charger le logger en premier (nécessaire pour PDF_Builder_Core)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php';
-    }
-
     // HOTFIX: Charger le correctif pour les notifications avant PDF_Builder_Core
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'hotfix-notifications.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'hotfix-notifications.php';
@@ -344,19 +339,20 @@ function pdf_builder_load_core()
 
     // Charger les managers essentiels depuis src/Managers/
     $managers = array(
-        'PDF_Builder_Backup_Restore_Manager.php',
-        'PDF_Builder_Canvas_Manager.php',
-        'PDF_Builder_Drag_Drop_Manager.php',
-        'PDF_Builder_Feature_Manager.php',
-        'PDF_Builder_License_Manager.php',
-        'PDF_Builder_Logger.php',
-        'PDF_Builder_PDF_Generator.php',
-        'PDF_Builder_Resize_Manager.php',
-        'PDF_Builder_Settings_Manager.php',
-        'PDF_Builder_Status_Manager.php',
-        'PDF_Builder_Template_Manager.php',
-        'PDF_Builder_Variable_Mapper.php',
-        'PDF_Builder_WooCommerce_Integration.php'
+        // Tous les managers sont maintenant chargés par autoloader (namespace PDF_Builder\Managers\)
+        // 'PDF_Builder_Backup_Restore_Manager.php',
+        // 'PDF_Builder_Canvas_Manager.php',
+        // 'PDF_Builder_Drag_Drop_Manager.php',
+        // 'PDF_Builder_Feature_Manager.php',
+        // 'PDF_Builder_License_Manager.php', // Chargé par autoloader (namespace PDF_Builder\Managers\)
+        // 'PDF_Builder_Logger.php',
+        // 'PDF_Builder_PDF_Generator.php',
+        // 'PDF_Builder_Resize_Manager.php',
+        // 'PDF_Builder_Settings_Manager.php',
+        // 'PDF_Builder_Status_Manager.php',
+        // 'PDF_Builder_Template_Manager.php',
+        // 'PDF_Builder_Variable_Mapper.php',
+        // 'PDF_Builder_WooCommerce_Integration.php'
     );
     foreach ($managers as $manager) {
         $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
