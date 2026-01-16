@@ -63,17 +63,12 @@ function get_canvas_modal_value($key, $default = '') {
             <div class="modal-settings-grid">
                 <div class="setting-group" style="grid-column: span 2;">
                     <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas</label>
-                    <div class="dimensions-display">
-                        <div style="display: flex; justify-content: center; gap: 40px;">
-                            <div>
-                                <div class="dim-label">Largeur</div>
-                                <div class="dim-value"><?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?>px</div>
-                            </div>
-                            <div style="width: 1px; background: rgba(255,255,255,0.3); height: 40px; margin: auto 0;"></div>
-                            <div>
-                                <div class="dim-label">Hauteur</div>
-                                <div class="dim-value"><?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?>px</div>
-                            </div>
+                    <div class="dimensions-display-compact">
+                        <div class="dimensions-value">
+                            <?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?> × <?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?> px
+                        </div>
+                        <div class="dimensions-format">
+                            Format: <?php echo esc_html(get_canvas_modal_value('format', $canvas_defaults['format'])); ?> • <?php echo esc_html(get_canvas_modal_value('orientation', $canvas_defaults['orientation'])); ?>
                         </div>
                     </div>
                 </div>
@@ -179,7 +174,7 @@ function get_canvas_modal_value($key, $default = '') {
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
                             <input type="color" id="modal_canvas_border_color" name="pdf_builder_canvas_border_color"
                                    value="<?php echo esc_attr(get_canvas_modal_value('border_color', $canvas_defaults['border_color'])); ?>"
-                                   style="width: 100%; height: 36px; border: none; border-radius: 6px; cursor: pointer; padding: 5px;">
+                                   style="width: 60px; height: 36px; border: none; border-radius: 6px; cursor: pointer; padding: 5px;">
                         </div>
                         <div style="flex: 1;">
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Épaisseur</label>
@@ -467,6 +462,7 @@ function get_canvas_modal_value($key, $default = '') {
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid #e1e5e9;
+    margin-bottom: 0px;
 }
 
 .canvas-modal-header h3 {
@@ -500,8 +496,8 @@ function get_canvas_modal_value($key, $default = '') {
 
 /* Corps du modal */
 .canvas-modal-body {
-    padding: 32px;
-    max-height: 60vh;
+    padding: 15px;
+    max-height: 65vh;
     overflow-y: auto;
     overflow-x: hidden;
     background: #ffffff;
@@ -739,27 +735,28 @@ function get_canvas_modal_value($key, $default = '') {
     accent-color: #6c757d;
 }
 
-/* Styles pour les dimensions (affichage spécial) */
-.dimensions-display {
+/* Styles pour les dimensions (affichage compact) */
+.dimensions-display-compact {
     background: #f8f9fa;
-    color: #2c3e50;
-    padding: 16px 20px;
-    border-radius: 12px;
-    text-align: center;
-    margin-bottom: 20px;
     border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    margin-bottom: 0;
 }
 
-.dimensions-display .dim-label {
-    font-size: 12px;
-    opacity: 0.8;
+.dimensions-value {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Monaco', 'Menlo', monospace;
+    color: #2c3e50;
     margin-bottom: 4px;
 }
 
-.dimensions-display .dim-value {
-    font-size: 18px;
-    font-weight: 700;
-    font-family: 'Monaco', 'Menlo', monospace;
+.dimensions-format {
+    font-size: 12px;
+    color: #6c757d;
+    opacity: 0.8;
 }
 </style>
 
