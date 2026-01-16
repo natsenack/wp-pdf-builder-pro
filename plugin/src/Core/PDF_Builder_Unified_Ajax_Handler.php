@@ -1919,6 +1919,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $settings = get_option('pdf_builder_settings', []);
             $settings['pdf_builder_license_test_key'] = $test_key;
             $settings['pdf_builder_license_test_key_expires'] = $expires_in_30_days;
+            $settings['pdf_builder_license_status'] = 'test'; // Mettre le statut à "test" quand une clé de test est générée
             update_option('pdf_builder_settings', $settings);
 
             error_log('PDF Builder - Test license key generated: ' . $test_key);
@@ -1948,6 +1949,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             unset($settings['pdf_builder_license_test_key']);
             unset($settings['pdf_builder_license_test_key_expires']);
             $settings['pdf_builder_license_test_mode'] = '0';
+            
+            // Si le statut était 'test', remettre à 'free' en supprimant la clé de test
+            if (isset($settings['pdf_builder_license_status']) && $settings['pdf_builder_license_status'] === 'test') {
+                $settings['pdf_builder_license_status'] = 'free';
+            }
+            
             update_option('pdf_builder_settings', $settings);
 
              wp_send_json_success([
