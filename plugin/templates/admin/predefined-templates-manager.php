@@ -67,17 +67,19 @@ class PDF_Builder_Predefined_Templates_Manager
         wp_enqueue_script('codemirror-mode-javascript', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/mode/javascript/javascript.min.js', ['codemirror'], '6.0.1', true);
         wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
         
-        // Scripts personnalisés
-        wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'js/predefined-templates.js', ['jquery', 'codemirror'], '1.1.0', true);
-        // Styles personnalisés
-        wp_enqueue_style('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'css/predefined-templates.css', [], '1.1.0');
-        // Localize script
-        wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_predefined_templates'),
-            'strings' => [
-                'confirmDelete' => __('Êtes-vous sûr de vouloir supprimer ce modèle ?', 'pdf-builder-pro'),
-                'saveSuccess' => __('Modèle sauvegardé avec succès !', 'pdf-builder-pro'),
+        // Scripts personnalisés - seulement si le fichier existe
+        $predefined_templates_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/predefined-templates.js';
+        if (file_exists($predefined_templates_js)) {
+            wp_enqueue_script('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'js/predefined-templates.js', ['jquery', 'codemirror'], '1.1.0', true);
+            
+            // Localize script seulement si chargé
+            wp_localize_script('pdf-builder-predefined-templates', 'pdfBuilderPredefined', [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_predefined_templates'),
+                'strings' => [
+                    'confirmDelete' => __('Êtes-vous sûr de vouloir supprimer ce modèle ?', 'pdf-builder-pro'),
+                    'saveSuccess' => __('Modèle sauvegardé avec succès !', 'pdf-builder-pro'),
+
                 'deleteSuccess' => __('Modèle supprimé avec succès !', 'pdf-builder-pro'),
                 'loadError' => __('Erreur lors du chargement du modèle.', 'pdf-builder-pro'),
                 'saveError' => __('Erreur lors de la sauvegarde.', 'pdf-builder-pro'),

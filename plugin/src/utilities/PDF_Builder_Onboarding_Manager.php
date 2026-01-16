@@ -104,9 +104,16 @@ class PDF_Builder_Onboarding_Manager {
         ])) {
             return;
         }
-        // Enqueue les scripts et styles d'onboarding
-        wp_enqueue_script('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_style('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/onboarding.css', [], PDF_BUILDER_PRO_VERSION);
+        // Enqueue les scripts et styles d'onboarding seulement si les fichiers existent
+        $onboarding_js = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/onboarding.js';
+        if (file_exists($onboarding_js)) {
+            wp_enqueue_script('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        }
+        
+        $onboarding_css = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/css/onboarding.css';
+        if (file_exists($onboarding_css)) {
+            wp_enqueue_style('pdf-builder-onboarding', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/onboarding.css', [], PDF_BUILDER_PRO_VERSION);
+        }
         // Localize le script avec les données AJAX
         wp_localize_script('pdf-builder-onboarding', 'pdfBuilderOnboarding', [
             'ajax_url' => admin_url('admin-ajax.php'),

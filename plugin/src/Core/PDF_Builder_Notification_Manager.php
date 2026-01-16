@@ -92,21 +92,28 @@ class PDF_Builder_Notification_Manager {
             return;
         }
 
-        wp_enqueue_style(
-            'pdf-builder-notifications',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/notifications.css',
-            [],
-            '1.0.0'
-        );
+        // Charger les styles et scripts seulement si les fichiers existent
+        $notifications_css = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/css/notifications.css';
+        if (file_exists($notifications_css)) {
+            wp_enqueue_style(
+                'pdf-builder-notifications',
+                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/notifications.css',
+                [],
+                '1.0.0'
+            );
+        }
 
-        wp_enqueue_script(
-            'pdf-builder-notifications',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/notifications.js',
-            ['jquery'],
-            '1.0.0-' . time(),
-            false
-        );
-        error_log('PDF_Builder_Notification_Manager: script enqueued');
+        $notifications_js = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/notifications.js';
+        if (file_exists($notifications_js)) {
+            wp_enqueue_script(
+                'pdf-builder-notifications',
+                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/notifications.js',
+                ['jquery'],
+                '1.0.0-' . time(),
+                false
+            );
+            error_log('PDF_Builder_Notification_Manager: script enqueued');
+        }
 
         // Localiser le script avec les paramètres
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [

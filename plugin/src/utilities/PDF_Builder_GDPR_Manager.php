@@ -109,8 +109,16 @@ class PDF_Builder_GDPR_Manager {
             return;
         }
 
-        wp_enqueue_script('pdf-builder-gdpr', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/gdpr.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_style('pdf-builder-gdpr', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/gdpr.css', [], PDF_BUILDER_PRO_VERSION);
+        // Enqueue les scripts et styles RGPD seulement si les fichiers existent
+        $gdpr_js = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/gdpr.js';
+        if (file_exists($gdpr_js)) {
+            wp_enqueue_script('pdf-builder-gdpr', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/gdpr.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        }
+        
+        $gdpr_css = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/css/gdpr.css';
+        if (file_exists($gdpr_css)) {
+            wp_enqueue_style('pdf-builder-gdpr', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/gdpr.css', [], PDF_BUILDER_PRO_VERSION);
+        }
 
         wp_localize_script('pdf-builder-gdpr', 'pdfBuilderGDPR', [
             'ajax_url' => admin_url('admin-ajax.php'),

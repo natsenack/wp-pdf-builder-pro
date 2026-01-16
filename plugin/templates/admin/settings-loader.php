@@ -190,62 +190,55 @@ function pdf_builder_load_settings_assets($hook) {
     // DEBUG: Avant enqueue du script
     error_log('PDF Builder - Avant wp_enqueue_script');
 
-    // Charger le JavaScript pour la navigation par onglets
-    wp_enqueue_script(
-        'pdf-builder-settings-tabs',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js',
-        array('jquery', 'wp-util', 'wp-api'),
-        PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
-        false // Chargé dans le header pour une exécution précoce
-    );
+    // Charger le JavaScript pour la navigation par onglets - seulement si le fichier existe
+    $settings_tabs_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-tabs.js';
+    if (file_exists($settings_tabs_js)) {
+        wp_enqueue_script(
+            'pdf-builder-settings-tabs',
+            PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js',
+            array('jquery', 'wp-util', 'wp-api'),
+            PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
+            false // Chargé dans le header pour une exécution précoce
+        );
+
+        // Localiser le script avec les données AJAX - seulement si chargé
+        wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax')
+        ));
+
+        // DEBUG: Après localization
+        error_log('PDF Builder - Après wp_localize_script');
+    } else {
+        error_log('PDF Builder - settings-tabs.js non trouvé, script ignoré');
+    }
 
     // DEBUG: Après enqueue du script
     error_log('PDF Builder - Après wp_enqueue_script');
 
-    // Localiser le script avec les données AJAX
-    wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', array(
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_ajax')
-    ));
+    // Charger le script principal des paramètres - seulement si le fichier existe
+    $settings_main_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-main.js';
+    if (file_exists($settings_main_js)) {
+        wp_enqueue_script(
+            'pdf-builder-settings-main',
+            PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.js',
+            array('jquery'),
+            PDF_BUILDER_VERSION . '-' . time(),
+            true // Chargé dans le footer
+        );
 
-    // DEBUG: Après localization
-    error_log('PDF Builder - Après wp_localize_script');
-
-    // Charger le système de notifications - SUPPRIMÉ
-    // if (class_exists('PDF_Builder_Notification_Manager')) {
-    //     $notification_manager = PDF_Builder_Notification_Manager::get_instance();
-    //     $notification_manager->enqueue_scripts();
-    //     error_log('PDF Builder - Système de notifications chargé');
-    // } else {
-    //     error_log('PDF Builder - ERREUR: Classe PDF_Builder_Notification_Manager non trouvée');
-    // }
-
-    // Charger le script de vérification de syntaxe JavaScript - SUPPRIMÉ
-    // wp_enqueue_script(
-    //     'pdf-builder-js-syntax-check',
-    //     PDF_BUILDER_PLUGIN_URL . 'assets/js/js-syntax-check.js',
-    //     array('jquery'),
-    //     PDF_BUILDER_VERSION . '-' . time(),
-    //     true // Chargé dans le footer
-    // );
-
-    // Charger le script principal des paramètres
-    wp_enqueue_script(
-        'pdf-builder-settings-main',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.js',
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
-
-    // Charger le script des paramètres canvas
-    wp_enqueue_script(
-        'pdf-builder-canvas-settings',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.js',
-        array('jquery', 'pdf-builder-settings-main'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true // Chargé dans le footer
-    );
+        // Charger le script des paramètres canvas - seulement si le fichier existe et que settings-main est chargé
+        $canvas_settings_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/canvas-settings.js';
+        if (file_exists($canvas_settings_js)) {
+            wp_enqueue_script(
+                'pdf-builder-canvas-settings',
+                PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.js',
+                array('jquery', 'pdf-builder-settings-main'),
+                PDF_BUILDER_VERSION . '-' . time(),
+                true // Chargé dans le footer
+            );
+        }
+    }
 
     // Localiser le script principal avec les données AJAX
     wp_localize_script('pdf-builder-settings-main', 'pdf_builder_ajax', array(

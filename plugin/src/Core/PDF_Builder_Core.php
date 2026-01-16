@@ -486,12 +486,15 @@ class PdfBuilderCore
         wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
         wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
 
-        // Charger seulement l'API globale de PDF Builder React
-        $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
-        $cache_bust = time();
-        $version_param = $this->version . '-' . $cache_bust;
-        wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
-        wp_script_add_data('pdf-builder-react-api-only', 'type', 'text/javascript');
+        // Charger seulement l'API globale de PDF Builder React - seulement si le fichier existe
+        $react_script_path = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react-wrapper.min.js';
+        if (file_exists($react_script_path)) {
+            $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
+            $cache_bust = time();
+            $version_param = $this->version . '-' . $cache_bust;
+            wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
+            wp_script_add_data('pdf-builder-react-api-only', 'type', 'text/javascript');
+        }
     }
 
     /**
