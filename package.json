@@ -24,6 +24,8 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.24.0",
     "@types/node": "^20.0.0",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "babel-loader": "^9.1.3",

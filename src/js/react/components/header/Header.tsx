@@ -905,7 +905,7 @@ export const Header = memo(function Header({
                     <input
                       type="checkbox"
                       checked={showGuides}
-                      onChange={(e) => setShowGuides(e.target.checked)}
+                      onChange={(e) => onUpdateTemplateSettings({ showGuides: e.target.checked })}
                       className="setting-checkbox"
                     />
                     Afficher les guides
@@ -914,73 +914,73 @@ export const Header = memo(function Header({
                     <input
                       type="checkbox"
                       checked={snapToGrid}
-                      onChange={(e) => setSnapToGrid(e.target.checked)}
+                      onChange={(e) => onUpdateTemplateSettings({ snapToGrid: e.target.checked })}
                       className="setting-checkbox"
                     />
                     Aimantation à la grille
                   </label>
                 </div>
-              <div className="setting-group">
-                <label className="setting-label">Statut</label>
-                <div className="setting-status-tags">
-                  {isNewTemplate && (
-                    <span className="status-tag status-new">Nouveau template</span>
-                  )}
-                  {deferredIsModified && (
-                    <span className="status-tag status-modified">Modifié</span>
-                  )}
-                  {isEditingExistingTemplate && (
-                    <span className="status-tag status-editing">Édition existante</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="setting-group">
-                <label className="setting-label">Informations système</label>
-                <div className="setting-info">
-                  <div>Template ID: {templateName || "N/A"}</div>
-                  <div>
-                    Dernière modification: {new Date().toLocaleString("fr-FR")}
-                  </div>
-                  <div>
-                    État:{" "}
-                    {deferredIsSaving
-                      ? "Enregistrement..."
-                      : deferredIsModified
-                      ? "Modifié"
-                      : "Sauvegardé"}
+                <div className="setting-group">
+                  <label className="setting-label">Statut</label>
+                  <div className="setting-status-tags">
+                    {isNewTemplate && (
+                      <span className="status-tag status-new">Nouveau template</span>
+                    )}
+                    {deferredIsModified && (
+                      <span className="status-tag status-modified">Modifié</span>
+                    )}
+                    {isEditingExistingTemplate && (
+                      <span className="status-tag status-editing">Édition existante</span>
+                    )}
                   </div>
                 </div>
+
+                <div className="setting-group">
+                  <label className="setting-label">Informations système</label>
+                  <div className="setting-info">
+                    <div>Template ID: {templateName || "N/A"}</div>
+                    <div>
+                      Dernière modification: {new Date().toLocaleString("fr-FR")}
+                    </div>
+                    <div>
+                      État:{" "}
+                      {deferredIsSaving
+                        ? "Enregistrement..."
+                        : deferredIsModified
+                        ? "Modifié"
+                        : "Sauvegardé"}
+                    </div>
+                  </div>
+                </div>
+
               </div>
+            </div>
+              <div className="canvas-modal-footer">
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  className="canvas-modal-btn canvas-modal-btn-secondary"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => {
+                    // Sauvegarder les paramètres du template
+                    onUpdateTemplateSettings({
+                      name: editedTemplateName,
+                      description: editedTemplateDescription,
+                      canvasWidth: editedCanvasWidth,
+                      canvasHeight: editedCanvasHeight,
+                      showGuides: showGuides,
+                      snapToGrid: snapToGrid,
+                    });
 
-            </div>
-            <div className="canvas-modal-footer">
-              <button
-                onClick={() => setShowSettingsModal(false)}
-                className="canvas-modal-btn canvas-modal-btn-secondary"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={() => {
-                  // Sauvegarder les paramètres du template
-                  onUpdateTemplateSettings({
-                    name: editedTemplateName,
-                    description: editedTemplateDescription,
-                    canvasWidth: editedCanvasWidth,
-                    canvasHeight: editedCanvasHeight,
-                    showGuides: showGuides,
-                    snapToGrid: snapToGrid,
-                  });
-
-                  setShowSettingsModal(false);
-                }}
-                className="canvas-modal-btn canvas-modal-btn-primary"
-              >
-                Sauvegarder
-              </button>
-            </div>
-            </div>
+                    setShowSettingsModal(false);
+                  }}
+                  className="canvas-modal-btn canvas-modal-btn-primary"
+                >
+                  Sauvegarder
+                </button>
+              </div>
           </div>
         </div>
       )}
