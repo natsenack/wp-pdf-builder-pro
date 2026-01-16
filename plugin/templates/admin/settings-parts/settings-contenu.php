@@ -507,6 +507,31 @@
                     }
 
                     // Appliquer les paramètres d'une modal
+                    // Fonction utilitaire pour afficher des notifications via le système unifié
+                    function showNotification(message, type) {
+                        // Utiliser le système de notification unifié du plugin
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_show_notification',
+                                message: message,
+                                type: type,
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_notifications"); ?>'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    console.log('[PDF Builder] Notification affichée:', response.data);
+                                } else {
+                                    console.error('[PDF Builder] Erreur notification:', response.data);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('[PDF Builder] Erreur AJAX notification:', error);
+                            }
+                        });
+                    }
+
                     function applyModalSettings(category) {
                         var modalId = modalConfig[category];
                         if (!modalId) return;
@@ -514,9 +539,9 @@
                         var modal = document.getElementById(modalId);
                         if (!modal) return;
 
-                        // Collecter et synchroniser les valeurs
+                        // Collecter les valeurs des inputs canvas
+                        var canvasData = {};
                         var inputs = modal.querySelectorAll('input, select, textarea');
-                        var updatedCount = 0;
 
                         // Gérer spécifiquement les checkboxes DPI (tableau)
                         var dpiCheckboxes = modal.querySelectorAll('input[name="pdf_builder_canvas_dpi[]"]:checked');
@@ -525,14 +550,7 @@
                             dpiCheckboxes.forEach(function(checkbox) {
                                 dpiValues.push(checkbox.value);
                             });
-                            var dpiString = dpiValues.join(',');
-                            
-                            var hiddenDpiField = document.querySelector('input[name="pdf_builder_settings[pdf_builder_canvas_dpi]"]');
-                            if (hiddenDpiField) {
-                                hiddenDpiField.value = dpiString;
-                                updatedCount++;
-                                console.log('[PDF Builder] Updated DPI settings:', dpiString);
-                            }
+                            canvasData['pdf_builder_canvas_dpi'] = dpiValues.join(',');
                         }
 
                         // Gérer les autres inputs normalement
@@ -541,19 +559,61 @@
                             if (input.name === 'pdf_builder_canvas_dpi[]') {
                                 return;
                             }
-                            
+
                             if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
-                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
-                                if (hiddenField) {
-                                    var newValue = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
-                                    hiddenField.value = newValue;
-                                    updatedCount++;
-                                }
+                                var value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+                                canvasData[input.name] = value;
                             }
                         });
 
-                        closeModal(modal);
-                        console.log('[PDF Builder] Applied', updatedCount, 'settings for', category);
+                        if (Object.keys(canvasData).length === 0) {
+                            console.log('[PDF Builder] Aucune donnée canvas à sauvegarder');
+                            closeModal(modal);
+                            return;
+                        }
+
+                        // Afficher un indicateur de chargement
+                        var applyBtn = modal.querySelector('.canvas-modal-apply[data-category="' + category + '"]');
+                        if (applyBtn) {
+                            var originalText = applyBtn.innerHTML;
+                            applyBtn.innerHTML = '⏳ Sauvegarde...';
+                            applyBtn.disabled = true;
+                        }
+
+                        // Envoyer la requête AJAX
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_ajax_handler',
+                                action_type: 'save_canvas_modal_settings',
+                                ...canvasData,
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    console.log('[PDF Builder] Paramètres canvas sauvegardés:', response.data);
+                                    // Afficher une notification de succès
+                                    showNotification('Paramètres sauvegardés avec succès !', 'success');
+                                } else {
+                                    console.error('[PDF Builder] Erreur sauvegarde:', response.data);
+                                    showNotification('Erreur lors de la sauvegarde: ' + (response.data.message || 'Erreur inconnue'), 'error');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('[PDF Builder] Erreur AJAX:', error);
+                                showNotification('Erreur de communication avec le serveur', 'error');
+                            },
+                            complete: function() {
+                                // Restaurer le bouton
+                                if (applyBtn) {
+                                    applyBtn.innerHTML = originalText;
+                                    applyBtn.disabled = false;
+                                }
+                                // Fermer la modal
+                                closeModal(modal);
+                            }
+                        });
                     }
 
                     // Initialisation des événements

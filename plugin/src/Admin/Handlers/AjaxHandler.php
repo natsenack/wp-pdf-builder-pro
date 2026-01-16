@@ -594,8 +594,8 @@ class AjaxHandler
                     $this->handleSaveGeneralSettings();
                     break;
 
-                case 'save_performance_settings':
-                    $this->handleSavePerformanceSettings();
+                case 'save_canvas_modal_settings':
+                    $this->handleSaveCanvasModalSettings();
                     break;
 
                 case 'get_settings':
@@ -1565,6 +1565,55 @@ class AjaxHandler
             wp_send_json_success($orientations);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Gère la sauvegarde des paramètres des modales canvas
+     */
+    private function handleSaveCanvasModalSettings()
+    {
+        try {
+            // Collecter et sanitiser tous les paramètres canvas depuis $_POST
+            $canvas_settings = [];
+
+            foreach ($_POST as $key => $value) {
+                // Ne traiter que les clés qui commencent par pdf_builder_canvas_
+                if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    $sanitized_value = $this->sanitizeFieldValue($key, $value);
+                    if ($sanitized_value !== '') {
+                        $canvas_settings[$key] = $sanitized_value;
+                    }
+                }
+            }
+
+            if (empty($canvas_settings)) {
+                wp_send_json_error(['message' => 'Aucune donnée canvas valide à sauvegarder']);
+                return;
+            }
+
+            // Sauvegarder chaque paramètre canvas individuellement
+            $saved_count = 0;
+            foreach ($canvas_settings as $key => $value) {
+                $option_key = $key; // La clé est déjà préfixée
+                $saved = update_option($option_key, $value);
+                if ($saved) {
+                    $saved_count++;
+                }
+            }
+
+            if ($saved_count > 0) {
+                wp_send_json_success([
+                    'message' => sprintf('%d paramètre(s) canvas sauvegardé(s) avec succès', $saved_count),
+                    'saved_count' => $saved_count
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Aucun paramètre n\'a pu être sauvegardé']);
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder - Erreur sauvegarde paramètres canvas: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
         }
     }
 }
