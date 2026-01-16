@@ -1148,9 +1148,7 @@ class PdfBuilderAdmin
 
                 // Helper functions defined first
                 isReactReady: function() {
-                    const hasWindowPdfBuilderReact = typeof window.pdfBuilderReact !== 'undefined';
-                    const hasInitFunction = hasWindowPdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
-                    return hasWindowPdfBuilderReact && hasInitFunction;
+                    return typeof window.initPDFBuilderReact === 'function';
                 },
 
                 isContainerReady: function() {
@@ -1254,7 +1252,7 @@ class PdfBuilderAdmin
                                 ">
                                     <strong>Informations de débogage :</strong><br>
                                     • React disponible: ${typeof window.pdfBuilderReact !== 'undefined'}<br>
-                                    • Fonction initPDFBuilderReact: ${typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function'}<br>
+                                    • Fonction initPDFBuilderReact: ${typeof window.initPDFBuilderReact === 'function'}<br>
                                     • Container #pdf-builder-react-root: ${!!document.getElementById('pdf-builder-react-root')}<br>
                                     • Script React chargé: ${!!window.REACT_SCRIPT_LOADED}<br>
                                     • Heure de chargement: ${window.REACT_LOAD_TIME || 'Non défini'}<br>
@@ -1298,7 +1296,7 @@ class PdfBuilderAdmin
                     // Log detailed error information
                     console.error('🚨 PDF BUILDER LOADING ERROR 🚨');
                     console.error('React available:', typeof window.pdfBuilderReact !== 'undefined');
-                    console.error('initPDFBuilderReact function:', typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function');
+                    console.error('initPDFBuilderReact function:', typeof window.initPDFBuilderReact === 'function');
                     console.error('Container exists:', !!document.getElementById('pdf-builder-react-root'));
                     console.error('React script loaded:', !!window.REACT_SCRIPT_LOADED);
                     console.error('React load time:', window.REACT_LOAD_TIME);
@@ -1330,7 +1328,7 @@ class PdfBuilderAdmin
 
                         console.log('[PDF Builder] ✅ Container found, proceeding with React init...');
                         try {
-                            const result = window.pdfBuilderReact.initPDFBuilderReact();
+                            const result = window.initPDFBuilderReact();
                             console.log('[PDF Builder] ✅ React initialization result:', result);
                             
                             // Hide loader after successful init
