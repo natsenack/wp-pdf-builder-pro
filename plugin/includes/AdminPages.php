@@ -48,7 +48,7 @@ class AdminPages {
             'manage_options',
             'pdf-builder-settings',
             function() {
-                include dirname(__DIR__) . '/pages/settings.php';
+                include dirname(__DIR__) . '/templates/admin/settings-page.php';
             }
         );
     }

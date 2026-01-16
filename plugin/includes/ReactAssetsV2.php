@@ -12,11 +12,6 @@ class ReactAssets {
     
     public static function register() {
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_scripts'], 1);
-        add_action('wp_head', function() {
-            if (is_admin()) {
-                echo '<script>window.wp = window.wp || {};</script>';
-            }
-        }, 0);
         add_action('admin_print_scripts', function() {
             global $wp_scripts;
             if (isset($wp_scripts->registered['general_script'])) {
@@ -29,10 +24,6 @@ class ReactAssets {
      * Enregistre les scripts et styles React V2
      */
     public static function enqueue_scripts($page) {
-        // Définir wp global tôt pour éviter les erreurs de plugins tiers
-        wp_enqueue_script('wp-define', '', [], '1.0', false);
-        wp_add_inline_script('wp-define', 'window.wp = window.wp || {};');
-        
         // Assurer que wp-util est chargé sur toutes les pages admin
         wp_enqueue_script('wp-util');
         
@@ -55,7 +46,7 @@ class ReactAssets {
         // Vendors (React, ReactDOM)
         wp_enqueue_script(
             'pdf-builder-react-vendors-v2',
-            $plugin_url . 'assets/js/vendors.min.js',
+            $plugin_url . 'assets/js/react-vendor.min.js',
             ['wp-util'],
             $version,
             true
