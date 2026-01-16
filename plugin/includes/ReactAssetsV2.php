@@ -16,7 +16,7 @@ class ReactAssets {
             if (is_admin()) {
                 echo '<script>window.wp = window.wp || {};</script>';
             }
-        }, 1);
+        }, 0);
     }
     
     /**
