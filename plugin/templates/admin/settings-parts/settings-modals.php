@@ -56,12 +56,12 @@ function get_canvas_modal_value($key, $default = '') {
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
-            <div style="flex: 1;">
-                <h3><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
+            <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
+                <h3 style="margin: 0;"><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
                 <?php if (!\PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user()): ?>
-                <div class="premium-header-notice" style="margin-left: 32px; margin-top: -4px; padding: 6px 10px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 12px; color: #856404; display: inline-block;">
-                    <strong>🔒 Fonction Premium</strong> - Débloquez la personnalisation avancée du canvas (couleurs, bordures, formats étendus)<br>
-                    <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
+                <div class="premium-header-notice" style="padding: 6px 12px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 6px; font-size: 12px; color: #856404; flex: 1;">
+                    <strong>🔒 Fonction Premium</strong> - Débloquez la personnalisation avancée du canvas (couleurs, bordures, formats étendus)
+                    <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500; margin-left: 8px;">Passer en Premium →</a>
                 </div>
                 <?php endif; ?>
             </div>
