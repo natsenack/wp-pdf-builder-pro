@@ -454,7 +454,7 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 
         // React initialization script - initializes PDFBuilderReact component
-        $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.js' . $random_param;
+        $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
         wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');

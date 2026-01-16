@@ -332,6 +332,8 @@ if ($All) {
 $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-react-wrapper.min.js"
     "plugin/assets/js/pdf-builder-react.min.js"
+    "plugin/assets/js/react-vendor.min.js"
+    "plugin/assets/js/pdf-builder-react-init.min.js"
     "plugin/assets/css/pdf-builder-react.min.css"
     # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
 )
