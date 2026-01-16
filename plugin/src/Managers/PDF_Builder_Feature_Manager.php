@@ -124,7 +124,7 @@ class PdfBuilderFeatureManager
      */
     public static function canUseFeature($feature_name)
     {
-        $license_manager = PDF_Builder_License_Manager::getInstance();
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
         $is_premium = $license_manager->is_premium();
 
         if (!isset(self::$features[$feature_name])) {
@@ -176,7 +176,7 @@ class PdfBuilderFeatureManager
             return false;
         }
 
-        $license_manager = PDF_Builder_License_Manager::getInstance();
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
         if ($license_manager->is_premium()) {
             return true; // Pas de limite pour premium
         }
@@ -225,7 +225,7 @@ class PdfBuilderFeatureManager
      */
     public static function getAvailableFeatures()
     {
-        $license_manager = PDF_Builder_License_Manager::getInstance();
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
         $is_premium = $license_manager->is_premium();
         $available_features = [];
 
@@ -285,7 +285,7 @@ class PdfBuilderFeatureManager
         }
 
         $feature = self::$features[$feature_name];
-        $license_manager = PDF_Builder_License_Manager::getInstance();
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
         $is_premium = $license_manager->is_premium();
 
         return [

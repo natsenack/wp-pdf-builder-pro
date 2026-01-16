@@ -56,7 +56,7 @@ class PDF_Builder_Ajax_Handler {
             'security' => PDF_Builder_Security_Validator::get_instance(),
             'diagnostic' => PDF_Builder_Diagnostic_Tool::get_instance(),
             'backup' => PDF_Builder_Backup_Recovery_System::get_instance(),
-            'license' => PDF_Builder_License_Manager::get_instance(),
+            'license' => \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance(),
             'user' => PDF_Builder_User_Manager::get_instance(),
             'reporting' => PDF_Builder_Advanced_Reporting::get_instance(),
         );
