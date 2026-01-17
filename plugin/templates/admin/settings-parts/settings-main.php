@@ -27,6 +27,86 @@
     error_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
     error_log('[PDF Builder] Current tab: ' . $current_tab);
     
+    // Injecter l'API JavaScript dans le head
+    add_action('admin_head', function() {
+        ?>
+        <script>
+        (function() {
+            'use strict';
+
+            // PDF Builder Tabs API - Défini dans le head pour être disponible immédiatement
+            window.PDFBuilderTabsAPI = {
+                /**
+                 * Change d'onglet
+                 * @param {string} tabName - Nom de l'onglet (general, licence, systeme, securite, pdf, contenu, templates, developpeur)
+                 */
+                switchToTab: function(tabName) {
+                    var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
+                    if (tabLink) {
+                        // Simuler un clic sur le lien de l'onglet
+                        tabLink.click();
+                    } else {
+                        // Fallback: changer l'URL
+                        var currentUrl = window.location.href;
+                        var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
+                        if (newUrl === currentUrl) {
+                            // Si tab n'était pas dans l'URL, l'ajouter
+                            newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
+                        }
+                        window.location.href = newUrl;
+                    }
+                },
+
+                /**
+                 * Bascule la section avancée dans l'onglet PDF
+                 */
+                toggleAdvancedSection: function() {
+                    var advancedSection = document.getElementById('advanced-section');
+                    var toggleIcon = document.getElementById('advanced-toggle');
+
+                    if (advancedSection && toggleIcon) {
+                        if (advancedSection.classList.contains('hidden-element')) {
+                            // Afficher la section
+                            advancedSection.classList.remove('hidden-element');
+                            toggleIcon.textContent = '▲';
+                        } else {
+                            // Masquer la section
+                            advancedSection.classList.add('hidden-element');
+                            toggleIcon.textContent = '▼';
+                        }
+                    }
+                },
+
+                /**
+                 * Réinitialise les paramètres des templates par statut
+                 */
+                resetTemplatesStatus: function() {
+                    if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
+                        // Réinitialiser tous les selects
+                        var selects = document.querySelectorAll('.template-select');
+                        selects.forEach(function(select) {
+                            select.value = '';
+                            // Déclencher l'événement change pour mettre à jour les prévisualisations
+                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                        });
+
+                        // Afficher un message de succès
+                        alert('Les paramètres des templates ont été réinitialisés.');
+                    }
+                }
+            };
+
+            console.log('PDFBuilderTabsAPI initialized in head');
+        })();
+        </script>
+        <style>
+        .hidden-element {
+            display: none !important;
+        }
+        </style>
+        <?php
+    });
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('[PDF Builder] POST data received: ' . print_r($_POST, true));
         
@@ -84,87 +164,6 @@
     <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 10px 0; border-radius: 4px;">
         <strong>🔍 DEBUG:</strong> Page chargée à <?php echo current_time('H:i:s'); ?> - Tab: <?php echo $current_tab; ?> - Settings count: <?php echo count($settings); ?>
     </div>
-
-    <!-- PDF Builder Tabs API JavaScript - Défini tôt pour éviter les erreurs -->
-    <script>
-    (function() {
-        'use strict';
-
-        // PDF Builder Tabs API
-        window.PDFBuilderTabsAPI = {
-            /**
-             * Change d'onglet
-             * @param {string} tabName - Nom de l'onglet (general, licence, systeme, securite, pdf, contenu, templates, developpeur)
-             */
-            switchToTab: function(tabName) {
-                var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
-                if (tabLink) {
-                    // Simuler un clic sur le lien de l'onglet
-                    tabLink.click();
-                } else {
-                    // Fallback: changer l'URL
-                    var currentUrl = window.location.href;
-                    var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
-                    if (newUrl === currentUrl) {
-                        // Si tab n'était pas dans l'URL, l'ajouter
-                        newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
-                    }
-                    window.location.href = newUrl;
-                }
-            },
-
-            /**
-             * Bascule la section avancée dans l'onglet PDF
-             */
-            toggleAdvancedSection: function() {
-                var advancedSection = document.getElementById('advanced-section');
-                var toggleIcon = document.getElementById('advanced-toggle');
-
-                if (advancedSection && toggleIcon) {
-                    if (advancedSection.classList.contains('hidden-element')) {
-                        // Afficher la section
-                        advancedSection.classList.remove('hidden-element');
-                        toggleIcon.textContent = '▲';
-                    } else {
-                        // Masquer la section
-                        advancedSection.classList.add('hidden-element');
-                        toggleIcon.textContent = '▼';
-                    }
-                }
-            },
-
-            /**
-             * Réinitialise les paramètres des templates par statut
-             */
-            resetTemplatesStatus: function() {
-                if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
-                    // Réinitialiser tous les selects
-                    var selects = document.querySelectorAll('.template-select');
-                    selects.forEach(function(select) {
-                        select.value = '';
-                        // Déclencher l'événement change pour mettre à jour les prévisualisations
-                        select.dispatchEvent(new Event('change', { bubbles: true }));
-                    });
-
-                    // Afficher un message de succès
-                    alert('Les paramètres des templates ont été réinitialisés.');
-                }
-            }
-        };
-
-        // Initialisation au chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('PDFBuilderTabsAPI initialized');
-        });
-
-    })();
-    </script>
-
-    <style>
-    .hidden-element {
-        display: none !important;
-    }
-    </style>
 
     <form method="post" action="options.php">
         <?php 
