@@ -2069,6 +2069,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                  $license_keys[] = 'pdf_builder_license_test_key';
                  $license_keys[] = 'pdf_builder_license_test_key_expires';
              }
+             // Ne pas supprimer le mode test, le mettre à 0 si nécessaire
+             if ($test_mode_was_enabled) {
+                 $settings['pdf_builder_license_test_mode'] = '0';
+             }
              $license_keys[] = 'pdf_builder_license_test_mode';
 
              foreach ($license_keys as $key) {

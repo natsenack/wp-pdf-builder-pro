@@ -1737,10 +1737,12 @@ class AjaxHandler
                 error_log('[PDF Builder] handleCleanupLicense - Will remove test key');
             } else {
                 error_log('[PDF Builder] handleCleanupLicense - Will preserve test key');
+                // Désactiver le mode test pour forcer la réactivation manuelle
+                $settings['pdf_builder_license_test_mode'] = '0';
             }
 
-            // Supprimer le mode test pour forcer la réactivation manuelle
-            $license_keys_to_remove[] = 'pdf_builder_license_test_mode';
+            // Ne pas supprimer le mode test de la liste de suppression
+            // $license_keys_to_remove[] = 'pdf_builder_license_test_mode';
 
             $removed_count = 0;
             foreach ($license_keys_to_remove as $key) {

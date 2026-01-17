@@ -408,7 +408,7 @@ class LicenseTestHandler
             $settings = get_option('pdf_builder_settings', []);
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
 
-// Options à supprimer
+            // Options à supprimer
             $options = [
                 'pdf_builder_license_status',
                 'pdf_builder_license_key',
@@ -424,6 +424,12 @@ class LicenseTestHandler
 
             foreach ($options as $option) {
                 delete_option($option);
+            }
+
+            // Mettre à jour le tableau settings pour désactiver le mode test si nécessaire
+            if ($test_mode_was_enabled) {
+                $settings['pdf_builder_license_test_mode'] = '0';
+                update_option('pdf_builder_settings', $settings);
             }
 
             // Définir l'état clean
