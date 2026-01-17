@@ -99,7 +99,7 @@ function pdf_builder_load_settings_assets($hook) {
     if (file_exists($settings_main_js)) {
         wp_enqueue_script(
             'pdf-builder-settings-main',
-            PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.js',
+            PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.min.js',
             array('jquery'),
             PDF_BUILDER_VERSION . '-' . time(),
             true // Chargé dans le footer
