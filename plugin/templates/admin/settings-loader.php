@@ -92,7 +92,7 @@ function pdf_builder_load_settings_assets($hook) {
             $tag = str_replace(' async="async"', '', $tag);
         }
         return $tag;
-    }, 10, 3);
+    }, 1, 3);
 
     // DEBUG: Après enqueue du script
     error_log('PDF Builder - Après wp_enqueue_script');
