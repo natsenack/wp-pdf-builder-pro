@@ -1714,5 +1714,13 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 // ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
+
+// ============================================================================
+// ✅ CHARGER LE SCRIPT DE DIAGNOSTIC REST API
+// ============================================================================
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-diagnostic.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-diagnostic.php';
+}
+
 // FIN DU BOOTSTRAP
 // ============================================================================
