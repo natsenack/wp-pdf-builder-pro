@@ -1722,5 +1722,12 @@ if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-diagnostic.php')) {
     require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-diagnostic.php';
 }
 
+// ============================================================================
+// ✅ FORCER L'ACTIVATION DE L'API REST WORDPRESS
+// ============================================================================
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-force-enable.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-force-enable.php';
+}
+
 // FIN DU BOOTSTRAP
 // ============================================================================
