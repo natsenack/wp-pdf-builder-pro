@@ -72,35 +72,35 @@
                 </div>
                 <div class="card-content">
                     <div class="form-grid-compact">
-                        <div class="form-field">
+                        <div class="pdf-form-field">
                             <label for="company_phone_manual">📞 Téléphone *</label>
                             <input type="tel" id="company_phone_manual" name="pdf_builder_settings[pdf_builder_company_phone_manual]"
                                    value="<?php echo esc_attr($settings['pdf_builder_company_phone_manual'] ?? ''); ?>"
                                    placeholder="+33 1 23 45 67 89" pattern="[\+]?[0-9\s\-\(\)]+"/>
                         </div>
 
-                        <div class="form-field">
+                        <div class="pdf-form-field">
                             <label for="company_siret">🆔 SIRET</label>
                             <input type="text" id="company_siret" name="pdf_builder_settings[pdf_builder_company_siret]"
                                    value="<?php echo esc_attr($settings['pdf_builder_company_siret'] ?? ''); ?>"
                                    placeholder="12345678900012" pattern="[0-9\s]{14,17}" maxlength="17"/>
                         </div>
 
-                        <div class="form-field">
+                        <div class="pdf-form-field">
                             <label for="company_vat">💰 TVA</label>
                             <input type="text" id="company_vat" name="pdf_builder_settings[pdf_builder_company_vat]"
                                    value="<?php echo esc_attr($settings['pdf_builder_company_vat'] ?? ''); ?>"
                                    placeholder="FR12345678901" pattern="[A-Z]{2}[0-9A-Z]{8,12}"/>
                         </div>
 
-                        <div class="form-field">
+                        <div class="pdf-form-field">
                             <label for="company_rcs">🏢 RCS</label>
                             <input type="text" id="company_rcs" name="pdf_builder_settings[pdf_builder_company_rcs]"
                                    value="<?php echo esc_attr($settings['pdf_builder_company_rcs'] ?? ''); ?>"
                                    placeholder="Lyon B 123456789"/>
                         </div>
 
-                        <div class="form-field">
+                        <div class="pdf-form-field">
                             <label for="company_capital">📈 Capital</label>
                             <input type="text" id="company_capital" name="pdf_builder_settings[pdf_builder_company_capital]"
                                    value="<?php echo esc_attr($settings['pdf_builder_company_capital'] ?? ''); ?>"
@@ -125,10 +125,10 @@
     .woo-info-compact div { padding: 0.5rem; background: #f8f9fa; border-radius: 4px; }
     .woo-notice { margin: 0; font-size: 0.9rem; color: #646970; }
     .form-grid-compact { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-    .form-field { display: flex; flex-direction: column; gap: 0.5rem; }
-    .form-field label { font-weight: 600; color: #1d2327; display: flex; align-items: center; gap: 0.25rem; }
-    .form-field input { padding: 0.5rem; border: 1px solid #8c8f94; border-radius: 4px; font-size: 0.95rem; }
-    .form-field input:focus { outline: none; border-color: #2271b1; box-shadow: 0 0 0 2px rgba(34,113,177,0.2); }
+    .pdf-form-field { display: flex; flex-direction: column; gap: 0.5rem; }
+    .pdf-form-field label { font-weight: 600; color: #1d2327; display: flex; align-items: center; gap: 0.25rem; }
+    .pdf-form-field input { padding: 0.5rem; border: 1px solid #8c8f94; border-radius: 4px; font-size: 0.95rem; }
+    .pdf-form-field input:focus { outline: none; border-color: #2271b1; box-shadow: 0 0 0 2px rgba(34,113,177,0.2); }
     .form-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f0f0f1; text-align: center; }
     @media (max-width: 782px) { .form-grid-compact { grid-template-columns: 1fr; } .card-header, .card-content { padding: 1rem; } }
 </style>
