@@ -1633,7 +1633,7 @@ add_action('init', 'pdf_builder_initialize_canvas_defaults');
 // CHARGER LE LOADER DES STYLES DE LA PAGE DE PARAMÈTRES
 // ============================================================================
 // Charge le CSS de settings au moment approprié (admin_print_styles)
-if (is_admin()) {
+if (is_admin() && isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
     require_once __DIR__ . '/templates/admin/settings-loader.php';
 }
 
