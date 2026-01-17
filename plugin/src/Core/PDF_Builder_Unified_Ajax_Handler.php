@@ -2027,15 +2027,35 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              // Clear license settings from the main settings array
              $settings = get_option('pdf_builder_settings', []);
+
+             // Remove all license-related keys from settings
+             foreach ($settings as $key => $value) {
+                 if (strpos($key, 'pdf_builder_license_') === 0) {
+                     unset($settings[$key]);
+                 }
+             }
+
+             // Also explicitly remove known license keys to be sure
              $license_keys = [
                  'pdf_builder_license_test_key',
                  'pdf_builder_license_test_key_expires',
-                 'pdf_builder_license_test_mode'
+                 'pdf_builder_license_test_mode',
+                 'pdf_builder_license_status',
+                 'pdf_builder_license_key',
+                 'pdf_builder_license_expires',
+                 'pdf_builder_license_activated_at',
+                 'pdf_builder_license_test_mode_enabled',
+                 'pdf_builder_license_email_reminders',
+                 'pdf_builder_license_reminder_email'
              ];
 
              foreach ($license_keys as $key) {
                  unset($settings[$key]);
              }
+
+             // Set license status to free explicitly
+             $settings['pdf_builder_license_status'] = 'free';
+
              update_option('pdf_builder_settings', $settings);
 
              // Clear license transients
