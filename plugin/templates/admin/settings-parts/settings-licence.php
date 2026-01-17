@@ -816,18 +816,63 @@
                     </div>
                     <?php else: ?>
                     <!-- Section publicité premium -->
-                    <div class="action-card premium-promo" style="max-height: 150px; overflow: hidden;">
-                        <div class="premium-promo-content" style="padding: 1rem; text-align: center;">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
-                            <h3 style="margin: 0 0 0.5rem 0; color: #2c3e50; font-size: 1.1rem;">Découvrez la Version Premium</h3>
-                            <p style="margin: 0 0 1rem 0; color: #6c757d; font-size: 0.9rem; line-height: 1.4;">
+                    <div class="action-card premium-promo" style="max-height: 150px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
+                        <div class="premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
+                            <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: rocketFloat 2s ease-in-out infinite; display: inline-block;">🚀</div>
+                            <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: textGlow 2s ease-in-out infinite alternate;">Découvrez la Version Premium</h3>
+                            <p style="margin: 0 0 1rem 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
                                 Débloquez toutes les fonctionnalités avancées : exports multi-formats, résolutions élevées, navigation grille, et bien plus !
                             </p>
-                            <a href="#" onclick="showUpgradeModal('license_tab')" class="btn-primary" style="display: inline-block; padding: 0.5rem 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 0.9rem;">
-                                ✨ Passer en Premium
+                            <a href="#" onclick="showUpgradeModal('license_tab')" class="btn-primary premium-cta" style="display: inline-block; padding: 0.6rem 1.2rem; background: linear-gradient(45deg, #ff6b6b, #ffa500); color: white; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+                                <span style="position: relative; z-index: 2;">✨ Passer en Premium</span>
+                                <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; z-index: 1;"></div>
                             </a>
                         </div>
+                        <!-- Particules animées en arrière-plan -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1;">
+                            <div style="position: absolute; width: 4px; height: 4px; background: rgba(255,255,255,0.6); border-radius: 50%; top: 20%; left: 10%; animation: particleFloat 4s ease-in-out infinite;"></div>
+                            <div style="position: absolute; width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; top: 60%; left: 80%; animation: particleFloat 5s ease-in-out infinite reverse;"></div>
+                            <div style="position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.5); border-radius: 50%; top: 40%; left: 60%; animation: particleFloat 3s ease-in-out infinite;"></div>
+                        </div>
                     </div>
+
+                    <style>
+                    @keyframes gradientShift {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+
+                    @keyframes rocketFloat {
+                        0%, 100% { transform: translateY(0px) rotate(-5deg); }
+                        50% { transform: translateY(-10px) rotate(5deg); }
+                    }
+
+                    @keyframes textGlow {
+                        0% { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+                        100% { text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5); }
+                    }
+
+                    @keyframes particleFloat {
+                        0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.6; }
+                        50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+                    }
+
+                    .premium-cta:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6) !important;
+                    }
+
+                    .premium-cta:hover div {
+                        left: 100%;
+                    }
+
+                    .premium-promo:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4) !important;
+                        transition: all 0.3s ease;
+                    }
+                    </style>
                     <?php endif; ?>
 
                 </div>
