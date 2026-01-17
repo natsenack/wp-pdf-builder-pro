@@ -123,18 +123,6 @@ class PdfBuilderFeatureManager
             'name' => 'Navigation grille et guides',
             'description' => 'Grille, guides et accrochage magnétique'
         ],
-        'advanced_zoom' => [
-            'free' => false,
-            'premium' => true,
-            'name' => 'Paramètres de zoom avancés',
-            'description' => 'Contrôle précis du zoom minimum, maximum et pas'
-        ],
-        'advanced_orientations' => [
-            'free' => false,
-            'premium' => true,
-            'name' => 'Orientations avancées',
-            'description' => 'Support des orientations portrait et paysage'
-        ],
     ];
 
     /**
