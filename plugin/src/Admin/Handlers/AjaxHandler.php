@@ -1829,39 +1829,6 @@ class AjaxHandler
     }
 
     /**
-     * Basculer le mode test de licence
-     */
-    private function handleToggleLicenseTestMode()
-    {
-        try {
-            error_log('[PDF Builder] handleToggleLicenseTestMode - Starting toggle process');
-
-            // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', []);
-            $current_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
-
-            // Basculer le mode
-            $new_mode = $current_mode === '1' ? '0' : '1';
-            $settings['pdf_builder_license_test_mode'] = $new_mode;
-
-            // Sauvegarder
-            $update_result = update_option('pdf_builder_settings', $settings);
-
-            error_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode);
-            error_log('[PDF Builder] handleToggleLicenseTestMode - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
-
-            wp_send_json_success([
-                'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès',
-                'new_mode' => $new_mode
-            ]);
-
-        } catch (Exception $e) {
-            error_log('[PDF Builder] handleToggleLicenseTestMode - Error: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur lors du basculement: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
      * Supprimer la clé de test
      */
     private function handleDeleteLicenseKey()
