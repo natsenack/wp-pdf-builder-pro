@@ -491,8 +491,13 @@
 
                     <?php foreach ($sorted_statuses as $status_key => $status_label):
                         $is_custom_status = $status_manager->is_custom_status($status_key);
+                        $is_premium_required = false;
+                        if (!$is_premium) {
+                            $is_default_completed = ($status_key === 'wc-completed');
+                            $is_premium_required = !$is_custom_status && !$is_default_completed;
+                        }
                     ?>
-                        <article class="template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?>">
+                        <article class="template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?> <?php echo $is_premium_required ? 'premium-card' : ''; ?>">
                             <header>
                                 <h4>
                                     <?php echo esc_html($status_label); ?>
@@ -504,6 +509,9 @@
                                         <span class="custom-status-indicator"
                                               data-tooltip="<?php echo esc_attr($tooltip_text); ?>"
                                               style="font-family: Arial, sans-serif;">🔍</span>
+                                    <?php endif; ?>
+                                    <?php if ($is_premium_required): ?>
+                                        <span class="premium-badge">⭐ PREMIUM</span>
                                     <?php endif; ?>
                                 </h4>
                             </header>
@@ -640,6 +648,30 @@
         color: #6c757d;
         font-style: italic;
     }
+
+    /* Badge Premium */
+    .premium-badge {
+        background: #fff3cd;
+        color: #856404;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 12px;
+        border: 1px solid #ffeaa7;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-left: 8px;
+    }
+
+    .premium-card {
+        position: relative;
+        border: 2px solid #ffeaa7;
+        background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+    }
+
+    .premium-card header h4 {
+        color: #856404;
+    }
 </style>
 
 
@@ -696,9 +728,9 @@
                         var assignedTemplateId = mappings[statusKey];
 
                         if (assignedTemplateId && templates[assignedTemplateId]) {
-                            preview.innerHTML = '<p class="current-template">📄 ' + templates[assignedTemplateId] + '</p>';
+                            preview.innerHTML = '<p class="current-template">' + templates[assignedTemplateId] + '</p>';
                         } else {
-                            preview.innerHTML = '<p class="no-template">❌ Aucun template</p>';
+                            preview.innerHTML = '<p class="no-template">Aucun template</p>';
                         }
                     }
                 }
