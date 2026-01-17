@@ -84,7 +84,10 @@ class AdminScriptLoader
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
-                error_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-tabs script');
+                error_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-tabs script - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js');
+                error_log('[WP AdminScriptLoader] Current REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
+            } else {
+                error_log('[WP AdminScriptLoader] pdf-builder-settings-tabs already enqueued');
             }
 
             // Charger le système de notifications pour les pages de paramètres - seulement si le fichier existe

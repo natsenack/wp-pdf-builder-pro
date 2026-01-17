@@ -3,7 +3,7 @@
  * Handles tab navigation and content switching
  */
 
-console.log('[PDF Builder] settings-tabs.js script loaded and executing');
+console.log('[PDF Builder] settings-tabs.js script STARTED loading at ' + new Date().toISOString());
 
 // Define API immediately for early access
 window.PDFBuilderTabsAPI = {
@@ -53,7 +53,7 @@ console.log('PDFBuilderTabsAPI defined at script load time');
 
 // Trigger custom event to signal API is ready
 $(document).trigger('PDFBuilderTabsAPIReady');
-console.log('PDFBuilderTabsAPIReady event triggered');
+console.log('PDFBuilderTabsAPIReady event triggered at ' + new Date().toISOString());
 
 // Debug: check if jQuery is available and event was triggered
 console.log('jQuery in settings-tabs:', typeof jQuery);
