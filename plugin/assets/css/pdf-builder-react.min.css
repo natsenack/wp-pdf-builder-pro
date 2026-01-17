@@ -1787,35 +1787,6 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
     font-weight: 600;
 }
 
-/* Styles pour les formulaires dans les onglets */
-.form-table {
-    margin-bottom: 15px;
-}
-
-.form-table th {
-    font-weight: 600;
-    padding: 8px 8px 8px 0;
-    text-align: left;
-    vertical-align: top;
-    width: 180px;
-}
-
-.form-table td {
-    padding: 8px 0;
-}
-
-.form-table input[type="text"],
-.form-table input[type="password"],
-.form-table input[type="email"],
-.form-table input[type="number"],
-.form-table select,
-.form-table textarea {
-    max-width: 350px;
-    width: 100%;
-    padding: 4px 6px;
-    border: 1px solid #ddd;
-}
-
 /* Styles pour les boutons */
 .button-primary {
     background: #0073aa;
