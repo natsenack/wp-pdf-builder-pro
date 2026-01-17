@@ -774,7 +774,8 @@
                         </div>
                     </div>
 
-                    <?php if (!empty($test_key)): ?>
+                    <!-- Mode développement ou publicité premium -->
+                    <?php if ($is_test_mode): ?>
                     <!-- Mode développement -->
                     <div class="action-card secondary">
                         <div class="action-card-header">
@@ -814,65 +815,17 @@
                         </div>
                     </div>
                     <?php else: ?>
-                    <!-- Section promotion premium -->
-                    <div class="action-card premium-promo">
-                        <div class="action-card-header">
-                            <h3>
-                                <span class="action-icon">⭐</span>
-                                Débloquez tout le potentiel !
-                            </h3>
-                            <p>Version Premium - Fonctionnalités avancées pour les professionnels</p>
-                        </div>
-
-                        <div class="action-card-content">
-                            <div class="premium-features-list">
-                                <div class="feature-item">
-                                    <span class="feature-icon">🎨</span>
-                                    <div class="feature-content">
-                                        <strong>Canvas Avancé</strong>
-                                        <p>Résolutions élevées, formats étendus, couleurs personnalisées</p>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">🧭</span>
-                                    <div class="feature-content">
-                                        <strong>Navigation Pro</strong>
-                                        <p>Grille magnétique, guides, accrochage automatique</p>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">📄</span>
-                                    <div class="feature-content">
-                                        <strong>Export Multi-Format</strong>
-                                        <p>PDF, PNG, JPG, SVG avec fond transparent</p>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">🎯</span>
-                                    <div class="feature-content">
-                                        <strong>Sélection Avancée</strong>
-                                        <p>Modes multiple et groupe, raccourcis clavier</p>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">📊</span>
-                                    <div class="feature-content">
-                                        <strong>Analytics & Support</strong>
-                                        <p>Tableaux de bord détaillés, support prioritaire 24/7</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="premium-cta">
-                                <div class="pricing-info">
-                                    <span class="price">À partir de 29€/an</span>
-                                    <span class="guarantee">Satisfaction garantie - 30 jours</span>
-                                </div>
-                                <a href="#" onclick="showUpgradeModal('license_tab')" class="btn-premium">
-                                    <span class="btn-icon">🚀</span>
-                                    Passer en Premium
-                                </a>
-                            </div>
+                    <!-- Section publicité premium -->
+                    <div class="action-card premium-promo" style="max-height: 150px; overflow: hidden;">
+                        <div class="premium-promo-content" style="padding: 1rem; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                            <h3 style="margin: 0 0 0.5rem 0; color: #2c3e50; font-size: 1.1rem;">Découvrez la Version Premium</h3>
+                            <p style="margin: 0 0 1rem 0; color: #6c757d; font-size: 0.9rem; line-height: 1.4;">
+                                Débloquez toutes les fonctionnalités avancées : exports multi-formats, résolutions élevées, navigation grille, et bien plus !
+                            </p>
+                            <a href="#" onclick="showUpgradeModal('license_tab')" class="btn-primary" style="display: inline-block; padding: 0.5rem 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 0.9rem;">
+                                ✨ Passer en Premium
+                            </a>
                         </div>
                     </div>
                     <?php endif; ?>
