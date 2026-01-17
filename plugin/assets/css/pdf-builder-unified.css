@@ -1363,24 +1363,6 @@
     padding-left: var(--spacing-md);
 }
 
-/* Styles pour les formulaires dans les onglets */
-.form-table {
-    margin-bottom: var(--spacing-lg);
-}
-
-.form-table th {
-    font-weight: 600;
-    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 0;
-    text-align: left;
-    vertical-align: top;
-    width: 200px;
-    color: var(--pdf-text);
-    font-size: 14px;
-}
-
-.form-table td {
-    padding: var(--spacing-sm) 0;
-}
 
 /* Styles cohérents pour les messages */
 .notice {
@@ -8891,7 +8873,7 @@ input:checked + .toggle-slider:before {
 }
 
 .pdf-section .form-table td {
-    padding: 12px 8px;
+    padding: var(--spacing-sm) 0;
     vertical-align: top;
 }
 
@@ -9652,35 +9634,6 @@ input:checked + .toggle-slider:before {
     color: #4b5563;
     margin-left: auto;
     font-style: italic;
-}
-
-.form-table th {
-    text-align: left;
-    padding: 15px 10px 15px 0;
-    font-weight: 600;
-    color: #1d2327;
-    width: 200px;
-}
-
-.form-table td {
-    padding: 15px 0;
-}
-
-.form-table input,
-.form-table textarea {
-    width: 100%;
-    max-width: 400px;
-    padding: 8px 12px;
-    border: 1px solid #c3c4c7;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.form-table input:focus,
-.form-table textarea:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px #3b82f6;
-    outline: none;
 }
 
 .template-preview {

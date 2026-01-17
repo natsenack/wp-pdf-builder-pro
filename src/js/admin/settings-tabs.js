@@ -40,6 +40,8 @@ window.PDFBuilderTabsAPI = {
     }
 };
 
+console.log('PDFBuilderTabsAPI defined at script load time');
+
 (function($) {
     'use strict';
 
