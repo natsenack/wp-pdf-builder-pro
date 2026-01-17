@@ -1728,24 +1728,6 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
     padding: 0;
 }
 
-.nav-tab {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #666;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.nav-tab:hover {
-    color: #0073aa;
-}
-
 .nav-tab:focus {
     outline: none;
 }

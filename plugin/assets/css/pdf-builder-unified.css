@@ -1068,13 +1068,6 @@
     padding: 0 var(--spacing-md);
 }
 
-.tabs-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0;
-}
-
 .nav-tab:hover {
     color: var(--pdf-primary);
     border-bottom-color: rgba(0, 102, 204, 0.3);
@@ -1452,14 +1445,6 @@
 .nav-tab:active {
     background-color: var(--pdf-active-bg);
     transform: translateY(1px);
-}
-
-.nav-tab.nav-tab-active,
-.nav-tab.nav-tab-active:hover {
-    color: var(--pdf-primary);
-    border-bottom-color: var(--pdf-primary);
-    background: white;
-    font-weight: 600;
 }
 
 .nav-tab.nav-tab-active::after {
@@ -2738,16 +2723,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 }
 
 /* Onglet actif - Design professionnel sobre */
-.nav-tab-active {
-    background: #ffffff;
-    color: #1e293b;
-    border: 1px solid #e2e8f0;
-    border-bottom: 1px solid #ffffff;
-    margin-bottom: -1px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    font-weight: 600;
-    position: relative;
-}
 
 .nav-tab-active::after {
     content: '';
@@ -4889,11 +4864,6 @@ select option:disabled {
     will-change: auto;
 }
 
-.nav-tab:hover,
-.nav-tab-active,
-.tab-content.active {
-    will-change: transform, opacity, box-shadow;
-}
 
 /* Support pour les préférences de mouvement réduit */
 @media (prefers-reduced-motion: reduce) {
