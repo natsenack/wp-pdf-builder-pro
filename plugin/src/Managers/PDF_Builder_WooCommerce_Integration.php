@@ -167,7 +167,7 @@ class PDF_Builder_WooCommerce_Integration
         $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
 
         // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
         $status_key = 'wc-' . $order_status;
         $selected_template = null;
@@ -418,7 +418,7 @@ class PDF_Builder_WooCommerce_Integration
             $valid_statuses = function_exists('wc_get_order_statuses') ? array_keys(\wc_get_order_statuses()) : [];
 
             // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
             $configured_statuses = array_keys($status_templates);
             $valid_statuses = array_merge($valid_statuses, $configured_statuses);
@@ -551,7 +551,7 @@ class PDF_Builder_WooCommerce_Integration
 
         // Détecter automatiquement le template basé sur le statut de la commande
         $order_status = $order->get_status();
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
         $status_key = 'wc-' . $order_status;
 
@@ -1243,7 +1243,7 @@ class PDF_Builder_WooCommerce_Integration
             // Récupérer les éléments depuis le cache ou la base de données
             // ✅ RESPECT DU SETTING CACHE: Only use transient if cache is enabled in settings
             $cache_key = 'pdf_builder_canvas_elements_' . $template_id;
-            $cache_enabled = !empty(get_option('pdf_builder_settings', [])['cache_enabled']);
+            $cache_enabled = !empty(get_option('pdf_builder_settings', array())['cache_enabled']);
             $canvas_elements = false;
             
             if ($cache_enabled) {
@@ -1432,7 +1432,7 @@ class PDF_Builder_WooCommerce_Integration
         $valid_statuses = function_exists('wc_get_order_statuses') ? array_keys(\wc_get_order_statuses()) : [];
 
         // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
         $configured_statuses = array_keys($status_templates);
         $valid_statuses = array_merge($valid_statuses, $configured_statuses);

@@ -72,7 +72,7 @@ class PDF_Builder_License_Manager
         }
 
         // Récupérer les paramètres unifiés
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
 
         // Vérifier les clés de test (mode développeur)
         $test_key = $settings['pdf_builder_license_test_key'] ?? '';

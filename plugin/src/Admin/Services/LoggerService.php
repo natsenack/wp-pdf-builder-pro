@@ -31,7 +31,7 @@ class LoggerService
         ];
 
         // Ajouter au log
-        $logs = get_option('pdf_builder_role_change_logs', []);
+        $logs = get_option('pdf_builder_role_change_logs', array());
 
         // Limiter à 100 entrées maximum
         if (count($logs) >= 100) {
@@ -68,7 +68,7 @@ class LoggerService
      */
     public function getRoleChangeHistory($limit = 50)
     {
-        $logs = get_option('pdf_builder_role_change_logs', []);
+        $logs = get_option('pdf_builder_role_change_logs', array());
 
         if ($limit > 0) {
             $logs = array_slice($logs, -$limit);

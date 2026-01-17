@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Settings Helper Functions
  * Common utility functions used across all settings tabs

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     /**
      * Templates par statut tab content
      * Gestion des templates PDF par défaut selon le statut des commandes WooCommerce
@@ -63,7 +63,7 @@
             if (function_exists('wc_get_order_statuses')) {
                 return wc_get_order_statuses();
             } else {
-                $statuses = get_option('wc_order_statuses', []);
+                $statuses = get_option('wc_order_statuses', array());
                 return !empty($statuses) ? $statuses : [
                     'wc-pending' => 'En attente de paiement',
                     'wc-processing' => 'En cours',
@@ -135,7 +135,7 @@
 
         // Chargement des mappings
         private function load_mappings() {
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             error_log('[PDF Builder] settings-templates.php load_mappings - settings count: ' . count($settings));
             $raw_option = $settings['pdf_builder_order_status_templates'] ?? [];
             error_log('DEBUG: Raw option value from DB: ' . print_r($raw_option, true));
@@ -156,7 +156,7 @@
                 $this->current_mappings = array_intersect_key($this->current_mappings, array_flip($valid_statuses));
 
                 // Sauvegarder si nécessaire
-                $settings = get_option('pdf_builder_settings', []);
+                $settings = get_option('pdf_builder_settings', array());
                 if (count($this->current_mappings) !== count($settings['pdf_builder_order_status_templates'] ?? [])) {
                     $settings['pdf_builder_order_status_templates'] = $this->current_mappings;
                     update_option('pdf_builder_settings', $settings);
@@ -167,7 +167,7 @@
         // Détection du plugin pour un statut personnalisé
         private function detect_custom_status_plugin($status_key) {
             // 1. Vérifier les options WooCommerce
-            $custom_statuses = get_option('wc_order_statuses', []);
+            $custom_statuses = get_option('wc_order_statuses', array());
             if (!empty($custom_statuses) && isset($custom_statuses['wc-' . $status_key])) {
                 $status_data = $custom_statuses['wc-' . $status_key];
                 if (is_array($status_data) && isset($status_data['label'])) {
@@ -233,7 +233,7 @@
         private function detect_plugin_from_active_plugins($status_key) {
             global $wpdb;
 
-            $active_plugins = get_option('active_plugins', []);
+            $active_plugins = get_option('active_plugins', array());
             $excluded_plugins = ['woocommerce/woocommerce.php'];
             $active_plugins = array_diff($active_plugins, $excluded_plugins);
 

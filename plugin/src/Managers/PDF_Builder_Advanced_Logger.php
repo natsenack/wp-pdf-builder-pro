@@ -39,7 +39,7 @@ class PDF_Builder_Logger {
 
     private function init_settings() {
         // Récupérer les paramètres de debug depuis les options WordPress
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
 
         // Niveau de log basé sur pdf_builder_log_level (0-4)
         $log_level_setting = isset($settings['pdf_builder_log_level']) ? intval($settings['pdf_builder_log_level']) : 3; // 3 = Info par défaut
@@ -122,7 +122,7 @@ class PDF_Builder_Logger {
      * Log un message de debug seulement si le debug PHP est activé
      */
     public function debug_log($message) {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
 
         if ($debug_php_errors) {
@@ -135,7 +135,7 @@ class PDF_Builder_Logger {
      */
     public function log_php_errors() {
         // Vérifier si le debug PHP errors est activé
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
 
         if (!$debug_php_errors) {

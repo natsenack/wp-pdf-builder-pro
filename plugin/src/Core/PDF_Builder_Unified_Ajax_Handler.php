@@ -349,7 +349,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Collecte les options sauvegardées pour un onglet spécifique
      */
     private function get_saved_options_for_tab($tab) {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $saved_options = [];
 
         switch ($tab) {
@@ -639,7 +639,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_all_settings_from_flattened_data() {
         $saved_count = 0;
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
 
         error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
         error_log('[PDF Builder AJAX] Full POST data: ' . json_encode($_POST));
@@ -1349,7 +1349,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             delete_transient($transient_key);
 
             // Test 3: Vérifier les options
-            $option_test = get_option('pdf_builder_settings', []);
+            $option_test = get_option('pdf_builder_settings', array());
             $options_ok = is_array($option_test);
 
             // Résultats
@@ -1432,7 +1432,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Mettre à jour la date de dernière maintenance
             $current_time = current_time('mysql');
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_last_maintenance'] = $current_time;
             update_option('pdf_builder_settings', $settings);
 
@@ -1491,7 +1491,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Mettre à jour la date de dernière maintenance
             $current_time = current_time('mysql');
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_last_maintenance'] = $current_time;
             update_option('pdf_builder_settings', $settings);
 
@@ -1551,7 +1551,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Mettre à jour la date de dernière maintenance
             $current_time = current_time('mysql');
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_last_maintenance'] = $current_time;
             update_option('pdf_builder_settings', $settings);
 
@@ -1575,7 +1575,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $new_state = $current_state === '1' ? '0' : '1';
 
             // Mettre à jour dans le tableau unifié des paramètres
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_systeme_auto_maintenance'] = $new_state;
             update_option('pdf_builder_settings', $settings);
 
@@ -1609,7 +1609,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             update_option('pdf_builder_next_maintenance', $next_sunday);
 
             // Mettre à jour dans le tableau unifié des paramètres
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_next_maintenance'] = date('Y-m-d H:i:s', $next_sunday);
             update_option('pdf_builder_settings', $settings);
 
@@ -1886,7 +1886,7 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             $settings = get_option('pdf_builder_settings', []);
+             $settings = get_option('pdf_builder_settings', array());
              $current_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
              $new_mode = $current_mode === '1' ? '0' : '1';
 
@@ -1951,7 +1951,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
 
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_license_test_key'] = $test_key;
             $settings['pdf_builder_license_test_key_expires'] = $expires_in_30_days;
             $settings['pdf_builder_license_status'] = 'test'; // Mettre le statut à "test" quand une clé de test est générée
@@ -1980,7 +1980,7 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             unset($settings['pdf_builder_license_test_key']);
             unset($settings['pdf_builder_license_test_key_expires']);
             $settings['pdf_builder_license_test_mode'] = '0';
@@ -2022,7 +2022,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ];
 
              // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-             $settings = get_option('pdf_builder_settings', []);
+             $settings = get_option('pdf_builder_settings', array());
              $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
 
              if (!$test_mode_was_enabled) {
@@ -2036,7 +2036,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              }
 
              // Clear license settings from the main settings array
-             $settings = get_option('pdf_builder_settings', []);
+             $settings = get_option('pdf_builder_settings', array());
              $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
              error_log('[PDF Builder] Settings before cleanup: ' . print_r($settings, true));
 

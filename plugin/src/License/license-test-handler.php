@@ -409,7 +409,7 @@ class LicenseTestHandler
             error_log('[PDF Builder] license-test-handler.php - Starting cleanup');
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
             error_log('[PDF Builder] license-test-handler.php - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO'));
 

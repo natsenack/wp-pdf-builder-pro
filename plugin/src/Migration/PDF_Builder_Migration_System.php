@@ -231,10 +231,10 @@ class PDF_Builder_Migration_System
             'wc-failed' => 0,
         ];
 
-        $current_mappings = get_option('pdf_builder_settings', [])['pdf_builder_order_status_templates'] ?? [];
+        $current_mappings = get_option('pdf_builder_settings', array())['pdf_builder_order_status_templates'] ?? [];
         $updated_mappings = array_merge($default_mappings, $current_mappings);
 
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $settings['pdf_builder_order_status_templates'] = $updated_mappings;
         update_option('pdf_builder_settings', $settings);
     }

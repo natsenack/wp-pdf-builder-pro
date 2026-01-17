@@ -120,7 +120,7 @@ class PdfBuilderCanvasManager
     public function getCanvasSettings()
     {
         // Les paramètres canvas sont sauvegardés dans pdf_builder_settings
-        $all_settings = get_option('pdf_builder_settings', []);
+        $all_settings = get_option('pdf_builder_settings', array());
 // Extraire seulement les paramètres canvas
         $canvas_settings = [];
         $canvas_keys = array_keys($this->default_settings);
@@ -203,7 +203,7 @@ class PdfBuilderCanvasManager
         // Valider les paramètres
         $validated_settings = $this->validateSettings($settings);
 // Récupérer tous les paramètres existants
-        $all_settings = get_option('pdf_builder_settings', []);
+        $all_settings = get_option('pdf_builder_settings', array());
 // Mettre à jour seulement les paramètres canvas
         $updated_settings = array_merge($all_settings, $validated_settings);
 // Sauvegarder

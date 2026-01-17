@@ -1690,7 +1690,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         }
 
         // Obtenir les paramètres existants
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
 
         // Mettre à jour le paramètre spécifique
         $settings[$setting_key] = $setting_value;

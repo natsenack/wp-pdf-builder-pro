@@ -37,7 +37,7 @@ class PDF_Builder_Predefined_Templates_Manager
     {
         // Menu déplacé dans PDF_Builder_Admin.php pour contrôler l'ordre
         // Vérifier si le Mode Développeur est activé
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         
         // N'ajouter le menu que si le Mode Développeur est activé
         if (!empty($settings['pdf_builder_developer_enabled'])) {
@@ -126,14 +126,14 @@ class PDF_Builder_Predefined_Templates_Manager
      */
     private function isDeveloperAuthenticated()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         if (empty($settings['pdf_builder_developer_enabled'])) {
             return false;
         }
         // Vérifier l'authentification développeur stockée en option
         $user_id = get_current_user_id();
         $dev_auth_key = 'pdf_builder_dev_auth_' . $user_id;
-        $auth_data = get_option($dev_auth_key, []);
+        $auth_data = get_option($dev_auth_key, array());
         
         // Vérifier si l'authentification a expiré (1 heure)
         if (!empty($auth_data['timestamp']) && (time() - $auth_data['timestamp']) < 3600) {
@@ -174,7 +174,7 @@ class PDF_Builder_Predefined_Templates_Manager
             }
             
 
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             
             
             if (empty($settings['pdf_builder_developer_enabled'])) {
@@ -262,7 +262,7 @@ class PDF_Builder_Predefined_Templates_Manager
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
         // Vérifier l'authentification développeur
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         if (empty($settings['pdf_builder_developer_enabled'])) {
             ?>
             <div class="wrap">

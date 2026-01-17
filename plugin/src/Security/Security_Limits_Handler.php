@@ -53,7 +53,7 @@ class Security_Limits_Handler
      */
     public static function validateUploadSize($size)
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $max_template_size = isset($settings['max_template_size'])
             ? intval($settings['max_template_size'])
             : 52428800;
@@ -72,7 +72,7 @@ class Security_Limits_Handler
      */
     public static function validateTemplateSize($template_data)
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $max_template_size = isset($settings['max_template_size'])
             ? intval($settings['max_template_size'])
             : 52428800;
@@ -99,7 +99,7 @@ class Security_Limits_Handler
      */
     public static function getLimitsInfo()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         return [
             'max_execution_time' => isset($settings['max_execution_time'])
                 ? intval($settings['max_execution_time'])

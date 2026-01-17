@@ -673,7 +673,7 @@ class AjaxHandler
     {
         // Créer un backup avant modification
         $backup_key = 'pdf_builder_backup_' . time();
-        $existing_settings = get_option('pdf_builder_settings', []);
+        $existing_settings = get_option('pdf_builder_settings', array());
         update_option($backup_key, $existing_settings, false);
 
         // Nettoyer automatiquement les anciens backups (garder seulement les 5 derniers)
@@ -795,7 +795,7 @@ class AjaxHandler
         }
 
         // Sauvegarder
-        $existing_settings = get_option('pdf_builder_settings', []);
+        $existing_settings = get_option('pdf_builder_settings', array());
         $updated_settings = array_merge($existing_settings, $general_settings);
         $saved = update_option('pdf_builder_settings', $updated_settings);
 
@@ -833,7 +833,7 @@ class AjaxHandler
         }
 
         // Sauvegarder
-        $existing_settings = get_option('pdf_builder_settings', []);
+        $existing_settings = get_option('pdf_builder_settings', array());
         $updated_settings = array_merge($existing_settings, $performance_settings);
         $saved = update_option('pdf_builder_settings', $updated_settings);
 
@@ -853,7 +853,7 @@ class AjaxHandler
      */
     private function handleGetSettings()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         wp_send_json_success([
             'settings' => $settings,
             'action' => 'get_settings'
@@ -1095,7 +1095,7 @@ class AjaxHandler
                 $result = $wpdb->get_row("CHECK TABLE {$wpdb->prefix}{$table}");
                 $checks[$table] = $result ? $result->Msg_text : 'OK';
             }
-            $checks['options_accessible'] = is_array(get_option('pdf_builder_settings', []));
+            $checks['options_accessible'] = is_array(get_option('pdf_builder_settings', array()));
             $all_ok = array_filter($checks, function($v) {
                 return $v === true || $v === 'OK' || strpos($v, 'OK') === 0;
             });
@@ -1346,7 +1346,7 @@ class AjaxHandler
             }
 
             // Récupérer les paramètres existants
-            $existing_settings = get_option('pdf_builder_settings', []);
+            $existing_settings = get_option('pdf_builder_settings', array());
 
             // Fusionner avec les nouveaux paramètres
             $updated_settings = array_merge($existing_settings, $settings_to_save);
@@ -1599,7 +1599,7 @@ class AjaxHandler
             }
 
             // Récupérer les paramètres
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             
             $orientations = [
                 'allowPortrait' => isset($settings['pdf_builder_canvas_allow_portrait']) && $settings['pdf_builder_canvas_allow_portrait'] === '1',
@@ -1713,7 +1713,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleCleanupLicense - Starting cleanup process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             error_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings));
             error_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings)));
 
@@ -1769,7 +1769,7 @@ class AjaxHandler
             }
 
             // Vérifier que les clés ont bien été supprimées
-            $updated_settings = get_option('pdf_builder_settings', []);
+            $updated_settings = get_option('pdf_builder_settings', array());
             $remaining_license_keys = array_filter(array_keys($updated_settings), function($key) {
                 return strpos($key, 'pdf_builder_license') === 0;
             });
@@ -1797,7 +1797,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleToggleLicenseTestMode - Starting toggle process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $current_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
 
             // Basculer le mode
@@ -1811,7 +1811,7 @@ class AjaxHandler
             wp_cache_flush();
 
             // Vérifier que la sauvegarde a bien fonctionné
-            $verify_settings = get_option('pdf_builder_settings', []);
+            $verify_settings = get_option('pdf_builder_settings', array());
             $verify_mode = $verify_settings['pdf_builder_license_test_mode'] ?? 'NOT_SET';
             error_log('[PDF Builder] handleToggleLicenseTestMode - VERIFICATION: saved=' . $new_mode . ' retrieved=' . $verify_mode);
 
@@ -1841,7 +1841,7 @@ class AjaxHandler
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $settings['pdf_builder_license_test_key'] = $test_key;
 
             // Sauvegarder
@@ -1870,7 +1870,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleDeleteLicenseKey - Starting deletion process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $old_key = $settings['pdf_builder_license_test_key'] ?? '';
 
             if (isset($settings['pdf_builder_license_test_key'])) {
@@ -1902,7 +1902,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleValidateLicenseKey - Starting validation process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', []);
+            $settings = get_option('pdf_builder_settings', array());
             $test_key = $settings['pdf_builder_license_test_key'] ?? '';
 
             if (empty($test_key)) {

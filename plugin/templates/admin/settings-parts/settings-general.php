@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     /**
      * Paramètres Généraux - PDF Builder Pro (Version compressée)
      * Onglet principal des paramètres généraux avec informations entreprise

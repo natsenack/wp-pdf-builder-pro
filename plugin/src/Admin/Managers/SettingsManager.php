@@ -139,7 +139,7 @@ class SettingsManager
      */
     public function renderCompanyInfoField()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $company_name = $settings['pdf_builder_company_name'] ?? '';
         $company_address = $settings['pdf_builder_company_address'] ?? '';
         $company_phone = $settings['pdf_builder_company_phone'] ?? '';
@@ -186,7 +186,7 @@ class SettingsManager
      */
     public function renderCacheField()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $enable_cache = $settings['pdf_builder_cache_enabled'] ?? '1';
         $cache_timeout = $settings['pdf_builder_cache_ttl'] ?? 3600;
 
@@ -214,7 +214,7 @@ class SettingsManager
      */
     public function renderPerformanceLimitsField()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $compression_level = $settings['pdf_builder_compression_level'] ?? 6;
         $memory_limit = $settings['pdf_builder_memory_limit'] ?? 256;
         $max_execution_time = $settings['pdf_builder_max_execution_time'] ?? 30;
@@ -343,7 +343,7 @@ class SettingsManager
      */
     public function renderCanvasDisplayDimensionsField()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         $allow_portrait = $settings['pdf_builder_canvas_allow_portrait'] ?? '1';
         $allow_landscape = $settings['pdf_builder_canvas_allow_landscape'] ?? '1';
         $default_orientation = $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait';
@@ -380,7 +380,7 @@ class SettingsManager
      */
     private function getGeneralSettings()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         return [
             'company_name' => $settings['pdf_builder_company_name'] ?? '',
             'company_address' => $settings['pdf_builder_company_address'] ?? '',
@@ -400,7 +400,7 @@ class SettingsManager
      */
     private function getPerformanceSettings()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         return [
             'enable_cache' => ($settings['pdf_builder_cache_enabled'] ?? '0') === '1',
             'cache_timeout' => intval($settings['pdf_builder_cache_ttl'] ?? 3600),
@@ -415,7 +415,7 @@ class SettingsManager
      */
     private function getCanvasSettings()
     {
-        $settings = get_option('pdf_builder_settings', []);
+        $settings = get_option('pdf_builder_settings', array());
         return [
             'format' => $settings['pdf_builder_canvas_canvas_format'] ?? 'A4',
             'orientation' => $settings['pdf_builder_canvas_canvas_orientation'] ?? 'portrait',
