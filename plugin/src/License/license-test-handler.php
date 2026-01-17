@@ -404,15 +404,24 @@ class LicenseTestHandler
         }
 
         try {
+            // Vérifier si le mode test est actif
+            $settings = get_option('pdf_builder_settings', []);
+            $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
+
 // Options à supprimer
             $options = [
                 'pdf_builder_license_status',
                 'pdf_builder_license_key',
                 'pdf_builder_license_expires',
                 'pdf_builder_license_activated_at',
-                'pdf_builder_license_test_mode_enabled',
-                'pdf_builder_license_test_key'
+                'pdf_builder_license_test_mode_enabled'
             ];
+
+            // Ne supprimer la clé de test que si le mode test n'est pas actif
+            if ($test_mode_enabled !== '1') {
+                $options[] = 'pdf_builder_license_test_key';
+            }
+
             foreach ($options as $option) {
                 delete_option($option);
             }
