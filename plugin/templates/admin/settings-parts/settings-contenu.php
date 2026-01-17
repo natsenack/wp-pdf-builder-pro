@@ -551,7 +551,11 @@
                             'gridEnabled': 'pdf_builder_canvas_grid_enabled',
                             'gridSize': 'pdf_builder_canvas_grid_size',
                             'guidesEnabled': 'pdf_builder_canvas_guides_enabled',
-                            'snapToGrid': 'pdf_builder_canvas_snap_to_grid'
+                            'snapToGrid': 'pdf_builder_canvas_snap_to_grid',
+                            'shadowEnabled': 'pdf_builder_canvas_shadow_enabled',
+                            'debugEnabled': 'pdf_builder_canvas_debug_enabled',
+                            'performanceMonitoring': 'pdf_builder_canvas_performance_monitoring',
+                            'errorReporting': 'pdf_builder_canvas_error_reporting'
                         };
 
                         // Pour chaque setting, trouver l'input correspondant et le mettre à jour
@@ -701,22 +705,47 @@
                                     
                                     // Mettre à jour les paramètres dans window.pdfBuilderCanvasSettings
                                     if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
+                                        // Mapping des noms d'input vers les clés settings (camelCase)
+                                        var inputToSettingMap = {
+                                            'pdf_builder_canvas_drag_enabled': 'dragEnabled',
+                                            'pdf_builder_canvas_resize_enabled': 'resizeEnabled',
+                                            'pdf_builder_canvas_rotate_enabled': 'rotateEnabled',
+                                            'pdf_builder_canvas_multi_select': 'multiSelect',
+                                            'pdf_builder_canvas_selection_mode': 'selectionMode',
+                                            'pdf_builder_canvas_keyboard_shortcuts': 'keyboardShortcuts',
+                                            'pdf_builder_canvas_export_quality': 'exportQuality',
+                                            'pdf_builder_canvas_export_format': 'exportFormat',
+                                            'pdf_builder_canvas_export_transparent': 'exportTransparent',
+                                            'pdf_builder_canvas_grid_enabled': 'gridEnabled',
+                                            'pdf_builder_canvas_grid_size': 'gridSize',
+                                            'pdf_builder_canvas_guides_enabled': 'guidesEnabled',
+                                            'pdf_builder_canvas_snap_to_grid': 'snapToGrid',
+                                            'pdf_builder_canvas_shadow_enabled': 'shadowEnabled',
+                                            'pdf_builder_canvas_debug_enabled': 'debugEnabled',
+                                            'pdf_builder_canvas_performance_monitoring': 'performanceMonitoring',
+                                            'pdf_builder_canvas_error_reporting': 'errorReporting'
+                                        };
+                                        
                                         // Créer une copie des données pour la conversion (sans modifier canvasData utilisé pour AJAX)
                                         var settingsUpdate = {};
                                         Object.keys(canvasData).forEach(function(key) {
-                                            var settingKey = key.replace('pdf_builder_canvas_', '');
-                                            var value = canvasData[key];
-                                            
-                                            // Convertir les valeurs '1'/'0' en boolean pour les paramètres booléens
-                                            if (['drag_enabled', 'resize_enabled', 'rotate_enabled', 'multi_select', 'keyboard_shortcuts', 'grid_enabled', 'guides_enabled', 'snap_to_grid', 'shadow_enabled', 'debug_enabled', 'performance_monitoring', 'error_reporting'].includes(settingKey)) {
-                                                value = value === '1';
+                                            var settingKey = inputToSettingMap[key];
+                                            if (settingKey) {
+                                                var value = canvasData[key];
+                                                
+                                                // Convertir les valeurs '1'/'0' en boolean pour les paramètres booléens
+                                                if (['dragEnabled', 'resizeEnabled', 'rotateEnabled', 'multiSelect', 'keyboardShortcuts', 'gridEnabled', 'guidesEnabled', 'snapToGrid', 'shadowEnabled', 'debugEnabled', 'performanceMonitoring', 'errorReporting'].includes(settingKey)) {
+                                                    value = value === '1';
+                                                }
+                                                
+                                                settingsUpdate[settingKey] = value;
                                             }
-                                            
-                                            settingsUpdate[settingKey] = value;
                                         });
                                         
                                         // Mettre à jour window.pdfBuilderCanvasSettings avec les nouvelles valeurs
                                         Object.assign(window.pdfBuilderCanvasSettings, settingsUpdate);
+                                        
+                                        console.log('[PDF Builder] Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
                                         
                                         // Dispatcher l'événement pour notifier React
                                         var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
