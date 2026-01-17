@@ -117,19 +117,28 @@
              * Bascule la section avancée dans l'onglet PDF
              */
             toggleAdvancedSection: function() {
+                console.log('toggleAdvancedSection called');
                 var advancedSection = document.getElementById('advanced-section');
                 var toggleIcon = document.getElementById('advanced-toggle');
 
+                console.log('advancedSection element:', advancedSection);
+                console.log('toggleIcon element:', toggleIcon);
+
                 if (advancedSection && toggleIcon) {
+                    console.log('Current advancedSection classList:', advancedSection.classList.toString());
                     if (advancedSection.classList.contains('hidden-element')) {
                         // Afficher la section
                         advancedSection.classList.remove('hidden-element');
                         toggleIcon.textContent = '▲';
+                        console.log('Section shown, icon set to ▲');
                     } else {
                         // Masquer la section
                         advancedSection.classList.add('hidden-element');
                         toggleIcon.textContent = '▼';
+                        console.log('Section hidden, icon set to ▼');
                     }
+                } else {
+                    console.error('Elements not found - advancedSection:', !!advancedSection, 'toggleIcon:', !!toggleIcon);
                 }
             },
 
