@@ -649,6 +649,74 @@
                         });
                     }
 
+                    // Fonction pour récupérer les paramètres canvas depuis le serveur
+                    function fetchCanvasSettings(callback) {
+                        console.log('[PDF Builder] Fetching latest canvas settings from server...');
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_ajax_handler',
+                                action_type: 'get_canvas_settings',
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
+                            },
+                            success: function(response) {
+                                console.log('[PDF Builder] Canvas settings fetch response:', response);
+                                if (response.success && response.data.canvas_settings) {
+                                    // Mettre à jour window.pdfBuilderCanvasSettings avec les valeurs du serveur
+                                    var serverSettings = response.data.canvas_settings;
+                                    window.pdfBuilderCanvasSettings = {
+                                        width: parseInt(serverSettings.pdf_builder_canvas_width || '794'),
+                                        height: parseInt(serverSettings.pdf_builder_canvas_height || '1123'),
+                                        dpi: serverSettings.pdf_builder_canvas_dpi || '96',
+                                        format: serverSettings.pdf_builder_canvas_format || 'A4',
+                                        bgColor: serverSettings.pdf_builder_canvas_bg_color || '#ffffff',
+                                        borderColor: serverSettings.pdf_builder_canvas_border_color || '#cccccc',
+                                        borderWidth: parseInt(serverSettings.pdf_builder_canvas_border_width || '1'),
+                                        containerBgColor: serverSettings.pdf_builder_canvas_container_bg_color || '#f8f9fa',
+                                        shadowEnabled: serverSettings.pdf_builder_canvas_shadow_enabled === '1',
+                                        gridEnabled: serverSettings.pdf_builder_canvas_grid_enabled === '1',
+                                        gridSize: parseInt(serverSettings.pdf_builder_canvas_grid_size || '20'),
+                                        guidesEnabled: serverSettings.pdf_builder_canvas_guides_enabled === '1',
+                                        snapToGrid: serverSettings.pdf_builder_canvas_snap_to_grid === '1',
+                                        zoomMin: parseInt(serverSettings.pdf_builder_canvas_zoom_min || '25'),
+                                        zoomMax: parseInt(serverSettings.pdf_builder_canvas_zoom_max || '500'),
+                                        zoomDefault: parseInt(serverSettings.pdf_builder_canvas_zoom_default || '100'),
+                                        zoomStep: parseInt(serverSettings.pdf_builder_canvas_zoom_step || '25'),
+                                        exportQuality: parseInt(serverSettings.pdf_builder_canvas_export_quality || '90'),
+                                        exportFormat: serverSettings.pdf_builder_canvas_export_format || 'png',
+                                        exportTransparent: serverSettings.pdf_builder_canvas_export_transparent === '1',
+                                        dragEnabled: serverSettings.pdf_builder_canvas_drag_enabled === '1',
+                                        resizeEnabled: serverSettings.pdf_builder_canvas_resize_enabled === '1',
+                                        rotateEnabled: serverSettings.pdf_builder_canvas_rotate_enabled === '1',
+                                        multiSelect: serverSettings.pdf_builder_canvas_multi_select === '1',
+                                        selectionMode: serverSettings.pdf_builder_canvas_selection_mode || 'single',
+                                        keyboardShortcuts: serverSettings.pdf_builder_canvas_keyboard_shortcuts === '1',
+                                        fpsTarget: parseInt(serverSettings.pdf_builder_canvas_fps_target || '60'),
+                                        memoryLimitJs: parseInt(serverSettings.pdf_builder_canvas_memory_limit_js || '50'),
+                                        responseTimeout: parseInt(serverSettings.pdf_builder_canvas_response_timeout || '5000'),
+                                        lazyLoadingEditor: serverSettings.pdf_builder_canvas_lazy_loading_editor === '1',
+                                        preloadCritical: serverSettings.pdf_builder_canvas_preload_critical === '1',
+                                        lazyLoadingPlugin: serverSettings.pdf_builder_canvas_lazy_loading_plugin === '1',
+                                        debugEnabled: serverSettings.pdf_builder_canvas_debug_enabled === '1',
+                                        performanceMonitoring: serverSettings.pdf_builder_canvas_performance_monitoring === '1',
+                                        errorReporting: serverSettings.pdf_builder_canvas_error_reporting === '1',
+                                        memoryLimitPhp: parseInt(serverSettings.pdf_builder_canvas_memory_limit_php || '128')
+                                    };
+                                    console.log('[PDF Builder] Updated window.pdfBuilderCanvasSettings with server data:', window.pdfBuilderCanvasSettings);
+                                    if (callback) callback();
+                                } else {
+                                    console.error('[PDF Builder] Failed to fetch canvas settings:', response);
+                                    if (callback) callback();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('[PDF Builder] Error fetching canvas settings:', error);
+                                if (callback) callback();
+                            }
+                        });
+                    }
+
                     // Fonction simple pour ouvrir une modal
                     function openModal(category) {
                         console.log('[PDF Builder] openModal called with category:', category);
@@ -662,12 +730,15 @@
                         var modal = document.getElementById(modalId);
                         console.log('[PDF Builder] Modal element found:', modal);
                         if (modal) {
-                            // Synchroniser les inputs avec les valeurs actuelles avant d'ouvrir
-                            syncModalInputsWithSettings(modal, category);
-                            console.log('[PDF Builder] Setting modal display to flex');
-                            modal.style.display = 'flex';
-                            document.body.style.overflow = 'hidden';
-                            console.log('[PDF Builder] Opened modal:', modalId);
+                            // Récupérer les dernières valeurs depuis le serveur avant d'ouvrir
+                            fetchCanvasSettings(function() {
+                                // Synchroniser les inputs avec les valeurs actuelles après récupération
+                                syncModalInputsWithSettings(modal, category);
+                                console.log('[PDF Builder] Setting modal display to flex');
+                                modal.style.display = 'flex';
+                                document.body.style.overflow = 'hidden';
+                                console.log('[PDF Builder] Opened modal:', modalId);
+                            });
                         } else {
                             console.error('[PDF Builder] Modal not found:', modalId);
                             console.log('[PDF Builder] Available modal IDs:');
