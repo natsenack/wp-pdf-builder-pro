@@ -3,34 +3,11 @@
  * Styles nettoyés et cohérents avec le système de design du plugin
  */
 
-/* Variables cohérentes avec le reste du plugin */
-:root {
-    --pdf-primary: #0066cc;
-    --pdf-secondary: #f0f0f0;
-    --pdf-border: #ddd;
-    --pdf-text: #333;
-    --pdf-text-light: #666;
-    --pdf-error: #dc3545;
-    --pdf-success: #28a745;
-    --pdf-warning: #ffc107;
+/* Import des variables globales */
+@import url('variables.css');
 
-    /* Espacements cohérents */
-    --spacing-xs: 8px;
-    --spacing-sm: 12px;
-    --spacing-md: 16px;
-    --spacing-lg: 20px;
-    --spacing-xl: 25px;
-
-    /* Rayons de bordure cohérents */
-    --border-radius-sm: 4px;
-    --border-radius-md: 6px;
-    --border-radius-lg: 8px;
-
-    /* Ombres cohérentes */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
 
 /* Styles globaux pour l'admin */
 .pdf-builder-admin {
@@ -391,37 +368,6 @@
     color: #666;
     margin-bottom: 20px;
     line-height: 1.5;
-}
-
-.action-card .button {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 500;
-    
-}
-
-.action-card .button-primary {
-    background: #2271b1;
-    color: white;
-    border: 1px solid #2271b1;
-}
-
-.action-card .button-primary:hover {
-    background: #135e96;
-    border-color: #135e96;
-}
-
-.action-card .button-secondary {
-    background: white;
-    color: #2271b1;
-    border: 1px solid #2271b1;
-}
-
-.action-card .button-secondary:hover {
-    background: #2271b1;
-    color: white;
 }
 
 .dashboard-guide {

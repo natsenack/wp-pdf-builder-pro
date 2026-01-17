@@ -3,31 +3,14 @@
  * Design cohérent et nettoyé pour une expérience utilisateur uniforme
  */
 
-/* Variables de couleur et espacement du plugin */
-:root {
-    --pdf-primary: #0066cc;
-    --pdf-secondary: #f0f0f0;
-    --pdf-border: #ddd;
-    --pdf-text: #333;
-    --pdf-text-light: #666;
-    --pdf-hover: #0052a3;
-    --pdf-active-bg: #f8f9f9;
+/* Import des variables globales */
+@import url('variables.css');
 
-    /* Espacements cohérents */
-    --spacing-xs: 8px;
-    --spacing-sm: 12px;
-    --spacing-md: 16px;
-    --spacing-lg: 20px;
-    --spacing-xl: 25px;
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
 
-    /* Rayons de bordure cohérents */
-    --border-radius-sm: 4px;
-    --border-radius-md: 6px;
-    --border-radius-lg: 8px;
-
-    /* Transitions cohérentes */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
+/* Import des styles de formulaires centralisés */
+@import url('forms.css');
 
     /* Ombres cohérentes */
     --shadow-sm: 0 1px 3px rgba(0, 102, 204, 0.1);
@@ -149,94 +132,6 @@
 
 .form-table td {
     padding: var(--spacing-sm) 0;
-}
-
-/* Styles cohérents pour tous les champs de formulaire */
-.form-table input[type="text"],
-.form-table input[type="password"],
-.form-table input[type="email"],
-.form-table input[type="number"],
-.form-table select {
-    max-width: 350px;
-    width: 100%;
-    padding: var(--spacing-xs) var(--spacing-md);
-    border: 2px solid var(--pdf-border);
-    border-radius: var(--border-radius-sm);
-    font-size: 14px;
-    transition: var(--transition-normal);
-}
-
-.form-table textarea {
-    max-width: 350px;
-    width: 100%;
-    padding: var(--spacing-xs) var(--spacing-md);
-    border: 2px solid var(--pdf-border);
-    border-radius: var(--border-radius-sm);
-    font-size: 14px;
-    min-height: 80px;
-    resize: vertical;
-    transition: var(--transition-normal);
-}
-
-/* États focus cohérents pour tous les champs */
-.form-table input[type="text"]:focus,
-.form-table input[type="password"]:focus,
-.form-table input[type="email"]:focus,
-.form-table input[type="number"]:focus,
-.form-table select:focus,
-.form-table textarea:focus {
-    outline: none;
-    border-color: var(--pdf-primary);
-    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-}
-
-/* Styles cohérents pour les boutons */
-.button-primary {
-    background: var(--pdf-primary);
-    border: 2px solid var(--pdf-primary);
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 600;
-    margin: 0;
-    padding: var(--spacing-xs) var(--spacing-md);
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: var(--border-radius-sm);
-    transition: var(--transition-normal);
-    box-shadow: var(--shadow-sm);
-}
-
-.button-primary:hover,
-.button-primary:focus {
-    background: var(--pdf-hover);
-    border-color: var(--pdf-hover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-}
-
-.button-secondary {
-    background: white;
-    border: 2px solid var(--pdf-border);
-    color: var(--pdf-text);
-    cursor: pointer;
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 500;
-    margin: 0 0 0 var(--spacing-sm);
-    padding: var(--spacing-xs) var(--spacing-md);
-    text-decoration: none;
-    vertical-align: top;
-    border-radius: var(--border-radius-sm);
-    transition: var(--transition-normal);
-}
-
-.button-secondary:hover,
-.button-secondary:focus {
-    background: var(--pdf-secondary);
-    border-color: var(--pdf-primary);
-    color: var(--pdf-primary);
 }
 
 /* Styles cohérents pour les messages */

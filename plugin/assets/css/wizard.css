@@ -1,3 +1,9 @@
+/* Import des variables globales */
+@import url('variables.css');
+
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
+
 .pdf-builder-wizard {
     max-width: 900px;
     margin: 20px auto;
@@ -309,28 +315,6 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.wizard-footer .button-primary {
-    background: #3b82f6;
-    border-color: #3b82f6;
-    color: white;
-}
-
-.wizard-footer .button-primary:hover {
-    background: #2563eb;
-    border-color: #2563eb;
-}
-
-.wizard-footer .button-secondary {
-    background: #fff;
-    border-color: #c3c4c7;
-    color: #3c434a;
-}
-
-.wizard-footer .button-secondary:hover {
-    background: #f6f7f7;
-    border-color: #a7aaad;
 }
 
 /* Responsive */

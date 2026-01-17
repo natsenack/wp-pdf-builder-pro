@@ -2,6 +2,15 @@
  * Styles CSS pour l'interface RGPD de PDF Builder Pro
  */
 
+/* Import des variables globales */
+@import url('variables.css');
+
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
+
+/* Import des styles de formulaires centralisés */
+@import url('forms.css');
+
 /* Styles généraux pour la page RGPD */
 .wrap.gdpr-page {
     max-width: 1200px;
@@ -304,43 +313,6 @@ input:checked + .toggle-slider:before {
     color: #666;
     font-size: 0.9em;
     margin-top: 5px;
-}
-
-/* Styles pour les boutons */
-.button-primary {
-    background: #007cba !important;
-    border-color: #007cba !important;
-    color: #fff !important;
-    text-decoration: none;
-    text-shadow: none;
-    box-shadow: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 0.9em;
-    line-height: 1.2;
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-.button-primary:hover {
-    background: #005a87 !important;
-    border-color: #005a87 !important;
-}
-
-.button-secondary {
-    background: #f7f7f7 !important;
-    border-color: #ccc !important;
-    color: #23282d !important;
-    box-shadow: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 0.9em;
-    line-height: 1.2;
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-.button-secondary:hover {
-    background: #e8e8e8 !important;
-    border-color: #999 !important;
 }
 
 .button-danger {

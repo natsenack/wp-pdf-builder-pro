@@ -1,6 +1,12 @@
 /* License Settings Tab Styles */
 /* Styles spécifiques à l'onglet Licence du plugin WP PDF Builder Pro */
 
+/* Import des variables globales */
+@import url('variables.css');
+
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
+
 .settings-page-title {
     margin: 0 0 30px 0;
     color: #23282d;
@@ -199,39 +205,6 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-}
-
-.license-action-buttons .button {
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.license-action-buttons .button-primary {
-    background: #007cba;
-    border: 1px solid #007cba;
-    color: white;
-}
-
-.license-action-buttons .button-primary:hover {
-    background: #005a87;
-    border-color: #005a87;
-}
-
-.license-action-buttons .button-secondary {
-    background: #f8f9fa;
-    border: 1px solid #ccc;
-    color: #23282d;
-}
-
-.license-action-buttons .button-secondary:hover {
-    background: #e9ecef;
-    border-color: #adb5bd;
 }
 
 /* License Form */

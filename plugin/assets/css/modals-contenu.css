@@ -27,6 +27,11 @@
     --modal-animation-duration: 0.3s;
 }
 
+/* Import des variables et styles globales */
+@import url('variables.css');
+@import url('buttons.css');
+@import url('forms.css');
+
 /* ============================================
    CACHE MODALS STYLES
    ============================================ */

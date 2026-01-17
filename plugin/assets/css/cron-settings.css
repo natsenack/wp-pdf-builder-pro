@@ -3,34 +3,11 @@
  * Styles nettoyés et cohérents avec le système de design du plugin
  */
 
-/* Variables cohérentes avec le reste du plugin */
-:root {
-    --pdf-primary: #0066cc;
-    --pdf-secondary: #f0f0f0;
-    --pdf-border: #ddd;
-    --pdf-text: #333;
-    --pdf-text-light: #666;
-    --pdf-error: #dc3545;
-    --pdf-success: #28a745;
-    --pdf-warning: #ffc107;
+/* Import des variables globales */
+@import url('variables.css');
 
-    /* Espacements cohérents */
-    --spacing-xs: 8px;
-    --spacing-sm: 12px;
-    --spacing-md: 16px;
-    --spacing-lg: 20px;
-    --spacing-xl: 25px;
-
-    /* Rayons de bordure cohérents */
-    --border-radius-sm: 4px;
-    --border-radius-md: 6px;
-    --border-radius-lg: 8px;
-
-    /* Ombres cohérentes */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
 
 .pdf-builder-cron-diagnostics {
     margin: var(--spacing-md) 0;
@@ -161,50 +138,6 @@
 
 .cron-results-section h3:before {
     content: "📋 ";
-    margin-right: 4px;
-}
-
-/* Cron Actions Buttons */
-.cron-actions-section .button {
-    margin-right: var(--spacing-xs);
-    margin-bottom: var(--spacing-xs);
-    padding: 6px var(--spacing-sm);
-    border-radius: var(--border-radius-sm);
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.cron-actions-section .button-secondary {
-    background: var(--pdf-secondary);
-    border: 1px solid #c7c7cc;
-    color: var(--pdf-text);
-}
-
-.cron-actions-section .button-secondary:hover {
-    background: #e9ecef;
-}
-
-.cron-actions-section .button-primary {
-    background: var(--pdf-primary);
-    border: 1px solid var(--pdf-primary);
-    color: white;
-}
-
-.cron-actions-section .button-primary:hover {
-    background: #005a87;
-}
-
-.cron-actions-section .button:disabled {
-    background: var(--pdf-text-light);
-    color: white;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.cron-actions-section .button .dashicons {
-    vertical-align: middle;
     margin-right: 4px;
 }
 
