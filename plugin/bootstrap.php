@@ -1717,31 +1717,5 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
 // ============================================================================
 // ✅ CHARGER LE SCRIPT DE DIAGNOSTIC REST API
-// ============================================================================
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-diagnostic.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-diagnostic.php';
-}
-
-// ============================================================================
-// ✅ FORCER L'ACTIVATION DE L'API REST WORDPRESS
-// ============================================================================
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-force-enable.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-force-enable.php';
-}
-
-// ============================================================================
-// ✅ DIAGNOSTIC APPROFONDI ET FALLBACK AJAX POUR API REST
-// ============================================================================
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-deep-diagnostic.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-deep-diagnostic.php';
-}
-
-// ============================================================================
-// ✅ RÉPARATION FORCÉE DU SERVEUR REST API
-// ============================================================================
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-server-fix.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-server-fix.php';
-}
-
 // FIN DU BOOTSTRAP
 // ============================================================================
