@@ -630,6 +630,13 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Sauvegarde tous les paramètres depuis les données POST aplaties
      */
+    private function save_all_settings() {
+        return $this->save_all_settings_from_flattened_data();
+    }
+
+    /**
+     * Sauvegarde tous les paramètres depuis les données POST aplaties
+     */
     private function save_all_settings_from_flattened_data() {
         $saved_count = 0;
         $settings = get_option('pdf_builder_settings', []);

@@ -537,4 +537,27 @@ class TemplateDefaults {
             ]
         ];
     }
+
+    /**
+     * Retourne un template par son slug
+     *
+     * @param string $slug Le slug du template
+     * @return array|null Les données du template ou null si non trouvé
+     */
+    public static function get_template_by_slug($slug) {
+        $free_templates = self::get_free_templates();
+        $premium_templates = self::get_premium_templates();
+
+        // Chercher dans les templates gratuits
+        if (isset($free_templates[$slug])) {
+            return $free_templates[$slug];
+        }
+
+        // Chercher dans les templates premium
+        if (isset($premium_templates[$slug])) {
+            return $premium_templates[$slug];
+        }
+
+        return null;
+    }
 }

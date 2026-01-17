@@ -11,6 +11,10 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée de la génération PDF
  */
 
+use Exception;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class PdfBuilderPdfGenerator
 {
     /**
@@ -45,7 +49,7 @@ class PdfBuilderPdfGenerator
     /**
      * AJAX - Télécharger PDF
      */
-    public function ajaxDownloadPdf()
+    public function ajax_download_pdf()
     {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
@@ -119,8 +123,8 @@ class PdfBuilderPdfGenerator
         $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
         // Créer les options Dompdf pour éviter l'erreur de dépréciation (version corrigée)
-        $options = new Dompdf\Options();
-        $dompdf = new Dompdf\Dompdf($options);
+        $options = new Options();
+        $dompdf = new Dompdf($options);
         $dompdf->set_option('isRemoteEnabled', true);
         $dompdf->set_option('isHtml5ParserEnabled', true);
         $dompdf->set_option('defaultFont', 'Arial');
@@ -451,8 +455,8 @@ class PdfBuilderPdfGenerator
             $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
-            $options = new Dompdf\Options();
-            $dompdf = new Dompdf\Dompdf($options);
+            $options = new Options();
+            $dompdf = new Dompdf($options);
             $dompdf->set_option('isRemoteEnabled', true);
             $dompdf->set_option('isHtml5ParserEnabled', true);
             $dompdf->set_option('defaultFont', 'Arial');
@@ -507,7 +511,7 @@ class PdfBuilderPdfGenerator
     /**
      * Sauvegarder le PDF généré sur le disque
      *
-     * @param Dompdf\Dompdf $dompdf Instance Dompdf
+     * @param Dompdf $dompdf Instance Dompdf
      * @param string $filename Nom du fichier
      * @return string|false Chemin du fichier ou false en cas d'erreur
      */
@@ -556,7 +560,7 @@ class PdfBuilderPdfGenerator
             $pdf_path = $this->generatePdf($html, $filename);
 
             return [
-                'success' => $pdf_path !== false,
+                'success' => !empty($pdf_path) && is_string($pdf_path),
                 'path' => $pdf_path,
                 'html' => $html
             ];

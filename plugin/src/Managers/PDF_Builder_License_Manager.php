@@ -125,7 +125,7 @@ class PDF_Builder_License_Manager
         }
 
         // Validation de la licence (simulation - à remplacer par appel API réel)
-        $result = $this->validate_license($license_key);
+        $result = $this->validateLicense($license_key);
 
         if ($result['success']) {
             update_option('pdf_builder_license_key', $license_key);
@@ -218,7 +218,7 @@ class PDF_Builder_License_Manager
         $now = time();
 
         if ($now - $last_check > 86400) {
-            $result = $this->validate_license($this->license_key);
+            $result = $this->validateLicense($this->license_key);
 
             if (!$result['success']) {
                 update_option('pdf_builder_license_status', 'expired');

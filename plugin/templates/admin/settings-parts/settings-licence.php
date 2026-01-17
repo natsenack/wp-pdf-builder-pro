@@ -690,5 +690,8 @@
             </section>
 
                     <!-- JavaScript AJAX déplacé vers settings-main.php pour éviter les conflits -->
-
-
+                    <script type="text/javascript">
+                        // Nonce for license deactivation
+                        window.pdfBuilderLicense = window.pdfBuilderLicense || {};
+                        window.pdfBuilderLicense.deactivateNonce = '<?php echo wp_create_nonce("pdf_builder_deactivate"); ?>';
+                    </script>
