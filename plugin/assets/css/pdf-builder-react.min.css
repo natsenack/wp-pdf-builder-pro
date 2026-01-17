@@ -1992,15 +1992,6 @@ html, body {
   padding: 20px;
 }
 
-/* PROPERTIES PANEL */
-.pdf-builder-properties {
-  width: 280px;
-  background: white;
-  border-left: 1px solid var(--border-color);
-  overflow-y: auto;
-  padding: 12px;
-}
-
 /* TOOLBAR */
 .pdf-builder-toolbar {
   display: flex;
