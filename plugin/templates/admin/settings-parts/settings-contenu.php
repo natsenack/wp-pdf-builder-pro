@@ -603,6 +603,29 @@
                             success: function(response) {
                                 if (response.success) {
                                     console.log('[PDF Builder] Paramètres canvas sauvegardés:', response.data);
+                                    
+                                    // Mettre à jour les paramètres dans window.pdfBuilderCanvasSettings
+                                    if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
+                                        // Convertir les valeurs sauvegardées pour correspondre au format React
+                                        Object.keys(canvasData).forEach(function(key) {
+                                            var settingKey = key.replace('pdf_builder_canvas_', '');
+                                            var value = canvasData[key];
+                                            
+                                            // Convertir les valeurs '1'/'0' en boolean pour les paramètres booléens
+                                            if (['drag_enabled', 'resize_enabled', 'rotate_enabled', 'multi_select', 'keyboard_shortcuts', 'grid_enabled', 'guides_enabled', 'snap_to_grid'].includes(settingKey)) {
+                                                value = value === '1';
+                                            }
+                                            
+                                            window.pdfBuilderCanvasSettings[settingKey] = value;
+                                            console.log('[PDF Builder] Updated window setting:', settingKey, '=', value);
+                                        });
+                                        
+                                        // Dispatcher l'événement pour notifier React
+                                        var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
+                                        window.dispatchEvent(event);
+                                        console.log('[PDF Builder] Dispatched pdfBuilderCanvasSettingsUpdated event');
+                                    }
+                                    
                                     // Afficher une notification de succès
                                     showNotification('Paramètres sauvegardés avec succès !', 'success');
                                 } else {

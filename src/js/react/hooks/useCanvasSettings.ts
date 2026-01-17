@@ -80,12 +80,12 @@ export const useCanvasSettings = () => {
             fetchSettings();
         }
 
-        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+        window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
         window.addEventListener('storage', handleStorageChange);
 
         return () => {
             isMounted = false;
-            window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+            window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []); // Dépendances vides pour un seul appel au montage
