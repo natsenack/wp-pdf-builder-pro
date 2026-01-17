@@ -104,12 +104,8 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     <script>
                     console.log('Setting up advanced section toggle handler...');
 
-                    var retryCount = 0;
-                    var maxRetries = 30; // Increased to 30 attempts (6 seconds)
-
                     function attachToggleHandler() {
-                        retryCount++;
-                        console.log('Attempt', retryCount, 'of', maxRetries);
+                        console.log('Attaching toggle handler...');
 
                         var toggleElement = document.getElementById('advanced-section-toggle');
                         console.log('Toggle element:', toggleElement ? 'found' : 'NOT FOUND');
@@ -119,6 +115,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                             console.log('toggleAdvancedSection function:', typeof window.PDFBuilderTabsAPI.toggleAdvancedSection);
                         } else {
                             console.log('PDFBuilderTabsAPI: NOT FOUND');
+                            return false;
                         }
 
                         if (toggleElement && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
@@ -126,29 +123,24 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                 console.log('Toggle clicked - calling API');
                                 window.PDFBuilderTabsAPI.toggleAdvancedSection();
                             });
-                            console.log('✅ Handler attached successfully on attempt', retryCount);
-                        } else if (retryCount >= maxRetries) {
-                            console.error('❌ Failed to attach handler after', maxRetries, 'attempts');
-                            console.error('Final state:', {
-                                toggleElement: !!toggleElement,
-                                PDFBuilderTabsAPI: !!window.PDFBuilderTabsAPI,
-                                toggleFunction: !!(window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.toggleAdvancedSection)
-                            });
-                        } else {
-                            console.log('⏳ Retrying in 200ms... (attempt', retryCount + 1, 'of', maxRetries, ')');
-                            setTimeout(attachToggleHandler, 200);
+                            console.log('✅ Handler attached successfully');
+                            return true;
                         }
+                        return false;
                     }
 
-                    // Wait for DOM to be fully loaded before starting
-                    if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', function() {
-                            // Add a small delay to ensure scripts are loaded
-                            setTimeout(attachToggleHandler, 100);
-                        });
+                    // Listen for the API ready event
+                    jQuery(document).on('PDFBuilderTabsAPIReady', function() {
+                        console.log('PDFBuilderTabsAPIReady event received');
+                        attachToggleHandler();
+                    });
+
+                    // Fallback: try to attach immediately if API is already available
+                    if (window.PDFBuilderTabsAPI) {
+                        console.log('PDFBuilderTabsAPI already available, attaching immediately');
+                        attachToggleHandler();
                     } else {
-                        // DOM is already loaded
-                        setTimeout(attachToggleHandler, 100);
+                        console.log('Waiting for PDFBuilderTabsAPIReady event...');
                     }
                     </script>
 

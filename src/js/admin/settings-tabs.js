@@ -42,6 +42,10 @@ window.PDFBuilderTabsAPI = {
 
 console.log('PDFBuilderTabsAPI defined at script load time');
 
+// Trigger custom event to signal API is ready
+$(document).trigger('PDFBuilderTabsAPIReady');
+console.log('PDFBuilderTabsAPIReady event triggered');
+
 (function($) {
     'use strict';
 
