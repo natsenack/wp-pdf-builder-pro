@@ -165,10 +165,11 @@
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
                         <!-- Carte Affichage (fusion Dimensions + Apparence) -->
-                        <article class="canvas-card" data-category="affichage">
+                        <article class="canvas-card premium-card" data-category="affichage">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🎨</span>
+                                    <span class="premium-badge">PREMIUM</span>
                                 </div>
                                 <h4>Affichage & Dimensions</h4>
                             </header>
@@ -202,8 +203,8 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>⚙️</span> Configurer
+                                <button type="button" class="canvas-configure-btn" disabled>
+                                    <span>🔒</span> Premium requis
                                 </button>
                             </footer>
                         </article>
