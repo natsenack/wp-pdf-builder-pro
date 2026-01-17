@@ -690,7 +690,7 @@
                             <?php endif; ?>
 
                             <!-- Indicateur de mode test -->
-                            <?php if (!empty($test_key)): ?>
+                            <?php if ($is_test_mode): ?>
                                 <div class="test-mode-banner">
                                     <span class="test-icon">🧪</span>
                                     <span class="test-text">Mode Développement Actif</span>
