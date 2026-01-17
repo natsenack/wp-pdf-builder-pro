@@ -4,7 +4,42 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder Settings] Main settings initialized - checking if on license tab');
+    console.log('[PDF Builder Settings] Main settings initialized');
+
+    // Define global functions immediately for modal control
+    window.closeDeactivateModal = function() {
+        $('#deactivate_modal').hide();
+    };
+
+    window.showDeactivateModal = function() {
+        $('#deactivate_modal').show();
+    };
+
+    window.deactivateLicense = function() {
+        // Create and submit a form to deactivate the license
+        var form = $('<form>', {
+            'method': 'POST',
+            'action': window.location.href
+        });
+
+        // Add required fields
+        form.append($('<input>', {
+            'type': 'hidden',
+            'name': 'deactivate_license',
+            'value': '1'
+        }));
+
+        // Add nonce for deactivation
+        form.append($('<input>', {
+            'type': 'hidden',
+            'name': 'pdf_builder_deactivate_nonce',
+            'value': (window.pdfBuilderLicense && window.pdfBuilderLicense.deactivateNonce) ? window.pdfBuilderLicense.deactivateNonce : ''
+        }));
+
+        // Submit the form
+        $('body').append(form);
+        form.submit();
+    };
 
     // Only initialize modal functionality if we're on the license tab
     var currentUrl = window.location.href;
@@ -44,40 +79,5 @@
             }
         });
     }
-
-    // Global functions for modal control
-    window.closeDeactivateModal = function() {
-        $('#deactivate_modal').hide();
-    };
-
-    window.showDeactivateModal = function() {
-        $('#deactivate_modal').show();
-    };
-
-    window.deactivateLicense = function() {
-        // Create and submit a form to deactivate the license
-        var form = $('<form>', {
-            'method': 'POST',
-            'action': window.location.href
-        });
-
-        // Add required fields
-        form.append($('<input>', {
-            'type': 'hidden',
-            'name': 'deactivate_license',
-            'value': '1'
-        }));
-
-        // Add nonce for deactivation
-        form.append($('<input>', {
-            'type': 'hidden',
-            'name': 'pdf_builder_deactivate_nonce',
-            'value': (window.pdfBuilderLicense && window.pdfBuilderLicense.deactivateNonce) ? window.pdfBuilderLicense.deactivateNonce : ''
-        }));
-
-        // Submit the form
-        $('body').append(form);
-        form.submit();
-    };
 
 })(jQuery);
