@@ -104,11 +104,6 @@
 
                 <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
-                <!-- Indicateur de monitoring -->
-                <div class="monitoring-indicator" style="position: absolute; top: 10px; right: 10px; font-size: 12px; color: #666; opacity: 0.7;">
-                    <span id="monitoring-status">🔍 Monitoring actif</span>
-                </div>
-
                 <?php error_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields"); ?>
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
                 <!-- DEBUG: Hidden fields rendering started -->
@@ -279,7 +274,7 @@
                         <article class="canvas-card" data-category="comportement">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">�</span>
+                                    <span class="canvas-card-icon">🎯</span>
                                 </div>
                                 <h4>Comportement & Export</h4>
                             </header>

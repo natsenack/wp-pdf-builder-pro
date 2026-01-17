@@ -581,7 +581,7 @@
                 <!-- Actions -->
                 <section class="templates-status-actions">
                     <button type="button" class="button button-secondary" onclick="PDFBuilderTabsAPI.resetTemplatesStatus()">
-                        🔄 Réinitialiser
+                        🔄 Réinitialiser les paramètres
                     </button>
                     <p class="description" style="margin-top: 10px; color: #666;">
                         💡 Utilisez le bouton "Enregistrer" flottant en bas de page pour sauvegarder vos modifications.

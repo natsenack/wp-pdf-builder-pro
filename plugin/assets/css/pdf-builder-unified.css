@@ -7841,7 +7841,6 @@ input:checked + .toggle-slider:before {
 }
 
 .contenu-canvas-section h3:before {
-    content: "🖼️ ";
     margin-right: 6px;
 }
 
