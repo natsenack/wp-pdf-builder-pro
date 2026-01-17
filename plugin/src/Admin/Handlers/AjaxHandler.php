@@ -1649,6 +1649,10 @@ class AjaxHandler
             }
 
             error_log('PDF Builder - Canvas settings to save: ' . print_r($canvas_settings, true));
+            error_log('PDF Builder - Navigation params in canvas_settings:');
+            error_log('  pdf_builder_canvas_grid_enabled: ' . ($canvas_settings['pdf_builder_canvas_grid_enabled'] ?? 'NOT_SET'));
+            error_log('  pdf_builder_canvas_guides_enabled: ' . ($canvas_settings['pdf_builder_canvas_guides_enabled'] ?? 'NOT_SET'));
+            error_log('  pdf_builder_canvas_snap_to_grid: ' . ($canvas_settings['pdf_builder_canvas_snap_to_grid'] ?? 'NOT_SET'));
 
             if (empty($canvas_settings)) {
                 wp_send_json_error(['message' => 'Aucune donnée canvas valide à sauvegarder']);

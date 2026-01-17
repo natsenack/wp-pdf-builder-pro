@@ -665,6 +665,10 @@
                         });
 
                         console.log('[PDF Builder] Canvas data to save:', canvasData);
+                        console.log('[PDF Builder] Navigation params in canvasData:');
+                        console.log('  grid_enabled:', canvasData['pdf_builder_canvas_grid_enabled']);
+                        console.log('  guides_enabled:', canvasData['pdf_builder_canvas_guides_enabled']);
+                        console.log('  snap_to_grid:', canvasData['pdf_builder_canvas_snap_to_grid']);
                         console.log('[PDF Builder] Total inputs found:', inputs.length);
 
                         if (Object.keys(canvasData).length === 0) {
