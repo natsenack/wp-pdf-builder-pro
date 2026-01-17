@@ -30,8 +30,7 @@ module.exports = {
     path: outputPath,
     filename: "[name].min.js",
     library: {
-      type: "umd",
-      name: "pdfBuilderReact",
+      type: "window",
     },
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: true,
