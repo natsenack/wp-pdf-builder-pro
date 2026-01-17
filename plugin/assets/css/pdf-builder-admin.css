@@ -1,242 +1,174 @@
-/* PDF Builder Pro Admin Styles */
-/* Cross-browser compatibility with vendor prefixes */
+/**
+ * PDF Builder Pro Admin Styles
+ * Styles nettoyés et cohérents avec le système de design du plugin
+ */
 
-/* PDF Preview Modal Styles */
+/* Variables cohérentes avec le reste du plugin */
+:root {
+    --pdf-primary: #0066cc;
+    --pdf-secondary: #f0f0f0;
+    --pdf-border: #ddd;
+    --pdf-text: #333;
+    --pdf-text-light: #666;
+    --pdf-error: #dc3545;
+    --pdf-success: #28a745;
+    --pdf-warning: #ffc107;
+
+    /* Espacements cohérents */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
+    /* Rayons de bordure cohérents */
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+
+    /* Ombres cohérentes */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* PDF Preview Modal Styles - Nettoyés et modernes */
 .pdf-preview-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
-  justify-content: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  -o-justify-content: center;
-  z-index: 10000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
 }
 
 .pdf-preview-modal-content {
-  background: white;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -ms-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -o-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  max-width: 90vw;
-  max-height: 90vh;
-  width: 800px;
-  height: 600px;
-  display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  -moz-flex-direction: column;
-  -ms-flex-direction: column;
-  -o-flex-direction: column;
-  overflow: hidden;
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-modal);
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 800px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .pdf-preview-modal-header {
-  display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  justify-content: space-between;
-  -webkit-justify-content: space-between;
-  -moz-justify-content: space-between;
-  -ms-justify-content: space-between;
-  -o-justify-content: space-between;
-  align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e1e1e1;
-  background: rgba(219, 234, 254, 0.9);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--pdf-border);
+    background: rgba(219, 234, 254, 0.9);
 }
 
 .pdf-preview-modal-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--pdf-text);
 }
 
 .pdf-preview-modal-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #4b5563;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
-  justify-content: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  -o-justify-content: center;
-  border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  transition: background-color 0.2s;
-  -webkit-transition: background-color 0.2s;
-  -moz-transition: background-color 0.2s;
-  -o-transition: background-color 0.2s;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--pdf-text-light);
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-sm);
+    transition: background-color 0.2s;
 }
 
 .pdf-preview-modal-close:hover {
-  background-color: #e9ecef;
-  color: #333;
+    background-color: var(--pdf-secondary);
+    color: var(--pdf-text);
 }
 
 .pdf-preview-modal-body {
-  flex: 1;
-  -webkit-flex: 1;
-  -moz-flex: 1;
-  -ms-flex: 1;
-  -o-flex: 1;
-  overflow: auto;
-  padding: 20px;
-  background: #fff;
+    flex: 1;
+    overflow: auto;
+    padding: var(--spacing-lg);
+    background: #fff;
 }
 
 .pdf-preview-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  -moz-flex-direction: column;
-  -ms-flex-direction: column;
-  -o-flex-direction: column;
-  align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
-  justify-content: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  -o-justify-content: center;
-  z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
 }
 
 .pdf-preview-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3b82f6;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-  animation: spin 1s linear infinite;
-  -webkit-animation: spin 1s linear infinite;
-  -moz-animation: spin 1s linear infinite;
-  -o-animation: spin 1s linear infinite;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--pdf-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); -webkit-transform: rotate(0deg); -moz-transform: rotate(0deg); -ms-transform: rotate(0deg); -o-transform: rotate(0deg); }
-  100% { transform: rotate(360deg); -webkit-transform: rotate(360deg); -moz-transform: rotate(360deg); -ms-transform: rotate(360deg); -o-transform: rotate(360deg); }
-}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@-moz-keyframes spin {
-  0% { -moz-transform: rotate(0deg); }
-  100% { -moz-transform: rotate(360deg); }
-}
-
-@-o-keyframes spin {
-  0% { -o-transform: rotate(0deg); }
-  100% { -o-transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .pdf-preview-error {
-  text-align: center;
-  padding: 40px 20px;
-  color: #721c24;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  margin: 20px 0;
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: var(--border-radius-sm);
+    margin: var(--spacing-lg) 0;
 }
 
 .pdf-preview-error p {
-  margin: 0 0 10px 0;
-  font-weight: bold;
+    margin: 0 0 var(--spacing-sm) 0;
+    font-weight: bold;
 }
 
 .error-message {
-  font-family: monospace;
-  background: #fff;
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #dee2e6;
-  word-break: break-all;
+    font-family: monospace;
+    background: #fff;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid #dee2e6;
+    word-break: break-all;
 }
 
 .pdf-preview-error-close {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 15px;
+    background: var(--pdf-error);
+    color: white;
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    margin-top: var(--spacing-md);
+    transition: background-color 0.2s;
 }
 
 .pdf-preview-error-close:hover {
-  background: #c82333;
+    background: #c82333;
 }
 
 /* Masquer les notifications WordPress et autres plugins dans le PDF Builder */

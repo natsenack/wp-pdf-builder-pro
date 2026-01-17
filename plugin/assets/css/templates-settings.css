@@ -1,17 +1,48 @@
-/* Templates Settings Tab Styles */
-/* Styles simplifiés pour l'onglet Templates */
+/**
+ * PDF Builder Templates Settings CSS
+ * Styles nettoyés et cohérents avec le système de design du plugin
+ */
+
+/* Variables cohérentes avec le reste du plugin */
+:root {
+    --pdf-primary: #0066cc;
+    --pdf-secondary: #f0f0f0;
+    --pdf-border: #ddd;
+    --pdf-text: #333;
+    --pdf-text-light: #666;
+    --pdf-error: #dc3545;
+    --pdf-success: #28a745;
+    --pdf-warning: #ffc107;
+
+    /* Espacements cohérents */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
+    /* Rayons de bordure cohérents */
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+
+    /* Ombres cohérentes */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 .templates-status-wrapper {
-    margin: 16px 0;
+    margin: var(--spacing-md) 0;
 }
 
 .templates-status-wrapper .notice {
-    margin: 0 0 16px 0;
-    padding: 10px 14px;
-    border-left: 4px solid #dba617;
+    margin: 0 0 var(--spacing-md) 0;
+    padding: calc(var(--spacing-sm) * 1.25) var(--spacing-md);
+    border-left: 4px solid var(--pdf-warning);
     background: #fef9e6;
-    color: #dba617;
-    border-radius: 4px;
+    color: var(--pdf-warning);
+    border-radius: var(--border-radius-sm);
 }
 
 .templates-status-wrapper .notice p {
@@ -23,27 +54,27 @@
 .templates-status-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 16px;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
 }
 
 .template-status-card {
     background: #fff;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
-    padding: 16px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md);
 }
 
 .custom-status-card {
-    border-color: #00a32a;
+    border-color: var(--pdf-success);
     background: #f8fff9;
 }
 
 .custom-status-card .custom-status-indicator {
     display: inline-block;
-    margin-bottom: 8px;
+    margin-bottom: var(--spacing-xs);
     padding: 3px 6px;
-    background: #00a32a;
+    background: var(--pdf-success);
     color: white;
     font-size: 10px;
     font-weight: 500;
@@ -54,13 +85,13 @@
 
 /* Template Selector */
 .template-selector {
-    margin-top: 12px;
+    margin-top: var(--spacing-sm);
 }
 
 .template-selector label {
     display: block;
     font-weight: 500;
-    color: #1e1e1e;
+    color: var(--pdf-text);
     margin-bottom: 6px;
     font-size: 14px;
 }
@@ -69,32 +100,32 @@
     width: 100%;
     padding: 6px 10px;
     border: 1px solid #c7c7cc;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     background: #fff;
     font-size: 14px;
-    color: #1e1e1e;
+    color: var(--pdf-text);
 }
 
 .template-select:focus {
-    border-color: #007cba;
+    border-color: var(--pdf-primary);
     outline: none;
 }
 
 /* Template Preview */
 .template-preview {
-    margin-top: 12px;
-    padding: 10px;
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
-    border-radius: 4px;
-    min-height: 32px;
+    margin-top: var(--spacing-sm);
+    padding: calc(var(--spacing-sm) * 1.25);
+    background: var(--pdf-secondary);
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
+    min-height: calc(var(--spacing-xl) * 1.25);
     display: flex;
     align-items: center;
 }
 
 .current-template {
     margin: 0;
-    color: #00a32a;
+    color: var(--pdf-success);
     font-weight: 500;
     font-size: 14px;
 }
@@ -106,7 +137,7 @@
 
 .no-template {
     margin: 0;
-    color: #d63638;
+    color: var(--pdf-error);
     font-weight: 500;
     font-size: 14px;
 }
@@ -118,17 +149,17 @@
 
 /* Templates Status Actions */
 .templates-status-actions {
-    margin-top: 24px;
-    padding: 16px;
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
-    border-radius: 4px;
+    margin-top: calc(var(--spacing-lg) * 1.5);
+    padding: var(--spacing-md);
+    background: var(--pdf-secondary);
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
 }
 
 .templates-status-actions .button {
-    margin-right: 8px;
-    padding: 6px 12px;
-    border-radius: 4px;
+    margin-right: var(--spacing-xs);
+    padding: 6px var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
     font-size: 14px;
     text-decoration: none;
     display: inline-block;
@@ -136,9 +167,9 @@
 }
 
 .templates-status-actions .button-secondary {
-    background: #f8f9fa;
+    background: var(--pdf-secondary);
     border: 1px solid #c7c7cc;
-    color: #1e1e1e;
+    color: var(--pdf-text);
 }
 
 .templates-status-actions .button-secondary:hover {
@@ -146,20 +177,20 @@
 }
 
 .templates-status-actions .description {
-    margin: 8px 0 0 0;
-    color: #646970;
+    margin: var(--spacing-xs) 0 0 0;
+    color: var(--pdf-text-light);
     font-size: 12px;
     line-height: 1.4;
 }
 
 /* Status Card Header */
 .template-status-card h4 {
-    margin: 0 0 12px 0;
-    color: #1e1e1e;
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--pdf-text);
     font-size: 16px;
     font-weight: 600;
-    border-bottom: 1px solid #e1e5e9;
-    padding-bottom: 8px;
+    border-bottom: 1px solid var(--pdf-border);
+    padding-bottom: var(--spacing-xs);
 }
 
 .template-status-card h4:before {
@@ -169,13 +200,13 @@
 
 /* Error States */
 .template-status-card.error {
-    border-color: #d63638;
+    border-color: var(--pdf-error);
     background: #fff5f5;
 }
 
 /* Success States */
 .template-status-card.success {
-    border-color: #00a32a;
+    border-color: var(--pdf-success);
     background: #f8fff9;
 }
 
