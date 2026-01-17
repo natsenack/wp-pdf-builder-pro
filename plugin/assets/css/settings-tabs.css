@@ -1,0 +1,211 @@
+/**
+ * PDF Builder Pro - Styles des onglets de paramètres avec les couleurs du plugin
+ * Design cohérent et nettoyé pour une expérience utilisateur uniforme
+ */
+
+/* Import des variables globales */
+@import url('variables.css');
+
+/* Import des styles de boutons centralisés */
+@import url('buttons.css');
+
+/* Import des styles de formulaires centralisés */
+@import url('forms.css');
+
+    /* Ombres cohérentes */
+    --shadow-sm: 0 1px 3px rgba(0, 102, 204, 0.1);
+    --shadow-md: 0 2px 8px rgba(0, 102, 204, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+/* Styles pour les onglets WordPress - Design cohérent avec le plugin */
+.nav-tab-wrapper {
+    background: var(--pdf-secondary);
+    border-bottom: 2px solid var(--pdf-primary);
+    margin-bottom: var(--spacing-xl);
+    padding: 0;
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.nav-tab {
+    display: inline-block;
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--pdf-text-light);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+}
+
+.nav-tab:hover {
+    color: var(--pdf-primary);
+    background: rgba(0, 102, 204, 0.05);
+}
+
+.nav-tab:active {
+    background-color: var(--pdf-active-bg);
+    transform: translateY(1px);
+}
+
+.nav-tab.nav-tab-active,
+.nav-tab.nav-tab-active:hover {
+    color: var(--pdf-primary);
+    border-bottom-color: var(--pdf-primary);
+    background: white;
+    font-weight: 600;
+}
+
+.nav-tab.nav-tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--pdf-primary);
+    border-radius: 2px 2px 0 0;
+}
+
+.nav-tab:focus {
+    outline: 2px solid var(--pdf-primary);
+    outline-offset: 2px;
+}
+
+/* Styles pour le contenu des onglets */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Styles pour les sections dans les onglets */
+.tab-section {
+    background: white;
+    border: 2px solid var(--pdf-border);
+    border-top: 4px solid var(--pdf-primary);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.tab-section h3 {
+    border-bottom: 2px solid var(--pdf-primary);
+    margin: 0 0 var(--spacing-lg) 0;
+    padding-bottom: var(--spacing-sm);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--pdf-primary);
+}
+
+.tab-section h4 {
+    margin: var(--spacing-lg) 0 var(--spacing-sm) 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--pdf-text);
+    border-left: 3px solid var(--pdf-primary);
+    padding-left: var(--spacing-md);
+}
+
+/* Styles pour les formulaires dans les onglets */
+.form-table {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-table th {
+    font-weight: 600;
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 0;
+    text-align: left;
+    vertical-align: top;
+    width: 200px;
+    color: var(--pdf-text);
+    font-size: 14px;
+}
+
+.form-table td {
+    padding: var(--spacing-sm) 0;
+}
+
+/* Styles cohérents pour les messages */
+.notice {
+    background: white;
+    border-left: 4px solid var(--pdf-primary);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.notice-success {
+    border-left-color: #28a745;
+    background: linear-gradient(90deg, #f8fff9 0%, #ffffff 100%);
+}
+
+.notice-error {
+    border-left-color: #dc3545;
+    background: linear-gradient(90deg, #fff8f8 0%, #ffffff 100%);
+}
+
+.notice-warning {
+    border-left-color: #ffc107;
+    background: linear-gradient(90deg, #fffef8 0%, #ffffff 100%);
+}
+
+.notice-info {
+    border-left-color: var(--pdf-primary);
+    background: linear-gradient(90deg, #f8fbff 0%, #ffffff 100%);
+}
+
+/* Styles responsives cohérents */
+@media screen and (max-width: 782px) {
+    .nav-tab-wrapper {
+        margin-bottom: var(--spacing-lg);
+        border-radius: 0;
+    }
+
+    .nav-tab {
+        display: block;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid var(--pdf-border);
+        padding: var(--spacing-md);
+        text-align: left;
+        font-size: 15px;
+    }
+
+    .nav-tab:last-child {
+        border-bottom: none;
+    }
+
+    .nav-tab:hover {
+        background: rgba(0, 102, 204, 0.05);
+        border-left: 4px solid var(--pdf-primary);
+        padding-left: var(--spacing-md);
+    }
+
+    .nav-tab.nav-tab-active {
+        background: white;
+        border-bottom-color: var(--pdf-primary);
+        border-left: 4px solid var(--pdf-primary);
+        padding-left: var(--spacing-md);
+        font-weight: 600;
+    }
+
+    .tab-section {
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-md);
+    }
+
+    .form-table th {
+        width: 150px;
+        font-size: 13px;
+    }
+}
