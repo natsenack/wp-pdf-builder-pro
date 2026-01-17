@@ -339,7 +339,7 @@ $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-wrap.min.js"
     "plugin/assets/js/pdf-builder-init.min.js"
     "plugin/assets/css/pdf-builder-react.min.css"
-    "plugin/assets/css/notifications-css.min.css"
+    "plugin/assets/css/notifications.min.css"
 )
 foreach ($criticalCompiledFile in $criticalCompiledFiles) {
     $criticalCompiledPath = Join-Path $WorkingDir $criticalCompiledFile
@@ -448,7 +448,7 @@ try {
         "plugin/assets/js/notifications.min.js"
         "plugin/assets/js/pdf-builder-wrap.min.js"
         "plugin/assets/js/pdf-builder-init.min.js"
-        "plugin/assets/css/notifications-css.min.css"
+        "plugin/assets/css/notifications.min.css"
     )
     foreach ($criticalFile in $criticalCompiledFiles) {
         if (Test-Path $criticalFile) {

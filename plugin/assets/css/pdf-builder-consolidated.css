@@ -401,6 +401,7 @@
 .cache-modal-container .form-group input[type="number"],
 .canvas-modal-container .form-group input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .cache-modal-container .form-group input[type="number"]::-webkit-outer-spin-button,
@@ -408,6 +409,7 @@
 .canvas-modal-container .form-group input[type="number"]::-webkit-outer-spin-button,
 .canvas-modal-container .form-group input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
@@ -443,7 +445,7 @@
     font-weight: var(--font-weight-medium);
     margin-top: var(--spacing-xs);
 } 
-﻿/**
+/**
  * PDF Builder Pro - Styles globaux pour l'administration WordPress
  * Styles nettoyés et cohérents avec le système de design du plugin
  */
@@ -524,7 +526,8 @@
 }
 
 .pdf-builder-collapsible-header .dashicons {
-    
+    transition: transform 0.3s ease;
+    transform: rotate(0deg);
 }
 
 .pdf-builder-collapsible-header.collapsed .dashicons {
@@ -972,6 +975,8 @@
 /* Import des styles de formulaires centralisés */
 @import url('forms.css');
 
+/* Variables CSS globales pour les ombres */
+:root {
     /* Ombres cohérentes */
     --shadow-sm: 0 1px 3px rgba(0, 102, 204, 0.1);
     --shadow-md: 0 2px 8px rgba(0, 102, 204, 0.15);
@@ -1169,7 +1174,7 @@
         font-size: 13px;
     }
 } 
-﻿/* PDF Builder Pro Settings Styles */
+/* PDF Builder Pro Settings Styles */
 
 /* === STYLES POUR L'EN-TÊTE === */
 .pdf-builder-header {
@@ -1500,7 +1505,11 @@
 
 /* === STYLES POUR LES SECTIONS MASQUABLES === */
 .collapsible-section {
-    /* Les styles d'affichage/masquage sont gérés par JavaScript */
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 /* === STYLES POUR LES DÉTAILS DE LICENCE === */
@@ -4293,13 +4302,14 @@ select option:disabled {
 /* Feedback visuel pour les interactions */
 .nav-tab:active {
     transform: translateY(1px);
-    
+    box-shadow: var(--shadow-sm);
 }
 
 /* Transition fluide pour les changements d'état */
 .tabs-transitioning .nav-tab,
 .tabs-transitioning .tab-content {
-    
+    pointer-events: none;
+    opacity: 0.7;
 }
 
 /* Indicateur de chargement pour les onglets */
@@ -4337,11 +4347,6 @@ select option:disabled {
 /* === ANIMATIONS FINALES ET TRANSITIONS FLUIDES === */
 
 /* Transitions globales pour tous les éléments interactifs */
-.nav-tab,
-.tab-content,
-.nav-tab-wrapper {
-    
-}
 
 /* Animation d'apparition progressive pour les onglets actifs */
 .tab-content.active {
@@ -4946,6 +4951,7 @@ select option:disabled {
 .slider-input {
     flex: 1;
     -webkit-appearance: none;
+    appearance: none;
     height: 6px;
     border-radius: 3px;
     background: #ddd;
@@ -8369,10 +8375,7 @@ input:checked + .toggle-slider:before {
 /* ============================================
    Modal styles moved to modals-contenu.css
    ============================================ */
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-} 
+
 /**
  * PDF Builder Developer Settings CSS
  *
@@ -13083,6 +13086,7 @@ input:checked + .toggle-slider:before {
 .cache-modal-container .form-group input[type="number"],
 .canvas-modal-container .form-group input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .cache-modal-container .form-group input[type="number"]::-webkit-outer-spin-button,
@@ -13090,6 +13094,7 @@ input:checked + .toggle-slider:before {
 .canvas-modal-container .form-group input[type="number"]::-webkit-outer-spin-button,
 .canvas-modal-container .form-group input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
@@ -15087,12 +15092,6 @@ input:checked + .toggle-slider:before {
 /* Animation fluide pour l'ouverture/fermeture */
 .accordion-content {
   transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
-
- 
-
 }
 
 /* Focus visible pour l'accessibilité */

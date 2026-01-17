@@ -218,11 +218,11 @@ class WooCommerceDataProvider implements DataProviderInterface
     /**
      * Récupère la valeur d'un champ pour un produit
      *
-     * @param \WC_Order_Item_Product $item Article de commande
+     * @param object $item Article de commande
      * @param string $field Champ demandé
      * @return string Valeur du champ
      */
-    private function getProductFieldValue(\WC_Order_Item_Product $item, string $field): string
+    private function getProductFieldValue(object $item, string $field): string
     {
         switch ($field) {
             case 'name':
@@ -230,7 +230,13 @@ class WooCommerceDataProvider implements DataProviderInterface
             case 'quantity':
                 return (string) $item->getQuantity();
             case 'price':
-                return $this->formatPrice($item->getTotal() / $item->getQuantity());
+                // Utiliser getSubtotal() pour obtenir le prix avant remises appliquées à l'article
+                $quantity = $item->getQuantity();
+                if ($quantity > 0) {
+                    $unitPrice = $item->getSubtotal() / $quantity;
+                    return $this->formatPrice($unitPrice);
+                }
+                return $this->formatPrice(0);
             case 'total':
                 return $this->formatPrice($item->getTotal());
             default:
@@ -271,9 +277,9 @@ class WooCommerceDataProvider implements DataProviderInterface
             case 'is_paid':
                 return $this->order->isPaid() ? 'true' : 'false';
             case 'currency_symbol':
-                return function_exists('get_woocommerce_currency_symbol') ? get_woocommerce_currency_symbol() : '$';
+                return $this->getCurrencySymbol();
             case 'currency_code':
-                return function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'USD';
+                return $this->getCurrencyCode();
             case 'tax_rate':
                 // Calcul du taux de TVA moyen (simplifié)
                 $taxes = $this->order->getTaxTotals();
@@ -548,5 +554,25 @@ class WooCommerceDataProvider implements DataProviderInterface
             return 'html';
         }
         return 'string';
+    }
+
+    /**
+     * Récupère le symbole de la devise de la commande
+     *
+     * @return string Symbole de la devise
+     */
+    private function getCurrencySymbol(): string
+    {
+        return \get_woocommerce_currency_symbol($this->order->getCurrency());
+    }
+
+    /**
+     * Récupère le code de la devise de la commande
+     *
+     * @return string Code de la devise
+     */
+    private function getCurrencyCode(): string
+    {
+        return \get_woocommerce_currency($this->order->getCurrency());
     }
 }
