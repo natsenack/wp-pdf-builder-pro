@@ -146,15 +146,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </button>
             <?php endif; ?>
 
-            <?php if ($is_premium): ?>
-                <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
-                    🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
-                </button>
-            <?php else: ?>
-                <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showUpgradeModal('gallery')">
-                    🎨 <?php _e('Parcourir les Modèles (Premium)', 'pdf-builder-pro'); ?>
-                </button>
-            <?php endif; ?>
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+            </button>
 
             <!-- DEBUG: Affichage temporaire du nombre de templates -->
             <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
@@ -878,13 +872,16 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
 });
 
 // Gestionnaire pour bouton galerie de modèles (uniquement premium)
-<?php if ($is_premium): ?>
 document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
     e.preventDefault();
-    // Ouvrir la galerie pour utilisateurs premium
-    document.getElementById('template-gallery-modal').style.display = 'flex';
+    <?php if ($is_premium): ?>
+        // Ouvrir la galerie pour utilisateurs premium
+        document.getElementById('template-gallery-modal').style.display = 'flex';
+    <?php else: ?>
+        // Montrer modal upgrade pour utilisateurs gratuits
+        showUpgradeModal('gallery');
+    <?php endif; ?>
 });
-<?php endif; ?>
 
 // Fermer modal au clic sur overlay ou bouton close
 document.addEventListener('click', function(e) {
@@ -1584,7 +1581,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var galleryBtn = document.getElementById('open-template-gallery');
     if (galleryBtn) {
         galleryBtn.addEventListener('click', function() {
-            document.getElementById('template-gallery-modal').style.display = 'flex';
+            <?php if ($is_premium): ?>
+                // Utilisateur premium : ouvrir la galerie
+                document.getElementById('template-gallery-modal').style.display = 'flex';
+            <?php else: ?>
+                // Utilisateur gratuit : ouvrir le modal d'upgrade
+                showUpgradeModal('gallery');
+            <?php endif; ?>
         });
     }
     
