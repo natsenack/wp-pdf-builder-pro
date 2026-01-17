@@ -44,13 +44,13 @@ function pdf_builder_load_settings_assets($hook) {
         <?php
     }, 1); // Priorité 1 pour s'exécuter très tôt
 
-    // ACTIVATION DES STYLES CSS PERSONNALISES
-    // Styles consolidés pour les paramètres du plugin PDF Builder Pro
+    // ACTIVATION DU CSS UNIFIÉ ULTIME
+    // Un SEUL fichier CSS contenant TOUT pour une performance maximale
 
-    // Charger le CSS consolidé (remplace tous les fichiers individuels)
+    // Charger le CSS unifié ultime (remplace TOUS les fichiers individuels)
     wp_enqueue_style(
-        'pdf-builder-consolidated',
-        PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-consolidated.css',
+        'pdf-builder-unified',
+        PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-unified.css',
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'
