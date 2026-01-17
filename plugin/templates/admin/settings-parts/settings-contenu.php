@@ -571,10 +571,12 @@
                             if (input.name && input.name.indexOf('pdf_builder_canvas_') === 0) {
                                 var value = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
                                 canvasData[input.name] = value;
+                                console.log('[PDF Builder] Collected input:', input.name, '=', value, 'type:', input.type);
                             }
                         });
 
                         console.log('[PDF Builder] Canvas data to save:', canvasData);
+                        console.log('[PDF Builder] Total inputs found:', inputs.length);
 
                         if (Object.keys(canvasData).length === 0) {
                             console.log('[PDF Builder] Aucune donnée canvas à sauvegarder');
