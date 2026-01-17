@@ -95,14 +95,14 @@ function pdf_builder_load_settings_assets($hook) {
     error_log('PDF Builder - Après wp_enqueue_script');
 
     // Charger le script principal des paramètres - seulement si le fichier existe
-    $settings_main_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-main.js';
+    $settings_main_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-main.min.js';
     if (file_exists($settings_main_js)) {
         wp_enqueue_script(
             'pdf-builder-settings-main',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.min.js',
             array('jquery'),
             PDF_BUILDER_VERSION . '-' . time(),
-            true // Chargé dans le footer
+            false // Chargé dans le header pour disponibilité immédiate
         );
 
         // Charger le script des paramètres canvas - seulement si le fichier existe et que settings-main est chargé
