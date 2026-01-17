@@ -101,16 +101,19 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     <script>
                     // Attach click handler for advanced section toggle
                     (function() {
-                        var toggleElement = document.getElementById('advanced-section-toggle');
-                        if (toggleElement) {
-                            toggleElement.addEventListener('click', function() {
-                                if (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
+                        function attachToggleHandler() {
+                            var toggleElement = document.getElementById('advanced-section-toggle');
+                            if (toggleElement && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
+                                toggleElement.addEventListener('click', function() {
                                     window.PDFBuilderTabsAPI.toggleAdvancedSection();
-                                } else {
-                                    console.error('PDFBuilderTabsAPI not available');
-                                }
-                            });
+                                });
+                                console.log('Advanced section toggle handler attached');
+                            } else {
+                                // Retry after a short delay if API not ready yet
+                                setTimeout(attachToggleHandler, 100);
+                            }
                         }
+                        attachToggleHandler();
                     })();
                     </script>
 
