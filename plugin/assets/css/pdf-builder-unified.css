@@ -1075,21 +1075,6 @@
     gap: 0;
 }
 
-.nav-tab {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px var(--spacing-md);
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--pdf-text-light);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
 .nav-tab:hover {
     color: var(--pdf-primary);
     border-bottom-color: rgba(0, 102, 204, 0.3);
@@ -1465,21 +1450,6 @@
     border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
 }
 
-.nav-tab {
-    display: inline-block;
-    padding: var(--spacing-md) var(--spacing-lg);
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    color: var(--pdf-text-light);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition-normal);
-    position: relative;
-}
 
 .nav-tab:hover {
     color: var(--pdf-primary);
@@ -2767,22 +2737,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.nav-tab {
-    border: 1px solid transparent;
-    background: transparent;
-    color: #64748b;
-    padding: 12px 20px;
-    text-decoration: none;
-    display: inline-block;
-    margin-right: 2px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-}
 
 .nav-tab:hover {
     background: #f8fafc;
