@@ -139,7 +139,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('template_limit')"
+                        onclick="showUpgradeModal('gallery')"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
@@ -174,7 +174,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                         $templates_count
                     ); ?>
                 </p>
-                <a href="#" onclick="showUpgradeModal('template_limit')" class="button button-primary">
+                <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
                     <span class="dashicons dashicons-star-filled"></span>
                     <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
                 </a>
