@@ -1,4 +1,10 @@
 ﻿<?php
+    // Log PHP pour vérifier que le fichier s'exécute
+    error_log('[PDF Builder] settings-main.php LOADED at line ' . __LINE__);
+    echo '<!-- PHP DEBUG: settings-main.php loaded at ' . current_time('H:i:s') . ' -->';
+?>
+
+<?php
     /**
      * Page principale des paramètres PDF Builder Pro
      *
