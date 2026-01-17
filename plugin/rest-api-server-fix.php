@@ -60,6 +60,44 @@ function pdf_builder_force_rest_server_init() {
 }
 
 /**
+ * Fix .htaccess rules for REST API
+ */
+function pdf_builder_fix_htaccess_rules() {
+    // Check if we can write to .htaccess
+    $htaccess_file = ABSPATH . '.htaccess';
+    if (!is_writable($htaccess_file)) {
+        return false;
+    }
+
+    $htaccess_content = file_get_contents($htaccess_file);
+
+    // Check if WordPress rewrite rules exist
+    if (strpos($htaccess_content, 'RewriteRule ^index\.php$ - [L]') === false) {
+        // Add basic WordPress rewrite rules
+        $rewrite_rules = "\n# BEGIN WordPress\n";
+        $rewrite_rules .= "<IfModule mod_rewrite.c>\n";
+        $rewrite_rules .= "RewriteEngine On\n";
+        $rewrite_rules .= "RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]\n";
+        $rewrite_rules .= "RewriteBase /\n";
+        $rewrite_rules .= "RewriteRule ^index\.php$ - [L]\n";
+        $rewrite_rules .= "RewriteCond %{REQUEST_FILENAME} !-f\n";
+        $rewrite_rules .= "RewriteCond %{REQUEST_FILENAME} !-d\n";
+        $rewrite_rules .= "RewriteRule . /index.php [L]\n";
+        $rewrite_rules .= "</IfModule>\n";
+        $rewrite_rules .= "# END WordPress\n";
+
+        // Add to .htaccess if not present
+        if (strpos($htaccess_content, '# BEGIN WordPress') === false) {
+            $htaccess_content .= $rewrite_rules;
+            file_put_contents($htaccess_file, $htaccess_content);
+            return 'rewrite_rules_added';
+        }
+    }
+
+    return true;
+}
+
+/**
  * Fix .htaccess rules for REST API access
  */
 function pdf_builder_fix_rest_api_htaccess() {
