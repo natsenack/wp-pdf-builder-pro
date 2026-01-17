@@ -8855,7 +8855,7 @@ input:checked + .toggle-slider:before {
     margin-bottom: 16px;
 }
 
-.pdf-section .form-table {
+.pdf-section {
     background: #fff;
     border: 1px solid #e1e5e9;
     border-radius: 6px;
@@ -8863,7 +8863,7 @@ input:checked + .toggle-slider:before {
     margin-top: 8px;
 }
 
-.pdf-section .form-table th {
+.pdf-section  {
     padding: 12px 8px 12px 0;
     font-weight: 500;
     color: #1e1e1e;
@@ -8872,7 +8872,7 @@ input:checked + .toggle-slider:before {
     font-size: 14px;
 }
 
-.pdf-section .form-table td {
+.pdf-section  {
     padding: var(--spacing-sm) 0;
     vertical-align: top;
 }
