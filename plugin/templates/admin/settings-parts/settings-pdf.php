@@ -140,8 +140,16 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                         }
                     }
 
-                    // Start immediately
-                    attachToggleHandler();
+                    // Wait for DOM to be fully loaded before starting
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Add a small delay to ensure scripts are loaded
+                            setTimeout(attachToggleHandler, 100);
+                        });
+                    } else {
+                        // DOM is already loaded
+                        setTimeout(attachToggleHandler, 100);
+                    }
                     </script>
 
                     <section id="advanced-section" class="hidden-element">
