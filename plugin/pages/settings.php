@@ -69,35 +69,6 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
         <?php endif; ?>
     </div>
 </div>
-
-<style>
-.nav-tab-wrapper {
-    border-bottom: 1px solid #ccc;
-    margin: 0 -20px 0 -20px;
-    padding: 0 20px;
-    background: #f1f1f1;
-}
-
-.nav-tab {
-    color: #0073aa;
-    cursor: pointer;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-bottom: 3px solid transparent;
-    display: inline-block;
-}
-
-.nav-tab:hover {
-    background-color: #fff;
-}
-
-.nav-tab.nav-tab-active {
-    color: #000;
-    border-bottom-color: #0073aa;
-    background-color: #fff;
-}
-
-.tab-content {
     background: white;
     padding: 20px;
     margin-top: 0;

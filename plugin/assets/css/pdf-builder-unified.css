@@ -4543,8 +4543,7 @@ select option:disabled {
 
 /* Transitions globales pour tous les éléments interactifs */
 .nav-tab,
-.tab-content,
-.nav-tab-wrapper {
+.tab-content {
     transition: all 0.3s ease-in-out;
 }
 
@@ -4652,8 +4651,7 @@ select option:disabled {
 
 /* Amélioration des performances avec will-change */
 .nav-tab,
-.tab-content,
-.nav-tab-wrapper {
+.tab-content {
     will-change: auto;
 }
 
