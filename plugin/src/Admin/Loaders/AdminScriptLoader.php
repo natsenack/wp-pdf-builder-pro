@@ -73,13 +73,16 @@ class AdminScriptLoader
             
             // Charger settings-tabs.min.js pour la page de paramètres spécifique, sinon settings-tabs-improved.js
             if ($hook === 'pdf-builder_page_pdf-builder-settings') {
-                wp_enqueue_script(
-                    'pdf-builder-settings-tabs',
-                    PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js',
-                    ['jquery'],
-                    PDF_BUILDER_PRO_VERSION,
-                    true
-                );
+                // Check if script is already enqueued to avoid conflicts
+                if (!wp_script_is('pdf-builder-settings-tabs', 'enqueued')) {
+                    wp_enqueue_script(
+                        'pdf-builder-settings-tabs',
+                        PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js',
+                        ['jquery'],
+                        PDF_BUILDER_PRO_VERSION,
+                        true
+                    );
+                }
             } else {
                 wp_enqueue_script(
                     'pdf-builder-settings-tabs',
