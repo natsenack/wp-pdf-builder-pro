@@ -18,15 +18,15 @@ window.PDFBuilderTabsAPI = {
     },
 
     toggleAdvancedSection: function() {
-        const $advancedSection = $('.pdf-advanced-settings');
-        const $toggleButton = $('.toggle-advanced-pdf');
+        const $advancedSection = $('#advanced-section');
+        const $toggleIcon = $('#advanced-toggle');
 
         if ($advancedSection.is(':visible')) {
             $advancedSection.slideUp();
-            $toggleButton.text('Afficher les paramètres avancés');
+            $toggleIcon.text('▶');
         } else {
             $advancedSection.slideDown();
-            $toggleButton.text('Masquer les paramètres avancés');
+            $toggleIcon.text('▼');
         }
     },
 
