@@ -60,8 +60,29 @@ function pdf_builder_force_rest_server_init() {
 }
 
 /**
- * Fix .htaccess rules for REST API
+ * Check if mod_rewrite is available
  */
+function pdf_builder_check_mod_rewrite() {
+    // Check if Apache modules function exists
+    if (function_exists('apache_get_modules')) {
+        $modules = apache_get_modules();
+        return in_array('mod_rewrite', $modules);
+    }
+
+    // Alternative check: try to detect via server signature
+    $server_software = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
+    if (stripos($server_software, 'apache') !== false) {
+        // For Apache, we assume mod_rewrite is available unless proven otherwise
+        // This is not 100% accurate but better than nothing
+        return true;
+    }
+
+    // Check via phpinfo (less reliable)
+    ob_start();
+    phpinfo(INFO_MODULES);
+    $phpinfo = ob_get_clean();
+    return stripos($phpinfo, 'mod_rewrite') !== false;
+}
 function pdf_builder_fix_htaccess_rules() {
     // Check if we can write to .htaccess
     $htaccess_file = ABSPATH . '.htaccess';
@@ -304,5 +325,6 @@ add_filter('pdf_builder_rest_api_diagnostic', function($results) {
     $results['server_tests'] = $server_tests;
     $results['htaccess_fixed'] = pdf_builder_fix_htaccess_rules();
     $results['rest_api_htaccess_fixed'] = pdf_builder_fix_rest_api_htaccess();
+    $results['mod_rewrite_enabled'] = pdf_builder_check_mod_rewrite();
     return $results;
 });
