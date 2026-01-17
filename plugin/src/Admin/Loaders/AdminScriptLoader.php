@@ -49,7 +49,7 @@ class AdminScriptLoader
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
         // Charger SETTINGS CSS et JS pour les pages settings
-        if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false) {
+        if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false || (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)) {
             error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook . ', page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
 
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
