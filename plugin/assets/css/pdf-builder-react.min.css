@@ -1720,41 +1720,6 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
  * PDF Builder Pro - Styles ultra-minimalistes pour les onglets de paramètres
  */
 
-/* Styles pour les onglets WordPress - Design ultra-minimal */
-.nav-tab-wrapper {
-    background: #f1f1f1;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding: 0;
-}
-
-.nav-tab {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #666;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.nav-tab:hover {
-    color: #0073aa;
-}
-
-.nav-tab.nav-tab-active,
-.nav-tab.nav-tab-active:hover {
-    color: #0073aa;
-    border-bottom-color: #0073aa;
-}
-
-.nav-tab:focus {
-    outline: none;
-}
 
 /* Styles pour le contenu des onglets */
 .tab-content {
