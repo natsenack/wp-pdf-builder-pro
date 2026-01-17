@@ -8875,6 +8875,7 @@ input:checked + .toggle-slider:before {
 .pdf-section  {
     padding: var(--spacing-sm) 0;
     vertical-align: top;
+    width: 100%;
 }
 
 .pdf-section .description {
