@@ -867,6 +867,51 @@
                 }
             });
         });
+
+        // Gestionnaire pour le bouton de nettoyage complet de la licence
+        $('#cleanup_license_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUS les paramètres de licence et réinitialiser complètement le plugin à l\'état libre.\n\nCette action est IRRÉVERSIBLE.\n\nÊtes-vous absolument sûr de vouloir continuer ?')) {
+                return;
+            }
+            
+            const $btn = $(this);
+            const $status = $('#cleanup_status');
+            const nonce = $('#cleanup_license_nonce').val();
+
+            // Désactiver le bouton pendant le nettoyage
+            $btn.prop('disabled', true).text('🧹 Nettoyage en cours...');
+            $status.html('<span style="color: #007cba;">Nettoyage complet en cours...</span>');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_cleanup_license',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<span style="color: #28a745;">✅ Nettoyage complet réussi ! Le plugin a été réinitialisé à l\'état libre.</span>');
+                        $btn.hide();
+                        // Recharger la page après 2 secondes pour voir les changements
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
+                }
+            });
+        });
     });
 })(jQuery);
 </script>

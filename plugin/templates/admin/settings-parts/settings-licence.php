@@ -554,34 +554,6 @@
                 }
                 </style>
 
-                <!-- Header avec titre et actions principales -->
-                <div class="license-header">
-                    <div class="license-header-content">
-                        <h2 class="license-main-title">
-                            <span class="license-icon">🔐</span>
-                            Gestion de la Licence
-                        </h2>
-                        <p class="license-subtitle">Gérez votre licence PDF Builder Pro et accédez aux fonctionnalités premium</p>
-                    </div>
-
-                    <!-- Actions rapides -->
-                    <div class="license-quick-actions">
-                        <?php if (!$is_premium): ?>
-                            <a href="#activate-section" class="btn-primary-large">
-                                <span class="btn-icon">🚀</span>
-                                Activer Premium
-                            </a>
-                        <?php else: ?>
-                            <button type="button" class="btn-secondary-large" onclick="showDeactivateModal()">
-                                <span class="btn-icon">🔓</span>
-                                Désactiver
-                            </button>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                
-
                 <?php
                     // Récupération des paramètres depuis le tableau unifié
                     $settings = get_option('pdf_builder_settings', []);
@@ -596,11 +568,12 @@
                     $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
                     $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
                     $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', '');
-                    // Email notifications removed — no UI or settings for license expiration notifications
-                    // is_premium si vraie licence OU si clé de test existe
-                    $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
-                    // is_test_mode si clé de test existe
+
+                    // Utiliser la méthode centralisée du License Manager pour déterminer si premium
+                    $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+                    $is_premium = $license_manager->isPremium();
                     $is_test_mode = !empty($test_key);
+
                     // DEBUG: Afficher les valeurs pour verifier
                     if (current_user_can('manage_options')) {
                         echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
@@ -647,6 +620,32 @@
                         }
                     }
                 ?>
+
+                <!-- Header avec titre et actions principales -->
+                <div class="license-header">
+                    <div class="license-header-content">
+                        <h2 class="license-main-title">
+                            <span class="license-icon">🔐</span>
+                            Gestion de la Licence
+                        </h2>
+                        <p class="license-subtitle">Gérez votre licence PDF Builder Pro et accédez aux fonctionnalités premium</p>
+                    </div>
+
+                    <!-- Actions rapides -->
+                    <div class="license-quick-actions">
+                        <?php if (!$is_premium): ?>
+                            <a href="#activate-section" class="btn-primary-large">
+                                <span class="btn-icon">🚀</span>
+                                Activer Premium
+                            </a>
+                        <?php else: ?>
+                            <button type="button" class="btn-secondary-large" onclick="showDeactivateModal()">
+                                <span class="btn-icon">🔓</span>
+                                Désactiver
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
                 <!-- Dashboard de statut principal -->
                 <div class="license-dashboard">
@@ -930,4 +929,92 @@
                         // Nonce for license deactivation
                         window.pdfBuilderLicense = window.pdfBuilderLicense || {};
                         window.pdfBuilderLicense.deactivateNonce = '<?php echo wp_create_nonce("pdf_builder_deactivate"); ?>';
+
+                        // Fonctions JavaScript inline pour les modals de licence
+                        function showDeactivateModal() {
+                            if (!document.getElementById('deactivate-modal-overlay')) {
+                                var modalHTML = `
+                                    <div id="deactivate-modal-overlay" class="canvas-modal-overlay" style="display: flex; z-index: 10002;">
+                                        <div class="canvas-modal-container" style="max-width: 450px;">
+                                            <div class="canvas-modal-header">
+                                                <h3>⚠️ Confirmer la désactivation</h3>
+                                                <button type="button" class="canvas-modal-close" onclick="closeDeactivateModal()">&times;</button>
+                                            </div>
+                                            <div class="canvas-modal-body" style="text-align: center; padding: 30px;">
+                                                <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+                                                <h4 style="margin-bottom: 15px; color: #23282d;">Êtes-vous sûr de vouloir désactiver la licence ?</h4>
+                                                <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">
+                                                    Cette action va :
+                                                </p>
+                                                <ul style="text-align: left; color: #666; margin: 0 0 25px 0; padding-left: 20px;">
+                                                    <li>Supprimer votre clé de licence</li>
+                                                    <li>Repasser en mode gratuit</li>
+                                                    <li>Perdre l'accès aux fonctionnalités premium</li>
+                                                </ul>
+                                                <div style="display: flex; gap: 10px; justify-content: center;">
+                                                    <button type="button" class="button button-secondary" onclick="closeDeactivateModal()" style="padding: 10px 20px;">Annuler</button>
+                                                    <button type="button" class="button button-danger" onclick="confirmDeactivateLicense()" style="padding: 10px 20px; background: #dc3545; border-color: #dc3545;">Désactiver</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                            } else {
+                                document.getElementById('deactivate-modal-overlay').style.display = 'flex';
+                            }
+                        }
+
+                        function closeDeactivateModal() {
+                            var modal = document.getElementById('deactivate-modal-overlay');
+                            if (modal) {
+                                modal.style.display = 'none';
+                            }
+                        }
+
+                        function confirmDeactivateLicense() {
+                            // Créer et soumettre un formulaire de désactivation
+                            var form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '';
+
+                            var nonceField = document.createElement('input');
+                            nonceField.type = 'hidden';
+                            nonceField.name = 'pdf_builder_deactivate_nonce';
+                            nonceField.value = window.pdfBuilderLicense.deactivateNonce;
+                            form.appendChild(nonceField);
+
+                            var actionField = document.createElement('input');
+                            actionField.type = 'hidden';
+                            actionField.name = 'deactivate_license';
+                            actionField.value = '1';
+                            form.appendChild(actionField);
+
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+
+                        function deactivateTestMode() {
+                            if (confirm('Êtes-vous sûr de vouloir désactiver le mode test ? Toutes les fonctionnalités premium seront désactivées.')) {
+                                // Créer et soumettre un formulaire de désactivation du mode test
+                                var form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = '';
+
+                                var nonceField = document.createElement('input');
+                                nonceField.type = 'hidden';
+                                nonceField.name = 'pdf_builder_deactivate_nonce';
+                                nonceField.value = window.pdfBuilderLicense.deactivateNonce;
+                                form.appendChild(nonceField);
+
+                                var actionField = document.createElement('input');
+                                actionField.type = 'hidden';
+                                actionField.name = 'deactivate_test_mode';
+                                actionField.value = '1';
+                                form.appendChild(actionField);
+
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                        }
                     </script>

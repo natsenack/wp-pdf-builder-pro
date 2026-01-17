@@ -6,10 +6,8 @@ $settings = get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 
 // Vérifier si l'utilisateur a une licence premium
-$settings = get_option('pdf_builder_settings', array());
-$license_status = $settings['pdf_builder_license_status'] ?? 'free';
-$test_key = get_option('pdf_builder_license_test_key', '');
-$is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
+$license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+$is_premium = $license_manager->isPremium();
 ?>
 
 
