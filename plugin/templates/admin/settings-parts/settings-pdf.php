@@ -103,9 +103,12 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     (function() {
                         console.log('Setting up advanced section toggle handler...');
 
+                        var retryCount = 0;
+                        var maxRetries = 50; // Stop after 50 attempts (5 seconds)
+
                         function attachToggleHandler() {
                             var toggleElement = document.getElementById('advanced-section-toggle');
-                            console.log('Toggle element found:', toggleElement);
+                            console.log('Toggle element found:', toggleElement, 'Retry count:', retryCount);
                             console.log('PDFBuilderTabsAPI available:', typeof window.PDFBuilderTabsAPI);
                             console.log('toggleAdvancedSection function:', typeof window.PDFBuilderTabsAPI?.toggleAdvancedSection);
 
@@ -116,7 +119,12 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                 });
                                 console.log('Advanced section toggle handler attached successfully');
                             } else {
-                                console.log('API not ready, retrying in 100ms...');
+                                retryCount++;
+                                if (retryCount >= maxRetries) {
+                                    console.error('Failed to attach toggle handler after', maxRetries, 'attempts');
+                                    return;
+                                }
+                                console.log('API not ready, retrying in 100ms... (attempt', retryCount, 'of', maxRetries, ')');
                                 // Retry after a short delay if API not ready yet
                                 setTimeout(attachToggleHandler, 100);
                             }

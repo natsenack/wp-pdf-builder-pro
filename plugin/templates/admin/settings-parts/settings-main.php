@@ -91,7 +91,8 @@
     <script>
     // PDF Builder Tabs API - Défini immédiatement pour éviter les erreurs
     (function() {
-        window.PDFBuilderTabsAPI = {
+        try {
+            window.PDFBuilderTabsAPI = {
             /**
              * Change d'onglet
              * @param {string} tabName - Nom de l'onglet (general, licence, systeme, securite, pdf, contenu, templates, developpeur)
@@ -162,6 +163,9 @@
         };
 
         console.log('PDFBuilderTabsAPI defined successfully:', typeof window.PDFBuilderTabsAPI, window.PDFBuilderTabsAPI);
+        } catch (error) {
+            console.error('Error defining PDFBuilderTabsAPI:', error);
+        }
     })();
     </script>
 
