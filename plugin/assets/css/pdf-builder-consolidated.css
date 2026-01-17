@@ -1,93 +1,14 @@
 /* PDF Builder Pro - CSS Consolidé */ 
 /* Généré le 17/01/2026 à  1:14:06,16 */ 
- 
-/**
- * PDF Builder Pro - Variables CSS globales
- * Définition centralisée de toutes les variables de design
- * Ce fichier doit être inclus en premier dans tous les autres fichiers CSS
- */
 
-:root {
-    /* Couleurs principales */
-    --pdf-primary: #0066cc;
-    --pdf-secondary: #f0f0f0;
-    --pdf-border: #ddd;
-    --pdf-text: #333;
-    --pdf-text-light: #666;
-    --pdf-error: #dc3545;
-    --pdf-success: #28a745;
-    --pdf-warning: #ffc107;
-    --pdf-info: #17a2b8;
+@import url('variables.css');
 
-    /* Couleurs d'arrière-plan */
-    --pdf-bg-white: #ffffff;
-    --pdf-bg-light: #f8f9fa;
-    --pdf-bg-dark: #343a40;
-    --pdf-hover: #0052a3;
-    --pdf-active-bg: #f8f9f9;
-
-    /* Espacements cohérents */
-    --spacing-xs: 8px;
-    --spacing-sm: 12px;
-    --spacing-md: 16px;
-    --spacing-lg: 20px;
-    --spacing-xl: 25px;
-    --spacing-xxl: 32px;
-
-    /* Rayons de bordure cohérents */
-    --border-radius-sm: 4px;
-    --border-radius-md: 6px;
-    --border-radius-lg: 8px;
-    --border-radius-xl: 12px;
-
-    /* Ombres cohérentes */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 8px 25px rgba(0, 0, 0, 0.25);
-    --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.3);
-
-    /* Largeurs de bordure */
-    --border-width-thin: 1px;
-    --border-width-medium: 2px;
-    --border-width-thick: 3px;
-
-    /* Tailles de police */
-    --font-size-xs: 12px;
-    --font-size-sm: 14px;
-    --font-size-md: 16px;
-    --font-size-lg: 18px;
-    --font-size-xl: 20px;
-    --font-size-xxl: 24px;
-
-    /* Poids de police */
-    --font-weight-normal: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-    --font-weight-bold: 700;
-
-    /* Transitions */
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
-
-    /* Z-index */
-    --z-index-dropdown: 1000;
-    --z-index-sticky: 1020;
-    --z-index-fixed: 1030;
-    --z-index-modal-backdrop: 1040;
-    --z-index-modal: 1050;
-    --z-index-popover: 1060;
-    --z-index-tooltip: 1070;
-    --z-index-toast: 1080;
-} 
 /**
  * PDF Builder Pro - Styles de boutons centralisés
  * Définition cohérente de tous les styles de boutons pour éviter les conflits CSS
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* ============================================
    BOUTONS WORDPRESS (Classes communes)
@@ -315,7 +236,6 @@
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* ============================================
    FORMULAIRES ET INPUTS
@@ -529,7 +449,6 @@
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Import des styles de boutons centralisés */
 @import url('buttons.css');
@@ -1046,7 +965,6 @@
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Import des styles de boutons centralisés */
 @import url('buttons.css');
@@ -5837,7 +5755,6 @@ body.modal-open {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 .settings-main .wrap {
     margin: var(--spacing-md) 0 0 0;
@@ -6227,7 +6144,6 @@ body.modal-open {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Section générale */
 .settings-section.general-settings {
@@ -6434,7 +6350,6 @@ body.modal-open {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Import des styles de boutons centralisés */
 @import url('buttons.css');
@@ -6711,7 +6626,6 @@ body.modal-open {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* ===========================================
    DESIGN PROFESSIONNEL WORDPRESS
@@ -7188,7 +7102,6 @@ input:checked + .toggle-slider:before {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 .security-section,
 .rgpd-section {
@@ -7470,7 +7383,6 @@ input:checked + .toggle-slider:before {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 .templates-status-wrapper {
     margin: var(--spacing-md) 0;
@@ -7692,7 +7604,6 @@ input:checked + .toggle-slider:before {
 /* Styles spécifiques à l'onglet Licence du plugin WP PDF Builder Pro */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Import des styles de boutons centralisés */
 @import url('buttons.css');
@@ -9346,7 +9257,6 @@ input:checked + .toggle-slider:before {
  */
 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Import des styles de boutons centralisés */
 @import url('buttons.css');
@@ -9745,7 +9655,6 @@ input:checked + .toggle-slider:before {
     }
 } 
 /* Import des variables globales */
-@import url('variables.css');
 
 /* Import des styles de boutons centralisés */
 @import url('buttons.css');
@@ -12492,7 +12401,6 @@ input:checked + .toggle-slider:before {
 }
 
 /* Import des variables et styles globales */
-@import url('variables.css');
 @import url('buttons.css');
 @import url('forms.css');
 
