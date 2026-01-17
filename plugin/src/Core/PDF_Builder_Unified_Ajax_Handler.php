@@ -2021,11 +2021,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'pdf_builder_license_data'
              ];
 
-             // Vérifier si le mode test est actif avant de supprimer la clé de test
+             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
              $settings = get_option('pdf_builder_settings', []);
-             $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
+             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
 
-             if ($test_mode_enabled !== '1') {
+             if (!$test_mode_was_enabled) {
                  $license_options[] = 'pdf_builder_license_test_key';
              }
              $license_options[] = 'pdf_builder_license_test_mode_enabled';
@@ -2037,14 +2037,14 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              // Clear license settings from the main settings array
              $settings = get_option('pdf_builder_settings', []);
-             $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
+             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
              error_log('[PDF Builder] Settings before cleanup: ' . print_r($settings, true));
 
              // Remove all license-related keys from settings
              foreach ($settings as $key => $value) {
                  if (strpos($key, 'pdf_builder_license_') === 0) {
-                     // Préserver la clé de test si le mode test est actif
-                     if ($test_mode_enabled === '1' && in_array($key, ['pdf_builder_license_test_key', 'pdf_builder_license_test_key_expires'])) {
+                     // Préserver la clé de test si le mode test était actif
+                     if ($test_mode_was_enabled && in_array($key, ['pdf_builder_license_test_key', 'pdf_builder_license_test_key_expires'])) {
                          error_log('[PDF Builder] Preserving test key: ' . $key);
                          continue;
                      }
@@ -2064,8 +2064,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'pdf_builder_license_reminder_email'
              ];
 
-             // Ne pas supprimer la clé de test si le mode test est actif
-             if ($test_mode_enabled !== '1') {
+             // Ne pas supprimer la clé de test si le mode test était actif
+             if (!$test_mode_was_enabled) {
                  $license_keys[] = 'pdf_builder_license_test_key';
                  $license_keys[] = 'pdf_builder_license_test_key_expires';
              }
