@@ -75,6 +75,7 @@ class AdminScriptLoader
             if ($hook === 'pdf-builder_page_pdf-builder-settings') {
                 // Check if script is already enqueued to avoid conflicts
                 if (!wp_script_is('pdf-builder-settings-tabs', 'enqueued')) {
+                    error_log('PDF Builder - Enqueuing settings-tabs.min.js from AdminScriptLoader.php');
                     wp_enqueue_script(
                         'pdf-builder-settings-tabs',
                         PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js',
@@ -82,6 +83,8 @@ class AdminScriptLoader
                         PDF_BUILDER_PRO_VERSION,
                         true
                     );
+                } else {
+                    error_log('PDF Builder - Script already enqueued, skipping from AdminScriptLoader.php');
                 }
             } else {
                 wp_enqueue_script(

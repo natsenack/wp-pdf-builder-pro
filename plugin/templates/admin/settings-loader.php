@@ -62,6 +62,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger le JavaScript pour la navigation par onglets - seulement si le fichier existe
     $settings_tabs_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-tabs.min.js';
     if (file_exists($settings_tabs_js)) {
+        error_log('PDF Builder - Enqueuing settings-tabs.min.js from settings-loader.php');
         wp_enqueue_script(
             'pdf-builder-settings-tabs',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.min.js',
