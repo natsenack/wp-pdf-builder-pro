@@ -1748,10 +1748,25 @@ class AjaxHandler
                 }
             }
 
-            // Sauvegarder les paramètres nettoyés
+            // IMPORTANT: Désactiver temporairement le sanitize callback pour éviter qu'il remette les clés supprimées
+            global $wp_filter;
+            $sanitize_callbacks = null;
+            if (isset($wp_filter['sanitize_option_pdf_builder_settings'])) {
+                $sanitize_callbacks = $wp_filter['sanitize_option_pdf_builder_settings'];
+                unset($wp_filter['sanitize_option_pdf_builder_settings']);
+                error_log('[PDF Builder] handleCleanupLicense - Temporarily disabled sanitize callback');
+            }
+
+            // Sauvegarder les paramètres nettoyés SANS sanitize callback
             $update_result = update_option('pdf_builder_settings', $settings);
             error_log('[PDF Builder] handleCleanupLicense - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
             error_log('[PDF Builder] handleCleanupLicense - Removed ' . $removed_count . ' license keys');
+
+            // Réactiver le sanitize callback si il était présent
+            if ($sanitize_callbacks !== null) {
+                $wp_filter['sanitize_option_pdf_builder_settings'] = $sanitize_callbacks;
+                error_log('[PDF Builder] handleCleanupLicense - Re-enabled sanitize callback');
+            }
 
             // Vérifier que les clés ont bien été supprimées
             $updated_settings = get_option('pdf_builder_settings', []);
