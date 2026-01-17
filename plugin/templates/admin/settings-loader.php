@@ -82,6 +82,16 @@ function pdf_builder_load_settings_assets($hook) {
         error_log('PDF Builder - settings-tabs.js non trouvé, script ignoré');
     }
 
+    // Force the settings-tabs script to not be deferred for early API availability
+    add_filter('script_loader_tag', function($tag, $handle, $src) {
+        if ($handle === 'pdf-builder-settings-tabs') {
+            // Remove defer attribute if present to ensure synchronous loading
+            $tag = str_replace(' defer', '', $tag);
+            $tag = str_replace(' defer="defer"', '', $tag);
+        }
+        return $tag;
+    }, 10, 3);
+
     // DEBUG: Après enqueue du script
     error_log('PDF Builder - Après wp_enqueue_script');
 
