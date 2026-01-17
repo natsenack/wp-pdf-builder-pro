@@ -99,31 +99,3 @@
     border-left-color: #00a0d2;
 }
 
-/* Styles responsives minimaux */
-@media screen and (max-width: 782px) {
-    .nav-tab-wrapper {
-        margin-bottom: 15px;
-    }
-
-    .nav-tab {
-        display: block;
-        width: 100%;
-        border: none;
-        border-bottom: 1px solid #ddd;
-        padding: 10px 12px;
-        text-align: left;
-    }
-
-    .nav-tab:last-child {
-        border-bottom: none;
-    }
-
-    .nav-tab:hover {
-        background: #f9f9f9;
-    }
-
-    .nav-tab.nav-tab-active {
-        background: #fff;
-        border-bottom-color: #0073aa;
-    }
-}
