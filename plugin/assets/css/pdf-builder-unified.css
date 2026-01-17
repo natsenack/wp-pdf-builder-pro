@@ -14246,41 +14246,6 @@ input:checked + .toggle-slider:before {
     border-left: 3px solid #f39c12;
 }
 
-/* Formulaire dans la modale */
-#canvas-dimensions-form,
-#canvas-apparence-form,
-#canvas-grille-form,
-#canvas-zoom-form,
-#canvas-interactions-form,
-#canvas-export-form,
-#canvas-performance-form,
-#canvas-debug-form {
-    margin: 0;
-}
-
-/* Table des paramètres */
-.form-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.form-table th,
-.form-table td {
-    padding: 12px 0;
-    border-bottom: 1px solid #f1f3f4;
-    vertical-align: top;
-}
-
-.form-table th {
-    width: 200px;
-    text-align: left;
-    font-weight: 600;
-    color: #37474f;
-}
-
-.form-table td {
-    padding-left: 20px;
-}
 
 /* Champs de formulaire */
 .form-table input[type="text"],
