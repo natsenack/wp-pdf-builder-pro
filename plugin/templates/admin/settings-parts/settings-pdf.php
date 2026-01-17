@@ -6,7 +6,9 @@ $settings = get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 ?>
 
-            <h2>📄 Configuration PDF</h2>
+            <h3 style="display: flex; justify-content: flex-start; align-items: center;">
+                <span>📄 Configuration PDF</span>
+            </h3>
 
             <!-- Section Principale -->
             <section id="pdf" class="pdf-section">

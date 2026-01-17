@@ -16,7 +16,9 @@
     $gdpr_consent_templates = $settings['pdf_builder_gdpr_consent_templates'] ?? '1';
     $gdpr_consent_marketing = $settings['pdf_builder_gdpr_consent_marketing'] ?? '0';
 ?>
-            <h2>🔒 Sécurité & Conformité</h2>
+            <h3 style="display: flex; justify-content: flex-start; align-items: center;">
+                <span>🔒 Sécurité & Conformité</span>
+            </h3>
 
             <!-- Formulaire pour les paramètres de sécurité -->
             <!-- <form id="securite-settings-form" method="post" action="">

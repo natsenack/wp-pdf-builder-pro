@@ -4,7 +4,9 @@
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
             <section id="licence" aria-label="Gestion de la Licence">
-                <h2 class="settings-page-title">🔐 Gestion de la Licence</h2>
+                <h3 style="display: flex; justify-content: flex-start; align-items: center;" class="settings-page-title">
+                    <span>🔐 Gestion de la Licence</span>
+                </h3>
 
                 
 

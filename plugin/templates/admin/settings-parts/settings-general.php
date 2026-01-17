@@ -28,9 +28,9 @@
 
 <section id="general" class="settings-section general-settings" role="tabpanel" aria-labelledby="tab-general">
     <header class="section-header">
-        <h2 class="section-title">
+        <h2 style="display: flex; justify-content: flex-start; align-items: center;" class="section-title">
             <span class="dashicons dashicons-admin-home"></span>
-            Paramètres Généraux
+            <span>Paramètres Généraux</span>
         </h2>
         <p class="section-description">
             Configuration générale et informations entreprise.

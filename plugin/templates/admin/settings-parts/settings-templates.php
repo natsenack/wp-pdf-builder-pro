@@ -431,18 +431,18 @@
 <section class="templates-status-wrapper">
     <!-- En-tête -->
     <header>
-        <h2 style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="display: flex; justify-content: flex-start; align-items: center;">
             <span>📋 Templates par Statut de Commande</span>
             <?php if (!empty($custom_status_plugins)): ?>
-                <span style="font-size: 14px; font-weight: normal; color: #666;">
+                <span style="font-size: 14px; font-weight: normal; color: #666; margin-left: auto;">
                     🔌 Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
                 </span>
             <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
-                <span style="font-size: 14px; font-weight: normal; color: #28a745;">
+                <span style="font-size: 14px; font-weight: normal; color: #28a745; margin-left: auto;">
                     ✅ Statuts WooCommerce standards uniquement
                 </span>
             <?php endif; ?>
-        </h2>
+        </h3>
 
         <?php if (!$is_premium): ?>
             <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 12px; margin: 15px 0; font-size: 14px;">

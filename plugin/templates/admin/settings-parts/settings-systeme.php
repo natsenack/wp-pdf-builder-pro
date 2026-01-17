@@ -78,7 +78,9 @@
         $cache_last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($cache_last_cleanup)) : $cache_last_cleanup) . ' ago';
     }
 ?>
-            <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
+            <h3 style="display: flex; justify-content: flex-start; align-items: center;">
+                <span>⚙️ Système - Performance, Maintenance & Sauvegarde</span>
+            </h3>
 
                 <!-- Section Cache et Performance -->
                 <section id="systeme" class="system-cache-section">

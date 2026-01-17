@@ -10,7 +10,9 @@
     $license_test_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
     $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
 ?>
-            <h2>Paramètres Développeur</h2>
+            <h3 style="display: flex; justify-content: flex-start; align-items: center;">
+                <span>👨‍💻 Paramètres Développeur</span>
+            </h3>
             <p class="developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
                 <h3 class="section-title">🔐 Contrôle d'Accès</h3>
