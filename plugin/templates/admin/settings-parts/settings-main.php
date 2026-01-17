@@ -33,48 +33,6 @@
     error_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
     error_log('[PDF Builder] Current tab: ' . $current_tab);
     
-    // Injecter l'API JavaScript dans le head
-    add_action('admin_head', function() {
-        ?>
-        <script>
-        // PDFBuilderTabsAPI is now defined inline in the page
-        console.log('PDFBuilderTabsAPI admin_head placeholder');
-        </script>
-        <?php
-    });
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        error_log('[PDF Builder] POST data received: ' . print_r($_POST, true));
-        
-        // Vérifier spécifiquement les données templates
-        if (isset($_POST['pdf_builder_settings'])) {
-            $posted_settings = $_POST['pdf_builder_settings'];
-            error_log('[PDF Builder] pdf_builder_settings received: ' . print_r($posted_settings, true));
-            
-            if (isset($posted_settings['pdf_builder_default_template'])) {
-                error_log('[PDF Builder] Template par défaut POST: ' . $posted_settings['pdf_builder_default_template']);
-            }
-            if (isset($posted_settings['pdf_builder_template_library_enabled'])) {
-                error_log('[PDF Builder] Bibliothèque templates POST: ' . $posted_settings['pdf_builder_template_library_enabled']);
-            }
-        }
-
-        // Message visible de debug
-        echo '<div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; margin: 10px 0; border-radius: 4px; color: #155724;">';
-        echo '<strong>✅ FORMULAIRE SOUMIS:</strong> ' . current_time('H:i:s') . '<br>';
-        echo 'Méthode: ' . $_SERVER['REQUEST_METHOD'] . '<br>';
-        if (isset($_POST['pdf_builder_settings'])) {
-            echo 'Paramètres reçus: ' . count($_POST['pdf_builder_settings']) . '<br>';
-            if (isset($_POST['pdf_builder_settings']['pdf_builder_default_template'])) {
-                echo 'Template: ' . $_POST['pdf_builder_settings']['pdf_builder_default_template'] . '<br>';
-            }
-            if (isset($_POST['pdf_builder_settings']['pdf_builder_template_library_enabled'])) {
-                echo 'Bibliothèque: ' . $_POST['pdf_builder_settings']['pdf_builder_template_library_enabled'] . '<br>';
-            }
-        }
-        echo '</div>';
-    }
-
     // Gestion des onglets via URL
     $current_tab = $_GET['tab'] ?? 'general';
     $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
@@ -92,69 +50,69 @@
     ] : null;
 
 ?>
-<div class="wrap">
-<!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
-<!-- PDF Builder Tabs API - Direct definition -->
-    <script>
-    console.log('PDFBuilderTabsAPI script starting...');
 
-    try {
-        window.PDFBuilderTabsAPI = {
-            switchToTab: function(tabName) {
-                console.log('switchToTab called with:', tabName);
-                var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
-                if (tabLink) {
-                    tabLink.click();
-                } else {
-                    var currentUrl = window.location.href;
-                    var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
-                    if (newUrl === currentUrl) {
-                        newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
-                    }
-                    window.location.href = newUrl;
+<!-- PDF Builder Tabs API - Direct definition at the top -->
+<script>
+console.log('PDFBuilderTabsAPI script starting...');
+
+try {
+    window.PDFBuilderTabsAPI = {
+        switchToTab: function(tabName) {
+            console.log('switchToTab called with:', tabName);
+            var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
+            if (tabLink) {
+                tabLink.click();
+            } else {
+                var currentUrl = window.location.href;
+                var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
+                if (newUrl === currentUrl) {
+                    newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
                 }
-            },
-
-            toggleAdvancedSection: function() {
-                console.log('toggleAdvancedSection called');
-                var advancedSection = document.getElementById('advanced-section');
-                var toggleIcon = document.getElementById('advanced-toggle');
-
-                console.log('Elements found:', { advancedSection: advancedSection, toggleIcon: toggleIcon });
-
-                if (advancedSection && toggleIcon) {
-                    if (advancedSection.classList.contains('hidden-element')) {
-                        advancedSection.classList.remove('hidden-element');
-                        toggleIcon.textContent = '▲';
-                        console.log('Section shown');
-                    } else {
-                        advancedSection.classList.add('hidden-element');
-                        toggleIcon.textContent = '▼';
-                        console.log('Section hidden');
-                    }
-                } else {
-                    console.error('Required elements not found');
-                }
-            },
-
-            resetTemplatesStatus: function() {
-                if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
-                    var selects = document.querySelectorAll('.template-select');
-                    selects.forEach(function(select) {
-                        select.value = '';
-                        select.dispatchEvent(new Event('change', { bubbles: true }));
-                    });
-                    alert('Les paramètres des templates ont été réinitialisés.');
-                }
+                window.location.href = newUrl;
             }
-        };
+        },
 
-        console.log('PDFBuilderTabsAPI defined successfully:', window.PDFBuilderTabsAPI);
-    } catch (error) {
-        console.error('Error in PDFBuilderTabsAPI definition:', error);
-    }
-    </script>
+        toggleAdvancedSection: function() {
+            console.log('toggleAdvancedSection called');
+            var advancedSection = document.getElementById('advanced-section');
+            var toggleIcon = document.getElementById('advanced-toggle');
 
+            console.log('Elements found:', { advancedSection: advancedSection, toggleIcon: toggleIcon });
+
+            if (advancedSection && toggleIcon) {
+                if (advancedSection.classList.contains('hidden-element')) {
+                    advancedSection.classList.remove('hidden-element');
+                    toggleIcon.textContent = '▲';
+                    console.log('Section shown');
+                } else {
+                    advancedSection.classList.add('hidden-element');
+                    toggleIcon.textContent = '▼';
+                    console.log('Section hidden');
+                }
+            } else {
+                console.error('Required elements not found');
+            }
+        },
+
+        resetTemplatesStatus: function() {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
+                var selects = document.querySelectorAll('.template-select');
+                selects.forEach(function(select) {
+                    select.value = '';
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                alert('Les paramètres des templates ont été réinitialisés.');
+            }
+        }
+    };
+
+    console.log('PDFBuilderTabsAPI defined successfully:', window.PDFBuilderTabsAPI);
+} catch (error) {
+    console.error('Error in PDFBuilderTabsAPI definition:', error);
+}
+</script>
+
+<div class="wrap">
     <style>
     .hidden-element {
         display: none !important;
