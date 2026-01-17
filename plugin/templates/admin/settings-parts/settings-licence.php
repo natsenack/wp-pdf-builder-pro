@@ -775,6 +775,7 @@
                     </div>
 
                     <!-- Support & Avantages Premium -->
+                    <?php if ($is_test_mode): ?>
                     <div class="action-card premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
                         <div class="action-card-header" style="padding: 1rem; text-align: center;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: supportPulse 2s ease-in-out infinite;">💎</div>
@@ -832,6 +833,7 @@
                         transition: all 0.3s ease;
                     }
                     </style>
+                    <?php else: ?>
                     <!-- Section publicité premium -->
                     <div class="action-card premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
                         <div class="premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
