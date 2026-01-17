@@ -146,9 +146,15 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
-                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
-            </button>
+            <?php if ($is_premium): ?>
+                <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+                    🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+                </button>
+            <?php else: ?>
+                <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;" onclick="showUpgradeModal('gallery')">
+                    🎨 <?php _e('Parcourir les Modèles (Premium)', 'pdf-builder-pro'); ?>
+                </button>
+            <?php endif; ?>
 
             <!-- DEBUG: Affichage temporaire du nombre de templates -->
             <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
@@ -872,16 +878,13 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
 });
 
 // Gestionnaire pour bouton galerie de modèles (uniquement premium)
+<?php if ($is_premium): ?>
 document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
     e.preventDefault();
-    <?php if ($is_premium): ?>
-        // Ouvrir la galerie pour utilisateurs premium
-        document.getElementById('template-gallery-modal').style.display = 'flex';
-    <?php else: ?>
-        // Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal('gallery');
-    <?php endif; ?>
+    // Ouvrir la galerie pour utilisateurs premium
+    document.getElementById('template-gallery-modal').style.display = 'flex';
 });
+<?php endif; ?>
 
 // Fermer modal au clic sur overlay ou bouton close
 document.addEventListener('click', function(e) {
