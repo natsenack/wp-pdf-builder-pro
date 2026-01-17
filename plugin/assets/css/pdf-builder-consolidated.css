@@ -18692,6 +18692,36 @@ input:checked + .toggle-slider-small::before {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* === STYLES POUR LES ÉLÉMENTS PREMIUM DÉSACTIVÉS === */
+
+/* Inputs disabled dans les modals canvas */
+.canvas-modal-container input:disabled,
+.canvas-modal-container select:disabled {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    border-color: #dee2e6 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+/* Toggle switches disabled */
+.canvas-modal-container .toggle-switch input:disabled + .toggle-slider {
+    background-color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+.canvas-modal-container .toggle-switch input:disabled:checked + .toggle-slider {
+    background-color: #6c757d !important;
+}
+
+/* Labels pour les éléments disabled */
+.canvas-modal-container input:disabled + label,
+.canvas-modal-container .setting-group:has(input:disabled) label {
+    color: #6c757d !important;
+    opacity: 0.7 !important;
+}
+
 
 
  
