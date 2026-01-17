@@ -4642,18 +4642,6 @@ select option:disabled {
     will-change: transform, box-shadow;
 }
 
-.nav-tab::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #007cba, #005a87);
-    
-    transform: translateX(-50%);
-}
-
 .nav-tab:hover::after {
     width: 80%;
 }
