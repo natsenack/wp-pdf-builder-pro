@@ -1080,13 +1080,6 @@
     border-bottom-color: rgba(0, 102, 204, 0.3);
 }
 
-.nav-tab-active,
-.nav-tab:active {
-    background: #fff;
-    color: var(--pdf-primary);
-    border-bottom-color: var(--pdf-primary);
-}
-
 .nav-tab:focus {
     outline: none;
 }
