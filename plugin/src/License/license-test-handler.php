@@ -390,6 +390,8 @@ class LicenseTestHandler
      */
     public function handleCleanupLicense()
     {
+        error_log('[PDF Builder] license-test-handler.php - handleCleanupLicense called');
+
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
@@ -404,9 +406,12 @@ class LicenseTestHandler
         }
 
         try {
+            error_log('[PDF Builder] license-test-handler.php - Starting cleanup');
+
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
             $settings = get_option('pdf_builder_settings', []);
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
+            error_log('[PDF Builder] license-test-handler.php - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO'));
 
             // Options à supprimer (nettoyage complet)
             $options = [
@@ -420,16 +425,23 @@ class LicenseTestHandler
                 'pdf_builder_license_test_mode'
             ];
 
+            error_log('[PDF Builder] license-test-handler.php - Options to delete: ' . implode(', ', $options));
+
             foreach ($options as $option) {
+                $old_value = get_option($option, 'NOT_SET');
                 delete_option($option);
+                error_log('[PDF Builder] license-test-handler.php - Deleted option: ' . $option . ' (was: ' . $old_value . ')');
             }
 
             // Définir l'état clean
             update_option('pdf_builder_license_status', 'free');
+            error_log('[PDF Builder] license-test-handler.php - Set license status to free');
+
             wp_send_json_success([
                 'message' => '✨ Licence complètement nettoyée et réinitialisée'
             ]);
         } catch (\Exception $e) {
+            error_log('[PDF Builder] license-test-handler.php - Error: ' . $e->getMessage());
             wp_send_json_error([
                 'message' => 'Erreur lors du nettoyage: ' . $e->getMessage()
             ]);

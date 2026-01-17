@@ -1715,6 +1715,7 @@ class AjaxHandler
             // Récupérer les paramètres actuels
             $settings = get_option('pdf_builder_settings', []);
             error_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings));
+            error_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings)));
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
@@ -1733,12 +1734,15 @@ class AjaxHandler
                 'pdf_builder_license_test_mode'
             ];
 
+            error_log('[PDF Builder] handleCleanupLicense - Keys to remove: ' . implode(', ', $license_keys_to_remove));
+
             $removed_count = 0;
             foreach ($license_keys_to_remove as $key) {
                 if (isset($settings[$key])) {
+                    $old_value = $settings[$key];
                     unset($settings[$key]);
                     $removed_count++;
-                    error_log('[PDF Builder] handleCleanupLicense - Removed key: ' . $key);
+                    error_log('[PDF Builder] handleCleanupLicense - Removed key: ' . $key . ' (value was: ' . $old_value . ')');
                 } else {
                     error_log('[PDF Builder] handleCleanupLicense - Key not found: ' . $key);
                 }
@@ -1755,6 +1759,7 @@ class AjaxHandler
                 return strpos($key, 'pdf_builder_license') === 0;
             });
             error_log('[PDF Builder] handleCleanupLicense - Remaining license keys: ' . implode(', ', $remaining_license_keys));
+            error_log('[PDF Builder] handleCleanupLicense - Final settings count: ' . count($updated_settings));
 
             wp_send_json_success([
                 'message' => 'Nettoyage complet réussi. ' . $removed_count . ' clés de licence supprimées.',
