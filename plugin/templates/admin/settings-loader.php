@@ -65,7 +65,7 @@ function pdf_builder_load_settings_assets($hook) {
         wp_enqueue_script(
             'pdf-builder-settings-tabs',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js',
-            array('jquery', 'wp-util', 'wp-api'),
+            array('jquery'), // Removed wp-util and wp-api to avoid async loading
             PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
             false // Chargé dans le header pour une exécution précoce
         );
