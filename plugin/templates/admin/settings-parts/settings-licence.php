@@ -576,7 +576,7 @@
 
                     // DEBUG: Afficher les valeurs pour verifier
                     if (current_user_can('manage_options')) {
-                        echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
+                        echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' is_test_mode=' . ($is_test_mode ? 'TRUE' : 'FALSE') . ' test_mode_enabled=' . $test_mode_enabled . ' -->';
                     }
 
                     // Traitement activation licence

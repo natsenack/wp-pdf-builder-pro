@@ -1782,7 +1782,10 @@ class AjaxHandler
             // Sauvegarder
             $update_result = update_option('pdf_builder_settings', $settings);
 
-            error_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode);
+            // Forcer le refresh du cache des options
+            wp_cache_flush();
+
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . new_mode);
             error_log('[PDF Builder] handleToggleLicenseTestMode - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
 
             wp_send_json_success([
