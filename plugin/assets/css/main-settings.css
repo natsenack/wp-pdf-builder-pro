@@ -1,19 +1,50 @@
-/* Main Settings Tab Styles */
-/* Styles simplifiés pour l'onglet Principal */
+/**
+ * PDF Builder Main Settings CSS
+ * Styles nettoyés et cohérents avec le système de design du plugin
+ */
+
+/* Variables cohérentes avec le reste du plugin */
+:root {
+    --pdf-primary: #0066cc;
+    --pdf-secondary: #f0f0f0;
+    --pdf-border: #ddd;
+    --pdf-text: #333;
+    --pdf-text-light: #666;
+    --pdf-error: #dc3545;
+    --pdf-success: #28a745;
+    --pdf-warning: #ffc107;
+
+    /* Espacements cohérents */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
+    /* Rayons de bordure cohérents */
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+
+    /* Ombres cohérentes */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 .settings-main .wrap {
-    margin: 16px 0 0 0;
+    margin: var(--spacing-md) 0 0 0;
     background: #fff;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
 }
 
 /* Navigation Tabs */
 .nav-tab-wrapper {
-    background: #f8f9fa;
-    border-bottom: 1px solid #e1e5e9;
+    background: var(--pdf-secondary);
+    border-bottom: 1px solid var(--pdf-border);
     margin: 0;
-    padding: 0 16px;
+    padding: 0 var(--spacing-md);
 }
 
 .tabs-container {
@@ -26,12 +57,12 @@
 .nav-tab {
     display: inline-flex;
     align-items: center;
-    padding: 10px 16px;
+    padding: 10px var(--spacing-md);
     margin: 0;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
-    color: #646970;
+    color: var(--pdf-text-light);
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
@@ -39,15 +70,15 @@
 }
 
 .nav-tab:hover {
-    color: #007cba;
-    border-bottom-color: rgba(0, 123, 186, 0.3);
+    color: var(--pdf-primary);
+    border-bottom-color: rgba(0, 102, 204, 0.3);
 }
 
 .nav-tab-active,
 .nav-tab:active {
     background: #fff;
-    color: #007cba;
-    border-bottom-color: #007cba;
+    color: var(--pdf-primary);
+    border-bottom-color: var(--pdf-primary);
 }
 
 .nav-tab:focus {
@@ -72,22 +103,22 @@
 
 /* Tab Content Area */
 .settings-main .settings-content {
-    padding: 24px 16px;
+    padding: calc(var(--spacing-lg) * 1.5) var(--spacing-md);
     min-height: 300px;
 }
 
 /* Welcome Section */
 .main-welcome-section {
     text-align: center;
-    margin-bottom: 32px;
-    padding: 24px;
-    background: #007cba;
+    margin-bottom: calc(var(--spacing-xl) * 1.5);
+    padding: calc(var(--spacing-lg) * 1.5);
+    background: var(--pdf-primary);
     color: white;
-    border-radius: 6px;
+    border-radius: var(--border-radius-sm);
 }
 
 .main-welcome-section h1 {
-    margin: 0 0 8px 0;
+    margin: 0 0 var(--spacing-xs) 0;
     font-size: 24px;
     font-weight: 600;
 }
@@ -105,49 +136,49 @@
 .main-quick-actions {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: var(--spacing-md);
+    margin-bottom: calc(var(--spacing-lg) * 1.5);
 }
 
 .quick-action-card {
     background: #fff;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
-    padding: 20px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
+    padding: calc(var(--spacing-lg) * 1.25);
     text-align: center;
 }
 
 .quick-action-card:hover {
-    border-color: #007cba;
+    border-color: var(--pdf-primary);
 }
 
 .quick-action-card .action-icon {
     font-size: 36px;
-    margin-bottom: 12px;
+    margin-bottom: var(--spacing-sm);
     display: block;
 }
 
 .quick-action-card h3 {
-    margin: 0 0 8px 0;
-    color: #1e1e1e;
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--pdf-text);
     font-size: 16px;
     font-weight: 600;
 }
 
 .quick-action-card p {
-    margin: 0 0 16px 0;
-    color: #646970;
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--pdf-text-light);
     font-size: 13px;
     line-height: 1.5;
 }
 
 .quick-action-card .action-button {
     display: inline-block;
-    padding: 8px 16px;
-    background: #007cba;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--pdf-primary);
     color: white;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     font-size: 14px;
 }
 
@@ -157,16 +188,16 @@
 
 /* Status Overview */
 .main-status-overview {
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
-    padding: 20px;
-    margin-bottom: 24px;
+    background: var(--pdf-secondary);
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
+    padding: calc(var(--spacing-lg) * 1.25);
+    margin-bottom: calc(var(--spacing-lg) * 1.5);
 }
 
 .main-status-overview h2 {
-    margin: 0 0 16px 0;
-    color: #1e1e1e;
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--pdf-text);
     font-size: 18px;
     font-weight: 600;
     display: flex;
@@ -182,16 +213,16 @@
 .status-indicators {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
+    gap: var(--spacing-sm);
 }
 
 .status-indicator-item {
     display: flex;
     align-items: center;
-    padding: 12px;
+    padding: var(--spacing-sm);
     background: white;
-    border: 1px solid #e1e5e9;
-    border-radius: 4px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
     font-size: 14px;
 }
 
@@ -199,33 +230,33 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: calc(var(--spacing-sm) * 1.25);
     flex-shrink: 0;
 }
 
 .status-indicator-item .status-dot.success {
-    background: #00a32a;
+    background: var(--pdf-success);
 }
 
 .status-indicator-item .status-dot.warning {
-    background: #dba617;
+    background: var(--pdf-warning);
 }
 
 .status-indicator-item .status-dot.error {
-    background: #d63638;
+    background: var(--pdf-error);
 }
 
 .status-indicator-item .status-dot.info {
-    background: #007cba;
+    background: var(--pdf-primary);
 }
 
 .status-indicator-item strong {
-    color: #1e1e1e;
+    color: var(--pdf-text);
     font-weight: 600;
 }
 
 .status-indicator-item span {
-    color: #646970;
+    color: var(--pdf-text-light);
     margin-left: auto;
     font-weight: 500;
 }
@@ -233,14 +264,14 @@
 /* Recent Activity */
 .main-recent-activity {
     background: white;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
-    padding: 20px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
+    padding: calc(var(--spacing-lg) * 1.25);
 }
 
 .main-recent-activity h2 {
-    margin: 0 0 16px 0;
-    color: #1e1e1e;
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--pdf-text);
     font-size: 18px;
     font-weight: 600;
     display: flex;
@@ -249,7 +280,7 @@
 
 .main-recent-activity h2:before {
     content: "🕒";
-    margin-right: 8px;
+    margin-right: var(--spacing-xs);
     font-size: 20px;
 }
 
@@ -262,7 +293,7 @@
 .activity-item {
     display: flex;
     align-items: center;
-    padding: 10px 0;
+    padding: calc(var(--spacing-sm) * 1.25) 0;
     border-bottom: 1px solid #f0f1f3;
 }
 
@@ -274,11 +305,11 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #f8f9fa;
+    background: var(--pdf-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 12px;
+    margin-right: var(--spacing-sm);
     font-size: 12px;
     flex-shrink: 0;
 }
@@ -288,19 +319,19 @@
 }
 
 .activity-item .activity-content strong {
-    color: #1e1e1e;
+    color: var(--pdf-text);
     font-weight: 600;
     display: block;
     font-size: 14px;
 }
 
 .activity-item .activity-content span {
-    color: #646970;
+    color: var(--pdf-text-light);
     font-size: 12px;
 }
 
 .activity-item .activity-time {
-    color: #646970;
+    color: var(--pdf-text-light);
     font-size: 11px;
     font-weight: 500;
 }

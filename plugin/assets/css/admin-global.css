@@ -1,6 +1,36 @@
 ﻿/**
  * PDF Builder Pro - Styles globaux pour l'administration WordPress
+ * Styles nettoyés et cohérents avec le système de design du plugin
  */
+
+/* Variables cohérentes avec le reste du plugin */
+:root {
+    --pdf-primary: #0066cc;
+    --pdf-secondary: #f0f0f0;
+    --pdf-border: #ddd;
+    --pdf-text: #333;
+    --pdf-text-light: #666;
+    --pdf-error: #dc3545;
+    --pdf-success: #28a745;
+    --pdf-warning: #ffc107;
+
+    /* Espacements cohérents */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
+    /* Rayons de bordure cohérents */
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+
+    /* Ombres cohérentes */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 /* Styles globaux pour l'admin */
 .pdf-builder-admin {
@@ -9,39 +39,39 @@
 
 /* Styles pour les messages d'état */
 .pdf-builder-status {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
+    padding: calc(var(--spacing-sm) * 1.25);
+    margin: calc(var(--spacing-sm) * 1.25) 0;
+    border-radius: var(--border-radius-sm);
     border-left: 4px solid;
 }
 
 .pdf-builder-status.success {
     background-color: #d1ecf1;
-    border-left-color: #17a2b8;
+    border-left-color: var(--pdf-success);
     color: #0c5460;
 }
 
 .pdf-builder-status.error {
     background-color: #f8d7da;
-    border-left-color: #dc3545;
+    border-left-color: var(--pdf-error);
     color: #721c24;
 }
 
 .pdf-builder-status.warning {
     background-color: #fff3cd;
-    border-left-color: #ffc107;
+    border-left-color: var(--pdf-warning);
     color: #856404;
 }
 
 .pdf-builder-status.info {
     background-color: #d1ecf1;
-    border-left-color: #17a2b8;
+    border-left-color: var(--pdf-primary);
     color: #0c5460;
 }
 
 /* Styles pour les boutons d'action */
 .pdf-builder-action-button {
-    margin-right: 10px;
+    margin-right: calc(var(--spacing-sm) * 1.25);
     margin-bottom: 5px;
 }
 
@@ -52,16 +82,16 @@
 
 /* Styles pour les sections pliables */
 .pdf-builder-collapsible {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin: 10px 0;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
+    margin: calc(var(--spacing-sm) * 1.25) 0;
 }
 
 .pdf-builder-collapsible-header {
-    background: #f8f9fa;
-    padding: 12px 15px;
+    background: var(--pdf-secondary);
+    padding: calc(var(--spacing-sm) * 1.5) calc(var(--spacing-lg) * 1.25);
     cursor: pointer;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--pdf-border);
     font-weight: 600;
     display: flex;
     justify-content: space-between;
@@ -81,7 +111,7 @@
 }
 
 .pdf-builder-collapsible-content {
-    padding: 15px;
+    padding: calc(var(--spacing-lg) * 1.25);
     background: #fff;
     display: block;
 }
@@ -96,7 +126,7 @@
     width: 16px;
     height: 16px;
     border: 2px solid #f3f3f3;
-    border-top: 2px solid #3498db;
+    border-top: 2px solid var(--pdf-primary);
     border-radius: 50%;
     animation: pdf-builder-spin 1s linear infinite;
     margin-right: 8px;

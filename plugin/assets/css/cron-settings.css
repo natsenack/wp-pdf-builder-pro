@@ -1,32 +1,63 @@
-/* Cron Settings Tab Styles */
-/* Styles simplifiés pour l'onglet Cron */
+/**
+ * PDF Builder Cron Settings CSS
+ * Styles nettoyés et cohérents avec le système de design du plugin
+ */
+
+/* Variables cohérentes avec le reste du plugin */
+:root {
+    --pdf-primary: #0066cc;
+    --pdf-secondary: #f0f0f0;
+    --pdf-border: #ddd;
+    --pdf-text: #333;
+    --pdf-text-light: #666;
+    --pdf-error: #dc3545;
+    --pdf-success: #28a745;
+    --pdf-warning: #ffc107;
+
+    /* Espacements cohérents */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
+    /* Rayons de bordure cohérents */
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+
+    /* Ombres cohérentes */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 .pdf-builder-cron-diagnostics {
-    margin: 16px 0;
+    margin: var(--spacing-md) 0;
 }
 
 /* WP Cron Status Indicator */
 .wp-cron-status-indicator {
-    margin-bottom: 16px;
-    padding: 12px;
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--pdf-secondary);
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
     display: flex;
     align-items: center;
     flex-wrap: wrap;
 }
 
 .wp-cron-status-indicator .dashicons-clock {
-    color: #007cba;
+    color: var(--pdf-primary);
     font-size: 18px;
-    margin-right: 8px;
+    margin-right: var(--spacing-xs);
     vertical-align: middle;
 }
 
 .wp-cron-status-indicator h4 {
-    margin: 0 12px 0 0;
-    color: #1e1e1e;
+    margin: 0 var(--spacing-sm) 0 0;
+    color: var(--pdf-text);
     font-size: 16px;
     font-weight: 600;
     flex: 1;
@@ -38,9 +69,9 @@
     display: flex;
     align-items: center;
     margin-bottom: 6px;
-    margin-right: 16px;
+    margin-right: var(--spacing-md);
     font-size: 14px;
-    color: #1e1e1e;
+    color: var(--pdf-text);
 }
 
 .status-indicator {
@@ -48,34 +79,34 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    margin-right: 8px;
+    margin-right: var(--spacing-xs);
     flex-shrink: 0;
 }
 
 .status-indicator.success {
-    background: #00a32a;
+    background: var(--pdf-success);
 }
 
 .status-indicator.warning {
-    background: #dba617;
+    background: var(--pdf-warning);
 }
 
 .status-indicator.error {
-    background: #d63638;
+    background: var(--pdf-error);
 }
 
 .status-indicator.info {
-    background: #007cba;
+    background: var(--pdf-primary);
 }
 
 /* Check Status Button */
 #check-wp-cron-status-btn {
-    margin-left: 12px;
-    padding: 6px 12px;
-    background: #007cba;
+    margin-left: var(--spacing-sm);
+    padding: 6px var(--spacing-sm);
+    background: var(--pdf-primary);
     color: white;
-    border: 1px solid #007cba;
-    border-radius: 4px;
+    border: 1px solid var(--pdf-primary);
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
@@ -86,7 +117,7 @@
 }
 
 #check-wp-cron-status-btn:disabled {
-    background: #646970;
+    background: var(--pdf-text-light);
     cursor: not-allowed;
     opacity: 0.6;
 }
@@ -100,22 +131,22 @@
 .cron-status-section,
 .cron-actions-section,
 .cron-results-section {
-    margin-bottom: 20px;
-    padding: 16px;
+    margin-bottom: calc(var(--spacing-lg) * 1.25);
+    padding: var(--spacing-md);
     background: #fff;
-    border: 1px solid #e1e5e9;
-    border-radius: 6px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
 }
 
 .cron-status-section h3,
 .cron-actions-section h3,
 .cron-results-section h3 {
-    margin: 0 0 12px 0;
-    color: #1e1e1e;
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--pdf-text);
     font-size: 16px;
     font-weight: 600;
-    border-bottom: 1px solid #e1e5e9;
-    padding-bottom: 8px;
+    border-bottom: 1px solid var(--pdf-border);
+    padding-bottom: var(--spacing-xs);
 }
 
 .cron-status-section h3:before {
@@ -135,10 +166,10 @@
 
 /* Cron Actions Buttons */
 .cron-actions-section .button {
-    margin-right: 8px;
-    margin-bottom: 8px;
-    padding: 6px 12px;
-    border-radius: 4px;
+    margin-right: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+    padding: 6px var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
     font-size: 14px;
     text-decoration: none;
     display: inline-block;
@@ -146,9 +177,9 @@
 }
 
 .cron-actions-section .button-secondary {
-    background: #f8f9fa;
+    background: var(--pdf-secondary);
     border: 1px solid #c7c7cc;
-    color: #1e1e1e;
+    color: var(--pdf-text);
 }
 
 .cron-actions-section .button-secondary:hover {
@@ -156,8 +187,8 @@
 }
 
 .cron-actions-section .button-primary {
-    background: #007cba;
-    border: 1px solid #007cba;
+    background: var(--pdf-primary);
+    border: 1px solid var(--pdf-primary);
     color: white;
 }
 
@@ -166,7 +197,7 @@
 }
 
 .cron-actions-section .button:disabled {
-    background: #646970;
+    background: var(--pdf-text-light);
     color: white;
     cursor: not-allowed;
     opacity: 0.6;
@@ -179,7 +210,7 @@
 
 /* Cron Results */
 .cron-results-section {
-    background: #f8f9fa;
+    background: var(--pdf-secondary);
 }
 
 .hidden-element {
@@ -191,71 +222,71 @@
 }
 
 .cron-results-section .result-item {
-    margin-bottom: 8px;
-    padding: 8px;
+    margin-bottom: var(--spacing-xs);
+    padding: var(--spacing-xs);
     background: white;
-    border: 1px solid #e1e5e9;
-    border-radius: 4px;
+    border: 1px solid var(--pdf-border);
+    border-radius: var(--border-radius-sm);
     font-family: monospace;
     font-size: 13px;
-    color: #1e1e1e;
+    color: var(--pdf-text);
     white-space: pre-wrap;
     word-break: break-all;
 }
 
 .cron-results-section .result-item.success {
-    border-color: #00a32a;
+    border-color: var(--pdf-success);
     background: #e6f7e6;
-    color: #1e8cbe;
+    color: var(--pdf-primary);
 }
 
 .cron-results-section .result-item.error {
-    border-color: #d63638;
+    border-color: var(--pdf-error);
     background: #fff5f5;
-    color: #d63638;
+    color: var(--pdf-error);
 }
 
 .cron-results-section .result-item.warning {
-    border-color: #dba617;
+    border-color: var(--pdf-warning);
     background: #fef9e6;
-    color: #dba617;
+    color: var(--pdf-warning);
 }
 
 .cron-results-section .result-item.info {
-    border-color: #007cba;
+    border-color: var(--pdf-primary);
     background: #f0f8ff;
-    color: #007cba;
+    color: var(--pdf-primary);
 }
 
 /* Loading States */
 .cron-loading {
     text-align: center;
-    padding: 16px;
-    color: #646970;
+    padding: var(--spacing-md);
+    color: var(--pdf-text-light);
 }
 
 /* Progress Indicators */
 .cron-progress {
-    margin: 12px 0;
-    padding: 8px;
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-xs);
     background: #e9ecef;
     border: 1px solid #ced4da;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
 }
 
 .cron-progress .progress-bar {
     width: 100%;
     height: 8px;
     background: #dee2e6;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     overflow: hidden;
 }
 
 .cron-progress .progress-fill {
     height: 100%;
-    background: #007cba;
+    background: var(--pdf-primary);
     width: 0%;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
 }
 
 /* Responsive Design */
