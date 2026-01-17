@@ -123,6 +123,18 @@ class PdfBuilderFeatureManager
             'name' => 'Navigation grille et guides',
             'description' => 'Grille, guides et accrochage magnétique'
         ],
+        'advanced_selection' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Modes de sélection avancés',
+            'description' => 'Sélection multiple et par groupe'
+        ],
+        'keyboard_shortcuts' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Raccourcis clavier',
+            'description' => 'Raccourcis clavier pour navigation rapide'
+        ],
     ];
 
     /**

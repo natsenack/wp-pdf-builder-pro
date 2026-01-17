@@ -470,19 +470,36 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🎯</span> Mode de sélection</label>
+                    <?php $can_use_advanced_selection = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('advanced_selection'); ?>
                     <select id="modal_canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
                         <option value="single" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'single'); ?>>Simple</option>
-                        <option value="multiple" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'multiple'); ?>>Multiple</option>
-                        <option value="group" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'group'); ?>>Groupe</option>
+                        <option value="multiple" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'multiple'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Multiple ⭐ PREMIUM' : 'Multiple'; ?></option>
+                        <option value="group" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'group'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Groupe ⭐ PREMIUM' : 'Groupe'; ?></option>
                     </select>
+                    <?php if (!$can_use_advanced_selection): ?>
+                        <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
+                            <strong>🔒 Fonction Premium</strong> - Débloquez les modes de sélection avancés (Multiple et Groupe)
+                            <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier</label>
+                    <?php $can_use_keyboard_shortcuts = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('keyboard_shortcuts'); ?>
+                    <?php if ($can_use_keyboard_shortcuts): ?>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts"
                                value="1" <?php checked(get_canvas_modal_value('keyboard_shortcuts', $canvas_defaults['keyboard_shortcuts']), '1'); ?>>
                         <label for="modal_canvas_keyboard_shortcuts"></label>
                     </div>
+                    <?php else: ?>
+                    <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
+                        <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts"
+                               value="1" disabled>
+                        <label for="modal_canvas_keyboard_shortcuts"></label>
+                    </div>
+                    <span class="premium-badge">⭐ PREMIUM</span>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_export_quality">Qualité export (%)</label>
@@ -491,12 +508,19 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_export_format">Format export</label>
+                    <?php $can_use_multi_format_export = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('multi_format_export'); ?>
                     <select id="modal_canvas_export_format" name="pdf_builder_canvas_export_format">
                         <option value="pdf" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'pdf'); ?>>PDF</option>
-                        <option value="png" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'png'); ?>>PNG</option>
-                        <option value="jpg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'jpg'); ?>>JPG</option>
-                        <option value="svg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'svg'); ?>>SVG</option>
+                        <option value="png" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
+                        <option value="jpg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'jpg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG'; ?></option>
+                        <option value="svg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'svg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG'; ?></option>
                     </select>
+                    <?php if (!$can_use_multi_format_export): ?>
+                        <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
+                            <strong>🔒 Fonction Premium</strong> - Débloquez l'export PNG, JPG et SVG
+                            <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_export_transparent">Fond transparent</label>
