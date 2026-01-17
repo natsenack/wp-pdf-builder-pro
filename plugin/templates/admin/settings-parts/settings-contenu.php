@@ -450,6 +450,47 @@
 
                     console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
 
+                    // Initialize window.pdfBuilderCanvasSettings with current DB values
+                    window.pdfBuilderCanvasSettings = {
+                        width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
+                        height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123')); ?>,
+                        dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
+                        format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4')); ?>,
+                        bgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
+                        borderColor: <?php echo json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')); ?>,
+                        borderWidth: <?php echo json_encode(get_canvas_option_contenu('canvas_border_width', '1')); ?>,
+                        containerBgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')); ?>,
+                        shadowEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'); ?>,
+                        gridEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1'); ?>,
+                        gridSize: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20')); ?>,
+                        guidesEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1'); ?>,
+                        snapToGrid: <?php echo json_encode(get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1'); ?>,
+                        zoomMin: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>,
+                        zoomMax: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_max', '500')); ?>,
+                        zoomDefault: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>,
+                        zoomStep: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_step', '25')); ?>,
+                        exportQuality: <?php echo json_encode(get_canvas_option_contenu('canvas_export_quality', '90')); ?>,
+                        exportFormat: <?php echo json_encode(get_canvas_option_contenu('canvas_export_format', 'png')); ?>,
+                        exportTransparent: <?php echo json_encode(get_canvas_option_contenu('canvas_export_transparent', '0') === '1'); ?>,
+                        dragEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_drag_enabled', '1') === '1'); ?>,
+                        resizeEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1'); ?>,
+                        rotateEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1'); ?>,
+                        multiSelect: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1'); ?>,
+                        selectionMode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single')); ?>,
+                        keyboardShortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1'); ?>,
+                        fpsTarget: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60')); ?>,
+                        memoryLimitJs: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>,
+                        responseTimeout: <?php echo json_encode(get_canvas_option_contenu('canvas_response_timeout', '5000')); ?>,
+                        lazyLoadingEditor: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_editor', '1') === '1'); ?>,
+                        preloadCritical: <?php echo json_encode(get_canvas_option_contenu('canvas_preload_critical', '1') === '1'); ?>,
+                        lazyLoadingPlugin: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1') === '1'); ?>,
+                        debugEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_debug_enabled', '0') === '1'); ?>,
+                        performanceMonitoring: <?php echo json_encode(get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1'); ?>,
+                        errorReporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1'); ?>,
+                        memoryLimitPhp: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>
+                    };
+                    console.log('[PDF Builder] Initialized window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+
                     // Configuration des modals
                     var modalConfig = {
                         'affichage': 'canvas-affichage-modal-overlay',
