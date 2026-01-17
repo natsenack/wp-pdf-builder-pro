@@ -243,30 +243,7 @@
    FORMULAIRES ET INPUTS
    ============================================ */
 
-/* Tables de formulaires WordPress */
-.form-table {
-    border-collapse: collapse;
-    margin-top: var(--spacing-md);
-    width: 100%;
-}
 
-.form-table th,
-.form-table td {
-    border-bottom: var(--border-width-thin) solid var(--pdf-border);
-    padding: var(--spacing-md) 0;
-    vertical-align: top;
-}
-
-.form-table th {
-    font-weight: var(--font-weight-medium);
-    padding-right: var(--spacing-lg);
-    text-align: left;
-    width: 200px;
-}
-
-.form-table td {
-    padding-left: 0;
-}
 
 /* Labels */
 .form-table label {
@@ -9675,11 +9652,6 @@ input:checked + .toggle-slider:before {
     color: #4b5563;
     margin-left: auto;
     font-style: italic;
-}
-
-.form-table {
-    width: 100%;
-    margin: 20px 0;
 }
 
 .form-table th {
