@@ -3,6 +3,43 @@
  * Handles tab navigation and content switching
  */
 
+// Define API immediately for early access
+window.PDFBuilderTabsAPI = {
+    switchToTab: function(tabId) {
+        // Remove active class from all tabs
+        $('.nav-tab-wrapper .nav-tab').removeClass('nav-tab-active');
+
+        // Add active class to target tab
+        $(`.nav-tab-wrapper .nav-tab[href*="${tabId}"]`).addClass('nav-tab-active');
+
+        // Since content is handled by PHP, we don't need to show/hide elements
+        // Just trigger custom event for tab change
+        $(document).trigger('pdfBuilderTabChanged', [tabId]);
+    },
+
+    toggleAdvancedSection: function() {
+        const $advancedSection = $('.pdf-advanced-settings');
+        const $toggleButton = $('.toggle-advanced-pdf');
+
+        if ($advancedSection.is(':visible')) {
+            $advancedSection.slideUp();
+            $toggleButton.text('Afficher les paramètres avancés');
+        } else {
+            $advancedSection.slideDown();
+            $toggleButton.text('Masquer les paramètres avancés');
+        }
+    },
+
+    resetTemplatesStatus: function() {
+        // Reset templates status - implementation can be added as needed
+        console.log('[PDF Builder] Resetting templates status');
+    },
+
+    getCurrentTab: function() {
+        return $('.nav-tab-wrapper .nav-tab.nav-tab-active').attr('href').substring(1);
+    }
+};
+
 (function($) {
     'use strict';
 
@@ -42,7 +79,7 @@
                 history.replaceState(null, null, '#' + tabId);
 
                 // Switch to tab (visual feedback)
-                switchToTab(tabId);
+                window.PDFBuilderTabsAPI.switchToTab(tabId);
             }
         });
     }
@@ -55,7 +92,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const tabParam = urlParams.get('tab');
         if (tabParam) {
-            switchToTab(tabParam);
+            window.PDFBuilderTabsAPI.switchToTab(tabParam);
             return;
         }
 
@@ -67,36 +104,8 @@
                 const hashParams = new URLSearchParams(hash);
                 tabId = hashParams.get('tab') || hash;
             }
-            switchToTab(tabId);
+            window.PDFBuilderTabsAPI.switchToTab(tabId);
         }
     }
-
-    /**
-     * Switch to specific tab
-     */
-    function switchToTab(tabId) {
-        // Remove active class from all tabs
-        $('.nav-tab-wrapper .nav-tab').removeClass('nav-tab-active');
-
-        // Add active class to target tab
-        $(`.nav-tab-wrapper .nav-tab[href*="${tabId}"]`).addClass('nav-tab-active');
-
-        // Since content is handled by PHP, we don't need to show/hide elements
-        // Just trigger custom event for tab change
-        $(document).trigger('pdfBuilderTabChanged', [tabId]);
-    }
-
-    /**
-     * Get current active tab
-     */
-    function getCurrentTab() {
-        return $('.nav-tab-wrapper .nav-tab.nav-tab-active').attr('href').substring(1);
-    }
-
-    // Make functions globally available
-    window.pdfBuilderTabs = {
-        switchToTab: switchToTab,
-        getCurrentTab: getCurrentTab
-    };
 
 })(jQuery);

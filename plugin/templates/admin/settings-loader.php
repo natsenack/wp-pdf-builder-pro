@@ -115,69 +115,6 @@ function pdf_builder_load_settings_assets($hook) {
         'nonce' => wp_create_nonce('pdf_builder_ajax')
     ));
 
-    // AJOUTER L'API PDFBuilderTabsAPI DIRECTEMENT - SOLUTION DE SECOURS
-    $pdf_builder_api_script = "
-    console.log('PDFBuilderTabsAPI script starting via inline script...');
-    
-    try {
-        window.PDFBuilderTabsAPI = {
-            switchToTab: function(tabName) {
-                console.log('switchToTab called with:', tabName);
-                var tabLink = document.querySelector('a[href*=\"tab=' + tabName + '\"]');
-                if (tabLink) {
-                    tabLink.click();
-                } else {
-                    var currentUrl = window.location.href;
-                    var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
-                    if (newUrl === currentUrl) {
-                        newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
-                    }
-                    window.location.href = newUrl;
-                }
-            },
-
-            toggleAdvancedSection: function() {
-                console.log('toggleAdvancedSection called');
-                var advancedSection = document.getElementById('advanced-section');
-                var toggleIcon = document.getElementById('advanced-toggle');
-
-                console.log('Elements found:', { advancedSection: advancedSection, toggleIcon: toggleIcon });
-
-                if (advancedSection && toggleIcon) {
-                    if (advancedSection.classList.contains('hidden-element')) {
-                        advancedSection.classList.remove('hidden-element');
-                        toggleIcon.textContent = '▲';
-                        console.log('Section shown');
-                    } else {
-                        advancedSection.classList.add('hidden-element');
-                        toggleIcon.textContent = '▼';
-                        console.log('Section hidden');
-                    }
-                } else {
-                    console.error('Required elements not found');
-                }
-            },
-
-            resetTemplatesStatus: function() {
-                if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
-                    var selects = document.querySelectorAll('.template-select');
-                    selects.forEach(function(select) {
-                        select.value = '';
-                        select.dispatchEvent(new Event('change', { bubbles: true }));
-                    });
-                    alert('Les paramètres des templates ont été réinitialisés.');
-                }
-            }
-        };
-
-        console.log('PDFBuilderTabsAPI defined successfully via inline script:', window.PDFBuilderTabsAPI);
-    } catch (error) {
-        console.error('Error in PDFBuilderTabsAPI definition via inline script:', error);
-    }
-    ";
-
-    wp_add_inline_script('pdf-builder-settings-tabs', $pdf_builder_api_script, 'after');
-
     error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 
