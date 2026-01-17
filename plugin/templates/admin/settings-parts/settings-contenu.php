@@ -607,7 +607,9 @@
                                     console.log('[PDF Builder] Paramètres canvas sauvegardés:', response.data);
                                     
                                     // Mettre à jour les paramètres dans window.pdfBuilderCanvasSettings
+                                    console.log('[PDF Builder] Checking window.pdfBuilderCanvasSettings:', typeof window.pdfBuilderCanvasSettings);
                                     if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
+                                        console.log('[PDF Builder] window.pdfBuilderCanvasSettings exists, updating...');
                                         // Créer une copie des données pour la conversion (sans modifier canvasData utilisé pour AJAX)
                                         var settingsUpdate = {};
                                         Object.keys(canvasData).forEach(function(key) {
@@ -625,11 +627,27 @@
                                         
                                         // Mettre à jour window.pdfBuilderCanvasSettings avec les nouvelles valeurs
                                         Object.assign(window.pdfBuilderCanvasSettings, settingsUpdate);
+                                        console.log('[PDF Builder] window.pdfBuilderCanvasSettings updated:', window.pdfBuilderCanvasSettings);
                                         
                                         // Dispatcher l'événement pour notifier React
                                         var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
                                         window.dispatchEvent(event);
                                         console.log('[PDF Builder] Dispatched pdfBuilderCanvasSettingsUpdated event');
+                                        
+                                        // Mettre à jour les inputs du modal avec les valeurs sauvegardées
+                                        Object.keys(canvasData).forEach(function(key) {
+                                            var input = modal.querySelector('[name="' + key + '"]');
+                                            if (input) {
+                                                if (input.type === 'checkbox') {
+                                                    input.checked = canvasData[key] === '1';
+                                                } else {
+                                                    input.value = canvasData[key];
+                                                }
+                                                console.log('[PDF Builder] Updated modal input:', key, '=', canvasData[key]);
+                                            }
+                                        });
+                                    } else {
+                                        console.log('[PDF Builder] window.pdfBuilderCanvasSettings not defined, skipping React update');
                                     }
                                     
                                     // Afficher une notification de succès
