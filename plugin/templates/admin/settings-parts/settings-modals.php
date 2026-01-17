@@ -334,34 +334,51 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
+                <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📐</span> Grille activée</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>
+                               <?php echo !$can_use_grid_navigation ? 'disabled' : ''; ?>>
                         <label for="modal_canvas_grid_enabled"></label>
                     </div>
+                    <?php if (!$can_use_grid_navigation): ?>
+                        <span class="premium-badge">⭐ PREMIUM</span>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📏</span> Taille grille (px)</label>
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
-                           value="<?php echo esc_attr(get_canvas_modal_value('grid_size', $canvas_defaults['grid_size'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('grid_size', $canvas_defaults['grid_size'])); ?>"
+                           <?php echo !$can_use_grid_navigation ? 'disabled' : ''; ?>>
+                    <?php if (!$can_use_grid_navigation): ?>
+                        <span class="premium-badge">⭐ PREMIUM</span>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📍</span> Guides activés</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>
+                               <?php echo !$can_use_grid_navigation ? 'disabled' : ''; ?>>
                         <label for="modal_canvas_guides_enabled"></label>
                     </div>
+                    <?php if (!$can_use_grid_navigation): ?>
+                        <span class="premium-badge">⭐ PREMIUM</span>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
-                               value="1" <?php checked(get_canvas_modal_value('snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>
+                               <?php echo !$can_use_grid_navigation ? 'disabled' : ''; ?>>
                         <label for="modal_canvas_snap_to_grid"></label>
                     </div>
+                    <?php if (!$can_use_grid_navigation): ?>
+                        <span class="premium-badge">⭐ PREMIUM</span>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%)</label>

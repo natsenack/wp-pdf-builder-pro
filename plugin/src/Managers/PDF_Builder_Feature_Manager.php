@@ -117,6 +117,12 @@ class PdfBuilderFeatureManager
             'name' => 'Couleurs personnalisées',
             'description' => 'Fond et bordures du canvas'
         ],
+        'grid_navigation' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Navigation grille et guides',
+            'description' => 'Grille, guides et accrochage magnétique'
+        ],
     ];
 
     /**
