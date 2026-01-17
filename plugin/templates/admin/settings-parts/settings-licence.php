@@ -117,8 +117,8 @@
                                         <?php echo $is_premium ? '✅' : '○'; ?>
                                     </div>
                                     <div class="status-info">
-                                        <h4 class="status-title"><?php echo $is_premium ? 'Premium Actif' : 'Version Gratuite'; ?></h4>
-                                        <p class="status-description"><?php echo $is_premium ? 'Toutes les fonctionnalités disponibles' : 'Fonctionnalités limitées'; ?></p>
+                                        <h4 class="status-title"><?php echo $is_premium ? 'Licence Premium Active' : 'Version Gratuite'; ?></h4>
+                                        <p class="status-description"><?php echo $is_premium ? 'Toutes les fonctionnalités sont disponibles' : 'Fonctionnalités de base uniquement'; ?></p>
                                     </div>
                                 </div>
                                 <?php if ($is_premium && !empty($license_expires)): ?>
@@ -128,25 +128,6 @@
                                 </div>
                                 <?php endif; ?>
                             </div>
-
-                            <!-- Carte Mode Test (si applicable) -->
-                            <?php if (!empty($test_key)): ?>
-                            <div class="status-card test-status">
-                                <div class="status-card-header">
-                                    <div class="status-icon">🧪</div>
-                                    <div class="status-info">
-                                        <h4 class="status-title">Mode Développement</h4>
-                                        <p class="status-description">Clé de test active</p>
-                                    </div>
-                                </div>
-                                <?php if (!empty($test_key_expires)): ?>
-                                <div class="status-expiry">
-                                    <span class="expiry-label">Expire le :</span>
-                                    <span class="expiry-date"><?php echo date('d/m/Y', strtotime($test_key_expires)); ?></span>
-                                </div>
-                                <?php endif; ?>
-                            </div>
-                            <?php endif; ?>
 
                             <!-- Carte Actions Rapides -->
                             <div class="status-card actions-card">
@@ -161,12 +142,12 @@
                                     <?php if (!$is_premium && empty($test_key)): ?>
                                         <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=developpeur'); ?>" class="quick-action-btn primary">
                                             <span class="btn-icon">🧪</span>
-                                            Activer Mode Test
+                                            Tester les fonctionnalités Premium
                                         </a>
                                     <?php elseif ($is_premium): ?>
                                         <button type="button" class="quick-action-btn secondary" onclick="showDeactivateModal()">
                                             <span class="btn-icon">🔓</span>
-                                            Désactiver Licence
+                                            Désactiver la licence
                                         </button>
                                     <?php endif; ?>
                                 </div>

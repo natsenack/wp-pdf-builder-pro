@@ -18449,23 +18449,24 @@ input:checked + .toggle-slider-small::before {
 /* Status Overview Grid */
 .status-overview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  max-width: 800px;
 }
 
 .status-card {
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  border-radius: 1rem;
+  padding: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
 
 .status-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .status-card.main-status.premium {
@@ -18478,11 +18479,6 @@ input:checked + .toggle-slider-small::before {
   background: linear-gradient(135deg, #f9fafb, #ffffff);
 }
 
-.status-card.test-status {
-  border-color: #f59e0b;
-  background: linear-gradient(135deg, #fffbeb, #ffffff);
-}
-
 .status-card.actions-card {
   border-color: #6366f1;
   background: linear-gradient(135deg, #eef2ff, #ffffff);
@@ -18491,18 +18487,19 @@ input:checked + .toggle-slider-small::before {
 .status-card-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .status-icon {
-  width: 3rem;
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.75rem;
-  font-size: 1.5rem;
+  border-radius: 1rem;
+  font-size: 2rem;
+  flex-shrink: 0;
 }
 
 .status-card.main-status.premium .status-icon {
@@ -18515,67 +18512,66 @@ input:checked + .toggle-slider-small::before {
   color: #6b7280;
 }
 
-.status-card.test-status .status-icon {
-  background: #f59e0b;
-  color: white;
-}
-
 .status-card.actions-card .status-icon {
   background: #6366f1;
   color: white;
 }
 
 .status-info h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.125rem;
-  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #111827;
 }
 
 .status-description {
   margin: 0;
   color: #6b7280;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .status-expiry {
-  padding-top: 1rem;
+  padding-top: 1.5rem;
   border-top: 1px solid #e5e7eb;
+  margin-top: 1.5rem;
 }
 
 .expiry-label {
   display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .expiry-date {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 700;
   color: #111827;
 }
 
 /* Quick Actions */
 .quick-actions {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .quick-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   cursor: pointer;
+  width: 100%;
+  text-align: center;
 }
 
 .quick-action-btn.primary {
@@ -18587,8 +18583,8 @@ input:checked + .toggle-slider-small::before {
 .quick-action-btn.primary:hover {
   background: #4f46e5;
   border-color: #4f46e5;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
 }
 
 .quick-action-btn.secondary {
@@ -18600,12 +18596,12 @@ input:checked + .toggle-slider-small::before {
 .quick-action-btn.secondary:hover {
   background: #dc2626;
   color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(220, 38, 38, 0.3);
 }
 
 .btn-icon {
-  font-size: 1rem;
+  font-size: 1.25rem;
 }
 
 /* License Details Section */
