@@ -869,6 +869,7 @@ class AjaxHandler
      */
     private function handleGetCanvasSettings()
     {
+        error_log("[PDF Builder] ===== AJAX handleGetCanvasSettings STARTED =====");
         global $wpdb;
         $canvas_settings = [];
 
@@ -912,17 +913,25 @@ class AjaxHandler
             'pdf_builder_canvas_memory_limit_php'
         ];
 
+        error_log("[PDF Builder] Canvas option keys to fetch: " . count($canvas_option_keys));
+        error_log("[PDF Builder] Keys: " . implode(', ', $canvas_option_keys));
+
         // Forcer la lecture directe depuis la base de données en contournant le cache
         foreach ($canvas_option_keys as $key) {
+            error_log("[PDF Builder] Fetching option: {$key}");
             $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $key));
+
             if ($value === null) {
                 $value = '';
                 error_log("[PDF Builder] AJAX get_canvas_settings - {$key}: OPTION_NOT_FOUND - using empty string");
             } else {
-                error_log("[PDF Builder] AJAX get_canvas_settings - {$key}: FOUND_DB_VALUE '{$value}'");
+                error_log("[PDF Builder] AJAX get_canvas_settings - {$key}: FOUND_DB_VALUE '{$value}' (type: " . gettype($value) . ")");
             }
             $canvas_settings[$key] = $value;
         }
+
+        error_log("[PDF Builder] Final canvas_settings array: " . print_r($canvas_settings, true));
+        error_log("[PDF Builder] ===== AJAX handleGetCanvasSettings COMPLETED =====");
 
         wp_send_json_success([
             'canvas_settings' => $canvas_settings,
