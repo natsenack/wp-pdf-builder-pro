@@ -85,6 +85,87 @@
         <strong>🔍 DEBUG:</strong> Page chargée à <?php echo current_time('H:i:s'); ?> - Tab: <?php echo $current_tab; ?> - Settings count: <?php echo count($settings); ?>
     </div>
 
+    <!-- PDF Builder Tabs API JavaScript - Défini tôt pour éviter les erreurs -->
+    <script>
+    (function() {
+        'use strict';
+
+        // PDF Builder Tabs API
+        window.PDFBuilderTabsAPI = {
+            /**
+             * Change d'onglet
+             * @param {string} tabName - Nom de l'onglet (general, licence, systeme, securite, pdf, contenu, templates, developpeur)
+             */
+            switchToTab: function(tabName) {
+                var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
+                if (tabLink) {
+                    // Simuler un clic sur le lien de l'onglet
+                    tabLink.click();
+                } else {
+                    // Fallback: changer l'URL
+                    var currentUrl = window.location.href;
+                    var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
+                    if (newUrl === currentUrl) {
+                        // Si tab n'était pas dans l'URL, l'ajouter
+                        newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
+                    }
+                    window.location.href = newUrl;
+                }
+            },
+
+            /**
+             * Bascule la section avancée dans l'onglet PDF
+             */
+            toggleAdvancedSection: function() {
+                var advancedSection = document.getElementById('advanced-section');
+                var toggleIcon = document.getElementById('advanced-toggle');
+
+                if (advancedSection && toggleIcon) {
+                    if (advancedSection.classList.contains('hidden-element')) {
+                        // Afficher la section
+                        advancedSection.classList.remove('hidden-element');
+                        toggleIcon.textContent = '▲';
+                    } else {
+                        // Masquer la section
+                        advancedSection.classList.add('hidden-element');
+                        toggleIcon.textContent = '▼';
+                    }
+                }
+            },
+
+            /**
+             * Réinitialise les paramètres des templates par statut
+             */
+            resetTemplatesStatus: function() {
+                if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
+                    // Réinitialiser tous les selects
+                    var selects = document.querySelectorAll('.template-select');
+                    selects.forEach(function(select) {
+                        select.value = '';
+                        // Déclencher l'événement change pour mettre à jour les prévisualisations
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+
+                    // Afficher un message de succès
+                    alert('Les paramètres des templates ont été réinitialisés.');
+                }
+            }
+        };
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PDFBuilderTabsAPI initialized');
+        });
+
+    })();
+    </script>
+
+    <style>
+    .hidden-element {
+        display: none !important;
+    }
+    </style>
+
     <form method="post" action="options.php">
         <?php 
         error_log('[PDF Builder] About to call settings_fields for pdf_builder_settings');
@@ -195,85 +276,4 @@
     <div id="pdf-builder-tab-content" style="display: none;"></div>
 
 </div> <!-- Fin du .wrap -->
-
-<style>
-.hidden-element {
-    display: none !important;
-}
-</style>
-
-<!-- PDF Builder Tabs API JavaScript -->
-<script>
-(function() {
-    'use strict';
-
-    // PDF Builder Tabs API
-    window.PDFBuilderTabsAPI = {
-        /**
-         * Change d'onglet
-         * @param {string} tabName - Nom de l'onglet (general, licence, systeme, securite, pdf, contenu, templates, developpeur)
-         */
-        switchToTab: function(tabName) {
-            var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
-            if (tabLink) {
-                // Simuler un clic sur le lien de l'onglet
-                tabLink.click();
-            } else {
-                // Fallback: changer l'URL
-                var currentUrl = window.location.href;
-                var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
-                if (newUrl === currentUrl) {
-                    // Si tab n'était pas dans l'URL, l'ajouter
-                    newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
-                }
-                window.location.href = newUrl;
-            }
-        },
-
-        /**
-         * Bascule la section avancée dans l'onglet PDF
-         */
-        toggleAdvancedSection: function() {
-            var advancedSection = document.getElementById('advanced-section');
-            var toggleIcon = document.getElementById('advanced-toggle');
-
-            if (advancedSection && toggleIcon) {
-                if (advancedSection.classList.contains('hidden-element')) {
-                    // Afficher la section
-                    advancedSection.classList.remove('hidden-element');
-                    toggleIcon.textContent = '▲';
-                } else {
-                    // Masquer la section
-                    advancedSection.classList.add('hidden-element');
-                    toggleIcon.textContent = '▼';
-                }
-            }
-        },
-
-        /**
-         * Réinitialise les paramètres des templates par statut
-         */
-        resetTemplatesStatus: function() {
-            if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
-                // Réinitialiser tous les selects
-                var selects = document.querySelectorAll('.template-select');
-                selects.forEach(function(select) {
-                    select.value = '';
-                    // Déclencher l'événement change pour mettre à jour les prévisualisations
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
-                });
-
-                // Afficher un message de succès
-                alert('Les paramètres des templates ont été réinitialisés.');
-            }
-        }
-    };
-
-    // Initialisation au chargement de la page
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('PDFBuilderTabsAPI initialized');
-    });
-
-})();
-</script>
 
