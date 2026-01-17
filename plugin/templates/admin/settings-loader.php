@@ -60,11 +60,11 @@ function pdf_builder_load_settings_assets($hook) {
     error_log('PDF Builder - Avant wp_enqueue_script');
 
     // Charger le JavaScript pour la navigation par onglets - seulement si le fichier existe
-    $settings_tabs_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-tabs.js';
+    $settings_tabs_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-tabs.min.js';
     if (file_exists($settings_tabs_js)) {
         wp_enqueue_script(
             'pdf-builder-settings-tabs',
-            PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js',
+            PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.min.js',
             array('jquery'), // Removed wp-util and wp-api to avoid async loading
             PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
             false // Chargé dans le header pour une exécution précoce
