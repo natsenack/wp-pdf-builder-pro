@@ -774,6 +774,7 @@
                         </div>
                     </div>
 
+                    <?php if (!empty($test_key)): ?>
                     <!-- Mode développement -->
                     <div class="action-card secondary">
                         <div class="action-card-header">
@@ -812,6 +813,69 @@
                             </div>
                         </div>
                     </div>
+                    <?php else: ?>
+                    <!-- Section promotion premium -->
+                    <div class="action-card premium-promo">
+                        <div class="action-card-header">
+                            <h3>
+                                <span class="action-icon">⭐</span>
+                                Débloquez tout le potentiel !
+                            </h3>
+                            <p>Version Premium - Fonctionnalités avancées pour les professionnels</p>
+                        </div>
+
+                        <div class="action-card-content">
+                            <div class="premium-features-list">
+                                <div class="feature-item">
+                                    <span class="feature-icon">🎨</span>
+                                    <div class="feature-content">
+                                        <strong>Canvas Avancé</strong>
+                                        <p>Résolutions élevées, formats étendus, couleurs personnalisées</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">🧭</span>
+                                    <div class="feature-content">
+                                        <strong>Navigation Pro</strong>
+                                        <p>Grille magnétique, guides, accrochage automatique</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">📄</span>
+                                    <div class="feature-content">
+                                        <strong>Export Multi-Format</strong>
+                                        <p>PDF, PNG, JPG, SVG avec fond transparent</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">🎯</span>
+                                    <div class="feature-content">
+                                        <strong>Sélection Avancée</strong>
+                                        <p>Modes multiple et groupe, raccourcis clavier</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">📊</span>
+                                    <div class="feature-content">
+                                        <strong>Analytics & Support</strong>
+                                        <p>Tableaux de bord détaillés, support prioritaire 24/7</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="premium-cta">
+                                <div class="pricing-info">
+                                    <span class="price">À partir de 29€/an</span>
+                                    <span class="guarantee">Satisfaction garantie - 30 jours</span>
+                                </div>
+                                <a href="#" onclick="showUpgradeModal('license_tab')" class="btn-premium">
+                                    <span class="btn-icon">🚀</span>
+                                    Passer en Premium
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
                 </div>
 
