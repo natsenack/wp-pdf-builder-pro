@@ -95,63 +95,15 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     </table>
                 </section>
 
-                <!-- Section Avancée (repliable) -->
+                <!-- Section Avancée (toujours visible) -->
                 <section id="pdf" class="pdf-section">
-                    <h3 id="advanced-section-toggle" style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;">
-                        🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
+                    <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">
+                        🔧 Options avancées
                     </h3>
 
-                    <script>
-                    console.log('[PDF Builder] Inline script in settings-pdf.php executing');
 
-                    console.log('Setting up advanced section toggle handler...');
 
-                    function attachToggleHandler() {
-                        console.log('Attaching toggle handler...');
-
-                        var toggleElement = document.getElementById('advanced-section-toggle');
-                        console.log('Toggle element:', toggleElement ? 'found' : 'NOT FOUND');
-
-                        if (window.PDFBuilderTabsAPI) {
-                            console.log('PDFBuilderTabsAPI found:', typeof window.PDFBuilderTabsAPI);
-                            console.log('toggleAdvancedSection function:', typeof window.PDFBuilderTabsAPI.toggleAdvancedSection);
-                        } else {
-                            console.log('PDFBuilderTabsAPI: NOT FOUND');
-                            return false;
-                        }
-
-                        if (toggleElement && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
-                            toggleElement.addEventListener('click', function() {
-                                console.log('Toggle clicked - calling API');
-                                window.PDFBuilderTabsAPI.toggleAdvancedSection();
-                            });
-                            console.log('✅ Handler attached successfully');
-                            return true;
-                        }
-                        console.log('❌ Cannot attach handler - missing requirements');
-                        return false;
-                    }
-
-                    // Listen for the API ready event
-                    jQuery(document).on('PDFBuilderTabsAPIReady', function() {
-                        console.log('PDFBuilderTabsAPIReady event received');
-                        attachToggleHandler();
-                    });
-
-                    // Fallback: try to attach immediately if API is already available
-                    if (window.PDFBuilderTabsAPI) {
-                        console.log('PDFBuilderTabsAPI already available, attaching immediately');
-                        attachToggleHandler();
-                    } else {
-                        console.log('Waiting for PDFBuilderTabsAPIReady event...');
-                    }
-
-                    // Debug: check if jQuery is available
-                    console.log('jQuery available:', typeof jQuery);
-                    console.log('document ready state:', document.readyState);
-                    </script>
-
-                    <section id="advanced-section" class="hidden-element">
+                    <section id="advanced-section">
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
