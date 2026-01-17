@@ -88,8 +88,6 @@
     $settings = get_option('pdf_builder_settings', array());
 
 ?>
-            <h2>🎨 Contenu & Design</h2>
-
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
                 <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); ?>
@@ -446,7 +444,7 @@
             <style>
             </style>
 
-<script>
+            <script>
                 (function() {
                     'use strict';
 
