@@ -787,22 +787,12 @@
                             var input = modal.querySelector('[name="' + inputName + '"]');
                             var settingValue = window.pdfBuilderCanvasSettings[settingKey];
 
-                            console.log('[PDF Builder] Syncing', settingKey, ': value =', settingValue, 'input =', inputName);
-
                             if (input) {
                                 if (input.type === 'checkbox') {
-                                    var oldChecked = input.checked;
                                     input.checked = settingValue === true || settingValue === '1';
-                                    var newChecked = input.checked;
-                                    console.log('[PDF Builder] ✓ Checkbox', inputName, ':', oldChecked, '→', newChecked);
                                 } else {
-                                    var oldValue = input.value;
                                     input.value = settingValue;
-                                    var newValue = input.value;
-                                    console.log('[PDF Builder] ✓ Input', inputName, ':', oldValue, '→', newValue);
                                 }
-                            } else {
-                                console.log('[PDF Builder] ✗ Input not found:', inputName);
                             }
                         });
 
