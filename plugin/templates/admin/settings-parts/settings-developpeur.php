@@ -903,8 +903,12 @@
                         $('#license_test_mode').prop('checked', isActive);
                         
                         // Recharger la page après 1 seconde pour voir les changements dans l'onglet licence
+                        // Ajouter un paramètre de cache busting pour forcer le rechargement des options
                         setTimeout(function() {
-                            location.reload();
+                            const cacheBust = Date.now();
+                            const currentUrl = new URL(window.location);
+                            currentUrl.searchParams.set('cache_bust', cacheBust);
+                            window.location.href = currentUrl.toString();
                         }, 1000);
                     } else {
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
