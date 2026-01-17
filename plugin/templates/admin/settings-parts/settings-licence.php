@@ -563,9 +563,9 @@
                     $license_key = $settings['pdf_builder_license_key'] ?? '';
                     $license_expires = $settings['pdf_builder_license_expires'] ?? '';
                     $license_activated_at = $settings['pdf_builder_license_activated_at'] ?? '';
-                    $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
-                    $test_key = get_option('pdf_builder_license_test_key', '');
-                    $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
+                    $test_mode_enabled = $settings['pdf_builder_license_test_mode_enabled'] ?? false;
+                    $test_key = $settings['pdf_builder_license_test_key'] ?? '';
+                    $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
                     $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
                     $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', '');
 

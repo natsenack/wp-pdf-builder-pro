@@ -1891,12 +1891,40 @@ class PDF_Builder_Unified_Ajax_Handler {
              $new_mode = $current_mode === '1' ? '0' : '1';
 
              $settings['pdf_builder_license_test_mode'] = $new_mode;
-             update_option('pdf_builder_settings', $settings);
 
-             wp_send_json_success([
+             $response_data = [
                  'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès.',
                  'test_mode' => $new_mode
-             ]);
+             ];
+
+             // Si on active le mode test, générer automatiquement une clé de test si elle n'existe pas
+             if ($new_mode === '1') {
+                 $existing_test_key = $settings['pdf_builder_license_test_key'] ?? '';
+                 if (empty($existing_test_key)) {
+                     // Générer une nouvelle clé de test
+                     $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
+                     $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
+
+                     $settings['pdf_builder_license_test_key'] = $test_key;
+                     $settings['pdf_builder_license_test_key_expires'] = $expires_in_30_days;
+                     $settings['pdf_builder_license_status'] = 'test';
+
+                     $response_data['test_key'] = $test_key;
+                     $response_data['expires'] = $expires_in_30_days;
+                     $response_data['message'] .= ' Clé de test générée automatiquement.';
+                 } else {
+                     // Retourner la clé existante
+                     $response_data['test_key'] = $existing_test_key;
+                     $response_data['expires'] = $settings['pdf_builder_license_test_key_expires'] ?? '';
+                 }
+             } else {
+                 // Si on désactive le mode test, on peut choisir de garder ou supprimer la clé
+                 // Pour l'instant, on la garde pour permettre de la réactiver facilement
+             }
+
+             update_option('pdf_builder_settings', $settings);
+
+             wp_send_json_success($response_data);
 
          } catch (Exception $e) {
              // error_log('[PDF Builder AJAX] Erreur toggle test mode: ' . $e->getMessage());

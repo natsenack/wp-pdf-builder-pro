@@ -71,11 +71,14 @@ class PDF_Builder_License_Manager
             return true;
         }
 
+        // Récupérer les paramètres unifiés
+        $settings = get_option('pdf_builder_settings', []);
+
         // Vérifier les clés de test (mode développeur)
-        $test_key = get_option('pdf_builder_license_test_key', '');
+        $test_key = $settings['pdf_builder_license_test_key'] ?? '';
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
-            $test_expires = get_option('pdf_builder_license_test_key_expires', '');
+            $test_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
             if (!empty($test_expires)) {
                 $expires_date = strtotime($test_expires);
                 if ($expires_date && $expires_date > time()) {
