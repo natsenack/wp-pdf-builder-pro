@@ -547,7 +547,11 @@
                             'keyboardShortcuts': 'pdf_builder_canvas_keyboard_shortcuts',
                             'exportQuality': 'pdf_builder_canvas_export_quality',
                             'exportFormat': 'pdf_builder_canvas_export_format',
-                            'exportTransparent': 'pdf_builder_canvas_export_transparent'
+                            'exportTransparent': 'pdf_builder_canvas_export_transparent',
+                            'gridEnabled': 'pdf_builder_canvas_grid_enabled',
+                            'gridSize': 'pdf_builder_canvas_grid_size',
+                            'guidesEnabled': 'pdf_builder_canvas_guides_enabled',
+                            'snapToGrid': 'pdf_builder_canvas_snap_to_grid'
                         };
 
                         // Pour chaque setting, trouver l'input correspondant et le mettre à jour
