@@ -10,7 +10,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
 
             <!-- Section Principale -->
             <section id="pdf" class="pdf-section">
-            <h3 style="display: flex; justify-content: flex-start; align-items: center;">
+            <h3 class="contenu-canvas-section" style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>📄 Configuration PDF</span>
             </h3>
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
