@@ -4,6 +4,13 @@
 
 $settings = get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
+
+// Vérifier si l'utilisateur a une licence premium
+$is_premium = false;
+if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+    $license_manager = PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+    $is_premium = $license_manager->isPremium();
+}
 ?>
 
 
@@ -95,7 +102,23 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     </table>
                 </section>
 
-                <!-- Section Avancée (toujours visible) -->
+                <?php if (!$is_premium): ?>
+                <!-- Message pour version Premium -->
+                <div class="notice notice-warning inline" style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;">
+                    <h4 style="margin: 0 0 10px 0; color: #856404;">🔒 Options avancées - Version Premium</h4>
+                    <p style="margin: 0 0 15px 0; color: #856404;">
+                        Les options avancées de compression, métadonnées et optimisation d'impression sont disponibles dans la version Premium.
+                    </p>
+                    <p style="margin: 0;">
+                        <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=licence'); ?>'; return false; }" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px;">
+                            Passer à la version Premium
+                        </a>
+                    </p>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($is_premium): ?>
+                <!-- Section Avancée (Premium) -->
                 <section id="pdf" class="pdf-section">
                     <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">
                         🔧 Options avancées
@@ -140,6 +163,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                             </tr>
                         </table>
                     </section>
+                <?php endif; ?>
                 </section>
 
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
