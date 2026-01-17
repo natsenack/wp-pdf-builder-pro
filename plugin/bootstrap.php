@@ -1736,5 +1736,12 @@ if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-deep-diagnostic.php')) {
     require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-deep-diagnostic.php';
 }
 
+// ============================================================================
+// ✅ RÉPARATION FORCÉE DU SERVEUR REST API
+// ============================================================================
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'rest-api-server-fix.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'rest-api-server-fix.php';
+}
+
 // FIN DU BOOTSTRAP
 // ============================================================================
