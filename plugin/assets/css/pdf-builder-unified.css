@@ -1343,17 +1343,6 @@
     border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
 }
 
-.nav-tab.nav-tab-active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--pdf-primary);
-    border-radius: 2px 2px 0 0;
-}
-
 /* Styles pour le contenu des onglets */
 .tab-content {
     display: none;
@@ -2611,19 +2600,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     background: #f8fafc;
     color: #334155;
     border-color: #e2e8f0;
-}
-
-/* Onglet actif - Design professionnel sobre */
-
-.nav-tab-active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-    border-radius: 1px 1px 0 0;
 }
 
 /* === STYLES POUR LES SOUS-ONGLETS - Design moderne === */
