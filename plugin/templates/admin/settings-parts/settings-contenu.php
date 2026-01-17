@@ -528,7 +528,7 @@
 
                     // Fonction simplifiée pour sauvegarder les toggles d'une modal
                     function saveModalToggles(category) {
-                        console.log('[PDF Builder] Saving toggles for modal:', category);
+                        console.log('[PDF Builder] ===== STARTING SAVE FOR MODAL:', category, '=====');
 
                         var modalId = modalConfig[category];
                         if (!modalId) {
@@ -544,6 +544,8 @@
 
                         // Récupérer les toggles pour cette modal
                         var togglesForModal = modalToggles[category] || [];
+                        console.log('[PDF Builder] Toggles for modal', category, ':', togglesForModal);
+
                         if (togglesForModal.length === 0) {
                             console.log('[PDF Builder] No toggles defined for modal:', category);
                             return;
@@ -556,11 +558,13 @@
                             if (input && input.type === 'checkbox') {
                                 var value = input.checked ? '1' : '0';
                                 toggleData[toggleName] = value;
-                                console.log('[PDF Builder] Toggle', toggleName, '=', value);
+                                console.log('[PDF Builder] ✓ Toggle', toggleName, 'checked:', input.checked, 'value:', value);
                             } else {
-                                console.warn('[PDF Builder] Toggle input not found or not a checkbox:', toggleName);
+                                console.warn('[PDF Builder] ✗ Toggle input not found or not a checkbox:', toggleName, 'input:', input);
                             }
                         });
+
+                        console.log('[PDF Builder] Final toggleData to save:', toggleData);
 
                         if (Object.keys(toggleData).length === 0) {
                             console.log('[PDF Builder] No toggle data to save');
@@ -586,30 +590,45 @@
                                 nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
                             },
                             success: function(response) {
+                                console.log('[PDF Builder] ===== AJAX RESPONSE RECEIVED =====');
                                 console.log('[PDF Builder] Toggle save response:', response);
+                                console.log('[PDF Builder] Response success:', response.success);
 
                                 if (response.success) {
+                                    console.log('[PDF Builder] Updating window.pdfBuilderCanvasSettings...');
+
                                     // Mettre à jour window.pdfBuilderCanvasSettings avec les nouvelles valeurs
                                     if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
                                         Object.keys(toggleData).forEach(function(inputName) {
                                             var settingKey = inputToSettingMap[inputName];
                                             if (settingKey) {
                                                 // Convertir en boolean pour window.pdfBuilderCanvasSettings
+                                                var oldValue = window.pdfBuilderCanvasSettings[settingKey];
                                                 window.pdfBuilderCanvasSettings[settingKey] = toggleData[inputName] === '1';
-                                                console.log('[PDF Builder] Updated window.pdfBuilderCanvasSettings[' + settingKey + '] =', window.pdfBuilderCanvasSettings[settingKey]);
+                                                var newValue = window.pdfBuilderCanvasSettings[settingKey];
+                                                console.log('[PDF Builder] ✓ Updated', settingKey, ':', oldValue, '→', newValue);
+                                            } else {
+                                                console.warn('[PDF Builder] ✗ No mapping found for', inputName);
                                             }
                                         });
+
+                                        console.log('[PDF Builder] Final window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
 
                                         // Dispatcher l'événement pour notifier React
                                         var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
                                         window.dispatchEvent(event);
+                                        console.log('[PDF Builder] Dispatched pdfBuilderCanvasSettingsUpdated event');
+                                    } else {
+                                        console.error('[PDF Builder] window.pdfBuilderCanvasSettings is undefined!');
                                     }
 
                                     // Resynchroniser les inputs de la modal (au cas où)
+                                    console.log('[PDF Builder] Resyncing modal inputs...');
                                     syncModalInputsWithSettings(modal, category);
 
                                     // Afficher la notification de succès
                                     showNotification('Paramètres sauvegardés avec succès !', 'success');
+                                    console.log('[PDF Builder] ===== SAVE COMPLETED SUCCESSFULLY =====');
 
                                 } else {
                                     console.error('[PDF Builder] Erreur sauvegarde:', response.data);
@@ -666,7 +685,9 @@
                             return;
                         }
 
-                        console.log('[PDF Builder] Syncing modal inputs for category:', category);
+                        console.log('[PDF Builder] ===== SYNCING MODAL INPUTS =====');
+                        console.log('[PDF Builder] Category:', category);
+                        console.log('[PDF Builder] Current window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
 
                         // Mapping des clés settings vers les noms d'input
                         var settingToInputMap = {
@@ -695,18 +716,26 @@
                             var input = modal.querySelector('[name="' + inputName + '"]');
                             var settingValue = window.pdfBuilderCanvasSettings[settingKey];
 
+                            console.log('[PDF Builder] Syncing', settingKey, ': value =', settingValue, 'input =', inputName);
+
                             if (input) {
                                 if (input.type === 'checkbox') {
+                                    var oldChecked = input.checked;
                                     input.checked = settingValue === true || settingValue === '1';
-                                    console.log('[PDF Builder] Synced checkbox', inputName, 'to', input.checked);
+                                    var newChecked = input.checked;
+                                    console.log('[PDF Builder] ✓ Checkbox', inputName, ':', oldChecked, '→', newChecked);
                                 } else {
+                                    var oldValue = input.value;
                                     input.value = settingValue;
-                                    console.log('[PDF Builder] Synced input', inputName, 'to', settingValue);
+                                    var newValue = input.value;
+                                    console.log('[PDF Builder] ✓ Input', inputName, ':', oldValue, '→', newValue);
                                 }
                             } else {
-                                console.log('[PDF Builder] Input not found:', inputName);
+                                console.log('[PDF Builder] ✗ Input not found:', inputName);
                             }
                         });
+
+                        console.log('[PDF Builder] ===== SYNC COMPLETED =====');
                     }
 
                     // Fonction simple pour fermer une modal
