@@ -52,7 +52,7 @@ function pdf_builder_load_settings_assets($hook) {
         'pdf-builder-unified',
         PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-unified.css',
         array(),
-        PDF_BUILDER_VERSION . '-' . time(),
+        PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999),
         'all'
     );
 
