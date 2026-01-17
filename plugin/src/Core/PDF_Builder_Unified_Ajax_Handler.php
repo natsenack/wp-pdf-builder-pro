@@ -2018,17 +2018,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'pdf_builder_license_key',
                  'pdf_builder_license_status',
                  'pdf_builder_license_expires',
+                 'pdf_builder_license_test_key',
+                 'pdf_builder_license_test_mode_enabled',
                  'pdf_builder_license_data'
              ];
-
-             // Vérifier si le mode test est actif avant de supprimer la clé de test
-             $settings = get_option('pdf_builder_settings', []);
-             $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
-
-             if ($test_mode_enabled !== '1') {
-                 $license_options[] = 'pdf_builder_license_test_key';
-             }
-             $license_options[] = 'pdf_builder_license_test_mode_enabled';
 
              foreach ($license_options as $option) {
                  delete_option($option);
@@ -2037,39 +2030,15 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              // Clear license settings from the main settings array
              $settings = get_option('pdf_builder_settings', []);
-             $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
              error_log('[PDF Builder] Settings before cleanup: ' . print_r($settings, true));
 
              // Remove all license-related keys from settings
              foreach ($settings as $key => $value) {
                  if (strpos($key, 'pdf_builder_license_') === 0) {
-                     // Préserver la clé de test si le mode test est actif
-                     if ($test_mode_enabled === '1' && in_array($key, ['pdf_builder_license_test_key', 'pdf_builder_license_test_key_expires'])) {
-                         error_log('[PDF Builder] Preserving test key: ' . $key);
-                         continue;
-                     }
                      unset($settings[$key]);
                      error_log('[PDF Builder] Removed license key from settings: ' . $key);
                  }
              }
-
-             // Also explicitly remove known license keys to be sure
-             $license_keys = [
-                 'pdf_builder_license_status',
-                 'pdf_builder_license_key',
-                 'pdf_builder_license_expires',
-                 'pdf_builder_license_activated_at',
-                 'pdf_builder_license_test_mode_enabled',
-                 'pdf_builder_license_email_reminders',
-                 'pdf_builder_license_reminder_email'
-             ];
-
-             // Ne pas supprimer la clé de test si le mode test est actif
-             if ($test_mode_enabled !== '1') {
-                 $license_keys[] = 'pdf_builder_license_test_key';
-                 $license_keys[] = 'pdf_builder_license_test_key_expires';
-             }
-             $license_keys[] = 'pdf_builder_license_test_mode';
 
              foreach ($license_keys as $key) {
                  unset($settings[$key]);
