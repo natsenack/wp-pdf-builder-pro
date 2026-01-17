@@ -268,16 +268,16 @@
                             </footer>
                         </article>
 
-                        <!-- Carte Comportement -->
+                        <!-- Carte Comportement (fusion Interactions + Export) -->
                         <article class="canvas-card" data-category="comportement">
                             <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🎯</span>
                                 </div>
-                                <h4>Comportement</h4>
+                                <h4>Comportement & Export</h4>
                             </header>
                             <main class="canvas-card-content">
-                                <p>Configurez les interactions, la sélection et les raccourcis du canvas.</p>
+                                <p>Configurez les interactions, la sélection, les raccourcis et les options d'export du canvas.</p>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="interactions-preview-container">
@@ -353,83 +353,6 @@
                             <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>🎯</span> Configurer
-                                </button>
-                            </footer>
-                        </article>
-
-                        <!-- Carte Export -->
-                        <article class="canvas-card" data-category="export">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">📤</span>
-                                </div>
-                                <h4>Export</h4>
-                            </header>
-                            <main class="canvas-card-content">
-                                <p>Configurez la qualité, le format et les options d'export de vos documents PDF.</p>
-                            </main>
-                            <aside class="canvas-card-preview">
-                                <div class="export-preview-container">
-                                    <!-- Aperçu des formats d'export -->
-                                    <div class="export-formats-preview">
-                                        <div class="format-option pdf-format active" title="Format PDF - Haute qualité, préserve la mise en page">
-                                            <div class="format-icon">📄</div>
-                                            <div class="format-label">PDF</div>
-                                            <div class="format-quality">95%</div>
-                                        </div>
-                                        <div class="format-option png-format" title="Format PNG - Image transparente, pour le web">
-                                            <div class="format-icon">🖼</div>
-                                            <div class="format-label">PNG</div>
-                                            <div class="format-quality">90%</div>
-                                        </div>
-                                        <div class="format-option jpg-format" title="Format JPG - Image compressée, pour le partage">
-                                            <div class="format-icon">📷</div>
-                                            <div class="format-label">JPG</div>
-                                            <div class="format-quality">85%</div>
-                                        </div>
-                                        <div class="format-option svg-format premium" title="Format SVG - Vectoriel, pour l'impression ⭐ PREMIUM">
-                                            <div class="format-icon">🎨</div>
-                                            <div class="format-label">SVG</div>
-                                            <div class="format-quality">100%</div>
-                                            <div class="premium-badge">⭐</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Options d'export -->
-                                    <div class="export-options-preview">
-                                        <div class="export-option quality-option">
-                                            <label class="option-label">Qualité</label>
-                                            <div class="quality-slider">
-                                                <div class="slider-track">
-                                                    <div class="slider-fill" style="width: 90%"></div>
-                                                </div>
-                                                <div class="slider-handle" style="left: 90%"></div>
-                                                <span class="quality-value">90%</span>
-                                            </div>
-                                        </div>
-                                        <div class="export-option transparent-option">
-                                            <label class="option-label">Fond transparent</label>
-                                            <div class="transparent-toggle">
-                                                <div class="toggle-switch active">
-                                                    <div class="toggle-slider"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Indicateur de progression d'export -->
-                                    <div class="export-progress">
-                                        <div class="progress-label">Export en cours...</div>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill exporting" style="width: 65%"></div>
-                                        </div>
-                                        <div class="progress-value">65%</div>
-                                    </div>
-                                </div>
-                            </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>📤</span> Configurer
                                 </button>
                             </footer>
                         </article>
@@ -573,7 +496,6 @@
                         'affichage': 'canvas-affichage-modal-overlay',
                         'navigation': 'canvas-navigation-modal-overlay',
                         'comportement': 'canvas-comportement-modal-overlay',
-                        'export': 'canvas-export-modal-overlay',
                         'systeme': 'canvas-systeme-modal-overlay'
                     };
 
@@ -812,7 +734,7 @@
                                                 var value = canvasData[key];
                                                 
                                                 // Convertir les valeurs '1'/'0' en boolean pour les paramètres booléens
-                                                if (['dragEnabled', 'resizeEnabled', 'rotateEnabled', 'multiSelect', 'keyboardShortcuts', 'gridEnabled', 'guidesEnabled', 'snapToGrid', 'shadowEnabled', 'debugEnabled', 'performanceMonitoring', 'errorReporting'].includes(settingKey)) {
+                                                if (['dragEnabled', 'resizeEnabled', 'rotateEnabled', 'multiSelect', 'keyboardShortcuts', 'gridEnabled', 'guidesEnabled', 'snapToGrid', 'shadowEnabled', 'debugEnabled', 'performanceMonitoring', 'errorReporting', 'exportTransparent'].includes(settingKey)) {
                                                     value = value === '1';
                                                 }
                                                 

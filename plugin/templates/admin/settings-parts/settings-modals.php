@@ -502,24 +502,6 @@ function get_canvas_modal_value($key, $default = '') {
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
                 </div>
-            </div>
-        </div>
-        <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">✅ Appliquer</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL EXPORT -->
-<div id="canvas-export-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container" style="display: block; z-index: 10001;">
-        <div class="canvas-modal-header">
-            <h3><span style="font-size: 24px;">📤</span> Paramètres d'Export</h3>
-            <button type="button" class="canvas-modal-close">&times;</button>
-        </div>
-        <div class="canvas-modal-body">
-            <div class="modal-settings-grid">
                 <div class="setting-group">
                     <label for="modal_canvas_export_quality">Qualité export (%)</label>
                     <input type="number" id="modal_canvas_export_quality" name="pdf_builder_canvas_export_quality"
@@ -553,7 +535,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="export">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">✅ Appliquer</button>
         </div>
     </div>
 </div>
