@@ -91,11 +91,11 @@ class AdminScriptLoader
             }
 
             // Charger le système de notifications pour les pages de paramètres - seulement si le fichier existe
-            $notifications_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/notifications.js';
+            $notifications_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/notifications.min.js';
             if (file_exists($notifications_js)) {
                 wp_enqueue_script(
                     'pdf-builder-notifications',
-                    PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js',
+                    PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js',
                     ['jquery'],
                     PDF_BUILDER_PRO_VERSION,
                     true
@@ -103,11 +103,11 @@ class AdminScriptLoader
             }
 
             // Charger le CSS des notifications - seulement si le fichier existe
-            $notifications_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/notifications.css';
+            $notifications_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/notifications.min.css';
             if (file_exists($notifications_css)) {
                 wp_enqueue_style(
                     'pdf-builder-notifications',
-                    PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css',
+                    PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css',
                     [],
                     PDF_BUILDER_PRO_VERSION
                 );
@@ -246,17 +246,17 @@ class AdminScriptLoader
         error_log('[WP AdminScriptLoader] Version param: ' . $version_param);
 
         // AJAX throttle manager
-        $throttle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/ajax-throttle.js';
+        $throttle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/ajax-throttle.min.js';
         wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url . ' with cache_bust: ' . $cache_bust);
 
         // Notifications system
-        $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js';
+        $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js';
         wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url . ' with cache_bust: ' . $cache_bust);
 
         // Notifications CSS
-        $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css';
+        $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css';
         wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url . ' with cache_bust: ' . $cache_bust);
 
@@ -292,7 +292,7 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
         // Wrapper script
-        $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
+        $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
@@ -449,7 +449,7 @@ class AdminScriptLoader
         */
 
         // Init helper
-        $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
+        $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.min.js';
         wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-main'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 

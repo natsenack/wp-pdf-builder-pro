@@ -334,8 +334,12 @@ $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-react.min.js"
     "plugin/assets/js/react-vendor.min.js"
     "plugin/assets/js/pdf-builder-react-init.min.js"
+    "plugin/assets/js/ajax-throttle.min.js"
+    "plugin/assets/js/notifications.min.js"
+    "plugin/assets/js/pdf-builder-wrap.min.js"
+    "plugin/assets/js/pdf-builder-init.min.js"
     "plugin/assets/css/pdf-builder-react.min.css"
-    # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
+    "plugin/assets/css/notifications-css.min.css"
 )
 foreach ($criticalCompiledFile in $criticalCompiledFiles) {
     $criticalCompiledPath = Join-Path $WorkingDir $criticalCompiledFile
@@ -363,10 +367,54 @@ foreach ($criticalFile in $criticalFiles) {
 
 Write-Log "$($filesToDeploy.Count) fichier(s) détecté(s)" "SUCCESS"
 
-# 2 COMPILATION (IGNORÉE - WEBPACK DÉSACTIVÉ)
-Write-Host "`n2 Compilation..." -ForegroundColor Magenta
-Write-Log "Compilation webpack désactivée" "INFO"
-Write-Log "Les fichiers existants seront déployés tels quels" "INFO"
+# 2 COMPILATION WEBPACK
+Write-Host "`n2 Compilation Webpack..." -ForegroundColor Magenta
+Write-Log "Début de la compilation webpack" "INFO"
+
+Push-Location $WorkingDir
+try {
+    # Vérifier si npm est disponible
+    $npmAvailable = Get-Command npm -ErrorAction SilentlyContinue
+    if (-not $npmAvailable) {
+        Write-Log "npm n'est pas disponible, compilation ignorée" "WARN"
+    } else {
+        # Vérifier si package.json existe
+        if (Test-Path "package.json") {
+            Write-Log "Lancement de npm run build" "INFO"
+            $buildResult = & npm run build 2>&1
+            $buildExitCode = $LASTEXITCODE
+            
+            # Afficher la sortie de webpack
+            foreach ($line in $buildResult) {
+                if ($line -match "ERROR" -or $line -match "error") {
+                    Write-Log "Webpack: $line" "ERROR"
+                } elseif ($line -match "WARNING" -or $line -match "warning") {
+                    Write-Log "Webpack: $line" "WARN"
+                } elseif ($line -match "compiled successfully") {
+                    Write-Log "Webpack: $line" "SUCCESS"
+                } else {
+                    Write-Log "Webpack: $line" "INFO"
+                }
+            }
+            
+            if ($buildExitCode -eq 0) {
+                Write-Log "Compilation webpack réussie" "SUCCESS"
+            } else {
+                Write-Log "Erreur lors de la compilation webpack (code: $buildExitCode)" "ERROR"
+                Write-Host "`n❌ ERREUR WEBPACK - Arrêt du déploiement" -ForegroundColor Red
+                exit 1
+            }
+        } else {
+            Write-Log "package.json non trouvé, compilation ignorée" "WARN"
+        }
+    }
+} catch {
+    Write-Log "Exception lors de la compilation: $($_.Exception.Message)" "ERROR"
+    Write-Host "`n❌ ERREUR WEBPACK - Arrêt du déploiement" -ForegroundColor Red
+    exit 1
+} finally {
+    Pop-Location
+}
 
 # 2.5 GIT ADD DES FICHIERS MODIFIÉS
 Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
@@ -396,7 +444,11 @@ try {
     # Force add critical compiled files
     $criticalCompiledFiles = @(
         "plugin/assets/js/pdf-builder-react-wrapper.min.js"
-        # "plugin/assets/css/pdf-builder-react.css" # Supprimé car remplacé par pdf-builder-css.css
+        "plugin/assets/js/ajax-throttle.min.js"
+        "plugin/assets/js/notifications.min.js"
+        "plugin/assets/js/pdf-builder-wrap.min.js"
+        "plugin/assets/js/pdf-builder-init.min.js"
+        "plugin/assets/css/notifications-css.min.css"
     )
     foreach ($criticalFile in $criticalCompiledFiles) {
         if (Test-Path $criticalFile) {
