@@ -48,6 +48,7 @@ $canvas_defaults = [
 function get_canvas_modal_value($key, $default = '') {
     $option_key = 'pdf_builder_canvas_' . $key;
     $value = get_option($option_key, $default);
+    error_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')");
     return $value;
 }
 ?>
