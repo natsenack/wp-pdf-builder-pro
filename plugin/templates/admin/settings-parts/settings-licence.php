@@ -563,7 +563,7 @@
                     $license_key = $settings['pdf_builder_license_key'] ?? '';
                     $license_expires = $settings['pdf_builder_license_expires'] ?? '';
                     $license_activated_at = $settings['pdf_builder_license_activated_at'] ?? '';
-                    $test_mode_enabled = $settings['pdf_builder_license_test_mode_enabled'] ?? false;
+                    $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
                     $test_key = $settings['pdf_builder_license_test_key'] ?? '';
                     $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
                     $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
@@ -572,7 +572,7 @@
                     // Utiliser la méthode centralisée du License Manager pour déterminer si premium
                     $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
                     $is_premium = $license_manager->isPremium();
-                    $is_test_mode = !empty($test_key);
+                    $is_test_mode = $test_mode_enabled === '1';
 
                     // DEBUG: Afficher les valeurs pour verifier
                     if (current_user_can('manage_options')) {
@@ -606,7 +606,7 @@
                             $settings['pdf_builder_license_expires'] = '';
                             $settings['pdf_builder_license_activated_at'] = '';
                             $settings['pdf_builder_license_test_key'] = '';
-                            $settings['pdf_builder_license_test_mode_enabled'] = false;
+                            $settings['pdf_builder_license_test_mode'] = '0';
                             $settings['pdf_builder_license_status'] = 'free';
                             update_option('pdf_builder_settings', $settings);
 
@@ -616,7 +616,7 @@
                             $license_status = 'free';
                             $license_activated_at = '';
                             $test_key = '';
-                            $test_mode_enabled = false;
+                            $test_mode_enabled = '0';
                         }
                     }
                 ?>
