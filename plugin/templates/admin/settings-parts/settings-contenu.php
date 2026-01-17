@@ -447,14 +447,9 @@
 
 
 
-            <!-- CSS pour les modales Canvas - AJOUTÉ -->
+            <!-- CSS pour les modales Canvas - DÉJÀ INCLUS dans pdf-builder-unified.css -->
             <style>
             </style>
-            <?php
-                $plugin_dir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-                $css_url = plugins_url('resources/assets/css/modals-contenu.css', $plugin_dir . '/pdf-builder-pro.php');
-                wp_enqueue_style('pdf-builder-modals-contenu', $css_url, array(), '1.0.0');
-            ?>
 
 <script>
                 (function() {
