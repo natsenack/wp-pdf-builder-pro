@@ -1722,12 +1722,19 @@ class AjaxHandler
                 'pdf_builder_license_status',
                 'pdf_builder_license_expiry',
                 'pdf_builder_license_type',
-                'pdf_builder_license_test_key',
-                'pdf_builder_license_test_key_expires',
-                'pdf_builder_license_test_mode',
                 'pdf_builder_license_last_check',
                 'pdf_builder_license_validated'
             ];
+
+            // Vérifier si le mode test est actif pour préserver la clé de test
+            $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
+            if ($test_mode_enabled !== '1') {
+                // Supprimer la clé de test seulement si le mode test n'est pas actif
+                $license_keys_to_remove[] = 'pdf_builder_license_test_key';
+                $license_keys_to_remove[] = 'pdf_builder_license_test_key_expires';
+            }
+            // Toujours supprimer le mode test lui-même pour forcer la réactivation manuelle
+            $license_keys_to_remove[] = 'pdf_builder_license_test_mode';
 
             $removed_count = 0;
             foreach ($license_keys_to_remove as $key) {
