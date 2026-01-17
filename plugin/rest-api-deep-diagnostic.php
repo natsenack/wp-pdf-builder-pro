@@ -231,21 +231,29 @@ function pdf_builder_ajax_rest_fallback() {
 function pdf_builder_override_wp_api() {
     // Add inline script to override wp.api initialization
     add_action('admin_enqueue_scripts', function() {
+        // Désactiver les scripts problématiques sur la page de diagnostic
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-api-diagnostic') {
+            // Supprimer les scripts qui causent des erreurs
+            wp_dequeue_script('webpage_content_reporter');
+            wp_deregister_script('webpage_content_reporter');
+        }
+
         wp_add_inline_script('jquery', '
             // Override wp.api initialization to prevent REST API calls
-            if (typeof window.wp !== "undefined" && typeof window.wp.api !== "undefined") {
-                console.log("[PDF Builder] Overriding wp.api to use AJAX fallback");
+            if (typeof window.wp !== "undefined") {
+                console.log("[PDF Builder] Initializing wp.api override");
 
-                // Store original wp.api.init
+                // Ensure wp.api exists
+                window.wp.api = window.wp.api || {};
+                window.wp.api.models = window.wp.api.models || {};
+                window.wp.api.collections = window.wp.api.collections || {};
+
+                // Store original wp.api.init if it exists
                 var originalApiInit = window.wp.api.init;
 
                 // Override wp.api.init to use our fallback
                 window.wp.api.init = function() {
                     console.log("[PDF Builder] wp.api.init overridden - using AJAX fallback");
-
-                    // Create a mock API that uses AJAX instead of REST
-                    window.wp.api.models = window.wp.api.models || {};
-                    window.wp.api.collections = window.wp.api.collections || {};
 
                     // Override specific models that might cause issues
                     if (typeof window.wp.api.models.Post !== "undefined") {
@@ -257,7 +265,7 @@ function pdf_builder_override_wp_api() {
                     }
 
                     // Call original init if it exists
-                    if (originalApiInit) {
+                    if (originalApiInit && typeof originalApiInit === "function") {
                         try {
                             originalApiInit.call(this);
                         } catch (e) {
@@ -265,32 +273,64 @@ function pdf_builder_override_wp_api() {
                         }
                     }
                 };
+
+                // Initialize if not already done
+                if (!window.wp.api.initialized) {
+                    window.wp.api.init();
+                    window.wp.api.initialized = true;
+                }
             }
 
-            // AJAX fallback function
+            // AJAX fallback function with better error handling
             window.pdf_builder_ajax_fallback = function(action, options) {
                 options = options || {};
+
+                // Get nonce safely
+                var nonce = "";
+                if (typeof pdfBuilderAjax !== "undefined" && pdfBuilderAjax.nonce) {
+                    nonce = pdfBuilderAjax.nonce;
+                } else if (typeof window.pdf_builder_nonce !== "undefined") {
+                    nonce = window.pdf_builder_nonce;
+                }
+
                 return jQuery.ajax({
-                    url: ajaxurl,
+                    url: ajaxurl || "/wp-admin/admin-ajax.php",
                     type: "POST",
                     data: {
                         action: "pdf_builder_rest_fallback",
                         rest_action: action,
-                        nonce: (typeof pdfBuilderAjax !== "undefined") ? pdfBuilderAjax.nonce : ""
+                        nonce: nonce
                     },
                     success: function(response) {
-                        if (options.success) {
+                        if (options.success && typeof options.success === "function") {
                             options.success(response);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error("[PDF Builder] AJAX fallback failed:", error);
-                        if (options.error) {
+                        if (options.error && typeof options.error === "function") {
                             options.error(xhr, status, error);
                         }
                     }
                 });
             };
+
+            // Prevent JavaScript errors from breaking the page
+            window.addEventListener("error", function(e) {
+                if (e.message && e.message.includes("Unexpected token \'export\'")) {
+                    console.warn("[PDF Builder] Suppressed ES6 module error:", e.message);
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Catch and suppress module-related errors
+            window.addEventListener("unhandledrejection", function(e) {
+                if (e.reason && typeof e.reason === "string" && e.reason.includes("export")) {
+                    console.warn("[PDF Builder] Suppressed unhandled module rejection:", e.reason);
+                    e.preventDefault();
+                }
+            });
         ', 'after');
     }, 999); // High priority to override after other scripts
 }
@@ -300,10 +340,10 @@ function pdf_builder_override_wp_api() {
  */
 function pdf_builder_add_diagnostic_page() {
     add_submenu_page(
-        'pdf-builder-settings',
+        'pdf-builder-pro', // parent slug - menu principal du plugin
         'REST API Diagnostic',
         'API Diagnostic',
-        'manage_options',
+        'manage_options', // capability
         'pdf-builder-api-diagnostic',
         'pdf_builder_render_diagnostic_page'
     );
@@ -313,8 +353,14 @@ function pdf_builder_add_diagnostic_page() {
  * Render diagnostic page
  */
 function pdf_builder_render_diagnostic_page() {
+    // Vérifications de sécurité supplémentaires
     if (!current_user_can('manage_options')) {
-        wp_die('Insufficient permissions');
+        wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.', 'pdf-builder-pro'));
+    }
+
+    // Vérifier que nous sommes dans le bon contexte admin
+    if (!is_admin()) {
+        wp_die(__('Cette page ne peut être accédée que depuis l\'administration WordPress.', 'pdf-builder-pro'));
     }
 
     $diagnostic = pdf_builder_deep_rest_diagnostic();
@@ -446,6 +492,15 @@ function pdf_builder_render_diagnostic_page() {
 add_action('init', 'pdf_builder_create_ajax_fallback', 1);
 add_action('init', 'pdf_builder_override_wp_api', 100);
 add_action('admin_menu', 'pdf_builder_add_diagnostic_page', 20);
+
+// Hook alternatif pour accéder à la page de diagnostic
+add_action('admin_init', function() {
+    if (isset($_GET['pdf_builder_direct_diagnostic']) && current_user_can('manage_options')) {
+        // Accès direct à la page de diagnostic
+        pdf_builder_render_diagnostic_page();
+        exit;
+    }
+});
 
 /**
  * Log REST API attempts for debugging
