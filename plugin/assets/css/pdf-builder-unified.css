@@ -4489,7 +4489,7 @@ select option:disabled {
     animation: fadeInUp 0.5s ease-out;
 }
 
-@keyframes fadeInUp {
+@keyframes fadeInUp2 {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -4672,7 +4672,7 @@ select option:disabled {
     top: -3px;
     right: -3px;
     font-size: 10px;
-    animation: pulse 2s infinite;
+    animation: pulse2 2s infinite;
 }
 
 /* Styles pour les transitions en cours */
@@ -4686,7 +4686,7 @@ select option:disabled {
 }
 
 /* Animation de pulsation pour les indicateurs */
-@keyframes pulse {
+@keyframes pulse2 {
     0%, 100% { 
         transform: scale(1);
         opacity: 1;
@@ -9931,7 +9931,7 @@ input:checked + .toggle-slider:before {
     opacity: 1;
 }
 
-@keyframes slideIn {
+@keyframes slideIn2 {
     from {
         opacity: 0;
         transform: translateY(-10px);
@@ -11122,7 +11122,7 @@ input:checked + .toggle-slider:before {
 }
 
 .pdf-builder-onboarding-modal .step-content {
-    animation: fadeInUp 0.5s ease-out;
+    animation: fadeInUp2 0.5s ease-out;
 }
 
 /* Styles spécifiques pour l'étape WooCommerce Setup */
@@ -11860,7 +11860,7 @@ input:checked + .toggle-slider:before {
 
 /* Animations d'entrée/sortie */
 .pdf-builder-notification-slide {
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn2 0.3s ease-out;
 }
 
 .pdf-builder-notification-slide.dismissing {
@@ -15379,7 +15379,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Animation pour les tooltips et feedback */
 .tooltip {
-  animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp2 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeInUp {
@@ -15511,7 +15511,7 @@ input:focus, select:focus, textarea:focus {
   white-space: nowrap;
   z-index: 100;
   pointer-events: none;
-  animation: fadeInUp 0.2s ease;
+  animation: fadeInUp2 0.2s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -15571,10 +15571,10 @@ input:focus, select:focus, textarea:focus {
 }
 
 .status-indicator.loading::before {
-  animation: pulse 1.5s ease-in-out infinite;
+  animation: pulse3 1.5s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse3 {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
