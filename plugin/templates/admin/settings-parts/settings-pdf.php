@@ -104,7 +104,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     console.log('Setting up advanced section toggle handler...');
 
                     var retryCount = 0;
-                    var maxRetries = 10; // Reduced to 10 attempts (1 second)
+                    var maxRetries = 30; // Increased to 30 attempts (6 seconds)
 
                     function attachToggleHandler() {
                         retryCount++;
@@ -134,8 +134,8 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                                 toggleFunction: !!(window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.toggleAdvancedSection)
                             });
                         } else {
-                            console.log('⏳ Retrying in 100ms... (attempt', retryCount + 1, 'of', maxRetries, ')');
-                            setTimeout(attachToggleHandler, 100);
+                            console.log('⏳ Retrying in 200ms... (attempt', retryCount + 1, 'of', maxRetries, ')');
+                            setTimeout(attachToggleHandler, 200);
                         }
                     }
 
