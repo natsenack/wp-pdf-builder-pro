@@ -606,19 +606,23 @@
                                     
                                     // Mettre à jour les paramètres dans window.pdfBuilderCanvasSettings
                                     if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
-                                        // Convertir les valeurs sauvegardées pour correspondre au format React
+                                        // Créer une copie des données pour la conversion (sans modifier canvasData utilisé pour AJAX)
+                                        var settingsUpdate = {};
                                         Object.keys(canvasData).forEach(function(key) {
                                             var settingKey = key.replace('pdf_builder_canvas_', '');
                                             var value = canvasData[key];
                                             
                                             // Convertir les valeurs '1'/'0' en boolean pour les paramètres booléens
-                                            if (['drag_enabled', 'resize_enabled', 'rotate_enabled', 'multi_select', 'keyboard_shortcuts', 'grid_enabled', 'guides_enabled', 'snap_to_grid'].includes(settingKey)) {
+                                            if (['drag_enabled', 'resize_enabled', 'rotate_enabled', 'multi_select', 'keyboard_shortcuts', 'grid_enabled', 'guides_enabled', 'snap_to_grid', 'shadow_enabled', 'debug_enabled', 'performance_monitoring', 'error_reporting'].includes(settingKey)) {
                                                 value = value === '1';
                                             }
                                             
-                                            window.pdfBuilderCanvasSettings[settingKey] = value;
+                                            settingsUpdate[settingKey] = value;
                                             console.log('[PDF Builder] Updated window setting:', settingKey, '=', value);
                                         });
+                                        
+                                        // Mettre à jour window.pdfBuilderCanvasSettings avec les nouvelles valeurs
+                                        Object.assign(window.pdfBuilderCanvasSettings, settingsUpdate);
                                         
                                         // Dispatcher l'événement pour notifier React
                                         var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
