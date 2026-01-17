@@ -93,6 +93,7 @@
 
 ?>
 <div class="wrap">
+<!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <!-- PDF Builder Tabs API - Direct definition -->
     <script>
     console.log('PDFBuilderTabsAPI script starting...');
