@@ -94,9 +94,25 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
 
                 <!-- Section Avancée (repliable) -->
                 <section id="pdf" class="pdf-section">
-                    <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;" onclick="PDFBuilderTabsAPI.toggleAdvancedSection()">
+                    <h3 id="advanced-section-toggle" style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;">
                         🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
                     </h3>
+
+                    <script>
+                    // Attach click handler for advanced section toggle
+                    (function() {
+                        var toggleElement = document.getElementById('advanced-section-toggle');
+                        if (toggleElement) {
+                            toggleElement.addEventListener('click', function() {
+                                if (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
+                                    window.PDFBuilderTabsAPI.toggleAdvancedSection();
+                                } else {
+                                    console.error('PDFBuilderTabsAPI not available');
+                                }
+                            });
+                        }
+                    })();
+                    </script>
 
                     <section id="advanced-section" class="hidden-element">
                         <table class="form-table">

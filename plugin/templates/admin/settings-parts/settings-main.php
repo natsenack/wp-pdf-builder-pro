@@ -151,7 +151,7 @@
         }
     };
 
-    console.log('PDFBuilderTabsAPI defined inline');
+    console.log('PDFBuilderTabsAPI defined successfully:', typeof window.PDFBuilderTabsAPI);
     </script>
 
     <style>
