@@ -99,38 +99,46 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     </h3>
 
                     <script>
-                    // Attach click handler for advanced section toggle
-                    (function() {
-                        console.log('Setting up advanced section toggle handler...');
+                    console.log('Setting up advanced section toggle handler...');
 
-                        var retryCount = 0;
-                        var maxRetries = 50; // Stop after 50 attempts (5 seconds)
+                    var retryCount = 0;
+                    var maxRetries = 10; // Reduced to 10 attempts (1 second)
 
-                        function attachToggleHandler() {
-                            var toggleElement = document.getElementById('advanced-section-toggle');
-                            console.log('Toggle element found:', toggleElement, 'Retry count:', retryCount);
-                            console.log('PDFBuilderTabsAPI available:', typeof window.PDFBuilderTabsAPI);
-                            console.log('toggleAdvancedSection function:', typeof window.PDFBuilderTabsAPI?.toggleAdvancedSection);
+                    function attachToggleHandler() {
+                        retryCount++;
+                        console.log('Attempt', retryCount, 'of', maxRetries);
 
-                            if (toggleElement && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
-                                toggleElement.addEventListener('click', function() {
-                                    console.log('Toggle clicked, calling PDFBuilderTabsAPI.toggleAdvancedSection');
-                                    window.PDFBuilderTabsAPI.toggleAdvancedSection();
-                                });
-                                console.log('Advanced section toggle handler attached successfully');
-                            } else {
-                                retryCount++;
-                                if (retryCount >= maxRetries) {
-                                    console.error('Failed to attach toggle handler after', maxRetries, 'attempts');
-                                    return;
-                                }
-                                console.log('API not ready, retrying in 100ms... (attempt', retryCount, 'of', maxRetries, ')');
-                                // Retry after a short delay if API not ready yet
-                                setTimeout(attachToggleHandler, 100);
-                            }
+                        var toggleElement = document.getElementById('advanced-section-toggle');
+                        console.log('Toggle element:', toggleElement ? 'found' : 'NOT FOUND');
+
+                        if (window.PDFBuilderTabsAPI) {
+                            console.log('PDFBuilderTabsAPI found:', typeof window.PDFBuilderTabsAPI);
+                            console.log('toggleAdvancedSection function:', typeof window.PDFBuilderTabsAPI.toggleAdvancedSection);
+                        } else {
+                            console.log('PDFBuilderTabsAPI: NOT FOUND');
                         }
-                        attachToggleHandler();
-                    })();
+
+                        if (toggleElement && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.toggleAdvancedSection === 'function') {
+                            toggleElement.addEventListener('click', function() {
+                                console.log('Toggle clicked - calling API');
+                                window.PDFBuilderTabsAPI.toggleAdvancedSection();
+                            });
+                            console.log('✅ Handler attached successfully on attempt', retryCount);
+                        } else if (retryCount >= maxRetries) {
+                            console.error('❌ Failed to attach handler after', maxRetries, 'attempts');
+                            console.error('Final state:', {
+                                toggleElement: !!toggleElement,
+                                PDFBuilderTabsAPI: !!window.PDFBuilderTabsAPI,
+                                toggleFunction: !!(window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.toggleAdvancedSection)
+                            });
+                        } else {
+                            console.log('⏳ Retrying in 100ms... (attempt', retryCount + 1, 'of', maxRetries, ')');
+                            setTimeout(attachToggleHandler, 100);
+                        }
+                    }
+
+                    // Start immediately
+                    attachToggleHandler();
                     </script>
 
                     <section id="advanced-section" class="hidden-element">

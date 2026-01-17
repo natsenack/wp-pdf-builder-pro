@@ -87,86 +87,65 @@
 
 ?>
 <div class="wrap">
-    <!-- PDF Builder Tabs API - Inline definition for immediate availability -->
+<!-- PDF Builder Tabs API - Direct definition -->
     <script>
-    // PDF Builder Tabs API - Défini immédiatement pour éviter les erreurs
-    (function() {
-        try {
-            window.PDFBuilderTabsAPI = {
-            /**
-             * Change d'onglet
-             * @param {string} tabName - Nom de l'onglet (general, licence, systeme, securite, pdf, contenu, templates, developpeur)
-             */
+    console.log('PDFBuilderTabsAPI script starting...');
+
+    try {
+        window.PDFBuilderTabsAPI = {
             switchToTab: function(tabName) {
+                console.log('switchToTab called with:', tabName);
                 var tabLink = document.querySelector('a[href*="tab=' + tabName + '"]');
                 if (tabLink) {
-                    // Simuler un clic sur le lien de l'onglet
                     tabLink.click();
                 } else {
-                    // Fallback: changer l'URL
                     var currentUrl = window.location.href;
                     var newUrl = currentUrl.replace(/tab=[^&]*/, 'tab=' + tabName);
                     if (newUrl === currentUrl) {
-                        // Si tab n'était pas dans l'URL, l'ajouter
                         newUrl = currentUrl + (currentUrl.indexOf('?') > -1 ? '&' : '?') + 'tab=' + tabName;
                     }
                     window.location.href = newUrl;
                 }
             },
 
-            /**
-             * Bascule la section avancée dans l'onglet PDF
-             */
             toggleAdvancedSection: function() {
                 console.log('toggleAdvancedSection called');
                 var advancedSection = document.getElementById('advanced-section');
                 var toggleIcon = document.getElementById('advanced-toggle');
 
-                console.log('advancedSection element:', advancedSection);
-                console.log('toggleIcon element:', toggleIcon);
+                console.log('Elements found:', { advancedSection: advancedSection, toggleIcon: toggleIcon });
 
                 if (advancedSection && toggleIcon) {
-                    console.log('Current advancedSection classList:', advancedSection.classList.toString());
                     if (advancedSection.classList.contains('hidden-element')) {
-                        // Afficher la section
                         advancedSection.classList.remove('hidden-element');
                         toggleIcon.textContent = '▲';
-                        console.log('Section shown, icon set to ▲');
+                        console.log('Section shown');
                     } else {
-                        // Masquer la section
                         advancedSection.classList.add('hidden-element');
                         toggleIcon.textContent = '▼';
-                        console.log('Section hidden, icon set to ▼');
+                        console.log('Section hidden');
                     }
                 } else {
-                    console.error('Elements not found - advancedSection:', !!advancedSection, 'toggleIcon:', !!toggleIcon);
+                    console.error('Required elements not found');
                 }
             },
 
-            /**
-             * Réinitialise les paramètres des templates par statut
-             */
             resetTemplatesStatus: function() {
                 if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les templates par statut de commande ? Cette action ne peut pas être annulée.')) {
-                    // Réinitialiser tous les selects
                     var selects = document.querySelectorAll('.template-select');
                     selects.forEach(function(select) {
                         select.value = '';
-                        // Déclencher l'événement change pour mettre à jour les prévisualisations
                         select.dispatchEvent(new Event('change', { bubbles: true }));
                     });
-
-                    // Afficher un message de succès
                     alert('Les paramètres des templates ont été réinitialisés.');
                 }
             }
         };
 
-        console.log('PDFBuilderTabsAPI defined successfully:', typeof window.PDFBuilderTabsAPI, window.PDFBuilderTabsAPI);
-        } catch (error) {
-            console.error('Error defining PDFBuilderTabsAPI:', error);
-        }
-    })();
+        console.log('PDFBuilderTabsAPI defined successfully:', window.PDFBuilderTabsAPI);
+    } catch (error) {
+        console.error('Error in PDFBuilderTabsAPI definition:', error);
+    }
     </script>
 
     <style>
