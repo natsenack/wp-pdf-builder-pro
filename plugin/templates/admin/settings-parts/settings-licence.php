@@ -3,10 +3,36 @@
 // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
-            <section id="licence" aria-label="Gestion de la Licence">
-                <h3 style="display: flex; justify-content: flex-start; align-items: center;" class="settings-page-title">
-                    <span>🔐 Gestion de la Licence</span>
-                </h3>
+            <section id="licence" aria-label="Gestion de la Licence" class="licence-management">
+                <div class="licence-header">
+                    <div class="licence-title-section">
+                        <h2 class="licence-main-title">
+                            <span class="licence-icon">🔐</span>
+                            Gestion de la Licence
+                        </h2>
+                        <p class="licence-subtitle">Gérez votre licence PDF Builder Pro et accédez aux fonctionnalités premium</p>
+                    </div>
+
+                    <!-- Quick Status Badge -->
+                    <div class="licence-quick-status">
+                        <?php if ($is_premium): ?>
+                            <span class="status-badge status-premium">
+                                <span class="status-dot"></span>
+                                Premium Actif
+                            </span>
+                        <?php elseif (!empty($test_key)): ?>
+                            <span class="status-badge status-test">
+                                <span class="status-dot"></span>
+                                Mode Test
+                            </span>
+                        <?php else: ?>
+                            <span class="status-badge status-free">
+                                <span class="status-dot"></span>
+                                Version Gratuite
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
                 
 
@@ -76,61 +102,76 @@
                     }
                 ?>
 
-                    <!-- Statut de la licence -->
-                <section class="licence-section">
-                        <h3 class="settings-section-title">📊 Statut de la Licence</h3>
+                    <!-- Statut de la licence - Design amélioré -->
+                <div class="licence-status-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">📊</span>
+                            Statut de la Licence
+                        </h3>
 
-                        <section class="status-cards-grid">
+                        <div class="status-overview-grid">
                             <!-- Carte Statut Principal -->
-                            <article class="status-card<?php echo $is_premium ? ' premium' : ''; ?>">
-                                <aside class="status-card-label">Statut</aside>
-                                <p class="status-card-value<?php echo $is_premium ? ' premium' : ''; ?>">
-                                    <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
-                                </p>
-                                <aside class="status-card-description<?php echo $is_premium ? ' premium' : ''; ?>">
-                                    <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
-                                </aside>
-                            </article>
+                            <div class="status-card main-status<?php echo $is_premium ? ' premium' : ' free'; ?>">
+                                <div class="status-card-header">
+                                    <div class="status-icon">
+                                        <?php echo $is_premium ? '✅' : '○'; ?>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4 class="status-title"><?php echo $is_premium ? 'Premium Actif' : 'Version Gratuite'; ?></h4>
+                                        <p class="status-description"><?php echo $is_premium ? 'Toutes les fonctionnalités disponibles' : 'Fonctionnalités limitées'; ?></p>
+                                    </div>
+                                </div>
+                                <?php if ($is_premium && !empty($license_expires)): ?>
+                                <div class="status-expiry">
+                                    <span class="expiry-label">Expire le :</span>
+                                    <span class="expiry-date"><?php echo date('d/m/Y', strtotime($license_expires)); ?></span>
+                                </div>
+                                <?php endif; ?>
+                            </div>
 
                             <!-- Carte Mode Test (si applicable) -->
-                            <?php if (!empty($test_key)) :
-                                ?>
-                            <article class="status-card test">
-                                <aside class="status-card-label">Mode</aside>
-                                <p class="status-card-value test">
-                                    🧪 TEST (Dev)
-                                </p>
-                                <aside class="status-card-description test">
-                                    Mode développement actif
-                                </aside>
-                            </article>
-                                <?php
-                            endif; ?>
+                            <?php if (!empty($test_key)): ?>
+                            <div class="status-card test-status">
+                                <div class="status-card-header">
+                                    <div class="status-icon">🧪</div>
+                                    <div class="status-info">
+                                        <h4 class="status-title">Mode Développement</h4>
+                                        <p class="status-description">Clé de test active</p>
+                                    </div>
+                                </div>
+                                <?php if (!empty($test_key_expires)): ?>
+                                <div class="status-expiry">
+                                    <span class="expiry-label">Expire le :</span>
+                                    <span class="expiry-date"><?php echo date('d/m/Y', strtotime($test_key_expires)); ?></span>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
 
-                            <!-- Carte Date d'expiration -->
-                            <?php if ($is_premium && $license_expires) :
-                                ?>
-                            <article class="status-card expiry">
-                                <aside class="status-card-label">Expire le</aside>
-                                <p class="status-card-value expiry">
-                                    <?php echo date('d/m/Y', strtotime($license_expires)); ?>
-                                </p>
-                                <aside class="status-card-description expiry">
-                                    <?php
-                                    $now = new DateTime();
-                                    $expires = new DateTime($license_expires);
-                                    $diff = $now->diff($expires);
-                                    if ($diff->invert) {
-                                        echo '❌ Expiré il y a ' . $diff->days . ' jours';
-                                    } else {
-                                        echo '✓ Valide pendant ' . $diff->days . ' jours';
-                                    }
-                                    ?>
-                                </aside>
-                            </article>
-                                <?php
-                            endif; ?>
-                        </section>
+                            <!-- Carte Actions Rapides -->
+                            <div class="status-card actions-card">
+                                <div class="status-card-header">
+                                    <div class="status-icon">⚡</div>
+                                    <div class="status-info">
+                                        <h4 class="status-title">Actions Rapides</h4>
+                                        <p class="status-description">Gérez votre licence</p>
+                                    </div>
+                                </div>
+                                <div class="quick-actions">
+                                    <?php if (!$is_premium && empty($test_key)): ?>
+                                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=developpeur'); ?>" class="quick-action-btn primary">
+                                            <span class="btn-icon">🧪</span>
+                                            Activer Mode Test
+                                        </a>
+                                    <?php elseif ($is_premium): ?>
+                                        <button type="button" class="quick-action-btn secondary" onclick="showDeactivateModal()">
+                                            <span class="btn-icon">🔓</span>
+                                            Désactiver Licence
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
 
                         <?php
                         // Bannière d'alerte si expiration dans moins de 30 jours
@@ -156,144 +197,116 @@
                                 <?php
                             }
                         }
-                        ?>                        <!-- Détails de la clé -->
-                        <?php if ($is_premium || !empty($test_key)) :
-                            ?>
-                        <article class="license-details-card">
-                            <header class="license-details-header">
-                                <h4>🔐 Détails de la Clé</h4>
-                                <?php if ($is_premium) :
-                                    ?>
-                                <button type="button" class="button button-secondary deactivate-btn"
-                                        onclick="showDeactivateModal()">
+                        ?>                        <!-- Détails de la licence - Design amélioré -->
+                        <?php if ($is_premium || !empty($test_key)): ?>
+                        <div class="license-details-section">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    <span class="section-icon">🔍</span>
+                                    Détails de la Licence
+                                </h3>
+                                <?php if ($is_premium): ?>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="showDeactivateModal()">
+                                    <span class="btn-icon">🔓</span>
                                     Désactiver
                                 </button>
-                                    <?php
-                                endif; ?>
-                            </header>
-                            <table class="license-details-table">
-                                <tr>
-                                    <td>Site actuel :</td>
-                                    <td>
-                                        <code class="code-inline">
-                                            <?php echo esc_html(home_url()); ?>
-                                        </code>
-                                    </td>
-                                </tr>
+                                <?php endif; ?>
+                            </div>
 
-                                <?php if ($is_premium && $license_key) :
-                                    ?>
-                                <tr>
-                                    <td>Clé Premium :</td>
-                                    <td>
-                                        <code class="license-key-display">
+                            <div class="license-details-grid">
+                                <div class="detail-item">
+                                    <label class="detail-label">Site actuel</label>
+                                    <div class="detail-value">
+                                        <code class="site-url"><?php echo esc_html(home_url()); ?></code>
+                                    </div>
+                                </div>
+
+                                <?php if ($is_premium && $license_key): ?>
+                                <div class="detail-item">
+                                    <label class="detail-label">Clé Premium</label>
+                                    <div class="detail-value license-key-container">
+                                        <code class="license-key">
                                             <?php
                                             $key = $license_key;
-                                            $visible_start = substr($key, 0, 6);
-                                            $visible_end = substr($key, -6);
-                                            echo $visible_start . '••••••••••••••••' . $visible_end;
+                                            $visible_start = substr($key, 0, 8);
+                                            $visible_end = substr($key, -8);
+                                            echo $visible_start . '••••••••••••••••••••••••' . $visible_end;
                                             ?>
                                         </code>
-                                        <span class="copy-link" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>');">📋 Copier</span>
-                                    </td>
-                                </tr>
-                                    <?php
-                                endif; ?>
+                                        <button type="button" class="btn-icon copy-btn" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); this.innerHTML='✅';" title="Copier la clé">
+                                            📋
+                                        </button>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
 
-                                <?php if (!empty($test_key)) :
-                                    ?>
-                                <tr>
-                                    <td>Clé de Test :</td>
-                                    <td>
-                                        <code class="test-key-display">
+                                <?php if (!empty($test_key)): ?>
+                                <div class="detail-item">
+                                    <label class="detail-label">Clé de Test</label>
+                                    <div class="detail-value test-key-container">
+                                        <code class="test-key">
                                             <?php
                                             $test = $test_key;
-                                            echo substr($test, 0, 6) . '••••••••••••••••' . substr($test, -6);
+                                            echo substr($test, 0, 8) . '••••••••••••••••••••••••' . substr($test, -8);
                                             ?>
                                         </code>
-                                        <span class="test-mode-indicator"> (Mode Développement)</span>
-                                    </td>
-                                </tr>
-                                    <?php if (!empty($test_key_expires)) :
-                                        ?>
-                                <tr>
-                                    <td>Expire le :</td>
-                                    <td>
-                                        <p class="test-expiry-date">
-                                            <strong><?php echo date('d/m/Y', strtotime($test_key_expires)); ?></strong>
-                                        </p>
-                                        <p class="test-expiry-status">
-                                            <?php
-                                            $now = new DateTime();
-                                            $expires = new DateTime($test_key_expires);
-                                            $diff = $now->diff($expires);
-                                            if ($diff->invert) {
-                                                echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            } else {
-                                                echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            }
-                                            ?>
-                                        </p>
-                                    </td>
-                                </tr>
-                                        <?php
-                                    endif; ?>
-                                    <?php
-                                endif; ?>
+                                        <span class="test-badge">Mode Développement</span>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
 
-                                <?php if ($is_premium && $license_activated_at) :
-                                    ?>
-                                <tr>
-                                    <td>Activée le :</td>
-                                    <td>
-                                        <?php echo date('d/m/Y à H:i', strtotime($license_activated_at)); ?>
-                                    </td>
-                                </tr>
-                                    <?php
-                                endif; ?>
+                                <?php if ($is_premium && $license_activated_at): ?>
+                                <div class="detail-item">
+                                    <label class="detail-label">Activée le</label>
+                                    <div class="detail-value">
+                                        <span class="activation-date"><?php echo date('d/m/Y à H:i', strtotime($license_activated_at)); ?></span>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
 
-                                <tr>
-                                    <td>Statut :</td>
-                                    <td>
+                                <div class="detail-item">
+                                    <label class="detail-label">Statut</label>
+                                    <div class="detail-value">
                                         <?php
                                         if (!empty($test_key)) {
-                                            echo '<span class="status-badge status-test">🧪 MODE TEST</span>';
+                                            echo '<span class="status-indicator status-test"><span class="status-dot"></span>Mode Test Actif</span>';
                                         } elseif ($is_premium) {
-                                            echo '<span class="status-badge status-active">✅ ACTIVE</span>';
+                                            echo '<span class="status-indicator status-active"><span class="status-dot"></span>Licence Active</span>';
                                         } else {
-                                            echo '<span class="status-badge status-free">○ GRATUIT</span>';
+                                            echo '<span class="status-indicator status-free"><span class="status-dot"></span>Version Gratuite</span>';
                                         }
                                         ?>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </div>
 
-                                <?php if ($is_premium && !empty($license_expires)) :
-                                    ?>
-                                <tr>
-                                    <td>Expire le :</td>
-                                    <td>
-                                        <p class="license-expiry-date">
-                                            <strong><?php echo date('d/m/Y', strtotime($license_expires)); ?></strong>
-                                        </p>
-                                        <p class="license-expiry-status">
-                                            <?php
-                                            $now = new DateTime();
-                                            $expires = new DateTime($license_expires);
-                                            $diff = $now->diff($expires);
-                                            if ($diff->invert) {
-                                                echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            } else {
-                                                echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            }
-                                            ?>
-                                        </p>
-                                    </td>
-                                </tr>
-                                    <?php
-                                endif; ?>
-                            </table>
-                            <?php
-                         endif; ?>
+                                <?php if (($is_premium && !empty($license_expires)) || (!empty($test_key) && !empty($test_key_expires))): ?>
+                                <div class="detail-item">
+                                    <label class="detail-label">Expiration</label>
+                                    <div class="detail-value">
+                                        <?php
+                                        $expiry_date = $is_premium ? $license_expires : $test_key_expires;
+                                        $now = new DateTime();
+                                        $expires = new DateTime($expiry_date);
+                                        $diff = $now->diff($expires);
+                                        $is_expired = $diff->invert;
+                                        $days = $diff->days;
+                                        ?>
+                                        <div class="expiry-info">
+                                            <span class="expiry-date"><?php echo date('d/m/Y', strtotime($expiry_date)); ?></span>
+                                            <span class="expiry-status <?php echo $is_expired ? 'expired' : 'valid'; ?>">
+                                                <?php if ($is_expired): ?>
+                                                    <span class="status-icon">❌</span> Expiré il y a <?php echo $days; ?> jour<?php echo $days > 1 ? 's' : ''; ?>
+                                                <?php else: ?>
+                                                    <span class="status-icon">✓</span> Valide <?php echo $days; ?> jour<?php echo $days > 1 ? 's' : ''; ?>
+                                                <?php endif; ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                         </article>
                 </section>
 
@@ -381,26 +394,58 @@
                     endif; ?>
 
                     <?php if ($is_premium) : ?>
-                    <!-- Modal de confirmation pour désactivation -->
+                    <!-- Modal de confirmation pour désactivation - Design amélioré -->
                     <div id="deactivate_modal" class="modal-overlay">
-                        <section class="modal-content">
-                            <span class="modal-icon">⚠️</span>
-                            <h2 class="modal-title">Désactiver la Licence</h2>
-                            <p class="modal-description">Êtes-vous sûr de vouloir désactiver cette licence ?</p>
-                            <ul class="modal-list">
-                                <li>✓ Vous pouvez la réactiver plus tard</li>
-                                <li>✓ Vous pourrez l'utiliser sur un autre site</li>
-                                <li>✓ La licence restera valide jusqu'à son expiration</li>
-                            </ul>
-                            <aside class="modal-actions">
-                                <button type="button" class="modal-btn cancel" onclick="closeDeactivateModal()">
-                                    Annuler
-                                </button>
-                                <button type="button" class="modal-btn danger" onclick="deactivateLicense()">
-                                    Désactiver
-                                </button>
-                            </aside>
-                        </section>
+                        <div class="modal-container">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal-icon">⚠️</div>
+                                    <h3 class="modal-title">Désactiver la Licence</h3>
+                                    <button type="button" class="modal-close" onclick="closeDeactivateModal()" aria-label="Fermer">
+                                        <span class="close-icon">×</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <p class="modal-description">
+                                        Êtes-vous sûr de vouloir désactiver cette licence sur ce site ?
+                                    </p>
+
+                                    <div class="modal-info-list">
+                                        <div class="info-item">
+                                            <span class="info-icon">✓</span>
+                                            <span>Vous pouvez la réactiver plus tard</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <span class="info-icon">✓</span>
+                                            <span>Vous pourrez l'utiliser sur un autre site</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <span class="info-icon">✓</span>
+                                            <span>La licence reste valide jusqu'à son expiration</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-warning">
+                                        <div class="warning-icon">💡</div>
+                                        <div class="warning-content">
+                                            <strong>Note :</strong> Cette action ne supprime pas votre accès aux fonctionnalités premium sur ce site tant que la licence n'est pas expirée.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="closeDeactivateModal()">
+                                        <span class="btn-icon">↩️</span>
+                                        Annuler
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="deactivateLicense()">
+                                        <span class="btn-icon">🔓</span>
+                                        Désactiver la Licence
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <?php endif; ?>
 
