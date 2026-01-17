@@ -68,7 +68,7 @@
                         <td>
                             <div class="developer-field-group">
                                 <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary developer-button">
-                                    🎚️ Basculer Mode Test
+                                    🎚️ <?php echo $license_test_mode ? 'Désactiver' : 'Activer'; ?> Mode Test
                                 </button>
                                 <span id="license_test_mode_status" class="license-test-mode-status <?php echo $license_test_mode ? 'license-test-mode-active' : 'license-test-mode-inactive'; ?>">
                                     <?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?>
@@ -825,49 +825,6 @@
             });
         });
 
-        // Gestionnaire pour le toggle du mode test
-        $('#license_test_mode').on('change', function() {
-            const isChecked = $(this).is(':checked');
-            const nonce = $('#toggle_license_test_mode_nonce').val();
-
-            $('#license_test_mode_status').html('<span style="color: #007cba;">Mise à jour en cours...</span>');
-
-            $.ajax({
-                url: pdf_builder_ajax.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_toggle_test_mode',
-                    enabled: isChecked ? 1 : 0,
-                    nonce: nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        const statusText = isChecked ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif';
-                        const statusClass = isChecked ? 'license-test-mode-active' : 'license-test-mode-inactive';
-                        $('#license_test_mode_status').removeClass('license-test-mode-active license-test-mode-inactive').addClass(statusClass).html(statusText);
-
-                        if (isChecked && response.data.test_key) {
-                            $('#license_test_key').val(response.data.test_key);
-                            $('#copy_license_key_btn').prop('disabled', false);
-                            $('#delete_license_key_btn').show();
-                        } else if (!isChecked) {
-                            $('#license_test_key').val('');
-                            $('#copy_license_key_btn').prop('disabled', true);
-                            $('#delete_license_key_btn').hide();
-                        }
-                    } else {
-                        $('#license_test_mode_status').html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
-                        // Remettre le checkbox dans l'état précédent
-                        $('#license_test_mode').prop('checked', !isChecked);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    $('#license_test_mode_status').html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
-                    $('#license_test_mode').prop('checked', !isChecked);
-                }
-            });
-        });
-
         // Gestionnaire pour le bouton de nettoyage complet de la licence
         $('#cleanup_license_btn').on('click', function(e) {
             e.preventDefault();
@@ -957,7 +914,9 @@
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
                 },
                 complete: function() {
-                    $btn.prop('disabled', false).text('🎚️ Basculer Mode Test');
+                    const currentMode = $('#license_test_mode').is(':checked') ? '1' : '0';
+                    const isActive = currentMode === '1';
+                    $btn.prop('disabled', false).text(isActive ? '🎚️ Désactiver Mode Test' : '🎚️ Activer Mode Test');
                 }
             });
         });
