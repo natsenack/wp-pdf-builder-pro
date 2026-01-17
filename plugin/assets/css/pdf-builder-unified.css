@@ -16055,13 +16055,6 @@ body.pdf-builder-active #wpadminbar {
   position: relative;
 }
 
-.pdf-builder-properties {
-  width: 320px;
-  background: #fafbfc; /* Gris très très clair */
-  border-left: 1px solid #f1f3f4; /* Bordure très subtile */
-  overflow-y: auto;
-}
-
 .pdf-builder-element-item {
   display: flex;
   align-items: center;
