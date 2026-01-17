@@ -18,15 +18,22 @@ window.PDFBuilderTabsAPI = {
     },
 
     toggleAdvancedSection: function() {
+        console.log('toggleAdvancedSection called');
         const $advancedSection = $('#advanced-section');
         const $toggleIcon = $('#advanced-toggle');
+
+        console.log('Advanced section element:', $advancedSection.length ? 'found' : 'NOT FOUND');
+        console.log('Toggle icon element:', $toggleIcon.length ? 'found' : 'NOT FOUND');
+        console.log('Advanced section visible:', $advancedSection.is(':visible'));
 
         if ($advancedSection.is(':visible')) {
             $advancedSection.slideUp();
             $toggleIcon.text('▶');
+            console.log('Section was visible, now hidden');
         } else {
             $advancedSection.slideDown();
             $toggleIcon.text('▼');
+            console.log('Section was hidden, now visible');
         }
     },
 
@@ -45,6 +52,10 @@ console.log('PDFBuilderTabsAPI defined at script load time');
 // Trigger custom event to signal API is ready
 $(document).trigger('PDFBuilderTabsAPIReady');
 console.log('PDFBuilderTabsAPIReady event triggered');
+
+// Debug: check if jQuery is available and event was triggered
+console.log('jQuery in settings-tabs:', typeof jQuery);
+console.log('document in settings-tabs:', typeof document);
 
 (function($) {
     'use strict';

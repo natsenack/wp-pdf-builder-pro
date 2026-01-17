@@ -126,6 +126,7 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                             console.log('✅ Handler attached successfully');
                             return true;
                         }
+                        console.log('❌ Cannot attach handler - missing requirements');
                         return false;
                     }
 
@@ -142,6 +143,10 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     } else {
                         console.log('Waiting for PDFBuilderTabsAPIReady event...');
                     }
+
+                    // Debug: check if jQuery is available
+                    console.log('jQuery available:', typeof jQuery);
+                    console.log('document ready state:', document.readyState);
                     </script>
 
                     <section id="advanced-section" class="hidden-element">
