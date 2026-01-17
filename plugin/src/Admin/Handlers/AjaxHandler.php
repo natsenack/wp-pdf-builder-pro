@@ -637,6 +637,23 @@ class AjaxHandler
                     $this->handleValidateSettings();
                     break;
 
+                // Actions de licence
+                case 'cleanup_license':
+                    $this->handleCleanupLicense();
+                    break;
+                case 'toggle_license_test_mode':
+                    $this->handleToggleLicenseTestMode();
+                    break;
+                case 'generate_license_key':
+                    $this->handleGenerateLicenseKey();
+                    break;
+                case 'delete_license_key':
+                    $this->handleDeleteLicenseKey();
+                    break;
+                case 'validate_license_key':
+                    $this->handleValidateLicenseKey();
+                    break;
+
                 default:
                     // Action non reconnue - essayer l'ancien système de compatibilité
                     $this->handleLegacyAction($action);
@@ -1684,53 +1701,6 @@ class AjaxHandler
         } catch (Exception $e) {
             error_log('PDF Builder - Erreur sauvegarde paramètres canvas: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Handler AJAX unifié pour toutes les actions de licence
-     */
-    public function ajaxUnifiedHandler()
-    {
-        try {
-            // Valider les permissions et nonce
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
-            if (!$validation['success']) {
-                if ($validation['code'] === 'nonce_invalid') {
-                    NonceManager::sendNonceErrorResponse();
-                } else {
-                    NonceManager::sendPermissionErrorResponse();
-                }
-                return;
-            }
-
-            // Récupérer l'action spécifique
-            $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : '';
-
-            switch ($action) {
-                case 'cleanup_license':
-                    $this->handleCleanupLicense();
-                    break;
-                case 'toggle_license_test_mode':
-                    $this->handleToggleLicenseTestMode();
-                    break;
-                case 'generate_license_key':
-                    $this->handleGenerateLicenseKey();
-                    break;
-                case 'delete_license_key':
-                    $this->handleDeleteLicenseKey();
-                    break;
-                case 'validate_license_key':
-                    $this->handleValidateLicenseKey();
-                    break;
-                default:
-                    wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
-                    break;
-            }
-
-        } catch (Exception $e) {
-            error_log('PDF Builder - Erreur handler AJAX unifié: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
     }
 
