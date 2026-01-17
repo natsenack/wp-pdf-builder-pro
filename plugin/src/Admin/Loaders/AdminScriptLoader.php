@@ -90,6 +90,18 @@ class AdminScriptLoader
                 error_log('[WP AdminScriptLoader] pdf-builder-settings-tabs already enqueued');
             }
 
+            // Charger settings-main.min.js pour les fonctions de licence
+            if (!wp_script_is('pdf-builder-settings-main', 'enqueued')) {
+                wp_enqueue_script(
+                    'pdf-builder-settings-main',
+                    PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-main.min.js',
+                    ['jquery'],
+                    PDF_BUILDER_PRO_VERSION,
+                    true
+                );
+                error_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-main script');
+            }
+
             // Charger le système de notifications pour les pages de paramètres - seulement si le fichier existe
             $notifications_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/notifications.min.js';
             if (file_exists($notifications_js)) {
