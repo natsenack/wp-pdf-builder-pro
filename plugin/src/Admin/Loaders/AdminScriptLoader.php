@@ -33,6 +33,8 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
+        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null'));
+
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
         add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
@@ -50,7 +52,7 @@ class AdminScriptLoader
 
         // Charger SETTINGS CSS et JS pour les pages settings
         if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false || (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)) {
-            error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook . ', page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
+            error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook . ', page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
 
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';

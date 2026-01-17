@@ -102,6 +102,8 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
                     </h3>
 
                     <script>
+                    console.log('[PDF Builder] Inline script in settings-pdf.php executing');
+
                     console.log('Setting up advanced section toggle handler...');
 
                     function attachToggleHandler() {

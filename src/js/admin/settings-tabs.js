@@ -3,6 +3,8 @@
  * Handles tab navigation and content switching
  */
 
+console.log('[PDF Builder] settings-tabs.js script loaded and executing');
+
 // Define API immediately for early access
 window.PDFBuilderTabsAPI = {
     switchToTab: function(tabId) {
