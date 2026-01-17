@@ -99,8 +99,6 @@ export function Toolbar({ className }: ToolbarProps) {
         borderRadius: '8px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         maxHeight: '140px',
-        overflowX: 'visible',
-        overflowY: 'auto',
         width: '100%'
       }}>
         {/* Première ligne : Outils + Actions principales + Informations */}
