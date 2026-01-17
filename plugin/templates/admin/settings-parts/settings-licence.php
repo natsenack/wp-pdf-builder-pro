@@ -816,7 +816,7 @@
                     </div>
                     <?php else: ?>
                     <!-- Section publicité premium -->
-                    <div class="action-card premium-promo" style="max-height: 150px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
+                    <div class="action-card premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
                         <div class="premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: rocketFloat 2s ease-in-out infinite; display: inline-block;">🚀</div>
                             <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: textGlow 2s ease-in-out infinite alternate;">Découvrez la Version Premium</h3>
