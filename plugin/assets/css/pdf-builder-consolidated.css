@@ -2820,49 +2820,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     transform: translateY(0);
 }
 
-/* === STYLES POUR LES CARTES PREMIUM === */
-.canvas-card.premium-card {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background: #f8f9fa;
-    border-color: #dee2e6;
-}
-
-.canvas-card.premium-card:hover {
-    border-color: #dee2e6;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transform: none;
-}
-
-.canvas-card.premium-card:hover::before {
-    transform: scaleX(0);
-}
-
-.canvas-card.premium-card .canvas-card-header h4 {
-    color: #6c757d;
-}
-
-.canvas-card.premium-card .canvas-card-content p {
-    color: #6c757d;
-}
-
-.canvas-card.premium-card .canvas-card-preview {
-    background: #e9ecef;
-    border-color: #dee2e6;
-}
-
-.canvas-card.premium-card .canvas-configure-btn {
-    background: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.canvas-card.premium-card .canvas-configure-btn:hover {
-    background: #6c757d;
-    transform: none;
-    box-shadow: none;
-}
-
 /* Aperçus spécifiques améliorés */
 .preview-format {
     font-weight: 600;

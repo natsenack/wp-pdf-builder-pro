@@ -184,7 +184,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles</label>
+                    <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles <span class="premium-badge">⭐ PREMIUM</span></label>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
                         <?php
                         // Récupérer les orientations actuellement sélectionnées
@@ -202,16 +202,20 @@ function get_canvas_modal_value($key, $default = '') {
                         }
                         $current_orientations = array_map('strval', $current_orientations); // S'assurer que ce sont des chaînes
 
+                        $can_use_advanced_orientations = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('advanced_orientations');
+
                         $orientation_options = [
                             ['value' => 'portrait', 'label' => 'Portrait', 'desc' => '794×1123 px • Vertical', 'icon' => '📱'],
                             ['value' => 'landscape', 'label' => 'Paysage', 'desc' => '1123×794 px • Horizontal', 'icon' => '🖥️']
                         ];
 
                         foreach ($orientation_options as $option) {
+                            $disabled = !$can_use_advanced_orientations ? 'disabled' : '';
                             $checked = in_array($option['value'], $current_orientations) ? 'checked' : '';
+                            $premium_class = !$can_use_advanced_orientations ? 'premium-option' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['value'] === 'portrait' ? 'opacity: 1;' : '') . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
-                            echo '<input type="checkbox" name="pdf_builder_canvas_orientations[]" value="' . $option['value'] . '" ' . $checked . '>';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . (!$can_use_advanced_orientations ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<input type="checkbox" name="pdf_builder_canvas_orientations[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
                             echo '<div style="flex: 1;">';
                             echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
                             echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
@@ -381,24 +385,45 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%)</label>
+                    <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%) <span class="premium-badge">⭐ PREMIUM</span></label>
+                    <?php $can_use_advanced_zoom = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('advanced_zoom'); ?>
                     <input type="number" id="modal_canvas_zoom_min" name="pdf_builder_canvas_zoom_min"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_min', $canvas_defaults['zoom_min'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_min', $canvas_defaults['zoom_min'])); ?>"
+                           <?php echo !$can_use_advanced_zoom ? 'disabled' : ''; ?>
+                           style="<?php echo !$can_use_advanced_zoom ? 'opacity: 0.6; pointer-events: none;' : ''; ?>">
+                    <?php if (!$can_use_advanced_zoom): ?>
+                        <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">Valeur par défaut: <?php echo $canvas_defaults['zoom_min']; ?>%</div>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
+                    <label for="modal_canvas_zoom_max">Zoom maximum (%) <span class="premium-badge">⭐ PREMIUM</span></label>
                     <input type="number" id="modal_canvas_zoom_max" name="pdf_builder_canvas_zoom_max"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_max', $canvas_defaults['zoom_max'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_max', $canvas_defaults['zoom_max'])); ?>"
+                           <?php echo !$can_use_advanced_zoom ? 'disabled' : ''; ?>
+                           style="<?php echo !$can_use_advanced_zoom ? 'opacity: 0.6; pointer-events: none;' : ''; ?>">
+                    <?php if (!$can_use_advanced_zoom): ?>
+                        <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">Valeur par défaut: <?php echo $canvas_defaults['zoom_max']; ?>%</div>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
+                    <label for="modal_canvas_zoom_default">Zoom par défaut (%) <span class="premium-badge">⭐ PREMIUM</span></label>
                     <input type="number" id="modal_canvas_zoom_default" name="pdf_builder_canvas_zoom_default"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_default', $canvas_defaults['zoom_default'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_default', $canvas_defaults['zoom_default'])); ?>"
+                           <?php echo !$can_use_advanced_zoom ? 'disabled' : ''; ?>
+                           style="<?php echo !$can_use_advanced_zoom ? 'opacity: 0.6; pointer-events: none;' : ''; ?>">
+                    <?php if (!$can_use_advanced_zoom): ?>
+                        <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">Valeur par défaut: <?php echo $canvas_defaults['zoom_default']; ?>%</div>
+                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
+                    <label for="modal_canvas_zoom_step">Pas de zoom (%) <span class="premium-badge">⭐ PREMIUM</span></label>
                     <input type="number" id="modal_canvas_zoom_step" name="pdf_builder_canvas_zoom_step"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_step', $canvas_defaults['zoom_step'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_step', $canvas_defaults['zoom_step'])); ?>"
+                           <?php echo !$can_use_advanced_zoom ? 'disabled' : ''; ?>
+                           style="<?php echo !$can_use_advanced_zoom ? 'opacity: 0.6; pointer-events: none;' : ''; ?>">
+                    <?php if (!$can_use_advanced_zoom): ?>
+                        <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">Valeur par défaut: <?php echo $canvas_defaults['zoom_step']; ?>%</div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
