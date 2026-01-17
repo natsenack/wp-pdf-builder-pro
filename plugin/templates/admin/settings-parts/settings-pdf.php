@@ -13,9 +13,9 @@ error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($se
             <h3 class="" style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>📄 Configuration PDF</span>
             </h3>
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
+                <h4 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
                     ⚙️ Paramètres principaux
-                </h3>
+                </h4>
 
                 <table class="form-table">
                     <tr>
