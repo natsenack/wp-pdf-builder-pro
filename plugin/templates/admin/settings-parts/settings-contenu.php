@@ -528,19 +528,13 @@
 
                     // Fonction simplifiée pour sauvegarder les toggles d'une modal
                     function saveModalToggles(category) {
-                        console.log('[PDF Builder] ===== STARTING SAVE FOR MODAL:', category, '=====');
-
                         var modalId = modalConfig[category];
-                        console.log('[PDF Builder] Modal ID:', modalId);
-
                         if (!modalId) {
                             console.error('[PDF Builder] Unknown modal category:', category);
                             return;
                         }
 
                         var modal = document.getElementById(modalId);
-                        console.log('[PDF Builder] Modal element:', modal);
-
                         if (!modal) {
                             console.error('[PDF Builder] Modal not found:', modalId);
                             return;
@@ -548,120 +542,66 @@
 
                         // Récupérer les toggles pour cette modal
                         var togglesForModal = modalToggles[category] || [];
-                        console.log('[PDF Builder] Toggles for modal', category, ':', togglesForModal);
-
                         if (togglesForModal.length === 0) {
-                            console.log('[PDF Builder] No toggles defined for modal:', category);
                             return;
                         }
 
                         // Collecter les valeurs des toggles
                         var toggleData = {};
-                        console.log('[PDF Builder] Collecting toggle values...');
-
                         togglesForModal.forEach(function(toggleName) {
                             var input = modal.querySelector('[name="' + toggleName + '"]');
-                            console.log('[PDF Builder] Processing toggle:', toggleName);
-                            console.log('  - Input found:', !!input);
-
                             if (input && input.type === 'checkbox') {
-                                var value = input.checked ? '1' : '0';
-                                toggleData[toggleName] = value;
-                                console.log('  - Checkbox checked:', input.checked, '→ value:', value);
-                            } else {
-                                console.warn('[PDF Builder] ✗ Toggle input not found or not a checkbox:', toggleName, 'input:', input);
+                                toggleData[toggleName] = input.checked ? '1' : '0';
                             }
                         });
 
-                        console.log('[PDF Builder] Final toggleData to save:', toggleData);
-
                         if (Object.keys(toggleData).length === 0) {
-                            console.log('[PDF Builder] No toggle data to save');
                             return;
                         }
 
                         // Afficher l'indicateur de chargement
                         var applyBtn = modal.querySelector('.canvas-modal-apply[data-category="' + category + '"]');
-                        console.log('[PDF Builder] Apply button found:', !!applyBtn);
-
                         if (applyBtn) {
                             var originalText = applyBtn.innerHTML;
                             applyBtn.innerHTML = '⏳ Sauvegarde...';
                             applyBtn.disabled = true;
-                            console.log('[PDF Builder] Button text changed to loading state');
                         }
-
-                        // Préparer les données AJAX
-                        var ajaxData = {
-                            action: 'pdf_builder_ajax_handler',
-                            action_type: 'save_canvas_modal_settings',
-                            ...toggleData,
-                            nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
-                        };
-
-                        console.log('[PDF Builder] ===== SENDING AJAX REQUEST =====');
-                        console.log('[PDF Builder] AJAX URL:', ajaxurl);
-                        console.log('[PDF Builder] AJAX Data:', ajaxData);
 
                         // Envoyer la requête AJAX
                         jQuery.ajax({
                             url: ajaxurl,
                             type: 'POST',
-                            data: ajaxData,
+                            data: {
+                                action: 'pdf_builder_ajax_handler',
+                                action_type: 'save_canvas_modal_settings',
+                                ...toggleData,
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
+                            },
                             success: function(response) {
-                                console.log('[PDF Builder] ===== AJAX RESPONSE RECEIVED =====');
-                                console.log('[PDF Builder] Raw response:', response);
-                                console.log('[PDF Builder] Response success:', response.success);
-                                console.log('[PDF Builder] Response data:', response.data);
-
                                 if (response.success) {
-                                    console.log('[PDF Builder] Save successful, updating window.pdfBuilderCanvasSettings...');
-
                                     // Mettre à jour window.pdfBuilderCanvasSettings avec les nouvelles valeurs
-                                    if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
-                                        console.log('[PDF Builder] Old window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                                    Object.keys(toggleData).forEach(function(inputName) {
+                                        var settingKey = inputToSettingMap[inputName];
+                                        if (settingKey) {
+                                            window.pdfBuilderCanvasSettings[settingKey] = toggleData[inputName] === '1';
+                                        }
+                                    });
 
-                                        Object.keys(toggleData).forEach(function(inputName) {
-                                            var settingKey = inputToSettingMap[inputName];
-                                            if (settingKey) {
-                                                // Convertir en boolean pour window.pdfBuilderCanvasSettings
-                                                var oldValue = window.pdfBuilderCanvasSettings[settingKey];
-                                                window.pdfBuilderCanvasSettings[settingKey] = toggleData[inputName] === '1';
-                                                var newValue = window.pdfBuilderCanvasSettings[settingKey];
-                                                console.log('[PDF Builder] Updated', settingKey, ':', oldValue, '(type:', typeof oldValue, ') →', newValue, '(type:', typeof newValue, ')');
-                                            } else {
-                                                console.warn('[PDF Builder] ✗ No mapping found for', inputName);
-                                            }
-                                        });
+                                    // Dispatcher l'événement pour notifier React
+                                    var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
+                                    window.dispatchEvent(event);
 
-                                        console.log('[PDF Builder] Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-
-                                        // Dispatcher l'événement pour notifier React
-                                        var event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
-                                        window.dispatchEvent(event);
-                                        console.log('[PDF Builder] Dispatched pdfBuilderCanvasSettingsUpdated event');
-                                    } else {
-                                        console.error('[PDF Builder] window.pdfBuilderCanvasSettings is undefined!');
-                                    }
-
-                                    // Resynchroniser les inputs de la modal (au cas où)
-                                    console.log('[PDF Builder] Resyncing modal inputs...');
+                                    // Resynchroniser les inputs de la modal
                                     syncModalInputsWithSettings(modal, category);
 
                                     // Afficher la notification de succès
                                     showNotification('Paramètres sauvegardés avec succès !', 'success');
-                                    console.log('[PDF Builder] ===== SAVE COMPLETED SUCCESSFULLY =====');
-
                                 } else {
-                                    console.error('[PDF Builder] Save failed:', response.data);
                                     showNotification('Erreur lors de la sauvegarde: ' + (response.data.message || 'Erreur inconnue'), 'error');
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error('[PDF Builder] ===== AJAX ERROR =====');
-                                console.error('[PDF Builder] Status:', status);
-                                console.error('[PDF Builder] Error:', error);
-                                console.error('[PDF Builder] XHR:', xhr);
+                                console.error('[PDF Builder] AJAX error saving modal settings:', error);
                                 showNotification('Erreur de communication avec le serveur', 'error');
                             },
                             complete: function() {
@@ -669,7 +609,6 @@
                                 if (applyBtn) {
                                     applyBtn.innerHTML = originalText;
                                     applyBtn.disabled = false;
-                                    console.log('[PDF Builder] Button restored to original state');
                                 }
                             }
                         });
@@ -677,9 +616,7 @@
 
                     // Fonction pour récupérer les paramètres canvas depuis le serveur
                     function fetchCanvasSettings(callback) {
-                        console.log('[PDF Builder] ===== FETCHING CANVAS SETTINGS FROM SERVER =====');
-                        console.log('[PDF Builder] AJAX URL:', ajaxurl);
-                        console.log('[PDF Builder] Nonce:', '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>');
+                        console.log('[PDF Builder] Fetching canvas settings from server...');
 
                         jQuery.ajax({
                             url: ajaxurl,
@@ -690,20 +627,9 @@
                                 nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
                             },
                             success: function(response) {
-                                console.log('[PDF Builder] ===== CANVAS SETTINGS FETCH RESPONSE =====');
-                                console.log('[PDF Builder] Raw response:', response);
-                                console.log('[PDF Builder] Response success:', response.success);
-                                console.log('[PDF Builder] Response data:', response.data);
-
                                 if (response.success && response.data && response.data.canvas_settings) {
-                                    console.log('[PDF Builder] Server canvas_settings received:', response.data.canvas_settings);
-
-                                    // Mettre à jour window.pdfBuilderCanvasSettings avec les valeurs du serveur
                                     var serverSettings = response.data.canvas_settings;
-                                    console.log('[PDF Builder] Converting server settings to camelCase...');
-
                                     var oldSettings = window.pdfBuilderCanvasSettings;
-                                    console.log('[PDF Builder] Old window.pdfBuilderCanvasSettings:', oldSettings);
 
                                     window.pdfBuilderCanvasSettings = {
                                         width: serverSettings.pdf_builder_canvas_width || '794',
@@ -744,29 +670,15 @@
                                         memoryLimitPhp: serverSettings.pdf_builder_canvas_memory_limit_php || '128'
                                     };
 
-                                    console.log('[PDF Builder] New window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-                                    console.log('[PDF Builder] Key differences:');
-                                    Object.keys(window.pdfBuilderCanvasSettings).forEach(function(key) {
-                                        if (oldSettings[key] !== window.pdfBuilderCanvasSettings[key]) {
-                                            console.log('  ', key, ':', oldSettings[key], '→', window.pdfBuilderCanvasSettings[key]);
-                                        }
-                                    });
-
-                                    console.log('[PDF Builder] ===== FETCH COMPLETED SUCCESSFULLY =====');
+                                    console.log('[PDF Builder] Canvas settings updated from server');
                                     if (callback) callback();
                                 } else {
-                                    console.error('[PDF Builder] Invalid response structure:', response);
-                                    console.error('[PDF Builder] Response.success:', response.success);
-                                    console.error('[PDF Builder] Response.data:', response.data);
-                                    console.error('[PDF Builder] Response.data.canvas_settings:', response.data ? response.data.canvas_settings : 'N/A');
+                                    console.error('[PDF Builder] Failed to fetch canvas settings');
                                     if (callback) callback();
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error('[PDF Builder] ===== AJAX ERROR FETCHING CANVAS SETTINGS =====');
-                                console.error('[PDF Builder] Status:', status);
-                                console.error('[PDF Builder] Error:', error);
-                                console.error('[PDF Builder] XHR:', xhr);
+                                console.error('[PDF Builder] AJAX error fetching canvas settings:', error);
                                 if (callback) callback();
                             }
                         });
@@ -774,56 +686,31 @@
 
                     // Fonction simple pour ouvrir une modal
                     function openModal(category) {
-                        console.log('[PDF Builder] ===== OPENING MODAL =====');
-                        console.log('[PDF Builder] Category:', category);
-
                         var modalId = modalConfig[category];
-                        console.log('[PDF Builder] Modal ID for category:', modalId);
-
                         if (!modalId) {
                             console.error('[PDF Builder] Unknown category:', category);
                             return;
                         }
 
                         var modal = document.getElementById(modalId);
-                        console.log('[PDF Builder] Modal element found:', modal);
-
                         if (modal) {
-                            console.log('[PDF Builder] Starting fetchCanvasSettings before opening modal...');
                             // Récupérer les dernières valeurs depuis le serveur avant d'ouvrir
                             fetchCanvasSettings(function() {
-                                console.log('[PDF Builder] fetchCanvasSettings completed, now syncing modal inputs...');
                                 // Synchroniser les inputs avec les valeurs actuelles après récupération
                                 syncModalInputsWithSettings(modal, category);
-                                console.log('[PDF Builder] Setting modal display to flex');
                                 modal.style.display = 'flex';
                                 document.body.style.overflow = 'hidden';
-                                console.log('[PDF Builder] ===== MODAL OPENED SUCCESSFULLY =====');
                             });
                         } else {
                             console.error('[PDF Builder] Modal not found:', modalId);
-                            console.log('[PDF Builder] Available modal IDs:');
-                            Object.values(modalConfig).forEach(function(id) {
-                                var element = document.getElementById(id);
-                                console.log('  -', id, ':', element ? 'EXISTS' : 'NOT FOUND');
-                            });
                         }
                     }
 
                     // Fonction pour synchroniser les inputs du modal avec window.pdfBuilderCanvasSettings
                     function syncModalInputsWithSettings(modal, category) {
-                        console.log('[PDF Builder] ===== SYNCING MODAL INPUTS =====');
-                        console.log('[PDF Builder] Modal:', modal);
-                        console.log('[PDF Builder] Category:', category);
-
                         if (!modal || !window.pdfBuilderCanvasSettings) {
-                            console.log('[PDF Builder] Cannot sync modal inputs: modal or settings not available');
-                            console.log('[PDF Builder] Modal exists:', !!modal);
-                            console.log('[PDF Builder] window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
                             return;
                         }
-
-                        console.log('[PDF Builder] Current window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
 
                         // Mapping des clés settings vers les noms d'input
                         var settingToInputMap = {
@@ -846,38 +733,20 @@
                             'errorReporting': 'pdf_builder_canvas_error_reporting'
                         };
 
-                        console.log('[PDF Builder] Starting input synchronization...');
-
                         // Pour chaque setting, trouver l'input correspondant et le mettre à jour
                         Object.keys(settingToInputMap).forEach(function(settingKey) {
                             var inputName = settingToInputMap[settingKey];
                             var input = modal.querySelector('[name="' + inputName + '"]');
                             var settingValue = window.pdfBuilderCanvasSettings[settingKey];
 
-                            console.log('[PDF Builder] Processing', settingKey, '→', inputName);
-                            console.log('  - Setting value:', settingValue, '(type:', typeof settingValue, ')');
-                            console.log('  - Input found:', !!input);
-
                             if (input) {
-                                var oldValue = input.type === 'checkbox' ? input.checked : input.value;
-                                console.log('  - Old input value:', oldValue);
-
                                 if (input.type === 'checkbox') {
                                     input.checked = settingValue === true || settingValue === '1';
-                                    console.log('  - New checkbox checked:', input.checked);
                                 } else {
                                     input.value = settingValue;
-                                    console.log('  - New input value:', input.value);
                                 }
-
-                                var newValue = input.type === 'checkbox' ? input.checked : input.value;
-                                console.log('  - Value changed:', oldValue !== newValue, '(' + oldValue + ' → ' + newValue + ')');
-                            } else {
-                                console.log('  - ⚠️ Input not found in modal!');
                             }
                         });
-
-                        console.log('[PDF Builder] ===== SYNC COMPLETED =====');
                     }
 
                     // Fonction simple pour fermer une modal
@@ -922,29 +791,18 @@
 
                     // Initialisation des événements
                     function initEvents() {
-                        console.log('[PDF Builder] Initializing events...');
-
                         // Boutons de configuration
                         document.addEventListener('click', function(e) {
-                            console.log('[PDF Builder] Click detected on:', e.target);
-
                             // Ouvrir modal
                             var configBtn = e.target.closest('.canvas-configure-btn');
                             if (configBtn) {
-                                console.log('[PDF Builder] Configure button clicked');
                                 e.preventDefault();
                                 var card = configBtn.closest('.canvas-card');
                                 if (card) {
                                     var category = card.getAttribute('data-category');
-                                    console.log('[PDF Builder] Card category:', category);
                                     if (category && modalConfig[category]) {
-                                        console.log('[PDF Builder] Opening modal for category:', category);
                                         openModal(category);
-                                    } else {
-                                        console.log('[PDF Builder] Invalid category or no modal config for:', category);
                                     }
-                                } else {
-                                    console.log('[PDF Builder] No parent card found');
                                 }
                                 return;
                             }
@@ -987,8 +845,6 @@
                                 });
                             }
                         });
-
-                        console.log('[PDF Builder] Events initialized');
                     }
 
                     // Initialisation au chargement du DOM
