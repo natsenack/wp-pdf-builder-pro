@@ -33,7 +33,7 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
-        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null'));
+        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
@@ -51,8 +51,10 @@ class AdminScriptLoader
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
         // Charger SETTINGS CSS et JS pour les pages settings
-        if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false || (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)) {
-            error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook . ', page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
+        // Simplifier la condition - charger pour toutes les pages admin contenant pdf-builder
+        $current_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        if (strpos($current_url, 'pdf-builder') !== false) {
+            error_log('[WP AdminScriptLoader] Loading settings scripts - URL contains pdf-builder: ' . $current_url);
 
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';
@@ -72,8 +74,8 @@ class AdminScriptLoader
                 [],
                 PDF_BUILDER_PRO_VERSION
             );
-            
-            // Charger settings-tabs.min.js pour TOUTES les pages de paramètres PDF Builder
+
+            // Charger settings-tabs.min.js pour TOUTES les pages PDF Builder
             if (!wp_script_is('pdf-builder-settings-tabs', 'enqueued')) {
                 wp_enqueue_script(
                     'pdf-builder-settings-tabs',
@@ -82,6 +84,7 @@ class AdminScriptLoader
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
+                error_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-tabs script');
             }
 
             // Charger le système de notifications pour les pages de paramètres - seulement si le fichier existe
