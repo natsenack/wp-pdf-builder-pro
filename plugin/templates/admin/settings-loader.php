@@ -83,16 +83,13 @@ function pdf_builder_load_settings_assets($hook) {
     }
 
     // Force the settings-tabs script to not be deferred or async for early API availability
-    add_filter('script_loader_tag', function($tag, $handle, $src) {
-        if ($handle === 'pdf-builder-settings-tabs') {
-            // Remove defer and async attributes if present to ensure synchronous loading
-            $tag = str_replace(' defer', '', $tag);
-            $tag = str_replace(' defer="defer"', '', $tag);
-            $tag = str_replace(' async', '', $tag);
-            $tag = str_replace(' async="async"', '', $tag);
+    add_action('wp_enqueue_scripts', function() {
+        global $wp_scripts;
+        if (isset($wp_scripts->registered['pdf-builder-settings-tabs'])) {
+            $wp_scripts->registered['pdf-builder-settings-tabs']->extra['defer'] = false;
+            $wp_scripts->registered['pdf-builder-settings-tabs']->extra['async'] = false;
         }
-        return $tag;
-    }, 1, 3);
+    }, 1);
 
     // DEBUG: Après enqueue du script
     error_log('PDF Builder - Après wp_enqueue_script');
