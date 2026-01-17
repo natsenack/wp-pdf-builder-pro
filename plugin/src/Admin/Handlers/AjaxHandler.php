@@ -1720,29 +1720,18 @@ class AjaxHandler
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
             error_log('[PDF Builder] handleCleanupLicense - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO'));
 
-            // Liste des clés de licence à supprimer
+            // Liste des clés de licence à supprimer (nettoyage complet)
             $license_keys_to_remove = [
                 'pdf_builder_license_key',
                 'pdf_builder_license_status',
                 'pdf_builder_license_expiry',
                 'pdf_builder_license_type',
                 'pdf_builder_license_last_check',
-                'pdf_builder_license_validated'
+                'pdf_builder_license_validated',
+                'pdf_builder_license_test_key',
+                'pdf_builder_license_test_key_expires',
+                'pdf_builder_license_test_mode'
             ];
-
-            // Ne supprimer la clé de test que si le mode test n'était pas actif
-            if (!$test_mode_was_enabled) {
-                $license_keys_to_remove[] = 'pdf_builder_license_test_key';
-                $license_keys_to_remove[] = 'pdf_builder_license_test_key_expires';
-                error_log('[PDF Builder] handleCleanupLicense - Will remove test key');
-            } else {
-                error_log('[PDF Builder] handleCleanupLicense - Will preserve test key');
-                // Désactiver le mode test pour forcer la réactivation manuelle
-                $settings['pdf_builder_license_test_mode'] = '0';
-            }
-
-            // Ne pas supprimer le mode test de la liste de suppression
-            // $license_keys_to_remove[] = 'pdf_builder_license_test_mode';
 
             $removed_count = 0;
             foreach ($license_keys_to_remove as $key) {

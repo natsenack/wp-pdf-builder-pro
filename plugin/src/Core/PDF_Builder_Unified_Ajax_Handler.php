@@ -2061,19 +2061,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'pdf_builder_license_activated_at',
                  'pdf_builder_license_test_mode_enabled',
                  'pdf_builder_license_email_reminders',
-                 'pdf_builder_license_reminder_email'
+                 'pdf_builder_license_reminder_email',
+                 'pdf_builder_license_test_key',
+                 'pdf_builder_license_test_key_expires',
+                 'pdf_builder_license_test_mode'
              ];
-
-             // Ne pas supprimer la clé de test si le mode test était actif
-             if (!$test_mode_was_enabled) {
-                 $license_keys[] = 'pdf_builder_license_test_key';
-                 $license_keys[] = 'pdf_builder_license_test_key_expires';
-             }
-             // Ne pas supprimer le mode test, le mettre à 0 si nécessaire
-             if ($test_mode_was_enabled) {
-                 $settings['pdf_builder_license_test_mode'] = '0';
-             }
-             $license_keys[] = 'pdf_builder_license_test_mode';
 
              foreach ($license_keys as $key) {
                  unset($settings[$key]);
