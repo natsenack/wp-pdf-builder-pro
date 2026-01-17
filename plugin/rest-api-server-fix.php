@@ -202,7 +202,7 @@ function pdf_builder_force_rest_endpoints() {
         }
 
         // Register basic root endpoint
-        register_rest_route('', '/?', array(
+        register_rest_route('pdf-builder/v1', '/?', array(
             'methods' => 'GET',
             'callback' => function() {
                 return array(
