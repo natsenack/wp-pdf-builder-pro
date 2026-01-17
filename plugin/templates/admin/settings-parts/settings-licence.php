@@ -404,7 +404,80 @@
                     </div>
                     <?php endif; ?>
 
-                    <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+                    <!-- JavaScript pour les fonctions de modal de licence -->
+                    <script type="text/javascript">
+                    // Fonctions pour la gestion des modals de licence
+                    window.closeDeactivateModal = function() {
+                        var modal = document.getElementById('deactivate_modal');
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
+                    };
+
+                    window.showDeactivateModal = function() {
+                        var modal = document.getElementById('deactivate_modal');
+                        if (modal) {
+                            modal.style.display = 'block';
+                        }
+                    };
+
+                    window.deactivateLicense = function() {
+                        // Créer et soumettre un formulaire pour désactiver la licence
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = window.location.href;
+
+                        // Ajouter les champs requis
+                        var input1 = document.createElement('input');
+                        input1.type = 'hidden';
+                        input1.name = 'deactivate_license';
+                        input1.value = '1';
+                        form.appendChild(input1);
+
+                        // Ajouter le nonce pour la désactivation
+                        var input2 = document.createElement('input');
+                        input2.type = 'hidden';
+                        input2.name = 'pdf_builder_deactivate_nonce';
+                        input2.value = (window.pdfBuilderLicense && window.pdfBuilderLicense.deactivateNonce) ? window.pdfBuilderLicense.deactivateNonce : '';
+                        form.appendChild(input2);
+
+                        // Soumettre le formulaire
+                        document.body.appendChild(form);
+                        form.submit();
+                    };
+
+                    // Initialiser les événements si on est sur l'onglet licence
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var currentUrl = window.location.href;
+                        if (currentUrl.indexOf('tab=licence') !== -1) {
+                            // Gestionnaire pour le bouton de désactivation
+                            var deactivateBtn = document.getElementById('deactivate-license-btn');
+                            if (deactivateBtn) {
+                                deactivateBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    showDeactivateModal();
+                                });
+                            }
+
+                            // Fermeture de la modal en cliquant sur l'overlay
+                            var modal = document.getElementById('deactivate_modal');
+                            if (modal) {
+                                modal.addEventListener('click', function(e) {
+                                    if (e.target === modal) {
+                                        closeDeactivateModal();
+                                    }
+                                });
+                            }
+
+                            // Fermeture avec Échap
+                            document.addEventListener('keydown', function(e) {
+                                if (e.keyCode === 27) {
+                                    closeDeactivateModal();
+                                }
+                            });
+                        }
+                    });
+                    </script>
 
                     <!-- Informations utiles -->
                     <aside class="info-section">
