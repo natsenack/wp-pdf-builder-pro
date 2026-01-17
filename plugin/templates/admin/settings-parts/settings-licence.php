@@ -774,47 +774,64 @@
                         </div>
                     </div>
 
-                    <!-- Mode développement ou publicité premium -->
-                    <?php if ($is_test_mode): ?>
-                    <!-- Mode développement -->
-                    <div class="action-card secondary">
-                        <div class="action-card-header">
-                            <h3>
-                                <span class="action-icon">🧪</span>
-                                Mode Développement
-                            </h3>
-                            <p>Activer une licence de test pour le développement</p>
+                    <!-- Support & Avantages Premium -->
+                    <div class="action-card premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
+                        <div class="action-card-header" style="padding: 1rem; text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: supportPulse 2s ease-in-out infinite;">💎</div>
+                            <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Support Premium & Avantages</h3>
+                            <p style="margin: 0 0 1rem 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.4;">
+                                Découvrez tous les avantages de votre licence premium
+                            </p>
                         </div>
 
-                        <div class="action-card-content">
-                            <div class="dev-mode-status">
-                                <?php if (!empty($test_key)): ?>
-                                    <div class="status-active">
-                                        <span class="status-dot active"></span>
-                                        <span>Mode test actif</span>
-                                        <?php if (!empty($test_key_expires)): ?>
-                                            <span class="expiry-info">
-                                                (expire le <?php echo date('d/m/Y', strtotime($test_key_expires)); ?>)
-                                            </span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <button type="button" class="btn-secondary" onclick="deactivateTestMode()">
-                                        Désactiver le mode test
-                                    </button>
-                                <?php else: ?>
-                                    <div class="status-inactive">
-                                        <span class="status-dot inactive"></span>
-                                        <span>Mode test inactif</span>
-                                    </div>
-                                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=developpeur'); ?>" class="btn-secondary">
-                                        <span class="btn-icon">⚙️</span>
-                                        Aller aux outils développeur
-                                    </a>
-                                <?php endif; ?>
+                        <div class="action-card-content" style="padding: 0 1rem 1rem 1rem;">
+                            <div class="premium-features-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
+                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">📊</div>
+                                    <div style="font-size: 0.8rem; color: white; font-weight: 500;">Exports Multi-Formats</div>
+                                </div>
+                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">🎯</div>
+                                    <div style="font-size: 0.8rem; color: white; font-weight: 500;">Navigation Grille</div>
+                                </div>
+                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">⚡</div>
+                                    <div style="font-size: 0.8rem; color: white; font-weight: 500;">Résolutions Élevées</div>
+                                </div>
+                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">🔧</div>
+                                    <div style="font-size: 0.8rem; color: white; font-weight: 500;">Outils Avancés</div>
+                                </div>
+                            </div>
+
+                            <div class="support-actions" style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <a href="https://wp-pdf-builder.com/support" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                                    <span style="display: block; font-weight: 500;">📞 Support</span>
+                                </a>
+                                <a href="https://wp-pdf-builder.com/docs" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                                    <span style="display: block; font-weight: 500;">📚 Docs</span>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <?php else: ?>
+
+                    <style>
+                    @keyframes supportPulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.1); }
+                    }
+
+                    .premium-support:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 12px 35px rgba(79, 172, 254, 0.4) !important;
+                        transition: all 0.3s ease;
+                    }
+
+                    .feature-item:hover {
+                        transform: translateY(-2px);
+                        transition: all 0.3s ease;
+                    }
+                    </style>
                     <!-- Section publicité premium -->
                     <div class="action-card premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
                         <div class="premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
