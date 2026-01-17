@@ -1686,5 +1686,245 @@ class AjaxHandler
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
         }
     }
+
+    /**
+     * Handler AJAX unifié pour toutes les actions de licence
+     */
+    public function ajaxUnifiedHandler()
+    {
+        try {
+            // Valider les permissions et nonce
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
+                return;
+            }
+
+            // Récupérer l'action spécifique
+            $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : '';
+
+            switch ($action) {
+                case 'cleanup_license':
+                    $this->handleCleanupLicense();
+                    break;
+                case 'toggle_license_test_mode':
+                    $this->handleToggleLicenseTestMode();
+                    break;
+                case 'generate_license_key':
+                    $this->handleGenerateLicenseKey();
+                    break;
+                case 'delete_license_key':
+                    $this->handleDeleteLicenseKey();
+                    break;
+                case 'validate_license_key':
+                    $this->handleValidateLicenseKey();
+                    break;
+                default:
+                    wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
+                    break;
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder - Erreur handler AJAX unifié: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Nettoyer complètement la licence
+     */
+    private function handleCleanupLicense()
+    {
+        try {
+            error_log('[PDF Builder] handleCleanupLicense - Starting cleanup process');
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', []);
+            error_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings));
+
+            // Liste des clés de licence à supprimer
+            $license_keys_to_remove = [
+                'pdf_builder_license_key',
+                'pdf_builder_license_status',
+                'pdf_builder_license_expiry',
+                'pdf_builder_license_type',
+                'pdf_builder_license_test_key',
+                'pdf_builder_license_test_mode',
+                'pdf_builder_license_last_check',
+                'pdf_builder_license_validated'
+            ];
+
+            $removed_count = 0;
+            foreach ($license_keys_to_remove as $key) {
+                if (isset($settings[$key])) {
+                    unset($settings[$key]);
+                    $removed_count++;
+                    error_log('[PDF Builder] handleCleanupLicense - Removed key: ' . $key);
+                } else {
+                    error_log('[PDF Builder] handleCleanupLicense - Key not found: ' . $key);
+                }
+            }
+
+            // Sauvegarder les paramètres nettoyés
+            $update_result = update_option('pdf_builder_settings', $settings);
+            error_log('[PDF Builder] handleCleanupLicense - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
+            error_log('[PDF Builder] handleCleanupLicense - Removed ' . $removed_count . ' license keys');
+
+            // Vérifier que les clés ont bien été supprimées
+            $updated_settings = get_option('pdf_builder_settings', []);
+            $remaining_license_keys = array_filter(array_keys($updated_settings), function($key) {
+                return strpos($key, 'pdf_builder_license') === 0;
+            });
+            error_log('[PDF Builder] handleCleanupLicense - Remaining license keys: ' . implode(', ', $remaining_license_keys));
+
+            wp_send_json_success([
+                'message' => 'Nettoyage complet réussi. ' . $removed_count . ' clés de licence supprimées.',
+                'removed_count' => $removed_count,
+                'remaining_keys' => $remaining_license_keys
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleCleanupLicense - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors du nettoyage: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Basculer le mode test de licence
+     */
+    private function handleToggleLicenseTestMode()
+    {
+        try {
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Starting toggle process');
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', []);
+            $current_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
+
+            // Basculer le mode
+            $new_mode = $current_mode === '1' ? '0' : '1';
+            $settings['pdf_builder_license_test_mode'] = $new_mode;
+
+            // Sauvegarder
+            $update_result = update_option('pdf_builder_settings', $settings);
+
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode);
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
+
+            wp_send_json_success([
+                'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès',
+                'new_mode' => $new_mode
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors du basculement: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Générer une clé de test
+     */
+    private function handleGenerateLicenseKey()
+    {
+        try {
+            error_log('[PDF Builder] handleGenerateLicenseKey - Starting generation process');
+
+            // Générer une clé aléatoire
+            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', []);
+            $settings['pdf_builder_license_test_key'] = $test_key;
+
+            // Sauvegarder
+            $update_result = update_option('pdf_builder_settings', $settings);
+
+            error_log('[PDF Builder] handleGenerateLicenseKey - Generated key: ' . $test_key);
+            error_log('[PDF Builder] handleGenerateLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
+
+            wp_send_json_success([
+                'message' => 'Clé de test générée avec succès',
+                'test_key' => $test_key
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleGenerateLicenseKey - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la génération: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Supprimer la clé de test
+     */
+    private function handleDeleteLicenseKey()
+    {
+        try {
+            error_log('[PDF Builder] handleDeleteLicenseKey - Starting deletion process');
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', []);
+            $old_key = $settings['pdf_builder_license_test_key'] ?? '';
+
+            if (isset($settings['pdf_builder_license_test_key'])) {
+                unset($settings['pdf_builder_license_test_key']);
+            }
+
+            // Sauvegarder
+            $update_result = update_option('pdf_builder_settings', $settings);
+
+            error_log('[PDF Builder] handleDeleteLicenseKey - Deleted key: ' . $old_key);
+            error_log('[PDF Builder] handleDeleteLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
+
+            wp_send_json_success([
+                'message' => 'Clé de test supprimée avec succès'
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleDeleteLicenseKey - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la suppression: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Valider la clé de test
+     */
+    private function handleValidateLicenseKey()
+    {
+        try {
+            error_log('[PDF Builder] handleValidateLicenseKey - Starting validation process');
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', []);
+            $test_key = $settings['pdf_builder_license_test_key'] ?? '';
+
+            if (empty($test_key)) {
+                wp_send_json_error(['message' => 'Aucune clé de test à valider']);
+                return;
+            }
+
+            // Validation simple pour les clés de test
+            $is_valid = strpos($test_key, 'TEST-') === 0 && strlen($test_key) === 21;
+
+            error_log('[PDF Builder] handleValidateLicenseKey - Key: ' . $test_key . ', Valid: ' . ($is_valid ? 'YES' : 'NO'));
+
+            if ($is_valid) {
+                wp_send_json_success([
+                    'message' => 'Clé de test validée avec succès',
+                    'valid' => true
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Clé de test invalide']);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
+        }
+    }
 }
 

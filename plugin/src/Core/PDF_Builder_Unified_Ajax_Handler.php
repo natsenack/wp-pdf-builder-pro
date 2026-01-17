@@ -2011,6 +2011,8 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
+             error_log('[PDF Builder] Starting license cleanup');
+
              // Clear separate license options
              $license_options = [
                  'pdf_builder_license_key',
@@ -2023,15 +2025,18 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              foreach ($license_options as $option) {
                  delete_option($option);
+                 error_log('[PDF Builder] Deleted option: ' . $option);
              }
 
              // Clear license settings from the main settings array
              $settings = get_option('pdf_builder_settings', []);
+             error_log('[PDF Builder] Settings before cleanup: ' . print_r($settings, true));
 
              // Remove all license-related keys from settings
              foreach ($settings as $key => $value) {
                  if (strpos($key, 'pdf_builder_license_') === 0) {
                      unset($settings[$key]);
+                     error_log('[PDF Builder] Removed license key from settings: ' . $key);
                  }
              }
 
@@ -2051,17 +2056,20 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              foreach ($license_keys as $key) {
                  unset($settings[$key]);
+                 error_log('[PDF Builder] Explicitly removed key: ' . $key);
              }
 
              // Set license status to free explicitly
              $settings['pdf_builder_license_status'] = 'free';
 
              update_option('pdf_builder_settings', $settings);
+             error_log('[PDF Builder] Settings after cleanup: ' . print_r($settings, true));
 
              // Clear license transients
              global $wpdb;
              $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'");
              $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'");
+             error_log('[PDF Builder] Cleared license transients');
 
              wp_send_json_success([
                  'message' => 'Licence complètement nettoyée. Le plugin est maintenant en mode gratuit.',

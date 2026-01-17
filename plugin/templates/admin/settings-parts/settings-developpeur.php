@@ -889,7 +889,8 @@
                 url: pdf_builder_ajax.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'pdf_builder_cleanup_license',
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'cleanup_license',
                     nonce: nonce
                 },
                 success: function(response) {
@@ -909,6 +910,173 @@
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
+                }
+            });
+        });
+
+        // Gestionnaire pour le bouton toggle du mode test
+        $('#toggle_license_test_mode_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $btn = $(this);
+            const $status = $('#license_test_mode_status');
+            const nonce = $('#toggle_license_test_mode_nonce').val();
+
+            // Désactiver le bouton pendant l'opération
+            $btn.prop('disabled', true).text('🔄 Basculement...');
+            $status.html('<span style="color: #007cba;">Basculement en cours...</span>');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'toggle_license_test_mode',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const newMode = response.data.new_mode;
+                        const isActive = newMode === '1';
+                        $status.html('<span class="' + (isActive ? 'license-test-mode-active' : 'license-test-mode-inactive') + '">' + (isActive ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif') + '</span>');
+                        $btn.text(isActive ? '🎚️ Désactiver Mode Test' : '🎚️ Activer Mode Test');
+                        
+                        // Mettre à jour le checkbox caché
+                        $('#license_test_mode').prop('checked', isActive);
+                        
+                        // Recharger la page après 1 seconde pour voir les changements dans l'onglet licence
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🎚️ Basculer Mode Test');
+                }
+            });
+        });
+
+        // Gestionnaire pour le bouton de génération de clé de test
+        $('#generate_license_key_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $btn = $(this);
+            const $status = $('#license_key_status');
+            const nonce = $('#generate_license_key_nonce').val();
+
+            // Désactiver le bouton pendant la génération
+            $btn.prop('disabled', true).text('🔄 Génération...');
+            $status.html('<span style="color: #007cba;">Génération de la clé en cours...</span>');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'generate_license_key',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#license_test_key').val(response.data.test_key);
+                        $status.html('<span style="color: #28a745;">✅ Clé générée: ' + response.data.test_key + '</span>');
+                        $('#delete_license_key_btn').show();
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🔑 Générer');
+                }
+            });
+        });
+
+        // Gestionnaire pour le bouton de suppression de clé de test
+        $('#delete_license_key_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            if (!confirm('Êtes-vous sûr de vouloir supprimer la clé de test ?')) {
+                return;
+            }
+            
+            const $btn = $(this);
+            const $status = $('#license_key_status');
+            const nonce = $('#delete_license_key_nonce').val();
+
+            // Désactiver le bouton pendant la suppression
+            $btn.prop('disabled', true).text('🗑️ Suppression...');
+            $status.html('<span style="color: #007cba;">Suppression en cours...</span>');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'delete_license_key',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#license_test_key').val('');
+                        $status.html('<span style="color: #28a745;">✅ Clé supprimée avec succès</span>');
+                        $btn.hide();
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🗑️ Supprimer');
+                }
+            });
+        });
+
+        // Gestionnaire pour le bouton de validation de clé de test
+        $('#validate_license_key_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $btn = $(this);
+            const $status = $('#license_key_status');
+            const nonce = $('#validate_license_key_nonce').val();
+
+            // Désactiver le bouton pendant la validation
+            $btn.prop('disabled', true).text('✅ Validation...');
+            $status.html('<span style="color: #007cba;">Validation en cours...</span>');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'validate_license_key',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success && response.data.valid) {
+                        $status.html('<span style="color: #28a745;">✅ Clé validée avec succès</span>');
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Clé invalide</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('✅ Valider');
                 }
             });
         });
