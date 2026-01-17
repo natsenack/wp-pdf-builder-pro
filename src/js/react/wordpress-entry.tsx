@@ -1,53 +1,42 @@
 // ABSOLUTE START - TRY CATCH WRAPPING ENTIRE MODULE
-console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V6: wordpress-entry.tsx STARTED EXECUTING');
+console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V7: wordpress-entry.tsx STARTED EXECUTING');
 console.error('🚨🚨🚨 CRITICAL: React script execution started');
-debugger;  // Force debugger if console is open
 
-// IMMEDIATE VISUAL INDICATOR - Add visible element to DOM VERY EARLY
+// IMMEDIATE API CREATION - Create API before any imports to handle extension conflicts
+// This ensures window.pdfBuilderReact exists even if imports fail
+window.pdfBuilderReact = {
+  initPDFBuilderReact: function(containerId) {
+    console.log('📦 Fallback initPDFBuilderReact called for container:', containerId);
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.innerHTML = `
+        <div style="padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; border-radius: 5px;">
+          <h3 style="margin: 0 0 10px 0;">⚠️ Mode de compatibilité activé</h3>
+          <p style="margin: 0; font-size: 14px;">
+            L'éditeur React n'a pas pu se charger complètement. Cela peut être dû à une extension de navigateur.
+            <br><br>
+            <strong>Solutions :</strong>
+            <br>• Désactivez temporairement les extensions Chrome
+            <br>• Utilisez un navigateur sans extensions
+            <br>• Actualisez la page (F5)
+          </p>
+        </div>
+      `;
+      return true;
+    }
+    return false;
+  },
+  _isFallbackMode: true,
+  _error: 'Extension conflict detected'
+};
+
+// Also create the direct function
+window.initPDFBuilderReact = window.pdfBuilderReact.initPDFBuilderReact;
+
+console.log('✅ Fallback API created immediately');
+
+// Now try the full React implementation
 try {
-  const debugDiv = document.createElement('div');
-  debugDiv.id = 'pdf-builder-debug-indicator';
-  debugDiv.style.cssText = `
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: #00FF00;
-    color: black;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 999999;
-    font-size: 14px;
-    font-weight: bold;
-    border: 3px solid #00FF00;
-    box-shadow: 0 0 20px #00FF00;
-  `;
-  debugDiv.textContent = '✅ REACT LOADED ✅ ' + new Date().toISOString().substring(11, 19);
-  if (document.body) {
-    document.body.appendChild(debugDiv);
-  } else {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.appendChild(debugDiv);
-    });
-  }
-  console.log('✅ Debug div added to DOM');
-} catch (e) {
-  console.error('❌ Failed to add debug div:', e);
-}
-
-// IMPORTS - Log after each one to identify which import fails
-console.log('📦 About to import React...');
-import React from 'react';
-console.log('✅ React imported successfully');
-
-console.log('📦 About to import createRoot...');
-import { createRoot } from 'react-dom/client';
-console.log('✅ createRoot imported successfully');
-
-console.log('📦 About to import PDFBuilder...');
-import { PDFBuilder } from './PDFBuilder';
-console.log('✅ PDFBuilder imported successfully');
-
-console.log('📦 About to import debug utilities...');
 import { debugError, debugWarn, debugLog } from './utils/debug';
 console.log('✅ Debug utilities imported successfully');
 
@@ -325,7 +314,7 @@ export function initPDFBuilderReact() {
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
 window.initPDFBuilderReact = initPDFBuilderReact;
 
-// Exporter l'API complète pour WordPress
+// REPLACE the fallback API with the full API since imports succeeded
 window.pdfBuilderReact = {
   initPDFBuilderReact,
   loadTemplate,
@@ -340,28 +329,33 @@ window.pdfBuilderReact = {
 };
 
 } catch (moduleError) {
-  // CATCH EXTENSION ERROR - Even if something breaks, create minimal API
+  // CATCH EXTENSION ERROR - Even if something breaks, don't replace working API
   console.error('🔥🔥🔥 MODULE-LEVEL ERROR CAUGHT (likely extension issue):', moduleError);
   console.error('🔥 Error:', moduleError instanceof Error ? moduleError.message : String(moduleError));
   console.error('🔥 Stack:', moduleError instanceof Error ? moduleError.stack : 'No stack');
-  
-  // Create minimal API stub so wrapper doesn't hang
-  window.initPDFBuilderReact = function() {
-    console.error('❌ initPDFBuilderReact is stub (module error)');
-    const container = document.getElementById('pdf-builder-react-root');
-    if (container) {
-      container.innerHTML = '<div style="padding: 20px; background: #ffcccc; border: 1px solid #ff0000; color: #c62828;"><h3>Erreur: Module React n\'a pas pu charger</h3><p style="font-size: 12px;">Erreur d\'extension détectée. Consultez la console pour les détails.</p></div>';
-    }
-    return false;
-  };
 
-  window.pdfBuilderReact = {
-    initPDFBuilderReact: window.initPDFBuilderReact,
-    _isWebpackBundle: true,
-    _error: moduleError,
-    _errorMessage: moduleError instanceof Error ? moduleError.message : String(moduleError)
-  };
-  
-  console.log('✅ Minimal API created (stub mode)');
+  // Only create stub API if the full API wasn't successfully created
+  if (!window.pdfBuilderReact || window.pdfBuilderReact._isFallbackMode) {
+    // Create minimal API stub so wrapper doesn't hang
+    window.initPDFBuilderReact = function() {
+      console.error('❌ initPDFBuilderReact is stub (module error)');
+      const container = document.getElementById('pdf-builder-react-root');
+      if (container) {
+        container.innerHTML = '<div style="padding: 20px; background: #ffcccc; border: 1px solid #ff0000; color: #c62828;"><h3>Erreur: Module React n\'a pas pu charger</h3><p style="font-size: 12px;">Erreur d\'extension détectée. Consultez la console pour les détails.</p></div>';
+      }
+      return false;
+    };
+
+    window.pdfBuilderReact = {
+      initPDFBuilderReact: window.initPDFBuilderReact,
+      _isWebpackBundle: true,
+      _error: moduleError,
+      _errorMessage: moduleError instanceof Error ? moduleError.message : String(moduleError)
+    };
+
+    console.log('✅ Minimal API created (stub mode)');
+  } else {
+    console.log('✅ Full API already created, keeping it despite module error');
+  }
 }
 // END OUTER TRY-CATCH
