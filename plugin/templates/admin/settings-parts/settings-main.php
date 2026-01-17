@@ -153,7 +153,6 @@
 
     console.log('PDFBuilderTabsAPI defined inline');
     </script>
-    </script>
 
     <style>
     .hidden-element {
