@@ -80,43 +80,41 @@ class TemplateDefaults {
      * @param int $user_id
      */
     public static function create_default_templates_for_user($user_id) {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
         $free_templates = self::get_free_templates();
 
-        foreach ($free_templates as $key => $template_data) {
-            // Vérifier si le template existe déjà pour cet utilisateur
-            $existing = get_posts([
-                'post_type' => 'pdf_template',
-                'author' => $user_id,
-                'meta_query' => [
-                    [
-                        'key' => '_pdf_template_key',
-                        'value' => $key
-                    ]
-                ]
-            ]);
+        // Pour les utilisateurs gratuits, créer seulement un template par défaut
+        // Sélectionner le premier template disponible (modern)
+        $default_template_key = 'modern';
+        $template_data = $free_templates[$default_template_key];
 
-            if (empty($existing)) {
-                // Créer le post template
-                $post_id = wp_insert_post([
-                    'post_title' => $template_data['name'],
-                    'post_content' => $template_data['description'],
-                    'post_type' => 'pdf_template',
-                    'post_author' => $user_id,
-                    'post_status' => 'publish'
-                ]);
+        // Vérifier si un template par défaut existe déjà pour cet utilisateur
+        $existing_default = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d AND is_default = 1",
+            $user_id
+        ));
 
-                if ($post_id && !is_wp_error($post_id)) {
-                    // Sauvegarder les métadonnées
-                    update_post_meta($post_id, '_pdf_template_key', $key);
-                    update_post_meta($post_id, '_pdf_template_data_json', wp_json_encode($template_data['elements']));
-                    update_post_meta($post_id, '_pdf_template_is_free', true);
-                    update_post_meta($post_id, '_pdf_template_category', $template_data['category']);
+        if ($existing_default == 0) {
+            // Insérer le template par défaut dans la table personnalisée
+            $result = $wpdb->insert(
+                $table_templates,
+                [
+                    'name' => $template_data['name'],
+                    'template_data' => wp_json_encode($template_data['elements']),
+                    'user_id' => $user_id,
+                    'is_default' => 1,
+                    'created_at' => current_time('mysql'),
+                    'updated_at' => current_time('mysql')
+                ],
+                ['%s', '%s', '%d', '%d', '%s', '%s']
+            );
 
-                    // Log de création
-                    
-                } else {
-                    
-                }
+            if ($result === false) {
+                error_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error);
+            } else {
+                error_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $template_data['name']);
             }
         }
     }
