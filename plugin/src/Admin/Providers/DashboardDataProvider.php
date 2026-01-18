@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * DashboardDataProvider - Fournit les données du tableau de bord

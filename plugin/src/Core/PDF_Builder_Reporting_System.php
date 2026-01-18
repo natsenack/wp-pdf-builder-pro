@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Système de Reporting Avancé pour PDF Builder Pro
  *

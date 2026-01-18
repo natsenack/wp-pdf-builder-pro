@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * PDF Builder Pro - Templates AJAX Handler

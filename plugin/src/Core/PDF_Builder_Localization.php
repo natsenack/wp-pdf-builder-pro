@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de localisation et internationalisation
  * Gère les traductions, langues et localisation du contenu

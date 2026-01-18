@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Gestionnaire d'erreurs avancé
  * Centralise la gestion des erreurs et exceptions avec logging structuré

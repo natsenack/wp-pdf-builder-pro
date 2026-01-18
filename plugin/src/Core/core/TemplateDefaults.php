@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * TemplateDefaults - Templates par défaut pour utilisateurs gratuits
  * PDF Builder Pro

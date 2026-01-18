@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Conventions de nommage et namespaces pour PDF Builder Pro

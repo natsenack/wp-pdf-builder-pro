@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de secours et récupération
  * Gère les sauvegardes d'urgence et la récupération en cas de panne

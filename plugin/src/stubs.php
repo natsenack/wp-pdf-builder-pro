@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Stubs for external functions and constants to satisfy Intelephense
  * This file is for development only and should not be deployed to production

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Fix pour afficher les images dans la bibliothèque média WordPress
  * Même sans GD/ImageMagick, on forcer les URL des images

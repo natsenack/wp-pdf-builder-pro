@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Gestionnaire de mises à jour automatiques
  * Gère les mises à jour automatiques, correctifs de sécurité et maintenance

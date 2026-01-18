@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Classe de base pour les handlers AJAX
  * Centralise la validation commune et la gestion d'erreurs

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de reporting et analyse avancé
  * Fournit des rapports détaillés et des analyses d'utilisation

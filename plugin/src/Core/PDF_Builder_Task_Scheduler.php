@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Planificateur de tâches
  * Gère les tâches automatiques et planifiées du plugin

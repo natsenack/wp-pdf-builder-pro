@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Gestion des utilisateurs et permissions
  * Contrôle l'accès aux fonctionnalités selon les rôles et permissions

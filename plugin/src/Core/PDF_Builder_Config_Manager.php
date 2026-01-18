@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Gestionnaire de configuration
  * Centralise la gestion de tous les paramètres et options du plugin

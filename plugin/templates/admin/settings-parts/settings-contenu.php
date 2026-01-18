@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     /**
      * PDF Builder Pro - Content Settings Tab
      * Canvas and design configuration settings

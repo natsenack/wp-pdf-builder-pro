@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de déploiement continu
  * Automatise les déploiements, rollbacks et gestion des environnements

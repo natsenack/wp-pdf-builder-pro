@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace PDF_Builder\Utilities;
 /**
  * PDF Builder Pro - Onboarding Manager

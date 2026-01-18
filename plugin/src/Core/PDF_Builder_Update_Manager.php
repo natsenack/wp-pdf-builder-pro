@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Gestionnaire de mises à jour
  * Gère les migrations de base de données et les mises à jour du plugin

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Settings Page (Simplified)
  * Main settings dispatcher - includes modular parts

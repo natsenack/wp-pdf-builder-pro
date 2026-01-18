@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Outil de diagnostic pour le système de monitoring des cartes canvas
  * Permet de vérifier l'état du système et diagnostiquer les problèmes

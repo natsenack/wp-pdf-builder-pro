@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Canvas Mappings
  *

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Moniteur de performance
  * Surveille les performances du plugin et identifie les optimisations possibles

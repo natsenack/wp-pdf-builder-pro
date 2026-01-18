@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de métriques et analyses avancées
  * Collecte et analyse les métriques de performance et d'utilisation

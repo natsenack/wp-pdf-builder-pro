@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Chargeur Intelligent pour PDF Builder Pro
  *

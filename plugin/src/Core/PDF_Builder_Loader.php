@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Gestionnaire de chargement optimisé
  * Remplace le système de chargement complexe par une approche plus propre

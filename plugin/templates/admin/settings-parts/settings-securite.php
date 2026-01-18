@@ -1,4 +1,4 @@
-﻿<?php // Securite tab content - Updated: 2025-11-18 20:20:00
+<?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
     // Préparer les variables nécessaires
     $settings = pdf_builder_get_option('pdf_builder_settings', array());

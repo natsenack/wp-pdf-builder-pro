@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de mise à jour de base de données
  * Gère les migrations, schémas et mises à jour de données

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - GDPR Compliance Manager
  * Gestionnaire de conformité RGPD

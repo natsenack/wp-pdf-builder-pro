@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Gestionnaire des limites de sécurité

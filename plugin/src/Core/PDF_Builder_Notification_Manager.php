@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Notification Manager
  * Système centralisé de gestion des notifications

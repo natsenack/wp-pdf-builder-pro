@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de mise à jour automatique
  * Gère les mises à jour du plugin de manière sécurisée et automatique

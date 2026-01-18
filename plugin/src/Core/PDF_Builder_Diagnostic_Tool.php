@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Outil de diagnostic
  * Fournit des outils de diagnostic et débogage complets

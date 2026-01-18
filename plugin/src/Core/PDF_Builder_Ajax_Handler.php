@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Gestionnaire AJAX avancé pour PDF Builder Pro
  *
