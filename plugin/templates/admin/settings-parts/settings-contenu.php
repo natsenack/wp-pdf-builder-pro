@@ -202,9 +202,10 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>⚙️</span> Configurer
-                                </button>
+                                <label for="pdf_builder_canvas_shadow_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_shadow_enabled', '0'), '1'); ?>>
+                                    Ombre activée
+                                </label>
                             </footer>
                         </article>
 
@@ -262,9 +263,18 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>📏</span> Configurer
-                                </button>
+                                <label for="pdf_builder_canvas_grid_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_grid_enabled', '1'), '1'); ?>>
+                                    Grille
+                                </label>
+                                <label for="pdf_builder_canvas_guides_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_guides_enabled', '1'), '1'); ?>>
+                                    Guides
+                                </label>
+                                <label for="pdf_builder_canvas_snap_to_grid">
+                                    <input type="checkbox" id="pdf_builder_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_canvas_option_contenu('canvas_snap_to_grid', '1'), '1'); ?>>
+                                    Aimantation
+                                </label>
                             </footer>
                         </article>
 
@@ -351,9 +361,30 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>🎯</span> Configurer
-                                </button>
+                                <label for="pdf_builder_canvas_drag_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_drag_enabled', '1'), '1'); ?>>
+                                    Glisser
+                                </label>
+                                <label for="pdf_builder_canvas_resize_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_resize_enabled', '1'), '1'); ?>>
+                                    Redimensionner
+                                </label>
+                                <label for="pdf_builder_canvas_rotate_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_rotate_enabled', '1'), '1'); ?>>
+                                    Rotation
+                                </label>
+                                <label for="pdf_builder_canvas_multi_select">
+                                    <input type="checkbox" id="pdf_builder_canvas_multi_select" name="pdf_builder_canvas_multi_select" value="1" <?php checked(get_canvas_option_contenu('canvas_multi_select', '1'), '1'); ?>>
+                                    Multi-sélection
+                                </label>
+                                <label for="pdf_builder_canvas_keyboard_shortcuts">
+                                    <input type="checkbox" id="pdf_builder_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts" value="1" <?php checked(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1'), '1'); ?>>
+                                    Raccourcis
+                                </label>
+                                <label for="pdf_builder_canvas_export_transparent">
+                                    <input type="checkbox" id="pdf_builder_canvas_export_transparent" name="pdf_builder_canvas_export_transparent" value="1" <?php checked(get_canvas_option_contenu('canvas_export_transparent', '0'), '1'); ?>>
+                                    Export transparent
+                                </label>
                             </footer>
                         </article>
 
@@ -393,9 +424,18 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>⚡</span> Configurer
-                                </button>
+                                <label for="pdf_builder_canvas_debug_enabled">
+                                    <input type="checkbox" id="pdf_builder_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_debug_enabled', '0'), '1'); ?>>
+                                    Debug
+                                </label>
+                                <label for="pdf_builder_canvas_performance_monitoring">
+                                    <input type="checkbox" id="pdf_builder_canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring" value="1" <?php checked(get_canvas_option_contenu('canvas_performance_monitoring', '0'), '1'); ?>>
+                                    Monitoring
+                                </label>
+                                <label for="pdf_builder_canvas_error_reporting">
+                                    <input type="checkbox" id="pdf_builder_canvas_error_reporting" name="pdf_builder_canvas_error_reporting" value="1" <?php checked(get_canvas_option_contenu('canvas_error_reporting', '0'), '1'); ?>>
+                                    Rapports d'erreur
+                                </label>
                             </footer>
                         </article>
                     </div>
@@ -443,13 +483,7 @@
             <!-- CSS pour les modales Canvas - DÉJÀ INCLUS dans pdf-builder-unified.css -->
             <style>
             </style>
-
-            <script>
-                (function() {
-                    'use strict';
-
-                    console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
-
+<script>
                     // Initialize window.pdfBuilderCanvasSettings with current DB values
                     window.pdfBuilderCanvasSettings = {
                         width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
