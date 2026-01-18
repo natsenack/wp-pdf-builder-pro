@@ -15,43 +15,9 @@ class AdminPages {
      * Ajoute les pages d'admin dans le menu WordPress
      */
     public static function add_menu_pages() {
-        // Page principale
-        add_menu_page(
-            __('PDF Builder Pro', 'pdf-builder-pro'),
-            __('PDF Builder', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder',
-            function() {
-                include dirname(__DIR__) . '/pages/welcome.php';
-            },
-            'dashicons-pdf',
-            76
-        );
+        // NE PAS CRÉER DE MENU PRINCIPAL - IL EXISTE DÉJÀ AILLEURS
+        // Uniquement ajouter la sous-page de migration
         
-        // Sous-page: Éditeur
-        add_submenu_page(
-            'pdf-builder',
-            __('Éditeur PDF', 'pdf-builder-pro'),
-            __('Éditeur', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-react-editor',
-            function() {
-                include dirname(__DIR__) . '/pages/admin-editor.php';
-            }
-        );
-        
-        // Sous-page: Paramètres
-        add_submenu_page(
-            'pdf-builder',
-            __('Paramètres PDF Builder', 'pdf-builder-pro'),
-            __('Paramètres', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-settings',
-            function() {
-                include dirname(__DIR__) . '/templates/admin/settings-page.php';
-            }
-        );
-
         // Sous-page: Migration Canvas
         add_submenu_page(
             'pdf-builder',

@@ -484,11 +484,6 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
-    // Charger les pages d'administration
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
-    }
-
     // Charger le handler AJAX pour les paramètres Canvas
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
