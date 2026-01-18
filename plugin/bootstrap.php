@@ -1721,6 +1721,15 @@ if (file_exists($migration_ajax_path)) {
 }
 
 // ============================================================================
+// ✅ CHARGER LES PAGES ADMIN
+// ============================================================================
+
+$admin_pages_path = PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
+if (file_exists($admin_pages_path)) {
+    require_once $admin_pages_path;
+}
+
+// ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
 
