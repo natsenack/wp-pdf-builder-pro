@@ -1712,6 +1712,15 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 });
 
 // ============================================================================
+// ✅ CHARGER LE SCRIPT DE MIGRATION CANVAS
+// ============================================================================
+
+$migration_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'migrate_canvas_settings_ajax.php';
+if (file_exists($migration_ajax_path)) {
+    require_once $migration_ajax_path;
+}
+
+// ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
 

@@ -51,6 +51,18 @@ class AdminPages {
                 include dirname(__DIR__) . '/templates/admin/settings-page.php';
             }
         );
+
+        // Sous-page: Migration Canvas
+        add_submenu_page(
+            'pdf-builder',
+            __('Migration Paramètres Canvas', 'pdf-builder-pro'),
+            __('Migration Canvas', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-migration',
+            function() {
+                include dirname(__DIR__) . '/migration_admin_page.php';
+            }
+        );
     }
 }
 
