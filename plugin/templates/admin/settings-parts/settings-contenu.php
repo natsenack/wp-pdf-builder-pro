@@ -752,6 +752,21 @@
                             }
                         });
 
+                        // Synchronisation agressive : mettre à jour les hidden fields en temps réel lors des changements dans les modales
+                        document.addEventListener('change', function(e) {
+                            var input = e.target;
+                            if (input.type === 'checkbox' && input.closest('.canvas-modal-overlay')) {
+                                var inputName = input.name;
+                                if (inputName) {
+                                    var hiddenField = document.querySelector('input[name="' + inputName + '"][type="hidden"]');
+                                    if (hiddenField) {
+                                        hiddenField.value = input.checked ? '1' : '0';
+                                        console.log('[PDF Builder] Hidden field updated:', inputName, '=', hiddenField.value);
+                                    }
+                                }
+                            }
+                        });
+
                         // Touche Échap
                         document.addEventListener('keydown', function(e) {
                             if (e.key === 'Escape') {
