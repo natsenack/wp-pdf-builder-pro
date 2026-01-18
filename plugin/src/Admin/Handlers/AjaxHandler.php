@@ -1694,11 +1694,11 @@ class AjaxHandler
                 return;
             }
 
-            // Inclure le gestionnaire des paramètres canvas
-            if (!class_exists('PDF_Builder_Canvas_Settings_Manager')) {
-                $canvas_settings_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'Managers/PDF_Builder_Canvas_Settings_Manager.php';
-                if (file_exists($canvas_settings_file)) {
-                    require_once $canvas_settings_file;
+            // Inclure la classe de migration
+            if (!class_exists('PDF_Builder_Canvas_Settings_Migration')) {
+                $migration_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'migrate_canvas_settings.php';
+                if (file_exists($migration_file)) {
+                    require_once $migration_file;
                 }
             }
 
@@ -1715,8 +1715,8 @@ class AjaxHandler
 
                 // Traiter les valeurs selon leur type
                 if (is_array($value)) {
-                    // Pour les tableaux (checkboxes multiples), garder comme tableau
-                    $settings_to_save[$key] = array_map('sanitize_text_field', $value);
+                    // Pour les tableaux (checkboxes multiples), imploser en chaîne
+                    $settings_to_save[$key] = implode(',', array_map('sanitize_text_field', $value));
                 } else {
                     // Pour les valeurs simples, utiliser sanitize_text_field
                     $settings_to_save[$key] = sanitize_text_field($value);
@@ -1728,19 +1728,44 @@ class AjaxHandler
                 return;
             }
 
-            // Utiliser le gestionnaire des paramètres canvas
-            $canvas_settings_manager = PDF_Builder_Canvas_Settings_Manager::get_instance();
-            $saved_count = $canvas_settings_manager->set_multiple_settings($settings_to_save);
+            // Utiliser la nouvelle table pour sauvegarder les paramètres canvas
+            if (class_exists('PDF_Builder_Canvas_Settings_Migration')) {
+                $migration = new PDF_Builder_Canvas_Settings_Migration();
+                $updated_count = $migration->set_canvas_settings($settings_to_save);
 
-            if ($saved_count > 0) {
-                wp_send_json_success([
-                    'message' => 'Paramètres canvas sauvegardés avec succès',
-                    'category' => $category,
-                    'saved_count' => $saved_count,
-                    'total_count' => count($settings_to_save)
-                ]);
+                if ($updated_count > 0) {
+                    wp_send_json_success([
+                        'message' => 'Paramètres sauvegardés avec succès dans la table dédiée',
+                        'category' => $category,
+                        'updated_count' => $updated_count,
+                        'table' => 'wp_pdf_builder_settings'
+                    ]);
+                } else {
+                    wp_send_json_error(['message' => 'Erreur lors de la sauvegarde dans la table']);
+                }
             } else {
-                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+                // Fallback vers l'ancien système si la classe n'est pas disponible
+                $existing_settings = get_option('pdf_builder_settings', array());
+
+                // Mettre à jour les paramètres
+                $updated_count = 0;
+                foreach ($settings_to_save as $key => $value) {
+                    $existing_settings[$key] = $value;
+                    $updated_count++;
+                }
+
+                // Sauvegarder dans l'option unifiée
+                $saved = update_option('pdf_builder_settings', $existing_settings);
+
+                if ($saved) {
+                    wp_send_json_success([
+                        'message' => 'Paramètres sauvegardés avec succès (fallback)',
+                        'category' => $category,
+                        'updated_count' => $updated_count
+                    ]);
+                } else {
+                    wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+                }
             }
 
         } catch (Exception $e) {

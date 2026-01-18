@@ -1,130 +1,133 @@
 <?php
 /**
- * Page admin pour la migration des paramètres canvas
+ * Page d'administration pour la migration des paramètres canvas
  */
 
-if (!defined('ABSPATH')) {
-    die('Accès direct non autorisé');
-}
+// Inclure la classe de migration
+require_once dirname(__DIR__) . '/migrate_canvas_settings.php';
 
-// Inclure le handler AJAX
-require_once plugin_dir_path(__FILE__) . 'migrate_canvas_settings_ajax.php';
+$message = '';
+$message_type = '';
 
-// Ajouter la page admin
-add_action('admin_menu', 'pdf_builder_add_migration_page');
+if (isset($_POST['run_migration']) && check_admin_referer('pdf_builder_migration_nonce')) {
+    try {
+        if (!class_exists('PDF_Builder_Canvas_Settings_Migration')) {
+            throw new Exception('Classe de migration non trouvée');
+        }
 
-function pdf_builder_add_migration_page() {
-    add_submenu_page(
-        'pdf-builder-settings',
-        'Migration Paramètres Canvas',
-        'Migration Canvas',
-        'manage_options',
-        'pdf-builder-migration',
-        'pdf_builder_migration_page'
-    );
-}
+        $migration = new PDF_Builder_Canvas_Settings_Migration();
 
-function pdf_builder_migration_page() {
-    if (!current_user_can('manage_options')) {
-        wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.'));
+        // Exécuter la migration complète
+        $migration_result = $migration->migrate();
+
+        // Récupérer les paramètres existants depuis wp_options
+        $existing_settings = get_option('pdf_builder_settings', array());
+
+        if (empty($existing_settings)) {
+            $message = 'Aucun paramètre existant trouvé dans wp_options';
+            $message_type = 'warning';
+        } else {
+            // Filtrer seulement les paramètres canvas
+            $canvas_settings = array();
+            foreach ($existing_settings as $key => $value) {
+                if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    $canvas_settings[$key] = $value;
+                }
+            }
+
+            if (empty($canvas_settings)) {
+                $message = 'Aucun paramètre canvas trouvé dans wp_options';
+                $message_type = 'warning';
+            } else {
+                // Migrer les paramètres vers la nouvelle table
+                $migrated_count = $migration->set_canvas_settings($canvas_settings);
+
+                if ($migrated_count > 0) {
+                    $message = "Migration réussie: $migrated_count paramètres déplacés vers la table dédiée";
+                    $message_type = 'success';
+                } else {
+                    $message = 'Erreur lors de la migration';
+                    $message_type = 'error';
+                }
+            }
+        }
+
+    } catch (Exception $e) {
+        $message = 'Erreur: ' . $e->getMessage();
+        $message_type = 'error';
     }
-
-    ?>
-    <div class="wrap">
-        <h1>Migration des Paramètres Canvas</h1>
-
-        <div class="notice notice-info">
-            <p>Cette page permet de migrer les paramètres canvas vers une table dédiée pour une meilleure organisation.</p>
-        </div>
-
-        <div id="migration-status" style="display: none;">
-            <div class="notice notice-success" id="migration-success">
-                <p><strong>Migration réussie!</strong></p>
-                <div id="migration-details"></div>
-            </div>
-
-            <div class="notice notice-error" id="migration-error">
-                <p><strong>Erreur lors de la migration:</strong></p>
-                <div id="migration-error-details"></div>
-            </div>
-        </div>
-
-        <div id="migration-form">
-            <p>
-                <button type="button" id="run-migration" class="button button-primary">
-                    Exécuter la Migration
-                </button>
-            </p>
-
-            <div id="migration-progress" style="display: none;">
-                <p>Migration en cours...</p>
-                <div class="spinner is-active" style="float: none;"></div>
-            </div>
-        </div>
-
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('#run-migration').on('click', function() {
-                var $button = $(this);
-                var $progress = $('#migration-progress');
-                var $status = $('#migration-status');
-                var $form = $('#migration-form');
-
-                // Désactiver le bouton et afficher le progrès
-                $button.prop('disabled', true);
-                $progress.show();
-
-                // Exécuter la migration AJAX
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_migrate_canvas_settings',
-                        nonce: '<?php echo wp_create_nonce("pdf_builder_migrate_canvas_settings"); ?>'
-                    },
-                    success: function(response) {
-                        $progress.hide();
-                        $status.show();
-
-                        if (response.success) {
-                            $('#migration-success').show();
-                            $('#migration-error').hide();
-
-                            var details = '<ul>';
-                            if (response.details.pending_migrations) {
-                                details += '<li>Migrations en attente: ' + response.details.pending_migrations.join(', ') + '</li>';
-                            }
-                            if (response.details.table_created) {
-                                details += '<li>Table créée: Oui</li>';
-                            }
-                            if (response.details.canvas_settings_migrated !== undefined) {
-                                details += '<li>Paramètres canvas migrés: ' + response.details.canvas_settings_migrated + '</li>';
-                            }
-                            details += '<li>Version DB: ' + response.details.current_db_version + '</li>';
-                            details += '<li>Table existe: ' + (response.details.table_exists ? 'Oui' : 'Non') + '</li>';
-                            if (response.details.canvas_settings_count !== undefined) {
-                                details += '<li>Paramètres canvas dans la table: ' + response.details.canvas_settings_count + '</li>';
-                            }
-                            details += '</ul>';
-
-                            $('#migration-details').html(details);
-                        } else {
-                            $('#migration-success').hide();
-                            $('#migration-error').show();
-                            $('#migration-error-details').html('<p>' + response.message + '</p>');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        $progress.hide();
-                        $status.show();
-                        $('#migration-success').hide();
-                        $('#migration-error').show();
-                        $('#migration-error-details').html('<p>Erreur AJAX: ' + error + '</p>');
-                    }
-                });
-            });
-        });
-        </script>
-    </div>
-    <?php
 }
+
+// Vérifier l'état actuel
+$current_canvas_settings = array();
+if (class_exists('PDF_Builder_Canvas_Settings_Migration')) {
+    $migration = new PDF_Builder_Canvas_Settings_Migration();
+    $current_canvas_settings = $migration->get_all_canvas_settings();
+}
+
+$existing_wp_options = get_option('pdf_builder_settings', array());
+$canvas_in_options = array();
+foreach ($existing_wp_options as $key => $value) {
+    if (strpos($key, 'pdf_builder_canvas_') === 0) {
+        $canvas_in_options[$key] = $value;
+    }
+}
+?>
+
+<div class="wrap">
+    <h1><?php _e('Migration des Paramètres Canvas', 'pdf-builder-pro'); ?></h1>
+
+    <?php if (!empty($message)): ?>
+        <div class="notice notice-<?php echo esc_attr($message_type); ?> is-dismissible">
+            <p><?php echo esc_html($message); ?></p>
+        </div>
+    <?php endif; ?>
+
+    <div class="card">
+        <h2><?php _e('Aperçu de la Migration', 'pdf-builder-pro'); ?></h2>
+        <p><?php _e('Cette page vous permet de migrer les paramètres canvas depuis wp_options vers une table dédiée (wp_pdf_builder_settings) pour une meilleure organisation.', 'pdf-builder-pro'); ?></p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+            <div>
+                <h3><?php _e('Paramètres dans wp_options', 'pdf-builder-pro'); ?></h3>
+                <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;">
+                    <?php if (empty($canvas_in_options)): ?>
+                        <p><em><?php _e('Aucun paramètre canvas trouvé', 'pdf-builder-pro'); ?></em></p>
+                    <?php else: ?>
+                        <ul>
+                            <?php foreach ($canvas_in_options as $key => $value): ?>
+                                <li><code><?php echo esc_html($key); ?></code>: <?php echo esc_html(substr($value, 0, 50)) . (strlen($value) > 50 ? '...' : ''); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div>
+                <h3><?php _e('Paramètres dans la nouvelle table', 'pdf-builder-pro'); ?></h3>
+                <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;">
+                    <?php if (empty($current_canvas_settings)): ?>
+                        <p><em><?php _e('Aucun paramètre dans la table dédiée', 'pdf-builder-pro'); ?></em></p>
+                    <?php else: ?>
+                        <ul>
+                            <?php foreach ($current_canvas_settings as $setting): ?>
+                                <li><code><?php echo esc_html($setting->setting_key); ?></code>: <?php echo esc_html(substr($setting->setting_value, 0, 50)) . (strlen($setting->setting_value) > 50 ? '...' : ''); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" style="margin-top: 20px;">
+            <?php wp_nonce_field('pdf_builder_migration_nonce'); ?>
+            <input type="hidden" name="run_migration" value="1">
+            <p>
+                <input type="submit" class="button button-primary" value="<?php _e('Exécuter la Migration', 'pdf-builder-pro'); ?>">
+            </p>
+            <p class="description">
+                <?php _e('Cette action déplacera tous les paramètres canvas de wp_options vers la table dédiée. Les données originales resteront intactes pour sécurité.', 'pdf-builder-pro'); ?>
+            </p>
+        </form>
+    </div>
+</div>
