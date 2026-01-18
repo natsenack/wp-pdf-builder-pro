@@ -138,6 +138,9 @@ class PDF_Builder_Database_Updater {
 
             $migration = $this->migrations[$target_version];
 
+            // S'assurer que la table des migrations existe
+            $this->ensure_migration_table_exists();
+
             // Créer un enregistrement de migration
             $migration_id = $this->create_migration_record($target_version, $direction);
 
@@ -231,6 +234,40 @@ class PDF_Builder_Database_Updater {
         }
 
         return $results;
+    }
+
+    /**
+     * S'assure que la table des migrations existe
+     */
+    private function ensure_migration_table_exists() {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'pdf_builder_migrations';
+
+        // Vérifier si la table existe
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
+            // Créer la table des migrations
+            $charset_collate = $wpdb->get_charset_collate();
+
+            $wpdb->query("
+                CREATE TABLE $table_name (
+                    id int(11) NOT NULL AUTO_INCREMENT,
+                    version varchar(20) NOT NULL,
+                    direction varchar(10) NOT NULL,
+                    status varchar(20) NOT NULL,
+                    user_id int(11) DEFAULT NULL,
+                    error text,
+                    started_at datetime DEFAULT CURRENT_TIMESTAMP,
+                    completed_at datetime NULL,
+                    failed_at datetime NULL,
+                    PRIMARY KEY (id),
+                    KEY version (version),
+                    KEY direction (direction),
+                    KEY status (status),
+                    KEY user_id (user_id)
+                ) $charset_collate
+            ");
+        }
     }
 
     /**
@@ -820,43 +857,100 @@ class PDF_Builder_Database_Updater {
     public function migrate_to_1_4_0() {
         global $wpdb;
 
-        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'pdf_builder_settings';
 
-        // Table des paramètres canvas séparés
-        $wpdb->query("
-            CREATE TABLE {$wpdb->prefix}pdf_builder_settings (
-                id int(11) NOT NULL AUTO_INCREMENT,
-                setting_key varchar(255) NOT NULL,
-                setting_value longtext,
-                setting_group varchar(100) DEFAULT 'canvas',
-                setting_type varchar(50) DEFAULT 'string',
-                is_public tinyint(1) DEFAULT 0,
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (id),
-                UNIQUE KEY setting_key (setting_key),
-                KEY setting_group (setting_group),
-                KEY setting_type (setting_type),
-                KEY is_public (is_public)
-            ) $charset_collate
-        ");
+        // Vérifier si la table existe déjà
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+
+        if (!$table_exists) {
+            // Créer la table si elle n'existe pas
+            $charset_collate = $wpdb->get_charset_collate();
+
+            $wpdb->query("
+                CREATE TABLE {$wpdb->prefix}pdf_builder_settings (
+                    id int(11) NOT NULL AUTO_INCREMENT,
+                    setting_key varchar(255) NOT NULL,
+                    setting_value longtext,
+                    setting_group varchar(100) DEFAULT 'canvas',
+                    setting_type varchar(50) DEFAULT 'string',
+                    is_public tinyint(1) DEFAULT 0,
+                    created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                    updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id),
+                    UNIQUE KEY setting_key (setting_key),
+                    KEY setting_group (setting_group),
+                    KEY setting_type (setting_type),
+                    KEY is_public (is_public)
+                ) $charset_collate
+            ");
+        } else {
+            // Si la table existe, vérifier et ajouter les colonnes manquantes
+            $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name", ARRAY_A);
+            $column_names = array_column($columns, 'Field');
+
+            $columns_to_add = [];
+
+            if (!in_array('setting_group', $column_names)) {
+                $columns_to_add[] = "ADD COLUMN setting_group varchar(100) DEFAULT 'canvas'";
+            }
+            if (!in_array('setting_type', $column_names)) {
+                $columns_to_add[] = "ADD COLUMN setting_type varchar(50) DEFAULT 'string'";
+            }
+            if (!in_array('is_public', $column_names)) {
+                $columns_to_add[] = "ADD COLUMN is_public tinyint(1) DEFAULT 0";
+            }
+            if (!in_array('created_at', $column_names)) {
+                $columns_to_add[] = "ADD COLUMN created_at datetime DEFAULT CURRENT_TIMESTAMP";
+            }
+            if (!in_array('updated_at', $column_names)) {
+                $columns_to_add[] = "ADD COLUMN updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+            }
+
+            // Ajouter les index manquants
+            if (!empty($columns_to_add)) {
+                $alter_query = "ALTER TABLE $table_name " . implode(', ', $columns_to_add);
+                $wpdb->query($alter_query);
+            }
+
+            // Ajouter les index si ils n'existent pas
+            $indexes = $wpdb->get_results("SHOW INDEX FROM $table_name", ARRAY_A);
+            $index_names = array_column($indexes, 'Key_name');
+
+            if (!in_array('setting_group', $index_names)) {
+                $wpdb->query("ALTER TABLE $table_name ADD KEY setting_group (setting_group)");
+            }
+            if (!in_array('setting_type', $index_names)) {
+                $wpdb->query("ALTER TABLE $table_name ADD KEY setting_type (setting_type)");
+            }
+            if (!in_array('is_public', $index_names)) {
+                $wpdb->query("ALTER TABLE $table_name ADD KEY is_public (is_public)");
+            }
+        }
 
         // Migrer les paramètres canvas existants depuis wp_options vers la nouvelle table
         $existing_settings = get_option('pdf_builder_settings', []);
         if (!empty($existing_settings)) {
             foreach ($existing_settings as $key => $value) {
                 if (strpos($key, 'pdf_builder_canvas_') === 0) {
-                    $wpdb->insert(
-                        $wpdb->prefix . 'pdf_builder_settings',
-                        [
-                            'setting_key' => $key,
-                            'setting_value' => maybe_serialize($value),
-                            'setting_group' => 'canvas',
-                            'setting_type' => $this->detect_setting_type($value),
-                            'is_public' => 0
-                        ],
-                        ['%s', '%s', '%s', '%s', '%d']
-                    );
+                    // Vérifier si le paramètre existe déjà dans la table
+                    $exists = $wpdb->get_var($wpdb->prepare(
+                        "SELECT COUNT(*) FROM $table_name WHERE setting_key = %s",
+                        $key
+                    ));
+
+                    if (!$exists) {
+                        $wpdb->insert(
+                            $table_name,
+                            [
+                                'setting_key' => $key,
+                                'setting_value' => maybe_serialize($value),
+                                'setting_group' => 'canvas',
+                                'setting_type' => $this->detect_setting_type($value),
+                                'is_public' => 0
+                            ],
+                            ['%s', '%s', '%s', '%s', '%d']
+                        );
+                    }
                 }
             }
         }
