@@ -629,7 +629,7 @@
                         // Collecter les données à sauvegarder
                         var formData = new FormData();
                         formData.append('action', 'pdf_builder_save_canvas_modal_settings');
-                        formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>');
+                        formData.append('nonce', '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>');
                         formData.append('category', category);
 
                         // Ajouter les valeurs des toggles

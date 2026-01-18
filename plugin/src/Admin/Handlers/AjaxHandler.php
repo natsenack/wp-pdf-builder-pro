@@ -1687,16 +1687,14 @@ class AjaxHandler
     public function ajaxSaveCanvasModalSettings()
     {
         try {
-            // Valider les permissions et nonce
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY, 'pdf_builder_canvas_settings');
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
             if (!$validation['success']) {
-                wp_send_json_error(['message' => 'Nonce invalide ou permissions insuffisantes']);
-                return;
-            }
-
-            // Vérifier les permissions
-            if (!current_user_can(NonceManager::ADMIN_CAPABILITY)) {
-                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
                 return;
             }
 
