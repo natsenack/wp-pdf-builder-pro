@@ -736,7 +736,6 @@ class SettingsManager
         error_log('[PDF Builder] sanitizeSettings saved to custom table, returning false to prevent wp_options save');
         return false; // Prevent WordPress from saving to wp_options
     }
-    }
 
     /**
      * Hook appelé quand les paramètres sont mis à jour
