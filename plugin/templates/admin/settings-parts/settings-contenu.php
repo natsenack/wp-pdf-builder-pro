@@ -638,6 +638,20 @@
                             }
                         });
 
+                        // Ajouter les valeurs des champs input et select dans la modal
+                        var allInputs = modal.querySelectorAll('input:not([type="checkbox"]):not([type="radio"]), select, textarea');
+                        allInputs.forEach(function(input) {
+                            if (input.name && input.name.trim() !== '' && input.name.startsWith('pdf_builder_canvas_')) {
+                                var value = '';
+                                if (input.type === 'checkbox' || input.type === 'radio') {
+                                    value = input.checked ? input.value : '';
+                                } else {
+                                    value = input.value || '';
+                                }
+                                formData.append(input.name, value);
+                            }
+                        });
+
                         // Sauvegarder via AJAX
                         fetch(ajaxurl, {
                             method: 'POST',
