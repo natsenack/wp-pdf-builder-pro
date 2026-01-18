@@ -503,16 +503,16 @@
                     $results.html('<span style="color: #28a745;">✅ Test terminé</span>');
 
                     // Notification de succès
-                    showSystemNotification(response.data.message, 'success');
+                    showSuccessNotification(response.data.message);
                 } else {
                     $results.html('<span style="color: #dc3545;">❌ Erreur</span>');
-                    showSystemNotification('Erreur lors du test du cache', 'error');
+                    showErrorNotification('Erreur lors du test du cache');
                 }
             },
             error: function(xhr, status, error) {
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
                 $output.html('<div style="color: #dc3545; margin-top: 10px;">Erreur AJAX: ' + error + '</div>');
-                showSystemNotification('Erreur de connexion lors du test du cache', 'error');
+                showErrorNotification('Erreur de connexion lors du test du cache');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -554,15 +554,15 @@
                     $('#cache-size-display').text('0 fichiers');
 
                     // Notification de succès
-                    showSystemNotification(response.data.message, 'success');
+                    showSuccessNotification(response.data.message);
                 } else {
                     $results.html('<span style="color: #dc3545;">❌ Erreur lors du vidage</span>');
-                    showSystemNotification('Erreur lors du vidage du cache', 'error');
+                    showErrorNotification('Erreur lors du vidage du cache');
                 }
             },
             error: function(xhr, status, error) {
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
-                showSystemNotification('Erreur de connexion lors du vidage du cache', 'error');
+                showErrorNotification('Erreur de connexion lors du vidage du cache');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -595,15 +595,15 @@
             success: function(response) {
                 if (response.success) {
                     $results.html('<div style="color: #28a745; margin-top: 10px; white-space: pre-line;">' + response.data.message + '</div>');
-                    showSystemNotification('Base de données optimisée avec succès', 'success');
+                    showSuccessNotification('Base de données optimisée avec succès');
                 } else {
                     $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de l\'optimisation</div>');
-                    showSystemNotification('Erreur lors de l\'optimisation de la base', 'error');
+                    showErrorNotification('Erreur lors de l\'optimisation de la base');
                 }
             },
             error: function(xhr, status, error) {
                 $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
-                showSystemNotification('Erreur de connexion lors de l\'optimisation', 'error');
+                showErrorNotification('Erreur de connexion lors de l\'optimisation');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -636,15 +636,15 @@
             success: function(response) {
                 if (response.success) {
                     $results.html('<div style="color: #28a745; margin-top: 10px; white-space: pre-line;">' + response.data.message + '</div>');
-                    showSystemNotification('Templates vérifiés et réparés', 'success');
+                    showSuccessNotification('Templates vérifiés et réparés');
                 } else {
                     $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de la réparation</div>');
-                    showSystemNotification('Erreur lors de la réparation des templates', 'error');
+                    showErrorNotification('Erreur lors de la réparation des templates');
                 }
             },
             error: function(xhr, status, error) {
                 $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
-                showSystemNotification('Erreur de connexion lors de la réparation', 'error');
+                showErrorNotification('Erreur de connexion lors de la réparation');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -681,15 +681,15 @@
             success: function(response) {
                 if (response.success) {
                     $results.html('<div style="color: #28a745; margin-top: 10px; white-space: pre-line;">' + response.data.message + '</div>');
-                    showSystemNotification('Fichiers temporaires supprimés', 'success');
+                    showSuccessNotification('Fichiers temporaires supprimés');
                 } else {
                     $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur lors de la suppression</div>');
-                    showSystemNotification('Erreur lors de la suppression des fichiers temporaires', 'error');
+                    showErrorNotification('Erreur lors de la suppression des fichiers temporaires');
                 }
             },
             error: function(xhr, status, error) {
                 $results.html('<div style="color: #dc3545; margin-top: 10px;">❌ Erreur de connexion</div>');
-                showSystemNotification('Erreur de connexion lors de la suppression', 'error');
+                showErrorNotification('Erreur de connexion lors de la suppression');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -697,47 +697,6 @@
             }
         });
     });
-
-    // Fonction utilitaire pour afficher les notifications
-    function showSystemNotification(message, type = 'info') {
-        // Utiliser les fonctions de notification globales
-        if (type === 'success' && window.showSuccessNotification) {
-            window.showSuccessNotification(message);
-        } else if (type === 'error' && window.showErrorNotification) {
-            window.showErrorNotification(message);
-        } else if (type === 'warning' && window.showWarningNotification) {
-            window.showWarningNotification(message);
-        } else if (type === 'info' && window.showInfoNotification) {
-            window.showInfoNotification(message);
-        } else {
-            // Fallback: créer une notification temporaire
-            const notification = $('<div class="system-notification ' + type + '">' + message + '</div>');
-            notification.css({
-                'position': 'fixed',
-                'top': '40px',
-                'right': '20px',
-                'background': type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007cba',
-                'color': 'white',
-                'padding': '12px 20px',
-                'border-radius': '4px',
-                'box-shadow': '0 2px 10px rgba(0,0,0,0.2)',
-                'z-index': '9999',
-                'max-width': '400px'
-            });
-
-            $('body').append(notification);
-
-            // Animation d'entrée
-            notification.animate({right: '20px', opacity: 1}, 300);
-
-            // Auto-suppression après 5 secondes
-            setTimeout(function() {
-                notification.animate({right: '-400px', opacity: 0}, 300, function() {
-                    notification.remove();
-                });
-            }, 5000);
-        }
-    }
 
     // Gestionnaire pour les boutons de maintenance
     $('.maintenance-action-btn').on('click', function(e) {
@@ -775,7 +734,7 @@
                 confirmMessage = 'Lancer la maintenance manuelle complète ?';
                 break;
             default:
-                showSystemNotification('Action non reconnue', 'error');
+                showErrorNotification('Action non reconnue');
                 $btn.prop('disabled', false);
                 $btn.find('.action-text').text(originalText);
                 return;
@@ -802,7 +761,7 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        showSystemNotification(response.data.message || 'Action exécutée avec succès', 'success');
+                        showSuccessNotification(response.data.message || 'Action exécutée avec succès');
                         
                         // Mettre à jour l'affichage si nécessaire
                         if (action === 'toggle-maintenance') {
@@ -828,11 +787,11 @@
                             }
                         }
                     } else {
-                        showSystemNotification(response.data.message || 'Erreur lors de l\'action', 'error');
+                        showErrorNotification(response.data.message || 'Erreur lors de l\'action');
                     }
                 },
                 error: function(xhr, status, error) {
-                    showSystemNotification('Erreur de connexion: ' + error, 'error');
+                    showErrorNotification('Erreur de connexion: ' + error);
                 },
                 complete: function() {
                     // Réactiver le bouton
@@ -861,7 +820,7 @@
                 results.forEach(result => {
                     message += '• ' + result.name + ': ' + result.status + '\n';
                 });
-                showSystemNotification(message, 'success');
+                showSuccessNotification(message);
                 
                 // Mettre à jour l'affichage de la dernière exécution
                 const now = new Date();
@@ -930,15 +889,15 @@
             },
             success: function(response) {
                 if (response.success) {
-                    showSystemNotification(response.data.message, 'success');
+                    showSuccessNotification(response.data.message);
                     // Recharger automatiquement l'accordéon des sauvegardes
                     loadBackupsOnPageLoad();
                 } else {
-                    showSystemNotification('Erreur lors de la création de la sauvegarde', 'error');
+                    showErrorNotification('Erreur lors de la création de la sauvegarde');
                 }
             },
             error: function(xhr, status, error) {
-                showSystemNotification('Erreur de connexion lors de la création de la sauvegarde', 'error');
+                showErrorNotification('Erreur de connexion lors de la création de la sauvegarde');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -1111,18 +1070,18 @@
             },
             success: function(response) {
                 if (response.success) {
-                    showSystemNotification(response.data.message, 'success');
+                    showSuccessNotification(response.data.message);
                     // Recharger la page pour appliquer les nouveaux paramètres
                     setTimeout(function() {
                         location.reload();
                     }, 2000);
                 } else {
-                    showSystemNotification(response.data.message || 'Erreur lors de la restauration', 'error');
+                    showErrorNotification(response.data.message || 'Erreur lors de la restauration');
                     $btn.prop('disabled', false).text('🔄 Restaurer');
                 }
             },
             error: function(xhr, status, error) {
-                showSystemNotification('Erreur de connexion lors de la restauration', 'error');
+                showErrorNotification('Erreur de connexion lors de la restauration');
                 $btn.prop('disabled', false).text('🔄 Restaurer');
             }
         });
@@ -1175,7 +1134,7 @@
             $btn.prop('disabled', false).text('📥 Télécharger');
         }, 1000);
 
-        showSystemNotification('Téléchargement de la sauvegarde démarré', 'success');
+        showSuccessNotification('Téléchargement de la sauvegarde démarré');
     });
 
     // Gestionnaire pour les boutons de suppression de sauvegarde
@@ -1220,14 +1179,14 @@
                             $('#backup-count-info').text(countText);
                         }
                     });
-                    showSystemNotification(response.data.message, 'success');
+                    showSuccessNotification(response.data.message);
                 } else {
-                    showSystemNotification(response.data.message || 'Erreur lors de la suppression', 'error');
+                    showErrorNotification(response.data.message || 'Erreur lors de la suppression');
                     $btn.prop('disabled', false).text('🗑️ Supprimer');
                 }
             },
             error: function(xhr, status, error) {
-                showSystemNotification('Erreur de connexion lors de la suppression', 'error');
+                showErrorNotification('Erreur de connexion lors de la suppression');
                 $btn.prop('disabled', false).text('🗑️ Supprimer');
             }
         });
