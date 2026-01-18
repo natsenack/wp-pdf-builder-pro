@@ -186,41 +186,6 @@ if (!function_exists('pdf_builder_validate_boolean')) {
 }
 
 // =============================================================================
-// DEBUG HELPERS (Development only)
-// =============================================================================
-
-if (!function_exists('pdf_builder_debug_log')) {
-    /**
-     * Debug logging helper
-     */
-    function pdf_builder_debug_log($message, $level = 'info') {
-        if (!defined('WP_DEBUG') || !WP_DEBUG) {
-            return;
-        }
-
-        $log_message = sprintf(
-            '[PDF Builder Pro] [%s] %s',
-            strtoupper($level),
-            is_string($message) ? $message : json_encode($message)
-        );
-
-        if (function_exists('error_log')) {
-            // error_log($log_message);
-        }
-    }
-}
-
-if (!function_exists('pdf_builder_is_development')) {
-    /**
-     * Check if we're in development mode
-     */
-    function pdf_builder_is_development() {
-        return (defined('WP_DEBUG') && WP_DEBUG) ||
-               (defined('PDF_BUILDER_DEVELOPMENT') && PDF_BUILDER_DEVELOPMENT);
-    }
-}
-
-// =============================================================================
 // WORDPRESS CAPABILITY HELPERS
 // =============================================================================
 

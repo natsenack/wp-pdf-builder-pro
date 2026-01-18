@@ -555,10 +555,6 @@
                                             }
                                         }
 
-                                        // Debug temporaire
-                                        if ($status_key === 'wc-completed') {
-                                            error_log("DEBUG Select: status=$status_key, current_value='$current_value', template_id='$template_id', is_selected=" . ($is_selected ? 'YES' : 'NO') . ", is_disabled=" . ($is_disabled ? 'YES' : 'NO'));
-                                        }
                                         ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
                                                 <?php selected($current_value, (string)$template_id); ?>
