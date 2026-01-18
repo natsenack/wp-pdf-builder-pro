@@ -541,7 +541,7 @@
                         togglesForModal.forEach(function(toggleName) {
                             var modalInput = modal.querySelector('[name="' + toggleName + '"]');
                             if (modalInput && modalInput.type === 'checkbox') {
-                                var hiddenField = document.querySelector('input[name="' + toggleName + '"][type="hidden"]');
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + toggleName + ']"]');
                                 if (hiddenField) {
                                     hiddenField.value = modalInput.checked ? '1' : '0';
                                     console.log('[PDF Builder] Forced sync:', toggleName, '=', hiddenField.value);
@@ -553,67 +553,7 @@
                         closeModal(modal);
                     }
 
-                    // Fonction pour récupérer les paramètres canvas depuis le serveur
-                    function fetchCanvasSettings(callback) {
-                        jQuery.ajax({
-                            url: ajaxurl,
-                            type: 'POST',
-                            data: {
-                                action: 'pdf_builder_ajax_handler',
-                                action_type: 'get_canvas_settings',
-                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
-                            },
-                            success: function(response) {
-                                if (response.success && response.data && response.data.canvas_settings) {
-                                    var serverSettings = response.data.canvas_settings;
-                                    window.pdfBuilderCanvasSettings = {
-                                        width: serverSettings.pdf_builder_canvas_width || '794',
-                                        height: serverSettings.pdf_builder_canvas_height || '1123',
-                                        dpi: serverSettings.pdf_builder_canvas_dpi || '96',
-                                        format: serverSettings.pdf_builder_canvas_format || 'A4',
-                                        bgColor: serverSettings.pdf_builder_canvas_bg_color || '#ffffff',
-                                        borderColor: serverSettings.pdf_builder_canvas_border_color || '#cccccc',
-                                        borderWidth: serverSettings.pdf_builder_canvas_border_width || '1',
-                                        containerBgColor: serverSettings.pdf_builder_canvas_container_bg_color || '#f8f9fa',
-                                        shadowEnabled: serverSettings.pdf_builder_canvas_shadow_enabled === '1',
-                                        gridEnabled: serverSettings.pdf_builder_canvas_grid_enabled === '1',
-                                        gridSize: serverSettings.pdf_builder_canvas_grid_size || '20',
-                                        guidesEnabled: serverSettings.pdf_builder_canvas_guides_enabled === '1',
-                                        snapToGrid: serverSettings.pdf_builder_canvas_snap_to_grid === '1',
-                                        zoomMin: serverSettings.pdf_builder_canvas_zoom_min || '25',
-                                        zoomMax: serverSettings.pdf_builder_canvas_zoom_max || '500',
-                                        zoomDefault: serverSettings.pdf_builder_canvas_zoom_default || '100',
-                                        zoomStep: serverSettings.pdf_builder_canvas_zoom_step || '25',
-                                        exportQuality: serverSettings.pdf_builder_canvas_export_quality || '90',
-                                        exportFormat: serverSettings.pdf_builder_canvas_export_format || 'png',
-                                        exportTransparent: serverSettings.pdf_builder_canvas_export_transparent === '1',
-                                        dragEnabled: serverSettings.pdf_builder_canvas_drag_enabled === '1',
-                                        resizeEnabled: serverSettings.pdf_builder_canvas_resize_enabled === '1',
-                                        rotateEnabled: serverSettings.pdf_builder_canvas_rotate_enabled === '1',
-                                        multiSelect: serverSettings.pdf_builder_canvas_multi_select === '1',
-                                        selectionMode: serverSettings.pdf_builder_canvas_selection_mode || 'single',
-                                        keyboardShortcuts: serverSettings.pdf_builder_canvas_keyboard_shortcuts === '1',
-                                        fpsTarget: serverSettings.pdf_builder_canvas_fps_target || '60',
-                                        memoryLimitJs: serverSettings.pdf_builder_canvas_memory_limit_js || '50',
-                                        responseTimeout: serverSettings.pdf_builder_canvas_response_timeout || '5000',
-                                        lazyLoadingEditor: serverSettings.pdf_builder_canvas_lazy_loading_editor === '1',
-                                        preloadCritical: serverSettings.pdf_builder_canvas_preload_critical === '1',
-                                        lazyLoadingPlugin: serverSettings.pdf_builder_canvas_lazy_loading_plugin === '1',
-                                        debugEnabled: serverSettings.pdf_builder_canvas_debug_enabled === '1',
-                                        performanceMonitoring: serverSettings.pdf_builder_canvas_performance_monitoring === '1',
-                                        errorReporting: serverSettings.pdf_builder_canvas_error_reporting === '1',
-                                        memoryLimitPhp: serverSettings.pdf_builder_canvas_memory_limit_php || '128'
-                                    };
-                                    if (callback) callback();
-                                } else {
-                                    if (callback) callback();
-                                }
-                            },
-                            error: function() {
-                                if (callback) callback();
-                            }
-                        });
-                    }
+
 
                     // Fonction simple pour ouvrir une modal
                     function openModal(category) {
@@ -622,49 +562,23 @@
 
                         var modal = document.getElementById(modalId);
                         if (modal) {
-                            fetchCanvasSettings(function() {
-                                syncModalInputsWithSettings(modal, category);
-                                modal.style.display = 'flex';
-                                document.body.style.overflow = 'hidden';
-                            });
+                            syncModalInputsWithHiddenFields(modal, category);
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
                         }
                     }
 
-                    // Fonction pour synchroniser les inputs du modal avec window.pdfBuilderCanvasSettings
-                    function syncModalInputsWithSettings(modal, category) {
-                        if (!modal || !window.pdfBuilderCanvasSettings) return;
+                    // Fonction pour synchroniser les inputs du modal avec les hidden fields
+                    function syncModalInputsWithHiddenFields(modal, category) {
+                        if (!modal) return;
 
-                        var settingToInputMap = {
-                            'dragEnabled': 'pdf_builder_canvas_drag_enabled',
-                            'resizeEnabled': 'pdf_builder_canvas_resize_enabled',
-                            'rotateEnabled': 'pdf_builder_canvas_rotate_enabled',
-                            'multiSelect': 'pdf_builder_canvas_multi_select',
-                            'selectionMode': 'pdf_builder_canvas_selection_mode',
-                            'keyboardShortcuts': 'pdf_builder_canvas_keyboard_shortcuts',
-                            'exportQuality': 'pdf_builder_canvas_export_quality',
-                            'exportFormat': 'pdf_builder_canvas_export_format',
-                            'exportTransparent': 'pdf_builder_canvas_export_transparent',
-                            'gridEnabled': 'pdf_builder_canvas_grid_enabled',
-                            'gridSize': 'pdf_builder_canvas_grid_size',
-                            'guidesEnabled': 'pdf_builder_canvas_guides_enabled',
-                            'snapToGrid': 'pdf_builder_canvas_snap_to_grid',
-                            'shadowEnabled': 'pdf_builder_canvas_shadow_enabled',
-                            'debugEnabled': 'pdf_builder_canvas_debug_enabled',
-                            'performanceMonitoring': 'pdf_builder_canvas_performance_monitoring',
-                            'errorReporting': 'pdf_builder_canvas_error_reporting'
-                        };
+                        var togglesForModal = modalToggles[category] || [];
+                        togglesForModal.forEach(function(inputName) {
+                            var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
+                            var modalInput = modal.querySelector('[name="' + inputName + '"]');
 
-                        Object.keys(settingToInputMap).forEach(function(settingKey) {
-                            var inputName = settingToInputMap[settingKey];
-                            var input = modal.querySelector('[name="' + inputName + '"]');
-                            var settingValue = window.pdfBuilderCanvasSettings[settingKey];
-
-                            if (input) {
-                                if (input.type === 'checkbox') {
-                                    input.checked = settingValue === true || settingValue === '1';
-                                } else {
-                                    input.value = settingValue;
-                                }
+                            if (hiddenField && modalInput && modalInput.type === 'checkbox') {
+                                modalInput.checked = hiddenField.value === '1';
                             }
                         });
                     }
@@ -773,7 +687,7 @@
                             if (input.type === 'checkbox' && input.closest('.canvas-modal-overlay')) {
                                 var inputName = input.name;
                                 if (inputName) {
-                                    var hiddenField = document.querySelector('input[name="' + inputName + '"][type="hidden"]');
+                                    var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
                                     if (hiddenField) {
                                         hiddenField.value = input.checked ? '1' : '0';
                                         console.log('[PDF Builder] Hidden field updated:', inputName, '=', hiddenField.value);

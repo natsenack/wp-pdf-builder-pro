@@ -1717,8 +1717,6 @@ class AjaxHandler
                 }
             }
 
-            wp_cache_flush();
-
             if ($saved_count > 0) {
                 wp_send_json_success([
                     'message' => sprintf('%d paramètre(s) canvas sauvegardé(s) avec succès', $saved_count),
@@ -1835,9 +1833,6 @@ class AjaxHandler
 
             // Sauvegarder
             $update_result = update_option('pdf_builder_settings', $settings);
-
-            // Forcer le refresh du cache des options
-            wp_cache_flush();
 
             // Vérifier que la sauvegarde a bien fonctionné
             $verify_settings = get_option('pdf_builder_settings', array());
