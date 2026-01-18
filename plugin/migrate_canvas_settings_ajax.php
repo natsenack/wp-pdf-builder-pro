@@ -20,7 +20,15 @@ function pdf_builder_migrate_canvas_settings_ajax() {
     try {
         // Inclure le gestionnaire de base de données
         if (!class_exists('PDF_Builder_Database_Updater')) {
-            require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Database_Updater.php';
+            $updater_path = dirname(__FILE__) . '/src/Core/PDF_Builder_Database_Updater.php';
+            if (!file_exists($updater_path)) {
+                throw new Exception('Fichier PDF_Builder_Database_Updater.php introuvable: ' . $updater_path);
+            }
+            require_once $updater_path;
+        }
+
+        if (!class_exists('PDF_Builder_Database_Updater')) {
+            throw new Exception('Classe PDF_Builder_Database_Updater non trouvée après inclusion');
         }
 
         $updater = PDF_Builder_Database_Updater::get_instance();

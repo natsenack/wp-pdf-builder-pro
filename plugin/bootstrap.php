@@ -793,6 +793,15 @@ function pdf_builder_load_bootstrap()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php';
     }
 
+    // ============================================================================
+    // ✅ CHARGER LE SCRIPT DE MIGRATION CANVAS (DÈS LE DÉBUT)
+    // ============================================================================
+
+    $migration_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'migrate_canvas_settings_ajax.php';
+    if (file_exists($migration_ajax_path)) {
+        require_once $migration_ajax_path;
+    }
+
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE SAUVEGARDE/RESTAURATION
     // Nécessaire pour l'onglet système même si la sauvegarde automatique n'est pas activée
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
@@ -1710,15 +1719,6 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });
-
-// ============================================================================
-// ✅ CHARGER LE SCRIPT DE MIGRATION CANVAS
-// ============================================================================
-
-$migration_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'migrate_canvas_settings_ajax.php';
-if (file_exists($migration_ajax_path)) {
-    require_once $migration_ajax_path;
-}
 
 // ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
