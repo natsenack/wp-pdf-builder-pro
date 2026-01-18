@@ -484,6 +484,11 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
+    // Charger les pages d'administration
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
+    }
+
     // Charger le handler AJAX pour les paramètres Canvas
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
@@ -1710,15 +1715,6 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });
-
-// ============================================================================
-// ✅ CHARGER LES PAGES D'ADMINISTRATION
-// ============================================================================
-
-$admin_pages_path = PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
-if (file_exists($admin_pages_path)) {
-    require_once $admin_pages_path;
-}
 
 // ============================================================================
 // ✅ CHARGER LE SCRIPT DE MIGRATION CANVAS
