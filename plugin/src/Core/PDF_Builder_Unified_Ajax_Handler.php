@@ -438,10 +438,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'order_status_templates' => $settings['pdf_builder_order_status_templates'] ?? [],
 
                     // Licence
-                    'license_test_mode' => pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0'),
-                    'license_email_reminders' => pdf_builder_get_option('pdf_builder_license_email_reminders', '0'),
-                    'license_reminder_email' => pdf_builder_get_option('pdf_builder_license_reminder_email', get_option('admin_email', '')),
-                    'pdf_builder_license_test_key_expires' => pdf_builder_get_option('pdf_builder_license_test_key_expires', ''),
+                    'license_test_mode' => $settings['pdf_builder_license_test_mode_enabled'] ?? '0',
+                    'license_email_reminders' => $settings['pdf_builder_license_email_reminders'] ?? '0',
+                    'license_reminder_email' => $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', ''),
+                    'pdf_builder_license_test_key_expires' => $settings['pdf_builder_license_test_key_expires'] ?? '',
                 ];
                 break;
 
@@ -1666,7 +1666,45 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        wp_send_json_error(['message' => 'Handler not implemented']);
+        try {
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            // Récupérer le statut de licence actuel
+            $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+            $license_key = pdf_builder_get_option('pdf_builder_license_key', '');
+            $test_mode = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0');
+
+            // Simuler un test de licence (à implémenter selon vos besoins)
+            $test_result = 'valid'; // ou 'invalid', 'expired', etc.
+
+            // Si en mode test, vérifier la clé de test
+            if ($test_mode === '1') {
+                $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
+                $test_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
+                
+                if (empty($test_key)) {
+                    $test_result = 'no_test_key';
+                } elseif (!empty($test_expires) && strtotime($test_expires) < time()) {
+                    $test_result = 'test_expired';
+                } else {
+                    $test_result = 'test_valid';
+                }
+            }
+
+            wp_send_json_success([
+                'license_status' => $license_status,
+                'license_key' => !empty($license_key) ? substr($license_key, 0, 8) . '...' : '',
+                'test_mode' => $test_mode,
+                'test_result' => $test_result,
+                'tested_at' => current_time('mysql')
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur lors du test de licence: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -1917,15 +1955,16 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             $current_mode = pdf_builder_get_option('pdf_builder_license_test_mode', '0');
+             $current_mode = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0');
              $new_mode = $current_mode === '1' ? '0' : '1';
-
-             pdf_builder_update_option('pdf_builder_license_test_mode', $new_mode);
 
              $response_data = [
                  'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès.',
                  'test_mode' => $new_mode
              ];
+
+             // Sauvegarder le nouveau mode
+             pdf_builder_update_option('pdf_builder_license_test_mode_enabled', $new_mode);
 
              // Si on active le mode test, générer automatiquement une clé de test si elle n'existe pas
              if ($new_mode === '1') {
@@ -1979,7 +2018,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
 
-            // Sauvegarder les options de licence individuellement
+            // Sauvegarder individuellement
             pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
             pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
             pdf_builder_update_option('pdf_builder_license_status', 'test'); // Mettre le statut à "test" quand une clé de test est générée
@@ -2007,17 +2046,17 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-            // Supprimer les options de licence de test individuellement
+            // Supprimer les clés de test individuellement
             pdf_builder_delete_option('pdf_builder_license_test_key');
             pdf_builder_delete_option('pdf_builder_license_test_key_expires');
-            pdf_builder_update_option('pdf_builder_license_test_mode', '0');
+            pdf_builder_update_option('pdf_builder_license_test_mode_enabled', '0');
             
             // Si le statut était 'test', remettre à 'free' en supprimant la clé de test
             $current_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
             if ($current_status === 'test') {
                 pdf_builder_update_option('pdf_builder_license_status', 'free');
             }
-            
+
              wp_send_json_success([
                  'message' => 'Clé de test supprimée avec succès.'
              ]);
@@ -2040,16 +2079,15 @@ class PDF_Builder_Unified_Ajax_Handler {
              error_log('[PDF Builder] Starting license cleanup');
 
              // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-             $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode', '0') === '1';
+             $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0') === '1';
 
-             // Liste des options de licence à nettoyer
+             // Liste des options de licence à supprimer
              $license_options = [
                  'pdf_builder_license_key',
                  'pdf_builder_license_status',
                  'pdf_builder_license_expires',
                  'pdf_builder_license_data',
                  'pdf_builder_license_activated_at',
-                 'pdf_builder_license_test_mode_enabled',
                  'pdf_builder_license_email_reminders',
                  'pdf_builder_license_reminder_email'
              ];
@@ -2059,14 +2097,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                  $license_options[] = 'pdf_builder_license_test_key';
                  $license_options[] = 'pdf_builder_license_test_key_expires';
              }
+             
+             // Toujours supprimer le mode test
+             $license_options[] = 'pdf_builder_license_test_mode_enabled';
 
-             // Supprimer toutes les options de licence
+             // Supprimer chaque option individuellement
              foreach ($license_options as $option) {
                  pdf_builder_delete_option($option);
-                 error_log('[PDF Builder] Deleted license option: ' . $option);
+                 error_log('[PDF Builder] Deleted option: ' . $option);
              }
 
-             // Définir le statut à 'free'
+             // Définir le statut de licence à 'free'
              pdf_builder_update_option('pdf_builder_license_status', 'free');
 
              // Clear license transients

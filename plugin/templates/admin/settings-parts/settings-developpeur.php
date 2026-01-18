@@ -5,8 +5,8 @@
     error_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode'] ?? 'not set') . ', settings count: ' . count($settings));
 
     // Variables nécessaires pour l'onglet développeur
-    $license_test_mode = pdf_builder_get_option('pdf_builder_license_test_mode', '0');
-    $license_test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
+    $license_test_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
+    $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
 ?>
             <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>👨‍💻 Paramètres Développeur</span>

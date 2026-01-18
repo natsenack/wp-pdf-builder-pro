@@ -558,15 +558,15 @@
                     $settings = pdf_builder_get_option('pdf_builder_settings', array());
                     error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
 
-                    $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
-                    $license_key = pdf_builder_get_option('pdf_builder_license_key', '');
-                    $license_expires = pdf_builder_get_option('pdf_builder_license_expires', '');
-                    $license_activated_at = pdf_builder_get_option('pdf_builder_license_activated_at', '');
-                    $test_mode_enabled = pdf_builder_get_option('pdf_builder_license_test_mode', '0');
-                    $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
-                    $test_key_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
-                    $license_email_reminders = pdf_builder_get_option('pdf_builder_license_email_reminders', '0');
-                    $license_reminder_email = pdf_builder_get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''));
+                    $license_status = $settings['pdf_builder_license_status'] ?? 'free';
+                    $license_key = $settings['pdf_builder_license_key'] ?? '';
+                    $license_expires = $settings['pdf_builder_license_expires'] ?? '';
+                    $license_activated_at = $settings['pdf_builder_license_activated_at'] ?? '';
+                    $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
+                    $test_key = $settings['pdf_builder_license_test_key'] ?? '';
+                    $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
+                    $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
+                    $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', '');
 
                     // Utiliser la méthode centralisée du License Manager pour déterminer si premium
                     $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
@@ -599,13 +599,15 @@
                     if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
 
                         if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
-                            // Mise à jour des options individuelles au lieu du tableau unifié
-                            pdf_builder_update_option('pdf_builder_license_key', '');
-                            pdf_builder_update_option('pdf_builder_license_expires', '');
-                            pdf_builder_update_option('pdf_builder_license_activated_at', '');
-                            pdf_builder_update_option('pdf_builder_license_test_key', '');
-                            pdf_builder_update_option('pdf_builder_license_test_mode', '0');
-                            pdf_builder_update_option('pdf_builder_license_status', 'free');
+                            // Mise à jour du tableau unifié au lieu d'options séparées
+                            $settings = pdf_builder_get_option('pdf_builder_settings', array());
+                            $settings['pdf_builder_license_key'] = '';
+                            $settings['pdf_builder_license_expires'] = '';
+                            $settings['pdf_builder_license_activated_at'] = '';
+                            $settings['pdf_builder_license_test_key'] = '';
+                            $settings['pdf_builder_license_test_mode'] = '0';
+                            $settings['pdf_builder_license_status'] = 'free';
+                            pdf_builder_update_option('pdf_builder_settings', $settings);
 
                             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
                             $is_premium = false;
