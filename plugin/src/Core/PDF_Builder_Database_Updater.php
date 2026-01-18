@@ -8,7 +8,7 @@ class PDF_Builder_Database_Updater {
     private static $instance = null;
 
     // Versions de base de données
-    const DB_VERSION = '1.0.0';
+    const DB_VERSION = '1.4.0';
     const DB_VERSION_OPTION = 'pdf_builder_db_version';
 
     // Types de migrations
@@ -76,6 +76,11 @@ class PDF_Builder_Database_Updater {
                 'description' => 'Optimisations de performance et index',
                 'up' => [$this, 'migrate_to_1_3_0'],
                 'down' => [$this, 'rollback_from_1_3_0']
+            ],
+            '1.4.0' => [
+                'description' => 'Ajout de la table des paramètres canvas séparés',
+                'up' => [$this, 'migrate_to_1_4_0'],
+                'down' => [$this, 'rollback_from_1_4_0']
             ]
         ];
     }
@@ -822,6 +827,96 @@ function pdf_builder_run_migration($version, $direction = 'up') {
 function pdf_builder_run_pending_migrations() {
     return PDF_Builder_Database_Updater::get_instance()->run_all_pending_migrations();
 }
+
+    /**
+     * Migration vers 1.4.0 - Table des paramètres canvas séparés
+     */
+    public function migrate_to_1_4_0() {
+        global $wpdb;
+
+        $charset_collate = $wpdb->get_charset_collate();
+
+        // Table des paramètres canvas séparés
+        $wpdb->query("
+            CREATE TABLE {$wpdb->prefix}pdf_builder_settings (
+                id int(11) NOT NULL AUTO_INCREMENT,
+                setting_key varchar(255) NOT NULL,
+                setting_value longtext,
+                setting_group varchar(100) DEFAULT 'canvas',
+                setting_type varchar(50) DEFAULT 'string',
+                is_public tinyint(1) DEFAULT 0,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY setting_key (setting_key),
+                KEY setting_group (setting_group),
+                KEY setting_type (setting_type),
+                KEY is_public (is_public)
+            ) $charset_collate
+        ");
+
+        // Migrer les paramètres canvas existants depuis wp_options vers la nouvelle table
+        $existing_settings = get_option('pdf_builder_settings', []);
+        if (!empty($existing_settings)) {
+            foreach ($existing_settings as $key => $value) {
+                if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    $wpdb->insert(
+                        $wpdb->prefix . 'pdf_builder_settings',
+                        [
+                            'setting_key' => $key,
+                            'setting_value' => maybe_serialize($value),
+                            'setting_group' => 'canvas',
+                            'setting_type' => $this->detect_setting_type($value),
+                            'is_public' => 0
+                        ],
+                        ['%s', '%s', '%s', '%s', '%d']
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Rollback depuis 1.4.0
+     */
+    public function rollback_from_1_4_0() {
+        global $wpdb;
+
+        // Migrer les paramètres canvas depuis la table vers wp_options
+        $canvas_settings = $wpdb->get_results("
+            SELECT setting_key, setting_value
+            FROM {$wpdb->prefix}pdf_builder_settings
+            WHERE setting_group = 'canvas'
+        ", ARRAY_A);
+
+        if (!empty($canvas_settings)) {
+            $existing_settings = get_option('pdf_builder_settings', []);
+            foreach ($canvas_settings as $setting) {
+                $existing_settings[$setting['setting_key']] = maybe_unserialize($setting['setting_value']);
+            }
+            update_option('pdf_builder_settings', $existing_settings);
+        }
+
+        // Supprimer la table
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}pdf_builder_settings");
+    }
+
+    /**
+     * Détecte le type d'un paramètre
+     */
+    private function detect_setting_type($value) {
+        if (is_array($value)) {
+            return 'array';
+        } elseif (is_bool($value)) {
+            return 'boolean';
+        } elseif (is_numeric($value)) {
+            return 'number';
+        } elseif (is_string($value) && strlen($value) > 100) {
+            return 'textarea';
+        } else {
+            return 'string';
+        }
+    }
 
 function pdf_builder_get_migration_history($limit = 50) {
     return PDF_Builder_Database_Updater::get_instance()->get_migration_history($limit);

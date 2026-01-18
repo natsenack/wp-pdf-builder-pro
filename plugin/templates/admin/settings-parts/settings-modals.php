@@ -46,12 +46,19 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Récupérer depuis l'option unifiée pdf_builder_settings
-    $settings = get_option('pdf_builder_settings', []);
-    $option_key = 'pdf_builder_' . $key;
+    // Inclure le gestionnaire des paramètres canvas
+    if (!class_exists('PDF_Builder_Canvas_Settings_Manager')) {
+        $canvas_settings_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Managers/PDF_Builder_Canvas_Settings_Manager.php';
+        if (file_exists($canvas_settings_file)) {
+            require_once $canvas_settings_file;
+        }
+    }
 
-    $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
-    error_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')");
+    // Utiliser le gestionnaire des paramètres canvas
+    $canvas_settings_manager = PDF_Builder_Canvas_Settings_Manager::get_instance();
+    $value = $canvas_settings_manager->get_setting($key, $default);
+
+    error_log("[CANVAS MODAL] Reading {$key}: '{$value}' (default: '{$default}')");
     return $value;
 }
 ?>
