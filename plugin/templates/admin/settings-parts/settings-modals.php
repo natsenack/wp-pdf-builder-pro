@@ -46,8 +46,11 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    $option_key = 'pdf_builder_canvas_' . $key;
-    $value = get_option($option_key, $default);
+    // Récupérer depuis l'option unifiée pdf_builder_settings
+    $settings = get_option('pdf_builder_settings', []);
+    $option_key = 'pdf_builder_' . $key;
+
+    $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
     error_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')");
     return $value;
 }
@@ -136,7 +139,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
                         <?php
                         // Récupérer les formats actuellement sélectionnés
-                        $current_formats_string = get_option('pdf_builder_canvas_formats', 'A4');
+                        $current_formats_string = get_canvas_modal_value('formats', 'A4');
                         $current_formats = [];
 
                         // Convertir la valeur actuelle en tableau
