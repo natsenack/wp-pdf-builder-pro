@@ -5,8 +5,6 @@
  * Version: 2.1.3 - Correction erreurs PHP et cron (05/12/2025)
  */
 
-use PDF_Builder\Database\Settings_Table_Manager as STM;
-
 class PDF_Builder_Unified_Ajax_Handler {
 
     private static $instance = null;
@@ -729,7 +727,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_canvas_canvas_export_transparent', 'pdf_builder_canvas_canvas_lazy_loading_editor', 'pdf_builder_canvas_canvas_preload_critical', 'pdf_builder_canvas_canvas_lazy_loading_plugin',
                 'pdf_builder_canvas_canvas_debug_enabled', 'pdf_builder_canvas_canvas_performance_monitoring', 'pdf_builder_canvas_canvas_error_reporting', 'pdf_builder_canvas_canvas_shadow_enabled',
                 // Additional toggles from templates
-                'pdf_builder_license_test_mode_enabled', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
+                'pdf_builder_license_test_mode', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
                 'pdf_builder_enable_logging', 'pdf_builder_gdpr_enabled', 'pdf_builder_gdpr_consent_required', 'pdf_builder_gdpr_audit_enabled', 'pdf_builder_gdpr_encryption_enabled',
                 'pdf_builder_gdpr_consent_analytics', 'pdf_builder_gdpr_consent_templates', 'pdf_builder_gdpr_consent_marketing',
                 'pdf_builder_pdf_metadata_enabled', 'pdf_builder_pdf_print_optimized'
@@ -1047,6 +1045,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             'license_test_mode_enabled' => 'pdf_builder_license_test_mode_enabled',
             'license_key' => 'pdf_builder_license_key',
             'license_test_key' => 'pdf_builder_license_test_key',
+            'license_test_mode' => 'pdf_builder_license_test_mode',
             'auto_maintenance' => 'pdf_builder_auto_maintenance',
             'auto_backup' => 'pdf_builder_auto_backup',
             'auto_backup_frequency' => 'pdf_builder_auto_backup_frequency',
@@ -1294,7 +1293,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         foreach ($settings as $key => $value) {
-            pdf_builder_update_option($key, $value);
+            update_option($key, $value);
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 // error_log('PDF Builder: Saved option ' . $key . ' = ' . $value);
             }
@@ -1918,10 +1917,10 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             $current_mode = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0');
+             $current_mode = pdf_builder_get_option('pdf_builder_license_test_mode', '0');
              $new_mode = $current_mode === '1' ? '0' : '1';
 
-             pdf_builder_update_option('pdf_builder_license_test_mode_enabled', $new_mode);
+             pdf_builder_update_option('pdf_builder_license_test_mode', $new_mode);
 
              $response_data = [
                  'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès.',
@@ -1980,6 +1979,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
 
+            // Sauvegarder les options de licence individuellement
             pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
             pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
             pdf_builder_update_option('pdf_builder_license_status', 'test'); // Mettre le statut à "test" quand une clé de test est générée
@@ -2007,17 +2007,17 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-            // Supprimer les options individuelles de test
-            pdf_builder_update_option('pdf_builder_license_test_key', '');
-            pdf_builder_update_option('pdf_builder_license_test_key_expires', '');
-            pdf_builder_update_option('pdf_builder_license_test_mode_enabled', '0');
+            // Supprimer les options de licence de test individuellement
+            pdf_builder_delete_option('pdf_builder_license_test_key');
+            pdf_builder_delete_option('pdf_builder_license_test_key_expires');
+            pdf_builder_update_option('pdf_builder_license_test_mode', '0');
             
             // Si le statut était 'test', remettre à 'free' en supprimant la clé de test
             $current_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
             if ($current_status === 'test') {
                 pdf_builder_update_option('pdf_builder_license_status', 'free');
             }
-
+            
              wp_send_json_success([
                  'message' => 'Clé de test supprimée avec succès.'
              ]);
@@ -2039,43 +2039,35 @@ class PDF_Builder_Unified_Ajax_Handler {
          try {
              error_log('[PDF Builder] Starting license cleanup');
 
-             // Clear separate license options
-             $license_options = [
-                 'pdf_builder_license_key',
-                 'pdf_builder_license_status',
-                 'pdf_builder_license_expires',
-                 'pdf_builder_license_data'
-             ];
-
              // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-             $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0') === '1';
+             $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode', '0') === '1';
 
              // Liste des options de licence à nettoyer
              $license_options = [
                  'pdf_builder_license_key',
                  'pdf_builder_license_status',
                  'pdf_builder_license_expires',
-                 'pdf_builder_license_activated_at',
                  'pdf_builder_license_data',
+                 'pdf_builder_license_activated_at',
+                 'pdf_builder_license_test_mode_enabled',
                  'pdf_builder_license_email_reminders',
                  'pdf_builder_license_reminder_email'
              ];
 
-             // Si le mode test n'était pas actif, supprimer aussi les clés de test
+             // Ne pas supprimer la clé de test si le mode test était actif
              if (!$test_mode_was_enabled) {
                  $license_options[] = 'pdf_builder_license_test_key';
                  $license_options[] = 'pdf_builder_license_test_key_expires';
              }
-             $license_options[] = 'pdf_builder_license_test_mode_enabled';
 
-             // Supprimer les options individuelles
+             // Supprimer toutes les options de licence
              foreach ($license_options as $option) {
-                 STM::delete_option($option);
+                 pdf_builder_delete_option($option);
                  error_log('[PDF Builder] Deleted license option: ' . $option);
              }
 
-             // Définir le statut de licence à 'free'
-             STM::update_option('pdf_builder_license_status', 'free');
+             // Définir le statut à 'free'
+             pdf_builder_update_option('pdf_builder_license_status', 'free');
 
              // Clear license transients
              global $wpdb;
