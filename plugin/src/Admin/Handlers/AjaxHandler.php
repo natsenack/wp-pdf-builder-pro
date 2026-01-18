@@ -1955,6 +1955,12 @@ class AjaxHandler
                 wp_send_json_error(['message' => 'Clé de test invalide']);
             }
 
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
+        }
+    }
+
     /**
      * Sauvegarder les paramètres des modales canvas
      */
