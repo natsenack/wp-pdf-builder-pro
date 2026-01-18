@@ -547,38 +547,22 @@
 
                         if (Object.keys(toggleData).length === 0) return;
 
-                        var ajaxData = {
-                            action: 'pdf_builder_ajax_handler',
-                            action_type: 'save_canvas_modal_settings',
-                            ...toggleData,
-                            nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
-                        };
-
-                        jQuery.ajax({
-                            url: ajaxurl,
-                            type: 'POST',
-                            data: ajaxData,
-                            success: function(response) {
-                                if (response.success) {
-                                    // Mettre à jour window.pdfBuilderCanvasSettings
-                                    Object.keys(toggleData).forEach(function(inputName) {
-                                        var settingKey = inputToSettingMap[inputName];
-                                        if (settingKey && typeof window.pdfBuilderCanvasSettings !== 'undefined') {
-                                            window.pdfBuilderCanvasSettings[settingKey] = toggleData[inputName] === '1';
-                                        }
-                                    });
-
-                                    // Dispatcher l'événement
-                                    window.dispatchEvent(new CustomEvent('pdfBuilderCanvasSettingsUpdated'));
-
-                                    // Fermer la modal
-                                    closeModal(modal);
-                                }
-                            },
-                            error: function() {
-                                // Rien à faire en cas d'erreur
+                        // Mettre à jour les champs cachés du formulaire principal
+                        Object.keys(toggleData).forEach(function(inputName) {
+                            var hiddenField = document.querySelector('input[name="' + inputName + '"][type="hidden"]');
+                            if (hiddenField) {
+                                hiddenField.value = toggleData[inputName];
                             }
                         });
+
+                        // Fermer la modal
+                        closeModal(modal);
+
+                        // Soumettre le formulaire pour sauvegarder normalement
+                        var form = document.querySelector('form[action="options.php"]');
+                        if (form) {
+                            form.submit();
+                        }
                     }
 
                     // Fonction pour récupérer les paramètres canvas depuis le serveur
