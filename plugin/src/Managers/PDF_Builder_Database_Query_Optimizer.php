@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -530,4 +530,6 @@ class PdfBuilderDatabaseQueryOptimizer
         PDF_Builder_Logger::get_instance()->info('Base de données optimisée pour PDF Builder', ['context' => 'db_optimizer']);
     }
 }
+
+
 

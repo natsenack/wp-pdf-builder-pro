@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Api;
 
@@ -19,4 +19,6 @@ class Exception extends \Exception
         parent::__construct($message, $code, $previous);
     }
 }
+
+
 

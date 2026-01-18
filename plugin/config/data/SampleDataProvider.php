@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Data;
 
@@ -384,4 +384,6 @@ class SampleDataProvider implements DataProviderInterface
         $this->sampleData[$key] = $this->validateAndSanitizeData($value);
     }
 }
+
+
 

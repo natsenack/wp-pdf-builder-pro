@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -282,4 +282,6 @@ class PdfBuilderSecureShellManager
         return true;
     }
 }
+
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Admin;
 
@@ -138,4 +138,6 @@ class Canvas_AJAX_Handler
         }
     }
 }
+
+
 

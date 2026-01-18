@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Data;
 
@@ -576,4 +576,6 @@ class WooCommerceDataProvider implements DataProviderInterface
         return \get_woocommerce_currency($this->order->getCurrency());
     }
 }
+
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Generators;
 
@@ -347,4 +347,6 @@ class CanvasGenerator extends BaseGenerator
         return $this->performance_metrics;
     }
 }
+
+
 

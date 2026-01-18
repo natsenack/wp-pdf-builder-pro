@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Generators;
 
@@ -367,4 +367,6 @@ abstract class BaseGenerator
     {
     }
 }
+
+
 

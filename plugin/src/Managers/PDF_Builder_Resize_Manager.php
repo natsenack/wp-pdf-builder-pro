@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -348,4 +348,6 @@ class PdfBuilderResizeManager
         return $stats;
     }
 }
+
+
 

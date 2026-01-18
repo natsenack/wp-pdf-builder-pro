@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Elements;
 
@@ -134,4 +134,6 @@ abstract class BaseElement implements ElementInterface
         return $attrs;
     }
 }
+
+
 

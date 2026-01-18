@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\States;
 
@@ -45,4 +45,6 @@ interface PreviewStateInterface
      */
     public function getUserMessage(): string;
 }
+
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Generators;
 
@@ -123,4 +123,6 @@ class ImageGenerator extends BaseGenerator
         }
     }
 }
+
+
 

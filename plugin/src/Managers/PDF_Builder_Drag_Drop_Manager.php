@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -305,4 +305,6 @@ class PdfBuilderDragDropManager
         return $stats;
     }
 }
+
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Elements;
 
@@ -64,4 +64,6 @@ interface ElementInterface
      */
     public function setStyle(array $style): void;
 }
+
+
 

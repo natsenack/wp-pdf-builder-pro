@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder;
 
@@ -559,4 +559,6 @@ class TemplateDefaults {
         return null;
     }
 }
+
+
 

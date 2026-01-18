@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Generators;
 
@@ -984,4 +984,6 @@ class PDFGenerator extends BaseGenerator
         return $output_path;
     }
 }
+
+
 

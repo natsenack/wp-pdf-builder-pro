@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -873,4 +873,6 @@ class PdfBuilderBackupRestoreManager
         ]);
     }
 }
+
+
 

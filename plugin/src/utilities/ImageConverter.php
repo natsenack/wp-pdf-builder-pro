@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Utilities;
 
@@ -210,4 +210,6 @@ class ImageConverter
         return $image_data;
     }
 }
+
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Elements;
 
@@ -29,4 +29,6 @@ interface TextElementInterface extends ElementInterface
      */
     public function getVariables(): array;
 }
+
+
 

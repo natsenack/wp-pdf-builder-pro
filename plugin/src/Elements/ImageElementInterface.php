@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Elements;
 
@@ -36,4 +36,6 @@ interface ImageElementInterface extends ElementInterface
      */
     public function setAlt(string $alt): void;
 }
+
+
 

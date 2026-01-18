@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Elements;
 
@@ -50,4 +50,6 @@ interface ShapeElementInterface extends ElementInterface
      */
     public function setStrokeWidth(int $width): void;
 }
+
+
 

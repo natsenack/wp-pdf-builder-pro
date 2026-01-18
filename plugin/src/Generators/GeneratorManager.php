@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Generators;
 
@@ -406,4 +406,6 @@ private function createGenerator(
     {
     }
 }
+
+
 

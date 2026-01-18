@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Interfaces;
 
@@ -54,4 +54,6 @@ interface DataProviderInterface
      */
     public function validateAndSanitizeData(array $data): array;
 }
+
+
 
