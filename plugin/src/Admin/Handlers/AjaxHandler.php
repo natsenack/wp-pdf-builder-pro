@@ -1925,6 +1925,37 @@ class AjaxHandler
     }
 
     /**
+     * Valider la clé de test
+     */
+    private function handleValidateLicenseKey()
+    {
+        try {
+            error_log('[PDF Builder] handleValidateLicenseKey - Starting validation process');
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', array());
+            $test_key = $settings['pdf_builder_license_test_key'] ?? '';
+
+            if (empty($test_key)) {
+                wp_send_json_error(['message' => 'Aucune clé de test à valider']);
+                return;
+            }
+
+            // Validation simple pour les clés de test
+            $is_valid = strpos($test_key, 'TEST-') === 0 && strlen($test_key) === 21;
+
+            error_log('[PDF Builder] handleValidateLicenseKey - Key: ' . $test_key . ', Valid: ' . ($is_valid ? 'YES' : 'NO'));
+
+            if ($is_valid) {
+                wp_send_json_success([
+                    'message' => 'Clé de test validée avec succès',
+                    'valid' => true
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Clé de test invalide']);
+            }
+
+    /**
      * Sauvegarder les paramètres des modales canvas
      */
     public function ajaxSaveCanvasModalSettings()
@@ -1979,43 +2010,6 @@ class AjaxHandler
         } catch (Exception $e) {
             error_log('PDF Builder - Erreur sauvegarde canvas modal: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Valider la clé de test
-     */
-    private function handleValidateLicenseKey()
-    {
-        try {
-            error_log('[PDF Builder] handleValidateLicenseKey - Starting validation process');
-
-            // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', array());
-            $test_key = $settings['pdf_builder_license_test_key'] ?? '';
-
-            if (empty($test_key)) {
-                wp_send_json_error(['message' => 'Aucune clé de test à valider']);
-                return;
-            }
-
-            // Validation simple pour les clés de test
-            $is_valid = strpos($test_key, 'TEST-') === 0 && strlen($test_key) === 21;
-
-            error_log('[PDF Builder] handleValidateLicenseKey - Key: ' . $test_key . ', Valid: ' . ($is_valid ? 'YES' : 'NO'));
-
-            if ($is_valid) {
-                wp_send_json_success([
-                    'message' => 'Clé de test validée avec succès',
-                    'valid' => true
-                ]);
-            } else {
-                wp_send_json_error(['message' => 'Clé de test invalide']);
-            }
-
-        } catch (Exception $e) {
-            error_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
         }
     }
 }
