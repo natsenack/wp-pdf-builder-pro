@@ -608,8 +608,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             // error_log('[PDF Builder AJAX] handle_save_all_settings called with form_data: ' . substr($form_data_json, 0, 500));
 
             if (!empty($form_data_json)) {
-                // Legacy JSON format
-                $saved_count = $this->save_all_settings_from_json($form_data_json);
+                // Legacy JSON format - not supported anymore, use flattened format
+                error_log('[PDF Builder AJAX] Legacy JSON format not supported, using flattened format instead');
+                $saved_count = $this->save_all_settings_from_flattened_data();
             } else {
                 // New flattened format - save all settings from POST data
                 $saved_count = $this->save_all_settings_from_flattened_data();
@@ -653,6 +654,27 @@ class PDF_Builder_Unified_Ajax_Handler {
         // FIRST: Handle the main pdf_builder_settings array if it exists
         if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
             error_log('[PDF Builder AJAX] Found pdf_builder_settings array with keys: ' . implode(', ', array_keys($_POST['pdf_builder_settings'])));
+
+            // EXTRACTION ET SAUVEGARDE DES CHAMPS DE L'ONGLET GÉNÉRAL DANS DES LIGNES SÉPARÉES
+            $general_fields = [
+                'pdf_builder_company_phone_manual',
+                'pdf_builder_company_siret',
+                'pdf_builder_company_vat',
+                'pdf_builder_company_rcs',
+                'pdf_builder_company_capital'
+            ];
+
+            foreach ($general_fields as $general_field) {
+                if (isset($_POST['pdf_builder_settings'][$general_field])) {
+                    // Sauvegarder dans une ligne séparée
+                    pdf_builder_update_option($general_field, sanitize_text_field($_POST['pdf_builder_settings'][$general_field]));
+                    error_log("[PDF Builder AJAX] Saved general field to separate row: {$general_field} = " . $_POST['pdf_builder_settings'][$general_field]);
+
+                    // Supprimer du tableau POST pour éviter le double traitement
+                    unset($_POST['pdf_builder_settings'][$general_field]);
+                    $saved_count++;
+                }
+            }
 
             foreach ($_POST['pdf_builder_settings'] as $setting_key => $setting_value) {
                 if (is_array($setting_value)) {
@@ -921,75 +943,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                 // Supprimer du tableau unifié
                 unset($settings[$license_key]);
                 $saved_count++;
-            }
-        }
-
-        // EXTRACTION ET SAUVEGARDE DES CHAMPS DE L'ONGLET GÉNÉRAL DANS DES LIGNES SÉPARÉES
-        $general_fields = [
-            'pdf_builder_company_phone_manual',
-            'pdf_builder_company_siret',
-            'pdf_builder_company_vat',
-            'pdf_builder_company_rcs',
-            'pdf_builder_company_capital'
-        ];
-
-        foreach ($general_fields as $general_field) {
-            if (isset($settings[$general_field])) {
-                // Sauvegarder dans une ligne séparée
-                pdf_builder_update_option($general_field, $settings[$general_field]);
-                error_log("[PDF Builder AJAX] Saved general field to separate row: {$general_field}");
-                
-                // Supprimer du tableau unifié
-                unset($settings[$general_field]);
-                $saved_count++;
-            }
-        }
-
-        // Save the remaining settings array (without license keys and general fields)
-        if (!empty($settings)) {
-            pdf_builder_update_option('pdf_builder_settings', $settings);
-            // error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' remaining settings to pdf_builder_settings option');
-        }
-
-        return $saved_count;
-    }
-
-    /**
-     * Sauvegarde tous les paramètres depuis les données JSON
-     */
-    private function save_all_settings_from_json($form_data_json) {
-        $form_data = json_decode($form_data_json, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('Données JSON invalides: ' . json_last_error_msg());
-        }
-
-        // error_log('[PDF Builder AJAX] Données JSON décodées, ' . count($form_data) . ' formulaires à traiter');
-
-        $saved_count = 0;
-
-        // Traiter chaque formulaire
-        foreach ($form_data as $form_id => $form_fields) {
-            if (!is_array($form_fields)) {
-                continue;
-            }
-
-            // error_log('[PDF Builder AJAX] Traitement formulaire: ' . $form_id . ' avec ' . count($form_fields) . ' champs');
-
-            foreach ($form_fields as $field_name => $field_value) {
-                // Nettoyer et valider les données selon le type de champ
-                $clean_value = $this->sanitize_field_value($field_name, $field_value);
-
-                // Déterminer le nom de l'option WordPress selon le formulaire
-                $option_name = $this->get_option_name_for_field($form_id, $field_name);
-
-                if ($option_name) {
-                    update_option($option_name, $clean_value);
-                    $saved_count++;
-                    // error_log('[PDF Builder AJAX] Sauvegardé: ' . $option_name . ' = ' . substr($clean_value, 0, 50));
-                } else {
-                    // error_log('[PDF Builder AJAX] Option name vide pour ' . $form_id . '.' . $field_name);
-                }
             }
         }
 
