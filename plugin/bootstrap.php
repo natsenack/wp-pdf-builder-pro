@@ -484,11 +484,6 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
-    // Charger les pages d'administration
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
-    }
-
     // Charger le handler AJAX pour les paramètres Canvas
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
@@ -880,7 +875,7 @@ function pdf_builder_load_bootstrap()
             ]);
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour notifications.js
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = PDF_Builder_Settings_Table::get_all_settings();
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -904,7 +899,7 @@ function pdf_builder_load_bootstrap()
             );
 
             // Définir les paramètres de debug JavaScript pour developer-tools.js
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = PDF_Builder_Settings_Table::get_all_settings();
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -1695,13 +1690,13 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         }
 
         // Obtenir les paramètres existants
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = PDF_Builder_Settings_Table::get_all_settings();
 
         // Mettre à jour le paramètre spécifique
         $settings[$setting_key] = $setting_value;
 
         // Sauvegarder en base de données
-        $updated = update_option('pdf_builder_settings', $settings);
+        $updated = PDF_Builder_Settings_Table::set_setting($setting_key, $setting_value);
         // error_log("PDF Builder Développeur: Résultat update_option: " . ($updated ? 'SUCCÈS' : 'AUCUN CHANGEMENT'));
 
         wp_send_json_success([

@@ -786,9 +786,9 @@ function pdf_builder_repair_templates_handler() {
         }
 
         // Check settings
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = PDF_Builder_Settings_Table::get_all_settings();
         if (!is_array($settings)) {
-            update_option('pdf_builder_settings', []);
+            // Si les paramètres ne sont pas un tableau, on ne fait rien car la table gère cela
         }
 
         wp_send_json_success(array(
@@ -1127,7 +1127,7 @@ function pdf_builder_add_asset_cache_headers()
 {
 
     // Vérifier si le cache est activé dans les paramètres
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
     $cache_enabled = $settings['cache_enabled'] ?? false;
 // Si le cache est désactivé, ne pas ajouter de headers de cache
     if (!$cache_enabled) {
@@ -1587,9 +1587,9 @@ function pdf_builder_auto_repair_templates() {
         }
 
         // Vérifier l'accès aux options
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = PDF_Builder_Settings_Table::get_all_settings();
         if (!is_array($settings)) {
-            update_option('pdf_builder_settings', []);
+            // Si les paramètres ne sont pas un tableau, on ne fait rien car la table gère cela
         }
 
         

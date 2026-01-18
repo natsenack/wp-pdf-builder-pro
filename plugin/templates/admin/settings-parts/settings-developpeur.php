@@ -1,7 +1,8 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
     // Récupération des paramètres depuis le tableau unifié
-    $settings = get_option('pdf_builder_settings', array());
+    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
     error_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode'] ?? 'not set') . ', settings count: ' . count($settings));
 
     // Variables nécessaires pour l'onglet développeur
@@ -1042,8 +1043,90 @@
             });
         });
     });
+
+    // Migration des paramètres vers table personnalisée
+    $('#migrate_settings_btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $status = $('#migration_status');
+
+        if (!confirm('Êtes-vous sûr de vouloir migrer les paramètres vers la table personnalisée ? Cette action ne peut pas être annulée.')) {
+            return;
+        }
+
+        $btn.prop('disabled', true).text('🔄 Migration en cours...');
+        $status.html('<span style="color: #007cba;">Migration en cours...</span>');
+
+        $.ajax({
+            url: pdf_builder_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'migrate_settings_to_custom_table',
+                migrate_nonce: $('#migrate_nonce').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $status.html('<span style="color: #28a745;">✅ Migration terminée avec succès</span>');
+                    $btn.hide();
+                    location.reload();
+                } else {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur lors de la migration</span>');
+                    $btn.prop('disabled', false).text('🔄 Migrer les paramètres');
+                }
+            },
+            error: function(xhr, status, error) {
+                $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                $btn.prop('disabled', false).text('🔄 Migrer les paramètres');
+            }
+        });
+    });
 })(jQuery);
 </script>
+
+<!-- Section Migration des Paramètres -->
+<section class="developpeur-migration-section">
+    <h3 style="display: flex; justify-content: flex-start; align-items: center;">
+        <span>🔄 Migration des Paramètres</span>
+    </h3>
+
+    <div class="migration-info" style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007cba; margin: 15px 0;">
+        <p><strong>Migration vers table personnalisée :</strong> Tous les paramètres du plugin sont maintenant stockés dans une table dédiée <code>wp_pdf_builder_settings</code> au lieu d'utiliser <code>wp_options</code>.</p>
+        <p>Cette migration améliore les performances et permet une meilleure organisation des données.</p>
+    </div>
+
+    <?php
+    $migration_done = get_option('pdf_builder_migration_done', false);
+    if ($migration_done): ?>
+        <div class="migration-completed" style="background: #d4edda; color: #155724; padding: 15px; border: 1px solid #c3e6cb; border-radius: 4px;">
+            ✅ Migration déjà effectuée. Tous les paramètres utilisent maintenant la table personnalisée.
+        </div>
+    <?php else: ?>
+        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+            <?php wp_nonce_field('migrate_settings', 'migrate_nonce'); ?>
+            <input type="hidden" name="action" value="migrate_settings_to_custom_table">
+
+            <button type="submit" id="migrate_settings_btn" class="button button-primary" style="background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                🔄 Migrer les paramètres vers table personnalisée
+            </button>
+
+            <div id="migration_status" style="margin-top: 10px;"></div>
+        </form>
+
+        <hr style="margin: 20px 0;">
+
+        <h4>🔧 Modification de la structure de la table</h4>
+        <p><strong>Action requise :</strong> Modifier la structure de la table pour qu'elle corresponde exactement à <code>wp_options</code>.</p>
+        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="margin-top: 10px;">
+            <?php wp_nonce_field('alter_table_structure', 'alter_table_nonce'); ?>
+            <input type="hidden" name="action" value="alter_table_structure">
+
+            <button type="submit" class="button button-secondary" style="background: #6c757d; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">
+                🔧 Modifier la structure de la table
+            </button>
+        </form>
+    <?php endif; ?>
+</section>
 
 
 

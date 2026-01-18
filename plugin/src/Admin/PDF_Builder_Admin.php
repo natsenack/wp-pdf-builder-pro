@@ -479,7 +479,7 @@ class PdfBuilderAdmin
      */
     public function company_name_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = PDF_Builder_Settings_Table::get_all_settings();
         $value = isset($settings['company_name']) ? $settings['company_name'] : '';
         echo '<input type="text" name="pdf_builder_settings[company_name]" value="' . esc_attr($value) . '" class="regular-text" />';
     }
@@ -872,6 +872,12 @@ class PdfBuilderAdmin
         // Script loading is handled by AdminScriptLoader
         // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
+        // Action pour la migration des paramètres
+        add_action('admin_post_migrate_settings_to_custom_table', [$this, 'migrate_settings_to_custom_table']);
+
+        // Action pour la modification de la structure de la table
+        add_action('admin_post_alter_table_structure', [$this, 'alter_table_structure']);
+
         // Inclure le gestionnaire de modèles prédéfinis
         include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
 
@@ -998,7 +1004,7 @@ class PdfBuilderAdmin
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
         // Galerie de modèles (mode développeur uniquement)
-        if (!empty(get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
+        if (!empty(PDF_Builder_Settings_Table::get_setting('pdf_builder_developer_enabled'))) {
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
@@ -1561,7 +1567,97 @@ class PdfBuilderAdmin
         </div> <!-- Fin du .wrap -->
         <?php
     }
+
+    /**
+     * Migrer la structure de la table vers le format wp_options
+     */
+    public function alter_table_structure() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Vous n\'avez pas les permissions suffisantes pour effectuer cette action.'));
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['alter_table_nonce']) || !wp_verify_nonce($_POST['alter_table_nonce'], 'alter_table_structure')) {
+            wp_die(__('Nonce de sécurité invalide.'));
+        }
+
+        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pdf_builder_settings';
+
+        echo '<div class="wrap">';
+        echo '<h1>Modification de la structure de la table PDF Builder Settings</h1>';
+        echo '<pre>';
+
+        // Vérifier si la table existe
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            echo "❌ La table $table_name n'existe pas.\n";
+            echo '</pre></div>';
+            return;
+        }
+
+        echo "Modification de la structure de la table $table_name...\n\n";
+
+        $sql_commands = [
+            // 1. Renommer setting_key en option_name
+            "ALTER TABLE `$table_name` CHANGE `setting_key` `option_name` VARCHAR(191) NOT NULL",
+
+            // 2. Renommer setting_value en option_value
+            "ALTER TABLE `$table_name` CHANGE `setting_value` `option_value` LONGTEXT NOT NULL",
+
+            // 3. Ajouter la colonne autoload
+            "ALTER TABLE `$table_name` ADD `autoload` VARCHAR(20) NOT NULL DEFAULT 'yes' AFTER `option_value`",
+
+            // 4. Supprimer les colonnes inutiles
+            "ALTER TABLE `$table_name` DROP COLUMN `setting_type`",
+            "ALTER TABLE `$table_name` DROP COLUMN `created_at`",
+            "ALTER TABLE `$table_name` DROP COLUMN `updated_at`",
+
+            // 5. Renommer id en option_id
+            "ALTER TABLE `$table_name` CHANGE `id` `option_id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT",
+
+            // 6. Recréer les index
+            "ALTER TABLE `$table_name` DROP INDEX `setting_key`",
+            "ALTER TABLE `$table_name` DROP INDEX `setting_type`",
+            "ALTER TABLE `$table_name` DROP INDEX `updated_at`",
+            "ALTER TABLE `$table_name` ADD UNIQUE KEY `option_name` (`option_name`)",
+            "ALTER TABLE `$table_name` ADD KEY `autoload` (`autoload`)"
+        ];
+
+        $success_count = 0;
+        foreach ($sql_commands as $sql) {
+            echo "Exécution: " . substr($sql, 0, 60) . "...\n";
+
+            // Certaines commandes peuvent échouer si les colonnes/index n'existent pas
+            $result = $wpdb->query($sql);
+
+            if ($result !== false) {
+                $success_count++;
+                echo "✅ OK\n";
+            } else {
+                echo "⚠️  Échec (peut-être normal): " . $wpdb->last_error . "\n";
+            }
+        }
+
+        echo "\n✅ Modification terminée: $success_count commandes exécutées avec succès.\n\n";
+
+        // Vérifier la nouvelle structure
+        echo "Nouvelle structure de la table:\n";
+        $columns = $wpdb->get_results("DESCRIBE $table_name");
+        foreach ($columns as $column) {
+            echo "- {$column->Field}: {$column->Type} {$column->Null} {$column->Key} {$column->Default} {$column->Extra}\n";
+        }
+
+        echo '</pre>';
+        echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-settings&tab=developpeur') . '" class="button button-primary">Retour aux paramètres</a></p>';
+        echo '</div>';
+        exit;
+    }
 }
+
+
 
 
 

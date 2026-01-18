@@ -25,7 +25,8 @@
     }
 
     // Récupération des paramètres généraux
-    $settings = get_option('pdf_builder_settings', array());
+    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
     $current_user = wp_get_current_user();
 
     // LOG pour déboguer la soumission du formulaire

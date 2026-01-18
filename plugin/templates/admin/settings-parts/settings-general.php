@@ -8,7 +8,8 @@
      */
 
     // Récupération sécurisée des paramètres
-    $settings = get_option('pdf_builder_settings', array());
+    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
     error_log('[PDF Builder] settings-general.php - Full settings from DB: ' . print_r($settings, true));
 
     // Récupération des informations WooCommerce

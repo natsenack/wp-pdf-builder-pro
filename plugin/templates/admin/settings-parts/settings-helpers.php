@@ -249,7 +249,8 @@ if (!function_exists('pdf_builder_ensure_upload_dir')) {
 // Ensure global settings variable is available
 global $settings;
 if (!isset($settings)) {
-    $settings = get_option('pdf_builder_settings', array());
+    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
 }
 
 // Ensure nonce is available

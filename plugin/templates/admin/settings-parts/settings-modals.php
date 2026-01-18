@@ -46,28 +46,13 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Inclure la classe de migration si elle n'existe pas
-    if (!class_exists('PDF_Builder_Canvas_Settings_Migration')) {
-        $migration_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'migrate_canvas_settings.php';
-        if (file_exists($migration_file)) {
-            require_once $migration_file;
-        }
-    }
+    // Inclure la classe de gestion des paramètres
+    require_once plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Admin/PDF_Builder_Settings_Table.php';
 
-    // Utiliser la nouvelle table pour les paramètres canvas
-    if (class_exists('PDF_Builder_Canvas_Settings_Migration')) {
-        $migration = new PDF_Builder_Canvas_Settings_Migration();
-        $option_key = 'pdf_builder_' . $key;
-        $value = $migration->get_canvas_setting($option_key, $default);
-        error_log("[CANVAS MODAL] Reading {$option_key} from table: '{$value}' (default: '{$default}')");
-        return $value;
-    }
-
-    // Fallback vers l'ancien système si la classe n'est pas disponible
-    $settings = get_option('pdf_builder_settings', []);
+    // Récupérer depuis la table personnalisée
     $option_key = 'pdf_builder_' . $key;
-    $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
-    error_log("[CANVAS MODAL] Reading {$option_key} from options (fallback): '{$value}' (default: '{$default}')");
+    $value = PDF_Builder_Settings_Table::get_setting($option_key, $default);
+    error_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')");
     return $value;
 }
 ?>

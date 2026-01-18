@@ -1,7 +1,8 @@
 <?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
     // Préparer les variables nécessaires
-    $settings = get_option('pdf_builder_settings', array());
+    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
     error_log('[PDF Builder] settings-securite.php loaded - security_level: ' . ($settings['pdf_builder_security_level'] ?? 'not set') . ', enable_logging: ' . ($settings['pdf_builder_enable_logging'] ?? 'not set'));
     $security_level = $settings['pdf_builder_security_level'] ?? 'medium';
     $enable_logging = $settings['pdf_builder_enable_logging'] ?? '1';

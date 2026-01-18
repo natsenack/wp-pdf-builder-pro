@@ -672,10 +672,13 @@ class AjaxHandler
      */
     private function handleSaveAllSettings()
     {
+        // Inclure la classe de gestion des paramètres
+        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
+
         // Créer un backup avant modification
         $backup_key = 'pdf_builder_backup_' . time();
-        $existing_settings = get_option('pdf_builder_settings', array());
-        update_option($backup_key, $existing_settings, false);
+        $existing_settings = PDF_Builder_Settings_Table::get_all_settings();
+        PDF_Builder_Settings_Table::set_setting($backup_key, $existing_settings);
 
         // Nettoyer automatiquement les anciens backups (garder seulement les 5 derniers)
         $this->cleanupOldBackups();
@@ -706,7 +709,7 @@ class AjaxHandler
 
             // Sauvegarder les templates séparément si des données existent
             if (!empty($templates_data)) {
-                update_option('pdf_builder_order_status_templates', $templates_data);
+                PDF_Builder_Settings_Table::set_setting('pdf_builder_order_status_templates', $templates_data);
                 error_log('PHP: Templates data saved to pdf_builder_order_status_templates');
             }
 
@@ -720,16 +723,21 @@ class AjaxHandler
                 // Fusionner avec les paramètres existants
                 $updated_settings = array_merge($existing_settings, $settings_to_save);
 
-                // Sauvegarder dans la base de données
-                $saved = update_option('pdf_builder_settings', $updated_settings);
+                // Sauvegarder dans la table personnalisée
+                $saved_count = 0;
+                foreach ($settings_to_save as $key => $value) {
+                    if (PDF_Builder_Settings_Table::set_setting($key, $value)) {
+                        $saved_count++;
+                    }
+                }
 
                 // Vérifier s'il y a eu une vraie erreur DB
                 global $wpdb;
                 $db_error = $wpdb->last_error;
 
-                if (!$saved && !empty($db_error)) {
+                if ($saved_count === 0 && !empty($db_error)) {
                     // Erreur DB réelle
-                    error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
+                    error_log('PDF Builder - PDF_Builder_Settings_Table::set_setting failed. Last DB error: ' . $db_error);
                     error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
                     error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
                     error_log('PDF Builder - New settings count: ' . count($settings_to_save));
@@ -742,7 +750,7 @@ class AjaxHandler
             }
 
             // Supprimer le backup si succès
-            delete_option($backup_key);
+            PDF_Builder_Settings_Table::delete_setting($backup_key);
 
             wp_send_json_success([
                 'message' => 'Paramètres sauvegardés avec succès',
@@ -774,6 +782,9 @@ class AjaxHandler
      */
     private function handleSaveGeneralSettings()
     {
+        // Inclure la classe de gestion des paramètres
+        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
+
         // Collecter seulement les paramètres généraux
         $general_settings = [];
         $general_fields = [
@@ -795,12 +806,15 @@ class AjaxHandler
             return;
         }
 
-        // Sauvegarder
-        $existing_settings = get_option('pdf_builder_settings', array());
-        $updated_settings = array_merge($existing_settings, $general_settings);
-        $saved = update_option('pdf_builder_settings', $updated_settings);
+        // Sauvegarder dans la table personnalisée
+        $saved_count = 0;
+        foreach ($general_settings as $key => $value) {
+            if (PDF_Builder_Settings_Table::set_setting($key, $value)) {
+                $saved_count++;
+            }
+        }
 
-        if ($saved) {
+        if ($saved_count > 0) {
             wp_send_json_success([
                 'message' => 'Paramètres généraux sauvegardés',
                 'saved_settings' => $general_settings,
@@ -854,7 +868,10 @@ class AjaxHandler
      */
     private function handleGetSettings()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        // Inclure la classe de gestion des paramètres
+        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
+
+        $settings = PDF_Builder_Settings_Table::get_all_settings();
         wp_send_json_success([
             'settings' => $settings,
             'action' => 'get_settings'
@@ -1694,14 +1711,6 @@ class AjaxHandler
                 return;
             }
 
-            // Inclure la classe de migration
-            if (!class_exists('PDF_Builder_Canvas_Settings_Migration')) {
-                $migration_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'migrate_canvas_settings.php';
-                if (file_exists($migration_file)) {
-                    require_once $migration_file;
-                }
-            }
-
             // Récupérer les paramètres depuis la requête
             $category = sanitize_text_field($_POST['category'] ?? '');
             $settings_to_save = [];
@@ -1728,44 +1737,27 @@ class AjaxHandler
                 return;
             }
 
-            // Utiliser la nouvelle table pour sauvegarder les paramètres canvas
-            if (class_exists('PDF_Builder_Canvas_Settings_Migration')) {
-                $migration = new PDF_Builder_Canvas_Settings_Migration();
-                $updated_count = $migration->set_canvas_settings($settings_to_save);
+            // Récupérer les paramètres existants
+            $existing_settings = get_option('pdf_builder_settings', array());
 
-                if ($updated_count > 0) {
-                    wp_send_json_success([
-                        'message' => 'Paramètres sauvegardés avec succès dans la table dédiée',
-                        'category' => $category,
-                        'updated_count' => $updated_count,
-                        'table' => 'wp_pdf_builder_settings'
-                    ]);
-                } else {
-                    wp_send_json_error(['message' => 'Erreur lors de la sauvegarde dans la table']);
-                }
+            // Mettre à jour les paramètres
+            $updated_count = 0;
+            foreach ($settings_to_save as $key => $value) {
+                $existing_settings[$key] = $value;
+                $updated_count++;
+            }
+
+            // Sauvegarder dans l'option unifiée
+            $saved = update_option('pdf_builder_settings', $existing_settings);
+
+            if ($saved) {
+                wp_send_json_success([
+                    'message' => 'Paramètres sauvegardés avec succès',
+                    'category' => $category,
+                    'updated_count' => $updated_count
+                ]);
             } else {
-                // Fallback vers l'ancien système si la classe n'est pas disponible
-                $existing_settings = get_option('pdf_builder_settings', array());
-
-                // Mettre à jour les paramètres
-                $updated_count = 0;
-                foreach ($settings_to_save as $key => $value) {
-                    $existing_settings[$key] = $value;
-                    $updated_count++;
-                }
-
-                // Sauvegarder dans l'option unifiée
-                $saved = update_option('pdf_builder_settings', $existing_settings);
-
-                if ($saved) {
-                    wp_send_json_success([
-                        'message' => 'Paramètres sauvegardés avec succès (fallback)',
-                        'category' => $category,
-                        'updated_count' => $updated_count
-                    ]);
-                } else {
-                    wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
-                }
+                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
             }
 
         } catch (Exception $e) {

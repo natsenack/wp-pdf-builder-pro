@@ -7,14 +7,14 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
-    $settings = get_option('pdf_builder_settings', array());
+    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option_contenu($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
-        // Lire depuis l'array de settings
-        $settings = get_option('pdf_builder_settings', array());
-        $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
+        // Lire depuis la table personnalisée
+        $value = PDF_Builder_Settings_Table::get_setting($option_key);
 
         if ($value === null) {
             $value = $default;
@@ -80,7 +80,7 @@
 
     <div class="settings-content">
 <?php
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = PDF_Builder_Settings_Table::get_all_settings();
 
 ?>
             <!-- Section Canvas -->
