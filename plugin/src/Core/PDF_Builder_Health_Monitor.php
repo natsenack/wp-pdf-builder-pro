@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de surveillance de la santé
  * Surveille la santé du système en temps réel et détecte les problèmes

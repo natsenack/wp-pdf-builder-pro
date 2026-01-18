@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - AJAX Handler for render_template_html

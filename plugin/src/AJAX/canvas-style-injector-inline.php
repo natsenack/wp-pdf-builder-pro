@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Canvas Style Injector (inlined in PHP)

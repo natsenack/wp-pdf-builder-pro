@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Admin\Data;
 
 class DataUtils

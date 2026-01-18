@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Admin Page Renderer

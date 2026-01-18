@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Dependency Injection Container - Conteneur d'injection de dépendances

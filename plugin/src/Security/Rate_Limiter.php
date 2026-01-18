@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Gestionnaire du Rate Limiting

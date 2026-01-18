@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Settings Loader
  * Charge les styles et scripts pour la page de paramètres

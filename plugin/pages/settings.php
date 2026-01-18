@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro V2 - Page de paramètres
  */

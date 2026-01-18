@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * JSON Optimizer - Compression & Serialization

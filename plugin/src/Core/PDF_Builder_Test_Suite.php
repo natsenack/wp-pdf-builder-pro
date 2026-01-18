@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de tests automatisés
  * Tests unitaires, d'intégration et fonctionnels pour valider les fonctionnalités

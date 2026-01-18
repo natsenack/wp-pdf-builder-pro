@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro V2 - Enregistrement des pages d'administration
  */

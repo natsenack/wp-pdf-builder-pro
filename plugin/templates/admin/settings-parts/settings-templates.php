@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * Templates par statut tab content
      * Gestion des templates PDF par défaut selon le statut des commandes WooCommerce

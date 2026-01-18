@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Mode Switcher - Gestionnaire de basculement entre modes Canvas/Metabox

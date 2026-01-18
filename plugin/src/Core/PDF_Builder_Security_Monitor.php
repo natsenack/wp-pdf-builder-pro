@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de surveillance de sécurité
  * Détecte les menaces, vulnérabilités et activités suspectes

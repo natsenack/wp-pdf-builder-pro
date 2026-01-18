@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Endpoint AJAX pour diagnostiquer la bibliothèque média
  */
