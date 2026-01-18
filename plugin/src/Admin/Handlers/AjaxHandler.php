@@ -1960,6 +1960,53 @@ class AjaxHandler
             wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
         }
     }
+
+    /**
+     * Sauvegarder les paramètres du modal canvas
+     */
+    public function ajaxSaveCanvasModalSettings()
+    {
+        try {
+            error_log('[PDF Builder] ajaxSaveCanvasModalSettings - Starting modal save process');
+
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_canvas_modal_nonce')) {
+                error_log('[PDF Builder] ajaxSaveCanvasModalSettings - Invalid nonce');
+                wp_send_json_error(['message' => 'Nonce invalide']);
+                return;
+            }
+
+            // Récupérer les paramètres actuels
+            $settings = get_option('pdf_builder_settings', array());
+
+            // Collecter tous les paramètres commençant par 'pdf_builder_canvas_'
+            $canvas_settings = array();
+            foreach ($_POST as $key => $value) {
+                if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    $canvas_settings[$key] = sanitize_text_field($value);
+                    error_log('[PDF Builder] ajaxSaveCanvasModalSettings - Processing: ' . $key . ' = ' . $value);
+                }
+            }
+
+            // Mettre à jour les paramètres
+            $settings = array_merge($settings, $canvas_settings);
+
+            // Sauvegarder
+            $update_result = update_option('pdf_builder_settings', $settings);
+
+            error_log('[PDF Builder] ajaxSaveCanvasModalSettings - Saved ' . count($canvas_settings) . ' canvas settings');
+            error_log('[PDF Builder] ajaxSaveCanvasModalSettings - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
+
+            wp_send_json_success([
+                'message' => 'Paramètres canvas sauvegardés avec succès',
+                'saved_count' => count($canvas_settings)
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] ajaxSaveCanvasModalSettings - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
+        }
+    }
 }
 
 
