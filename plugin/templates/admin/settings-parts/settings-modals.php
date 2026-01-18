@@ -5,8 +5,6 @@
  * Created: 2025-12-12
  */
 
-require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
-
 // Valeurs par défaut pour les champs Canvas
 $canvas_defaults = [
     'width' => '794',
@@ -48,12 +46,11 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Inclure la classe de gestion des paramètres
-    require_once plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Admin/PDF_Builder_Settings_Table.php';
-
-    // Récupérer depuis la table personnalisée
+    // Récupérer depuis l'option unifiée pdf_builder_settings
+    $settings = get_option('pdf_builder_settings', []);
     $option_key = 'pdf_builder_' . $key;
-    $value = PDF_Builder_Settings_Table::get_setting($option_key, $default);
+
+    $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
     error_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')");
     return $value;
 }

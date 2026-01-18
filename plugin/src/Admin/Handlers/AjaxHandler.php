@@ -9,7 +9,6 @@ namespace PDF_Builder\Admin\Handlers;
 
 use Exception;
 use WP_Error;
-use PDF_Builder\Admin\PDF_Builder_Settings_Table;
 
 /**
  * Classe responsable de la gestion des appels AJAX
@@ -673,13 +672,10 @@ class AjaxHandler
      */
     private function handleSaveAllSettings()
     {
-        // Inclure la classe de gestion des paramètres
-        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
-
         // Créer un backup avant modification
         $backup_key = 'pdf_builder_backup_' . time();
-        $existing_settings = PDF_Builder_Settings_Table::get_all_settings();
-        PDF_Builder_Settings_Table::set_setting($backup_key, $existing_settings);
+        $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
+        pdf_builder_update_option($backup_key, $existing_settings);
 
         // Nettoyer automatiquement les anciens backups (garder seulement les 5 derniers)
         $this->cleanupOldBackups();
@@ -710,7 +706,7 @@ class AjaxHandler
 
             // Sauvegarder les templates séparément si des données existent
             if (!empty($templates_data)) {
-                PDF_Builder_Settings_Table::set_setting('pdf_builder_order_status_templates', $templates_data);
+                pdf_builder_update_option('pdf_builder_order_status_templates', $templates_data);
                 error_log('PHP: Templates data saved to pdf_builder_order_status_templates');
             }
 
@@ -724,21 +720,16 @@ class AjaxHandler
                 // Fusionner avec les paramètres existants
                 $updated_settings = array_merge($existing_settings, $settings_to_save);
 
-                // Sauvegarder dans la table personnalisée
-                $saved_count = 0;
-                foreach ($settings_to_save as $key => $value) {
-                    if (PDF_Builder_Settings_Table::set_setting($key, $value)) {
-                        $saved_count++;
-                    }
-                }
+                // Sauvegarder dans la base de données
+                $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
                 // Vérifier s'il y a eu une vraie erreur DB
                 global $wpdb;
                 $db_error = $wpdb->last_error;
 
-                if ($saved_count === 0 && !empty($db_error)) {
+                if (!$saved && !empty($db_error)) {
                     // Erreur DB réelle
-                    error_log('PDF Builder - PDF_Builder_Settings_Table::set_setting failed. Last DB error: ' . $db_error);
+                    error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
                     error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
                     error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
                     error_log('PDF Builder - New settings count: ' . count($settings_to_save));
@@ -751,7 +742,7 @@ class AjaxHandler
             }
 
             // Supprimer le backup si succès
-            PDF_Builder_Settings_Table::delete_setting($backup_key);
+            pdf_builder_delete_option($backup_key);
 
             wp_send_json_success([
                 'message' => 'Paramètres sauvegardés avec succès',
@@ -783,9 +774,6 @@ class AjaxHandler
      */
     private function handleSaveGeneralSettings()
     {
-        // Inclure la classe de gestion des paramètres
-        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
-
         // Collecter seulement les paramètres généraux
         $general_settings = [];
         $general_fields = [
@@ -807,15 +795,12 @@ class AjaxHandler
             return;
         }
 
-        // Sauvegarder dans la table personnalisée
-        $saved_count = 0;
-        foreach ($general_settings as $key => $value) {
-            if (PDF_Builder_Settings_Table::set_setting($key, $value)) {
-                $saved_count++;
-            }
-        }
+        // Sauvegarder
+        $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
+        $updated_settings = array_merge($existing_settings, $general_settings);
+        $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
-        if ($saved_count > 0) {
+        if ($saved) {
             wp_send_json_success([
                 'message' => 'Paramètres généraux sauvegardés',
                 'saved_settings' => $general_settings,
@@ -869,10 +854,7 @@ class AjaxHandler
      */
     private function handleGetSettings()
     {
-        // Inclure la classe de gestion des paramètres
-        require_once plugin_dir_path(dirname(__FILE__)) . 'PDF_Builder_Settings_Table.php';
-
-        $settings = PDF_Builder_Settings_Table::get_all_settings();
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         wp_send_json_success([
             'settings' => $settings,
             'action' => 'get_settings'
@@ -985,7 +967,7 @@ class AjaxHandler
             global $wpdb;
 
             // Récupérer les mappings sauvegardés
-            $mappings = get_option('pdf_builder_order_status_templates', []);
+            $mappings = pdf_builder_get_option('pdf_builder_order_status_templates', []);
 
             // Récupérer tous les types de templates disponibles (comme dans PDF_Template_Status_Manager)
 
@@ -1578,9 +1560,9 @@ class AjaxHandler
             }
 
             // Sauvegarder dans la base de données
-            update_option('pdf_builder_order_status_templates', $clean_templates);
+            pdf_builder_update_option('pdf_builder_order_status_templates', $clean_templates);
             error_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true));
-            error_log('PHP: DB content after save: ' . print_r(get_option('pdf_builder_order_status_templates', []), true));
+            error_log('PHP: DB content after save: ' . print_r(pdf_builder_get_option('pdf_builder_order_status_templates', []), true));
 
             wp_send_json_success([
                 'message' => 'Mappings de templates sauvegardés avec succès',

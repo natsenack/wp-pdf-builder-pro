@@ -1,8 +1,7 @@
 <?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
     // Récupération des paramètres depuis le tableau unifié
-    require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
-    $settings = PDF_Builder_Settings_Table::get_all_settings();
+    $settings = get_option('pdf_builder_settings', array());
     error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
 
     // Préparer toutes les variables nécessaires

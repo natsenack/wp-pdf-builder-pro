@@ -133,8 +133,7 @@
 
         // Chargement des mappings
         private function load_mappings() {
-            require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
-            $settings = PDF_Builder_Settings_Table::get_all_settings();
+            $settings = get_option('pdf_builder_settings', array());
             error_log('[PDF Builder] settings-templates.php load_mappings - settings count: ' . count($settings));
             $raw_option = $settings['pdf_builder_order_status_templates'] ?? [];
             error_log('DEBUG: Raw option value from DB: ' . print_r($raw_option, true));
@@ -155,10 +154,10 @@
                 $this->current_mappings = array_intersect_key($this->current_mappings, array_flip($valid_statuses));
 
                 // Sauvegarder si nécessaire
-                $settings = PDF_Builder_Settings_Table::get_all_settings();
+                $settings = get_option('pdf_builder_settings', array());
                 if (count($this->current_mappings) !== count($settings['pdf_builder_order_status_templates'] ?? [])) {
                     $settings['pdf_builder_order_status_templates'] = $this->current_mappings;
-                    PDF_Builder_Settings_Table::set_setting('pdf_builder_order_status_templates', $this->current_mappings);
+                    update_option('pdf_builder_settings', $settings);
                 }
             }
         }

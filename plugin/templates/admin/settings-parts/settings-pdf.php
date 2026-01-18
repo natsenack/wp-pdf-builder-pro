@@ -1,7 +1,6 @@
 <?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
-require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
-$settings = PDF_Builder_Settings_Table::get_all_settings();
+$settings = get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 
 // Vérifier si l'utilisateur a une licence premium

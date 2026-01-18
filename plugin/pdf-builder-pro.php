@@ -63,13 +63,22 @@ function pdf_builder_activate()
         wp_die('PDF Builder Pro nécessite WordPress 5.0 ou supérieur. Version actuelle: ' . get_bloginfo('version'));
     }
 
-    // Créer la table des paramètres
-    if (file_exists(plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php')) {
-        require_once plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php';
-        if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
-            \PDF_Builder\Admin\PDF_Builder_Settings_Table::create_table();
-        }
+    // ========== NOUVELLE TABLE DE PARAMÈTRES PERSONNALISÉE ==========
+    // Charger le Settings Table Manager
+    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+    
+    // Créer la table de paramètres personnalisée
+    \PDF_Builder\Database\Settings_Table_Manager::create_table();
+    
+    // Migrer les données existantes depuis wp_options
+    $migrated = \PDF_Builder\Database\Settings_Table_Manager::is_migrated();
+    if (!$migrated) {
+        \PDF_Builder\Database\Settings_Table_Manager::migrate_data();
+        error_log('[PDF Builder] Activation: Données migrées vers wp_pdf_builder_settings');
+    } else {
+        error_log('[PDF Builder] Activation: Données déjà migrées');
     }
+    // ================================================================
 
     // Créer une table de logs si nécessaire
     global $wpdb;
@@ -226,11 +235,6 @@ function pdf_builder_update_table_schema() {
     $metadata_exists = $wpdb->get_results("SHOW COLUMNS FROM `$table_templates` LIKE 'metadata'");
     if (empty($metadata_exists)) {
         $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN metadata longtext");
-    }
-    
-    // Créer ou mettre à jour la table des paramètres
-    if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
-        \PDF_Builder\Admin\PDF_Builder_Settings_Table::create_table();
     }
     
     // Mettre à jour les templates existants pour leur assigner un user_id par défaut
@@ -799,11 +803,9 @@ function pdf_builder_repair_templates_handler() {
         }
 
         // Check settings
-        if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
-            $settings = \PDF_Builder\Admin\PDF_Builder_Settings_Table::get_all_settings();
-            if (!is_array($settings)) {
-                // Si les paramètres ne sont pas un tableau, on ne fait rien car la table gère cela
-            }
+        $settings = get_option('pdf_builder_settings', array());
+        if (!is_array($settings)) {
+            update_option('pdf_builder_settings', []);
         }
 
         wp_send_json_success(array(
@@ -1083,14 +1085,6 @@ function pdf_builder_init()
         require_once $autoload_path;
     }
 
-    // Charger la classe de gestion des paramètres personnalisés
-    require_once plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php';
-    
-    // Créer la table des paramètres si elle n'existe pas
-    if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
-        \PDF_Builder\Admin\PDF_Builder_Settings_Table::create_table();
-    }
-
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
@@ -1150,11 +1144,8 @@ function pdf_builder_add_asset_cache_headers()
 {
 
     // Vérifier si le cache est activé dans les paramètres
-    $cache_enabled = false;
-    if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
-        $settings = \PDF_Builder\Admin\PDF_Builder_Settings_Table::get_all_settings();
-        $cache_enabled = $settings['cache_enabled'] ?? false;
-    }
+    $settings = get_option('pdf_builder_settings', array());
+    $cache_enabled = $settings['cache_enabled'] ?? false;
 // Si le cache est désactivé, ne pas ajouter de headers de cache
     if (!$cache_enabled) {
 // Headers pour désactiver complètement le cache
@@ -1613,9 +1604,9 @@ function pdf_builder_auto_repair_templates() {
         }
 
         // Vérifier l'accès aux options
-        $settings = PDF_Builder_Settings_Table::get_all_settings();
+        $settings = get_option('pdf_builder_settings', array());
         if (!is_array($settings)) {
-            // Si les paramètres ne sont pas un tableau, on ne fait rien car la table gère cela
+            update_option('pdf_builder_settings', []);
         }
 
         

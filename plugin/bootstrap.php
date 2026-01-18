@@ -19,6 +19,59 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
+// ✅ FONCTIONS WRAPPER POUR LA TABLE PERSONNALISÉE DE PARAMÈTRES
+// ============================================================================
+
+/**
+ * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
+ * Fallback vers wp_options si la table n'existe pas
+ */
+function pdf_builder_get_option($option_name, $default = false) {
+    // Charger le Settings Table Manager
+    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+    }
+    
+    return \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
+}
+
+/**
+ * Mettre à jour une option dans la table personnalisée wp_pdf_builder_settings
+ */
+function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
+    // Charger le Settings Table Manager
+    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+    }
+    
+    return \PDF_Builder\Database\Settings_Table_Manager::update_option($option_name, $option_value, $autoload);
+}
+
+/**
+ * Supprimer une option depuis la table personnalisée wp_pdf_builder_settings
+ */
+function pdf_builder_delete_option($option_name) {
+    // Charger le Settings Table Manager
+    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+    }
+    
+    return \PDF_Builder\Database\Settings_Table_Manager::delete_option($option_name);
+}
+
+/**
+ * Récupérer tous les paramètres PDF Builder
+ */
+function pdf_builder_get_all_options() {
+    // Charger le Settings Table Manager
+    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+    }
+    
+    return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
+}
+
+// ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
 
@@ -126,9 +179,6 @@ function pdf_builder_diagnose_onboarding_manager() {
 if (function_exists('add_action')) {
     // Initialiser l'Onboarding Manager une fois WordPress chargé
     add_action('plugins_loaded', function() {
-        // Charger la classe de gestion des paramètres personnalisés
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Settings_Table.php';
-
         // Charger les utilitaires d'urgence si nécessaire
         pdf_builder_load_utilities_emergency();
 
@@ -878,7 +928,7 @@ function pdf_builder_load_bootstrap()
             ]);
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour notifications.js
-            $settings = PDF_Builder_Settings_Table::get_all_settings();
+            $settings = get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -902,7 +952,7 @@ function pdf_builder_load_bootstrap()
             );
 
             // Définir les paramètres de debug JavaScript pour developer-tools.js
-            $settings = PDF_Builder_Settings_Table::get_all_settings();
+            $settings = get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -1693,13 +1743,13 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         }
 
         // Obtenir les paramètres existants
-        $settings = PDF_Builder_Settings_Table::get_all_settings();
+        $settings = get_option('pdf_builder_settings', array());
 
         // Mettre à jour le paramètre spécifique
         $settings[$setting_key] = $setting_value;
 
         // Sauvegarder en base de données
-        $updated = PDF_Builder_Settings_Table::set_setting($setting_key, $setting_value);
+        $updated = update_option('pdf_builder_settings', $settings);
         // error_log("PDF Builder Développeur: Résultat update_option: " . ($updated ? 'SUCCÈS' : 'AUCUN CHANGEMENT'));
 
         wp_send_json_success([
