@@ -1712,6 +1712,15 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 });
 
 // ============================================================================
+// ✅ CHARGER LES PAGES D'ADMINISTRATION
+// ============================================================================
+
+$admin_pages_path = PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
+if (file_exists($admin_pages_path)) {
+    require_once $admin_pages_path;
+}
+
+// ============================================================================
 // ✅ CHARGER LE SCRIPT DE MIGRATION CANVAS
 // ============================================================================
 
