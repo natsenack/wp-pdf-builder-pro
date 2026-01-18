@@ -1925,6 +1925,64 @@ class AjaxHandler
     }
 
     /**
+     * Sauvegarder les paramètres des modales canvas
+     */
+    public function ajaxSaveCanvasModalSettings()
+    {
+        try {
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
+                return;
+            }
+
+            $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+            if (empty($category)) {
+                wp_send_json_error(['message' => 'Catégorie manquante']);
+                return;
+            }
+
+            // Collecter tous les paramètres qui commencent par 'pdf_builder_canvas_'
+            $settings_to_save = [];
+            foreach ($_POST as $key => $value) {
+                if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    // Nettoyer et valider la valeur selon le type de champ
+                    $clean_value = '';
+                    if (is_array($value)) {
+                        $clean_value = array_map('sanitize_text_field', $value);
+                    } else {
+                        $clean_value = sanitize_text_field($value);
+                    }
+                    $settings_to_save[$key] = $clean_value;
+
+                    // Sauvegarder directement dans les options WordPress
+                    update_option($key, $clean_value);
+                }
+            }
+
+            if (empty($settings_to_save)) {
+                wp_send_json_error(['message' => 'Aucune donnée canvas à sauvegarder']);
+                return;
+            }
+
+            wp_send_json_success([
+                'message' => 'Paramètres canvas sauvegardés avec succès',
+                'category' => $category,
+                'saved_settings' => $settings_to_save
+            ]);
+
+        } catch (Exception $e) {
+            error_log('PDF Builder - Erreur sauvegarde canvas modal: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
      * Valider la clé de test
      */
     private function handleValidateLicenseKey()

@@ -522,24 +522,35 @@
                         'pdf_builder_canvas_error_reporting': 'errorReporting'
                     };
 
-                    // Fonction pour sauvegarder les toggles d'une modal (agressive : force la synchronisation)
-                    function saveModalToggles(category) {
+                    // Fonction pour sauvegarder tous les champs d'une modal (toggles + inputs/selects/textareas)
+                    function saveModalFields(category) {
                         var modalId = modalConfig[category];
                         if (!modalId) return;
 
                         var modal = document.getElementById(modalId);
                         if (!modal) return;
 
-                        var togglesForModal = modalToggles[category] || [];
-                        if (togglesForModal.length === 0) return;
-
                         // Synchronisation agressive : mettre à jour tous les hidden fields pour cette modal
+                        // 1. Les toggles (checkboxes)
+                        var togglesForModal = modalToggles[category] || [];
                         togglesForModal.forEach(function(toggleName) {
                             var modalInput = modal.querySelector('[name="' + toggleName + '"]');
                             if (modalInput && modalInput.type === 'checkbox') {
                                 var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + toggleName + ']"]');
                                 if (hiddenField) {
                                     hiddenField.value = modalInput.checked ? '1' : '0';
+                                    
+                                }
+                            }
+                        });
+
+                        // 2. Tous les autres champs input/select/textarea qui commencent par 'pdf_builder_canvas_'
+                        var allInputs = modal.querySelectorAll('input:not([type="checkbox"]):not([type="radio"]), select, textarea');
+                        allInputs.forEach(function(input) {
+                            if (input.name && input.name.trim() !== '' && input.name.startsWith('pdf_builder_canvas_')) {
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + input.name + ']"]');
+                                if (hiddenField) {
+                                    hiddenField.value = input.value || '';
                                     
                                 }
                             }
@@ -673,7 +684,7 @@
                         });
 
                         // Mettre à jour les hidden fields et fermer la modal (logique existante)
-                        saveModalToggles(category);
+                        saveModalFields(category);
                     }
 
                     // Initialisation des événements

@@ -2243,17 +2243,17 @@ function pdf_builder_check_template_limit_handler() {
  */
 function pdf_builder_check_advanced_systems_status() {
     $systems_status = array(
-        'intelligent_loader' => class_exists('PDF_Builder_Intelligent_Loader') ? PDF_Builder_Intelligent_Loader::get_instance() !== null : false,
-        'config_manager' => class_exists('PDF_Builder_Config_Manager') ? PDF_Builder_Config_Manager::get_instance() !== null : false,
-        'error_handler' => class_exists('PDF_Builder_Error_Handler') ? PDF_Builder_Error_Handler::get_instance() !== null : false,
-        'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') ? PDF_Builder_Analytics_Manager::get_instance() !== null : false,
-        'update_manager' => class_exists('PDF_Builder_Update_Manager') ? PDF_Builder_Update_Manager::get_instance() !== null : false,
-        'health_monitor' => class_exists('PDF_Builder_Health_Monitor') ? PDF_Builder_Health_Monitor::get_instance() !== null : false,
-        'api_manager' => class_exists('PDF_Builder_API_Manager') ? PDF_Builder_API_Manager::get_instance() !== null : false,
-        'user_manager' => class_exists('PDF_Builder_User_Manager') ? PDF_Builder_User_Manager::get_instance() !== null : false,
-        'license_manager' => class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager') ? \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance() !== null : false,
-        'integration_manager' => class_exists('PDF_Builder_Integration_Manager') ? PDF_Builder_Integration_Manager::get_instance() !== null : false,
-        'auto_update_manager' => class_exists('PDF_Builder_Auto_Update_Manager') ? PDF_Builder_Auto_Update_Manager::get_instance() !== null : false,
+        'intelligent_loader' => class_exists('PDF_Builder_Intelligent_Loader') && PDF_Builder_Intelligent_Loader::get_instance() !== null,
+        'config_manager' => class_exists('PDF_Builder_Config_Manager') && PDF_Builder_Config_Manager::get_instance() !== null,
+        'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
+        'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
+        'update_manager' => class_exists('PDF_Builder_Update_Manager') && PDF_Builder_Update_Manager::get_instance() !== null,
+        'health_monitor' => class_exists('PDF_Builder_Health_Monitor') && PDF_Builder_Health_Monitor::get_instance() !== null,
+        'api_manager' => class_exists('PDF_Builder_API_Manager') && PDF_Builder_API_Manager::get_instance() !== null,
+        'user_manager' => class_exists('PDF_Builder_User_Manager') && PDF_Builder_User_Manager::get_instance() !== null,
+        'license_manager' => class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager') && \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance() !== null,
+        'integration_manager' => class_exists('PDF_Builder_Integration_Manager') && PDF_Builder_Integration_Manager::get_instance() !== null,
+        'auto_update_manager' => class_exists('PDF_Builder_Auto_Update_Manager') && PDF_Builder_Auto_Update_Manager::get_instance() !== null,
     );
 
     $all_systems_loaded = !in_array(false, $systems_status, true);
