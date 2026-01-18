@@ -108,18 +108,17 @@ function pdf_builder_migrate_canvas_settings_ajax() {
         header('Content-Type: application/json');
     }
 
-    try {
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Permission refusée', 'pdf-builder-pro')]);
-            return;
-        }
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('Permission refusée', 'pdf-builder-pro')]);
+        return;
+    }
 
-        // Vérifier le nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_migrate_canvas_settings')) {
-            wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
-            return;
-        }
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_migrate_canvas_settings')) {
+        wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
+        return;
+    }
 
     try {
         // Vérifier que nous sommes dans un environnement WordPress valide
