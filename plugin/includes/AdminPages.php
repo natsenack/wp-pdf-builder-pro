@@ -1,37 +1,25 @@
 <?php
 /**
- * PDF Builder Pro V2 - Enregistrement des pages d'administration
+ * PDF Builder Pro - Enregistrement des pages d'administration
  */
 
-namespace PDFBuilderPro\V2;
-
-class AdminPages {
-    
-    public static function register() {
-        add_action('admin_menu', [self::class, 'add_menu_pages']);
-    }
-    
-    /**
-     * Ajoute les pages d'admin dans le menu WordPress
-     */
-    public static function add_menu_pages() {
-        // NE PAS CRÉER DE MENU PRINCIPAL - IL EXISTE DÉJÀ AILLEURS
-        // Uniquement ajouter la sous-page de migration
-        
-        // Sous-page: Migration Canvas
-        add_submenu_page(
-            'pdf-builder',
-            __('Migration Paramètres Canvas', 'pdf-builder-pro'),
-            __('Migration Canvas', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-migration',
-            function() {
-                include dirname(__DIR__) . '/migration_admin_page.php';
-            }
-        );
-    }
+// Fonction pour ajouter les pages admin
+function pdf_builder_add_migration_page() {
+    add_submenu_page(
+        'pdf-builder',
+        __('Migration Paramètres Canvas', 'pdf-builder-pro'),
+        __('Migration Canvas', 'pdf-builder-pro'),
+        'manage_options',
+        'pdf-builder-migration',
+        'pdf_builder_render_migration_page'
+    );
 }
 
-// Auto-register
-AdminPages::register();
+// Fonction pour rendre la page de migration
+function pdf_builder_render_migration_page() {
+    include plugin_dir_path(__FILE__) . '../migration_admin_page.php';
+}
+
+// Enregistrer le hook admin_menu
+add_action('admin_menu', 'pdf_builder_add_migration_page');
 
