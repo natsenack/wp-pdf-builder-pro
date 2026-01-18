@@ -133,6 +133,7 @@
 
         // Chargement des mappings
         private function load_mappings() {
+            require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
             $settings = PDF_Builder_Settings_Table::get_all_settings();
             error_log('[PDF Builder] settings-templates.php load_mappings - settings count: ' . count($settings));
             $raw_option = $settings['pdf_builder_order_status_templates'] ?? [];

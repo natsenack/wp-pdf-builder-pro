@@ -9,6 +9,7 @@ namespace PDF_Builder\Admin\Handlers;
 
 use Exception;
 use WP_Error;
+use PDF_Builder\Admin\PDF_Builder_Settings_Table;
 
 /**
  * Classe responsable de la gestion des appels AJAX

@@ -8,6 +8,8 @@
 define('WP_USE_THEMES', false);
 require_once dirname(__FILE__) . '/../../../wp-load.php';
 
+require_once dirname(__FILE__) . '/src/Admin/PDF_Builder_Settings_Table.php';
+
 require_once plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php';
 
 function migrate_pdf_builder_settings_to_custom_table() {

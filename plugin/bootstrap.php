@@ -126,6 +126,9 @@ function pdf_builder_diagnose_onboarding_manager() {
 if (function_exists('add_action')) {
     // Initialiser l'Onboarding Manager une fois WordPress chargé
     add_action('plugins_loaded', function() {
+        // Charger la classe de gestion des paramètres personnalisés
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Settings_Table.php';
+
         // Charger les utilitaires d'urgence si nécessaire
         pdf_builder_load_utilities_emergency();
 

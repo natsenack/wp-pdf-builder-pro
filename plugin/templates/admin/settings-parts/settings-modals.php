@@ -5,6 +5,8 @@
  * Created: 2025-12-12
  */
 
+require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+
 // Valeurs par défaut pour les champs Canvas
 $canvas_defaults = [
     'width' => '794',

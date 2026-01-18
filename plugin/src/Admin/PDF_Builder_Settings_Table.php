@@ -4,6 +4,8 @@
  * Crée la table wp_pdf_builder_settings pour stocker tous les paramètres du plugin
  */
 
+namespace PDF_Builder\Admin;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit;

@@ -1,7 +1,7 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
     // Récupération des paramètres depuis le tableau unifié
-    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
     $settings = PDF_Builder_Settings_Table::get_all_settings();
     error_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode'] ?? 'not set') . ', settings count: ' . count($settings));
 

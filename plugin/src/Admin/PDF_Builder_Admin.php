@@ -13,6 +13,7 @@ use PDF_Builder\Admin\Managers\SettingsManager;
 use PDF_Builder\Admin\Handlers\AjaxHandler;
 use PDF_Builder\Admin\Utils\Permissions;
 use PDF_Builder\Admin\Utils\Validation;
+use PDF_Builder\Admin\PDF_Builder_Settings_Table;
 use Exception;
 use PDF_Builder\Admin\Utils\Helpers;
 use PDF_Builder\Admin\Data\DataUtils;

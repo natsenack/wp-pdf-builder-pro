@@ -8,7 +8,7 @@
      */
 
     // Récupération sécurisée des paramètres
-    require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
     $settings = PDF_Builder_Settings_Table::get_all_settings();
     error_log('[PDF Builder] settings-general.php - Full settings from DB: ' . print_r($settings, true));
 

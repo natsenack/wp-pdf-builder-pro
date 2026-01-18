@@ -28,6 +28,8 @@ if (!$wp_load_found) {
     die("Erreur: Impossible de trouver wp-load.php. Chemins essayés:\n" . implode("\n", $possible_paths) . "\n");
 }
 
+require_once dirname(__FILE__) . '/src/Admin/PDF_Builder_Settings_Table.php';
+
 function alter_pdf_builder_settings_table() {
     global $wpdb;
 

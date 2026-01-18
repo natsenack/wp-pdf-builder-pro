@@ -5,6 +5,8 @@
      * Updated: 2025-12-03
      */
 
+    require_once plugin_dir_path(dirname(__FILE__, 4)) . 'src/Admin/PDF_Builder_Settings_Table.php';
+
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
     require_once plugin_dir_path(dirname(__FILE__, 3)) . 'src/Admin/PDF_Builder_Settings_Table.php';

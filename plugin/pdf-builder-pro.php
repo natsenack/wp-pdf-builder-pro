@@ -1068,6 +1068,9 @@ function pdf_builder_init()
         require_once $autoload_path;
     }
 
+    // Charger la classe de gestion des paramètres personnalisés
+    require_once plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php';
+
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
