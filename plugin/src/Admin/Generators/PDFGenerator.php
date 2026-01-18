@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - PDF Generator
@@ -48,10 +48,10 @@ class PDFGenerator
 
         // Récupérer les paramètres canvas
         $canvas_settings = [
-            'canvas_background_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
-            'canvas_border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
-            'canvas_border_width' => intval(get_option('pdf_builder_canvas_border_width', 1)),
-            'canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', false) == '1'
+            'canvas_background_color' => pdf_builder_get_option('pdf_builder_canvas_bg_color', '#ffffff'),
+            'canvas_border_color' => pdf_builder_get_option('pdf_builder_canvas_border_color', '#cccccc'),
+            'canvas_border_width' => intval(pdf_builder_get_option('pdf_builder_canvas_border_width', 1)),
+            'canvas_shadow_enabled' => pdf_builder_get_option('pdf_builder_canvas_shadow_enabled', false) == '1'
         ];
 
         // Utiliser notre générateur PDF personnalisé avec les paramètres canvas
@@ -90,12 +90,12 @@ class PDFGenerator
 
             $html_content = $this->admin->generateUnifiedHtml($template_data, $order);
             // Récupérer les paramètres PDF depuis les options
-            $pdf_quality = get_option('pdf_builder_pdf_quality', 'high');
-            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
-            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
-            $pdf_compression = get_option('pdf_builder_pdf_compression', 'medium');
-            $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
-            $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
+            $pdf_quality = pdf_builder_get_option('pdf_builder_pdf_quality', 'high');
+            $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
+            $pdf_compression = pdf_builder_get_option('pdf_builder_pdf_compression', 'medium');
+            $pdf_metadata_enabled = pdf_builder_get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
+            $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
             // Utiliser Dompdf pour générer le PDF
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
@@ -225,4 +225,5 @@ class PDFGenerator
         return true;
     }
 }
+
 

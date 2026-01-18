@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -298,8 +298,8 @@ class PdfBuilderScreenshotRenderer
             require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
 
             // Récupérer les paramètres PDF depuis les options
-            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
-            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+            $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
 
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
             $options = new Dompdf\Options();
@@ -333,4 +333,5 @@ class PdfBuilderScreenshotRenderer
         ];
     }
 }
+
 

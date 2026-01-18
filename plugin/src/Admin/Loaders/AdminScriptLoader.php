@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Admin Script Loader
@@ -136,7 +136,7 @@ class AdminScriptLoader
             }
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour les notifications
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -173,7 +173,7 @@ class AdminScriptLoader
             ]);
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour settings-tabs
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -294,7 +294,7 @@ class AdminScriptLoader
         ]);
 
         // Définir les paramètres de debug JavaScript UNIQUEMENT pour l'éditeur React
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $debug_settings = [
             'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
             'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -360,7 +360,7 @@ class AdminScriptLoader
         }
 
         // Ajouter les options disponibles pour les sélecteurs (DPI, formats, orientations)
-        $available_dpi_string = get_option('pdf_builder_canvas_dpi', '72,96,150');
+        $available_dpi_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '72,96,150');
         if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== false) {
             $available_dpis = explode(',', $available_dpi_string);
         } elseif (is_array($available_dpi_string)) {
@@ -370,7 +370,7 @@ class AdminScriptLoader
         }
         $available_dpis = array_map('strval', $available_dpis);
 
-        $available_formats_string = get_option('pdf_builder_canvas_formats', 'A4');
+        $available_formats_string = pdf_builder_get_option('pdf_builder_canvas_formats', 'A4');
         if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
             $available_formats = explode(',', $available_formats_string);
         } elseif (is_array($available_formats_string)) {
@@ -380,7 +380,7 @@ class AdminScriptLoader
         }
         $available_formats = array_map('strval', $available_formats);
 
-        $available_orientations_string = get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
+        $available_orientations_string = pdf_builder_get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
         if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
             $available_orientations = explode(',', $available_orientations_string);
         } elseif (is_array($available_orientations_string)) {
@@ -620,4 +620,5 @@ class AdminScriptLoader
         return $content;
     }
 }
+
 

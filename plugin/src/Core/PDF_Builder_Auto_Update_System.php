@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de mise à jour automatique
  * Gère les mises à jour du plugin de manière sécurisée et automatique
@@ -460,7 +460,7 @@ class PDF_Builder_Auto_Update_System {
      * Met à jour la version du plugin
      */
     private function update_plugin_version($version) {
-        update_option('pdf_builder_version', $version);
+        pdf_builder_update_option('pdf_builder_version', $version);
 
         // Mettre à jour la constante si elle est définie
         if (defined('PDF_BUILDER_VERSION')) {
@@ -607,11 +607,11 @@ class PDF_Builder_Auto_Update_System {
      * Obtient le token API pour l'authentification
      */
     private function get_api_token() {
-        $token = get_option('pdf_builder_api_token');
+        $token = pdf_builder_get_option('pdf_builder_api_token');
 
         if (!$token) {
             $token = wp_generate_password(32, false);
-            update_option('pdf_builder_api_token', $token);
+            pdf_builder_update_option('pdf_builder_api_token', $token);
         }
 
         return $token;
@@ -876,4 +876,5 @@ function pdf_builder_get_updates() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Auto_Update_System::get_instance();
 });
+
 

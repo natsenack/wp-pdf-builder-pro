@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Gestionnaire de mises à jour automatiques
  * Gère les mises à jour automatiques, correctifs de sécurité et maintenance
@@ -190,7 +190,7 @@ class PDF_Builder_Auto_Update_Manager {
             $response = $this->call_update_api('check', [
                 'current_version' => PDF_BUILDER_VERSION,
                 'site_url' => get_site_url(),
-                'license_key' => get_option('pdf_builder_license_key'),
+                'license_key' => pdf_builder_get_option('pdf_builder_license_key'),
                 'php_version' => PHP_VERSION,
                 'wp_version' => get_bloginfo('version')
             ]);
@@ -259,7 +259,7 @@ class PDF_Builder_Auto_Update_Manager {
             $response = $this->call_security_api('check', [
                 'current_version' => PDF_BUILDER_VERSION,
                 'site_url' => get_site_url(),
-                'license_key' => get_option('pdf_builder_license_key')
+                'license_key' => pdf_builder_get_option('pdf_builder_license_key')
             ]);
 
             if ($response['success']) {
@@ -453,7 +453,7 @@ class PDF_Builder_Auto_Update_Manager {
     private function get_update_download_url($update) {
         $response = $this->call_update_api('download_url', [
             'update_id' => $update['id'],
-            'license_key' => get_option('pdf_builder_license_key'),
+            'license_key' => pdf_builder_get_option('pdf_builder_license_key'),
             'site_url' => get_site_url()
         ]);
 
@@ -846,7 +846,7 @@ class PDF_Builder_Auto_Update_Manager {
         // Retourner les informations du plugin depuis l'API
         try {
             $response = $this->call_update_api('info', [
-                'license_key' => get_option('pdf_builder_license_key'),
+                'license_key' => pdf_builder_get_option('pdf_builder_license_key'),
                 'site_url' => get_site_url()
             ]);
 
@@ -1205,4 +1205,5 @@ function pdf_builder_get_security_patches() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Auto_Update_Manager::get_instance();
 });
+
 

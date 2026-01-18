@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de métriques et analyses avancées
  * Collecte et analyse les métriques de performance et d'utilisation
@@ -716,7 +716,7 @@ class PDF_Builder_Metrics_Analytics {
         ];
 
         // Sauvegarder le rapport
-        update_option('pdf_builder_weekly_report', $report);
+        pdf_builder_update_option('pdf_builder_weekly_report', $report);
 
         // Legacy notification calls removed — replaced by logger info
         PDF_Builder_Logger::get_instance()->info('Rapport hebdomadaire généré: Le rapport d\'analyse hebdomadaire est disponible dans le tableau de bord.', ['report' => $report]);
@@ -735,7 +735,7 @@ class PDF_Builder_Metrics_Analytics {
         ];
 
         // Sauvegarder le rapport
-        update_option('pdf_builder_monthly_report', $report);
+        pdf_builder_update_option('pdf_builder_monthly_report', $report);
 
         // Legacy notification calls removed — replaced by logger info
         PDF_Builder_Logger::get_instance()->info('Rapport mensuel généré: Le rapport d\'analyse mensuel est disponible dans le tableau de bord.', ['report' => $report]);
@@ -879,4 +879,5 @@ add_action('shutdown', function() {
         PDF_Builder_Metrics_Analytics::get_instance()->flush_metric_buffer();
     }
 });
+
 

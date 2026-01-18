@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Gestionnaire de configuration
  * Centralise la gestion de tous les paramètres et options du plugin
@@ -131,7 +131,7 @@ class PDF_Builder_Global_Config_Manager {
      * Charge la configuration depuis la base de données
      */
     private function load_config() {
-        $saved_config = get_option('pdf_builder_config', []);
+        $saved_config = pdf_builder_get_option('pdf_builder_config', []);
 
         // Fusionner avec les valeurs par défaut
         $this->config = array_merge($this->defaults, $saved_config);
@@ -153,7 +153,7 @@ class PDF_Builder_Global_Config_Manager {
         $this->config = array_merge($this->config, $validated_config);
 
         // Sauvegarder en base
-        update_option('pdf_builder_config', $this->config);
+        pdf_builder_update_option('pdf_builder_config', $this->config);
 
         // Logger la modification
         if (class_exists('PDF_Builder_Logger')) {
@@ -176,7 +176,7 @@ class PDF_Builder_Global_Config_Manager {
      */
     public function reset_config() {
         $this->config = $this->defaults;
-        update_option('pdf_builder_config', $this->config);
+        pdf_builder_update_option('pdf_builder_config', $this->config);
 
         // Logger la réinitialisation
         if (class_exists('PDF_Builder_Logger')) {
@@ -540,4 +540,5 @@ function pdf_builder_health_check() {
 
 // Initialisation différée - l'instance sera créée quand nécessaire
 // PDF_Builder_Global_Config_Manager::get_instance();
+
 

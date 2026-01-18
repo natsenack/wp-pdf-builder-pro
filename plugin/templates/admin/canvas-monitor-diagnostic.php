@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Outil de diagnostic pour le système de monitoring des cartes canvas
  * Permet de vérifier l'état du système et diagnostiquer les problèmes
@@ -14,7 +14,7 @@ if (!current_user_can('manage_options')) {
     wp_die('Permissions insuffisantes');
 }
 
-$settings = get_option('pdf_builder_settings', array());
+$settings = pdf_builder_get_option('pdf_builder_settings', array());
 
 // Fonction pour analyser l'état du système
 function analyze_canvas_monitoring_system($settings) {
@@ -311,4 +311,5 @@ function exportCanvasSettings() {
 </style>
 <?php</content>
 <parameter name="filePath">i:\wp-pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php
+
 

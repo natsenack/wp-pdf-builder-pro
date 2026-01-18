@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Templates AJAX Handler
@@ -588,7 +588,7 @@ class PdfBuilderTemplatesAjax
             }
 
             // Sauvegarder dans les options WordPress
-            update_option('pdf_builder_order_status_templates', $clean_data);
+            pdf_builder_update_option('pdf_builder_order_status_templates', $clean_data);
 
             wp_send_json_success(array(
                 'message' => 'Mappings des templates sauvegardés avec succès',
@@ -603,4 +603,5 @@ class PdfBuilderTemplatesAjax
 
 // Initialiser le handler AJAX
 new PdfBuilderTemplatesAjax();
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Gestion des utilisateurs et permissions
  * Contrôle l'accès aux fonctionnalités selon les rôles et permissions
@@ -192,7 +192,7 @@ class PDF_Builder_User_Manager {
      * Charge les capacités utilisateur
      */
     private function load_user_capabilities() {
-        $this->user_capabilities = get_option('pdf_builder_user_capabilities', []);
+        $this->user_capabilities = pdf_builder_get_option('pdf_builder_user_capabilities', []);
     }
 
     /**
@@ -749,4 +749,5 @@ function pdf_builder_check_access($capability, $context = null) {
 add_action('plugins_loaded', function() {
     PDF_Builder_User_Manager::get_instance();
 });
+
 

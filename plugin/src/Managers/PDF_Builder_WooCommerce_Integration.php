@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -167,7 +167,7 @@ class PDF_Builder_WooCommerce_Integration
         $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
 
         // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
         $status_key = 'wc-' . $order_status;
         $selected_template = null;
@@ -418,7 +418,7 @@ class PDF_Builder_WooCommerce_Integration
             $valid_statuses = function_exists('wc_get_order_statuses') ? array_keys(\wc_get_order_statuses()) : [];
 
             // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
             $configured_statuses = array_keys($status_templates);
             $valid_statuses = array_merge($valid_statuses, $configured_statuses);
@@ -432,21 +432,21 @@ class PDF_Builder_WooCommerce_Integration
 
             // Charger le template
             if ($template_id > 0) {
-                $templates = get_option('pdf_builder_templates', []);
+                $templates = pdf_builder_get_option('pdf_builder_templates', []);
                 $template_data = isset($templates[$template_id]) ? $templates[$template_id] : null;
             } else {
                 // Détecter automatiquement le template basé sur le statut de la commande
                 $order_status = $order->get_status();
-                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_templates = pdf_builder_get_option('pdf_builder_order_status_templates', []);
                 $status_key = 'wc-' . $order_status;
 
                 if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
                     $mapped_template_id = $status_templates[$status_key];
-                    $templates = get_option('pdf_builder_templates', []);
+                    $templates = pdf_builder_get_option('pdf_builder_templates', []);
                     $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
                 } else {
                     // Template par défaut - prendre le premier template disponible
-                    $templates = get_option('pdf_builder_templates', []);
+                    $templates = pdf_builder_get_option('pdf_builder_templates', []);
                     $template_data = !empty($templates) ? reset($templates) : null;
                 }
             }
@@ -551,7 +551,7 @@ class PDF_Builder_WooCommerce_Integration
 
         // Détecter automatiquement le template basé sur le statut de la commande
         $order_status = $order->get_status();
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
         $status_key = 'wc-' . $order_status;
 
@@ -560,7 +560,7 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         // Template par défaut - prendre le premier template disponible
-        $templates = get_option('pdf_builder_templates', []);
+        $templates = pdf_builder_get_option('pdf_builder_templates', []);
         if (!empty($templates)) {
             $first_template = reset($templates);
             return $first_template['id'] ?? null;
@@ -1243,7 +1243,7 @@ class PDF_Builder_WooCommerce_Integration
             // Récupérer les éléments depuis le cache ou la base de données
             // ✅ RESPECT DU SETTING CACHE: Only use transient if cache is enabled in settings
             $cache_key = 'pdf_builder_canvas_elements_' . $template_id;
-            $cache_enabled = !empty(get_option('pdf_builder_settings', array())['cache_enabled']);
+            $cache_enabled = !empty(pdf_builder_get_option('pdf_builder_settings', array())['cache_enabled']);
             $canvas_elements = false;
             
             if ($cache_enabled) {
@@ -1432,7 +1432,7 @@ class PDF_Builder_WooCommerce_Integration
         $valid_statuses = function_exists('wc_get_order_statuses') ? array_keys(\wc_get_order_statuses()) : [];
 
         // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
         $configured_statuses = array_keys($status_templates);
         $valid_statuses = array_merge($valid_statuses, $configured_statuses);
@@ -1643,12 +1643,12 @@ class PDF_Builder_WooCommerce_Integration
                     get_option('woocommerce_store_postcode') . ' ' .
                     get_option('woocommerce_store_city')
                 ),
-                'phone' => get_option('woocommerce_phone') ?: get_option('pdf_builder_company_phone'),
+                'phone' => get_option('woocommerce_phone') ?: pdf_builder_get_option('pdf_builder_company_phone'),
                 'email' => get_option('woocommerce_email_from_address'),
                 'website' => get_option('siteurl'), // URL du site WordPress
-                'vat' => get_option('pdf_builder_company_vat'),
-                'rcs' => get_option('pdf_builder_company_rcs'),
-                'siret' => get_option('pdf_builder_company_siret')
+                'vat' => pdf_builder_get_option('pdf_builder_company_vat'),
+                'rcs' => pdf_builder_get_option('pdf_builder_company_rcs'),
+                'siret' => pdf_builder_get_option('pdf_builder_company_siret')
             ];
 
             // Nettoyer les données vides
@@ -1709,4 +1709,5 @@ class PDF_Builder_WooCommerce_Integration
         return implode("\n", $address_parts);
     }
 }
+
 

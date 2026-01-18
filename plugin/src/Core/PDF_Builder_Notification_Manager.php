@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Notification Manager
  * Système centralisé de gestion des notifications
@@ -53,12 +53,12 @@ class PDF_Builder_Notification_Manager {
      */
     private function init_settings() {
         $this->settings = [
-            'enabled' => get_option('pdf_builder_notifications_enabled', true),
-            'position' => get_option('pdf_builder_notifications_position', 'top-right'),
-            'duration' => get_option('pdf_builder_notifications_duration', 5000),
-            'max_notifications' => get_option('pdf_builder_notifications_max', 5),
-            'animation' => get_option('pdf_builder_notifications_animation', 'slide'),
-            'sound_enabled' => get_option('pdf_builder_notifications_sound', false),
+            'enabled' => pdf_builder_get_option('pdf_builder_notifications_enabled', true),
+            'position' => pdf_builder_get_option('pdf_builder_notifications_position', 'top-right'),
+            'duration' => pdf_builder_get_option('pdf_builder_notifications_duration', 5000),
+            'max_notifications' => pdf_builder_get_option('pdf_builder_notifications_max', 5),
+            'animation' => pdf_builder_get_option('pdf_builder_notifications_animation', 'slide'),
+            'sound_enabled' => pdf_builder_get_option('pdf_builder_notifications_sound', false),
             'types' => [
                 'success' => ['icon' => '✅', 'color' => '#28a745', 'bg' => '#d4edda'],
                 'error' => ['icon' => '❌', 'color' => '#dc3545', 'bg' => '#f8d7da'],
@@ -310,7 +310,7 @@ class PDF_Builder_Notification_Manager {
 
         // Sauvegarder en base
         foreach ($new_settings as $key => $value) {
-            update_option('pdf_builder_notifications_' . $key, $value);
+            pdf_builder_update_option('pdf_builder_notifications_' . $key, $value);
         }
     }
 
@@ -326,7 +326,7 @@ class PDF_Builder_Notification_Manager {
      */
     public function disable() {
         $this->settings['enabled'] = false;
-        update_option('pdf_builder_notifications_enabled', false);
+        pdf_builder_update_option('pdf_builder_notifications_enabled', false);
     }
 
     /**
@@ -334,7 +334,7 @@ class PDF_Builder_Notification_Manager {
      */
     public function enable() {
         $this->settings['enabled'] = true;
-        update_option('pdf_builder_notifications_enabled', true);
+        pdf_builder_update_option('pdf_builder_notifications_enabled', true);
     }
 }
 
@@ -359,4 +359,5 @@ function pdf_builder_notify_warning($message, $options = []) {
 function pdf_builder_notify_info($message, $options = []) {
     return pdf_builder_notifications()->info($message, $options);
 }
+
 

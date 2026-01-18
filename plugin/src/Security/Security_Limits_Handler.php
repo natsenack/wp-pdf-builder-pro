@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Gestionnaire des limites de sécurité
@@ -39,7 +39,7 @@ class Security_Limits_Handler
         }
 
         // Appliquer la limite mémoire depuis les paramètres canvas
-        $memory_limit_mb = intval(get_option('pdf_builder_canvas_memory_limit_php', 256));
+        $memory_limit_mb = intval(pdf_builder_get_option('pdf_builder_canvas_memory_limit_php', 256));
         $memory_limit = $memory_limit_mb . 'M';
 
         if (!empty($memory_limit)) {
@@ -53,7 +53,7 @@ class Security_Limits_Handler
      */
     public static function validateUploadSize($size)
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $max_template_size = isset($settings['max_template_size'])
             ? intval($settings['max_template_size'])
             : 52428800;
@@ -72,7 +72,7 @@ class Security_Limits_Handler
      */
     public static function validateTemplateSize($template_data)
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $max_template_size = isset($settings['max_template_size'])
             ? intval($settings['max_template_size'])
             : 52428800;
@@ -99,12 +99,12 @@ class Security_Limits_Handler
      */
     public static function getLimitsInfo()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         return [
             'max_execution_time' => isset($settings['max_execution_time'])
                 ? intval($settings['max_execution_time'])
                 : 300,
-            'memory_limit' => intval(get_option('pdf_builder_canvas_memory_limit_php', 256)) . 'M',
+            'memory_limit' => intval(pdf_builder_get_option('pdf_builder_canvas_memory_limit_php', 256)) . 'M',
             'max_template_size' => isset($settings['max_template_size'])
                 ? intval($settings['max_template_size'])
                 : 52428800,
@@ -117,4 +117,5 @@ class Security_Limits_Handler
 
 // Initialiser au chargement
 Security_Limits_Handler::init();
+
 

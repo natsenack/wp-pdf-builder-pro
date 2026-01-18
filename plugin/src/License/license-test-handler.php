@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * License Test Handler - Gère la génération et validation des clés de test de licence
@@ -112,7 +112,7 @@ class LicenseTestHandler
      */
     public function saveTestKey($key)
     {
-        return update_option('pdf_builder_license_test_key', sanitize_text_field($key));
+        return pdf_builder_update_option('pdf_builder_license_test_key', sanitize_text_field($key));
     }
 
     /**
@@ -122,7 +122,7 @@ class LicenseTestHandler
      */
     public function getTestKey()
     {
-        return get_option('pdf_builder_license_test_key', false);
+        return pdf_builder_get_option('pdf_builder_license_test_key', false);
     }
 
     /**
@@ -133,7 +133,7 @@ class LicenseTestHandler
      */
     public function setTestModeEnabled($enabled)
     {
-        return update_option('pdf_builder_license_test_mode_enabled', (bool) $enabled);
+        return pdf_builder_update_option('pdf_builder_license_test_mode_enabled', (bool) $enabled);
     }
 
     /**
@@ -143,7 +143,7 @@ class LicenseTestHandler
      */
     public function isTestModeEnabled()
     {
-        return (bool) get_option('pdf_builder_license_test_mode_enabled', false);
+        return (bool) pdf_builder_get_option('pdf_builder_license_test_mode_enabled', false);
     }
 
     /**
@@ -188,7 +188,7 @@ class LicenseTestHandler
 
             // Sauvegarder la date d'expiration (30 jours)
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
-            update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
+            pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
             
 
             // Retourner la clé générée (compatibilité: key + license_key)
@@ -311,7 +311,7 @@ class LicenseTestHandler
                 $test_key = $this->generateTestKey();
                 $this->saveTestKey($test_key);
                 $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
-                update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
+                pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
                 error_log('[PDF Builder] handleToggleTestMode: clé de test générée = ' . substr($test_key, 0, 10) . '...');
             }
             
@@ -371,7 +371,7 @@ class LicenseTestHandler
             // Supprimer la clé de test et l'expiration / désactiver le mode test
             delete_option('pdf_builder_license_test_key');
             delete_option('pdf_builder_license_test_key_expires');
-            update_option('pdf_builder_license_test_mode_enabled', false);
+            pdf_builder_update_option('pdf_builder_license_test_mode_enabled', false);
 
             // Retourner la confirmation
             wp_send_json_success([
@@ -409,7 +409,7 @@ class LicenseTestHandler
             error_log('[PDF Builder] license-test-handler.php - Starting cleanup');
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
             error_log('[PDF Builder] license-test-handler.php - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO'));
 
@@ -434,7 +434,7 @@ class LicenseTestHandler
             }
 
             // Définir l'état clean
-            update_option('pdf_builder_license_status', 'free');
+            pdf_builder_update_option('pdf_builder_license_status', 'free');
             error_log('[PDF Builder] license-test-handler.php - Set license status to free');
 
             wp_send_json_success([
@@ -448,4 +448,5 @@ class LicenseTestHandler
         }
     }
 }
+
 

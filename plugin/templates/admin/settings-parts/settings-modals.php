@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Canvas Settings Modals
  * Modal dialogs for canvas configuration
@@ -47,7 +47,7 @@ $canvas_defaults = [
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
     // Récupérer depuis l'option unifiée pdf_builder_settings
-    $settings = get_option('pdf_builder_settings', []);
+    $settings = pdf_builder_get_option('pdf_builder_settings', []);
     $option_key = 'pdf_builder_' . $key;
 
     $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
@@ -1015,6 +1015,7 @@ function closeUpgradeModal() {
 </script>
 
 <?php
+
 
 
 

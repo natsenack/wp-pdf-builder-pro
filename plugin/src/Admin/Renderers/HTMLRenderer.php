@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - HTML Renderer
@@ -468,7 +468,7 @@ class HTMLRenderer
     public function formatCompleteCompanyInfo()
     {
         // Essayer d'abord de récupérer depuis l'option personnalisée
-        $company_info = get_option('pdf_builder_company_info', '');
+        $company_info = pdf_builder_get_option('pdf_builder_company_info', '');
 // Si les informations sont configurées manuellement, les utiliser
         if (!empty($company_info)) {
             return $company_info;
@@ -639,5 +639,6 @@ class HTMLRenderer
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }
 }
+
 
 

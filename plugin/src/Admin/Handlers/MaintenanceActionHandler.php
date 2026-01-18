@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * MaintenanceActionHandler - Gestion des actions de maintenance
@@ -69,7 +69,7 @@ class MaintenanceActionHandler
      */
     public function performRepairTemplates()
     {
-        $templates = get_option('pdf_builder_templates', []);
+        $templates = pdf_builder_get_option('pdf_builder_templates', []);
         $repaired_count = 0;
         
         if (is_array($templates)) {
@@ -82,7 +82,7 @@ class MaintenanceActionHandler
             }
         }
 
-        update_option('pdf_builder_templates', $templates);
+        pdf_builder_update_option('pdf_builder_templates', $templates);
         
         return array(
             'success' => true,
@@ -130,4 +130,5 @@ class MaintenanceActionHandler
         );
     }
 }
+
 

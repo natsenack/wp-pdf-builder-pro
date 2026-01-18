@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Système de Reporting Avancé pour PDF Builder Pro
  *
@@ -376,9 +376,9 @@ class PDF_Builder_Reporting_System {
 
         $stats = array(
             'total_templates' => intval($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pdf_builder_templates")),
-            'total_pdfs_generated' => intval(get_option('pdf_builder_total_pdfs', 0)),
+            'total_pdfs_generated' => intval(pdf_builder_get_option('pdf_builder_total_pdfs', 0)),
             'active_users' => count(get_users(array('meta_key' => 'pdf_builder_last_activity', 'meta_compare' => '>', 'meta_value' => strtotime('-30 days')))),
-            'total_logins' => intval(get_option('pdf_builder_total_logins', 0)),
+            'total_logins' => intval(pdf_builder_get_option('pdf_builder_total_logins', 0)),
         );
 
         return $stats;
@@ -386,10 +386,10 @@ class PDF_Builder_Reporting_System {
 
     private function get_security_status() {
         return array(
-            'failed_logins' => intval(get_option('pdf_builder_failed_logins', 0)),
-            'blocked_ips' => count(get_option('pdf_builder_blocked_ips', array())),
-            'security_scans' => intval(get_option('pdf_builder_security_scans', 0)),
-            'last_security_scan' => get_option('pdf_builder_last_security_scan', 'Never'),
+            'failed_logins' => intval(pdf_builder_get_option('pdf_builder_failed_logins', 0)),
+            'blocked_ips' => count(pdf_builder_get_option('pdf_builder_blocked_ips', array())),
+            'security_scans' => intval(pdf_builder_get_option('pdf_builder_security_scans', 0)),
+            'last_security_scan' => pdf_builder_get_option('pdf_builder_last_security_scan', 'Never'),
             'ssl_enabled' => is_ssl(),
             'wp_debug' => defined('WP_DEBUG') && WP_DEBUG,
         );
@@ -402,19 +402,19 @@ class PDF_Builder_Reporting_System {
             'table_count' => count($wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}%'")),
             'database_size' => $this->get_database_size(),
             'connection_status' => $this->check_database_connection(),
-            'slow_queries' => intval(get_option('pdf_builder_slow_queries', 0)),
+            'slow_queries' => intval(pdf_builder_get_option('pdf_builder_slow_queries', 0)),
             'orphaned_data' => $this->check_orphaned_data(),
         );
     }
 
     private function get_cache_status() {
-        $cache_metrics = get_option('pdf_builder_cache_metrics', array());
+        $cache_metrics = pdf_builder_get_option('pdf_builder_cache_metrics', array());
 
         return array(
-            'enabled' => get_option('pdf_builder_cache_enabled', '0') === '1',
+            'enabled' => pdf_builder_get_option('pdf_builder_cache_enabled', '0') === '1',
             'size' => $cache_metrics['size'] ?? 0,
             'hit_ratio' => $this->calculate_hit_ratio($cache_metrics),
-            'compression_enabled' => get_option('pdf_builder_cache_compression', '0') === '1',
+            'compression_enabled' => pdf_builder_get_option('pdf_builder_cache_compression', '0') === '1',
             'last_cleanup' => $cache_metrics['last_cleanup'] ?? 0,
         );
     }
@@ -452,7 +452,7 @@ class PDF_Builder_Reporting_System {
 
     private function get_average_response_time() {
         // Calcul basé sur les métriques stockées
-        $response_times = get_option('pdf_builder_response_times', array());
+        $response_times = pdf_builder_get_option('pdf_builder_response_times', array());
         if (empty($response_times)) {
             return 0;
         }
@@ -460,7 +460,7 @@ class PDF_Builder_Reporting_System {
     }
 
     private function get_cache_hit_ratio() {
-        $metrics = get_option('pdf_builder_cache_metrics', array());
+        $metrics = pdf_builder_get_option('pdf_builder_cache_metrics', array());
         $hits = $metrics['hits'] ?? 0;
         $misses = $metrics['misses'] ?? 0;
         $total = $hits + $misses;
@@ -598,7 +598,7 @@ class PDF_Builder_Reporting_System {
         file_put_contents($reports_dir . $filename, $report);
 
         // Envoyer par email si configuré
-        $email_recipient = get_option('pdf_builder_report_email', '');
+        $email_recipient = pdf_builder_get_option('pdf_builder_report_email', '');
         if (!empty($email_recipient)) {
             wp_mail(
                 $email_recipient,
@@ -624,4 +624,5 @@ class PDF_Builder_Reporting_System {
     private function format_csv_report($report) { return 'CSV format not implemented yet'; }
     private function format_json_report($report) { return json_encode($report); }
 }
+
 

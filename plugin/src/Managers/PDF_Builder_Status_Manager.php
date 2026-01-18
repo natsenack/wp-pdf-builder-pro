@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -192,9 +192,9 @@ class PdfBuilderStatusManager
         }
 
         // Sauvegarder les nouveaux mappings
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $settings['pdf_builder_order_status_templates'] = $current_mappings;
-        update_option('pdf_builder_settings', $settings);
+        pdf_builder_update_option('pdf_builder_settings', $settings);
 
         return $settings;
     }
@@ -235,7 +235,7 @@ class PdfBuilderStatusManager
     public function getStatusMappings()
     {
         if ($this->status_mappings === null) {
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $this->status_mappings = $settings['pdf_builder_order_status_templates'] ?? [];
         }
         return $this->status_mappings;
@@ -358,4 +358,5 @@ class PdfBuilderStatusManager
         return $info;
     }
 }
+
 

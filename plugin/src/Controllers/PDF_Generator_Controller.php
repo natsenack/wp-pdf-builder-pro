@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Generateur PDF Ultra-Performant avec Dompdf
@@ -496,35 +496,35 @@ class PdfBuilderProGenerator
                     $mention_parts = [];
 
                     if ($show_email) {
-                        $email = get_option('pdf_builder_company_email', '');
+                        $email = pdf_builder_get_option('pdf_builder_company_email', '');
                         if ($email) {
                             $mention_parts[] = esc_html($email);
                         }
                     }
 
                     if ($show_phone) {
-                        $phone = get_option('pdf_builder_company_phone', '');
+                        $phone = pdf_builder_get_option('pdf_builder_company_phone', '');
                         if ($phone) {
                             $mention_parts[] = esc_html($phone);
                         }
                     }
 
                     if ($show_siret) {
-                        $siret = get_option('pdf_builder_company_siret', '');
+                        $siret = pdf_builder_get_option('pdf_builder_company_siret', '');
                         if ($siret) {
                             $mention_parts[] = 'SIRET ' . esc_html($siret);
                         }
                     }
 
                     if ($show_vat) {
-                        $vat = get_option('pdf_builder_company_vat', '');
+                        $vat = pdf_builder_get_option('pdf_builder_company_vat', '');
                         if ($vat) {
                             $mention_parts[] = 'TVA ' . esc_html($vat);
                         }
                     }
 
                     if ($show_address) {
-                        $address = get_option('pdf_builder_company_address', '');
+                        $address = pdf_builder_get_option('pdf_builder_company_address', '');
                         if ($address) {
                             $mention_parts[] = esc_html($address);
                         }
@@ -804,11 +804,11 @@ class PdfBuilderProGenerator
         // Variables de compagnie (toujours disponibles)
         $company_replacements = array(
             '{{company_name}}' => get_bloginfo('name'),
-            '{{company_email}}' => get_option('pdf_builder_company_email', ''),
-            '{{company_phone}}' => get_option('pdf_builder_company_phone', ''),
-            '{{company_siret}}' => get_option('pdf_builder_company_siret', ''),
-            '{{company_vat}}' => get_option('pdf_builder_company_vat', ''),
-            '{{company_address}}' => get_option('pdf_builder_company_address', ''),
+            '{{company_email}}' => pdf_builder_get_option('pdf_builder_company_email', ''),
+            '{{company_phone}}' => pdf_builder_get_option('pdf_builder_company_phone', ''),
+            '{{company_siret}}' => pdf_builder_get_option('pdf_builder_company_siret', ''),
+            '{{company_vat}}' => pdf_builder_get_option('pdf_builder_company_vat', ''),
+            '{{company_address}}' => pdf_builder_get_option('pdf_builder_company_address', ''),
             '{{company_info}}' => $this->formatCompleteCompanyInfo(),
         );
 
@@ -900,7 +900,7 @@ class PdfBuilderProGenerator
      */
     private function formatCompleteCompanyInfo()
     {
-        $company_info = get_option('pdf_builder_company_info', '');
+        $company_info = pdf_builder_get_option('pdf_builder_company_info', '');
         if (!empty($company_info)) {
             return $company_info;
         }
@@ -912,17 +912,17 @@ class PdfBuilderProGenerator
         }
 
         $address_parts = [];
-        $company_address = get_option('pdf_builder_company_address', '');
+        $company_address = pdf_builder_get_option('pdf_builder_company_address', '');
         if (!empty($company_address)) {
             $address_parts[] = $company_address;
         }
 
-        $company_city = get_option('pdf_builder_company_city', '');
+        $company_city = pdf_builder_get_option('pdf_builder_company_city', '');
         if (!empty($company_city)) {
             $address_parts[] = $company_city;
         }
 
-        $company_postcode = get_option('pdf_builder_company_postcode', '');
+        $company_postcode = pdf_builder_get_option('pdf_builder_company_postcode', '');
         if (!empty($company_postcode)) {
             $address_parts[] = $company_postcode;
         }
@@ -931,22 +931,22 @@ class PdfBuilderProGenerator
             $company_parts = array_merge($company_parts, $address_parts);
         }
 
-        $company_email = get_option('pdf_builder_company_email', '');
+        $company_email = pdf_builder_get_option('pdf_builder_company_email', '');
         if (!empty($company_email)) {
             $company_parts[] = $company_email;
         }
 
-        $company_phone = get_option('pdf_builder_company_phone', '');
+        $company_phone = pdf_builder_get_option('pdf_builder_company_phone', '');
         if (!empty($company_phone)) {
             $company_parts[] = $company_phone;
         }
 
-        $company_siret = get_option('pdf_builder_company_siret', '');
+        $company_siret = pdf_builder_get_option('pdf_builder_company_siret', '');
         if (!empty($company_siret)) {
             $company_parts[] = 'SIRET: ' . $company_siret;
         }
 
-        $company_vat = get_option('pdf_builder_company_vat', '');
+        $company_vat = pdf_builder_get_option('pdf_builder_company_vat', '');
         if (!empty($company_vat)) {
             $company_parts[] = 'TVA: ' . $company_vat;
         }
@@ -961,19 +961,19 @@ class PdfBuilderProGenerator
     {
         return [
             'name' => get_bloginfo('name') ?: '',
-            'address' => get_option('pdf_builder_company_address', ''),
-            'city' => get_option('pdf_builder_company_city', ''),
-            'postcode' => get_option('pdf_builder_company_postcode', ''),
-            'country' => get_option('pdf_builder_company_country', ''),
-            'phone' => get_option('pdf_builder_company_phone', ''),
-            'email' => get_option('pdf_builder_company_email', ''),
-            'website' => get_option('pdf_builder_company_website', ''),
-            'vat' => get_option('pdf_builder_company_vat', ''),
-            'siret' => get_option('pdf_builder_company_siret', ''),
-            'rcs' => get_option('pdf_builder_company_rcs', ''),
-            'capital' => get_option('pdf_builder_company_capital', ''),
-            'legal_form' => get_option('pdf_builder_company_legal_form', ''),
-            'registration_city' => get_option('pdf_builder_company_registration_city', ''),
+            'address' => pdf_builder_get_option('pdf_builder_company_address', ''),
+            'city' => pdf_builder_get_option('pdf_builder_company_city', ''),
+            'postcode' => pdf_builder_get_option('pdf_builder_company_postcode', ''),
+            'country' => pdf_builder_get_option('pdf_builder_company_country', ''),
+            'phone' => pdf_builder_get_option('pdf_builder_company_phone', ''),
+            'email' => pdf_builder_get_option('pdf_builder_company_email', ''),
+            'website' => pdf_builder_get_option('pdf_builder_company_website', ''),
+            'vat' => pdf_builder_get_option('pdf_builder_company_vat', ''),
+            'siret' => pdf_builder_get_option('pdf_builder_company_siret', ''),
+            'rcs' => pdf_builder_get_option('pdf_builder_company_rcs', ''),
+            'capital' => pdf_builder_get_option('pdf_builder_company_capital', ''),
+            'legal_form' => pdf_builder_get_option('pdf_builder_company_legal_form', ''),
+            'registration_city' => pdf_builder_get_option('pdf_builder_company_registration_city', ''),
             // Données WooCommerce si disponibles
             'woocommerce_store_address' => get_option('woocommerce_store_address', ''),
             'woocommerce_store_city' => get_option('woocommerce_store_city', ''),
@@ -2024,4 +2024,5 @@ class PdfBuilderProGenerator
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }
 }
+
 

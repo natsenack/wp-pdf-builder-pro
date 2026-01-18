@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -670,7 +670,7 @@ class PdfBuilderAssetOptimizer
         $stats = [
             'total_optimized_size' => $this->getDirectorySize($this->optimized_dir),
             'config' => $this->optimization_config,
-            'last_optimization' => get_option('pdf_builder_last_asset_optimization', false)
+            'last_optimization' => pdf_builder_get_option('pdf_builder_last_asset_optimization', false)
         ];
 
         return $stats;
@@ -694,4 +694,5 @@ class PdfBuilderAssetOptimizer
         return $size;
     }
 }
+
 

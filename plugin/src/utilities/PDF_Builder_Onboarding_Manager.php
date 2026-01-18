@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Utilities;
 /**
  * PDF Builder Pro - Onboarding Manager
@@ -75,7 +75,7 @@ class PDF_Builder_Onboarding_Manager {
      * Charger les options d'onboarding
      */
     private function load_onboarding_options() {
-        $this->onboarding_options = get_option('pdf_builder_onboarding', [
+        $this->onboarding_options = pdf_builder_get_option('pdf_builder_onboarding', [
             'completed' => false,
             'current_step' => 0,
             'steps_completed' => [],
@@ -88,7 +88,7 @@ class PDF_Builder_Onboarding_Manager {
      * Sauvegarder les options d'onboarding
      */
     private function save_onboarding_options() {
-        update_option('pdf_builder_onboarding', $this->onboarding_options);
+        pdf_builder_update_option('pdf_builder_onboarding', $this->onboarding_options);
     }
 
 
@@ -900,7 +900,7 @@ class PDF_Builder_Onboarding_Manager {
                 case 'woocommerce_setup':
                     // Sauvegarder les préférences WooCommerce
                     if (isset($_POST['woocommerce_options'])) {
-                        update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
+                        pdf_builder_update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
                     }
                     break;
                 case 'completed':
@@ -1154,7 +1154,7 @@ class PDF_Builder_Onboarding_Manager {
             $this->onboarding_options['steps_completed'][] = 4;
         }
         // Sauvegarder les options
-        update_option('pdf_builder_onboarding', $this->onboarding_options);
+        pdf_builder_update_option('pdf_builder_onboarding', $this->onboarding_options);
         // Créer une configuration WooCommerce si nécessaire
         if (!empty($assignment_data['assigned_statuses'])) {
             $this->create_woocommerce_template_config($assignment_data);
@@ -1172,7 +1172,7 @@ class PDF_Builder_Onboarding_Manager {
             return;
         }
         // Récupérer ou créer les options WooCommerce
-        $wc_options = get_option('pdf_builder_woocommerce', []);
+        $wc_options = pdf_builder_get_option('pdf_builder_woocommerce', []);
         // Configuration pour les statuts assignés
         foreach ($assignment_data['assigned_statuses'] as $status) {
             $clean_status = str_replace('wc-', '', $status);
@@ -1189,7 +1189,7 @@ class PDF_Builder_Onboarding_Manager {
                 ];
             }
         }
-        update_option('pdf_builder_woocommerce', $wc_options);
+        pdf_builder_update_option('pdf_builder_woocommerce', $wc_options);
     }
     /**
      * Obtenir la liste des templates prédéfinis disponibles
@@ -1237,4 +1237,5 @@ class PDF_Builder_Onboarding_Manager {
         return $name;
     }
 }
+
 

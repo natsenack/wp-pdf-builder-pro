@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -92,16 +92,16 @@ class PdfBuilderSettingsManager
     {
         // Rôles autorisés
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
-        update_option('pdf_builder_allowed_roles', $allowed_roles);
+        pdf_builder_update_option('pdf_builder_allowed_roles', $allowed_roles);
 
         // Informations société (seulement les champs non disponibles dans WooCommerce/WordPress)
         $company_vat = sanitize_text_field($_POST['company_vat'] ?? '');
         $company_rcs = sanitize_text_field($_POST['company_rcs'] ?? '');
         $company_siret = sanitize_text_field($_POST['company_siret'] ?? '');
 
-        update_option('pdf_builder_company_vat', $company_vat);
-        update_option('pdf_builder_company_rcs', $company_rcs);
-        update_option('pdf_builder_company_siret', $company_siret);
+        pdf_builder_update_option('pdf_builder_company_vat', $company_vat);
+        pdf_builder_update_option('pdf_builder_company_rcs', $company_rcs);
+        pdf_builder_update_option('pdf_builder_company_siret', $company_siret);
 
         // Templates par statut de commande
         $status_templates = [];
@@ -110,9 +110,9 @@ class PdfBuilderSettingsManager
                 $status_templates[$status] = intval($template_id);
             }
         }
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $settings['pdf_builder_order_status_templates'] = $status_templates;
-        update_option('pdf_builder_settings', $settings);
+        pdf_builder_update_option('pdf_builder_settings', $settings);
     }
 
 
@@ -153,4 +153,5 @@ class PdfBuilderSettingsManager
         return $json_string;
     }
 }
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Gestionnaire AJAX
@@ -839,9 +839,9 @@ class AjaxHandler
         }
 
         // Sauvegarder
-        $existing_settings = get_option('pdf_builder_settings', array());
+        $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
         $updated_settings = array_merge($existing_settings, $performance_settings);
-        $saved = update_option('pdf_builder_settings', $updated_settings);
+        $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
         if ($saved) {
             wp_send_json_success([
@@ -1159,7 +1159,7 @@ class AjaxHandler
                 $result = $wpdb->get_row("CHECK TABLE {$wpdb->prefix}{$table}");
                 $checks[$table] = $result ? $result->Msg_text : 'OK';
             }
-            $checks['options_accessible'] = is_array(get_option('pdf_builder_settings', array()));
+            $checks['options_accessible'] = is_array(pdf_builder_get_option('pdf_builder_settings', array()));
             $all_ok = array_filter($checks, function($v) {
                 return $v === true || $v === 'OK' || strpos($v, 'OK') === 0;
             });
@@ -1410,13 +1410,13 @@ class AjaxHandler
             }
 
             // Récupérer les paramètres existants
-            $existing_settings = get_option('pdf_builder_settings', array());
+            $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
 
             // Fusionner avec les nouveaux paramètres
             $updated_settings = array_merge($existing_settings, $settings_to_save);
 
             // Sauvegarder dans la base de données
-            $saved = update_option('pdf_builder_settings', $updated_settings);
+            $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
             if ($saved) {
                 wp_send_json_success([
@@ -1453,7 +1453,7 @@ class AjaxHandler
     {
         $backup = get_option($backup_key, false);
         if ($backup !== false) {
-            update_option('pdf_builder_settings', $backup);
+            pdf_builder_update_option('pdf_builder_settings', $backup);
             delete_option($backup_key);
             error_log('PDF Builder - Rollback effectué depuis backup: ' . $backup_key);
         }
@@ -1663,7 +1663,7 @@ class AjaxHandler
             }
 
             // Récupérer les paramètres
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             
             $orientations = [
                 'allowPortrait' => isset($settings['pdf_builder_canvas_allow_portrait']) && $settings['pdf_builder_canvas_allow_portrait'] === '1',
@@ -1726,7 +1726,7 @@ class AjaxHandler
             }
 
             // Récupérer les paramètres existants
-            $existing_settings = get_option('pdf_builder_settings', array());
+            $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
 
             // Mettre à jour les paramètres
             $updated_count = 0;
@@ -1736,7 +1736,7 @@ class AjaxHandler
             }
 
             // Sauvegarder dans l'option unifiée
-            $saved = update_option('pdf_builder_settings', $existing_settings);
+            $saved = pdf_builder_update_option('pdf_builder_settings', $existing_settings);
 
             if ($saved) {
                 wp_send_json_success([
@@ -1762,7 +1762,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleCleanupLicense - Starting cleanup process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             error_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings));
             error_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings)));
 
@@ -1807,7 +1807,7 @@ class AjaxHandler
             }
 
             // Sauvegarder les paramètres nettoyés SANS sanitize callback
-            $update_result = update_option('pdf_builder_settings', $settings);
+            $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
             error_log('[PDF Builder] handleCleanupLicense - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
             error_log('[PDF Builder] handleCleanupLicense - Removed ' . $removed_count . ' license keys');
 
@@ -1818,7 +1818,7 @@ class AjaxHandler
             }
 
             // Vérifier que les clés ont bien été supprimées
-            $updated_settings = get_option('pdf_builder_settings', array());
+            $updated_settings = pdf_builder_get_option('pdf_builder_settings', array());
             $remaining_license_keys = array_filter(array_keys($updated_settings), function($key) {
                 return strpos($key, 'pdf_builder_license') === 0;
             });
@@ -1846,7 +1846,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleToggleLicenseTestMode - Starting toggle process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $current_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
 
             // Basculer le mode
@@ -1854,10 +1854,10 @@ class AjaxHandler
             $settings['pdf_builder_license_test_mode'] = $new_mode;
 
             // Sauvegarder
-            $update_result = update_option('pdf_builder_settings', $settings);
+            $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
             // Vérifier que la sauvegarde a bien fonctionné
-            $verify_settings = get_option('pdf_builder_settings', array());
+            $verify_settings = pdf_builder_get_option('pdf_builder_settings', array());
             $verify_mode = $verify_settings['pdf_builder_license_test_mode'] ?? 'NOT_SET';
             error_log('[PDF Builder] handleToggleLicenseTestMode - VERIFICATION: saved=' . $new_mode . ' retrieved=' . $verify_mode);
 
@@ -1887,11 +1887,11 @@ class AjaxHandler
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $settings['pdf_builder_license_test_key'] = $test_key;
 
             // Sauvegarder
-            $update_result = update_option('pdf_builder_settings', $settings);
+            $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
             error_log('[PDF Builder] handleGenerateLicenseKey - Generated key: ' . $test_key);
             error_log('[PDF Builder] handleGenerateLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
@@ -1916,7 +1916,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleDeleteLicenseKey - Starting deletion process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $old_key = $settings['pdf_builder_license_test_key'] ?? '';
 
             if (isset($settings['pdf_builder_license_test_key'])) {
@@ -1924,7 +1924,7 @@ class AjaxHandler
             }
 
             // Sauvegarder
-            $update_result = update_option('pdf_builder_settings', $settings);
+            $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
             error_log('[PDF Builder] handleDeleteLicenseKey - Deleted key: ' . $old_key);
             error_log('[PDF Builder] handleDeleteLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
@@ -1948,7 +1948,7 @@ class AjaxHandler
             error_log('[PDF Builder] handleValidateLicenseKey - Starting validation process');
 
             // Récupérer les paramètres actuels
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $test_key = $settings['pdf_builder_license_test_key'] ?? '';
 
             if (empty($test_key)) {
@@ -2130,5 +2130,6 @@ class AjaxHandler
         }
     }
 }
+
 
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     // Log PHP pour vérifier que le fichier s'exécute
     error_log('[PDF Builder] settings-main.php LOADED at line ' . __LINE__);
     echo '<!-- PHP DEBUG: settings-main.php loaded at ' . current_time('H:i:s') . ' -->';
@@ -25,7 +25,7 @@
     }
 
     // Récupération des paramètres généraux
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
     $current_user = wp_get_current_user();
 
     // LOG pour déboguer la soumission du formulaire
@@ -176,5 +176,6 @@
     <div id="pdf-builder-tab-content" style="display: none;"></div>
 
 </div> <!-- Fin du .wrap -->
+
 
 

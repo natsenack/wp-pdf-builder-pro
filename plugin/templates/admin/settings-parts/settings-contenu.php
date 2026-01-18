@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * PDF Builder Pro - Content Settings Tab
      * Canvas and design configuration settings
@@ -7,13 +7,13 @@
 
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
     // Fonction helper pour récupérer les valeurs Canvas depuis les options individuelles
     function get_canvas_option_contenu($key, $default = '') {
         $option_key = 'pdf_builder_' . $key;
         // Lire depuis l'array de settings
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
 
         if ($value === null) {
@@ -80,7 +80,7 @@
 
     <div class="settings-content">
 <?php
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
 ?>
             <!-- Section Canvas -->
@@ -151,8 +151,8 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_performance_monitoring]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_performance_monitoring', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_error_reporting]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_error_reporting', '0')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_memory_limit_php]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_portrait]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_allow_portrait', '1')); ?>">
-                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_landscape]" value="<?php echo esc_attr(get_option('pdf_builder_canvas_allow_landscape', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_portrait]" value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_canvas_allow_portrait', '1')); ?>">
+                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_landscape]" value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_canvas_allow_landscape', '1')); ?>">
 
                     <!-- DEBUG: Hidden fields rendering completed -->
                     <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
@@ -780,5 +780,6 @@
             </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
+
 
 

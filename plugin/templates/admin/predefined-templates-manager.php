@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Admin;
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
@@ -37,7 +37,7 @@ class PDF_Builder_Predefined_Templates_Manager
     {
         // Menu déplacé dans PDF_Builder_Admin.php pour contrôler l'ordre
         // Vérifier si le Mode Développeur est activé
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         
         // N'ajouter le menu que si le Mode Développeur est activé
         if (!empty($settings['pdf_builder_developer_enabled'])) {
@@ -126,7 +126,7 @@ class PDF_Builder_Predefined_Templates_Manager
      */
     private function isDeveloperAuthenticated()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         if (empty($settings['pdf_builder_developer_enabled'])) {
             return false;
         }
@@ -174,7 +174,7 @@ class PDF_Builder_Predefined_Templates_Manager
             }
             
 
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             
             
             if (empty($settings['pdf_builder_developer_enabled'])) {
@@ -262,7 +262,7 @@ class PDF_Builder_Predefined_Templates_Manager
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
         // Vérifier l'authentification développeur
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         if (empty($settings['pdf_builder_developer_enabled'])) {
             ?>
             <div class="wrap">
@@ -1058,4 +1058,5 @@ class PDF_Builder_Predefined_Templates_Manager
 }
 // Initialisation gérée par PDF_Builder_Admin.php - v2
 // new PDF_Builder_Predefined_Templates_Manager();
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * Paramètres Généraux - PDF Builder Pro (Version compressée)
      * Onglet principal des paramètres généraux avec informations entreprise
@@ -8,7 +8,7 @@
      */
 
     // Récupération sécurisée des paramètres
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
     error_log('[PDF Builder] settings-general.php - Full settings from DB: ' . print_r($settings, true));
 
     // Récupération des informations WooCommerce
@@ -132,4 +132,5 @@
     .form-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f0f0f1; text-align: center; }
     @media (max-width: 782px) { .form-grid-compact { grid-template-columns: 1fr; } .card-header, .card-content { padding: 1rem; } }
 </style>
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de thème et personnalisation
  * Gère les thèmes, couleurs, polices et personnalisation de l'interface
@@ -172,13 +172,13 @@ class PDF_Builder_Theme_Customizer {
      */
     private function load_theme_config() {
         $this->current_theme_config = [
-            'preset' => get_option('pdf_builder_theme_preset', self::THEME_DEFAULT),
-            'colors' => array_merge($this->default_colors, get_option('pdf_builder_custom_colors', [])),
-            'font_family' => get_option('pdf_builder_font_family', 'system'),
-            'font_size' => get_option('pdf_builder_font_size', 'base'),
-            'border_radius' => get_option('pdf_builder_border_radius', '4px'),
-            'animations' => get_option('pdf_builder_enable_animations', true),
-            'shadows' => get_option('pdf_builder_enable_shadows', true)
+            'preset' => pdf_builder_get_option('pdf_builder_theme_preset', self::THEME_DEFAULT),
+            'colors' => array_merge($this->default_colors, pdf_builder_get_option('pdf_builder_custom_colors', [])),
+            'font_family' => pdf_builder_get_option('pdf_builder_font_family', 'system'),
+            'font_size' => pdf_builder_get_option('pdf_builder_font_size', 'base'),
+            'border_radius' => pdf_builder_get_option('pdf_builder_border_radius', '4px'),
+            'animations' => pdf_builder_get_option('pdf_builder_enable_animations', true),
+            'shadows' => pdf_builder_get_option('pdf_builder_enable_shadows', true)
         ];
     }
 
@@ -395,7 +395,7 @@ class PDF_Builder_Theme_Customizer {
         $sanitized_config = $this->sanitize_theme_config($config);
 
         foreach ($sanitized_config as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            pdf_builder_update_option('pdf_builder_' . $key, $value);
         }
 
         $this->load_theme_config();
@@ -713,4 +713,5 @@ function pdf_builder_get_border_class($color_name) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Theme_Customizer::get_instance();
 });
+
 

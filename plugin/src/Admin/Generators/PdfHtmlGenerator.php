@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - PDF HTML Generator
@@ -19,10 +19,10 @@ class PdfHtmlGenerator
     public function generateUnifiedHtml($template, $order = null)
     {
         // Récupérer les paramètres canvas
-        $canvas_bg_color = get_option('pdf_builder_canvas_bg_color', '#ffffff');
-        $canvas_border_color = get_option('pdf_builder_canvas_border_color', '#cccccc');
-        $canvas_border_width = intval(get_option('pdf_builder_canvas_border_width', 1));
-        $canvas_shadow_enabled = get_option('pdf_builder_canvas_shadow_enabled', false) == '1';
+        $canvas_bg_color = pdf_builder_get_option('pdf_builder_canvas_bg_color', '#ffffff');
+        $canvas_border_color = pdf_builder_get_option('pdf_builder_canvas_border_color', '#cccccc');
+        $canvas_border_width = intval(pdf_builder_get_option('pdf_builder_canvas_border_width', 1));
+        $canvas_shadow_enabled = pdf_builder_get_option('pdf_builder_canvas_shadow_enabled', false) == '1';
 
         // Construire les styles du conteneur
         $container_bg = "background: {$canvas_bg_color};";
@@ -465,25 +465,25 @@ class PdfHtmlGenerator
     {
         $mentions = [];
         if (isset($element['showEmail']) && $element['showEmail']) {
-            $email = get_option('pdf_builder_company_email', '');
+            $email = pdf_builder_get_option('pdf_builder_company_email', '');
             if ($email) {
                 $mentions[] = $email;
             }
         }
         if (isset($element['showPhone']) && $element['showPhone']) {
-            $phone = get_option('pdf_builder_company_phone', '');
+            $phone = pdf_builder_get_option('pdf_builder_company_phone', '');
             if ($phone) {
                 $mentions[] = $phone;
             }
         }
         if (isset($element['showSiret']) && $element['showSiret']) {
-            $siret = get_option('pdf_builder_company_siret', '');
+            $siret = pdf_builder_get_option('pdf_builder_company_siret', '');
             if ($siret) {
                 $mentions[] = 'SIRET: ' . $siret;
             }
         }
         if (isset($element['showVat']) && $element['showVat']) {
-            $vat = get_option('pdf_builder_company_vat', '');
+            $vat = pdf_builder_get_option('pdf_builder_company_vat', '');
             if ($vat) {
                 $mentions[] = 'TVA: ' . $vat;
             }
@@ -652,4 +652,5 @@ class PdfHtmlGenerator
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }
 }
+
 

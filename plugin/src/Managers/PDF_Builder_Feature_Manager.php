@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -215,7 +215,7 @@ class PdfBuilderFeatureManager
             return 0;
         }
 
-        return get_option('pdf_builder_usage_' . $feature_name, 0);
+        return pdf_builder_get_option('pdf_builder_usage_' . $feature_name, 0);
     }
 
     /**
@@ -317,4 +317,5 @@ class PdfBuilderFeatureManager
         ];
     }
 }
+
 

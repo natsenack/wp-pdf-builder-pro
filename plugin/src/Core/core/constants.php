@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro Constants
@@ -60,7 +60,7 @@ function pdf_builder_get_current_version() {
  */
 function pdf_builder_is_pro_license_active() {
     // Check for license activation option
-    $license_active = get_option('pdf_builder_pro_license_active', false);
+    $license_active = pdf_builder_get_option('pdf_builder_pro_license_active', false);
 
     // Also check for license manager if it exists
     if (class_exists('PDF_Builder\\Managers\\PDF_Builder_License_Manager')) {
@@ -235,4 +235,5 @@ if (!defined('PDF_BUILDER_SECURITY_LOG_LEVEL')) {
 if (!defined('PDF_BUILDER_CANVAS_META_KEY')) {
     define('PDF_BUILDER_CANVAS_META_KEY', '_pdf_builder_canvas_data');
 }
+
 

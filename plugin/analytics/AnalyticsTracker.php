@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Analytics;
 
@@ -96,7 +96,7 @@ class AnalyticsTracker implements AnalyticsInterface
      */
     private function isAnalyticsEnabled(): bool
     {
-        return get_option('pdf_builder_analytics_enabled', false) === true;
+        return pdf_builder_get_option('pdf_builder_analytics_enabled', false) === true;
     }
 
     /**
@@ -104,7 +104,7 @@ class AnalyticsTracker implements AnalyticsInterface
      */
     private function isDeveloperMode(): bool
     {
-        return get_option('pdf_builder_developer_enabled', false) === true;
+        return pdf_builder_get_option('pdf_builder_developer_enabled', false) === true;
     }
 
     /**
@@ -437,4 +437,5 @@ class AnalyticsTracker implements AnalyticsInterface
         return true;
     }
 }
+
 

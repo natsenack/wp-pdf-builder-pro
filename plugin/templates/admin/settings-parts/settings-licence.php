@@ -1,4 +1,4 @@
-<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
@@ -555,7 +555,7 @@
 
                 <?php
                     // Récupération des paramètres depuis le tableau unifié
-                    $settings = get_option('pdf_builder_settings', array());
+                    $settings = pdf_builder_get_option('pdf_builder_settings', array());
                     error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
@@ -600,14 +600,14 @@
 
                         if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
                             // Mise à jour du tableau unifié au lieu d'options séparées
-                            $settings = get_option('pdf_builder_settings', array());
+                            $settings = pdf_builder_get_option('pdf_builder_settings', array());
                             $settings['pdf_builder_license_key'] = '';
                             $settings['pdf_builder_license_expires'] = '';
                             $settings['pdf_builder_license_activated_at'] = '';
                             $settings['pdf_builder_license_test_key'] = '';
                             $settings['pdf_builder_license_test_mode'] = '0';
                             $settings['pdf_builder_license_status'] = 'free';
-                            update_option('pdf_builder_settings', $settings);
+                            pdf_builder_update_option('pdf_builder_settings', $settings);
 
                             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
                             $is_premium = false;
@@ -1098,4 +1098,5 @@
                             }
                         }
                     </script>
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -53,9 +53,9 @@ class PDF_Builder_License_Manager
      */
     private function init()
     {
-        $this->license_key = get_option('pdf_builder_license_key', '');
-        $this->license_status = get_option('pdf_builder_license_status', 'free');
-        $this->license_data = get_option('pdf_builder_license_data', []);
+        $this->license_key = pdf_builder_get_option('pdf_builder_license_key', '');
+        $this->license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+        $this->license_data = pdf_builder_get_option('pdf_builder_license_data', []);
 
         add_action('admin_init', array($this, 'check_license_status'));
     }
@@ -72,7 +72,7 @@ class PDF_Builder_License_Manager
         }
 
         // Récupérer les paramètres unifiés
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Vérifier les clés de test (mode développeur)
         $test_key = $settings['pdf_builder_license_test_key'] ?? '';
@@ -131,9 +131,9 @@ class PDF_Builder_License_Manager
         $result = $this->validateLicense($license_key);
 
         if ($result['success']) {
-            update_option('pdf_builder_license_key', $license_key);
-            update_option('pdf_builder_license_status', 'active');
-            update_option('pdf_builder_license_data', $result['data']);
+            pdf_builder_update_option('pdf_builder_license_key', $license_key);
+            pdf_builder_update_option('pdf_builder_license_status', 'active');
+            pdf_builder_update_option('pdf_builder_license_data', $result['data']);
 
             $this->license_key = $license_key;
             $this->license_status = 'active';
@@ -217,18 +217,18 @@ class PDF_Builder_License_Manager
         }
 
         // Vérifier une fois par jour
-        $last_check = get_option('pdf_builder_license_last_check', 0);
+        $last_check = pdf_builder_get_option('pdf_builder_license_last_check', 0);
         $now = time();
 
         if ($now - $last_check > 86400) {
             $result = $this->validateLicense($this->license_key);
 
             if (!$result['success']) {
-                update_option('pdf_builder_license_status', 'expired');
+                pdf_builder_update_option('pdf_builder_license_status', 'expired');
                 $this->license_status = 'expired';
             }
 
-            update_option('pdf_builder_license_last_check', $now);
+            pdf_builder_update_option('pdf_builder_license_last_check', $now);
         }
     }
 
@@ -247,5 +247,6 @@ class PDF_Builder_License_Manager
     }
 }
 }
+
 
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * DashboardDataProvider - Fournit les données du tableau de bord
@@ -72,7 +72,7 @@ class DashboardDataProvider
      */
     public function getTemplateCount()
     {
-        $templates = get_option('pdf_builder_templates', []);
+        $templates = pdf_builder_get_option('pdf_builder_templates', []);
         return is_array($templates) ? count($templates) : 0;
     }
 
@@ -154,4 +154,5 @@ class DashboardDataProvider
         return $default_template;
     }
 }
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Classe de base pour les handlers AJAX
  * Centralise la validation commune et la gestion d'erreurs
@@ -199,7 +199,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $saved_settings = [];
 
         // Get current settings
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // DEBUG: Log that this function is being executed
         // error_log("[AJAX HANDLER] process_all_settings called");
@@ -356,12 +356,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // MISE À JOUR DES PARAMÈTRES CANVAS POUR LES CHAMPS DEBUG
                 if (preg_match('/debug_(.+)/', $key, $matches)) {
                     $debug_key = $matches[1];
-                    $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+                    $canvas_settings = pdf_builder_get_option('pdf_builder_canvas_settings', []);
                     if (!isset($canvas_settings['debug'])) {
                         $canvas_settings['debug'] = [];
                     }
                     $canvas_settings['debug'][$debug_key] = $option_value;
-                    update_option('pdf_builder_canvas_settings', $canvas_settings);
+                    pdf_builder_update_option('pdf_builder_canvas_settings', $canvas_settings);
                     // error_log("[AJAX DEBUG] Updated canvas settings debug.$debug_key = $option_value");
                 }
             } elseif (in_array($short_key, $field_rules['array_fields'])) {
@@ -408,7 +408,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                             // error_log("[AJAX HANDLER] SPECIAL HANDLING: Saved roles: " . json_encode($saved_roles));
 
                             // Vérifier immédiatement si la sauvegarde a fonctionné
-                            $settings_check = get_option('pdf_builder_settings', array());
+                            $settings_check = pdf_builder_get_option('pdf_builder_settings', array());
                             if (isset($settings_check['pdf_builder_allowed_roles'])) {
                                 // error_log("[AJAX HANDLER] SPECIAL HANDLING: VERIFICATION - Roles saved in DB: " . json_encode($settings_check['pdf_builder_allowed_roles']));
                             } else {
@@ -478,11 +478,11 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         }
 
         // Save the settings array
-        update_option('pdf_builder_settings', $settings);
+        pdf_builder_update_option('pdf_builder_settings', $settings);
         // error_log("[AJAX HANDLER] Saved " . count($settings) . " settings to pdf_builder_settings option");
 
         // DEBUG: Check if debug_javascript was saved
-        $saved_settings_check = get_option('pdf_builder_settings', array());
+        $saved_settings_check = pdf_builder_get_option('pdf_builder_settings', array());
         if (isset($saved_settings_check['pdf_builder_debug_javascript'])) {
             // error_log("[DEBUG JAVASCRIPT TOGGLE] VERIFICATION: pdf_builder_debug_javascript = " . $saved_settings_check['pdf_builder_debug_javascript'] . " in saved settings");
         } else {
@@ -746,7 +746,7 @@ function pdf_builder_test_roles_handler() {
     // error_log('PDF Builder: [TEST ROLES HANDLER] Nonce vérifié avec succès');
     
     // Récupérer les rôles autorisés depuis les paramètres
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
     // error_log('PDF Builder: [TEST ROLES HANDLER] Full settings from DB: ' . print_r($settings, true));
     $allowed_roles_raw = isset($settings['pdf_builder_allowed_roles']) ? $settings['pdf_builder_allowed_roles'] : ['administrator'];
     // error_log('PDF Builder: [TEST ROLES HANDLER] Raw allowed_roles from DB: ' . print_r($allowed_roles_raw, true));
@@ -865,7 +865,7 @@ function pdf_builder_reset_canvas_defaults_handler() {
         ];
 
         // Récupérer les paramètres actuels
-        $current_settings = get_option('pdf_builder_settings', array());
+        $current_settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Fusionner avec les valeurs par défaut (conserver les autres paramètres non-canvas)
         $updated_settings = array_merge($current_settings, $default_canvas_settings);
@@ -882,7 +882,7 @@ function pdf_builder_reset_canvas_defaults_handler() {
         }
 
         // Aussi sauvegarder dans l'option globale pour compatibilité
-        $global_result = update_option('pdf_builder_settings', $updated_settings);
+        $global_result = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
         if ($success_count > 0) {
             // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Paramètres réinitialisés avec succès');
@@ -926,7 +926,7 @@ function pdf_builder_get_debug_settings_handler() {
     }
     
     // Récupérer les paramètres depuis la base de données
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
     // error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Settings from DB: ' . print_r($settings, true));
     
     // Extraire les paramètres de debug
@@ -957,7 +957,7 @@ function pdf_builder_verify_canvas_settings_consistency_handler() {
         }
 
         // Récupérer tous les paramètres canvas depuis la base de données
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Extraire seulement les paramètres canvas
         $canvas_settings = array();
@@ -988,4 +988,5 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Interface d'administration simplifiée
@@ -479,7 +479,7 @@ class PdfBuilderAdmin
      */
     public function company_name_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['company_name']) ? $settings['company_name'] : '';
         echo '<input type="text" name="pdf_builder_settings[company_name]" value="' . esc_attr($value) . '" class="regular-text" />';
     }
@@ -489,7 +489,7 @@ class PdfBuilderAdmin
      */
     public function company_address_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['company_address']) ? $settings['company_address'] : '';
         echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . esc_textarea($value) . '</textarea>';
     }
@@ -555,7 +555,7 @@ class PdfBuilderAdmin
      */
     public function system_memory_limit_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['system_memory_limit']) ? $settings['system_memory_limit'] : '256M';
         echo '<input type="text" name="pdf_builder_settings[system_memory_limit]" value="' . esc_attr($value) . '" class="regular-text" placeholder="256M" />';
         echo '<p class="description">Limite mémoire PHP recommandée (ex: 256M, 512M).</p>';
@@ -566,7 +566,7 @@ class PdfBuilderAdmin
      */
     public function system_max_execution_time_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['system_max_execution_time']) ? $settings['system_max_execution_time'] : '30';
         echo '<input type="number" name="pdf_builder_settings[system_max_execution_time]" value="' . esc_attr($value) . '" class="small-text" min="10" max="300" />';
         echo '<p class="description">Temps maximum d\'exécution en secondes (10-300).</p>';
@@ -577,7 +577,7 @@ class PdfBuilderAdmin
      */
     public function security_file_validation_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['security_file_validation']) ? $settings['security_file_validation'] : '1';
         echo '<input type="checkbox" name="pdf_builder_settings[security_file_validation]" value="1" ' . checked($value, '1', false) . ' />';
         echo '<label>Activer la validation des fichiers uploadés</label>';
@@ -589,7 +589,7 @@ class PdfBuilderAdmin
      */
     public function pdf_quality_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['pdf_quality']) ? $settings['pdf_quality'] : 'high';
         echo '<select name="pdf_builder_settings[pdf_quality]">';
         echo '<option value="low" ' . selected($value, 'low', false) . '>Faible (72 DPI)</option>';
@@ -604,7 +604,7 @@ class PdfBuilderAdmin
      */
     public function pdf_compression_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['pdf_compression']) ? $settings['pdf_compression'] : '1';
         echo '<input type="checkbox" name="pdf_builder_settings[pdf_compression]" value="1" ' . checked($value, '1', false) . ' />';
         echo '<label>Activer la compression des images</label>';
@@ -616,7 +616,7 @@ class PdfBuilderAdmin
      */
     public function canvas_default_width_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['canvas_default_width']) ? $settings['canvas_default_width'] : '800';
         echo '<input type="number" name="pdf_builder_settings[canvas_default_width]" value="' . esc_attr($value) . '" class="small-text" min="400" max="2000" /> px';
         echo '<p class="description">Largeur par défaut du canvas en pixels (400-2000).</p>';
@@ -627,7 +627,7 @@ class PdfBuilderAdmin
      */
     public function template_cache_enabled_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['template_cache_enabled']) ? $settings['template_cache_enabled'] : '1';
         echo '<input type="checkbox" name="pdf_builder_settings[template_cache_enabled]" value="1" ' . checked($value, '1', false) . ' />';
         echo '<label>Activer le cache des templates</label>';
@@ -639,7 +639,7 @@ class PdfBuilderAdmin
      */
     public function developer_debug_mode_field_callback()
     {
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['developer_debug_mode']) ? $settings['developer_debug_mode'] : '0';
         echo '<input type="checkbox" name="pdf_builder_settings[developer_debug_mode]" value="1" ' . checked($value, '1', false) . ' />';
         echo '<label>Activer le mode debug développeur</label>';
@@ -732,7 +732,7 @@ class PdfBuilderAdmin
         }
 
         // Récupérer les paramètres existants
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Traiter selon l'onglet
         switch ($current_tab) {
@@ -774,7 +774,7 @@ class PdfBuilderAdmin
         }
 
         // Sauvegarder les paramètres
-        update_option('pdf_builder_settings', $settings);
+        pdf_builder_update_option('pdf_builder_settings', $settings);
 
         // Message de succès
         add_settings_error(
@@ -998,7 +998,7 @@ class PdfBuilderAdmin
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
         // Galerie de modèles (mode développeur uniquement)
-        if (!empty(get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
+        if (!empty(pdf_builder_get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
@@ -1386,7 +1386,7 @@ class PdfBuilderAdmin
         $this->handle_settings_form_submission();
 
         // Récupération des paramètres généraux
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $current_user = wp_get_current_user();
 
         // Gestion des onglets via URL
@@ -1562,6 +1562,7 @@ class PdfBuilderAdmin
         <?php
     }
 }
+
 
 
 

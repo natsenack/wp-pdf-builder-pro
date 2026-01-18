@@ -41,7 +41,7 @@ if ($templates_count === 0 && !$is_premium) {
 }
 
 // Récupérer les DPI disponibles depuis les paramètres canvas
-$available_dpi_string = get_option('pdf_builder_canvas_dpi', '72,96,150');
+$available_dpi_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '72,96,150');
 if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== false) {
     $available_dpis = explode(',', $available_dpi_string);
 } elseif (is_array($available_dpi_string)) {
@@ -53,7 +53,7 @@ if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== f
 $available_dpis = array_map('intval', $available_dpis); // S'assurer que ce sont des entiers
 
 // Récupérer les formats disponibles depuis les paramètres canvas
-$available_formats_string = get_option('pdf_builder_canvas_formats', 'A4');
+$available_formats_string = pdf_builder_get_option('pdf_builder_canvas_formats', 'A4');
 if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
     $available_formats = explode(',', $available_formats_string);
 } elseif (is_array($available_formats_string)) {
@@ -65,7 +65,7 @@ if (is_string($available_formats_string) && strpos($available_formats_string, ',
 $available_formats = array_map('strval', $available_formats); // S'assurer que ce sont des chaînes
 
 // Récupérer les orientations disponibles depuis les paramètres canvas
-$available_orientations_string = get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
+$available_orientations_string = pdf_builder_get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
 if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
     $available_orientations = explode(',', $available_orientations_string);
 } elseif (is_array($available_orientations_string)) {

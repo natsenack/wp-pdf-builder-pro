@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Api;
 
@@ -109,7 +109,7 @@ class PreviewImageAPI
                 $result = wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
                 if (!$result) {
                     // Cron système indisponible - utiliser une approche alternative
-                    update_option('pdf_builder_manual_cache_cleanup_needed', '1');
+                    pdf_builder_update_option('pdf_builder_manual_cache_cleanup_needed', '1');
                 } else {
                     // Cron réussi - supprimer le flag manuel
                     delete_option('pdf_builder_manual_cache_cleanup_needed');
@@ -117,7 +117,7 @@ class PreviewImageAPI
             }
         } catch (Exception $e) {
             // En cas d'exception, activer le mode manuel
-            update_option('pdf_builder_manual_cache_cleanup_needed', '1');
+            pdf_builder_update_option('pdf_builder_manual_cache_cleanup_needed', '1');
         }
     }
 
@@ -126,18 +126,18 @@ class PreviewImageAPI
      */
     public static function maybe_trigger_manual_cleanup() {
         // Vérifier si un nettoyage manuel est nécessaire
-        if (get_option('pdf_builder_manual_cache_cleanup_needed') !== '1') {
+        if (pdf_builder_get_option('pdf_builder_manual_cache_cleanup_needed') !== '1') {
             return;
         }
 
         // Vérifier le dernier nettoyage manuel
-        $last_manual_cleanup = get_option('pdf_builder_last_manual_cleanup', 0);
+        $last_manual_cleanup = pdf_builder_get_option('pdf_builder_last_manual_cleanup', 0);
         $time_since_last_cleanup = time() - $last_manual_cleanup;
 
         // Nettoyer toutes les 6 heures (21600 secondes) si nécessaire
         if ($time_since_last_cleanup > 21600) {
             self::cleanup_cache();
-            update_option('pdf_builder_last_manual_cleanup', time());
+            pdf_builder_update_option('pdf_builder_last_manual_cleanup', time());
         }
     }
 
@@ -1082,4 +1082,5 @@ class PreviewImageAPI
         ];
     }
 }
+
 

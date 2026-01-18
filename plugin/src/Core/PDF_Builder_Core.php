@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Core;
 
@@ -736,25 +736,25 @@ class PdfBuilderCore
         ];
 
         // Sauvegarder les paramètres
-        update_option('pdf_builder_settings', $settings);
+        pdf_builder_update_option('pdf_builder_settings', $settings);
 
         // Traiter les paramètres de sauvegarde automatique
         if (isset($_POST['pdf_builder_backup_frequency'])) {
-            update_option('pdf_builder_backup_frequency', sanitize_text_field($_POST['pdf_builder_backup_frequency']));
+            pdf_builder_update_option('pdf_builder_backup_frequency', sanitize_text_field($_POST['pdf_builder_backup_frequency']));
         }
 
         // Traiter les informations entreprise spécifiques
         if (isset($_POST['company_vat'])) {
-            update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));
+            pdf_builder_update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));
         }
         if (isset($_POST['company_rcs'])) {
-            update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs']));
+            pdf_builder_update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs']));
         }
         if (isset($_POST['company_siret'])) {
-            update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret']));
+            pdf_builder_update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret']));
         }
         if (isset($_POST['company_phone'])) {
-            update_option('pdf_builder_company_phone', sanitize_text_field($_POST['company_phone']));
+            pdf_builder_update_option('pdf_builder_company_phone', sanitize_text_field($_POST['company_phone']));
         }
 
         // Traiter les rôles autorisés
@@ -763,7 +763,7 @@ class PdfBuilderCore
             if (empty($allowed_roles)) {
                 $allowed_roles = ['administrator'];
             }
-            update_option('pdf_builder_allowed_roles', $allowed_roles);
+            pdf_builder_update_option('pdf_builder_allowed_roles', $allowed_roles);
         }
 
         // Traiter les mappings template par statut de commande
@@ -775,7 +775,7 @@ class PdfBuilderCore
                     $template_mappings[sanitize_text_field($status)] = $template_id;
                 }
             }
-            update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', array()), ['pdf_builder_order_status_templates' => $template_mappings]));
+            pdf_builder_update_option('pdf_builder_settings', array_merge(pdf_builder_get_option('pdf_builder_settings', array()), ['pdf_builder_order_status_templates' => $template_mappings]));
         }
 
         // Retourner le succès
@@ -800,7 +800,7 @@ class PdfBuilderCore
         }
 
         // Récupérer les paramètres depuis la base de données
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Retourner les paramètres
         wp_send_json_success($settings);
@@ -946,6 +946,7 @@ class PdfBuilderCore
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
 
 
 

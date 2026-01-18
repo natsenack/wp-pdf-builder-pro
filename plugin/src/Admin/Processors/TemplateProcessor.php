@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Template Processor
@@ -207,7 +207,7 @@ class TemplateProcessor
      */
     public function performRepairTemplates()
     {
-        $templates = get_option('pdf_builder_templates', []);
+        $templates = pdf_builder_get_option('pdf_builder_templates', []);
         $repaired_count = 0;
         if (is_array($templates)) {
             foreach ($templates as $key => $template) {
@@ -219,7 +219,7 @@ class TemplateProcessor
             }
         }
 
-        update_option('pdf_builder_templates', $templates);
+        pdf_builder_update_option('pdf_builder_templates', $templates);
         return array(
             'success' => true,
             'message' => sprintf(__('Templates réparés. %d templates corrompus supprimés.', 'pdf-builder-pro'), $repaired_count)
@@ -277,4 +277,5 @@ class TemplateProcessor
         return $template;
     }
 }
+
 

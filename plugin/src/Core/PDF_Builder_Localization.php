@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Système de localisation et internationalisation
  * Gère les traductions, langues et localisation du contenu
@@ -115,7 +115,7 @@ class PDF_Builder_Localization {
             return $user_locale;
         }
 
-        $default_locale = get_option('pdf_builder_default_locale', 'en_US');
+        $default_locale = pdf_builder_get_option('pdf_builder_default_locale', 'en_US');
 
         return $default_locale ?: $locale;
     }
@@ -204,7 +204,7 @@ class PDF_Builder_Localization {
      * Formate une date selon la locale
      */
     public function format_date($timestamp, $format = null) {
-        $format = $format ?: get_option('pdf_builder_date_format', 'Y-m-d');
+        $format = $format ?: pdf_builder_get_option('pdf_builder_date_format', 'Y-m-d');
 
         // Utiliser date_i18n de WordPress pour la localisation
         return date_i18n($format, $timestamp);
@@ -214,7 +214,7 @@ class PDF_Builder_Localization {
      * Formate une heure selon la locale
      */
     public function format_time($timestamp, $format = null) {
-        $format = $format ?: get_option('pdf_builder_time_format', 'H:i:s');
+        $format = $format ?: pdf_builder_get_option('pdf_builder_time_format', 'H:i:s');
 
         return date_i18n($format, $timestamp);
     }
@@ -223,7 +223,7 @@ class PDF_Builder_Localization {
      * Formate un nombre selon la locale
      */
     public function format_number($number, $decimals = 0) {
-        $locale = get_option('pdf_builder_number_format', 'en_US');
+        $locale = pdf_builder_get_option('pdf_builder_number_format', 'en_US');
 
         // Utiliser number_format_i18n de WordPress
         return number_format_i18n($number, $decimals);
@@ -272,7 +272,7 @@ class PDF_Builder_Localization {
      * Vérifie si le support RTL est activé
      */
     public function is_rtl_enabled() {
-        return get_option('pdf_builder_rtl_support', true);
+        return pdf_builder_get_option('pdf_builder_rtl_support', true);
     }
 
     /**
@@ -598,4 +598,5 @@ function _n_pdf_builder($single, $plural, $number, $context = '') {
 add_action('plugins_loaded', function() {
     PDF_Builder_Localization::get_instance();
 });
+
 

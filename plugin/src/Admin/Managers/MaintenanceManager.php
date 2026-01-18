@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Maintenance Manager
@@ -53,7 +53,7 @@ class MaintenanceManager
      */
     public function performRepairTemplates()
     {
-        $templates = get_option('pdf_builder_templates', []);
+        $templates = pdf_builder_get_option('pdf_builder_templates', []);
         $repaired_count = 0;
 
         if (is_array($templates)) {
@@ -66,7 +66,7 @@ class MaintenanceManager
             }
         }
 
-        update_option('pdf_builder_templates', $templates);
+        pdf_builder_update_option('pdf_builder_templates', $templates);
 
         return [
             'success' => true,
@@ -117,4 +117,5 @@ class MaintenanceManager
         ];
     }
 }
+
 

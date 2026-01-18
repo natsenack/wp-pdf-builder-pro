@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Bootstrap
@@ -258,7 +258,7 @@ if (function_exists('add_action')) {
             if (defined('DOING_AJAX') && DOING_AJAX) return;
             if (defined('REST_REQUEST') && REST_REQUEST) return;
 
-            $force = get_option('pdf_builder_force_https', '0');
+            $force = pdf_builder_get_option('pdf_builder_force_https', '0');
             if ($force === '1' || $force === 1) {
                 // Consider common reverse proxy headers to detect SSL
                 $is_forwarded_ssl = (
@@ -288,7 +288,7 @@ if (function_exists('add_action')) {
         if (defined('DOING_AJAX') && DOING_AJAX) return;
         if (defined('REST_REQUEST') && REST_REQUEST) return;
 
-        $force = get_option('pdf_builder_force_https', '0');
+        $force = pdf_builder_get_option('pdf_builder_force_https', '0');
         if ($force === '1' || $force === 1) {
             $is_forwarded_ssl = (
                 (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
@@ -928,7 +928,7 @@ function pdf_builder_load_bootstrap()
             ]);
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour notifications.js
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -952,7 +952,7 @@ function pdf_builder_load_bootstrap()
             );
 
             // Définir les paramètres de debug JavaScript pour developer-tools.js
-            $settings = get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $debug_settings = [
                 'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
                 'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
@@ -1743,13 +1743,13 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         }
 
         // Obtenir les paramètres existants
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Mettre à jour le paramètre spécifique
         $settings[$setting_key] = $setting_value;
 
         // Sauvegarder en base de données
-        $updated = update_option('pdf_builder_settings', $settings);
+        $updated = pdf_builder_update_option('pdf_builder_settings', $settings);
         // error_log("PDF Builder Développeur: Résultat update_option: " . ($updated ? 'SUCCÈS' : 'AUCUN CHANGEMENT'));
 
         wp_send_json_success([
@@ -1781,4 +1781,5 @@ if (file_exists($migration_ajax_path)) {
 // ✅ CHARGER LE SCRIPT DE DIAGNOSTIC REST API
 // FIN DU BOOTSTRAP
 // ============================================================================
+
 

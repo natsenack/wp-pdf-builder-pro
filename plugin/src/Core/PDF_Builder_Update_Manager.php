@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Gestionnaire de mises à jour
  * Gère les migrations de base de données et les mises à jour du plugin
@@ -18,7 +18,7 @@ class PDF_Builder_Update_Manager {
 
     private function __construct() {
         $this->current_version = PDF_BUILDER_VERSION;
-        $this->db_version = get_option('pdf_builder_db_version', '1.0.0');
+        $this->db_version = pdf_builder_get_option('pdf_builder_db_version', '1.0.0');
 
         $this->init_hooks();
     }
@@ -65,7 +65,7 @@ class PDF_Builder_Update_Manager {
                     $this->log_update("Running migration: $version");
 
                     if ($this->execute_migration($migration)) {
-                        update_option('pdf_builder_db_version', $version);
+                        pdf_builder_update_option('pdf_builder_db_version', $version);
                         $this->db_version = $version;
                         $this->log_update("Migration $version completed successfully");
                     } else {
@@ -75,8 +75,8 @@ class PDF_Builder_Update_Manager {
             }
 
             // Mettre à jour la version finale
-            update_option('pdf_builder_db_version', $this->current_version);
-            update_option('pdf_builder_last_update', current_time('mysql'));
+            pdf_builder_update_option('pdf_builder_db_version', $this->current_version);
+            pdf_builder_update_option('pdf_builder_last_update', current_time('mysql'));
 
             $wpdb->query('COMMIT');
 
@@ -568,7 +568,7 @@ class PDF_Builder_Update_Manager {
             'current_version' => $this->current_version,
             'db_version' => $this->db_version,
             'needs_update' => version_compare($this->db_version, $this->current_version, '<'),
-            'last_update' => get_option('pdf_builder_last_update')
+            'last_update' => pdf_builder_get_option('pdf_builder_last_update')
         ];
     }
 }
@@ -586,4 +586,5 @@ function pdf_builder_run_updates() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Update_Manager::get_instance();
 });
+
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -25,7 +25,7 @@ class PdfBuilderTemplateManager
     private static function isDebugMode()
     {
         // Vérifier d'abord si le debug PHP est explicitement activé dans les paramètres
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $php_debug_enabled = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
         
         if ($php_debug_enabled) {
@@ -1060,4 +1060,5 @@ class PdfBuilderTemplateManager
      * Génère un thumbnail pour le template
      */
 }
+
 

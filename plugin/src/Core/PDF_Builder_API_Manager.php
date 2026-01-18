@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Gestionnaire d'APIs externes
  * Gère les intégrations avec des services tiers (Google Drive, Dropbox, etc.)
@@ -62,7 +62,7 @@ class PDF_Builder_API_Manager {
      * Charge les connexions API depuis la base de données
      */
     private function load_connections() {
-        $stored_connections = get_option('pdf_builder_api_connections', []);
+        $stored_connections = pdf_builder_get_option('pdf_builder_api_connections', []);
 
         foreach ($stored_connections as $service => $connection) {
             $this->connections[$service] = $connection;
@@ -313,7 +313,7 @@ class PDF_Builder_API_Manager {
      * Sauvegarde les connexions dans la base de données
      */
     private function save_connections() {
-        update_option('pdf_builder_api_connections', $this->connections);
+        pdf_builder_update_option('pdf_builder_api_connections', $this->connections);
     }
 
     /**
@@ -795,4 +795,5 @@ function pdf_builder_backup_external($path, $services = null) {
 add_action('plugins_loaded', function() {
     PDF_Builder_API_Manager::get_instance();
 });
+
 

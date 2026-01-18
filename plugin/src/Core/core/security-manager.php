@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Security Manager
  *
@@ -66,7 +66,7 @@ class PDF_Builder_Security_Manager {
      * @return bool True if PHP error debugging is enabled
      */
     public static function is_php_debug_enabled() {
-        return get_option('pdf_builder_debug_php_errors', false);
+        return pdf_builder_get_option('pdf_builder_debug_php_errors', false);
     }
 
     /**
@@ -75,7 +75,7 @@ class PDF_Builder_Security_Manager {
      * @return bool True if database debugging is enabled
      */
     public static function is_database_debug_enabled() {
-        return get_option('pdf_builder_debug_database', false);
+        return pdf_builder_get_option('pdf_builder_debug_database', false);
     }
 
     /**
@@ -84,7 +84,7 @@ class PDF_Builder_Security_Manager {
      * @return bool True if performance debugging is enabled
      */
     public static function is_performance_debug_enabled() {
-        return get_option('pdf_builder_debug_performance', false);
+        return pdf_builder_get_option('pdf_builder_debug_performance', false);
     }
 
     /**
@@ -118,4 +118,5 @@ class PDF_Builder_Security_Manager {
         }
     }
 }
+
 

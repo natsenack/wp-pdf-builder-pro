@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Générateur d'Aperçu
@@ -87,8 +87,8 @@ class PdfBuilderPreviewGenerator
             $this->dompdf->set_option('defaultFont', 'Arial');
 
             // Récupérer les paramètres PDF depuis les options pour la prévisualisation
-            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
-            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+            $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
             $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
             return;
         }
@@ -112,8 +112,8 @@ class PdfBuilderPreviewGenerator
         }
 
         // Récupérer les paramètres PDF depuis les options pour la prévisualisation
-        $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
-        $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+        $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
+        $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
 
         $this->dompdf = new \Dompdf\Dompdf();
         $this->dompdf->set_option('isRemoteEnabled', true);
@@ -516,4 +516,5 @@ class PdfBuilderPreviewGenerator
         return $upload_dir['basedir'] . '/pdf-builder-previews/';
     }
 }
+
 

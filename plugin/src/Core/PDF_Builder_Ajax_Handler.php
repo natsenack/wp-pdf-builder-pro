@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Gestionnaire AJAX avancé pour PDF Builder Pro
  *
@@ -586,7 +586,7 @@ class PDF_Builder_Ajax_Handler {
         );
 
         foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            pdf_builder_update_option('pdf_builder_' . $key, $value);
         }
 
         return count($settings);
@@ -598,7 +598,7 @@ class PDF_Builder_Ajax_Handler {
         );
 
         foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            pdf_builder_update_option('pdf_builder_' . $key, $value);
         }
 
         return count($settings);
@@ -612,7 +612,7 @@ class PDF_Builder_Ajax_Handler {
         );
 
         foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            pdf_builder_update_option('pdf_builder_' . $key, $value);
         }
 
         return count($settings);
@@ -625,10 +625,11 @@ class PDF_Builder_Ajax_Handler {
         );
 
         foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            pdf_builder_update_option('pdf_builder_' . $key, $value);
         }
 
         return count($settings);
     }
 }
+
 

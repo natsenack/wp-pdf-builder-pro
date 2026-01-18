@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -141,7 +141,7 @@ class PdfBuilderTemplateMigrator
         global $wpdb;
 
         // Récupérer tous les templates globaux
-        $templates = get_option('pdf_builder_templates', []);
+        $templates = pdf_builder_get_option('pdf_builder_templates', []);
 
         if (!is_array($templates) || empty($templates)) {
             return ['migrated' => 0, 'errors' => []];
@@ -159,7 +159,7 @@ class PdfBuilderTemplateMigrator
         }
 
         if ($count > 0) {
-            update_option('pdf_builder_templates', $templates);
+            pdf_builder_update_option('pdf_builder_templates', $templates);
         }
 
         return [
@@ -173,4 +173,5 @@ class PdfBuilderTemplateMigrator
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
 

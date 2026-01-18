@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Rate Limiter
@@ -156,7 +156,7 @@ class PdfBuilderRateLimiter
     private static function getLimitsForAction($action)
     {
         // Possibilité de personnaliser via options WordPress
-        $custom_limits = get_option('pdf_builder_rate_limits', []);
+        $custom_limits = pdf_builder_get_option('pdf_builder_rate_limits', []);
 
         if (isset($custom_limits[$action])) {
             return wp_parse_args($custom_limits[$action], self::DEFAULT_LIMITS[$action] ?? self::DEFAULT_LIMITS['pdf_generation']);
@@ -330,7 +330,7 @@ class PdfBuilderRateLimiter
             }
         }
 
-        return update_option('pdf_builder_rate_limits', $validated_limits);
+        return pdf_builder_update_option('pdf_builder_rate_limits', $validated_limits);
     }
 
     /**
@@ -351,4 +351,5 @@ class PdfBuilderRateLimiter
         ];
     }
 }
+
 

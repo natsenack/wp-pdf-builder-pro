@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - GDPR Compliance Manager
  * Gestionnaire de conformité RGPD
@@ -80,7 +80,7 @@ class PDF_Builder_GDPR_Manager {
      * Charger les options RGPD
      */
     private function load_gdpr_options() {
-        $this->gdpr_options = get_option('pdf_builder_gdpr', [
+        $this->gdpr_options = pdf_builder_get_option('pdf_builder_gdpr', [
             'consent_required' => true,
             'consent_types' => [
                 'analytics' => true,
@@ -97,7 +97,7 @@ class PDF_Builder_GDPR_Manager {
      * Sauvegarder les options RGPD
      */
     private function save_gdpr_options() {
-        update_option('pdf_builder_gdpr', $this->gdpr_options);
+        pdf_builder_update_option('pdf_builder_gdpr', $this->gdpr_options);
     }
 
     /**
@@ -1465,4 +1465,5 @@ class PDF_Builder_GDPR_Manager {
         return rmdir($dir);
     }
 }
+
 

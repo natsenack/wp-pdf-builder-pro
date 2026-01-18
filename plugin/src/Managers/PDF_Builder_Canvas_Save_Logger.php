@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Canvas Save Logger
@@ -55,7 +55,7 @@ class PdfBuilderCanvasSaveLogger
 
         $this->log_file = $cache_dir . '/canvas-save.log';
 // Déterminer le niveau minimum à partir des options
-        $level = get_option('pdf_builder_canvas_log_level', 'DEBUG');
+        $level = pdf_builder_get_option('pdf_builder_canvas_log_level', 'DEBUG');
         if (isset($this->log_levels[$level])) {
             $this->min_level = $level;
         }
@@ -241,4 +241,5 @@ class PdfBuilderCanvasSaveLogger
         }
     }
 }
+
 

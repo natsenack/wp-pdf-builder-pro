@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Settings Helper Functions
  * Common utility functions used across all settings tabs
@@ -249,7 +249,7 @@ if (!function_exists('pdf_builder_ensure_upload_dir')) {
 // Ensure global settings variable is available
 global $settings;
 if (!isset($settings)) {
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
 }
 
 // Ensure nonce is available
@@ -257,5 +257,6 @@ global $nonce;
 if (!isset($nonce)) {
     $nonce = wp_create_nonce('pdf_builder_ajax');
 }
+
 
 

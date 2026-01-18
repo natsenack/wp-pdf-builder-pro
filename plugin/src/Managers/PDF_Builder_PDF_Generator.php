@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -115,12 +115,12 @@ class PdfBuilderPdfGenerator
         require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
         // Récupérer les paramètres PDF depuis les options
-        $pdf_quality = get_option('pdf_builder_pdf_quality', 'high');
-        $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
-        $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
-        $pdf_compression = get_option('pdf_builder_pdf_compression', 'medium');
-        $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
-        $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
+        $pdf_quality = pdf_builder_get_option('pdf_builder_pdf_quality', 'high');
+        $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
+        $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
+        $pdf_compression = pdf_builder_get_option('pdf_builder_pdf_compression', 'medium');
+        $pdf_metadata_enabled = pdf_builder_get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
+        $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
         // Créer les options Dompdf pour éviter l'erreur de dépréciation (version corrigée)
         $options = new Options();
@@ -447,12 +447,12 @@ class PdfBuilderPdfGenerator
             }
 
             // Récupérer les paramètres PDF depuis les options
-            $pdf_quality = get_option('pdf_builder_pdf_quality', 'high');
-            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
-            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
-            $pdf_compression = get_option('pdf_builder_pdf_compression', 'medium');
-            $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
-            $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
+            $pdf_quality = pdf_builder_get_option('pdf_builder_pdf_quality', 'high');
+            $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
+            $pdf_compression = pdf_builder_get_option('pdf_builder_pdf_compression', 'medium');
+            $pdf_metadata_enabled = pdf_builder_get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
+            $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
             $options = new Options();
@@ -653,4 +653,5 @@ class PdfBuilderPdfGenerator
         return $html_content;
     }
 }
+
 

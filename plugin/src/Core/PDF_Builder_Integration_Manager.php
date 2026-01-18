@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Gestion des intégrations externes
  * Connecte le plugin avec des services externes (Google Drive, Dropbox, etc.)
@@ -153,8 +153,8 @@ class PDF_Builder_Integration_Manager {
      * Charge le cache des intégrations
      */
     private function load_integrations_cache() {
-        $this->integrations_cache = get_option('pdf_builder_integrations', []);
-        $this->connections_cache = get_option('pdf_builder_integration_connections', []);
+        $this->integrations_cache = pdf_builder_get_option('pdf_builder_integrations', []);
+        $this->connections_cache = pdf_builder_get_option('pdf_builder_integration_connections', []);
     }
 
     /**
@@ -312,11 +312,11 @@ class PDF_Builder_Integration_Manager {
 
             // Nettoyer les données de connexion
             unset($this->connections_cache[$service_id]);
-            update_option('pdf_builder_integration_connections', $this->connections_cache);
+            pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
             // Nettoyer la configuration
             unset($this->integrations_cache[$service_id]);
-            update_option('pdf_builder_integrations', $this->integrations_cache);
+            pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
             // Logger la déconnexion
             if (class_exists('PDF_Builder_Logger')) {
@@ -390,7 +390,7 @@ class PDF_Builder_Integration_Manager {
             'timestamp' => time()
         ]);
 
-        update_option('pdf_builder_oauth_temp_config', $temp_config);
+        pdf_builder_update_option('pdf_builder_oauth_temp_config', $temp_config);
 
         return [
             'success' => true,
@@ -405,7 +405,7 @@ class PDF_Builder_Integration_Manager {
     private function connect_api_key_service($service_id, $config) {
         // Sauvegarder la configuration
         $this->integrations_cache[$service_id] = $config;
-        update_option('pdf_builder_integrations', $this->integrations_cache);
+        pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
         // Marquer comme connecté
         $this->connections_cache[$service_id] = [
@@ -413,7 +413,7 @@ class PDF_Builder_Integration_Manager {
             'connected_at' => time(),
             'last_sync' => time()
         ];
-        update_option('pdf_builder_integration_connections', $this->connections_cache);
+        pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
         return [
             'success' => true,
@@ -432,7 +432,7 @@ class PDF_Builder_Integration_Manager {
 
         // Sauvegarder la configuration
         $this->integrations_cache[$service_id] = $config;
-        update_option('pdf_builder_integrations', $this->integrations_cache);
+        pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
         // Marquer comme connecté
         $this->connections_cache[$service_id] = [
@@ -440,7 +440,7 @@ class PDF_Builder_Integration_Manager {
             'connected_at' => time(),
             'last_sync' => time()
         ];
-        update_option('pdf_builder_integration_connections', $this->connections_cache);
+        pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
         return [
             'success' => true,
@@ -454,7 +454,7 @@ class PDF_Builder_Integration_Manager {
     private function connect_no_auth_service($service_id, $config) {
         // Sauvegarder la configuration
         $this->integrations_cache[$service_id] = $config;
-        update_option('pdf_builder_integrations', $this->integrations_cache);
+        pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
         // Marquer comme connecté
         $this->connections_cache[$service_id] = [
@@ -462,7 +462,7 @@ class PDF_Builder_Integration_Manager {
             'connected_at' => time(),
             'last_sync' => time()
         ];
-        update_option('pdf_builder_integration_connections', $this->connections_cache);
+        pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
         return [
             'success' => true,
@@ -520,7 +520,7 @@ class PDF_Builder_Integration_Manager {
 
         try {
             // Récupérer la configuration temporaire
-            $temp_config = get_option('pdf_builder_oauth_temp_config', []);
+            $temp_config = pdf_builder_get_option('pdf_builder_oauth_temp_config', []);
 
             if (empty($temp_config) || $temp_config['service_id'] !== $service_id) {
                 throw new Exception(pdf_builder_translate('Configuration OAuth manquante', 'integration'));
@@ -531,7 +531,7 @@ class PDF_Builder_Integration_Manager {
 
             // Sauvegarder la configuration et les tokens
             $this->integrations_cache[$service_id] = $temp_config;
-            update_option('pdf_builder_integrations', $this->integrations_cache);
+            pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
             $this->connections_cache[$service_id] = [
                 'status' => self::STATUS_CONNECTED,
@@ -539,7 +539,7 @@ class PDF_Builder_Integration_Manager {
                 'last_sync' => time(),
                 'tokens' => $token_data
             ];
-            update_option('pdf_builder_integration_connections', $this->connections_cache);
+            pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
             // Nettoyer la configuration temporaire
             delete_option('pdf_builder_oauth_temp_config');
@@ -699,7 +699,7 @@ class PDF_Builder_Integration_Manager {
             'token_type' => $data['token_type'] ?? 'Bearer'
         ];
 
-        update_option('pdf_builder_integration_connections', $this->connections_cache);
+        pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
     }
 
     /**
@@ -880,7 +880,7 @@ class PDF_Builder_Integration_Manager {
                     $this->connections_cache[$service_id]['last_error'] = $e->getMessage();
                     $this->connections_cache[$service_id]['error_time'] = time();
 
-                    update_option('pdf_builder_integration_connections', $this->connections_cache);
+                    pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
                     // Logger l'erreur
                     if (class_exists('PDF_Builder_Logger')) {
@@ -924,7 +924,7 @@ class PDF_Builder_Integration_Manager {
      */
     public function cleanup_integration_data() {
         // Supprimer les configurations temporaires expirées
-        $temp_config = get_option('pdf_builder_oauth_temp_config', []);
+        $temp_config = pdf_builder_get_option('pdf_builder_oauth_temp_config', []);
 
         if (!empty($temp_config['timestamp']) && (time() - $temp_config['timestamp']) > 3600) {
             delete_option('pdf_builder_oauth_temp_config');
@@ -938,7 +938,7 @@ class PDF_Builder_Integration_Manager {
             }
         }
 
-        update_option('pdf_builder_integration_connections', $this->connections_cache);
+        pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
     }
 
     /**
@@ -1139,7 +1139,7 @@ class PDF_Builder_Integration_Manager {
                 $this->integrations_cache[$service_id] ?? [],
                 $settings
             );
-            update_option('pdf_builder_integrations', $this->integrations_cache);
+            pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
             wp_send_json_success([
                 'message' => pdf_builder_translate('Paramètres sauvegardés avec succès', 'integration')
@@ -1184,4 +1184,5 @@ function pdf_builder_get_available_integrations() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Integration_Manager::get_instance();
 });
+
 

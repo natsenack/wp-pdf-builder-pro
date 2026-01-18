@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Plugin Name: PDF Builder Pro
@@ -115,7 +115,7 @@ function pdf_builder_activate()
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
-    update_option('pdf_builder_version', '1.1.0');
+    pdf_builder_update_option('pdf_builder_version', '1.1.0');
 
     // Définir les valeurs par défaut pour les paramètres canvas
     $default_canvas_settings = array(
@@ -254,12 +254,12 @@ function pdf_builder_update_table_schema() {
  */
 function pdf_builder_check_database_updates() {
     // Vérifier la version actuelle
-    $current_version = get_option('pdf_builder_version', '1.0.0');
+    $current_version = pdf_builder_get_option('pdf_builder_version', '1.0.0');
     
     // Si la version est inférieure à 1.1.0, mettre à jour le schéma
     if (version_compare($current_version, '1.1.0', '<')) {
         pdf_builder_update_table_schema();
-        update_option('pdf_builder_version', '1.1.0');
+        pdf_builder_update_option('pdf_builder_version', '1.1.0');
     }
 }
 
@@ -803,9 +803,9 @@ function pdf_builder_repair_templates_handler() {
         }
 
         // Check settings
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         if (!is_array($settings)) {
-            update_option('pdf_builder_settings', []);
+            pdf_builder_update_option('pdf_builder_settings', []);
         }
 
         wp_send_json_success(array(
@@ -1144,7 +1144,7 @@ function pdf_builder_add_asset_cache_headers()
 {
 
     // Vérifier si le cache est activé dans les paramètres
-    $settings = get_option('pdf_builder_settings', array());
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
     $cache_enabled = $settings['cache_enabled'] ?? false;
 // Si le cache est désactivé, ne pas ajouter de headers de cache
     if (!$cache_enabled) {
@@ -1275,7 +1275,7 @@ function pdf_builder_get_cache_status_ajax() {
         return;
     }
 
-    $cache_enabled = get_option('pdf_builder_cache_enabled', '0');
+    $cache_enabled = pdf_builder_get_option('pdf_builder_cache_enabled', '0');
 
     wp_send_json_success(array(
         'cache_enabled' => $cache_enabled
@@ -1337,7 +1337,7 @@ function pdf_builder_test_cache_ajax() {
     }
 
     // Test 3: Vérifier les options de cache du plugin
-    $cache_enabled = get_option('pdf_builder_cache_enabled', false);
+    $cache_enabled = pdf_builder_get_option('pdf_builder_cache_enabled', false);
     if ($cache_enabled) {
         $results['cache_status'] .= ' | Cache du plugin activé';
     } else {
@@ -1524,8 +1524,8 @@ function pdf_builder_calculate_next_backup_time($frequency) {
  */
 function pdf_builder_execute_weekly_maintenance() {
     // Vérifier si la maintenance automatique est activée
-    $auto_maintenance_enabled = get_option('pdf_builder_auto_maintenance', '0');
-    $performance_optimization_enabled = get_option('pdf_builder_performance_auto_optimization', '0');
+    $auto_maintenance_enabled = pdf_builder_get_option('pdf_builder_auto_maintenance', '0');
+    $performance_optimization_enabled = pdf_builder_get_option('pdf_builder_performance_auto_optimization', '0');
 
     if ($auto_maintenance_enabled !== '1' && $performance_optimization_enabled !== '1') {
         return; // Aucune maintenance automatique activée
@@ -1604,9 +1604,9 @@ function pdf_builder_auto_repair_templates() {
         }
 
         // Vérifier l'accès aux options
-        $settings = get_option('pdf_builder_settings', array());
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
         if (!is_array($settings)) {
-            update_option('pdf_builder_settings', []);
+            pdf_builder_update_option('pdf_builder_settings', []);
         }
 
         
@@ -2295,12 +2295,12 @@ function pdf_builder_check_advanced_systems_status() {
  */
 add_action('admin_init', function() {
     // Vérifier l'état des systèmes une fois par jour
-    $last_check = get_option('pdf_builder_systems_check_timestamp', 0);
+    $last_check = pdf_builder_get_option('pdf_builder_systems_check_timestamp', 0);
     $current_time = current_time('timestamp');
 
     if (($current_time - $last_check) > 86400) { // 24 heures
         $status = pdf_builder_check_advanced_systems_status();
-        update_option('pdf_builder_systems_check_timestamp', $current_time);
+        pdf_builder_update_option('pdf_builder_systems_check_timestamp', $current_time);
 
         if (!$status['all_loaded']) {
             // Notifier l'administrateur si des systèmes ne sont pas chargés
@@ -2513,5 +2513,6 @@ function pdf_builder_view_logs_handler() {
         wp_send_json_error('Erreur lors de la récupération des logs: ' . $e->getMessage());
     }
 }
+
 
 

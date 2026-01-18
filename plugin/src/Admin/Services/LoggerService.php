@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Logger Service
@@ -31,7 +31,7 @@ class LoggerService
         ];
 
         // Ajouter au log
-        $logs = get_option('pdf_builder_role_change_logs', array());
+        $logs = pdf_builder_get_option('pdf_builder_role_change_logs', array());
 
         // Limiter à 100 entrées maximum
         if (count($logs) >= 100) {
@@ -39,7 +39,7 @@ class LoggerService
         }
 
         $logs[] = $log_entry;
-        update_option('pdf_builder_role_change_logs', $logs);
+        pdf_builder_update_option('pdf_builder_role_change_logs', $logs);
 
         // Log WordPress si debug activé
         if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -68,7 +68,7 @@ class LoggerService
      */
     public function getRoleChangeHistory($limit = 50)
     {
-        $logs = get_option('pdf_builder_role_change_logs', array());
+        $logs = pdf_builder_get_option('pdf_builder_role_change_logs', array());
 
         if ($limit > 0) {
             $logs = array_slice($logs, -$limit);
@@ -87,4 +87,5 @@ class LoggerService
         return delete_option('pdf_builder_role_change_logs');
     }
 }
+
 
