@@ -135,8 +135,30 @@ function pdf_builder_migrate_canvas_settings_ajax() {
         $response['details']['table_exists'] = $table_exists;
 
         if ($table_exists) {
-            $count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pdf_builder_settings WHERE setting_group = 'canvas'");
-            $response['details']['canvas_settings_count'] = intval($count);
+            // Vérifier si la colonne setting_group existe
+            $columns = $wpdb->get_results("SHOW COLUMNS FROM {$wpdb->prefix}pdf_builder_settings", ARRAY_A);
+            $column_names = array_column($columns, 'Field');
+            $has_setting_group = in_array('setting_group', $column_names);
+            $response['details']['has_setting_group_column'] = $has_setting_group;
+
+            if ($has_setting_group) {
+                $count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pdf_builder_settings WHERE setting_group = 'canvas'");
+                $response['details']['canvas_settings_count'] = intval($count);
+            } else {
+                // Si la colonne n'existe pas, essayer de l'ajouter
+                $response['details']['canvas_settings_count'] = 0;
+                $response['message'] = 'Colonne setting_group manquante. Tentative de correction...';
+
+                try {
+                    $wpdb->query("ALTER TABLE {$wpdb->prefix}pdf_builder_settings ADD COLUMN setting_group varchar(100) DEFAULT 'canvas'");
+                    $wpdb->query("ALTER TABLE {$wpdb->prefix}pdf_builder_settings ADD KEY setting_group (setting_group)");
+                    $response['details']['column_added'] = true;
+                    $response['message'] = 'Colonne setting_group ajoutée avec succès.';
+                } catch (Exception $alter_error) {
+                    $response['details']['column_add_error'] = $alter_error->getMessage();
+                    $response['message'] = 'Erreur lors de l\'ajout de la colonne: ' . $alter_error->getMessage();
+                }
+            }
         }
 
     } catch (Exception $e) {
