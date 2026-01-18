@@ -359,3 +359,5 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
   );
 }
 
+
+

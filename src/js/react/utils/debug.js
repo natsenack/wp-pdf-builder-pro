@@ -38,52 +38,26 @@ function isDebugEnabled() {
     }
     return false;
 }
-// Fonction de logging conditionnel
+// Fonction de logging conditionnel (désactivée)
 function debugLog() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-    }
-    if (isDebugEnabled()) {
-        console.log.apply(console, args);
-    }
+    // Logging supprimé
 }
 exports.debugLog = debugLog;
-// Fonction de debug pour les sauvegardes (activable séparément)
+// Fonction de debug pour les sauvegardes (désactivée)
 function debugSave() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-    }
-    if (isDebugEnabled()) {
-        console.log.apply(console, args);
-    }
+    // Logging supprimé
 }
 exports.debugSave = debugSave;
 function debugError() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-    }
-    if (isDebugEnabled()) {
-        console.error.apply(console, args);
-    }
+    // Logging supprimé
 }
 exports.debugError = debugError;
 function debugWarn() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-    }
-    if (isDebugEnabled()) {
-        console.warn.apply(console, args);
-    }
+    // Logging supprimé
 }
 exports.debugWarn = debugWarn;
 function debugTable(data) {
-    if (isDebugEnabled()) {
-        console.table(data);
-    }
+    // Logging supprimé
 }
 exports.debugTable = debugTable;
 // Keep an internal verbose flag in sync with window.pdfBuilderDebugSettings
@@ -100,15 +74,11 @@ if (typeof window !== 'undefined') {
             try {
                 var detail = e && e.detail ? e.detail : window.pdfBuilderDebugSettings;
                 window.PDF_BUILDER_VERBOSE = !!(detail && detail.javascript);
-                if (typeof window.console !== 'undefined' && window.PDF_BUILDER_VERBOSE) {
-                    console.log('[PDF Builder Debug] pdfBuilder:debugSettingsChanged, verbose set to', window.PDF_BUILDER_VERBOSE);
-                }
             }
             catch (err) {
-                if (typeof window.console !== 'undefined') {
-                    console.warn('[PDF Builder Debug] Error handling pdfBuilder:debugSettingsChanged', err);
-                }
+                // ignore
             }
         });
     }
 }
+

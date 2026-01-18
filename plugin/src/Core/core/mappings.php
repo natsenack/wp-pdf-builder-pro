@@ -108,3 +108,4 @@ class PDF_Builder_Core_Mappings {
         return call_user_func_array([$class_name, $method], $args);
     }
 }
+

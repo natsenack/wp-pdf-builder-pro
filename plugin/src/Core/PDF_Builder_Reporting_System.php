@@ -624,3 +624,4 @@ class PDF_Builder_Reporting_System {
     private function format_csv_report($report) { return 'CSV format not implemented yet'; }
     private function format_json_report($report) { return json_encode($report); }
 }
+

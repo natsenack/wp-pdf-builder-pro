@@ -1131,15 +1131,15 @@ class PdfBuilderAdmin
             const urlParams = new URLSearchParams(window.location.search);
             const currentPage = urlParams.get('page');
 
-            console.log('[PDF Builder] Page check - current page:', currentPage, 'URL:', window.location.href);
+            
 
             // Ne charger React que sur la page appropriée
             if (currentPage !== 'pdf-builder-react-editor') {
-                console.log('[PDF Builder] Not on React editor page, skipping React initialization');
+                
                 return;
             }
 
-            console.log('[PDF Builder] On React editor page, proceeding with initialization');
+            
 
             // Simple loader management
             const loader = {
@@ -1163,7 +1163,7 @@ class PdfBuilderAdmin
 
                     if (!this.element || !this.editor) {
                         const allElements = document.querySelectorAll('[id*="pdf-builder"]');
-                        allElements.forEach(el => console.log('  -', el.id));
+                        allElements.forEach(el => 
                         return;
                     }
 
@@ -1196,12 +1196,12 @@ class PdfBuilderAdmin
 
                     const checkInterval = setInterval(() => {
                         attempts++;
-                        console.log('[PDF Builder] Loader check attempt', attempts, '- React ready:', this.isReactReady(), '- Container ready:', this.isContainerReady());
+                        
 
                         if (this.isReactReady() && this.isContainerReady()) {
                             clearInterval(checkInterval);
                             clearInterval(countdownInterval);
-                            console.log('[PDF Builder] ✅ React and container are ready, initializing...');
+                            
                             this.initializeReact();
                             return;
                         }
@@ -1209,7 +1209,7 @@ class PdfBuilderAdmin
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
                             clearInterval(countdownInterval);
-                            console.error('[PDF Builder] ❌ Timeout reached after 10 seconds, showing error...');
+                            
                             this.showLoadingError();
                         }
                     }, 500);
@@ -1270,20 +1270,6 @@ class PdfBuilderAdmin
                                         font-size: 14px;
                                         margin-right: 10px;
                                     ">🔄 Recharger la page</button>
-
-                                    <button onclick="console.log('Debug info:', {
-                                        react: window.pdfBuilderReact,
-                                        container: document.getElementById('pdf-builder-react-root'),
-                                        scripts: Array.from(document.querySelectorAll('script')).filter(s => s.src.includes('pdf-builder-react')).map(s => s.src)
-                                    })" style="
-                                        background: #646970;
-                                        color: white;
-                                        border: none;
-                                        padding: 10px 20px;
-                                        border-radius: 4px;
-                                        cursor: pointer;
-                                        font-size: 14px;
-                                    ">🔍 Afficher les logs de débogage</button>
                                 </div>
 
                                 <p style="color: #666; font-size: 12px; margin-top: 20px;">
@@ -1294,42 +1280,42 @@ class PdfBuilderAdmin
                     }
 
                     // Log detailed error information
-                    console.error('🚨 PDF BUILDER LOADING ERROR 🚨');
-                    console.error('React available:', typeof window.pdfBuilderReact !== 'undefined');
-                    console.error('initPDFBuilderReact function:', typeof window.initPDFBuilderReact === 'function');
-                    console.error('Container exists:', !!document.getElementById('pdf-builder-react-root'));
-                    console.error('React script loaded:', !!window.REACT_SCRIPT_LOADED);
-                    console.error('React load time:', window.REACT_LOAD_TIME);
+                    
+                    
+                    
+                    
+                    
+                    
 
                     // Check for script loading issues
                     const reactScripts = Array.from(document.querySelectorAll('script')).filter(s =>
                         s.src.includes('pdf-builder-react')
                     );
-                    console.error('React scripts found:', reactScripts.length);
+                    
                     reactScripts.forEach((script, index) => {
-                        console.error(`Script ${index + 1}:`, script.src, 'loaded:', !script.hasAttribute('data-error'));
+                        
                     });
                 },
 
                 initializeReact: function() {
-                    console.log('[PDF Builder] ✅ initializeReact called');
+                    
                     if (this.isReactReady()) {
-                        console.log('[PDF Builder] ✅ React is confirmed ready, calling initPDFBuilderReact...');
+                        
 
                         // Additional check: ensure container exists in DOM
                         const container = document.getElementById('pdf-builder-react-root');
                         if (!container) {
-                            console.error('[PDF Builder] ❌ Container #pdf-builder-react-root not found in DOM!');
-                            console.log('[PDF Builder] Available elements with pdf-builder in ID:');
+                            
+                            
                             const allElements = document.querySelectorAll('[id*="pdf-builder"]');
-                            allElements.forEach(el => console.log('  -', el.id, el.tagName, el.style.display));
+                            allElements.forEach(el => 
                             return false;
                         }
 
-                        console.log('[PDF Builder] ✅ Container found, proceeding with React init...');
+                        
                         try {
                             const result = window.initPDFBuilderReact();
-                            console.log('[PDF Builder] ✅ React initialization result:', result);
+                            
                             
                             // Hide loader after successful init
                             if (result) {
@@ -1337,11 +1323,11 @@ class PdfBuilderAdmin
                             }
                             return true;
                         } catch (error) {
-                            console.error('[PDF Builder] ❌ Error calling initPDFBuilderReact:', error);
+                            
                             return false;
                         }
                     }
-                    console.log('[PDF Builder] React not ready yet, waiting...');
+                    
                     return false;
                 }
             };
@@ -1576,5 +1562,6 @@ class PdfBuilderAdmin
         <?php
     }
 }
+
 
 

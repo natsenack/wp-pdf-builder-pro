@@ -879,3 +879,4 @@ add_action('shutdown', function() {
         PDF_Builder_Metrics_Analytics::get_instance()->flush_metric_buffer();
     }
 });
+

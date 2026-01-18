@@ -210,3 +210,4 @@ class ImageConverter
         return $image_data;
     }
 }
+

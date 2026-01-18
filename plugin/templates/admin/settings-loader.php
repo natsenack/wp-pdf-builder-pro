@@ -34,7 +34,7 @@ function pdf_builder_load_settings_assets($hook) {
         // S'assurer que l'objet wp est défini avant que d'autres scripts ne s'exécutent
         if (typeof window.wp === 'undefined') {
             window.wp = window.wp || {};
-            console.log('[PDF Builder Settings] Initialized wp object');
+            
         }
         // Initialiser les propriétés communes de wp si elles n'existent pas
         window.wp = window.wp || {};
@@ -140,3 +140,4 @@ function pdf_builder_load_global_admin_assets($hook) {
 
 // Enregistrer le hook pour les assets globaux
 add_action('admin_enqueue_scripts', 'pdf_builder_load_global_admin_assets');
+

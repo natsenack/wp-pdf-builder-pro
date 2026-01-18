@@ -401,10 +401,7 @@ export function ElementLibrary({
       defaultProps: element.defaultProps,
     };
     const jsonData = JSON.stringify(dragData);
-    console.log("[ElementLibrary] Drag started:", {
-      type: element.type,
-      jsonLength: jsonData.length,
-    });
+    
     e.dataTransfer?.setData("application/json", jsonData);
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = "copy";
@@ -413,7 +410,7 @@ export function ElementLibrary({
 
   const handleDragEnd = (_e: DragEvent) => {
     // Drag terminé
-    console.log("[ElementLibrary] Drag ended");
+    
   };
 
   return (
@@ -570,3 +567,5 @@ export function ElementLibrary({
     </ResponsiveContainer>
   );
 }
+
+

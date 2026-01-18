@@ -282,3 +282,4 @@ class PdfBuilderSecureShellManager
         return true;
     }
 }
+

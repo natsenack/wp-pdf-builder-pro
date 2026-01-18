@@ -367,3 +367,4 @@ abstract class BaseGenerator
     {
     }
 }
+

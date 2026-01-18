@@ -540,3 +540,4 @@ class PDF_Builder_Compatibility_Mappings {
         return $report;
     }
 }
+

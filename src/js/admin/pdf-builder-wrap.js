@@ -5,7 +5,7 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder] Wrapper utilities loaded');
+    
 
     window.pdfBuilderWrap = {
         // Utility functions
@@ -41,3 +41,4 @@
     };
 
 })(jQuery);
+

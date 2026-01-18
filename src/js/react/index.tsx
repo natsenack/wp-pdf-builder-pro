@@ -112,3 +112,5 @@ if (typeof window !== 'undefined') {
 // Default export for testing/bundling
 export { initPDFBuilderReact, PDFBuilder, api };
 export default api;
+
+

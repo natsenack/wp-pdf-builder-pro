@@ -1465,3 +1465,4 @@ class PDF_Builder_GDPR_Manager {
         return rmdir($dir);
     }
 }
+

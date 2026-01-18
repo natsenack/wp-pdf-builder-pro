@@ -642,3 +642,4 @@ function pdf_builder_unschedule_task($task_name) {
     wp_clear_scheduled_hook($task_name);
     return true;
 }
+

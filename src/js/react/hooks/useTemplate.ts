@@ -43,34 +43,13 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = useCallback(
     async (templateId: string) => {
-      console.log(
-        "🔄 [useTemplate] loadExistingTemplate called with templateId:",
-        templateId
-      );
-      console.log(
-        "🔄 [useTemplate] window.pdfBuilderData at start:",
-        window.pdfBuilderData
-      );
-      console.log(
-        "🔄 [useTemplate] window.pdfBuilderData?.ajaxUrl:",
-        window.pdfBuilderData?.ajaxUrl
-      );
-      console.log(
-        "🔄 [useTemplate] window.pdfBuilderData?.nonce:",
-        window.pdfBuilderData?.nonce
-      );
-      console.log(
-        "🔄 [useTemplate] window keys containing pdfBuilder:",
-        Object.keys(window).filter((key) => key.includes("pdfBuilder"))
-      );
-      console.log(
-        "🔄 [useTemplate] window.pdfBuilderData?.existingTemplate:",
-        window.pdfBuilderData?.existingTemplate
-      );
-      console.log(
-        "🔄 [useTemplate] window.pdfBuilderData?.hasExistingData:",
-        window.pdfBuilderData?.hasExistingData
-      );
+      
+      
+      
+      
+      
+      
+      
 
       try {
         // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
@@ -78,24 +57,12 @@ export function useTemplate() {
           window.pdfBuilderData?.existingTemplate &&
           window.pdfBuilderData?.hasExistingData
         ) {
-          console.log(
-            "🔄 [useTemplate] USING LOCALIZED DATA PATH for template:",
-            templateId
-          );
+          
           const templateData = window.pdfBuilderData.existingTemplate;
-          console.log("🔄 [useTemplate] templateData:", templateData);
-          console.log(
-            "🔄 [useTemplate] templateData.name:",
-            templateData?.name
-          );
-          console.log(
-            "🔄 [useTemplate] templateData._db_name:",
-            templateData?._db_name
-          );
-          console.log(
-            "🔄 [useTemplate] templateData keys:",
-            Object.keys(templateData || {})
-          );
+          
+          
+          
+          
 
           // Utiliser le nom du JSON en priorité (s'il existe et n'est pas vide), sinon le nom de la DB, sinon fallback explicite
           const templateName =
@@ -104,8 +71,8 @@ export function useTemplate() {
               : templateData?._db_name && templateData._db_name.trim() !== ""
               ? templateData._db_name
               : `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
-          console.log("🔄 [useTemplate] Final template name:", templateName);
-          // console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
+          
+          // 
 
           // Parse JSON strings if needed
           let elements = [];
@@ -216,22 +183,10 @@ export function useTemplate() {
         }
 
         // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
-        console.log(
-          "🔄 [useTemplate] USING AJAX FALLBACK PATH for template:",
-          templateId
-        );
-        console.log(
-          "🔄 [useTemplate] Checking window.pdfBuilderData again:",
-          window.pdfBuilderData
-        );
-        console.log(
-          "🔄 [useTemplate] ajaxUrl for AJAX call:",
-          window.pdfBuilderData?.ajaxUrl
-        );
-        console.log(
-          "🔄 [useTemplate] nonce for AJAX call:",
-          window.pdfBuilderData?.nonce
-        );
+        
+        
+        
+        
 
         // Détecter le navigateur pour des en-têtes spécifiques
         const isChrome =
@@ -249,11 +204,7 @@ export function useTemplate() {
           !/Chrome/.test(navigator.userAgent) &&
           !/Chromium/.test(navigator.userAgent);
 
-        console.log("🔄 [useTemplate] Browser detection:", {
-          isChrome,
-          isFirefox,
-          isSafari,
-        });
+        
 
         // Préparer les options fetch avec des en-têtes spécifiques par navigateur
         const fetchOptions: RequestInit = {
@@ -276,15 +227,15 @@ export function useTemplate() {
           // Chrome peut avoir besoin d'un mode plus permissif
           fetchOptions.mode = "cors";
           fetchOptions.cache = "no-cache";
-          console.log("🔄 [useTemplate] Using Chrome-specific options");
+          
         } else if (isFirefox) {
           // Firefox gère bien le cache par défaut
           fetchOptions.cache = "no-cache";
-          console.log("🔄 [useTemplate] Using Firefox-specific options");
+          
         } else if (isSafari) {
           // Safari peut avoir des problèmes avec certains modes
           fetchOptions.mode = "cors";
-          console.log("🔄 [useTemplate] Using Safari-specific options");
+          
         }
 
         const cacheBreaker = Date.now();
@@ -292,8 +243,8 @@ export function useTemplate() {
           `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&t=${cacheBreaker}`
         );
 
-        console.log("🔄 [useTemplate] About to fetch URL:", url);
-        console.log("🔄 [useTemplate] Fetch options:", fetchOptions);
+        
+        
 
         const response = await fetch(url, fetchOptions);
 
@@ -313,13 +264,10 @@ export function useTemplate() {
           );
         }
 
-        console.log("🔄 [useTemplate] AJAX result:", result);
-        console.log("🔄 [useTemplate] result.data:", result.data);
-        console.log("🔄 [useTemplate] result.template:", result.template);
-        console.log(
-          "🔄 [useTemplate] result.template_name:",
-          result.template_name
-        );
+        
+        
+        
+        
 
         const templateData = result.data
           ? result.data.template
@@ -328,8 +276,8 @@ export function useTemplate() {
           ? result.data.template_name || result.data.name
           : result.name || result.template_name;
 
-        console.log("🔄 [useTemplate] templateData:", templateData);
-        console.log("🔄 [useTemplate] ajaxTemplateName:", ajaxTemplateName);
+        
+        
 
         // Appliquer la même logique de fallback que pour les données localisées
         const templateName =
@@ -604,12 +552,12 @@ export function useTemplate() {
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
-    // console.log('[PDF_BUILDER_FRONTEND] Starting template save...');
+    // 
     dispatch({ type: "SET_TEMPLATE_SAVING", payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
-      // console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
+      // 
 
       if (!templateId) {
         throw new Error("Aucun template chargé pour la sauvegarde");
@@ -617,36 +565,24 @@ export function useTemplate() {
 
       // Vérifier que le template est complètement chargé
       if (!state.template.name || state.template.name.trim() === "") {
-        // console.log('[PDF_BUILDER_FRONTEND] Template name not loaded yet, skipping save');
+        // 
         return; // Ne pas lancer d'erreur, juste ignorer
       }
 
-      // console.log('[PDF_BUILDER_FRONTEND] Template name:', state.template.name);
+      // 
 
       if (!ClientNonceManager.getAjaxUrl()) {
         throw new Error("URL AJAX non disponible");
       }
 
       if (!ClientNonceManager.isValid()) {
-        console.error(
-          "🔴 [useTemplate] ERREUR: Nonce non disponible",
-          window.pdfBuilderData
-        );
+        
         throw new Error("Nonce non disponible");
       }
 
-      console.log(
-        "🟢 [useTemplate] AJAX URL available:",
-        !!ClientNonceManager.getAjaxUrl()
-      );
-      console.log(
-        "🟢 [useTemplate] Nonce available:",
-        ClientNonceManager.isValid()
-      );
-      console.log(
-        "🟢 [useTemplate] Nonce value:",
-        ClientNonceManager.getCurrentNonce()
-      );
+      
+      
+      
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
       // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
@@ -656,12 +592,12 @@ export function useTemplate() {
       debugElementState(normalizedElements as any, "AVANT SAUVEGARDE");
 
       // 🔍 DEBUG: Log complet des propriétés des éléments avant sauvegarde
-      // console.log('[PDF_BUILDER_FRONTEND] Éléments avant normalisation:', state.elements);
-      // console.log('[PDF_BUILDER_FRONTEND] Éléments après normalisation:', normalizedElements);
+      // 
+      // 
 
       // Vérifier les propriétés spéciales
       normalizedElements.forEach((el, idx) => {
-        // console.log(`[PDF_BUILDER_FRONTEND] Élément ${idx} (${el.type}) propriétés:`, Object.keys(el));
+        // 
         // Chercher des propriétés avec emoji ou "interactions"
         Object.keys(el).forEach((key) => {
           if (
@@ -670,7 +606,7 @@ export function useTemplate() {
             key.includes("comportement") ||
             key.includes("behavior")
           ) {
-            // console.log(`[PDF_BUILDER_FRONTEND] Propriété spéciale trouvée: ${key} =`, el[key]);
+            // 
           }
         });
       });
@@ -730,24 +666,19 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      console.log("📡 [saveTemplate] Réponse serveur:", result);
-      console.log("📡 [saveTemplate] result.success:", result.success);
-      console.log("📡 [saveTemplate] result.data:", result.data);
+      
+      
+      
 
       if (!result.success) {
         // Gestion d'erreur nonce - tentative de récupération automatique
         if (result.data?.code === "nonce_invalid") {
-          console.log(
-            "🔄 [useTemplate] Nonce invalide détecté, récupération automatique..."
-          );
+          
 
           try {
             // ✅ CORRECTION: Utiliser le nonce frais fourni par le serveur dans la réponse d'erreur
             let freshNonce = result.data?.nonce;
-            console.log(
-              "🔍 [useTemplate] Nonce frais depuis serveur:",
-              freshNonce
-            );
+            
 
             if (!freshNonce) {
               // Fallback: si le serveur n'a pas fourni de nonce, en récupérer un nouveau
@@ -760,17 +691,12 @@ export function useTemplate() {
             }
 
             if (freshNonce) {
-              console.log(
-                "✅ [useTemplate] Nouveau nonce récupéré, nouvelle tentative..."
-              );
+              
               // ✅ CORRECTION: Refaire la SAUVEGARDE (pas le chargement!) avec le nouveau nonce
               return await saveTemplate();
             }
           } catch (nonceError) {
-            console.error(
-              "❌ [useTemplate] Échec récupération nonce:",
-              nonceError
-            );
+            
           }
         }
 
@@ -875,3 +801,5 @@ export function useTemplate() {
     ]
   );
 }
+
+

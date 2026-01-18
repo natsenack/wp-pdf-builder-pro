@@ -544,7 +544,7 @@ function pdf_builder_load_core()
                     },
                     template: function() { return ""; }
                 };
-                console.log("[PDF Builder] Objet wp initialisé pour compatibilité");
+                
             }
         ', 'before');
     }, 0); // Priorité 0 pour s'exécuter en premier
@@ -1719,3 +1719,4 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 // ✅ CHARGER LE SCRIPT DE DIAGNOSTIC REST API
 // FIN DU BOOTSTRAP
 // ============================================================================
+

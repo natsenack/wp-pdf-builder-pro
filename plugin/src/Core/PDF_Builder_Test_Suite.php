@@ -1130,3 +1130,4 @@ function pdf_builder_get_test_results($limit = 50) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Test_Suite::get_instance();
 });
+

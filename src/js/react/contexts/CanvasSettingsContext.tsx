@@ -190,30 +190,18 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 
     // Debug: Check if window settings exist
     if (typeof window !== "undefined") {
-      console.log("[CanvasSettings] loadSettingsFromWindowObj called");
-      console.log(
-        "[CanvasSettings] window.pdfBuilderData exists:",
-        !!window.pdfBuilderData
-      );
-      console.log(
-        "[CanvasSettings] window.pdfBuilderCanvasSettings exists:",
-        !!window.pdfBuilderCanvasSettings
-      );
-      console.log(
-        "[CanvasSettings] windowSettings type:",
-        typeof windowSettings
-      );
-      console.log("[CanvasSettings] windowSettings value:", windowSettings);
+      
+      
+      
+      
+      
       if (windowSettings && typeof windowSettings === "object") {
-        console.log(
-          "[CanvasSettings] windowSettings keys:",
-          Object.keys(windowSettings)
-        );
+        
       }
     }
 
     if (!windowSettings) {
-      console.log("[CanvasSettings] No window settings found, using defaults");
+      
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
@@ -225,10 +213,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 
     // Vérifier que windowSettings est un objet
     if (typeof windowSettings !== "object" || windowSettings === null) {
-      console.error(
-        "[CanvasSettings] windowSettings is not an object:",
-        windowSettings
-      );
+      
       throw new Error("Les paramètres du canvas ne sont pas un objet valide");
     }
 
@@ -400,7 +385,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     return newSettings;
   } catch (_err) {
     const errorMsg = _err instanceof Error ? _err.message : "Erreur inconnue";
-    console.error("[CanvasSettings] Error loading settings:", _err);
+    
 
     return {
       ...DEFAULT_SETTINGS,
@@ -603,3 +588,5 @@ export function useCanvasSettings(): CanvasSettingsContextType {
   }
   return context;
 }
+
+

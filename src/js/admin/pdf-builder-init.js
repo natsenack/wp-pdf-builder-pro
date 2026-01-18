@@ -5,7 +5,7 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder] General init loaded');
+    
 
     window.pdfBuilderInit = {
         // General initialization functions
@@ -34,3 +34,4 @@
     };
 
 })(jQuery);
+

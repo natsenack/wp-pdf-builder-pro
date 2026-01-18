@@ -56,3 +56,4 @@ class AdminPages {
 
 // Auto-register
 AdminPages::register();
+

@@ -225,3 +225,4 @@ class PDFGenerator
         return true;
     }
 }
+

@@ -835,3 +835,4 @@ function pdf_builder_get_pending_migrations() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Database_Updater::get_instance();
 });
+

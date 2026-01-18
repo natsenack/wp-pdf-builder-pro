@@ -437,3 +437,4 @@ class AnalyticsTracker implements AnalyticsInterface
         return true;
     }
 }
+

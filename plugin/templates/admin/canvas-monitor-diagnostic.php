@@ -311,3 +311,4 @@ function exportCanvasSettings() {
 </style>
 <?php</content>
 <parameter name="filePath">i:\wp-pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php
+

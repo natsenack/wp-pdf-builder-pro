@@ -1184,3 +1184,4 @@ function pdf_builder_get_available_integrations() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Integration_Manager::get_instance();
 });
+

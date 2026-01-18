@@ -235,3 +235,4 @@ if (!defined('PDF_BUILDER_SECURITY_LOG_LEVEL')) {
 if (!defined('PDF_BUILDER_CANVAS_META_KEY')) {
     define('PDF_BUILDER_CANVAS_META_KEY', '_pdf_builder_canvas_data');
 }
+

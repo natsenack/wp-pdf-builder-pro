@@ -560,3 +560,4 @@ class InfoRenderer
         return implode("\n", $css);
     }
 }
+

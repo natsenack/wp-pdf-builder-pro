@@ -88,3 +88,4 @@ if (!function_exists('rand')) {
      */
     function rand($min = 0, $max = PHP_INT_MAX) { return 0; }
 }
+

@@ -89,7 +89,7 @@ export class ClientNonceManager {
       });
 
       if (!response.ok) {
-        console.error("❌ [ClientNonceManager] Erreur HTTP:", response.status);
+        
         return null;
       }
 
@@ -98,17 +98,14 @@ export class ClientNonceManager {
       if (result.success && result.data?.nonce) {
         const freshNonce = result.data.nonce;
         this.setNonce(freshNonce);
-        console.log("✅ [ClientNonceManager] Nonce rafraîchi avec succès");
+        
         return freshNonce;
       } else {
-        console.error("❌ [ClientNonceManager] Erreur:", result.data?.message);
+        
         return null;
       }
     } catch (error) {
-      console.error(
-        "❌ [ClientNonceManager] Exception lors du rafraîchissement:",
-        error
-      );
+      
       return null;
     }
   }
@@ -118,27 +115,14 @@ export class ClientNonceManager {
    */
   static addToFormData(formData: FormData, nonce?: string): FormData {
     const nonceToUse = nonce || this.getCurrentNonce();
-    console.log(
-      "🔍 [ClientNonceManager.addToFormData] Nonce à ajouter:",
-      nonceToUse
-    );
-    console.log(
-      "🔍 [ClientNonceManager.addToFormData] window.pdfBuilderData?.nonce:",
-      window.pdfBuilderData?.nonce
-    );
-    console.log(
-      "🔍 [ClientNonceManager.addToFormData] window.pdfBuilderNonce:",
-      window.pdfBuilderNonce
-    );
+    
+    
+    
     if (nonceToUse) {
       formData.append("nonce", nonceToUse);
-      console.log(
-        "✅ [ClientNonceManager.addToFormData] Nonce ajouté au FormData"
-      );
+      
     } else {
-      console.error(
-        "❌ [ClientNonceManager.addToFormData] PAS DE NONCE TROUVÉ!"
-      );
+      
     }
     return formData;
   }
@@ -185,15 +169,17 @@ export class ClientNonceManager {
    * Logger une information
    */
   static log(message: string): void {
-    console.log(`[ClientNonceManager] ${message}`);
+    
   }
 
   /**
    * Logger une erreur
    */
   static logError(message: string): void {
-    console.error(`[ClientNonceManager] ${message}`);
+    
   }
 }
 
 export default ClientNonceManager;
+
+

@@ -410,3 +410,4 @@ class PDF_Builder_JS_Mappings {
         return self::generate_js_constants_script() . "\n" . self::generate_js_objects_script();
     }
 }
+

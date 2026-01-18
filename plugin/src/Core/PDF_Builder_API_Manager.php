@@ -795,3 +795,4 @@ function pdf_builder_backup_external($path, $services = null) {
 add_action('plugins_loaded', function() {
     PDF_Builder_API_Manager::get_instance();
 });
+

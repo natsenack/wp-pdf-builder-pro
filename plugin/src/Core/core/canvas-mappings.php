@@ -233,3 +233,4 @@ class PDF_Builder_Canvas_Mappings {
         return $category_mappings[$field_name] ?? null;
     }
 }
+

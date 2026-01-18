@@ -467,3 +467,4 @@ class TemplateManager
         return $new_id;
     }
 }
+

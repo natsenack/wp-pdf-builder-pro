@@ -189,3 +189,4 @@ class PDF_Builder_Nonce_Manager {
         return false; // Pour l'instant, on laisse le JS gérer ça
     }
 }
+

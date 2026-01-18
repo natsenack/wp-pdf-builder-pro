@@ -5,7 +5,7 @@
 export const getDOMContainer = (containerId: string): HTMLElement | null => {
   const container = document.getElementById(containerId);
   if (!container) {
-    console.warn(`Container with id "${containerId}" not found in DOM`);
+    
     return null;
   }
   return container;
@@ -41,3 +41,5 @@ export default {
   waitForDOM,
   createErrorElement,
 };
+
+

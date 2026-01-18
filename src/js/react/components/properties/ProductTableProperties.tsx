@@ -1864,3 +1864,5 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
   );
 }
 
+
+

@@ -806,3 +806,5 @@ export function useCanvas() {
 export { BuilderContext };
 // Pas d'export de conversion MM/PX - on utilise que PX
 
+
+

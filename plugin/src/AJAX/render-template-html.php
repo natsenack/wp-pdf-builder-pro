@@ -75,3 +75,4 @@ function pdf_builder_ajax_render_template_html_handler()
 }
 
 add_action('wp_ajax_pdf_builder_render_template_html', 'pdf_builder_ajax_render_template_html_handler');
+

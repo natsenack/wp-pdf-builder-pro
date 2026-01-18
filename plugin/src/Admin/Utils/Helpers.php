@@ -269,3 +269,4 @@ class Helpers
         return update_option($key, $value);
     }
 }
+

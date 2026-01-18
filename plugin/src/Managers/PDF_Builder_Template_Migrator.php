@@ -173,3 +173,4 @@ class PdfBuilderTemplateMigrator
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+

@@ -749,3 +749,4 @@ function pdf_builder_check_access($capability, $context = null) {
 add_action('plugins_loaded', function() {
     PDF_Builder_User_Manager::get_instance();
 });
+

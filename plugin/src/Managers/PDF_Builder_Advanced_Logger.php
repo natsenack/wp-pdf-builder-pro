@@ -389,3 +389,4 @@ function pdf_builder_log_critical($message, $context = []) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Logger::get_instance();
 });
+

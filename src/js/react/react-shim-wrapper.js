@@ -8,12 +8,8 @@
 const React = window.React;
 
 if (!React) {
-  console.error('❌ [react-shim-wrapper] window.React is not available!');
   throw new Error('React not available on window.React');
 }
-
-console.log('✅ [react-shim-wrapper] React shim loaded with', Object.keys(React).length, 'properties');
-console.log('✅ [react-shim-wrapper] Hooks available - useState:', typeof React.useState, ', useRef:', typeof React.useRef);
 
 // CRITICAL: Inject all React hooks into global scope for transpiled code to find them
 // When Babel compiles "const { useRef } = React", it becomes "function(useRef) { ... }"
@@ -38,8 +34,6 @@ if (typeof window !== 'undefined') {
   window.React = React;
   window.React_createElement = React.createElement;
   window.React_Fragment = React.Fragment;
-  
-  console.log('✅ [react-shim-wrapper] All hooks injected into window global scope');
 }
 
 // Create a Proxy that dynamically resolves React properties at access time
@@ -48,7 +42,6 @@ const ReactProxy = new Proxy(React, {
     const value = Reflect.get(target, prop, receiver);
     if (typeof prop === 'string' && prop.startsWith('use')) {
       if (!value) {
-        console.warn(`⚠️ [react-shim] Hook ${prop} not found on React, checking window.React again...`);
         return window.React[prop];
       }
     }
@@ -82,9 +75,3 @@ module.exports.Fragment = React.Fragment;
 module.exports.createContext = React.createContext;
 module.exports.memo = React.memo;
 
-// Log what was exported
-console.log('✅ [react-shim-wrapper] Module exports set:', {
-  useState: typeof module.exports.useState,
-  useRef: typeof module.exports.useRef,
-  createElement: typeof module.exports.createElement
-});

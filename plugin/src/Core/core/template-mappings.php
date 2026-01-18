@@ -319,3 +319,4 @@ class PDF_Builder_Template_Mappings {
         return $type_mappings[$property_name] ?? null;
     }
 }
+

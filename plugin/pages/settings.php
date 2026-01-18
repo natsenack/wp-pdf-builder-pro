@@ -94,3 +94,4 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
     margin-bottom: 8px;
 }
 </style>
+

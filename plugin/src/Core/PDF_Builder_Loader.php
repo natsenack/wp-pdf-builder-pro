@@ -306,3 +306,4 @@ class PDF_Builder_Loader {
 
 // Initialiser le loader
 PDF_Builder_Loader::get_instance();
+

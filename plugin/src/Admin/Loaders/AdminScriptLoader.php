@@ -445,12 +445,12 @@ class AdminScriptLoader
                 var startTime = Date.now();
                 var checkInterval = setInterval(function() {
                     if (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
-                        console.log('[Emergency Reload] React scripts loaded successfully');
+                        
                         clearInterval(checkInterval);
                         return;
                     }
                     if (Date.now() - startTime > 5000) {
-                        console.error('[Emergency Reload] React scripts failed to load within 5 seconds - forcing page reload');
+                        
                         clearInterval(checkInterval);
                         window.location.reload(true);
                     }
@@ -481,20 +481,20 @@ class AdminScriptLoader
 
         // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "
-        // console.log('🔧 [WP] Script d\'initialisation exécuté à ' + new Date().toISOString());
-        // console.log('🔧 [WP] Vérification window.pdfBuilderData dans 100ms...');
+        // 
+        // 
         setTimeout(function() {
-            // console.log('🔧 [WP] Localized data après timeout:', window.pdfBuilderData);
+            // 
             if (window.pdfBuilderData) {
-                // console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
-                // console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
-                // console.log('✅ [WP] version:', window.pdfBuilderData.version);
-                // console.log('✅ [WP] templateId:', window.pdfBuilderData.templateId);
-                // console.log('✅ [WP] Toutes les clés:', Object.keys(window.pdfBuilderData));
+                // 
+                // 
+                // 
+                // 
+                // 
             } else {
-                // console.error('❌ [WP] pdfBuilderData not found on window après timeout');
-                // console.log('❌ [WP] window keys avec pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
-                // console.log('❌ [WP] Toutes les clés window:', Object.keys(window));
+                // 
+                // 
+                // 
             }
         }, 100);
         ";
@@ -504,20 +504,20 @@ class AdminScriptLoader
         // Script de diagnostic supplémentaire qui s'exécute plus tôt
         $diagnostic_script = "
         jQuery(document).ready(function($) {
-            // console.log('🔧 [WP] Document ready - vérification pdfBuilderData à ' + new Date().toISOString());
+            // 
             setTimeout(function() {
-                // console.log('🔧 [WP] pdfBuilderData dans document ready:', window.pdfBuilderData);
+                // 
                 if (!window.pdfBuilderData) {
-                    // console.error('❌ [WP] pdfBuilderData toujours undefined dans document ready');
-                    // console.log('❌ [WP] Vérification des scripts chargés...');
+                    // 
+                    // 
                     var scripts = document.getElementsByTagName('script');
                     for (var i = 0; i < scripts.length; i++) {
                         if (scripts[i].src && scripts[i].src.includes('pdf-builder-react')) {
-                            // console.log('❌ [WP] Script trouvé:', scripts[i].src);
+                            // 
                         }
                     }
                 } else {
-                    // console.log('✅ [WP] pdfBuilderData trouvé dans document ready');
+                    // 
                 }
             }, 500);
         });
@@ -620,3 +620,4 @@ class AdminScriptLoader
         return $content;
     }
 }
+

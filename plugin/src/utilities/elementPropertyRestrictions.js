@@ -254,3 +254,4 @@ export const ELEMENT_PROPERTY_RESTRICTIONS = {
 
                                                                                     return stringDefaults[propertyName] || invalidValue;
                                                                             };
+

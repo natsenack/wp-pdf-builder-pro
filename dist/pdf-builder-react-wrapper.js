@@ -6,7 +6,7 @@
 (function() {
   'use strict';
 
-  console.log('[PDF Builder V2 Wrapper] Starting initialization...');
+  
 
   // Configuration
   const CONFIG = {
@@ -29,12 +29,12 @@
       Object.assign(script, attributes);
       
       script.onload = () => {
-        console.log(`[PDF Builder V2 Wrapper] Script loaded: ${src}`);
+        
         resolve(script);
       };
       
       script.onerror = () => {
-        console.error(`[PDF Builder V2 Wrapper] Failed to load script: ${src}`);
+        
         reject(new Error(`Failed to load: ${src}`));
       };
       
@@ -52,12 +52,12 @@
       link.href = href;
       
       link.onload = () => {
-        console.log(`[PDF Builder V2 Wrapper] Stylesheet loaded: ${href}`);
+        
         resolve(link);
       };
       
       link.onerror = () => {
-        console.error(`[PDF Builder V2 Wrapper] Failed to load stylesheet: ${href}`);
+        
         reject(new Error(`Failed to load: ${href}`));
       };
       
@@ -74,13 +74,13 @@
       
       const checkModule = () => {
         if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-          console.log('[PDF Builder V2 Wrapper] ✅ Module loaded successfully');
+          
           resolve(window.pdfBuilderReact);
           return;
         }
         
         if (Date.now() - startTime > timeout) {
-          console.error(`[PDF Builder V2 Wrapper] ❌ Module loading timeout after ${timeout}ms`);
+          
           reject(new Error('Module loading timeout'));
           return;
         }
@@ -97,7 +97,7 @@
    */
   async function initializePDFBuilder() {
     try {
-      console.log('[PDF Builder V2 Wrapper] Loading resources...');
+      
       
       // Wait for DOM ready
       if (document.readyState === 'loading') {
@@ -111,33 +111,33 @@
       
       // Load vendors (React, ReactDOM, etc.)
       await loadScript(CONFIG.vendorsUrl);
-      console.log('[PDF Builder V2 Wrapper] Vendors loaded');
+      
       
       // Load main bundle
       await loadScript(CONFIG.bundleUrl);
-      console.log('[PDF Builder V2 Wrapper] Bundle loaded');
+      
       
       // Wait for module initialization
       const module = await waitForModule();
-      console.log('[PDF Builder V2 Wrapper] Module available');
+      
       
       // Initialize React app
       const container = document.getElementById(CONFIG.containerId);
       if (container) {
-        console.log(`[PDF Builder V2 Wrapper] Initializing in container: ${CONFIG.containerId}`);
+        
         const success = module.initPDFBuilderReact(CONFIG.containerId);
         
         if (success) {
-          console.log('[PDF Builder V2 Wrapper] ✅ PDF Builder initialized successfully');
+          
         } else {
-          console.error('[PDF Builder V2 Wrapper] ❌ Initialization returned false');
+          
         }
       } else {
-        console.error(`[PDF Builder V2 Wrapper] ❌ Container not found: ${CONFIG.containerId}`);
+        
       }
       
     } catch (error) {
-      console.error('[PDF Builder V2 Wrapper] ❌ Initialization error:', error);
+      
     }
   }
 
@@ -148,3 +148,4 @@
     initializePDFBuilder();
   }
 })();
+

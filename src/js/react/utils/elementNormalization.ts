@@ -84,7 +84,7 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
 
       // DEBUG: Log des propriétés spéciales
       if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
-        // console.log(`[NORMALIZE] Propriété spéciale détectée: ${key} (type: ${type}) =`, value);
+        // 
       }
 
       // Garder: string, number, boolean, null, undefined
@@ -155,4 +155,6 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
 export function debugElementState(elements: Element[], label: string): void {
   // Debug function - logs removed for production
 }
+
+
 

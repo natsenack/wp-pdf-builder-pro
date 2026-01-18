@@ -540,3 +540,4 @@ function pdf_builder_health_check() {
 
 // Initialisation différée - l'instance sera créée quand nécessaire
 // PDF_Builder_Global_Config_Manager::get_instance();
+

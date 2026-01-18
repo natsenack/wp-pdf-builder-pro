@@ -96,3 +96,4 @@ class PDF_Builder_Sanitizer {
         return $sanitized;
     }
 }
+

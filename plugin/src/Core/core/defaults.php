@@ -202,3 +202,4 @@ class PDF_Builder_Defaults {
         return self::STATUSES[$key] ?? self::STATUSES['inactive'];
     }
 }
+

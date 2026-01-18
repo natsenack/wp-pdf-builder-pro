@@ -45,3 +45,4 @@ interface PreviewStateInterface
      */
     public function getUserMessage(): string;
 }
+

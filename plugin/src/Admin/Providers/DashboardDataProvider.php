@@ -154,3 +154,4 @@ class DashboardDataProvider
         return $default_template;
     }
 }
+

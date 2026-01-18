@@ -242,3 +242,5 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
   );
 }
 
+
+

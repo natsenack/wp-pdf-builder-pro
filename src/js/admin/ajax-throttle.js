@@ -5,7 +5,7 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder] AJAX Throttle loaded');
+    
 
     // Basic throttle implementation
     window.pdfBuilderAjaxThrottle = {
@@ -19,9 +19,10 @@
                 return fn();
             }
 
-            console.log('[PDF Builder] AJAX call throttled for key:', key);
+            
             return Promise.resolve(null);
         }
     };
 
 })(jQuery);
+

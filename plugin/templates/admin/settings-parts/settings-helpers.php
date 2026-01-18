@@ -258,3 +258,4 @@ if (!isset($nonce)) {
     $nonce = wp_create_nonce('pdf_builder_ajax');
 }
 
+

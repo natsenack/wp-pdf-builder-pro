@@ -841,3 +841,4 @@ function pdf_builder_check_integrity() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Backup_Recovery_System::get_instance();
 });
+

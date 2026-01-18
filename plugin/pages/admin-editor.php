@@ -76,3 +76,4 @@ require_once __DIR__ . '/includes/ReactAssetsV2.php';
     100% { transform: rotate(360deg); }
 }
 </style>
+

@@ -66,26 +66,26 @@ declare global {
 // Fonction de logging conditionnel
 export function debugLog(...args: unknown[]) {
   if (isDebugEnabled()) {
-    console.log(...args);
+    
   }
 }
 
 // Fonction de debug pour les sauvegardes (activable séparément)
 export function debugSave(...args: unknown[]) {
   if (isDebugEnabled()) {
-    console.log(...args);
+    
   }
 }
 
 export function debugError(...args: unknown[]) {
   if (isDebugEnabled()) {
-    console.error(...args);
+    
   }
 }
 
 export function debugWarn(...args: unknown[]) {
   if (isDebugEnabled()) {
-    console.warn(...args);
+    
   }
 }
 
@@ -109,14 +109,16 @@ if (typeof window !== 'undefined') {
         const detail = e && e.detail ? e.detail : window.pdfBuilderDebugSettings;
         window.PDF_BUILDER_VERBOSE = !!(detail && detail.javascript);
         if (typeof window.console !== 'undefined' && window.PDF_BUILDER_VERBOSE) {
-          console.log('[PDF Builder Debug] pdfBuilder:debugSettingsChanged, verbose set to', window.PDF_BUILDER_VERBOSE);
+          
         }
       } catch (err) {
         if (typeof window.console !== 'undefined') {
-          console.warn('[PDF Builder Debug] Error handling pdfBuilder:debugSettingsChanged', err);
+          
         }
       }
     });
   }
 }
+
+
 

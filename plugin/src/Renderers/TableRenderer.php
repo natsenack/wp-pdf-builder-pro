@@ -442,3 +442,4 @@ class TableRenderer
         return '#000000';
     }
 }
+

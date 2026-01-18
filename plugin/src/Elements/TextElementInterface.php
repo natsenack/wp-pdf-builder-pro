@@ -29,3 +29,4 @@ interface TextElementInterface extends ElementInterface
      */
     public function getVariables(): array;
 }
+

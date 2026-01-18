@@ -680,7 +680,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Écouter l'événement de sauvegarde globale
             document.addEventListener('pdfBuilderSettingsSaved', function(event) {
-                console.log('📋 Templates: Sauvegarde globale détectée, mise à jour des prévisualisations');
+                
                 // Mettre à jour les prévisualisations après sauvegarde globale
                 updatePreviewsAfterSave();
             });
@@ -739,4 +739,5 @@
         });
     })();
 </script>
+
 

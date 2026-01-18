@@ -984,3 +984,4 @@ class PDFGenerator extends BaseGenerator
         return $output_path;
     }
 }
+

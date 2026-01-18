@@ -1652,3 +1652,4 @@ function pdf_builder_get_reports() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Reporting_Analytics::get_instance();
 });
+

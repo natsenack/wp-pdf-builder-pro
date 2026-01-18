@@ -131,16 +131,16 @@ jQuery(document).ready(function($) {
                     $('#cron-results').show();
                     $('#cron-results-content').html('<pre>Diagnostics completed successfully</pre>');
                 } else {
-                    // console.error('PDF Builder: [CRON] Error diagnosing cron system:', response.data);
+                    // 
                     alert(i18n.errorDiagnosingCronSystem + ' ' + response.data);
                 }
                 $('#diagnose-cron-btn').prop('disabled', false).text(i18n.diagnoseCronSystem);
             },
             error: function(xhr, status, error) {
-                // console.error('PDF Builder: [CRON] AJAX error - xhr:', xhr);
-                // console.error('PDF Builder: [CRON] AJAX error - status:', status);
-                // console.error('PDF Builder: [CRON] AJAX error - error:', error);
-                // console.error('PDF Builder: [CRON] AJAX error - response text:', xhr.responseText);
+                // 
+                // 
+                // 
+                // 
                 $('#diagnose-cron-btn').prop('disabled', false).text(i18n.diagnoseCronSystem);
                 alert(i18n.ajaxErrorOccurred);
             }
@@ -170,12 +170,12 @@ jQuery(document).ready(function($) {
                     alert(i18n.cronSystemRepairedSuccessfully);
                     $('#diagnose-cron-btn').click(); // Refresh status
                 } else {
-                    // console.error('PDF Builder: [CRON] Error repairing cron system:', response.data);
+                    // 
                     alert(i18n.errorRepairingCronSystem + ' ' + response.data);
                 }
             },
             error: function(xhr, status, error) {
-                // console.error('PDF Builder: [CRON] Repair AJAX error:', {xhr: xhr, status: status, error: error});
+                // 
                 $('#repair-cron-btn').prop('disabled', false).text(i18n.repairCronSystem);
                 alert(i18n.ajaxErrorOccurred);
             }
@@ -201,12 +201,12 @@ jQuery(document).ready(function($) {
                     $('#cron-results').show();
                     $('#cron-results-content').html('<pre>' + response.data + '</pre>');
                 } else {
-                    // console.error('PDF Builder: [BACKUP] Error loading backup statistics:', response.data);
+                    // 
                     alert(i18n.errorLoadingBackupStatistics + ' ' + response.data);
                 }
             },
             error: function(xhr, status, error) {
-                // console.error('PDF Builder: [BACKUP] Statistics AJAX error:', {xhr: xhr, status: status, error: error});
+                // 
                 $('#backup-stats-btn').prop('disabled', false).text(i18n.viewBackupStatistics);
                 alert(i18n.ajaxErrorOccurred);
             }
@@ -236,12 +236,12 @@ jQuery(document).ready(function($) {
                     alert(i18n.manualBackupCreatedSuccessfully);
                     $('#backup-stats-btn').click(); // Refresh stats
                 } else {
-                    // console.error('PDF Builder: [BACKUP] Error creating manual backup:', response.data);
+                    // 
                     alert(i18n.errorCreatingManualBackup + ' ' + response.data);
                 }
             },
             error: function(xhr, status, error) {
-                // console.error('PDF Builder: [BACKUP] Manual backup AJAX error:', {xhr: xhr, status: status, error: error});
+                // 
                 $('#manual-backup-btn').prop('disabled', false).text(i18n.createManualBackup);
                 alert(i18n.ajaxErrorOccurred);
             }
@@ -397,6 +397,7 @@ jQuery(document).ready(function($) {
 }
 </style>
 </script>
+
 
 
 

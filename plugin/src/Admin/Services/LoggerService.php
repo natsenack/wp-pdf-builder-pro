@@ -87,3 +87,4 @@ class LoggerService
         return delete_option('pdf_builder_role_change_logs');
     }
 }
+

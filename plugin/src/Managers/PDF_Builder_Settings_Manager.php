@@ -153,3 +153,4 @@ class PdfBuilderSettingsManager
         return $json_string;
     }
 }
+

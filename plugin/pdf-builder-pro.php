@@ -2497,3 +2497,4 @@ function pdf_builder_view_logs_handler() {
     }
 }
 
+

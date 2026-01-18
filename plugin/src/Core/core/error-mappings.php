@@ -326,3 +326,4 @@ class PDF_Builder_Error_Mappings {
         ], $additional_data);
     }
 }
+

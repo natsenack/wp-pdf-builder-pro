@@ -350,3 +350,4 @@ class PdfBuilderThumbnailManager
         PDF_Builder_Security_Manager::debug_log('php_errors', 'THUMBNAIL_INFO: ' . $message);
     }
 }
+

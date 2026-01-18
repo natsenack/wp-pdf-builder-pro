@@ -589,3 +589,4 @@ class PDFBuilderVariableMapper
         return implode("\n", $address_parts);
     }
 }
+

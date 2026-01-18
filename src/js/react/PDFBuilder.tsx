@@ -68,7 +68,7 @@ export function PDFBuilder({
     );
   } catch (renderError) {
     debugLog('❌ PDFBuilder: Render error:', renderError);
-    console.error('❌ PDFBuilder: Render error:', renderError);
+    
     // Return error UI
     return (
       <div style={{
@@ -91,4 +91,6 @@ export function PDFBuilder({
 
 // Export des composants individuels pour une utilisation modulaire
 export { PDFBuilderContent };
+
+
 

@@ -603,3 +603,4 @@ class PdfBuilderTemplatesAjax
 
 // Initialiser le handler AJAX
 new PdfBuilderTemplatesAjax();
+

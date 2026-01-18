@@ -464,3 +464,4 @@ class TextRenderer
         return array_unique($variables);
     }
 }
+

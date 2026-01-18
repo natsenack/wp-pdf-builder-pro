@@ -975,3 +975,4 @@ function pdf_builder_get_deployments($limit = 20) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Continuous_Deployment::get_instance();
 });
+

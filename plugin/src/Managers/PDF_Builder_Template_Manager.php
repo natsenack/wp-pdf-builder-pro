@@ -1060,3 +1060,4 @@ class PdfBuilderTemplateManager
      * Génère un thumbnail pour le template
      */
 }
+

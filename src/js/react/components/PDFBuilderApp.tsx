@@ -26,7 +26,7 @@ export const PDFBuilderApp: React.FC<AppProps> = ({
 
   useEffect(() => {
     // Component mounted successfully
-    console.log("[PDFBuilderApp] Component mounted");
+    
     setIsReady(true);
 
     // Charger les données du template depuis WordPress
@@ -35,7 +35,7 @@ export const PDFBuilderApp: React.FC<AppProps> = ({
     }
 
     return () => {
-      console.log("[PDFBuilderApp] Component unmounted");
+      
     };
   }, []);
 
@@ -58,7 +58,7 @@ export const PDFBuilderApp: React.FC<AppProps> = ({
         setTemplateData(data);
       }
     } catch (error) {
-      console.error("[PDF Builder] Error loading template:", error);
+      
     }
   };
 
@@ -111,3 +111,5 @@ export const PDFBuilderApp: React.FC<AppProps> = ({
 };
 
 export default PDFBuilderApp;
+
+

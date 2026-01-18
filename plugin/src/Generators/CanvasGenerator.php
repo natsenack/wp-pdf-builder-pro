@@ -347,3 +347,4 @@ class CanvasGenerator extends BaseGenerator
         return $this->performance_metrics;
     }
 }
+

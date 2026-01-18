@@ -117,3 +117,4 @@ class License_Expiration_Handler
         self::clearScheduledExpirationCheck();
     }
 }
+

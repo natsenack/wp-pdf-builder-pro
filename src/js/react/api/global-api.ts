@@ -36,7 +36,7 @@ export async function loadTemplate(templateData: any) {
 
     return true;
   } catch (error) {
-    console.error('[Global API] Error loading template', error);
+    
     return false;
   }
 }
@@ -159,5 +159,7 @@ export interface GlobalAPI {
   resetAPI: typeof resetAPI;
   updateCanvasDimensions: typeof updateCanvasDimensions;
 }
+
+
 
 

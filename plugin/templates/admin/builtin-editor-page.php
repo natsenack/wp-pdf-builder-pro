@@ -327,3 +327,4 @@ function pdf_builder_ajax_save_builtin_from_react()
 
     wp_send_json_error('Système builtin supprimé');
 }
+

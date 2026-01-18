@@ -866,7 +866,7 @@ document.getElementById('create-template-btn')?.addEventListener('click', functi
         }
     })
     .catch(error => {
-        // console.error('Erreur vérification limite:', error);
+        // 
         showUpgradeModal('template');
     });
 });
@@ -940,7 +940,7 @@ function loadTemplateSettings(templateId) {
         }
     })
     .catch(error => {
-        console.error('Erreur AJAX:', error);
+        
         alert('Erreur lors du chargement des paramètres du template');
         closeTemplateSettingsModal();
     });
@@ -986,7 +986,7 @@ function saveTemplateSettings() {
         }
     })
     .catch(error => {
-        console.error('Erreur AJAX:', error);
+        
         alert('Erreur lors de la sauvegarde des paramètres du template');
     });
 }
@@ -1015,7 +1015,7 @@ function duplicateTemplate(templateId, templateName) {
             }
         })
         .catch(error => {
-            console.error('Erreur AJAX:', error);
+            
             alert('Erreur lors de la duplication du template');
         });
     }
@@ -1045,7 +1045,7 @@ function confirmDeleteTemplate(templateId, templateName) {
             }
         })
         .catch(error => {
-            console.error('Erreur AJAX:', error);
+            
             alert('Erreur lors de la suppression du template');
         });
     }
@@ -1075,7 +1075,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         }
     })
     .catch(error => {
-        console.error('Erreur AJAX:', error);
+        
         alert('Erreur lors de la mise à jour du template');
     });
 }
@@ -1181,7 +1181,7 @@ var currentTemplateId = null;
 
 // Fonction pour ouvrir les paramètres du template
 function openTemplateSettings(templateId, templateName) {
-    console.log('Opening template settings for:', templateId, templateName);
+    
     currentTemplateId = templateId;
     
     // Afficher la modale
@@ -1202,7 +1202,7 @@ function closeTemplateSettingsModal() {
 
 // Fonction pour charger les paramètres du template via AJAX
 function loadTemplateSettings(templateId) {
-    console.log('Loading template settings for ID:', templateId);
+    
     
     // Afficher un indicateur de chargement
     document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
@@ -1220,7 +1220,7 @@ function loadTemplateSettings(templateId) {
         type: 'POST',
         data: data,
         success: function(response) {
-            console.log('Template settings loaded:', response);
+            
             if (response.success && response.data && response.data.template) {
                 displayTemplateSettings(response.data.template);
             } else {
@@ -1234,7 +1234,7 @@ function loadTemplateSettings(templateId) {
             }
         },
         error: function(xhr, status, error) {
-            console.error('AJAX error loading template settings:', xhr, status, error);
+            
             document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
             
             // Afficher une notification d'erreur
@@ -1247,7 +1247,7 @@ function loadTemplateSettings(templateId) {
 
 // Fonction pour afficher les paramètres du template dans la modale
 function displayTemplateSettings(template) {
-    console.log('Displaying template settings:', template);
+    
     
     var content = document.getElementById('template-settings-content');
     
@@ -1451,7 +1451,7 @@ function saveTemplateSettings() {
         return;
     }
     
-    console.log('Saving template settings for ID:', currentTemplateId);
+    
     
     // Récupérer les valeurs du formulaire
     var formData = new FormData();
@@ -1483,7 +1483,7 @@ function saveTemplateSettings() {
         return response.json();
     })
     .then(function(data) {
-        console.log('Template settings saved:', data);
+        
         
         if (data.success) {
             // Fermer la modale
@@ -1513,7 +1513,7 @@ function saveTemplateSettings() {
         }
     })
     .catch(function(error) {
-        console.error('Error saving template settings:', error);
+        
         
         // Afficher une notification d'erreur
         if (typeof window.showErrorNotification !== 'undefined') {
@@ -1533,7 +1533,7 @@ function saveTemplateSettings() {
 function duplicateTemplate(templateId, templateName) {
     if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
         // Implémentation de la duplication
-        console.log('Duplicating template:', templateId, templateName);
+        
         // TODO: Implémenter la duplication via AJAX
         alert('Fonction de duplication à implémenter');
     }
@@ -1542,14 +1542,14 @@ function duplicateTemplate(templateId, templateName) {
 function confirmDeleteTemplate(templateId, templateName) {
     if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action est irréversible.')) {
         // Implémentation de la suppression
-        console.log('Deleting template:', templateId, templateName);
+        
         // TODO: Implémenter la suppression via AJAX
         alert('Fonction de suppression à implémenter');
     }
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
-    console.log('Toggling default template:', templateId, templateType, templateName);
+    
     // TODO: Implémenter le changement de template par défaut
     alert('Fonction de changement de template par défaut à implémenter');
 }
@@ -1560,14 +1560,14 @@ function closeTemplateGallery() {
 }
 
 function selectPredefinedTemplate(slug) {
-    console.log('Selecting predefined template:', slug);
+    
     // TODO: Implémenter la sélection de modèle prédéfini
     alert('Fonction de sélection de modèle prédéfini à implémenter');
 }
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('PDF Builder Templates page loaded');
+    
     
     // Gestionnaire pour le bouton "Créer un template"
     var createBtn = document.getElementById('create-template-btn');
@@ -1642,3 +1642,4 @@ function filterGalleryTemplates(filter) {
     });
 }
 </script>
+

@@ -54,3 +54,4 @@ interface DataProviderInterface
      */
     public function validateAndSanitizeData(array $data): array;
 }
+

@@ -927,7 +927,7 @@ class PdfBuilderCore
                 };
             } catch (e) {
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    // console.error('Erreur lors du chargement des données PDF Builder:', e);
+                    // 
                 }
                 window.pdfBuilderData = {
                     templateId: null,
@@ -946,5 +946,6 @@ class PdfBuilderCore
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
 
 

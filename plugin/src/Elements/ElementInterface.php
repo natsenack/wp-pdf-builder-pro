@@ -64,3 +64,4 @@ interface ElementInterface
      */
     public function setStyle(array $style): void;
 }
+

@@ -653,3 +653,4 @@ class PdfBuilderPdfGenerator
         return $html_content;
     }
 }
+

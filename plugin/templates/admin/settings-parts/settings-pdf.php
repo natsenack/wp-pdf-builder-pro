@@ -163,3 +163,4 @@ $is_premium = $license_manager->isPremium();
 
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
+

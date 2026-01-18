@@ -57,7 +57,7 @@ function useTemplate() {
     var _this = this;
     var _a = (0, BuilderContext_1.useBuilder)(), state = _a.state, dispatch = _a.dispatch;
     var _b = (0, CanvasSettingsContext_1.useCanvasSettings)(), canvasWidth = _b.canvasWidth, canvasHeight = _b.canvasHeight;
-    console.log('[useTemplate] Initializing, window.pdfBuilderData:', window.pdfBuilderData);
+    
     // Détecter si on est sur un template existant via l'URL ou les données localisées
     var getTemplateIdFromUrl = (0, react_1.useCallback)(function () {
         var _a;
@@ -83,30 +83,30 @@ function useTemplate() {
         return __generator(this, function (_p) {
             switch (_p.label) {
                 case 0:
-                    console.log('🔄 [useTemplate] loadExistingTemplate called with templateId:', templateId);
-                    console.log('🔄 [useTemplate] window.pdfBuilderData at start:', window.pdfBuilderData);
-                    console.log('🔄 [useTemplate] window.pdfBuilderData?.ajaxUrl:', (_a = window.pdfBuilderData) === null || _a === void 0 ? void 0 : _a.ajaxUrl);
-                    console.log('🔄 [useTemplate] window.pdfBuilderData?.nonce:', (_b = window.pdfBuilderData) === null || _b === void 0 ? void 0 : _b.nonce);
-                    console.log('🔄 [useTemplate] window keys containing pdfBuilder:', Object.keys(window).filter(function (key) { return key.includes('pdfBuilder'); }));
-                    console.log('🔄 [useTemplate] window.pdfBuilderData?.existingTemplate:', (_c = window.pdfBuilderData) === null || _c === void 0 ? void 0 : _c.existingTemplate);
-                    console.log('🔄 [useTemplate] window.pdfBuilderData?.hasExistingData:', (_d = window.pdfBuilderData) === null || _d === void 0 ? void 0 : _d.hasExistingData);
+                    
+                    
+                    
+                    
+                     }));
+                    
+                    
                     _p.label = 1;
                 case 1:
                     _p.trys.push([1, 6, , 12]);
                     // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
                     if (((_e = window.pdfBuilderData) === null || _e === void 0 ? void 0 : _e.existingTemplate) && ((_f = window.pdfBuilderData) === null || _f === void 0 ? void 0 : _f.hasExistingData)) {
-                        console.log('🔄 [useTemplate] USING LOCALIZED DATA PATH for template:', templateId);
+                        
                         templateData_1 = window.pdfBuilderData.existingTemplate;
-                        console.log('🔄 [useTemplate] templateData:', templateData_1);
-                        console.log('🔄 [useTemplate] templateData.name:', templateData_1 === null || templateData_1 === void 0 ? void 0 : templateData_1.name);
-                        console.log('🔄 [useTemplate] templateData._db_name:', templateData_1 === null || templateData_1 === void 0 ? void 0 : templateData_1._db_name);
-                        console.log('🔄 [useTemplate] templateData keys:', Object.keys(templateData_1 || {}));
+                        
+                        
+                        
+                        
                         templateName_1 = ((templateData_1 === null || templateData_1 === void 0 ? void 0 : templateData_1.name) && templateData_1.name.trim() !== '') ?
                             templateData_1.name :
                             ((templateData_1 === null || templateData_1 === void 0 ? void 0 : templateData_1._db_name) && templateData_1._db_name.trim() !== '') ?
                                 templateData_1._db_name :
                                 "[NOM NON R\u00C9CUP\u00C9R\u00C9 - ID: ".concat(templateId, "]");
-                        console.log('🔄 [useTemplate] Final template name:', templateName_1);
+                        
                         elements_1 = [];
                         canvasData_1 = null;
                         try {
@@ -202,10 +202,10 @@ function useTemplate() {
                         return [2 /*return*/, true];
                     }
                     // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
-                    console.log('🔄 [useTemplate] USING AJAX FALLBACK PATH for template:', templateId);
-                    console.log('🔄 [useTemplate] Checking window.pdfBuilderData again:', window.pdfBuilderData);
-                    console.log('🔄 [useTemplate] ajaxUrl for AJAX call:', (_g = window.pdfBuilderData) === null || _g === void 0 ? void 0 : _g.ajaxUrl);
-                    console.log('🔄 [useTemplate] nonce for AJAX call:', (_h = window.pdfBuilderData) === null || _h === void 0 ? void 0 : _h.nonce);
+                    
+                    
+                    
+                    
                     isChrome = typeof navigator !== 'undefined' &&
                         /Chrome/.test(navigator.userAgent) &&
                         /Google Inc/.test(navigator.vendor);
@@ -215,7 +215,7 @@ function useTemplate() {
                         /Safari/.test(navigator.userAgent) &&
                         !/Chrome/.test(navigator.userAgent) &&
                         !/Chromium/.test(navigator.userAgent);
-                    console.log('🔄 [useTemplate] Browser detection:', { isChrome: isChrome, isFirefox: isFirefox, isSafari: isSafari });
+                    
                     fetchOptions = {
                         method: 'GET',
                         headers: {
@@ -235,22 +235,22 @@ function useTemplate() {
                         // Chrome peut avoir besoin d'un mode plus permissif
                         fetchOptions.mode = 'cors';
                         fetchOptions.cache = 'no-cache';
-                        console.log('🔄 [useTemplate] Using Chrome-specific options');
+                        
                     }
                     else if (isFirefox) {
                         // Firefox gère bien le cache par défaut
                         fetchOptions.cache = 'no-cache';
-                        console.log('🔄 [useTemplate] Using Firefox-specific options');
+                        
                     }
                     else if (isSafari) {
                         // Safari peut avoir des problèmes avec certains modes
                         fetchOptions.mode = 'cors';
-                        console.log('🔄 [useTemplate] Using Safari-specific options');
+                        
                     }
                     cacheBreaker = Date.now();
                     url = "".concat((_j = window.pdfBuilderData) === null || _j === void 0 ? void 0 : _j.ajaxUrl, "?action=pdf_builder_get_template&template_id=").concat(templateId, "&nonce=").concat((_k = window.pdfBuilderData) === null || _k === void 0 ? void 0 : _k.nonce, "&t=").concat(cacheBreaker);
-                    console.log('🔄 [useTemplate] About to fetch URL:', url);
-                    console.log('🔄 [useTemplate] Fetch options:', fetchOptions);
+                    
+                    
                     return [4 /*yield*/, fetch(url, fetchOptions)];
                 case 2:
                     response = _p.sent();
@@ -266,14 +266,14 @@ function useTemplate() {
                     if (!result.success) {
                         throw new Error(result.data || 'Erreur lors du chargement du template');
                     }
-                    console.log('🔄 [useTemplate] AJAX result:', result);
-                    console.log('🔄 [useTemplate] result.data:', result.data);
-                    console.log('🔄 [useTemplate] result.template:', result.template);
-                    console.log('🔄 [useTemplate] result.template_name:', result.template_name);
+                    
+                    
+                    
+                    
                     templateData = result.data ? result.data.template : result.template;
                     ajaxTemplateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
-                    console.log('🔄 [useTemplate] templateData:', templateData);
-                    console.log('🔄 [useTemplate] ajaxTemplateName:', ajaxTemplateName);
+                    
+                    
                     templateName = (ajaxTemplateName && ajaxTemplateName.trim() !== '') ?
                         ajaxTemplateName :
                         ((templateData === null || templateData === void 0 ? void 0 : templateData.name) && templateData.name.trim() !== '') ?
@@ -489,22 +489,22 @@ function useTemplate() {
         return __generator(this, function (_f) {
             switch (_f.label) {
                 case 0:
-                    // console.log('[PDF_BUILDER_FRONTEND] Starting template save...');
+                    // 
                     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
                     _f.label = 1;
                 case 1:
                     _f.trys.push([1, 4, 5, 6]);
                     templateId = state.template.id || getTemplateIdFromUrl();
-                    // console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
+                    // 
                     if (!templateId) {
                         throw new Error('Aucun template chargé pour la sauvegarde');
                     }
                     // Vérifier que le template est complètement chargé
                     if (!state.template.name || state.template.name.trim() === '') {
-                        // console.log('[PDF_BUILDER_FRONTEND] Template name not loaded yet, skipping save');
+                        // 
                         return [2 /*return*/]; // Ne pas lancer d'erreur, juste ignorer
                     }
-                    // console.log('[PDF_BUILDER_FRONTEND] Template name:', state.template.name);
+                    // 
                     if (!((_a = window.pdfBuilderData) === null || _a === void 0 ? void 0 : _a.ajaxUrl)) {
                         throw new Error('URL AJAX non disponible');
                     }
@@ -514,15 +514,15 @@ function useTemplate() {
                     normalizedElements = (0, elementNormalization_1.normalizeElementsBeforeSave)(state.elements);
                     (0, elementNormalization_1.debugElementState)(normalizedElements, 'AVANT SAUVEGARDE');
                     // 🔍 DEBUG: Log complet des propriétés des éléments avant sauvegarde
-                    // console.log('[PDF_BUILDER_FRONTEND] Éléments avant normalisation:', state.elements);
-                    // console.log('[PDF_BUILDER_FRONTEND] Éléments après normalisation:', normalizedElements);
+                    // 
+                    // 
                     // Vérifier les propriétés spéciales
                     normalizedElements.forEach(function (el, idx) {
-                        // console.log(`[PDF_BUILDER_FRONTEND] Élément ${idx} (${el.type}) propriétés:`, Object.keys(el));
+                        // 
                         // Chercher des propriétés avec emoji ou "interactions"
                         Object.keys(el).forEach(function (key) {
                             if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
-                                // console.log(`[PDF_BUILDER_FRONTEND] Propriété spéciale trouvée: ${key} =`, el[key]);
+                                // 
                             }
                         });
                     });
@@ -546,8 +546,8 @@ function useTemplate() {
                     formData.append('template_description', state.template.description || '');
                     formData.append('template_data', JSON.stringify(templateData));
                     formData.append('nonce', ((_c = window.pdfBuilderData) === null || _c === void 0 ? void 0 : _c.nonce) || '');
-                    console.log('[PDF_BUILDER_FRONTEND] Nonce envoyé:', (_d = window.pdfBuilderData) === null || _d === void 0 ? void 0 : _d.nonce);
-                    console.log('[PDF_BUILDER_FRONTEND] window.pdfBuilderData:', window.pdfBuilderData);
+                    
+                    
                     // Ajouter les paramètres du template
                     formData.append('show_guides', state.template.showGuides ? '1' : '0');
                     formData.append('snap_to_grid', state.template.snapToGrid ? '1' : '0');
@@ -561,20 +561,20 @@ function useTemplate() {
                         })];
                 case 2:
                     response = _f.sent();
-                    // console.log('[PDF_BUILDER_FRONTEND] HTTP Response status:', response.status);
+                    // 
                     if (!response.ok) {
                         throw new Error("Erreur HTTP: ".concat(response.status));
                     }
                     return [4 /*yield*/, response.json()];
                 case 3:
                     result = _f.sent();
-                    // console.log('[PDF_BUILDER_FRONTEND] Server response:', result);
+                    // 
                     if (!result.success) {
                         (0, debug_1.debugError)('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
                         errorMessage = result.data || 'Unknown error during save';
                         throw new Error(errorMessage);
                     }
-                    // console.log('[PDF_BUILDER_FRONTEND] Save successful! Template ID:', result.data?.template_id);
+                    // 
                     dispatch({
                         type: 'SAVE_TEMPLATE',
                         payload: {
@@ -631,3 +631,4 @@ function useTemplate() {
     };
 }
 exports.useTemplate = useTemplate;
+

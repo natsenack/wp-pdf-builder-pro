@@ -598,3 +598,4 @@ function _n_pdf_builder($single, $plural, $number, $context = '') {
 add_action('plugins_loaded', function() {
     PDF_Builder_Localization::get_instance();
 });
+

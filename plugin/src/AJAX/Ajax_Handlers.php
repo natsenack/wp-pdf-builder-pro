@@ -988,3 +988,4 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
+

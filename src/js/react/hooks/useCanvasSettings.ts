@@ -280,3 +280,5 @@ export const getDefaultCanvasSettings = () => ({
     show_fps: false,
 });
 
+
+

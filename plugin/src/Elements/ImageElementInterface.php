@@ -36,3 +36,4 @@ interface ImageElementInterface extends ElementInterface
      */
     public function setAlt(string $alt): void;
 }
+

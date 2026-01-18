@@ -358,3 +358,4 @@ class PdfBuilderStatusManager
         return $info;
     }
 }
+

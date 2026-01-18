@@ -914,3 +914,4 @@ function pdf_builder_perform_health_check() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Health_Monitor::get_instance();
 });
+

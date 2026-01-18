@@ -694,3 +694,4 @@ class PdfBuilderAssetOptimizer
         return $size;
     }
 }
+

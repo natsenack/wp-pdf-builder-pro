@@ -686,3 +686,4 @@ function pdf_builder_run_diagnostic() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Diagnostic_Tool::get_instance();
 });
+

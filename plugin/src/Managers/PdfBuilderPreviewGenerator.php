@@ -516,3 +516,4 @@ class PdfBuilderPreviewGenerator
         return $upload_dir['basedir'] . '/pdf-builder-previews/';
     }
 }
+

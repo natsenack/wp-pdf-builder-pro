@@ -7,11 +7,8 @@
 const React = window.React;
 
 if (!React) {
-  console.error('❌ [jsx-runtime] window.React is not available!');
   throw new Error('React is not available on window.React');
 }
-
-console.log('✅ [jsx-runtime] React JSX runtime loaded from window.React');
 
 // Export the JSX functions
 module.exports = {
@@ -21,3 +18,4 @@ module.exports = {
 };
 
 module.exports.default = module.exports;
+

@@ -1058,3 +1058,4 @@ class PDF_Builder_Predefined_Templates_Manager
 }
 // Initialisation gérée par PDF_Builder_Admin.php - v2
 // new PDF_Builder_Predefined_Templates_Manager();
+

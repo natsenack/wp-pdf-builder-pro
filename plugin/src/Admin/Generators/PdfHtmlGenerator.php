@@ -652,3 +652,4 @@ class PdfHtmlGenerator
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }
 }
+

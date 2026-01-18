@@ -324,3 +324,4 @@ class PdfBuilderCanvasManager
         return $this->default_settings;
     }
 }
+

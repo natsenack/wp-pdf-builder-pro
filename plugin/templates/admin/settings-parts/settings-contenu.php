@@ -444,7 +444,7 @@
                 (function() {
                     'use strict';
 
-                    console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
+                    
 
                     // Initialize window.pdfBuilderCanvasSettings with current DB values
                     window.pdfBuilderCanvasSettings = {
@@ -485,7 +485,7 @@
                         errorReporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1'); ?>,
                         memoryLimitPhp: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>
                     };
-                    console.log('[PDF Builder] Initialized window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                    
 
                     // Configuration des modals
                     var modalConfig = {
@@ -540,7 +540,7 @@
                                 var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + toggleName + ']"]');
                                 if (hiddenField) {
                                     hiddenField.value = modalInput.checked ? '1' : '0';
-                                    console.log('[PDF Builder] Forced sync:', toggleName, '=', hiddenField.value);
+                                    
                                 }
                             }
                         });
@@ -584,7 +584,7 @@
                         if (modalElement) {
                             modalElement.style.display = 'none';
                             document.body.style.overflow = '';
-                            console.log('[PDF Builder] Closed modal');
+                            
                         }
                     }
 
@@ -603,13 +603,13 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    console.log('[PDF Builder] Notification affichée:', response.data);
+                                    
                                 } else {
-                                    console.error('[PDF Builder] Erreur notification:', response.data);
+                                    
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error('[PDF Builder] Erreur AJAX notification:', error);
+                                
                             }
                         });
                     }
@@ -646,15 +646,15 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                console.log('[PDF Builder] Modal settings saved successfully:', data.data);
+                                
                                 showNotification('Paramètres sauvegardés avec succès', 'success');
                             } else {
-                                console.error('[PDF Builder] Error saving modal settings:', data.data);
+                                
                                 showNotification('Erreur lors de la sauvegarde', 'error');
                             }
                         })
                         .catch(error => {
-                            console.error('[PDF Builder] AJAX error:', error);
+                            
                             showNotification('Erreur de connexion', 'error');
                         });
 
@@ -664,29 +664,29 @@
 
                     // Initialisation des événements
                     function initEvents() {
-                        console.log('[PDF Builder] Initializing events...');
+                        
 
                         // Boutons de configuration
                         document.addEventListener('click', function(e) {
-                            console.log('[PDF Builder] Click detected on:', e.target);
+                            
 
                             // Ouvrir modal
                             var configBtn = e.target.closest('.canvas-configure-btn');
                             if (configBtn) {
-                                console.log('[PDF Builder] Configure button clicked');
+                                
                                 e.preventDefault();
                                 var card = configBtn.closest('.canvas-card');
                                 if (card) {
                                     var category = card.getAttribute('data-category');
-                                    console.log('[PDF Builder] Card category:', category);
+                                    
                                     if (category && modalConfig[category]) {
-                                        console.log('[PDF Builder] Opening modal for category:', category);
+                                        
                                         openModal(category);
                                     } else {
-                                        console.log('[PDF Builder] Invalid category or no modal config for:', category);
+                                        
                                     }
                                 } else {
-                                    console.log('[PDF Builder] No parent card found');
+                                    
                                 }
                                 return;
                             }
@@ -729,7 +729,7 @@
                                     var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
                                     if (hiddenField) {
                                         hiddenField.value = input.checked ? '1' : '0';
-                                        console.log('[PDF Builder] Hidden field updated:', inputName, '=', hiddenField.value);
+                                        
                                     }
                                 }
                             }
@@ -745,7 +745,7 @@
                             }
                         });
 
-                        console.log('[PDF Builder] Events initialized');
+                        
                     }
 
                     // Initialisation au chargement du DOM
@@ -767,9 +767,10 @@
                         initEvents();
                     }
 
-                    console.log('[PDF Builder] Canvas modals system ready');
+                    
                 })();
             </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
+
 

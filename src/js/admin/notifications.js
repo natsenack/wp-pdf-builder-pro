@@ -5,11 +5,11 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder] Notifications loaded');
+    
 
     window.pdfBuilderNotifications = {
         show: function(message, type = 'info', duration = 5000) {
-            console.log('[PDF Builder] Notification:', type, message);
+            
 
             // Basic notification - could be enhanced with UI
             const notification = $('<div class="pdf-builder-notification pdf-builder-notification-' + type + '">' + message + '</div>');
@@ -29,3 +29,4 @@
     };
 
 })(jQuery);
+

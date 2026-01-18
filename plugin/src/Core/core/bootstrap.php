@@ -17,3 +17,4 @@ if (defined('PHPUNIT_RUNNING')) {
         require_once $main_bootstrap;
     }
 }
+

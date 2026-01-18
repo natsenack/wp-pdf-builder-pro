@@ -631,3 +631,4 @@ class PDF_Builder_Ajax_Handler {
         return count($settings);
     }
 }
+

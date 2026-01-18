@@ -277,3 +277,4 @@ class TemplateProcessor
         return $template;
     }
 }
+

@@ -586,3 +586,4 @@ function pdf_builder_run_updates() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Update_Manager::get_instance();
 });
+

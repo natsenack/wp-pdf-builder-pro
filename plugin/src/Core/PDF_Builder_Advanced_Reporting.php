@@ -1427,3 +1427,4 @@ function pdf_builder_export_report($report_id, $format = null) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Advanced_Reporting::get_instance();
 });
+

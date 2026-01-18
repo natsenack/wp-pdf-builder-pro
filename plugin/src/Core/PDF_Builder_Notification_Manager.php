@@ -359,3 +359,4 @@ function pdf_builder_notify_warning($message, $options = []) {
 function pdf_builder_notify_info($message, $options = []) {
     return pdf_builder_notifications()->info($message, $options);
 }
+

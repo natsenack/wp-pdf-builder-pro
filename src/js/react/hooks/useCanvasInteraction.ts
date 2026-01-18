@@ -1215,3 +1215,5 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   };
 };
 
+
+

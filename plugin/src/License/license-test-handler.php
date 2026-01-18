@@ -448,3 +448,4 @@ class LicenseTestHandler
         }
     }
 }
+

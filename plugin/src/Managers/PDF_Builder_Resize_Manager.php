@@ -348,3 +348,4 @@ class PdfBuilderResizeManager
         return $stats;
     }
 }
+

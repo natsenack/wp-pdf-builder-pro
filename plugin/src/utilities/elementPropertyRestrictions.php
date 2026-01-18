@@ -280,3 +280,4 @@ function fixInvalidProperty(string $elementType, string $propertyName, $invalidV
     ];
     return $stringDefaults[$propertyName] ?? $invalidValue;
 }
+

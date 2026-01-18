@@ -1114,3 +1114,4 @@ function pdf_builder_is_ip_blocked($ip) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Security_Monitor::get_instance();
 });
+

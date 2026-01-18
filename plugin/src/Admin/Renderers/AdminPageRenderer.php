@@ -612,3 +612,4 @@ class AdminPageRenderer
         return $html;
     }
 }
+

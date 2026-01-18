@@ -262,3 +262,4 @@ if (
 ) {
     PDF_Builder_Performance_Monitor::init();
 }
+

@@ -1205,3 +1205,4 @@ function pdf_builder_get_security_patches() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Auto_Update_Manager::get_instance();
 });
+

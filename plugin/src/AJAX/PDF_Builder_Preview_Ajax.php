@@ -137,3 +137,4 @@ class PdfBuilderPreviewAjax
 
 // Initialisation
 new PDF_Builder_Preview_Ajax();
+

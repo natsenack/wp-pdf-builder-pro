@@ -117,3 +117,4 @@ class TemplateDefaults
         return $template_type === 'default';
     }
 }
+

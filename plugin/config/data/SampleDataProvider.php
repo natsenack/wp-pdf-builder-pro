@@ -384,3 +384,4 @@ class SampleDataProvider implements DataProviderInterface
         $this->sampleData[$key] = $this->validateAndSanitizeData($value);
     }
 }
+

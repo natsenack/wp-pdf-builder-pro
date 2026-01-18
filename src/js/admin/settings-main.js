@@ -4,7 +4,7 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder Settings] Main settings initialized');
+    
 
     // Define global functions immediately for modal control
     window.closeDeactivateModal = function() {
@@ -73,3 +73,4 @@
     }
 
 })(jQuery);
+

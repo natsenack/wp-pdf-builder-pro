@@ -35,7 +35,7 @@ class ReactAssets {
             // S'assurer que l'objet wp est défini avant que d'autres scripts ne s'exécutent
             if (typeof window.wp === 'undefined') {
                 window.wp = window.wp || {};
-                console.log('[PDF Builder] Initialized wp object');
+                
             }
             </script>
             <?php
@@ -149,3 +149,4 @@ class ReactAssets {
 
 // Auto-enregister
 ReactAssets::register();
+

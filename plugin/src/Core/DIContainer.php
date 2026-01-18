@@ -235,3 +235,4 @@ class DIContainer
             ->registerPreviewRenderer(['mode' => $initialMode]);
     }
 }
+

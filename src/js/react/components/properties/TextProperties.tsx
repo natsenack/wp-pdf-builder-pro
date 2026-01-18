@@ -421,3 +421,5 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
   );
 }
 
+
+

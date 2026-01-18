@@ -5,12 +5,12 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder] Preview API Client loaded');
+    
 
     window.pdfPreviewApiClient = {
         // API client for PDF preview
         generatePreview: function(data, callback) {
-            console.log('[PDF Builder] Generating preview...', data);
+            
 
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',
@@ -24,7 +24,7 @@
                     if (callback) callback(null, response);
                 },
                 error: function(xhr, status, error) {
-                    console.error('[PDF Builder] Preview API error:', error);
+                    
                     if (callback) callback(error, null);
                 }
             });
@@ -50,3 +50,4 @@
     };
 
 })(jQuery);
+

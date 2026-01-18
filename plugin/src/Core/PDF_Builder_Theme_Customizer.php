@@ -713,3 +713,4 @@ function pdf_builder_get_border_class($color_name) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Theme_Customizer::get_instance();
 });
+

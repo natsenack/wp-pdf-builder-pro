@@ -53,3 +53,4 @@ add_action('admin_init', 'pdf_builder_fix_media_library_display');
 
 // Aussi charger côté frontend si besoin
 add_action('init', 'pdf_builder_fix_media_library_display');
+

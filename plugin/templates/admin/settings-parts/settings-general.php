@@ -132,3 +132,4 @@
     .form-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f0f0f1; text-align: center; }
     @media (max-width: 782px) { .form-grid-compact { grid-template-columns: 1fr; } .card-header, .card-content { padding: 1rem; } }
 </style>
+
