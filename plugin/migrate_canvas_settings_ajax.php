@@ -4,6 +4,62 @@
  * À utiliser depuis l'interface admin WordPress
  */
 
+// Gestionnaire d'erreur global pour les appels AJAX
+function pdf_builder_ajax_error_handler($errno, $errstr, $errfile, $errline) {
+    // Nettoyer tout buffer de sortie
+    if (ob_get_level()) {
+        ob_clean();
+    }
+
+    // S'assurer que c'est du JSON
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
+    }
+
+    $error_response = [
+        'success' => false,
+        'message' => 'Erreur PHP fatale dans l\'AJAX',
+        'debug' => [
+            'error' => $errstr,
+            'file' => $errfile,
+            'line' => $errline,
+            'type' => $errno
+        ]
+    ];
+
+    echo json_encode($error_response);
+    exit;
+}
+
+// Gestionnaire d'exception non capturée pour AJAX
+function pdf_builder_ajax_exception_handler($exception) {
+    // Nettoyer tout buffer de sortie
+    if (ob_get_level()) {
+        ob_clean();
+    }
+
+    // S'assurer que c'est du JSON
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
+    }
+
+    $error_response = [
+        'success' => false,
+        'message' => 'Exception non capturée: ' . $exception->getMessage(),
+        'debug' => [
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString()
+        ]
+    ];
+
+    echo json_encode($error_response);
+    exit;
+}
+
+// Définir le gestionnaire d'exception pour cette fonction AJAX
+set_exception_handler('pdf_builder_ajax_exception_handler');
+
 add_action('wp_ajax_pdf_builder_migrate_canvas_settings', 'pdf_builder_migrate_canvas_settings_ajax');
 
 // Action de test pour vérifier l'enregistrement AJAX
@@ -42,17 +98,28 @@ function pdf_builder_test_ajax_registration() {
 }
 
 function pdf_builder_migrate_canvas_settings_ajax() {
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Permission refusée', 'pdf-builder-pro')]);
-        return;
+    // Nettoyer tout buffer de sortie existant
+    if (ob_get_level()) {
+        ob_clean();
     }
 
-    // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_migrate_canvas_settings')) {
-        wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
-        return;
+    // S'assurer qu'aucun header HTML n'est envoyé
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
     }
+
+    try {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission refusée', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_migrate_canvas_settings')) {
+            wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
+            return;
+        }
 
     try {
         // Vérifier que nous sommes dans un environnement WordPress valide
@@ -168,4 +235,8 @@ function pdf_builder_migrate_canvas_settings_ajax() {
     }
 
     wp_send_json($response);
+
+    // Restaurer les gestionnaires d'erreur
+    restore_error_handler();
+    restore_exception_handler();
 }
