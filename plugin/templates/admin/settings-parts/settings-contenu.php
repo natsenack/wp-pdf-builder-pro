@@ -202,10 +202,9 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <label for="pdf_builder_canvas_shadow_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_shadow_enabled', '0'), '1'); ?>>
-                                    Ombre activée
-                                </label>
+                                <button type="button" class="canvas-configure-btn">
+                                    <span>⚙️</span> Configurer
+                                </button>
                             </footer>
                         </article>
 
@@ -263,18 +262,9 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <label for="pdf_builder_canvas_grid_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_grid_enabled', '1'), '1'); ?>>
-                                    Grille
-                                </label>
-                                <label for="pdf_builder_canvas_guides_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_guides_enabled', '1'), '1'); ?>>
-                                    Guides
-                                </label>
-                                <label for="pdf_builder_canvas_snap_to_grid">
-                                    <input type="checkbox" id="pdf_builder_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid" value="1" <?php checked(get_canvas_option_contenu('canvas_snap_to_grid', '1'), '1'); ?>>
-                                    Aimantation
-                                </label>
+                                <button type="button" class="canvas-configure-btn">
+                                    <span>📏</span> Configurer
+                                </button>
                             </footer>
                         </article>
 
@@ -361,30 +351,9 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <label for="pdf_builder_canvas_drag_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_drag_enabled', '1'), '1'); ?>>
-                                    Glisser
-                                </label>
-                                <label for="pdf_builder_canvas_resize_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_resize_enabled', '1'), '1'); ?>>
-                                    Redimensionner
-                                </label>
-                                <label for="pdf_builder_canvas_rotate_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_rotate_enabled', '1'), '1'); ?>>
-                                    Rotation
-                                </label>
-                                <label for="pdf_builder_canvas_multi_select">
-                                    <input type="checkbox" id="pdf_builder_canvas_multi_select" name="pdf_builder_canvas_multi_select" value="1" <?php checked(get_canvas_option_contenu('canvas_multi_select', '1'), '1'); ?>>
-                                    Multi-sélection
-                                </label>
-                                <label for="pdf_builder_canvas_keyboard_shortcuts">
-                                    <input type="checkbox" id="pdf_builder_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts" value="1" <?php checked(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1'), '1'); ?>>
-                                    Raccourcis
-                                </label>
-                                <label for="pdf_builder_canvas_export_transparent">
-                                    <input type="checkbox" id="pdf_builder_canvas_export_transparent" name="pdf_builder_canvas_export_transparent" value="1" <?php checked(get_canvas_option_contenu('canvas_export_transparent', '0'), '1'); ?>>
-                                    Export transparent
-                                </label>
+                                <button type="button" class="canvas-configure-btn">
+                                    <span>🎯</span> Configurer
+                                </button>
                             </footer>
                         </article>
 
@@ -424,18 +393,9 @@
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
-                                <label for="pdf_builder_canvas_debug_enabled">
-                                    <input type="checkbox" id="pdf_builder_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1" <?php checked(get_canvas_option_contenu('canvas_debug_enabled', '0'), '1'); ?>>
-                                    Debug
-                                </label>
-                                <label for="pdf_builder_canvas_performance_monitoring">
-                                    <input type="checkbox" id="pdf_builder_canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring" value="1" <?php checked(get_canvas_option_contenu('canvas_performance_monitoring', '0'), '1'); ?>>
-                                    Monitoring
-                                </label>
-                                <label for="pdf_builder_canvas_error_reporting">
-                                    <input type="checkbox" id="pdf_builder_canvas_error_reporting" name="pdf_builder_canvas_error_reporting" value="1" <?php checked(get_canvas_option_contenu('canvas_error_reporting', '0'), '1'); ?>>
-                                    Rapports d'erreur
-                                </label>
+                                <button type="button" class="canvas-configure-btn">
+                                    <span>⚡</span> Configurer
+                                </button>
                             </footer>
                         </article>
                     </div>
@@ -480,7 +440,353 @@
 
 
 
+            <!-- CSS pour les modales Canvas - DÉJÀ INCLUS dans pdf-builder-unified.css -->
+            <style>
+            </style>
 
+            <script>
+                (function() {
+                    'use strict';
+
+                    console.log('[PDF Builder] Canvas Modals System - Simple Version v3.0');
+
+                    // Initialize window.pdfBuilderCanvasSettings with current DB values
+                    window.pdfBuilderCanvasSettings = {
+                        width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
+                        height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123')); ?>,
+                        dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
+                        format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4')); ?>,
+                        bgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
+                        borderColor: <?php echo json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')); ?>,
+                        borderWidth: <?php echo json_encode(get_canvas_option_contenu('canvas_border_width', '1')); ?>,
+                        containerBgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')); ?>,
+                        shadowEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'); ?>,
+                        gridEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1'); ?>,
+                        gridSize: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20')); ?>,
+                        guidesEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1'); ?>,
+                        snapToGrid: <?php echo json_encode(get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1'); ?>,
+                        zoomMin: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>,
+                        zoomMax: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_max', '500')); ?>,
+                        zoomDefault: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>,
+                        zoomStep: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_step', '25')); ?>,
+                        exportQuality: <?php echo json_encode(get_canvas_option_contenu('canvas_export_quality', '90')); ?>,
+                        exportFormat: <?php echo json_encode(get_canvas_option_contenu('canvas_export_format', 'png')); ?>,
+                        exportTransparent: <?php echo json_encode(get_canvas_option_contenu('canvas_export_transparent', '0') === '1'); ?>,
+                        dragEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_drag_enabled', '1') === '1'); ?>,
+                        resizeEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1'); ?>,
+                        rotateEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1'); ?>,
+                        multiSelect: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1'); ?>,
+                        selectionMode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single')); ?>,
+                        keyboardShortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1'); ?>,
+                        fpsTarget: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60')); ?>,
+                        memoryLimitJs: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>,
+                        responseTimeout: <?php echo json_encode(get_canvas_option_contenu('canvas_response_timeout', '5000')); ?>,
+                        lazyLoadingEditor: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_editor', '1') === '1'); ?>,
+                        preloadCritical: <?php echo json_encode(get_canvas_option_contenu('canvas_preload_critical', '1') === '1'); ?>,
+                        lazyLoadingPlugin: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1') === '1'); ?>,
+                        debugEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_debug_enabled', '0') === '1'); ?>,
+                        performanceMonitoring: <?php echo json_encode(get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1'); ?>,
+                        errorReporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1'); ?>,
+                        memoryLimitPhp: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>
+                    };
+                    console.log('[PDF Builder] Initialized window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+
+                    // Configuration des modals
+                    var modalConfig = {
+                        'affichage': 'canvas-affichage-modal-overlay',
+                        'navigation': 'canvas-navigation-modal-overlay',
+                        'comportement': 'canvas-comportement-modal-overlay',
+                        'systeme': 'canvas-systeme-modal-overlay'
+                    };
+
+                    // ==================== NOUVELLE LOGIQUE DE SAUVEGARDE DES TOGGLES ====================
+
+                    // Définition des toggles par modal
+                    var modalToggles = {
+                        'affichage': ['pdf_builder_canvas_shadow_enabled'],
+                        'navigation': ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'],
+                        'comportement': ['pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts', 'pdf_builder_canvas_export_transparent'],
+                        'systeme': ['pdf_builder_canvas_debug_enabled', 'pdf_builder_canvas_performance_monitoring', 'pdf_builder_canvas_error_reporting']
+                    };
+
+                    // Mapping des noms d'input vers les clés camelCase pour window.pdfBuilderCanvasSettings
+                    var inputToSettingMap = {
+                        'pdf_builder_canvas_shadow_enabled': 'shadowEnabled',
+                        'pdf_builder_canvas_grid_enabled': 'gridEnabled',
+                        'pdf_builder_canvas_guides_enabled': 'guidesEnabled',
+                        'pdf_builder_canvas_snap_to_grid': 'snapToGrid',
+                        'pdf_builder_canvas_drag_enabled': 'dragEnabled',
+                        'pdf_builder_canvas_resize_enabled': 'resizeEnabled',
+                        'pdf_builder_canvas_rotate_enabled': 'rotateEnabled',
+                        'pdf_builder_canvas_multi_select': 'multiSelect',
+                        'pdf_builder_canvas_keyboard_shortcuts': 'keyboardShortcuts',
+                        'pdf_builder_canvas_export_transparent': 'exportTransparent',
+                        'pdf_builder_canvas_debug_enabled': 'debugEnabled',
+                        'pdf_builder_canvas_performance_monitoring': 'performanceMonitoring',
+                        'pdf_builder_canvas_error_reporting': 'errorReporting'
+                    };
+
+                    // Fonction pour sauvegarder les toggles d'une modal
+                    function saveModalToggles(category) {
+                        var modalId = modalConfig[category];
+                        if (!modalId) return;
+
+                        var modal = document.getElementById(modalId);
+                        if (!modal) return;
+
+                        // Fermer la modal immédiatement sans sauvegarde
+                        closeModal(modal);
+                    }
+
+                    // Fonction pour récupérer les paramètres canvas depuis le serveur
+                    function fetchCanvasSettings(callback) {
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_ajax_handler',
+                                action_type: 'get_canvas_settings',
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
+                            },
+                            success: function(response) {
+                                if (response.success && response.data && response.data.canvas_settings) {
+                                    var serverSettings = response.data.canvas_settings;
+                                    window.pdfBuilderCanvasSettings = {
+                                        width: serverSettings.pdf_builder_canvas_width || '794',
+                                        height: serverSettings.pdf_builder_canvas_height || '1123',
+                                        dpi: serverSettings.pdf_builder_canvas_dpi || '96',
+                                        format: serverSettings.pdf_builder_canvas_format || 'A4',
+                                        bgColor: serverSettings.pdf_builder_canvas_bg_color || '#ffffff',
+                                        borderColor: serverSettings.pdf_builder_canvas_border_color || '#cccccc',
+                                        borderWidth: serverSettings.pdf_builder_canvas_border_width || '1',
+                                        containerBgColor: serverSettings.pdf_builder_canvas_container_bg_color || '#f8f9fa',
+                                        shadowEnabled: serverSettings.pdf_builder_canvas_shadow_enabled === '1',
+                                        gridEnabled: serverSettings.pdf_builder_canvas_grid_enabled === '1',
+                                        gridSize: serverSettings.pdf_builder_canvas_grid_size || '20',
+                                        guidesEnabled: serverSettings.pdf_builder_canvas_guides_enabled === '1',
+                                        snapToGrid: serverSettings.pdf_builder_canvas_snap_to_grid === '1',
+                                        zoomMin: serverSettings.pdf_builder_canvas_zoom_min || '25',
+                                        zoomMax: serverSettings.pdf_builder_canvas_zoom_max || '500',
+                                        zoomDefault: serverSettings.pdf_builder_canvas_zoom_default || '100',
+                                        zoomStep: serverSettings.pdf_builder_canvas_zoom_step || '25',
+                                        exportQuality: serverSettings.pdf_builder_canvas_export_quality || '90',
+                                        exportFormat: serverSettings.pdf_builder_canvas_export_format || 'png',
+                                        exportTransparent: serverSettings.pdf_builder_canvas_export_transparent === '1',
+                                        dragEnabled: serverSettings.pdf_builder_canvas_drag_enabled === '1',
+                                        resizeEnabled: serverSettings.pdf_builder_canvas_resize_enabled === '1',
+                                        rotateEnabled: serverSettings.pdf_builder_canvas_rotate_enabled === '1',
+                                        multiSelect: serverSettings.pdf_builder_canvas_multi_select === '1',
+                                        selectionMode: serverSettings.pdf_builder_canvas_selection_mode || 'single',
+                                        keyboardShortcuts: serverSettings.pdf_builder_canvas_keyboard_shortcuts === '1',
+                                        fpsTarget: serverSettings.pdf_builder_canvas_fps_target || '60',
+                                        memoryLimitJs: serverSettings.pdf_builder_canvas_memory_limit_js || '50',
+                                        responseTimeout: serverSettings.pdf_builder_canvas_response_timeout || '5000',
+                                        lazyLoadingEditor: serverSettings.pdf_builder_canvas_lazy_loading_editor === '1',
+                                        preloadCritical: serverSettings.pdf_builder_canvas_preload_critical === '1',
+                                        lazyLoadingPlugin: serverSettings.pdf_builder_canvas_lazy_loading_plugin === '1',
+                                        debugEnabled: serverSettings.pdf_builder_canvas_debug_enabled === '1',
+                                        performanceMonitoring: serverSettings.pdf_builder_canvas_performance_monitoring === '1',
+                                        errorReporting: serverSettings.pdf_builder_canvas_error_reporting === '1',
+                                        memoryLimitPhp: serverSettings.pdf_builder_canvas_memory_limit_php || '128'
+                                    };
+                                    if (callback) callback();
+                                } else {
+                                    if (callback) callback();
+                                }
+                            },
+                            error: function() {
+                                if (callback) callback();
+                            }
+                        });
+                    }
+
+                    // Fonction simple pour ouvrir une modal
+                    function openModal(category) {
+                        var modalId = modalConfig[category];
+                        if (!modalId) return;
+
+                        var modal = document.getElementById(modalId);
+                        if (modal) {
+                            fetchCanvasSettings(function() {
+                                syncModalInputsWithSettings(modal, category);
+                                modal.style.display = 'flex';
+                                document.body.style.overflow = 'hidden';
+                            });
+                        }
+                    }
+
+                    // Fonction pour synchroniser les inputs du modal avec window.pdfBuilderCanvasSettings
+                    function syncModalInputsWithSettings(modal, category) {
+                        if (!modal || !window.pdfBuilderCanvasSettings) return;
+
+                        var settingToInputMap = {
+                            'dragEnabled': 'pdf_builder_canvas_drag_enabled',
+                            'resizeEnabled': 'pdf_builder_canvas_resize_enabled',
+                            'rotateEnabled': 'pdf_builder_canvas_rotate_enabled',
+                            'multiSelect': 'pdf_builder_canvas_multi_select',
+                            'selectionMode': 'pdf_builder_canvas_selection_mode',
+                            'keyboardShortcuts': 'pdf_builder_canvas_keyboard_shortcuts',
+                            'exportQuality': 'pdf_builder_canvas_export_quality',
+                            'exportFormat': 'pdf_builder_canvas_export_format',
+                            'exportTransparent': 'pdf_builder_canvas_export_transparent',
+                            'gridEnabled': 'pdf_builder_canvas_grid_enabled',
+                            'gridSize': 'pdf_builder_canvas_grid_size',
+                            'guidesEnabled': 'pdf_builder_canvas_guides_enabled',
+                            'snapToGrid': 'pdf_builder_canvas_snap_to_grid',
+                            'shadowEnabled': 'pdf_builder_canvas_shadow_enabled',
+                            'debugEnabled': 'pdf_builder_canvas_debug_enabled',
+                            'performanceMonitoring': 'pdf_builder_canvas_performance_monitoring',
+                            'errorReporting': 'pdf_builder_canvas_error_reporting'
+                        };
+
+                        Object.keys(settingToInputMap).forEach(function(settingKey) {
+                            var inputName = settingToInputMap[settingKey];
+                            var input = modal.querySelector('[name="' + inputName + '"]');
+                            var settingValue = window.pdfBuilderCanvasSettings[settingKey];
+
+                            if (input) {
+                                if (input.type === 'checkbox') {
+                                    input.checked = settingValue === true || settingValue === '1';
+                                } else {
+                                    input.value = settingValue;
+                                }
+                            }
+                        });
+                    }
+
+                    // Fonction simple pour fermer une modal
+                    function closeModal(modalElement) {
+                        if (modalElement) {
+                            modalElement.style.display = 'none';
+                            document.body.style.overflow = '';
+                            console.log('[PDF Builder] Closed modal');
+                        }
+                    }
+
+                    // Appliquer les paramètres d'une modal
+                    // Fonction utilitaire pour afficher des notifications via le système unifié
+                    function showNotification(message, type) {
+                        // Utiliser le système de notification unifié du plugin
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_show_notification',
+                                message: message,
+                                type: type,
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_notifications"); ?>'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    console.log('[PDF Builder] Notification affichée:', response.data);
+                                } else {
+                                    console.error('[PDF Builder] Erreur notification:', response.data);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('[PDF Builder] Erreur AJAX notification:', error);
+                            }
+                        });
+                    }
+
+                    function applyModalSettings(category) {
+                        // Utiliser la nouvelle logique simplifiée pour sauvegarder uniquement les toggles
+                        saveModalToggles(category);
+                    }
+
+                    // Initialisation des événements
+                    function initEvents() {
+                        console.log('[PDF Builder] Initializing events...');
+
+                        // Boutons de configuration
+                        document.addEventListener('click', function(e) {
+                            console.log('[PDF Builder] Click detected on:', e.target);
+
+                            // Ouvrir modal
+                            var configBtn = e.target.closest('.canvas-configure-btn');
+                            if (configBtn) {
+                                console.log('[PDF Builder] Configure button clicked');
+                                e.preventDefault();
+                                var card = configBtn.closest('.canvas-card');
+                                if (card) {
+                                    var category = card.getAttribute('data-category');
+                                    console.log('[PDF Builder] Card category:', category);
+                                    if (category && modalConfig[category]) {
+                                        console.log('[PDF Builder] Opening modal for category:', category);
+                                        openModal(category);
+                                    } else {
+                                        console.log('[PDF Builder] Invalid category or no modal config for:', category);
+                                    }
+                                } else {
+                                    console.log('[PDF Builder] No parent card found');
+                                }
+                                return;
+                            }
+
+                            // Fermer modal
+                            var closeBtn = e.target.closest('.canvas-modal-close, .canvas-modal-cancel');
+                            if (closeBtn) {
+                                e.preventDefault();
+                                var modal = closeBtn.closest('.canvas-modal-overlay');
+                                if (modal) {
+                                    closeModal(modal);
+                                }
+                                return;
+                            }
+
+                            // Appliquer paramètres
+                            var applyBtn = e.target.closest('.canvas-modal-apply');
+                            if (applyBtn) {
+                                e.preventDefault();
+                                var category = applyBtn.getAttribute('data-category');
+                                if (category) {
+                                    applyModalSettings(category);
+                                }
+                                return;
+                            }
+
+                            // Clic sur overlay
+                            if (e.target.classList.contains('canvas-modal-overlay')) {
+                                closeModal(e.target);
+                                return;
+                            }
+                        });
+
+                        // Touche Échap
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                var openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                                openModals.forEach(function(modal) {
+                                    closeModal(modal);
+                                });
+                            }
+                        });
+
+                        console.log('[PDF Builder] Events initialized');
+                    }
+
+                    // Initialisation au chargement du DOM
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // S'assurer que tous les modals sont cachés au chargement
+                            var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                            allModals.forEach(function(modal) {
+                                modal.style.display = 'none';
+                            });
+                            initEvents();
+                        });
+                    } else {
+                        // S'assurer que tous les modals sont cachés au chargement
+                        var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                        allModals.forEach(function(modal) {
+                            modal.style.display = 'none';
+                        });
+                        initEvents();
+                    }
+
+                    console.log('[PDF Builder] Canvas modals system ready');
+                })();
+            </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
