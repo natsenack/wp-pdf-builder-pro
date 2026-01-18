@@ -813,20 +813,6 @@ class PDF_Builder_Database_Updater {
             wp_send_json_error(['message' => 'Erreur lors de l\'annulation: ' . $e->getMessage()]);
         }
     }
-}
-
-// Fonctions globales
-function pdf_builder_db_updater() {
-    return PDF_Builder_Database_Updater::get_instance();
-}
-
-function pdf_builder_run_migration($version, $direction = 'up') {
-    return PDF_Builder_Database_Updater::get_instance()->run_migration($version, $direction);
-}
-
-function pdf_builder_run_pending_migrations() {
-    return PDF_Builder_Database_Updater::get_instance()->run_all_pending_migrations();
-}
 
     /**
      * Migration vers 1.4.0 - Table des paramètres canvas séparés
@@ -917,6 +903,20 @@ function pdf_builder_run_pending_migrations() {
             return 'string';
         }
     }
+}
+
+// Fonctions globales
+function pdf_builder_db_updater() {
+    return PDF_Builder_Database_Updater::get_instance();
+}
+
+function pdf_builder_run_migration($version, $direction = 'up') {
+    return PDF_Builder_Database_Updater::get_instance()->run_migration($version, $direction);
+}
+
+function pdf_builder_run_pending_migrations() {
+    return PDF_Builder_Database_Updater::get_instance()->run_all_pending_migrations();
+}
 
 function pdf_builder_get_migration_history($limit = 50) {
     return PDF_Builder_Database_Updater::get_instance()->get_migration_history($limit);
