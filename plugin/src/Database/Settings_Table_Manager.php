@@ -37,6 +37,10 @@ class Settings_Table_Manager {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
         
+        error_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès');
+        return true;
+    }
+    
     /**
      * Migrer les clés de licence vers des lignes séparées
      */
