@@ -63,6 +63,14 @@ function pdf_builder_activate()
         wp_die('PDF Builder Pro nécessite WordPress 5.0 ou supérieur. Version actuelle: ' . get_bloginfo('version'));
     }
 
+    // Créer la table des paramètres
+    if (file_exists(plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php')) {
+        require_once plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php';
+        if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
+            \PDF_Builder\Admin\PDF_Builder_Settings_Table::create_table();
+        }
+    }
+
     // Créer une table de logs si nécessaire
     global $wpdb;
     $table_name = $wpdb->prefix . 'pdf_builder_logs';
@@ -1077,6 +1085,11 @@ function pdf_builder_init()
 
     // Charger la classe de gestion des paramètres personnalisés
     require_once plugin_dir_path(__FILE__) . 'src/Admin/PDF_Builder_Settings_Table.php';
+    
+    // Créer la table des paramètres si elle n'existe pas
+    if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
+        \PDF_Builder\Admin\PDF_Builder_Settings_Table::create_table();
+    }
 
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';

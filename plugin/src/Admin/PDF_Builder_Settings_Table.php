@@ -154,6 +154,11 @@ class PDF_Builder_Settings_Table {
         global $wpdb;
         $table_name = self::get_table_name();
 
+        // Vérifier et créer la table si elle n'existe pas
+        if (!self::table_exists()) {
+            self::create_table();
+        }
+
         $results = $wpdb->get_results(
             "SELECT option_name, option_value FROM $table_name",
             ARRAY_A
@@ -165,5 +170,58 @@ class PDF_Builder_Settings_Table {
         }
 
         return $settings;
+    }
+
+    /**
+     * Vérifier et réparer la structure de la table
+     */
+    public static function check_and_repair() {
+        global $wpdb;
+        $table_name = self::get_table_name();
+
+        // Si la table n'existe pas, la créer
+        if (!self::table_exists()) {
+            self::create_table();
+            return array('status' => 'created', 'message' => 'Table créée');
+        }
+
+        // Vérifier les colonnes requises
+        $required_columns = array(
+            'option_id' => 'bigint',
+            'option_name' => 'varchar',
+            'option_value' => 'longtext',
+            'autoload' => 'varchar'
+        );
+
+        $existing_columns = $wpdb->get_results("DESCRIBE $table_name");
+        $column_names = wp_list_pluck($existing_columns, 'Field');
+
+        $missing_columns = array_diff(array_keys($required_columns), $column_names);
+
+        if (!empty($missing_columns)) {
+            // Ajouter les colonnes manquantes
+            foreach ($missing_columns as $col) {
+                if ($col === 'option_id') {
+                    // Ne pas ajouter option_id car c'est la clé primaire
+                    continue;
+                } elseif ($col === 'option_name') {
+                    $wpdb->query("ALTER TABLE $table_name ADD COLUMN option_name varchar(191) NOT NULL");
+                } elseif ($col === 'option_value') {
+                    $wpdb->query("ALTER TABLE $table_name ADD COLUMN option_value longtext NOT NULL");
+                } elseif ($col === 'autoload') {
+                    $wpdb->query("ALTER TABLE $table_name ADD COLUMN autoload varchar(20) NOT NULL DEFAULT 'yes'");
+                }
+            }
+            
+            // Ajouter la clé unique si elle n'existe pas
+            $keys = $wpdb->get_results("SHOW KEYS FROM $table_name WHERE Key_name = 'option_name'");
+            if (empty($keys) && in_array('option_name', $column_names)) {
+                $wpdb->query("ALTER TABLE $table_name ADD UNIQUE KEY option_name (option_name)");
+            }
+
+            return array('status' => 'repaired', 'message' => 'Colonnes manquantes ajoutées et réparées');
+        }
+
+        return array('status' => 'ok', 'message' => 'Table OK');
     }
 }
