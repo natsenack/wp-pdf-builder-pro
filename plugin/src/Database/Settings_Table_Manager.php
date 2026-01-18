@@ -42,57 +42,6 @@ class Settings_Table_Manager {
     }
     
     /**
-     * Migrer les clés de licence vers des lignes séparées
-     */
-    public static function migrate_license_keys_to_separate_rows() {
-        global $wpdb;
-        
-        $table_name = $wpdb->prefix . 'pdf_builder_settings';
-        
-        // Récupérer le tableau unifié des paramètres
-        $settings = self::get_option('pdf_builder_settings', []);
-        
-        if (empty($settings)) {
-            error_log('[PDF Builder] Aucun paramètre trouvé pour la migration des licences');
-            return 0;
-        }
-        
-        $migrated_count = 0;
-        $license_keys = [
-            'pdf_builder_license_key',
-            'pdf_builder_license_status', 
-            'pdf_builder_license_data',
-            'pdf_builder_license_test_key',
-            'pdf_builder_license_test_key_expires',
-            'pdf_builder_license_email_reminders',
-            'pdf_builder_license_test_mode_enabled'
-        ];
-        
-        foreach ($license_keys as $key) {
-            if (isset($settings[$key])) {
-                // Sauvegarder dans une ligne séparée
-                self::update_option($key, $settings[$key]);
-                $migrated_count++;
-                error_log("[PDF Builder] Migré {$key} vers ligne séparée: " . substr(serialize($settings[$key]), 0, 100));
-                
-                // Supprimer du tableau unifié
-                unset($settings[$key]);
-            }
-        }
-        
-        // Mettre à jour le tableau unifié sans les clés de licence
-        if (!empty($settings)) {
-            self::update_option('pdf_builder_settings', $settings);
-        } else {
-            // Si le tableau est vide, le supprimer
-            self::delete_option('pdf_builder_settings');
-        }
-        
-        error_log("[PDF Builder] Migration des clés de licence terminée: {$migrated_count} clés migrées");
-        return $migrated_count;
-    }
-    
-    /**
      * Récupérer une option depuis la table personnalisée
      */
     public static function get_option($option_name, $default = false) {

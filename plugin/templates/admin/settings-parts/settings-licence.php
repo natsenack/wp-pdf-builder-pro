@@ -554,19 +554,22 @@
                 </style>
 
                 <?php
-                    // Récupération des paramètres depuis le tableau unifié
+                    // Récupération des paramètres depuis la table personnalisée (licences individuelles)
+                    use PDF_Builder\Database\Settings_Table_Manager as STM;
+                    
+                    $license_status = STM::get_option('pdf_builder_license_status', 'free');
+                    $license_key = STM::get_option('pdf_builder_license_key', '');
+                    $license_expires = STM::get_option('pdf_builder_license_expires', '');
+                    $license_activated_at = STM::get_option('pdf_builder_license_activated_at', '');
+                    $test_mode_enabled = STM::get_option('pdf_builder_license_test_mode_enabled', '0');
+                    $test_key = STM::get_option('pdf_builder_license_test_key', '');
+                    $test_key_expires = STM::get_option('pdf_builder_license_test_key_expires', '');
+                    $license_email_reminders = STM::get_option('pdf_builder_license_email_reminders', '0');
+                    $license_reminder_email = STM::get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''));
+                    
+                    // Récupération du tableau unifié pour les autres paramètres (si nécessaire)
                     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-                    error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
-
-                    $license_status = $settings['pdf_builder_license_status'] ?? 'free';
-                    $license_key = $settings['pdf_builder_license_key'] ?? '';
-                    $license_expires = $settings['pdf_builder_license_expires'] ?? '';
-                    $license_activated_at = $settings['pdf_builder_license_activated_at'] ?? '';
-                    $test_mode_enabled = $settings['pdf_builder_license_test_mode'] ?? '0';
-                    $test_key = $settings['pdf_builder_license_test_key'] ?? '';
-                    $test_key_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
-                    $license_email_reminders = $settings['pdf_builder_license_email_reminders'] ?? '0';
-                    $license_reminder_email = $settings['pdf_builder_license_reminder_email'] ?? get_option('admin_email', '');
+                    error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . $license_status . ', test_mode_enabled: ' . $test_mode_enabled);
 
                     // Utiliser la méthode centralisée du License Manager pour déterminer si premium
                     $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
@@ -599,15 +602,15 @@
                     if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
 
                         if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
-                            // Mise à jour du tableau unifié au lieu d'options séparées
-                            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-                            $settings['pdf_builder_license_key'] = '';
-                            $settings['pdf_builder_license_expires'] = '';
-                            $settings['pdf_builder_license_activated_at'] = '';
-                            $settings['pdf_builder_license_test_key'] = '';
-                            $settings['pdf_builder_license_test_mode'] = '0';
-                            $settings['pdf_builder_license_status'] = 'free';
-                            pdf_builder_update_option('pdf_builder_settings', $settings);
+                            // Mise à jour des options individuelles dans la table personnalisée
+                            STM::update_option('pdf_builder_license_key', '');
+                            STM::update_option('pdf_builder_license_expires', '');
+                            STM::update_option('pdf_builder_license_activated_at', '');
+                            STM::update_option('pdf_builder_license_test_key', '');
+                            STM::update_option('pdf_builder_license_test_key_expires', '');
+                            STM::update_option('pdf_builder_license_test_mode_enabled', '0');
+                            STM::update_option('pdf_builder_license_status', 'free');
+                            STM::update_option('pdf_builder_license_email_reminders', '0');
 
                             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
                             $is_premium = false;
