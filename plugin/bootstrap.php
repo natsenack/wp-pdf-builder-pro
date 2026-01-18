@@ -1730,15 +1730,6 @@ if (file_exists($admin_pages_path)) {
 }
 
 // ============================================================================
-// ✅ CHARGER LA PAGE MIGRATION SIMPLE (DIAGNOSTIC)
-// ============================================================================
-
-$migration_simple_path = PDF_BUILDER_PLUGIN_DIR . '../migration_admin_simple.php';
-if (file_exists($migration_simple_path)) {
-    require_once $migration_simple_path;
-}
-
-// ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
 
