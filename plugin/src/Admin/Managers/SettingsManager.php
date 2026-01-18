@@ -714,9 +714,28 @@ class SettingsManager
             error_log("[PDF Builder] Final '$field' = '$final_value'");
         }
 
-        error_log('[PDF Builder] sanitizeSettings returning sanitized data: ' . print_r($sanitized, true));
-        error_log('[PDF Builder] Final sanitized array count: ' . count($sanitized));
-        return $sanitized;
+        // Save to custom table instead of wp_options
+        pdf_builder_update_option('pdf_builder_settings', $sanitized);
+
+        // Save individual general fields to separate rows
+        $general_fields = [
+            'pdf_builder_company_phone_manual',
+            'pdf_builder_company_siret',
+            'pdf_builder_company_vat',
+            'pdf_builder_company_rcs',
+            'pdf_builder_company_capital'
+        ];
+
+        foreach ($general_fields as $field) {
+            if (isset($input[$field])) {
+                pdf_builder_update_option($field, sanitize_text_field($input[$field]));
+                error_log("[PDF Builder] Saved general field '$field' = '" . $input[$field] . "'");
+            }
+        }
+
+        error_log('[PDF Builder] sanitizeSettings saved to custom table, returning false to prevent wp_options save');
+        return false; // Prevent WordPress from saving to wp_options
+    }
     }
 
     /**
