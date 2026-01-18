@@ -220,6 +220,11 @@ function pdf_builder_update_table_schema() {
         $wpdb->query("ALTER TABLE `$table_templates` ADD COLUMN metadata longtext");
     }
     
+    // Créer ou mettre à jour la table des paramètres
+    if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
+        \PDF_Builder\Admin\PDF_Builder_Settings_Table::create_table();
+    }
+    
     // Mettre à jour les templates existants pour leur assigner un user_id par défaut
     // Pour les templates sans user_id ou avec user_id = 0, on les assigne à l'utilisateur actuel
     // (en production, il faudrait une logique plus sophistiquée)
@@ -786,9 +791,11 @@ function pdf_builder_repair_templates_handler() {
         }
 
         // Check settings
-        $settings = PDF_Builder_Settings_Table::get_all_settings();
-        if (!is_array($settings)) {
-            // Si les paramètres ne sont pas un tableau, on ne fait rien car la table gère cela
+        if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
+            $settings = \PDF_Builder\Admin\PDF_Builder_Settings_Table::get_all_settings();
+            if (!is_array($settings)) {
+                // Si les paramètres ne sont pas un tableau, on ne fait rien car la table gère cela
+            }
         }
 
         wp_send_json_success(array(
@@ -1130,8 +1137,11 @@ function pdf_builder_add_asset_cache_headers()
 {
 
     // Vérifier si le cache est activé dans les paramètres
-    $settings = PDF_Builder_Settings_Table::get_all_settings();
-    $cache_enabled = $settings['cache_enabled'] ?? false;
+    $cache_enabled = false;
+    if (class_exists('\PDF_Builder\Admin\PDF_Builder_Settings_Table')) {
+        $settings = \PDF_Builder\Admin\PDF_Builder_Settings_Table::get_all_settings();
+        $cache_enabled = $settings['cache_enabled'] ?? false;
+    }
 // Si le cache est désactivé, ne pas ajouter de headers de cache
     if (!$cache_enabled) {
 // Headers pour désactiver complètement le cache
