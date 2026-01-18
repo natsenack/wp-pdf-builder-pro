@@ -997,6 +997,9 @@ class PdfBuilderAdmin
         // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
+        // Migration des paramètres canvas
+        add_submenu_page('pdf-builder-pro', __('Migration Canvas - PDF Builder Pro', 'pdf-builder-pro'), __('🔄 Migration Canvas', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-migration', [$this, 'migrationPage']);
+
         // Galerie de modèles (mode développeur uniquement)
         if (!empty(get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
             add_submenu_page(
@@ -1559,6 +1562,115 @@ class PdfBuilderAdmin
             <div id="pdf-builder-tab-content" style="display: none;"></div>
 
         </div> <!-- Fin du .wrap -->
+        <?php
+    }
+
+    /**
+     * Page de migration des paramètres canvas
+     */
+    public function migrationPage()
+    {
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Migration des Paramètres Canvas', 'pdf-builder-pro'); ?></h1>
+
+            <div class="notice notice-info">
+                <p><?php _e('Cette page permet de migrer les paramètres canvas vers une table dédiée pour une meilleure organisation.', 'pdf-builder-pro'); ?></p>
+            </div>
+
+            <div id="migration-status" style="display: none;">
+                <div class="notice notice-success" id="migration-success">
+                    <p><strong><?php _e('Migration réussie!', 'pdf-builder-pro'); ?></strong></p>
+                    <div id="migration-details"></div>
+                </div>
+
+                <div class="notice notice-error" id="migration-error">
+                    <p><strong><?php _e('Erreur lors de la migration:', 'pdf-builder-pro'); ?></strong></p>
+                    <div id="migration-error-details"></div>
+                </div>
+            </div>
+
+            <div id="migration-form">
+                <p>
+                    <button type="button" id="run-migration" class="button button-primary">
+                        <?php _e('Exécuter la Migration', 'pdf-builder-pro'); ?>
+                    </button>
+                </p>
+
+                <div id="migration-progress" style="display: none;">
+                    <p><?php _e('Migration en cours...', 'pdf-builder-pro'); ?></p>
+                    <div class="spinner is-active" style="float: none;"></div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('#run-migration').on('click', function() {
+                    var $button = $(this);
+                    var $progress = $('#migration-progress');
+                    var $status = $('#migration-status');
+                    var $form = $('#migration-form');
+
+                    // Désactiver le bouton et afficher le progrès
+                    $button.prop('disabled', true);
+                    $progress.show();
+
+                    // Exécuter la migration AJAX
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_migrate_canvas_settings',
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_migrate_canvas_settings"); ?>'
+                        },
+                        success: function(response) {
+                            $progress.hide();
+                            $status.show();
+
+                            if (response.success) {
+                                $('#migration-success').show();
+                                $('#migration-error').hide();
+
+                                var details = '<ul>';
+                                if (response.details.pending_migrations) {
+                                    details += '<li><?php _e('Migrations en attente:', 'pdf-builder-pro'); ?> ' + response.details.pending_migrations.join(', ') + '</li>';
+                                }
+                                if (response.details.table_created) {
+                                    details += '<li><?php _e('Table créée:', 'pdf-builder-pro'); ?> <?php _e('Oui', 'pdf-builder-pro'); ?></li>';
+                                }
+                                if (response.details.canvas_settings_migrated !== undefined) {
+                                    details += '<li><?php _e('Paramètres canvas migrés:', 'pdf-builder-pro'); ?> ' + response.details.canvas_settings_migrated + '</li>';
+                                }
+                                details += '<li><?php _e('Version DB:', 'pdf-builder-pro'); ?> ' + response.details.current_db_version + '</li>';
+                                details += '<li><?php _e('Table existe:', 'pdf-builder-pro'); ?> ' + (response.details.table_exists ? '<?php _e('Oui', 'pdf-builder-pro'); ?>' : '<?php _e('Non', 'pdf-builder-pro'); ?>') + '</li>';
+                                if (response.details.canvas_settings_count !== undefined) {
+                                    details += '<li><?php _e('Paramètres canvas dans la table:', 'pdf-builder-pro'); ?> ' + response.details.canvas_settings_count + '</li>';
+                                }
+                                details += '</ul>';
+
+                                $('#migration-details').html(details);
+                            } else {
+                                $('#migration-success').hide();
+                                $('#migration-error').show();
+                                $('#migration-error-details').html('<p>' + response.message + '</p>');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            $progress.hide();
+                            $status.show();
+                            $('#migration-success').hide();
+                            $('#migration-error').show();
+                            $('#migration-error-details').html('<p><?php _e('Erreur AJAX:', 'pdf-builder-pro'); ?> ' + error + '</p>');
+                        }
+                    });
+                });
+            });
+            </script>
+        </div>
         <?php
     }
 }
