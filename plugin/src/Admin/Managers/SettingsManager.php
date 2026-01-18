@@ -758,12 +758,12 @@ class SettingsManager
         error_log('[PDF Builder] === SETTINGS UPDATE DETAILS ===');
         foreach ($check_fields as $field) {
             $old_val = isset($old_value[$field]) ? $old_value[$field] : 'NOT_SET';
-            $new_val = isset($new_value[$field]) ? $new_value[$field] : 'NOT_SET';
+            $new_val = (is_array($new_value) && isset($new_value[$field])) ? $new_value[$field] : 'NOT_SET';
             $changed = ($old_val !== $new_val) ? 'CHANGED' : 'UNCHANGED';
             error_log("[PDF Builder] $field: '$old_val' -> '$new_val' [$changed]");
         }
 
-        error_log('[PDF Builder] ✅ New value sample: ' . print_r(array_slice($new_value, 0, 5), true));
+        error_log('[PDF Builder] ✅ New value sample: ' . (is_array($new_value) ? print_r(array_slice($new_value, 0, 5), true) : 'Not an array (returned false from sanitizeSettings)'));
     }
 
     /**
