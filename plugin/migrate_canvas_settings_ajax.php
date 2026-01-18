@@ -1,66 +1,50 @@
 <?php
 /**
- * Migration AJAX Handler pour créer la table des paramètres canvas
- * À utiliser depuis l'interface admin WordPress
+ * Migration AJAX Handler - Version simplifiée pour diagnostic
  */
 
-// Gestionnaire d'erreur global pour les appels AJAX
-function pdf_builder_ajax_error_handler($errno, $errstr, $errfile, $errline) {
-    // Nettoyer tout buffer de sortie
-    if (ob_get_level()) {
-        ob_clean();
-    }
-
-    // S'assurer que c'est du JSON
+// Gestionnaire d'erreur minimal
+function pdf_builder_error_handler($errno, $errstr, $errfile, $errline) {
     if (!headers_sent()) {
         header('Content-Type: application/json');
     }
-
-    $error_response = [
+    echo json_encode([
         'success' => false,
-        'message' => 'Erreur PHP fatale dans l\'AJAX',
-        'debug' => [
-            'error' => $errstr,
-            'file' => $errfile,
-            'line' => $errline,
-            'type' => $errno
-        ]
-    ];
-
-    echo json_encode($error_response);
+        'message' => 'PHP Error: ' . $errstr,
+        'debug' => ['file' => $errfile, 'line' => $errline]
+    ]);
     exit;
 }
 
-// Gestionnaire d'exception non capturée pour AJAX
-function pdf_builder_ajax_exception_handler($exception) {
-    // Nettoyer tout buffer de sortie
-    if (ob_get_level()) {
-        ob_clean();
-    }
-
-    // S'assurer que c'est du JSON
+function pdf_builder_exception_handler($exception) {
     if (!headers_sent()) {
         header('Content-Type: application/json');
     }
-
-    $error_response = [
+    echo json_encode([
         'success' => false,
-        'message' => 'Exception non capturée: ' . $exception->getMessage(),
-        'debug' => [
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString()
-        ]
-    ];
-
-    echo json_encode($error_response);
+        'message' => 'Exception: ' . $exception->getMessage(),
+        'debug' => ['file' => $exception->getFile(), 'line' => $exception->getLine()]
+    ]);
     exit;
 }
 
-// Définir le gestionnaire d'exception pour cette fonction AJAX
-set_exception_handler('pdf_builder_ajax_exception_handler');
+// Définir les gestionnaires immédiatement
+set_error_handler('pdf_builder_error_handler');
+set_exception_handler('pdf_builder_exception_handler');
 
 add_action('wp_ajax_pdf_builder_migrate_canvas_settings', 'pdf_builder_migrate_canvas_settings_ajax');
+
+function pdf_builder_migrate_canvas_settings_ajax() {
+    try {
+        // Réponse de test simple
+        wp_send_json_success([
+            'message' => 'Test de migration réussi',
+            'timestamp' => time()
+        ]);
+    } catch (Exception $e) {
+        wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+    }
+}
 
 // Action de test pour vérifier l'enregistrement AJAX
 add_action('wp_ajax_pdf_builder_test_ajax_registration', 'pdf_builder_test_ajax_registration');
