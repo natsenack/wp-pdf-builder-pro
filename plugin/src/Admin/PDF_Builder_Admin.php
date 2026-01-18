@@ -1162,8 +1162,6 @@ class PdfBuilderAdmin
 
 
                     if (!this.element || !this.editor) {
-                        const allElements = document.querySelectorAll('[id*="pdf-builder"]');
-                        allElements.forEach(el => 
                         return;
                     }
 
@@ -1306,9 +1304,6 @@ class PdfBuilderAdmin
                         const container = document.getElementById('pdf-builder-react-root');
                         if (!container) {
                             
-                            
-                            const allElements = document.querySelectorAll('[id*="pdf-builder"]');
-                            allElements.forEach(el => 
                             return false;
                         }
 
