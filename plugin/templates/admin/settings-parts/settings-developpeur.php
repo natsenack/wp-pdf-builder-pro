@@ -707,6 +707,48 @@
                 </ul>
             </div>
 
+            <!-- Section Gestion Base de Données -->
+            <section id="dev-database-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+                <h3 class="section-title">🗄️ Gestion de la Base de Données</h3>
+                
+                <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="color: #0d47a1; margin-top: 0;">📊 Gestion du Stockage Personnalisé</h4>
+                    <p style="margin-bottom: 15px; color: #333;">
+                        Gère la table personnalisée <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">wp_pdf_builder_settings</code> 
+                        pour le stockage des paramètres du plugin.
+                    </p>
+
+                    <div style="background: #f8f9fa; border-left: 4px solid #2196f3; padding: 15px; margin: 15px 0;">
+                        <h5 style="margin-top: 0; color: #0d47a1;">🎯 Actions Disponibles :</h5>
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>Créer la Table :</strong> Crée la table de stockage personnalisée</li>
+                            <li><strong>Migrer les Données :</strong> Migre les paramètres de wp_options vers la table personnalisée</li>
+                            <li><strong>Vérifier l'État :</strong> Affiche l'état actuel de la table et de la migration</li>
+                        </ul>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <button type="button" id="create_db_table_btn" class="button button-secondary" style="padding: 10px 15px; height: auto; font-weight: bold;">
+                            📊 Créer la Table
+                        </button>
+                        <button type="button" id="migrate_db_data_btn" class="button button-secondary" style="padding: 10px 15px; height: auto; font-weight: bold;">
+                            🔄 Migrer les Données
+                        </button>
+                        <button type="button" id="check_db_status_btn" class="button button-secondary" style="padding: 10px 15px; height: auto; font-weight: bold;">
+                            ✅ Vérifier l'État
+                        </button>
+                    </div>
+
+                    <div id="database_status_container" style="margin-top: 20px;">
+                        <span id="database_status" style="display: inline-block;"></span>
+                    </div>
+
+                    <input type="hidden" id="create_db_table_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                    <input type="hidden" id="migrate_db_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                    <input type="hidden" id="check_db_status_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                </div>
+            </section>
+
             <!-- Bouton de sauvegarde spécifique à l'onglet développeur -->
             <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
                 <h3 style="margin-top: 0; color: #495057;">💾 Sauvegarde des Paramètres Développeur</h3>
@@ -1038,6 +1080,134 @@
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('✅ Valider');
+                }
+            });
+        });
+
+        // ============================================
+        // Gestionnaires pour la gestion de la BD
+        // ============================================
+
+        // Créer la table
+        $('#create_db_table_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $btn = $(this);
+            const $status = $('#database_status');
+            const nonce = $('#create_db_table_nonce').val();
+
+            $btn.prop('disabled', true).text('⏳ Création...');
+            $status.html('<span style="color: #007cba;">Création de la table en cours...</span>');
+
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'manage_database_table',
+                    sub_action: 'create_table',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<span style="color: #28a745;">✅ ' + response.data.message + '</span>');
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('📊 Créer la Table');
+                }
+            });
+        });
+
+        // Migrer les données
+        $('#migrate_db_data_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            if (!confirm('Êtes-vous sûr de vouloir migrer les données ? Cette opération copiera tous les paramètres vers la table personnalisée.')) {
+                return;
+            }
+            
+            const $btn = $(this);
+            const $status = $('#database_status');
+            const nonce = $('#migrate_db_data_nonce').val();
+
+            $btn.prop('disabled', true).text('⏳ Migration...');
+            $status.html('<span style="color: #007cba;">Migration des données en cours...</span>');
+
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'manage_database_table',
+                    sub_action: 'migrate_data',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<span style="color: #28a745;">✅ ' + response.data.message + '</span>');
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🔄 Migrer les Données');
+                }
+            });
+        });
+
+        // Vérifier l'état
+        $('#check_db_status_btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $btn = $(this);
+            const $status = $('#database_status');
+            const nonce = $('#check_db_status_nonce').val();
+
+            $btn.prop('disabled', true).text('⏳ Vérification...');
+            $status.html('<span style="color: #007cba;">Vérification de l\'état en cours...</span>');
+
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'manage_database_table',
+                    sub_action: 'check_status',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const data = response.data;
+                        let status_html = '<div style="background: #f1f8e9; border: 1px solid #4caf50; border-radius: 4px; padding: 15px; margin-top: 10px;">';
+                        
+                        status_html += '<h5 style="margin-top: 0; color: #2e7d32;">📊 État de la Base de Données :</h5>';
+                        status_html += '<ul style="margin: 0; padding-left: 20px;">';
+                        status_html += '<li><strong>Table existe :</strong> ' + (data.table_exists ? '✅ Oui' : '❌ Non') + '</li>';
+                        status_html += '<li><strong>Colonnes :</strong> ' + (data.columns_count || 0) + ' colonnes</li>';
+                        status_html += '<li><strong>Enregistrements :</strong> ' + (data.records_count || 0) + ' enregistrements</li>';
+                        status_html += '<li><strong>Migration effectuée :</strong> ' + (data.is_migrated ? '✅ Oui' : '❌ Non') + '</li>';
+                        status_html += '</ul>';
+                        status_html += '</div>';
+                        
+                        $status.html(status_html);
+                    } else {
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('✅ Vérifier l\'État');
                 }
             });
         });

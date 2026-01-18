@@ -655,6 +655,11 @@ class AjaxHandler
                     $this->handleValidateLicenseKey();
                     break;
 
+                // Gestion de la base de données
+                case 'manage_database_table':
+                    $this->handleManageDatabaseTable();
+                    break;
+
                 default:
                     // Action non reconnue - essayer l'ancien système de compatibilité
                     $this->handleLegacyAction($action);
@@ -1968,6 +1973,160 @@ class AjaxHandler
         } catch (Exception $e) {
             error_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Gérer la table de base de données personnalisée
+     */
+    private function handleManageDatabaseTable()
+    {
+        try {
+            error_log('[PDF Builder] handleManageDatabaseTable - Starting');
+
+            // Récupérer la sous-action
+            $sub_action = isset($_POST['sub_action']) ? sanitize_text_field($_POST['sub_action']) : '';
+
+            error_log('[PDF Builder] handleManageDatabaseTable - Sub-action: ' . $sub_action);
+
+            // Charger la classe Settings_Table_Manager
+            $table_manager_file = plugin_dir_path(dirname(__FILE__)) . 'Database/Settings_Table_Manager.php';
+            
+            if (!file_exists($table_manager_file)) {
+                error_log('[PDF Builder] handleManageDatabaseTable - Settings_Table_Manager not found at: ' . $table_manager_file);
+                wp_send_json_error(['message' => 'Gestionnaire de table non trouvé']);
+                return;
+            }
+
+            if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+                require_once $table_manager_file;
+            }
+
+            $table_manager = new \PDF_Builder\Database\Settings_Table_Manager();
+
+            // Router selon la sous-action
+            switch ($sub_action) {
+                case 'create_table':
+                    $this->handleCreateTable($table_manager);
+                    break;
+
+                case 'migrate_data':
+                    $this->handleMigrateData($table_manager);
+                    break;
+
+                case 'check_status':
+                    $this->handleCheckDatabaseStatus($table_manager);
+                    break;
+
+                default:
+                    error_log('[PDF Builder] handleManageDatabaseTable - Unknown sub-action: ' . $sub_action);
+                    wp_send_json_error(['message' => 'Sous-action non reconnue: ' . $sub_action]);
+                    break;
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleManageDatabaseTable - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la gestion de la BD: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Créer la table de base de données
+     */
+    private function handleCreateTable($table_manager)
+    {
+        try {
+            error_log('[PDF Builder] handleCreateTable - Starting table creation');
+
+            // Créer la table
+            $result = $table_manager->create_table();
+
+            if ($result) {
+                error_log('[PDF Builder] handleCreateTable - Table created successfully');
+                wp_send_json_success(['message' => 'Table wp_pdf_builder_settings créée avec succès']);
+            } else {
+                error_log('[PDF Builder] handleCreateTable - Table creation failed');
+                wp_send_json_error(['message' => 'Erreur lors de la création de la table']);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleCreateTable - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Migrer les données
+     */
+    private function handleMigrateData($table_manager)
+    {
+        try {
+            error_log('[PDF Builder] handleMigrateData - Starting data migration');
+
+            // Migrer les données
+            $result = $table_manager->migrate_data();
+
+            error_log('[PDF Builder] handleMigrateData - Migration result: ' . json_encode($result));
+
+            if ($result && isset($result['success']) && $result['success']) {
+                error_log('[PDF Builder] handleMigrateData - Data migration completed successfully');
+                wp_send_json_success([
+                    'message' => 'Migration des données effectuée: ' . ($result['migrated'] ?? 0) . ' paramètres migrés',
+                    'migrated' => $result['migrated'] ?? 0
+                ]);
+            } else {
+                error_log('[PDF Builder] handleMigrateData - Data migration failed: ' . json_encode($result));
+                wp_send_json_error(['message' => 'Erreur lors de la migration: ' . ($result['message'] ?? 'Erreur inconnue')]);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleMigrateData - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Vérifier l'état de la base de données
+     */
+    private function handleCheckDatabaseStatus($table_manager)
+    {
+        try {
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Starting status check');
+
+            global $wpdb;
+
+            // Vérifier si la table existe
+            $table_name = $wpdb->prefix . 'pdf_builder_settings';
+            $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Table exists: ' . ($table_exists ? 'YES' : 'NO'));
+
+            $response = [
+                'table_exists' => $table_exists,
+                'columns_count' => 0,
+                'records_count' => 0,
+                'is_migrated' => false
+            ];
+
+            if ($table_exists) {
+                // Compter les colonnes
+                $columns = $wpdb->get_results("DESCRIBE $table_name");
+                $response['columns_count'] = count($columns);
+
+                // Compter les enregistrements
+                $response['records_count'] = intval($wpdb->get_var("SELECT COUNT(*) FROM $table_name"));
+
+                // Vérifier l'état de migration
+                $response['is_migrated'] = $table_manager->is_migrated();
+            }
+
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Status: ' . json_encode($response));
+
+            wp_send_json_success($response);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
         }
     }
 }
