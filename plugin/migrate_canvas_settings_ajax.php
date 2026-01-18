@@ -12,12 +12,14 @@ add_action('wp_ajax_pdf_builder_test_ajax_registration', 'pdf_builder_test_ajax_
 function pdf_builder_test_ajax_registration() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        wp_die(__('Permission refusée'));
+        wp_send_json_error(['message' => __('Permission refusée', 'pdf-builder-pro')]);
+        return;
     }
 
     // Vérifier le nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_test_ajax')) {
-        wp_die(__('Nonce invalide'));
+        wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
+        return;
     }
 
     $response = [
@@ -42,29 +44,50 @@ function pdf_builder_test_ajax_registration() {
 function pdf_builder_migrate_canvas_settings_ajax() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        wp_die(__('Permission refusée'));
+        wp_send_json_error(['message' => __('Permission refusée', 'pdf-builder-pro')]);
+        return;
     }
 
     // Vérifier le nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_migrate_canvas_settings')) {
-        wp_die(__('Nonce invalide'));
+        wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
+        return;
     }
 
     try {
+        // Vérifier que nous sommes dans un environnement WordPress valide
+        if (!defined('ABSPATH') || !function_exists('get_option')) {
+            throw new Exception('Environnement WordPress non valide');
+        }
+
+        // Log pour déboguer
+        error_log('PDF Builder Migration: Début de la migration AJAX');
+
         // Inclure le gestionnaire de base de données
         if (!class_exists('PDF_Builder_Database_Updater')) {
             $updater_path = dirname(__FILE__) . '/src/Core/PDF_Builder_Database_Updater.php';
+            error_log('PDF Builder Migration: Tentative de chargement du fichier: ' . $updater_path);
             if (!file_exists($updater_path)) {
                 throw new Exception('Fichier PDF_Builder_Database_Updater.php introuvable: ' . $updater_path);
             }
             require_once $updater_path;
+            error_log('PDF Builder Migration: Fichier chargé');
         }
 
         if (!class_exists('PDF_Builder_Database_Updater')) {
             throw new Exception('Classe PDF_Builder_Database_Updater non trouvée après inclusion');
         }
 
+        error_log('PDF Builder Migration: Classe trouvée, tentative d\'instanciation');
+
+        // Tenter d'instancier le gestionnaire
         $updater = PDF_Builder_Database_Updater::get_instance();
+
+        if (!$updater) {
+            throw new Exception('Impossible d\'instancier PDF_Builder_Database_Updater');
+        }
+
+        error_log('PDF Builder Migration: Instance créée avec succès');
 
         $response = [
             'success' => false,
@@ -133,8 +156,15 @@ function pdf_builder_migrate_canvas_settings_ajax() {
         }
 
     } catch (Exception $e) {
+        error_log('PDF Builder Migration: Erreur capturée: ' . $e->getMessage());
+        error_log('PDF Builder Migration: Trace: ' . $e->getTraceAsString());
         $response['success'] = false;
         $response['message'] = 'Erreur: ' . $e->getMessage();
+        $response['debug'] = [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ];
     }
 
     wp_send_json($response);
