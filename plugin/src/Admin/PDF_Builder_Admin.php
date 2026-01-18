@@ -1000,6 +1000,11 @@ class PdfBuilderAdmin
         // Migration des paramètres canvas
         add_submenu_page('pdf-builder-pro', __('Migration Canvas - PDF Builder Pro', 'pdf-builder-pro'), __('🔄 Migration Canvas', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-migration', [$this, 'migrationPage']);
 
+        // Test AJAX (mode développeur uniquement)
+        if (!empty(get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
+            add_submenu_page('pdf-builder-pro', __('Test AJAX - PDF Builder Pro', 'pdf-builder-pro'), __('🧪 Test AJAX', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-test-ajax', [$this, 'testAjaxPage']);
+        }
+
         // Galerie de modèles (mode développeur uniquement)
         if (!empty(get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
             add_submenu_page(
@@ -1668,6 +1673,111 @@ class PdfBuilderAdmin
                         }
                     });
                 });
+            });
+            </script>
+        </div>
+        <?php
+    }
+
+    /**
+     * Page de test AJAX (mode développeur)
+     */
+    public function testAjaxPage()
+    {
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Test AJAX - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+
+            <div class="notice notice-info">
+                <p><?php _e('Page de test pour vérifier le fonctionnement des actions AJAX.', 'pdf-builder-pro'); ?></p>
+            </div>
+
+            <div id="ajax-test-results">
+                <h2><?php _e('Résultats des tests', 'pdf-builder-pro'); ?></h2>
+                <div id="test-output" style="background: #f5f5f5; padding: 15px; border: 1px solid #ddd; font-family: monospace; white-space: pre-wrap;"></div>
+            </div>
+
+            <div id="test-buttons" style="margin-top: 20px;">
+                <button type="button" id="test-migration-action" class="button button-primary">
+                    <?php _e('Tester Action Migration', 'pdf-builder-pro'); ?>
+                </button>
+                <button type="button" id="test-ajax-registration" class="button button-secondary" style="margin-left: 10px;">
+                    <?php _e('Vérifier Enregistrement AJAX', 'pdf-builder-pro'); ?>
+                </button>
+            </div>
+
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                function log(message) {
+                    var output = $('#test-output');
+                    var timestamp = new Date().toLocaleTimeString();
+                    output.append('[' + timestamp + '] ' + message + '\n');
+                    output.scrollTop(output[0].scrollHeight);
+                }
+
+                function clearLog() {
+                    $('#test-output').text('');
+                }
+
+                $('#test-migration-action').on('click', function() {
+                    clearLog();
+                    log('=== TEST ACTION MIGRATION ===');
+
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_migrate_canvas_settings',
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_migrate_canvas_settings"); ?>'
+                        },
+                        success: function(response) {
+                            log('✅ Requête AJAX réussie');
+                            log('Statut: ' + (response.success ? 'SUCCÈS' : 'ÉCHEC'));
+                            if (response.message) {
+                                log('Message: ' + response.message);
+                            }
+                            if (response.details) {
+                                log('Détails: ' + JSON.stringify(response.details, null, 2));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            log('❌ Erreur AJAX: ' + error);
+                            log('Statut HTTP: ' + xhr.status);
+                            log('Réponse: ' + xhr.responseText);
+                        }
+                    });
+                });
+
+                $('#test-ajax-registration').on('click', function() {
+                    clearLog();
+                    log('=== VÉRIFICATION ENREGISTREMENT AJAX ===');
+
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_test_ajax_registration',
+                            nonce: '<?php echo wp_create_nonce("pdf_builder_test_ajax"); ?>'
+                        },
+                        success: function(response) {
+                            log('✅ Test d\'enregistrement réussi');
+                            log('Actions enregistrées: ' + JSON.stringify(response.data, null, 2));
+                        },
+                        error: function(xhr, status, error) {
+                            log('❌ Erreur lors du test d\'enregistrement: ' + error);
+                            log('Statut HTTP: ' + xhr.status);
+                        }
+                    });
+                });
+
+                // Log initial
+                log('Page de test AJAX chargée');
+                log('URL AJAX: ' + ajaxurl);
+                log('Nonce disponible: <?php echo wp_create_nonce("pdf_builder_migrate_canvas_settings") ? "OUI" : "NON"; ?>');
             });
             </script>
         </div>

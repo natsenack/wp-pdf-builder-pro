@@ -6,6 +6,39 @@
 
 add_action('wp_ajax_pdf_builder_migrate_canvas_settings', 'pdf_builder_migrate_canvas_settings_ajax');
 
+// Action de test pour vérifier l'enregistrement AJAX
+add_action('wp_ajax_pdf_builder_test_ajax_registration', 'pdf_builder_test_ajax_registration');
+
+function pdf_builder_test_ajax_registration() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_die(__('Permission refusée'));
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_test_ajax')) {
+        wp_die(__('Nonce invalide'));
+    }
+
+    $response = [
+        'migration_action_registered' => has_action('wp_ajax_pdf_builder_migrate_canvas_settings'),
+        'test_action_registered' => has_action('wp_ajax_pdf_builder_test_ajax_registration'),
+        'function_exists' => function_exists('pdf_builder_migrate_canvas_settings_ajax'),
+        'class_exists' => class_exists('PDF_Builder_Database_Updater'),
+        'actions' => []
+    ];
+
+    // Lister toutes les actions AJAX enregistrées pour pdf_builder
+    global $wp_filter;
+    foreach ($wp_filter as $hook => $filters) {
+        if (strpos($hook, 'wp_ajax_pdf_builder') === 0) {
+            $response['actions'][$hook] = count($filters->callbacks);
+        }
+    }
+
+    wp_send_json_success($response);
+}
+
 function pdf_builder_migrate_canvas_settings_ajax() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
