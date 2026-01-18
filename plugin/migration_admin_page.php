@@ -10,7 +10,19 @@ if (!defined('ABSPATH')) {
 // Inclure le handler AJAX
 require_once plugin_dir_path(__FILE__) . 'migrate_canvas_settings_ajax.php';
 
-// La page est déjà enregistrée dans AdminPages.php, pas besoin de l'enregistrer ici
+// Ajouter la page admin
+add_action('admin_menu', 'pdf_builder_add_migration_page');
+
+function pdf_builder_add_migration_page() {
+    add_submenu_page(
+        'pdf-builder-settings',
+        'Migration Paramètres Canvas',
+        'Migration Canvas',
+        'manage_options',
+        'pdf-builder-migration',
+        'pdf_builder_migration_page'
+    );
+}
 
 function pdf_builder_migration_page() {
     if (!current_user_can('manage_options')) {
