@@ -559,8 +559,8 @@
                         closeModal(modal);
 
                         // Soumettre le formulaire pour sauvegarder normalement
-                        var form = document.querySelector('form[action="options.php"]');
-                        if (form) {
+                        var form = document.querySelector('form');
+                        if (form && typeof form.submit === 'function') {
                             form.submit();
                         }
                     }
