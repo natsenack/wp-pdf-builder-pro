@@ -275,12 +275,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                         }
                     }
 
-                    update_option($setting_key, $value);
+                    pdf_builder_update_option($setting_key, $value);
                     $saved_options[$setting_key] = $value;
                     $saved_count++;
                     
                     // Vérifier immédiatement que la valeur a été sauvegardée
-                    $verify_value = get_option($setting_key);
+                    $verify_value = pdf_builder_get_option($setting_key);
                     error_log("[PDF Builder] SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}");
                     
                     // Log spécifique pour les toggles
