@@ -70,13 +70,14 @@ function pdf_builder_activate()
     // Créer la table de paramètres personnalisée
     \PDF_Builder\Database\Settings_Table_Manager::create_table();
     
-    // Migrer les données existantes depuis wp_options
-    $migrated = \PDF_Builder\Database\Settings_Table_Manager::is_migrated();
-    if (!$migrated) {
-        \PDF_Builder\Database\Settings_Table_Manager::migrate_data();
-        error_log('[PDF Builder] Activation: Données migrées vers wp_pdf_builder_settings');
-    } else {
-        error_log('[PDF Builder] Activation: Données déjà migrées');
+    // Migrer les clés de licence vers des lignes séparées (si nécessaire)
+    $license_migrated = get_option('pdf_builder_license_keys_migrated', false);
+    if (!$license_migrated) {
+        $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows();
+        if ($migrated_count > 0) {
+            update_option('pdf_builder_license_keys_migrated', true);
+            error_log('[PDF Builder] Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
+        }
     }
     // ================================================================
 

@@ -576,6 +576,12 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             case 'licence':
                 $saved_options = [
+                    'license_key' => pdf_builder_get_option('pdf_builder_license_key', ''),
+                    'license_status' => pdf_builder_get_option('pdf_builder_license_status', 'free'),
+                    'license_data' => pdf_builder_get_option('pdf_builder_license_data', []),
+                    'license_test_key' => pdf_builder_get_option('pdf_builder_license_test_key', ''),
+                    'license_test_key_expires' => pdf_builder_get_option('pdf_builder_license_test_key_expires', ''),
+                    'license_email_reminders' => pdf_builder_get_option('pdf_builder_license_email_reminders', '0'),
                     'license_test_mode' => pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0'),
                 ];
                 break;
@@ -895,9 +901,34 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
 
-        // Save the settings array
-        pdf_builder_update_option('pdf_builder_settings', $settings);
-        // error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' settings to pdf_builder_settings option');
+        // EXTRACTION ET SAUVEGARDE DES CLÉS DE LICENCE DANS DES LIGNES SÉPARÉES
+        $license_keys = [
+            'pdf_builder_license_key',
+            'pdf_builder_license_status',
+            'pdf_builder_license_data',
+            'pdf_builder_license_test_key',
+            'pdf_builder_license_test_key_expires',
+            'pdf_builder_license_email_reminders',
+            'pdf_builder_license_test_mode_enabled'
+        ];
+
+        foreach ($license_keys as $license_key) {
+            if (isset($settings[$license_key])) {
+                // Sauvegarder dans une ligne séparée
+                pdf_builder_update_option($license_key, $settings[$license_key]);
+                error_log("[PDF Builder AJAX] Saved license key to separate row: {$license_key}");
+                
+                // Supprimer du tableau unifié
+                unset($settings[$license_key]);
+                $saved_count++;
+            }
+        }
+
+        // Save the remaining settings array (without license keys)
+        if (!empty($settings)) {
+            pdf_builder_update_option('pdf_builder_settings', $settings);
+            // error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' remaining settings to pdf_builder_settings option');
+        }
 
         return $saved_count;
     }

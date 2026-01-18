@@ -37,52 +37,55 @@ class Settings_Table_Manager {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
         
-        error_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès');
-        return true;
-    }
-    
     /**
-     * Migrer les données de wp_options vers wp_pdf_builder_settings
+     * Migrer les clés de licence vers des lignes séparées
      */
-    public static function migrate_data() {
+    public static function migrate_license_keys_to_separate_rows() {
         global $wpdb;
         
-        $source_table = $wpdb->options;
-        $dest_table = $wpdb->prefix . 'pdf_builder_settings';
+        $table_name = $wpdb->prefix . 'pdf_builder_settings';
         
-        // Récupérer tous les paramètres pdf_builder_*
-        $options = $wpdb->get_results(
-            "SELECT option_name, option_value, autoload 
-             FROM $source_table 
-             WHERE option_name LIKE 'pdf_builder_%' 
-             OR option_name = 'pdf_builder_settings'",
-            ARRAY_A
-        );
+        // Récupérer le tableau unifié des paramètres
+        $settings = self::get_option('pdf_builder_settings', []);
         
-        if (empty($options)) {
-            error_log('[PDF Builder] Aucune donnée à migrer depuis wp_options');
+        if (empty($settings)) {
+            error_log('[PDF Builder] Aucun paramètre trouvé pour la migration des licences');
             return 0;
         }
         
-        $count = 0;
+        $migrated_count = 0;
+        $license_keys = [
+            'pdf_builder_license_key',
+            'pdf_builder_license_status', 
+            'pdf_builder_license_data',
+            'pdf_builder_license_test_key',
+            'pdf_builder_license_test_key_expires',
+            'pdf_builder_license_email_reminders',
+            'pdf_builder_license_test_mode_enabled'
+        ];
         
-        foreach ($options as $option) {
-            $inserted = $wpdb->replace(
-                $dest_table,
-                [
-                    'option_name' => $option['option_name'],
-                    'option_value' => $option['option_value'],
-                    'autoload' => $option['autoload']
-                ]
-            );
-            
-            if ($inserted) {
-                $count++;
+        foreach ($license_keys as $key) {
+            if (isset($settings[$key])) {
+                // Sauvegarder dans une ligne séparée
+                self::update_option($key, $settings[$key]);
+                $migrated_count++;
+                error_log("[PDF Builder] Migré {$key} vers ligne séparée: " . substr(serialize($settings[$key]), 0, 100));
+                
+                // Supprimer du tableau unifié
+                unset($settings[$key]);
             }
         }
         
-        error_log("[PDF Builder] Migration: $count paramètres migrés avec succès");
-        return $count;
+        // Mettre à jour le tableau unifié sans les clés de licence
+        if (!empty($settings)) {
+            self::update_option('pdf_builder_settings', $settings);
+        } else {
+            // Si le tableau est vide, le supprimer
+            self::delete_option('pdf_builder_settings');
+        }
+        
+        error_log("[PDF Builder] Migration des clés de licence terminée: {$migrated_count} clés migrées");
+        return $migrated_count;
     }
     
     /**
@@ -187,24 +190,5 @@ class Settings_Table_Manager {
         error_log('[PDF Builder] Table wp_pdf_builder_settings vidée');
         
         return $result !== false;
-    }
-    
-    /**
-     * Vérifier si la migration est complète
-     */
-    public static function is_migrated() {
-        global $wpdb;
-        
-        $table_name = $wpdb->prefix . 'pdf_builder_settings';
-        
-        // Vérifier que la table existe
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
-            return false;
-        }
-        
-        // Vérifier qu'il y a des données
-        $count = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
-        
-        return $count > 0;
     }
 }

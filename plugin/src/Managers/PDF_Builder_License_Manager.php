@@ -53,6 +53,7 @@ class PDF_Builder_License_Manager
      */
     private function init()
     {
+        // Les clés de licence sont maintenant dans des lignes séparées
         $this->license_key = pdf_builder_get_option('pdf_builder_license_key', '');
         $this->license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
         $this->license_data = pdf_builder_get_option('pdf_builder_license_data', []);
@@ -71,14 +72,11 @@ class PDF_Builder_License_Manager
             return true;
         }
 
-        // Récupérer les paramètres unifiés
-        $settings = pdf_builder_get_option('pdf_builder_settings', array());
-
-        // Vérifier les clés de test (mode développeur)
-        $test_key = $settings['pdf_builder_license_test_key'] ?? '';
+        // Vérifier les clés de test (maintenant dans des lignes séparées)
+        $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
-            $test_expires = $settings['pdf_builder_license_test_key_expires'] ?? '';
+            $test_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
             if (!empty($test_expires)) {
                 $expires_date = strtotime($test_expires);
                 if ($expires_date && $expires_date > time()) {
@@ -150,9 +148,9 @@ class PDF_Builder_License_Manager
      */
     public function deactivateLicense()
     {
-        delete_option('pdf_builder_license_key');
-        delete_option('pdf_builder_license_status');
-        delete_option('pdf_builder_license_data');
+        pdf_builder_delete_option('pdf_builder_license_key');
+        pdf_builder_delete_option('pdf_builder_license_status');
+        pdf_builder_delete_option('pdf_builder_license_data');
 
         $this->license_key = '';
         $this->license_status = 'free';
