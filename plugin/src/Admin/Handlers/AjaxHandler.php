@@ -869,11 +869,9 @@ class AjaxHandler
      */
     private function handleGetCanvasSettings()
     {
-        error_log("[PDF Builder] ===== AJAX handleGetCanvasSettings STARTED =====");
         global $wpdb;
         $canvas_settings = [];
 
-        // Liste des options canvas à récupérer
         $canvas_option_keys = [
             'pdf_builder_canvas_width',
             'pdf_builder_canvas_height',
@@ -913,25 +911,10 @@ class AjaxHandler
             'pdf_builder_canvas_memory_limit_php'
         ];
 
-        error_log("[PDF Builder] Canvas option keys to fetch: " . count($canvas_option_keys));
-        error_log("[PDF Builder] Keys: " . implode(', ', $canvas_option_keys));
-
-        // Forcer la lecture directe depuis la base de données en contournant le cache
         foreach ($canvas_option_keys as $key) {
-            error_log("[PDF Builder] Fetching option: {$key}");
             $value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $key));
-
-            if ($value === null) {
-                $value = '';
-                error_log("[PDF Builder] AJAX get_canvas_settings - {$key}: OPTION_NOT_FOUND - using empty string");
-            } else {
-                error_log("[PDF Builder] AJAX get_canvas_settings - {$key}: FOUND_DB_VALUE '{$value}' (type: " . gettype($value) . ")");
-            }
-            $canvas_settings[$key] = $value;
+            $canvas_settings[$key] = $value ?? '';
         }
-
-        error_log("[PDF Builder] Final canvas_settings array: " . print_r($canvas_settings, true));
-        error_log("[PDF Builder] ===== AJAX handleGetCanvasSettings COMPLETED =====");
 
         wp_send_json_success([
             'canvas_settings' => $canvas_settings,
@@ -1703,81 +1686,38 @@ class AjaxHandler
     private function handleSaveCanvasModalSettings()
     {
         try {
-            // Log des données reçues pour débogage
-            error_log('PDF Builder - handleSaveCanvasModalSettings - POST data: ' . print_r($_POST, true));
-            error_log('PDF Builder - handleSaveCanvasModalSettings - REQUEST data: ' . print_r($_REQUEST, true));
-            error_log('PDF Builder - handleSaveCanvasModalSettings - Raw input: ' . file_get_contents('php://input'));
-
-            // Collecter et sanitiser tous les paramètres canvas depuis $_POST
             $canvas_settings = [];
 
             foreach ($_POST as $key => $value) {
-                // Ne traiter que les clés qui commencent par pdf_builder_canvas_
                 if (strpos($key, 'pdf_builder_canvas_') === 0) {
-                    error_log("PDF Builder - Processing canvas key: $key, raw value: " . (is_array($value) ? json_encode($value) : $value));
                     $sanitized_value = $this->sanitizeFieldValue($key, $value);
-                    error_log("PDF Builder - Sanitized value for $key: '" . $sanitized_value . "' (type: " . gettype($sanitized_value) . ")");
-
                     if ($sanitized_value !== '') {
                         $canvas_settings[$key] = $sanitized_value;
-                        error_log("PDF Builder - Added to canvas_settings: $key => $sanitized_value");
-                    } else {
-                        error_log("PDF Builder - Skipped empty sanitized value for: $key");
                     }
                 }
             }
-
-            error_log('PDF Builder - Canvas settings to save: ' . print_r($canvas_settings, true));
-            error_log('PDF Builder - Navigation params in canvas_settings:');
-            error_log('  pdf_builder_canvas_grid_enabled: ' . ($canvas_settings['pdf_builder_canvas_grid_enabled'] ?? 'NOT_SET'));
-            error_log('  pdf_builder_canvas_guides_enabled: ' . ($canvas_settings['pdf_builder_canvas_guides_enabled'] ?? 'NOT_SET'));
-            error_log('  pdf_builder_canvas_snap_to_grid: ' . ($canvas_settings['pdf_builder_canvas_snap_to_grid'] ?? 'NOT_SET'));
 
             if (empty($canvas_settings)) {
                 wp_send_json_error(['message' => 'Aucune donnée canvas valide à sauvegarder']);
                 return;
             }
 
-            // Sauvegarder chaque paramètre canvas individuellement
             $saved_count = 0;
             global $wpdb;
             foreach ($canvas_settings as $key => $value) {
-                $option_key = $key; // La clé est déjà préfixée
-
-                // Vérifier la valeur actuelle avant sauvegarde (requête directe)
-                $current_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
-                error_log("PDF Builder - Current DB value for $option_key: " . ($current_value ?? 'NULL'));
-
-                // Tenter de sauvegarder
+                $option_key = $key;
                 $update_result = update_option($option_key, $value);
-                error_log("PDF Builder - update_option result for $key: " . ($update_result ? 'SUCCESS' : 'FAILED'));
-
-                // Si update_option échoue (option n'existe pas), essayer add_option
                 if (!$update_result) {
-                    $add_result = add_option($option_key, $value, '', 'no');
-                    error_log("PDF Builder - add_option result for $key: " . ($add_result ? 'SUCCESS' : 'FAILED'));
+                    add_option($option_key, $value, '', 'no');
                 }
-
-                // Vider le cache pour cette option spécifique
                 wp_cache_delete($option_key, 'options');
-
-                // Vérifier si la valeur a été correctement sauvegardée en lisant directement en base
                 $saved_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
-                error_log("PDF Builder - DB value after save for $option_key: " . ($saved_value ?? 'NULL'));
-
-                // Considérer comme sauvegardé si la valeur correspond à ce qu'on voulait sauvegarder
                 if ($saved_value === $value || (is_array($value) && $saved_value == $value)) {
                     $saved_count++;
-                    error_log("PDF Builder - Confirmed save successful for $key");
-                } else {
-                    error_log("PDF Builder - Save verification failed for $key - expected: " . (is_array($value) ? json_encode($value) : $value) . ", got: " . ($saved_value ?? 'NULL'));
                 }
             }
 
-            // Vider complètement le cache des options
             wp_cache_flush();
-
-            error_log("PDF Builder - Total canvas settings saved: $saved_count / " . count($canvas_settings));
 
             if ($saved_count > 0) {
                 wp_send_json_success([
@@ -1789,7 +1729,6 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            error_log('PDF Builder - Erreur sauvegarde paramètres canvas: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
         }
     }
