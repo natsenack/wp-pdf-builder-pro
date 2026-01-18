@@ -924,7 +924,28 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
 
-        // Save the remaining settings array (without license keys)
+        // EXTRACTION ET SAUVEGARDE DES CHAMPS DE L'ONGLET GÉNÉRAL DANS DES LIGNES SÉPARÉES
+        $general_fields = [
+            'pdf_builder_company_phone_manual',
+            'pdf_builder_company_siret',
+            'pdf_builder_company_vat',
+            'pdf_builder_company_rcs',
+            'pdf_builder_company_capital'
+        ];
+
+        foreach ($general_fields as $general_field) {
+            if (isset($settings[$general_field])) {
+                // Sauvegarder dans une ligne séparée
+                pdf_builder_update_option($general_field, $settings[$general_field]);
+                error_log("[PDF Builder AJAX] Saved general field to separate row: {$general_field}");
+                
+                // Supprimer du tableau unifié
+                unset($settings[$general_field]);
+                $saved_count++;
+            }
+        }
+
+        // Save the remaining settings array (without license keys and general fields)
         if (!empty($settings)) {
             pdf_builder_update_option('pdf_builder_settings', $settings);
             // error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' remaining settings to pdf_builder_settings option');
