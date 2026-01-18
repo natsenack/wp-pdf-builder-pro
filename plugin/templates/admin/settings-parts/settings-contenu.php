@@ -442,6 +442,7 @@
             </style>
 
             <script>
+                var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                 (function() {
                     'use strict';
 
@@ -616,7 +617,50 @@
                     }
 
                     function applyModalSettings(category) {
-                        // Utiliser la nouvelle logique simplifiée pour sauvegarder uniquement les toggles
+                        var modalId = modalConfig[category];
+                        if (!modalId) return;
+
+                        var modal = document.getElementById(modalId);
+                        if (!modal) return;
+
+                        var togglesForModal = modalToggles[category] || [];
+                        if (togglesForModal.length === 0) return;
+
+                        // Collecter les données à sauvegarder
+                        var formData = new FormData();
+                        formData.append('action', 'pdf_builder_save_canvas_modal_settings');
+                        formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_canvas_settings"); ?>');
+                        formData.append('category', category);
+
+                        // Ajouter les valeurs des toggles
+                        togglesForModal.forEach(function(toggleName) {
+                            var modalInput = modal.querySelector('[name="' + toggleName + '"]');
+                            if (modalInput && modalInput.type === 'checkbox') {
+                                formData.append(toggleName, modalInput.checked ? '1' : '0');
+                            }
+                        });
+
+                        // Sauvegarder via AJAX
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('[PDF Builder] Modal settings saved successfully:', data.data);
+                                showNotification('Paramètres sauvegardés avec succès', 'success');
+                            } else {
+                                console.error('[PDF Builder] Error saving modal settings:', data.data);
+                                showNotification('Erreur lors de la sauvegarde', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('[PDF Builder] AJAX error:', error);
+                            showNotification('Erreur de connexion', 'error');
+                        });
+
+                        // Mettre à jour les hidden fields et fermer la modal (logique existante)
                         saveModalToggles(category);
                     }
 

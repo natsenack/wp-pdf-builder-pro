@@ -67,6 +67,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
         add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
         add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
+        add_action('wp_ajax_pdf_builder_save_canvas_modal_settings', [$this, 'ajaxSaveCanvasModalSettings']);
     }
 
     /**
@@ -1677,6 +1678,69 @@ class AjaxHandler
             wp_send_json_success($orientations);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX: Sauvegarder les paramètres des modales canvas
+     */
+    public function ajaxSaveCanvasModalSettings()
+    {
+        try {
+            // Valider les permissions et nonce
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY, 'pdf_builder_canvas_settings');
+            if (!$validation['success']) {
+                wp_send_json_error(['message' => 'Nonce invalide ou permissions insuffisantes']);
+                return;
+            }
+
+            // Vérifier les permissions
+            if (!current_user_can(NonceManager::ADMIN_CAPABILITY)) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            // Récupérer les paramètres depuis la requête
+            $category = sanitize_text_field($_POST['category'] ?? '');
+            $settings_to_save = [];
+
+            // Collecter tous les paramètres canvas depuis POST
+            foreach ($_POST as $key => $value) {
+                if (strpos($key, 'pdf_builder_canvas_') === 0) {
+                    $settings_to_save[$key] = sanitize_text_field($value);
+                }
+            }
+
+            if (empty($settings_to_save)) {
+                wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
+                return;
+            }
+
+            // Récupérer les paramètres existants
+            $existing_settings = get_option('pdf_builder_settings', array());
+
+            // Mettre à jour les paramètres
+            $updated_count = 0;
+            foreach ($settings_to_save as $key => $value) {
+                $existing_settings[$key] = $value;
+                $updated_count++;
+            }
+
+            // Sauvegarder dans l'option unifiée
+            $saved = update_option('pdf_builder_settings', $existing_settings);
+
+            if ($saved) {
+                wp_send_json_success([
+                    'message' => 'Paramètres sauvegardés avec succès',
+                    'category' => $category,
+                    'updated_count' => $updated_count
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
     }
 
