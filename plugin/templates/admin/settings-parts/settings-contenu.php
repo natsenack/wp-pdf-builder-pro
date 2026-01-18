@@ -526,7 +526,7 @@
                         'pdf_builder_canvas_error_reporting': 'errorReporting'
                     };
 
-                    // Fonction pour sauvegarder les toggles d'une modal
+                    // Fonction pour sauvegarder les toggles d'une modal (agressive : force la synchronisation)
                     function saveModalToggles(category) {
                         var modalId = modalConfig[category];
                         if (!modalId) return;
@@ -534,7 +534,22 @@
                         var modal = document.getElementById(modalId);
                         if (!modal) return;
 
-                        // Fermer la modal immédiatement sans sauvegarde
+                        var togglesForModal = modalToggles[category] || [];
+                        if (togglesForModal.length === 0) return;
+
+                        // Synchronisation agressive : mettre à jour tous les hidden fields pour cette modal
+                        togglesForModal.forEach(function(toggleName) {
+                            var modalInput = modal.querySelector('[name="' + toggleName + '"]');
+                            if (modalInput && modalInput.type === 'checkbox') {
+                                var hiddenField = document.querySelector('input[name="' + toggleName + '"][type="hidden"]');
+                                if (hiddenField) {
+                                    hiddenField.value = modalInput.checked ? '1' : '0';
+                                    console.log('[PDF Builder] Forced sync:', toggleName, '=', hiddenField.value);
+                                }
+                            }
+                        });
+
+                        // Fermer la modal
                         closeModal(modal);
                     }
 
