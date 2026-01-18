@@ -693,7 +693,6 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
 }
 
 // Inclure les fonctions utilitaires pour les paramètres
-// require_once PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 /**
  * Initialise les handlers AJAX unifiés pour PDF Builder Pro
  *

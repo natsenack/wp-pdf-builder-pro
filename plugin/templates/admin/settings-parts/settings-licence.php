@@ -1,6 +1,5 @@
 <?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
-// require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
             <section id="licence" aria-label="Gestion de la Licence">

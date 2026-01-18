@@ -1,7 +1,5 @@
 <?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
-    // require_once __DIR__ . '/../settings-helpers.php'; // REMOVED - settings-helpers.php deleted
-
     // Préparer les variables nécessaires
     $settings = get_option('pdf_builder_settings', array());
     error_log('[PDF Builder] settings-securite.php loaded - security_level: ' . ($settings['pdf_builder_security_level'] ?? 'not set') . ', enable_logging: ' . ($settings['pdf_builder_enable_logging'] ?? 'not set'));

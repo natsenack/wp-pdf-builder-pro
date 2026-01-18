@@ -622,10 +622,6 @@ class AjaxHandler
                     $this->handleSaveGeneralSettings();
                     break;
 
-                case 'save_canvas_modal_settings':
-                    $this->handleSaveCanvasModalSettings();
-                    break;
-
                 case 'get_settings':
                     $this->handleGetSettings();
                     break;
@@ -1739,57 +1735,6 @@ class AjaxHandler
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Gère la sauvegarde des paramètres des modales canvas
-     */
-    private function handleSaveCanvasModalSettings()
-    {
-        try {
-            $canvas_settings = [];
-
-            foreach ($_POST as $key => $value) {
-                if (strpos($key, 'pdf_builder_canvas_') === 0) {
-                    $sanitized_value = $this->sanitizeFieldValue($key, $value);
-                    if ($sanitized_value !== '') {
-                        $canvas_settings[$key] = $sanitized_value;
-                    }
-                }
-            }
-
-            if (empty($canvas_settings)) {
-                wp_send_json_error(['message' => 'Aucune donnée canvas valide à sauvegarder']);
-                return;
-            }
-
-            $saved_count = 0;
-            global $wpdb;
-            foreach ($canvas_settings as $key => $value) {
-                $option_key = $key;
-                $update_result = update_option($option_key, $value);
-                if (!$update_result) {
-                    add_option($option_key, $value, '', 'no');
-                }
-                wp_cache_delete($option_key, 'options');
-                $saved_value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option_key));
-                if ($saved_value === $value || (is_array($value) && $saved_value == $value)) {
-                    $saved_count++;
-                }
-            }
-
-            if ($saved_count > 0) {
-                wp_send_json_success([
-                    'message' => sprintf('%d paramètre(s) canvas sauvegardé(s) avec succès', $saved_count),
-                    'saved_count' => $saved_count
-                ]);
-            } else {
-                wp_send_json_error(['message' => 'Aucun paramètre n\'a pu être sauvegardé']);
-            }
-
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
         }
     }
 

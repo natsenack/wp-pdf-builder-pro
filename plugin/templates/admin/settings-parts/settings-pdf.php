@@ -1,7 +1,5 @@
 <?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
-// require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
-
 $settings = get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 

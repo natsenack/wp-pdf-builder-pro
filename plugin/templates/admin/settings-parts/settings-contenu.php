@@ -5,8 +5,6 @@
      * Updated: 2025-12-03
      */
 
-    // require_once __DIR__ . '/settings-helpers.php'; // REMOVED - settings-helpers.php deleted
-
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
     $settings = get_option('pdf_builder_settings', array());
