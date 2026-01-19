@@ -1071,13 +1071,13 @@ class PdfBuilderAdmin
                 align-items: center;
                 z-index: 999999;
                 text-align: center;
-            ">
+             ">
                 <div style="
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     gap: 20px;
-                ">
+                 ">
                     <!-- Custom Spinner - no global classes -->
                     <div id="pdf-builder-custom-spinner" style="
                         width: 40px;
