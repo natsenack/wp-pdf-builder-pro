@@ -97,7 +97,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">🔍</span> Résolutions DPI</label>
                     <div style="display: flex; flex-direction: column; margin-top: 8px;">
                         <?php
-                        $current_dpi_string = get_canvas_modal_value('dpi', $canvas_defaults['dpi']);
+                        $current_dpi_string = get_canvas_modal_value('canvas_dpi', $canvas_defaults['dpi']);
                         // Convertir la valeur actuelle en tableau (peut être une chaîne ou un tableau sérialisé)
                         if (is_string($current_dpi_string) && strpos($current_dpi_string, ',') !== false) {
                             $current_dpis = explode(',', $current_dpi_string);
@@ -148,7 +148,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
                         <?php
                         // Récupérer les formats actuellement sélectionnés
-                        $current_formats_string = get_canvas_modal_value('formats', 'A4');
+                        $current_formats_string = get_canvas_modal_value('canvas_formats', 'A4');
                         $current_formats = [];
 
                         // Convertir la valeur actuelle en tableau
@@ -201,7 +201,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
                         <?php
                         // Récupérer les orientations actuellement sélectionnées
-                        $current_orientations_string = get_canvas_modal_value('orientations', 'portrait,landscape');
+                        $current_orientations_string = get_canvas_modal_value('canvas_orientations', 'portrait,landscape');
                         $current_orientations = [];
 
                         // Convertir la valeur actuelle en tableau
@@ -244,9 +244,9 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_bg_color" name="pdf_builder_canvas_bg_color"
-                               value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
+                               value="<?php echo esc_attr(get_canvas_modal_value('canvas_bg_color', $canvas_defaults['bg_color'])); ?>"
                                style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer; padding: 5px;">
-                        <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('bg_color', $canvas_defaults['bg_color'])); ?>"
+                        <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('canvas_bg_color', $canvas_defaults['bg_color'])); ?>"
                                style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
                     </div>
                     <?php else: ?>
@@ -266,13 +266,13 @@ function get_canvas_modal_value($key, $default = '') {
                         <div style="flex: 1;">
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Couleur</label>
                             <input type="color" id="modal_canvas_border_color" name="pdf_builder_canvas_border_color"
-                                   value="<?php echo esc_attr(get_canvas_modal_value('border_color', $canvas_defaults['border_color'])); ?>"
+                                   value="<?php echo esc_attr(get_canvas_modal_value('canvas_border_color', $canvas_defaults['border_color'])); ?>"
                                    style="width: 60px; height: 36px; border: none; border-radius: 6px; cursor: pointer; padding: 5px;">
                         </div>
                         <div style="flex: 1;">
                             <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;">Épaisseur</label>
                             <input type="number" id="modal_canvas_border_width" name="pdf_builder_canvas_border_width"
-                                   value="<?php echo esc_attr(get_canvas_modal_value('border_width', $canvas_defaults['border_width'])); ?>"
+                                   value="<?php echo esc_attr(get_canvas_modal_value('canvas_border_width', $canvas_defaults['border_width'])); ?>"
                                    min="0" max="20" style="width: 100%;">
                         </div>
                     </div>
@@ -280,7 +280,7 @@ function get_canvas_modal_value($key, $default = '') {
                         <label for="modal_canvas_shadow_enabled" style="font-weight: 500; cursor: pointer; flex: 1;">Ombre activée</label>
                         <div class="toggle-switch">
                             <input type="checkbox" id="modal_canvas_shadow_enabled" name="pdf_builder_canvas_shadow_enabled"
-                                   value="1" <?php checked(get_canvas_modal_value('shadow_enabled', $canvas_defaults['shadow_enabled']), '1'); ?>>
+                                   value="1" <?php checked(get_canvas_modal_value('canvas_shadow_enabled', $canvas_defaults['shadow_enabled']), '1'); ?>>
                             <label for="modal_canvas_shadow_enabled"></label>
                         </div>
                     </div>
@@ -314,9 +314,9 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color"
-                               value="<?php echo esc_attr(get_canvas_modal_value('container_bg_color', $canvas_defaults['container_bg_color'])); ?>"
+                               value="<?php echo esc_attr(get_canvas_modal_value('canvas_container_bg_color', $canvas_defaults['container_bg_color'])); ?>"
                                style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer; padding: 5px;">
-                        <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('container_bg_color', $canvas_defaults['container_bg_color'])); ?>"
+                        <input type="text" readonly value="<?php echo esc_attr(get_canvas_modal_value('canvas_container_bg_color', $canvas_defaults['container_bg_color'])); ?>"
                                style="flex: 1; font-family: monospace; background: #f8f9fa; border: 1px solid #e1e5e9;">
                     </div>
                     <?php else: ?>
