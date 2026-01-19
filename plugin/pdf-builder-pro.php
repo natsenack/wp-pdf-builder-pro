@@ -16,26 +16,6 @@
  * date de début de la création du plugin : 15/10/2025
  */
 
-// ============================================================================
-// INCLUSIONS POUR INTELEPHENSE
-// ============================================================================
-
-/**
- * Déclarations de classes pour Intelephense
- */
-if (!class_exists('PDF_Builder_Logger')) {
-    require_once plugin_dir_path(__FILE__) . 'src/PDF_Builder_Logger.php';
-}
-
-if (!class_exists('PDF_Builder_Analytics_Manager')) {
-    /**
-     * @method static get_instance()
-     */
-    class PDF_Builder_Analytics_Manager {
-        public static function get_instance() { return null; }
-    }
-}
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
@@ -93,13 +73,10 @@ function pdf_builder_activate()
     // Migrer les clés de licence vers des lignes séparées (si nécessaire)
     $license_migrated = get_option('pdf_builder_license_keys_migrated', false);
     if (!$license_migrated) {
-        // $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows(); // Méthode non implémentée
-        $migrated_count = 0;
+        $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows();
         if ($migrated_count > 0) {
             update_option('pdf_builder_license_keys_migrated', true);
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
-            }
+            error_log('[PDF Builder] Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
         }
     }
     // ================================================================
@@ -1103,7 +1080,11 @@ function pdf_builder_init()
         return;
     }
 
-    // Autoloader Composer chargé centralement dans bootstrap.php
+    // Charger l'autoloader Composer
+    $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+    if (file_exists($autoload_path)) {
+        require_once $autoload_path;
+    }
 
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';
@@ -2284,7 +2265,7 @@ function pdf_builder_check_advanced_systems_status() {
         'config_manager' => class_exists('PDF_Builder_Config_Manager') && PDF_Builder_Config_Manager::get_instance() !== null,
         'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
         'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
-        'update_manager' => false, // Désactivé - système réservé pour mise à jour distant
+        'update_manager' => class_exists('PDF_Builder_Update_Manager') && PDF_Builder_Update_Manager::get_instance() !== null,
         'health_monitor' => class_exists('PDF_Builder_Health_Monitor') && PDF_Builder_Health_Monitor::get_instance() !== null,
         'api_manager' => class_exists('PDF_Builder_API_Manager') && PDF_Builder_API_Manager::get_instance() !== null,
         'user_manager' => class_exists('PDF_Builder_User_Manager') && PDF_Builder_User_Manager::get_instance() !== null,
