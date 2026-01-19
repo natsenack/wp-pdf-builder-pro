@@ -1057,15 +1057,6 @@ class PdfBuilderAdmin
 
         ?>
         <div class="wrap pdf-builder-editor-page">
-            <div class="pdf-builder-editor-header">
-                <h1><?php _e('Éditeur PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-                <div class="pdf-builder-editor-info">
-                    <p><?php _e('Éditeur avancé pour la création de templates PDF', 'pdf-builder-pro'); ?></p>
-                    <?php if ($template_id) : ?>
-                        <p class="template-info"><?php printf(__('Template ID: %d', 'pdf-builder-pro'), $template_id); ?></p>
-                    <?php endif; ?>
-                </div>
-            </div>
 
             <!-- PDF Builder Loading Screen -->
             <div id="pdf-builder-loader" class="pdf-builder-loader">

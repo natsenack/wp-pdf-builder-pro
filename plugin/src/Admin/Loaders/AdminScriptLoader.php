@@ -410,7 +410,7 @@ class AdminScriptLoader
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id); }
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id); }
 
             // Vérifier que template_processor existe
             if (isset($this->admin->template_processor) && $this->admin->template_processor) {
@@ -419,14 +419,14 @@ class AdminScriptLoader
                     $localize_data['initialElements'] = $existing_template_data['elements'];
                     $localize_data['existingTemplate'] = $existing_template_data;
                     $localize_data['hasExistingData'] = true;
-                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id); }
-                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND')); }
-                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data)); }
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id); }
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND')); }
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data)); }
                 } else {
-                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true)); }
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true)); }
                 }
             } else {
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template processor not available, skipping template data loading'); }
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template processor not available, skipping template data loading'); }
             }
         }
 
