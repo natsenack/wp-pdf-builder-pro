@@ -491,14 +491,6 @@
 
             <!-- Inclusion du script canvas-settings.js pour la gestion des modals -->
             <script src="<?php echo esc_url(PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-settings.min.js'); ?>?v=<?php echo time(); ?>"></script>
-
-            <!-- Script de test pour vérifier le chargement -->
-            <script>
-                console.log('🧪🧪🧪 TEST SCRIPT LOADED - Settings page script loading works! 🧪🧪🧪');
-                console.log('Current URL:', window.location.href);
-                console.log('PDF_BUILDER_PRO_ASSETS_URL:', '<?php echo PDF_BUILDER_PRO_ASSETS_URL; ?>');
-                console.log('Canvas settings script URL:', '<?php echo esc_url(PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-settings.min.js'); ?>?v=<?php echo time(); ?>');
-            </script>
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
 
