@@ -52,6 +52,8 @@
          * Initialise le systeme de gestion des modals
          */
         init() {
+            log(LOG_LEVELS.INFO, 'CanvasModalManager.init() called - STARTING INITIALIZATION');
+
             if (this.isInitialized) {
                 log(LOG_LEVELS.WARN, 'CanvasModalManager already initialized');
                 return;
@@ -104,8 +106,10 @@
 
             // Boutons de configuration (pour ouvrir les modals)
             document.addEventListener('click', (e) => {
+                log(LOG_LEVELS.DEBUG, 'Document click detected', { target: e.target.className, tagName: e.target.tagName });
                 const configBtn = e.target.closest('.canvas-configure-btn');
                 if (configBtn) {
+                    log(LOG_LEVELS.INFO, 'Configure button clicked!', { button: configBtn, className: configBtn.className });
                     e.preventDefault();
                     this.handleConfigureButtonClick(configBtn);
                 }
@@ -145,11 +149,15 @@
          * Gère le clic sur un bouton de configuration
          */
         handleConfigureButtonClick(button) {
+            log(LOG_LEVELS.INFO, 'handleConfigureButtonClick called', { button: button, buttonClass: button.className });
+
             const card = button.closest('.canvas-card');
             if (!card) {
                 log(LOG_LEVELS.ERROR, 'Configure button clicked but no parent card found');
                 return;
             }
+
+            log(LOG_LEVELS.INFO, 'Parent card found', { card: card, cardClass: card.className });
 
             const category = card.getAttribute('data-category');
             if (!category) {
@@ -196,6 +204,8 @@
          * Ouvre un modal spécifique
          */
         openModal(category) {
+            log(LOG_LEVELS.INFO, 'openModal called', { category: category, availableModals: Object.keys(this.modals) });
+
             const modalData = this.modals[category];
             if (!modalData) {
                 log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`);
@@ -438,6 +448,12 @@
             return;
         }
 
+        log(LOG_LEVELS.INFO, 'window.pdfBuilderCanvasSettings is defined', {
+            hasAjaxUrl: !!window.pdfBuilderCanvasSettings.ajax_url,
+            hasNonce: !!window.pdfBuilderCanvasSettings.nonce,
+            settingsKeys: Object.keys(window.pdfBuilderCanvasSettings)
+        });
+
         // Vérifier que les éléments DOM existent
         const modalIds = [
             'canvas-affichage-modal-overlay',
@@ -469,7 +485,9 @@
 
         // Créer et initialiser le gestionnaire de modals
         try {
+            log(LOG_LEVELS.INFO, 'About to create CanvasModalManager instance');
             window.canvasModalManager = new CanvasModalManager();
+            log(LOG_LEVELS.INFO, 'CanvasModalManager instance created, calling init()');
             window.canvasModalManager.init();
             log(LOG_LEVELS.INFO, 'Canvas Modal System ready');
         } catch (error) {
