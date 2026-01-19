@@ -9,8 +9,8 @@
         console.log('Canvas settings JavaScript loaded');
 
         // Add any canvas-specific initialization here
-        if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
-            console.log('Canvas settings initialized:', window.pdfBuilderCanvasSettings);
+        if (typeof window.pdf_builder_canvas_settings !== 'undefined') {
+            console.log('Canvas settings initialized:', window.pdf_builder_canvas_settings);
         }
 
         // Handle modal apply buttons
