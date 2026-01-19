@@ -1731,35 +1731,6 @@ export const Canvas = function Canvas({
     canvasSettings.debugMode,
   ]);
 
-  // Écouter les changements de couleur de fond depuis les paramètres
-  useEffect(() => {
-    debugLog(
-      `[Canvas] Background color change detected: ${canvasSettings?.canvasBackgroundColor}`
-    );
-    const handleBgColorChange = (event: CustomEvent) => {
-      debugLog(
-        `[Canvas] Custom background color change event received:`,
-        event.detail
-      );
-      // Forcer le re-rendu du canvas avec la nouvelle couleur
-      renderCountRef.current += 1;
-      // Le canvas se re-rendra automatiquement grâce aux dépendances du useEffect principal
-    };
-
-    window.addEventListener(
-      "pdfBuilderCanvasBgColorChanged",
-      handleBgColorChange as EventListener,
-      { passive: true }
-    );
-
-    return () => {
-      window.removeEventListener(
-        "pdfBuilderCanvasBgColorChanged",
-        handleBgColorChange as EventListener
-      );
-    };
-  }, [canvasSettings?.canvasBackgroundColor]);
-
   // Utiliser les hooks pour les interactions
   const {
     handleDrop,
@@ -3193,9 +3164,7 @@ export const Canvas = function Canvas({
     }
 
     // Clear canvas with background color from settings (matching PDF background)
-    const canvasBgColor = normalizeColor(
-      canvasSettings?.canvasBackgroundColor || "#ffffff"
-    );
+    const canvasBgColor = normalizeColor("#ffffff");
     debugLog(
       `🖌️ Canvas: Clearing canvas with background color: ${canvasBgColor}`
     );
@@ -3485,7 +3454,7 @@ export const Canvas = function Canvas({
             width: `${displayWidth}px`,
             height: `${displayHeight}px`,
             cursor: "crosshair",
-            backgroundColor: canvasSettings?.canvasBackgroundColor || "#ffffff",
+            backgroundColor: "#ffffff",
             border: "none",
             boxShadow: canvasSettings?.shadowEnabled
               ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)"
