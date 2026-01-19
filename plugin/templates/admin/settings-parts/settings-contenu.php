@@ -590,7 +590,7 @@
 
                     // Appliquer les paramètres d'une modal
                     // Fonction utilitaire pour afficher des notifications via le système unifié
-                    function showNotification(message, type) {
+                    window.showNotification = function(message, type) {
                         // Utiliser le système de notification unifié du plugin
                         jQuery.ajax({
                             url: ajaxurl,
@@ -612,9 +612,10 @@
                                 
                             }
                         });
-                    }
+                    };
 
-                    function applyModalSettings(buttonElement) {
+                    // Rendre la fonction globale pour qu'elle soit accessible depuis les onclick inline
+                    window.applyModalSettings = function(buttonElement) {
                         console.log('🔄 APPLY MODAL SETTINGS - START');
                         console.log('Button element:', buttonElement);
                         
@@ -709,7 +710,7 @@
 
                         // Mettre à jour les hidden fields et fermer la modal (logique existante)
                         saveModalToggles(category);
-                    }
+                    };
 
                     // Initialisation des événements
                     function initEvents() {
