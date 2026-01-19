@@ -733,8 +733,8 @@
                             console.log('AJAX data:', data);
                             if (data.success) {
                                 console.log('Success: Parameters saved');
-                                console.log('Updated count:', data.updated_count);
-                                console.log('Category:', data.category);
+                                console.log('Updated count:', data.data ? data.data.updated_count : 'undefined');
+                                console.log('Category:', data.data ? data.data.category : 'undefined');
                                 showNotification('Paramètres sauvegardés avec succès', 'success');
 
                                 // Forcer la synchronisation des hidden fields après sauvegarde
