@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Bootstrap
@@ -403,7 +403,7 @@ function pdf_builder_load_core()
         // 'PDF_Builder_Backup_Restore_Manager.php',
         // 'PDF_Builder_Canvas_Manager.php',
         // 'PDF_Builder_Drag_Drop_Manager.php',
-        // 'PDF_Builder_Feature_Manager.php',
+        'PDF_Builder_Feature_Manager.php', // Chargé pour les fonctionnalités freemium
         'PDF_Builder_License_Manager.php', // Manuellement chargé car autoloader désactivé
         // 'PDF_Builder_Logger.php',
         // 'PDF_Builder_PDF_Generator.php',
