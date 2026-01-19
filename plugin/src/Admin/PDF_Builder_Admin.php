@@ -1368,10 +1368,76 @@ class PdfBuilderAdmin
                             window.initPDFBuilderReact();
                         }
                         this.hide();
+
+                        // Appliquer les paramètres de bordure du canvas après l'initialisation
+                        this.applyCanvasBorderSettings();
+
                     } catch (error) {
                         console.error('[PDF Builder] Erreur lors de l\'initialisation React:', error);
                         this.showLoadingError();
                     }
+                },
+
+                applyCanvasBorderSettings: function() {
+                    // Attendre que l'éditeur soit complètement chargé
+                    setTimeout(() => {
+                        try {
+                            // Récupérer les paramètres de bordure depuis les données localisées
+                            const canvasSettings = window.pdfBuilderCanvasSettings || {};
+                            const borderColor = canvasSettings.border_color || '#cccccc';
+                            const borderWidth = canvasSettings.border_width || 1;
+
+                            // Appliquer les styles au canvas de l'éditeur
+                            const canvasElement = document.querySelector('.pdf-builder-canvas, .canvas-container, [data-canvas]');
+                            if (canvasElement) {
+                                canvasElement.style.borderColor = borderColor;
+                                canvasElement.style.borderWidth = borderWidth + 'px';
+                                canvasElement.style.borderStyle = 'solid';
+
+                                console.log('[PDF Builder] Paramètres de bordure appliqués:', {
+                                    borderColor: borderColor,
+                                    borderWidth: borderWidth + 'px'
+                                });
+                            } else {
+                                console.warn('[PDF Builder] Élément canvas non trouvé pour appliquer les paramètres de bordure');
+                            }
+
+                            // Alternative: chercher dans le shadow DOM ou les composants React
+                            const reactRoot = document.getElementById('pdf-builder-react-root');
+                            if (reactRoot) {
+                                // Observer les changements dans le DOM React pour appliquer les styles
+                                const observer = new MutationObserver((mutations) => {
+                                    mutations.forEach((mutation) => {
+                                        if (mutation.type === 'childList') {
+                                            const canvas = reactRoot.querySelector('.canvas, .pdf-canvas, [class*="canvas"]');
+                                            if (canvas && !canvas.dataset.borderApplied) {
+                                                canvas.style.borderColor = borderColor;
+                                                canvas.style.borderWidth = borderWidth + 'px';
+                                                canvas.style.borderStyle = 'solid';
+                                                canvas.dataset.borderApplied = 'true';
+
+                                                console.log('[PDF Builder] Bordure appliquée via MutationObserver');
+                                                observer.disconnect();
+                                            }
+                                        }
+                                    });
+                                });
+
+                                observer.observe(reactRoot, {
+                                    childList: true,
+                                    subtree: true
+                                });
+
+                                // Timeout de sécurité
+                                setTimeout(() => {
+                                    observer.disconnect();
+                                }, 10000);
+                            }
+
+                        } catch (error) {
+                            console.error('[PDF Builder] Erreur lors de l\'application des paramètres de bordure:', error);
+                        }
+                    }, 2000); // Attendre 2 secondes que React soit complètement chargé
                 }
             };
 
