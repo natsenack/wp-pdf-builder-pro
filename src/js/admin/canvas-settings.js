@@ -7,6 +7,21 @@
 // Log immédiat au chargement du script
 console.log('[CANVAS_MODAL] Script file loaded at:', new Date().toISOString());
 
+// Test basique - alert sur clic
+$(document).ready(function() {
+    console.log('[CANVAS_MODAL] jQuery ready, testing basic click binding');
+
+    // Test ultra-simple : alert sur tous les clics de boutons canvas
+    $(document).on('click', '.canvas-configure-btn', function(e) {
+        alert('CANVAS BUTTON CLICKED! Category: ' + $(this).closest('.canvas-card').data('category'));
+        console.log('[CANVAS_MODAL] Button clicked, category:', $(this).closest('.canvas-card').data('category'));
+        e.preventDefault();
+        return false;
+    });
+
+    console.log('[CANVAS_MODAL] Click binding test completed');
+});
+
 (function($) {
     'use strict';
 
@@ -28,15 +43,6 @@ console.log('[CANVAS_MODAL] Script file loaded at:', new Date().toISOString());
             var $card = $(this);
             var category = $card.data('category');
             console.log('[CANVAS_MODAL] Card', index, '- category:', category, '- visible:', $card.is(':visible'));
-        });
-
-        // Test click event binding
-        $(document).on('click', '.canvas-configure-btn', function(e) {
-            console.log('[CANVAS_MODAL] CLICK DETECTED on button!');
-            console.log('[CANVAS_MODAL] Event target:', e.target);
-            console.log('[CANVAS_MODAL] Button element:', this);
-            e.preventDefault();
-            return false;
         });
     });
 
