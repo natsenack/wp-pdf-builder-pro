@@ -1,213 +1,442 @@
 /**
- * PDF Builder Canvas Settings JavaScript
- * Nouveau système de sauvegarde par modal
+ * PDF Builder Canvas Settings JavaScript - Nouveau système de sauvegarde
+ * Version: 2.0 - Refonte complète du système de sauvegarde des modals
  */
 (function($) {
     'use strict';
 
-    // Configuration des champs par modal
-    var modalFieldsConfig = {
-        'affichage': [
-            'pdf_builder_canvas_width',
-            'pdf_builder_canvas_height',
-            'pdf_builder_canvas_dpi[]',
-            'pdf_builder_canvas_formats[]',
-            'pdf_builder_canvas_orientations[]',
-            'pdf_builder_canvas_bg_color',
-            'pdf_builder_canvas_border_color',
-            'pdf_builder_canvas_border_width',
-            'pdf_builder_canvas_container_bg_color',
-            'pdf_builder_canvas_shadow_enabled'
-        ],
-        'navigation': [
-            'pdf_builder_canvas_grid_enabled',
-            'pdf_builder_canvas_grid_size',
-            'pdf_builder_canvas_guides_enabled',
-            'pdf_builder_canvas_snap_to_grid',
-            'pdf_builder_canvas_zoom_min',
-            'pdf_builder_canvas_zoom_max',
-            'pdf_builder_canvas_zoom_default',
-            'pdf_builder_canvas_zoom_step'
-        ],
-        'comportement': [
-            'pdf_builder_canvas_drag_enabled',
-            'pdf_builder_canvas_resize_enabled',
-            'pdf_builder_canvas_rotate_enabled',
-            'pdf_builder_canvas_multi_select',
-            'pdf_builder_canvas_selection_mode',
-            'pdf_builder_canvas_keyboard_shortcuts',
-            'pdf_builder_canvas_export_quality',
-            'pdf_builder_canvas_export_format',
-            'pdf_builder_canvas_export_transparent'
-        ],
-        'systeme': [
-            'pdf_builder_canvas_fps_target',
-            'pdf_builder_canvas_memory_limit_js',
-            'pdf_builder_canvas_response_timeout',
-            'pdf_builder_canvas_lazy_loading_editor',
-            'pdf_builder_canvas_preload_critical',
-            'pdf_builder_canvas_lazy_loading_plugin',
-            'pdf_builder_canvas_debug_enabled',
-            'pdf_builder_canvas_performance_monitoring',
-            'pdf_builder_canvas_error_reporting',
-            'pdf_builder_canvas_memory_limit_php'
-        ]
+    // Configuration du système de logs
+    const LOG_PREFIX = '[CANVAS_MODAL_SAVE]';
+    const LOG_LEVELS = {
+        DEBUG: 'DEBUG',
+        INFO: 'INFO',
+        WARN: 'WARN',
+        ERROR: 'ERROR'
     };
 
-    // Initialize canvas settings functionality
-    $(document).ready(function() {
-        console.log('Canvas settings JavaScript loaded - Nouveau système');
+    // Fonction de logging unifiée
+    function log(level, message, data = null) {
+        const timestamp = new Date().toISOString();
+        const logMessage = `${LOG_PREFIX} ${timestamp} [${level}] ${message}`;
 
-        // Handle modal apply buttons with new system
-        $('.canvas-modal-apply').on('click', function(e) {
-            e.preventDefault();
+        console.log(logMessage);
+        if (data) {
+            console.log(`${LOG_PREFIX} Data:`, data);
+        }
 
-            console.log('Canvas modal apply button clicked - Nouveau système');
+        // Envoyer aussi au système de logs PHP si disponible
+        if (typeof pdf_builder_canvas_settings !== 'undefined' && pdf_builder_canvas_settings.ajax_url) {
+            $.ajax({
+                url: pdf_builder_canvas_settings.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_log_client_event',
+                    level: level,
+                    message: message,
+                    data: JSON.stringify(data),
+                    nonce: pdf_builder_canvas_settings.nonce
+                },
+                async: true,
+                error: function() {
+                    // Silent fail pour les logs
+                }
+            });
+        }
+    }
 
-            var $button = $(this);
-            var category = $button.data('category');
-            var $modal = $button.closest('.canvas-modal-overlay');
+    // Classe principale pour la gestion des modals canvas
+    class CanvasModalManager {
+        constructor() {
+            this.modals = {};
+            this.currentModal = null;
+            this.isInitialized = false;
+            log(LOG_LEVELS.INFO, 'CanvasModalManager initialized');
+        }
 
-            console.log('Processing modal category:', category);
-
-            if (!category || !modalFieldsConfig[category]) {
-                console.error('Unknown modal category:', category);
-                showNotification('Erreur: Catégorie de modal inconnue', 'error');
+        /**
+         * Initialise le système de gestion des modals
+         */
+        init() {
+            if (this.isInitialized) {
+                log(LOG_LEVELS.WARN, 'CanvasModalManager already initialized');
                 return;
             }
 
-            // Collect form data for this specific modal
-            var formData = new FormData();
-            var collectedData = {};
+            log(LOG_LEVELS.INFO, 'Initializing Canvas Modal System...');
 
-            // Get all inputs in this modal
-            $modal.find('input, select, textarea').each(function() {
-                var $input = $(this);
-                var name = $input.attr('name');
-                var type = $input.attr('type');
-                var value = $input.val();
+            this.registerModals();
+            this.bindEvents();
+            this.isInitialized = true;
 
-                if (name && !$input.prop('disabled') && modalFieldsConfig[category].includes(name)) {
-                    if (type === 'checkbox') {
-                        if ($input.prop('checked')) {
-                            if (name.endsWith('[]')) {
-                                // Handle array inputs
-                                var arrayName = name.slice(0, -2);
-                                if (!collectedData[arrayName]) {
-                                    collectedData[arrayName] = [];
-                                }
-                                collectedData[arrayName].push(value);
-                                formData.append(arrayName, value);
-                            } else {
-                                collectedData[name] = '1';
-                                formData.append(name, '1');
-                            }
-                        } else if (!name.endsWith('[]')) {
-                            collectedData[name] = '0';
-                            formData.append(name, '0');
-                        }
-                    } else if (type === 'radio') {
-                        if ($input.prop('checked')) {
-                            collectedData[name] = value;
-                            formData.append(name, value);
-                        }
-                    } else {
-                        collectedData[name] = value;
-                        formData.append(name, value);
-                    }
+            log(LOG_LEVELS.INFO, 'Canvas Modal System initialized successfully');
+        }
+
+        /**
+         * Enregistre tous les modals disponibles
+         */
+        registerModals() {
+            const modalIds = [
+                'canvas-affichage-modal-overlay',
+                'canvas-navigation-modal-overlay',
+                'canvas-comportement-modal-overlay',
+                'canvas-systeme-modal-overlay'
+            ];
+
+            modalIds.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    const category = modalId.replace('canvas-', '').replace('-modal-overlay', '');
+                    this.modals[category] = {
+                        id: modalId,
+                        element: modal,
+                        category: category,
+                        applyButton: modal.querySelector('.canvas-modal-apply'),
+                        cancelButton: modal.querySelector('.canvas-modal-cancel'),
+                        closeButton: modal.querySelector('.canvas-modal-close')
+                    };
+                    log(LOG_LEVELS.DEBUG, `Registered modal: ${category}`, { modalId, hasApplyButton: !!this.modals[category].applyButton });
+                } else {
+                    log(LOG_LEVELS.WARN, `Modal not found: ${modalId}`);
+                }
+            });
+        }
+
+        /**
+         * Lie les événements pour tous les modals
+         */
+        bindEvents() {
+            log(LOG_LEVELS.DEBUG, 'Binding modal events...');
+
+            // Boutons de configuration (pour ouvrir les modals)
+            document.addEventListener('click', (e) => {
+                const configBtn = e.target.closest('.canvas-configure-btn');
+                if (configBtn) {
+                    e.preventDefault();
+                    this.handleConfigureButtonClick(configBtn);
                 }
             });
 
-            console.log('Collected data for', category, ':', collectedData);
+            // Boutons d'application (pour sauvegarder)
+            document.addEventListener('click', (e) => {
+                const applyBtn = e.target.closest('.canvas-modal-apply');
+                if (applyBtn) {
+                    e.preventDefault();
+                    this.handleApplyButtonClick(applyBtn);
+                }
+            });
 
-            // Add metadata
+            // Boutons d'annulation et de fermeture
+            document.addEventListener('click', (e) => {
+                const cancelBtn = e.target.closest('.canvas-modal-cancel');
+                const closeBtn = e.target.closest('.canvas-modal-close');
+
+                if (cancelBtn || closeBtn) {
+                    e.preventDefault();
+                    this.handleCloseButtonClick(cancelBtn || closeBtn);
+                }
+            });
+
+            // Clic en dehors du modal pour fermer
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('canvas-modal-overlay')) {
+                    this.closeModal(e.target);
+                }
+            });
+
+            log(LOG_LEVELS.DEBUG, 'Modal events bound successfully');
+        }
+
+        /**
+         * Gère le clic sur un bouton de configuration
+         */
+        handleConfigureButtonClick(button) {
+            const card = button.closest('.canvas-card');
+            if (!card) {
+                log(LOG_LEVELS.ERROR, 'Configure button clicked but no parent card found');
+                return;
+            }
+
+            const category = card.getAttribute('data-category');
+            if (!category) {
+                log(LOG_LEVELS.ERROR, 'Configure button clicked but no category found on card');
+                return;
+            }
+
+            log(LOG_LEVELS.INFO, `Opening modal for category: ${category}`);
+            this.openModal(category);
+        }
+
+        /**
+         * Gère le clic sur un bouton d'application
+         */
+        async handleApplyButtonClick(button) {
+            const modal = button.closest('.canvas-modal-overlay');
+            if (!modal) {
+                log(LOG_LEVELS.ERROR, 'Apply button clicked but no parent modal found');
+                return;
+            }
+
+            const category = button.getAttribute('data-category');
+            if (!category) {
+                log(LOG_LEVELS.ERROR, 'Apply button clicked but no category found');
+                return;
+            }
+
+            log(LOG_LEVELS.INFO, `Applying settings for modal: ${category}`);
+            await this.saveModalSettings(modal, category);
+        }
+
+        /**
+         * Gère le clic sur un bouton de fermeture
+         */
+        handleCloseButtonClick(button) {
+            const modal = button.closest('.canvas-modal-overlay');
+            if (modal) {
+                log(LOG_LEVELS.DEBUG, 'Closing modal via button click');
+                this.closeModal(modal);
+            }
+        }
+
+        /**
+         * Ouvre un modal spécifique
+         */
+        openModal(category) {
+            const modalData = this.modals[category];
+            if (!modalData) {
+                log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`);
+                return;
+            }
+
+            log(LOG_LEVELS.INFO, `Opening modal: ${category}`, { modalId: modalData.id });
+
+            // Fermer tout modal ouvert
+            this.closeAllModals();
+
+            // Ouvrir le modal demandé
+            modalData.element.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            this.currentModal = modalData;
+
+            // Synchroniser les valeurs du modal avec les paramètres actuels
+            this.syncModalValues(modalData);
+
+            log(LOG_LEVELS.INFO, `Modal ${category} opened successfully`);
+        }
+
+        /**
+         * Ferme un modal spécifique
+         */
+        closeModal(modalElement) {
+            if (!modalElement) return;
+
+            const category = this.getModalCategory(modalElement);
+            log(LOG_LEVELS.DEBUG, `Closing modal: ${category || 'unknown'}`);
+
+            modalElement.style.display = 'none';
+            document.body.style.overflow = '';
+            this.currentModal = null;
+        }
+
+        /**
+         * Ferme tous les modals
+         */
+        closeAllModals() {
+            Object.values(this.modals).forEach(modalData => {
+                modalData.element.style.display = 'none';
+            });
+            document.body.style.overflow = '';
+            this.currentModal = null;
+        }
+
+        /**
+         * Synchronise les valeurs du modal avec les paramètres actuels
+         */
+        syncModalValues(modalData) {
+            log(LOG_LEVELS.DEBUG, `Syncing values for modal: ${modalData.category}`);
+
+            // Cette fonction peut être étendue pour synchroniser les valeurs
+            // Pour l'instant, on suppose que les valeurs sont déjà correctes
+        }
+
+        /**
+         * Sauvegarde les paramètres d'un modal
+         */
+        async saveModalSettings(modalElement, category) {
+            log(LOG_LEVELS.INFO, `Starting save process for modal: ${category}`);
+
+            try {
+                // Collecter les données du formulaire
+                const formData = this.collectModalData(modalElement, category);
+
+                log(LOG_LEVELS.DEBUG, `Collected form data for ${category}:`, {
+                    fieldCount: formData.getAll ? formData.getAll('field_count')[0] : 'unknown',
+                    action: formData.get('action'),
+                    category: formData.get('category')
+                });
+
+                // Désactiver le bouton pendant la sauvegarde
+                const applyButton = modalElement.querySelector('.canvas-modal-apply');
+                if (applyButton) {
+                    applyButton.disabled = true;
+                    applyButton.textContent = '⏳ Sauvegarde...';
+                }
+
+                // Envoyer la requête AJAX
+                const response = await this.sendSaveRequest(formData);
+
+                log(LOG_LEVELS.INFO, `Save response received for ${category}:`, response);
+
+                if (response.success) {
+                    log(LOG_LEVELS.INFO, `Settings saved successfully for ${category}`);
+
+                    // Afficher une notification de succès
+                    this.showNotification('Paramètres sauvegardés avec succès !', 'success');
+
+                    // Fermer le modal
+                    this.closeModal(modalElement);
+
+                    // Recharger la page pour refléter les changements
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+
+                } else {
+                    throw new Error(response.data?.message || 'Erreur inconnue lors de la sauvegarde');
+                }
+
+            } catch (error) {
+                log(LOG_LEVELS.ERROR, `Save failed for modal ${category}:`, error);
+
+                // Afficher une notification d'erreur
+                this.showNotification(`Erreur lors de la sauvegarde: ${error.message}`, 'error');
+
+            } finally {
+                // Réactiver le bouton
+                const applyButton = modalElement.querySelector('.canvas-modal-apply');
+                if (applyButton) {
+                    applyButton.disabled = false;
+                    applyButton.textContent = '✅ Appliquer';
+                }
+            }
+        }
+
+        /**
+         * Collecte les données d'un modal
+         */
+        collectModalData(modalElement, category) {
+            log(LOG_LEVELS.DEBUG, `Collecting data from modal: ${category}`);
+
+            const formData = new FormData();
+            let fieldCount = 0;
+
+            // Ajouter les métadonnées
             formData.append('action', 'pdf_builder_save_canvas_modal');
-            formData.append('modal_category', category);
-            formData.append('nonce', pdf_builder_canvas_settings.nonce || '');
+            formData.append('category', category);
+            formData.append('nonce', pdf_builder_canvas_settings?.nonce || '');
 
-            // Show loading state
-            $button.prop('disabled', true).text('⏳ Sauvegarde...');
+            // Collecter tous les inputs du modal
+            const inputs = modalElement.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                const name = input.name;
+                const type = input.type;
 
-            // Send AJAX request
-            $.ajax({
-                url: pdf_builder_canvas_settings.ajax_url || ajaxurl,
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    console.log('Save response:', response);
-                    if (response.success) {
-                        showNotification('Paramètres ' + category + ' sauvegardés avec succès !', 'success');
+                if (!name || input.disabled) {
+                    return; // Ignorer les inputs sans nom ou désactivés
+                }
 
-                        // Update the main settings form hidden fields if they exist
-                        updateMainFormFields(collectedData);
+                let value = null;
 
-                        // Close modal
-                        $modal.hide();
-
-                        // Optional: reload to reflect changes
-                        setTimeout(function() {
-                            // window.location.reload();
-                        }, 500);
+                if (type === 'checkbox') {
+                    value = input.checked ? '1' : '0';
+                } else if (type === 'radio') {
+                    if (input.checked) {
+                        value = input.value;
                     } else {
-                        showNotification('Erreur lors de la sauvegarde : ' + (response.data || 'Erreur inconnue'), 'error');
+                        return; // Ne pas ajouter les radios non cochées
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX error:', xhr, status, error);
-                    showNotification('Erreur AJAX : ' + error, 'error');
-                },
-                complete: function() {
-                    // Reset button state
-                    $button.prop('disabled', false).text('✅ Appliquer');
+                } else {
+                    value = input.value;
+                }
+
+                if (value !== null) {
+                    formData.append(name, value);
+                    fieldCount++;
+
+                    log(LOG_LEVELS.DEBUG, `Collected field: ${name} = ${value}`);
                 }
             });
-        });
 
-        // Handle modal cancel buttons
-        $('.canvas-modal-cancel').on('click', function(e) {
-            e.preventDefault();
-            var $modal = $(this).closest('.canvas-modal-overlay');
-            $modal.hide();
-        });
+            formData.append('field_count', fieldCount.toString());
 
-        // Handle modal close buttons
-        $('.canvas-modal-close').on('click', function(e) {
-            e.preventDefault();
-            var $modal = $(this).closest('.canvas-modal-overlay');
-            $modal.hide();
-        });
+            log(LOG_LEVELS.INFO, `Collected ${fieldCount} fields from modal ${category}`);
+            return formData;
+        }
 
-        // Close modal when clicking outside
-        $('.canvas-modal-overlay').on('click', function(e) {
-            if (e.target === this) {
-                $(this).hide();
+        /**
+         * Envoie la requête de sauvegarde
+         */
+        async sendSaveRequest(formData) {
+            const url = pdf_builder_canvas_settings?.ajax_url || ajaxurl;
+
+            log(LOG_LEVELS.DEBUG, `Sending AJAX request to: ${url}`);
+
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: (response) => {
+                        log(LOG_LEVELS.DEBUG, 'AJAX request successful', response);
+                        resolve(response);
+                    },
+                    error: (xhr, status, error) => {
+                        log(LOG_LEVELS.ERROR, 'AJAX request failed', { xhr, status, error });
+                        reject(new Error(`Erreur AJAX: ${error}`));
+                    }
+                });
+            });
+        }
+
+        /**
+         * Affiche une notification
+         */
+        showNotification(message, type) {
+            log(LOG_LEVELS.DEBUG, `Showing notification: ${type} - ${message}`);
+
+            // Essayer d'utiliser le système de notification existant
+            if (typeof showSystemNotification !== 'undefined') {
+                showSystemNotification(message, type);
+            } else {
+                // Fallback vers alert
+                alert(message);
             }
-        });
-    });
+        }
 
-    // Function to update main form hidden fields
-    function updateMainFormFields(collectedData) {
-        Object.keys(collectedData).forEach(function(key) {
-            var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + key + ']"]');
-            if (hiddenField) {
-                hiddenField.value = collectedData[key];
-                console.log('Updated hidden field', key, 'to', collectedData[key]);
+        /**
+         * Obtient la catégorie d'un modal à partir de son élément
+         */
+        getModalCategory(modalElement) {
+            for (const [category, modalData] of Object.entries(this.modals)) {
+                if (modalData.element === modalElement) {
+                    return category;
+                }
             }
-        });
-    }
-
-    // Helper function to show notifications
-    function showNotification(message, type) {
-        // Try to use existing notification system
-        if (typeof showSystemNotification !== 'undefined') {
-            showSystemNotification(message, type);
-        } else {
-            // Fallback to alert
-            alert(message);
+            return null;
         }
     }
+
+    // Initialisation globale
+    $(document).ready(function() {
+        log(LOG_LEVELS.INFO, 'Document ready, initializing Canvas Modal Manager...');
+
+        // Créer et initialiser le gestionnaire de modals
+        window.canvasModalManager = new CanvasModalManager();
+        window.canvasModalManager.init();
+
+        log(LOG_LEVELS.INFO, 'Canvas Modal System ready');
+    });
 
 })(jQuery);
 
