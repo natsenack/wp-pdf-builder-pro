@@ -167,9 +167,8 @@
     $(document).ready(function() {
         console.log('[CANVAS_MODAL] DOM ready, checking if we should initialize');
 
-        // Check if we're on the right page
-        if (window.location.href.indexOf('page=pdf-builder-settings') !== -1 &&
-            window.location.href.indexOf('tab=contenu') !== -1) {
+        // Check if we're on the settings page (modals are now always available)
+        if (window.location.href.indexOf('page=pdf-builder-settings') !== -1) {
 
             console.log('[CANVAS_MODAL] On settings page, initializing modals');
 
