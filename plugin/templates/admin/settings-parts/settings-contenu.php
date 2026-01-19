@@ -535,12 +535,24 @@
 
                         // Synchronisation agressive : mettre à jour tous les hidden fields pour cette modal
                         togglesForModal.forEach(function(toggleName) {
-                            var modalInput = modal.querySelector('[name="' + toggleName + '"]');
-                            if (modalInput && modalInput.type === 'checkbox') {
-                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + toggleName + ']"]');
-                                if (hiddenField) {
-                                    hiddenField.value = modalInput.checked ? '1' : '0';
-                                    
+                            var modalInputs = modal.querySelectorAll('[name="' + toggleName + '"], [name="' + toggleName + '[]"]');
+                            var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + toggleName + ']"]');
+                            
+                            if (modalInputs.length > 0 && hiddenField) {
+                                if (modalInputs[0].type === 'checkbox') {
+                                    if (toggleName.endsWith('[]') || modalInputs.length > 1) {
+                                        // Array of checkboxes - collect checked values
+                                        var checkedValues = [];
+                                        modalInputs.forEach(function(input) {
+                                            if (input.checked) {
+                                                checkedValues.push(input.value);
+                                            }
+                                        });
+                                        hiddenField.value = checkedValues.join(',');
+                                    } else {
+                                        // Single checkbox
+                                        hiddenField.value = modalInputs[0].checked ? '1' : '0';
+                                    }
                                 }
                             }
                         });
@@ -571,10 +583,25 @@
                         var togglesForModal = modalToggles[category] || [];
                         togglesForModal.forEach(function(inputName) {
                             var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
-                            var modalInput = modal.querySelector('[name="' + inputName + '"]');
+                            var modalInputs = modal.querySelectorAll('[name="' + inputName + '"], [name="' + inputName + '[]"]');
 
-                            if (hiddenField && modalInput && modalInput.type === 'checkbox') {
-                                modalInput.checked = hiddenField.value === '1';
+                            if (modalInputs.length > 0) {
+                                if (modalInputs[0].type === 'checkbox') {
+                                    if (inputName.endsWith('[]') || modalInputs.length > 1) {
+                                        // Array of checkboxes
+                                        if (hiddenField && hiddenField.value) {
+                                            var values = hiddenField.value.split(',');
+                                            modalInputs.forEach(function(input) {
+                                                input.checked = values.includes(input.value);
+                                            });
+                                        }
+                                    } else {
+                                        // Single checkbox
+                                        if (hiddenField) {
+                                            modalInputs[0].checked = hiddenField.value === '1';
+                                        }
+                                    }
+                                }
                             }
                         });
                     }
@@ -637,25 +664,58 @@
                         // Collecter TOUS les champs de formulaire dans la modale
                         var allInputs = modal.querySelectorAll('input, select, textarea');
                         console.log('Found inputs in modal:', allInputs.length);
+                        
+                        // Grouper les inputs par nom pour gérer les arrays
+                        var inputsByName = {};
                         allInputs.forEach(function(input) {
                             var name = input.name;
                             if (name) {
-                                if (input.type === 'checkbox') {
-                                    formData.append(name, input.checked ? '1' : '0');
-                                    console.log('Checkbox:', name, '=', input.checked ? '1' : '0');
-                                } else if (input.type === 'radio') {
-                                    if (input.checked) {
-                                        formData.append(name, input.value);
-                                        console.log('Radio:', name, '=', input.value);
-                                    }
-                                } else if (input.type === 'file') {
-                                    // Ne pas traiter les fichiers pour le moment
-                                } else {
-                                    formData.append(name, input.value);
-                                    console.log('Input:', name, '=', input.value);
+                                if (!inputsByName[name]) {
+                                    inputsByName[name] = [];
                                 }
+                                inputsByName[name].push(input);
                             }
                         });
+                        
+                        // Traiter chaque groupe d'inputs
+                        for (var name in inputsByName) {
+                            var inputs = inputsByName[name];
+                            var firstInput = inputs[0];
+                            
+                            if (firstInput.type === 'checkbox') {
+                                if (name.endsWith('[]')) {
+                                    // Checkbox array - collect all checked values
+                                    var checkedValues = [];
+                                    inputs.forEach(function(input) {
+                                        if (input.checked) {
+                                            checkedValues.push(input.value);
+                                        }
+                                    });
+                                    if (checkedValues.length > 0) {
+                                        formData.append(name, checkedValues.join(','));
+                                        console.log('Checkbox array:', name, '=', checkedValues.join(','));
+                                    }
+                                } else {
+                                    // Single checkbox
+                                    var checked = inputs.some(function(input) { return input.checked; });
+                                    formData.append(name, checked ? '1' : '0');
+                                    console.log('Checkbox:', name, '=', checked ? '1' : '0');
+                                }
+                            } else if (firstInput.type === 'radio') {
+                                // Radio buttons - find the checked one
+                                var checkedInput = inputs.find(function(input) { return input.checked; });
+                                if (checkedInput) {
+                                    formData.append(name, checkedInput.value);
+                                    console.log('Radio:', name, '=', checkedInput.value);
+                                }
+                            } else if (firstInput.type === 'file') {
+                                // Ne pas traiter les fichiers pour le moment
+                            } else {
+                                // Single value inputs (text, select, textarea, etc.)
+                                formData.append(name, firstInput.value);
+                                console.log('Input:', name, '=', firstInput.value);
+                            }
+                        }
 
                         console.log('Sending AJAX request...');
                         // Sauvegarder via AJAX
