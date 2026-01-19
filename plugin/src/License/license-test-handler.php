@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * License Test Handler - Gère la génération et validation des clés de test de licence
