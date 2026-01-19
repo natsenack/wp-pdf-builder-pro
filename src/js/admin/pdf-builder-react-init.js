@@ -92,7 +92,8 @@
                 borderColor: borderColor,
                 borderWidth: borderWidth,
                 canvasSettings: canvasSettings,
-                allSettings: window.pdfBuilderCanvasSettings
+                allSettings: window.pdfBuilderCanvasSettings,
+                rawSettings: JSON.stringify(window.pdfBuilderCanvasSettings, null, 2)
             });
 
             // Fonction pour appliquer les styles à un canvas

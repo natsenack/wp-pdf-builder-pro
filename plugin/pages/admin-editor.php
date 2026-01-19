@@ -84,6 +84,9 @@ function get_canvas_option_editor($key, $default = '') {
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
     $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
 
+    // Debug log
+    error_log("[EDITOR CANVAS] {$key}: looking for '{$option_key}', found: '" . ($value ?? 'NULL') . "', using default: '{$default}'");
+
     if ($value === null) {
         $value = $default;
     }
