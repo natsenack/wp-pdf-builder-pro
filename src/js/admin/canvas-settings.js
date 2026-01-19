@@ -84,7 +84,7 @@
 
                 // Send AJAX request
                 $.ajax({
-                    url: pdf_builder_ajax.ajax_url || ajaxurl,
+                    url: pdf_builder_canvas_settings.ajax_url || ajaxurl,
                     type: 'POST',
                     data: formData,
                     processData: false,
