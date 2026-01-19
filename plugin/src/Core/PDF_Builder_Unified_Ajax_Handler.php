@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Handler AJAX unifié
  * Point d'entrée unique pour toutes les actions AJAX avec gestion centralisée des nonces
