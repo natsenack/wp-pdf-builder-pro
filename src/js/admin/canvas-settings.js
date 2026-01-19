@@ -4,6 +4,10 @@
 (function($) {
     'use strict';
 
+    // LOG DE TEST - Fichier chargé
+    console.log('🚀🚀🚀 CANVAS-SETTINGS.JS CHARGÉ ET EXÉCUTÉ 🚀🚀🚀');
+    console.log('⏰ Timestamp de chargement:', new Date().toISOString());
+
     console.log('🎨 PDF Builder Canvas Settings JS - Loading...');
 
     // Initialize canvas settings functionality
