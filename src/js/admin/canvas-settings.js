@@ -2,6 +2,8 @@
  * PDF Builder Canvas Settings JavaScript - Nouveau système de sauvegarde
  * Version: 2.0 - Refonte complète du système de sauvegarde des modals
  */
+console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file execution begins');
+
 (function($) {
     'use strict';
 
@@ -173,7 +175,14 @@
                 buttonTag: button.tagName,
                 buttonId: button.id,
                 buttonParent: button.parentElement,
-                buttonParentClass: button.parentElement ? button.parentElement.className : 'no parent'
+                buttonParentClass: button.parentElement ? button.parentElement.className : 'no parent',
+                allButtonsInDOM: document.querySelectorAll('.canvas-configure-btn').length,
+                allButtons: Array.from(document.querySelectorAll('.canvas-configure-btn')).map(btn => ({
+                    element: btn,
+                    className: btn.className,
+                    parentElement: btn.parentElement,
+                    parentClass: btn.parentElement ? btn.parentElement.className : 'no parent'
+                }))
             });
 
             const card = button.closest('.canvas-card');
@@ -184,7 +193,8 @@
                     allCards: Array.from(document.querySelectorAll('.canvas-card')).map(card => ({
                         element: card,
                         className: card.className,
-                        dataCategory: card.getAttribute('data-category')
+                        dataCategory: card.getAttribute('data-category'),
+                        innerHTML: card.innerHTML.substring(0, 100) + '...'
                     }))
                 });
                 return;
@@ -198,8 +208,10 @@
                 cardChildren: Array.from(card.children).map(child => ({
                     tag: child.tagName,
                     class: child.className,
-                    id: child.id
-                }))
+                    id: child.id,
+                    textContent: child.textContent ? child.textContent.substring(0, 50) : ''
+                })),
+                cardInnerHTML: card.innerHTML.substring(0, 200) + '...'
             });
 
             const category = card.getAttribute('data-category');
@@ -267,7 +279,9 @@
                 modalElement: modalData.element,
                 modalExistsInDOM: !!modalData.element,
                 modalCurrentDisplay: modalData.element ? modalData.element.style.display : 'no element',
-                modalClasses: modalData.element ? modalData.element.className : 'no element'
+                modalClasses: modalData.element ? modalData.element.className : 'no element',
+                modalInActualDOM: modalData.element ? document.getElementById(modalData.id) : null,
+                bodyOverflowBefore: document.body.style.overflow
             });
 
             // Fermer tout modal ouvert
@@ -281,7 +295,9 @@
             log(LOG_LEVELS.INFO, `Modal ${category} display set to flex`, {
                 modalElement: modalData.element,
                 newDisplay: modalData.element.style.display,
-                bodyOverflow: document.body.style.overflow
+                bodyOverflow: document.body.style.overflow,
+                modalVisibility: modalData.element ? window.getComputedStyle(modalData.element).visibility : 'no element',
+                modalOpacity: modalData.element ? window.getComputedStyle(modalData.element).opacity : 'no element'
             });
 
             // Synchroniser les valeurs du modal avec les paramètres actuels
@@ -293,6 +309,8 @@
                 log(LOG_LEVELS.ERROR, `syncModalValues function not found!`);
             }
 
+            log(LOG_LEVELS.INFO, `About to set modal display to block for ${category}`);
+            modalElement.style.display = 'block';
             log(LOG_LEVELS.INFO, `Modal ${category} opened successfully`);
         }
 
@@ -499,6 +517,9 @@
             return null;
         }
     }
+
+    // LOG CRITIQUE - Classe complètement définie
+    console.log('[CANVAS_MODAL_SAVE] CanvasModalManager class fully defined');
 
     // Initialisation globale
     $(document).ready(function() {
