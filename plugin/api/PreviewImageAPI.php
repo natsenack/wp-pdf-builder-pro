@@ -439,7 +439,8 @@ class PreviewImageAPI
             return $this->getDefaultTemplate();
         }
 
-        $decoded = json_decode(stripslashes($data), true);
+        $sanitized_data = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($data);
+        $decoded = json_decode($sanitized_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->sendJsonError('Invalid template data: ' . json_last_error_msg(), 400);
         }

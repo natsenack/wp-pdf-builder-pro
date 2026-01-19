@@ -64,7 +64,7 @@ class PdfBuilderPerformanceMonitor
             'execution_time' => $execution_time,
             'memory_used' => $memory_used,
             'peak_memory' => $peak_memory,
-            'action' => $_REQUEST['action'] ?? 'unknown'
+            'action' => sanitize_key($_REQUEST['action'] ?? 'unknown')
         ]);
     }
 

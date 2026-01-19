@@ -1431,7 +1431,7 @@ class PdfBuilderAdmin
         $current_user = wp_get_current_user();
 
         // Gestion des onglets via URL
-        $current_tab = $_GET['tab'] ?? 'general';
+        $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
         $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
         if (!in_array($current_tab, $valid_tabs)) {
             $current_tab = 'general';

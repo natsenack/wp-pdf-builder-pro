@@ -911,7 +911,8 @@ class PDF_Builder_Onboarding_Manager {
                 case 'woocommerce_setup':
                     // Sauvegarder les préférences WooCommerce
                     if (isset($_POST['woocommerce_options'])) {
-                        pdf_builder_update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
+                        $woocommerce_options = $this->sanitizeWooCommerceOptions($_POST['woocommerce_options']);
+                        pdf_builder_update_option('pdf_builder_woocommerce_integration', $woocommerce_options);
                     }
                     break;
                 case 'completed':
@@ -1246,6 +1247,31 @@ class PDF_Builder_Onboarding_Manager {
         $name = str_replace(['-', '_'], ' ', $filename);
         $name = ucwords($name);
         return $name;
+    }
+
+    /**
+     * Sanitize WooCommerce options array
+     */
+    private function sanitizeWooCommerceOptions($options)
+    {
+        if (!is_array($options)) {
+            return array();
+        }
+
+        $sanitized = array();
+        foreach ($options as $key => $value) {
+            $sanitized_key = sanitize_key($key);
+            if (is_array($value)) {
+                $sanitized[$sanitized_key] = $this->sanitizeWooCommerceOptions($value);
+            } elseif (is_string($value)) {
+                $sanitized[$sanitized_key] = sanitize_text_field($value);
+            } elseif (is_numeric($value)) {
+                $sanitized[$sanitized_key] = $value;
+            } elseif (is_bool($value)) {
+                $sanitized[$sanitized_key] = $value;
+            }
+        }
+        return $sanitized;
     }
 }
 

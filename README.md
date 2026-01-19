@@ -131,6 +131,7 @@ Le système de génération utilise une approche hybride :
 - **Problème** : Certaines entrées utilisateur non sanitizées
 - **Impact** : Vulnérabilités XSS potentielles
 - **Solution** : Audit complet et ajout de `wp_kses()`, `sanitize_*()`
+- **Statut** : ✅ Corrigé - Sanitisation complète ajoutée
 
 ### 🟡 Problèmes moyens (Version 1.1.0.1)
 
