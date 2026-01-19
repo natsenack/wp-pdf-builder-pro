@@ -124,8 +124,13 @@ class PdfBuilderAdmin
 
         if (!class_exists('PDF_Builder\Admin\Processors\TemplateProcessor')) {
             $template_processor_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Processors/TemplateProcessor.php';
+            error_log('[DEBUG] PDF Builder: Looking for TemplateProcessor at: ' . $template_processor_file);
             if (file_exists($template_processor_file)) {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor file exists, requiring it');
                 require_once $template_processor_file;
+                error_log('[DEBUG] PDF Builder: TemplateProcessor file loaded, class exists: ' . (class_exists('PDF_Builder\Admin\Processors\TemplateProcessor') ? 'YES' : 'NO'));
+            } else {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor file does not exist');
             }
         }
 
@@ -168,7 +173,9 @@ class PdfBuilderAdmin
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+            error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully');
         } catch (Exception $e) {
+            error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed: ' . $e->getMessage());
             $this->template_processor = null;
         }
 
