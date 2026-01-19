@@ -247,6 +247,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🔳</span> Bordure du canvas <span class="premium-badge">⭐ PREMIUM</span></label>
+                    <?php $can_use_custom_colors = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('custom_colors'); ?>
                     <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
                         <div style="flex: 1;">
