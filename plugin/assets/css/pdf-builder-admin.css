@@ -1,6 +1,8 @@
 /* PDF Builder Pro Admin Styles */
 /* Cross-browser compatibility with vendor prefixes */
-
+.php-error #adminmenuback, .php-error #adminmenuwrap {
+    margin-top: 0px;
+}
 /* PDF Preview Modal Styles */
 .pdf-preview-modal-overlay {
   position: fixed;
