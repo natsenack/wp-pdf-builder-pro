@@ -415,32 +415,12 @@ class AdminScriptLoader
             error_log('[DEBUG] PDF Builder: Template ID detected: ' . $template_id);
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id . ', REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
 
-            // Vérifier que template_processor existe, sinon le créer
-            if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
-                error_log('[DEBUG] PDF Builder: template_processor not available, attempting to create it');
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor not available, attempting to create it'); }
-                
-                // Essayer de créer le TemplateProcessor si la classe existe
-                if (class_exists('PDF_Builder\Admin\Processors\TemplateProcessor')) {
-                    try {
-                        $this->admin->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this->admin);
-                        error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully in AdminScriptLoader');
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] TemplateProcessor created successfully in AdminScriptLoader'); }
-                    } catch (Exception $e) {
-                        error_log('[DEBUG] PDF Builder: Failed to create TemplateProcessor in AdminScriptLoader: ' . $e->getMessage());
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Failed to create TemplateProcessor in AdminScriptLoader: ' . $e->getMessage()); }
-                    }
-                } else {
-                    error_log('[DEBUG] PDF Builder: TemplateProcessor class not found');
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] TemplateProcessor class not found'); }
-                }
-            }
-
-            // Maintenant vérifier si template_processor est disponible
-            if (isset($this->admin->template_processor) && $this->admin->template_processor) {
-                error_log('[DEBUG] PDF Builder: template_processor is now available, calling loadTemplateRobust');
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor is now available, calling loadTemplateRobust'); }
-                $existing_template_data = $this->admin->template_processor->loadTemplateRobust($template_id);
+            // Utiliser le getter pour obtenir le TemplateProcessor (avec création à la demande)
+            $template_processor = $this->admin->getTemplateProcessor();
+            if ($template_processor) {
+                error_log('[DEBUG] PDF Builder: template_processor is available via getter, calling loadTemplateRobust');
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor is available via getter, calling loadTemplateRobust'); }
+                $existing_template_data = $template_processor->loadTemplateRobust($template_id);
                 error_log('[DEBUG] PDF Builder: loadTemplateRobust returned: ' . (is_array($existing_template_data) ? 'array with ' . count($existing_template_data) . ' keys' : gettype($existing_template_data)));
                 if ($existing_template_data && isset($existing_template_data['elements'])) {
                     $localize_data['initialElements'] = $existing_template_data['elements'];
@@ -455,8 +435,8 @@ class AdminScriptLoader
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true)); }
                 }
             } else {
-                error_log('[DEBUG] PDF Builder: template_processor still not available after creation attempt');
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor still not available after creation attempt'); }
+                error_log('[DEBUG] PDF Builder: template_processor not available even after getter attempt');
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor not available even after getter attempt, skipping template data loading'); }
             }
         }
 

@@ -1602,6 +1602,24 @@ class PdfBuilderAdmin
         </div> <!-- Fin du .wrap -->
         <?php
     }
+
+    /**
+     * Getter pour le TemplateProcessor avec création à la demande
+     */
+    public function getTemplateProcessor()
+    {
+        if ($this->template_processor === null) {
+            error_log('[DEBUG] PDF Builder: TemplateProcessor not available, creating it now in getter');
+            try {
+                $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+                error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully in getter');
+            } catch (Exception $e) {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed in getter: ' . $e->getMessage());
+                $this->template_processor = null;
+            }
+        }
+        return $this->template_processor;
+    }
 }
 
 
