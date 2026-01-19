@@ -1387,19 +1387,72 @@ class PdfBuilderAdmin
                             const borderColor = canvasSettings.border_color || '#cccccc';
                             const borderWidth = canvasSettings.border_width || 1;
 
-                            // Appliquer les styles au canvas de l'éditeur
-                            const canvasElement = document.querySelector('.pdf-builder-canvas, .canvas-container, [data-canvas]');
+                            console.log('[PDF Builder] Application des paramètres de bordure:', {
+                                borderColor: borderColor,
+                                borderWidth: borderWidth,
+                                canvasSettings: canvasSettings
+                            });
+
+                            // Essayer différents sélecteurs pour trouver l'élément canvas
+                            const possibleSelectors = [
+                                '.pdf-builder-canvas',
+                                '.canvas-container',
+                                '[data-canvas]',
+                                '.canvas',
+                                '.pdf-canvas',
+                                '[class*="canvas"]',
+                                '.react-canvas',
+                                '#canvas',
+                                '.fabric-canvas',
+                                '.konva-canvas',
+                                '.editor-canvas'
+                            ];
+
+                            let canvasElement = null;
+                            for (const selector of possibleSelectors) {
+                                canvasElement = document.querySelector(selector);
+                                if (canvasElement) {
+                                    console.log('[PDF Builder] Canvas trouvé avec le sélecteur:', selector);
+                                    break;
+                                }
+                            }
+
+                            // Si trouvé, appliquer les styles
                             if (canvasElement) {
                                 canvasElement.style.borderColor = borderColor;
                                 canvasElement.style.borderWidth = borderWidth + 'px';
                                 canvasElement.style.borderStyle = 'solid';
 
-                                console.log('[PDF Builder] Paramètres de bordure appliqués:', {
-                                    borderColor: borderColor,
-                                    borderWidth: borderWidth + 'px'
-                                });
+                                console.log('[PDF Builder] Paramètres de bordure appliqués avec succès');
                             } else {
-                                console.warn('[PDF Builder] Élément canvas non trouvé pour appliquer les paramètres de bordure');
+                                console.warn('[PDF Builder] Élément canvas non trouvé avec les sélecteurs testés');
+                                
+                                // Lister tous les éléments qui pourraient être le canvas
+                                const allElements = document.querySelectorAll('*');
+                                const potentialCanvasElements = [];
+                                
+                                allElements.forEach(el => {
+                                    const classList = el.className || '';
+                                    const id = el.id || '';
+                                    const tagName = el.tagName || '';
+                                    
+                                    if (classList.toLowerCase().includes('canvas') || 
+                                        id.toLowerCase().includes('canvas') || 
+                                        tagName.toLowerCase() === 'canvas') {
+                                        potentialCanvasElements.push({
+                                            element: el,
+                                            className: classList,
+                                            id: id,
+                                            tagName: tagName
+                                        });
+                                    }
+                                });
+                                
+                                if (potentialCanvasElements.length > 0) {
+                                    console.log('[PDF Builder] Éléments potentiels trouvés:', potentialCanvasElements);
+                                } else {
+                                    console.log('[PDF Builder] Aucun élément avec "canvas" dans le nom trouvé');
+                                }
                             }
 
                             // Alternative: chercher dans le shadow DOM ou les composants React
@@ -1409,14 +1462,20 @@ class PdfBuilderAdmin
                                 const observer = new MutationObserver((mutations) => {
                                     mutations.forEach((mutation) => {
                                         if (mutation.type === 'childList') {
-                                            const canvas = reactRoot.querySelector('.canvas, .pdf-canvas, [class*="canvas"]');
+                                            // Réessayer les sélecteurs après chaque mutation
+                                            let canvas = null;
+                                            for (const selector of possibleSelectors) {
+                                                canvas = reactRoot.querySelector(selector);
+                                                if (canvas) break;
+                                            }
+                                            
                                             if (canvas && !canvas.dataset.borderApplied) {
                                                 canvas.style.borderColor = borderColor;
                                                 canvas.style.borderWidth = borderWidth + 'px';
                                                 canvas.style.borderStyle = 'solid';
                                                 canvas.dataset.borderApplied = 'true';
 
-                                                console.log('[PDF Builder] Bordure appliquée via MutationObserver');
+                                                console.log('[PDF Builder] Bordure appliquée via MutationObserver avec sélecteur trouvé');
                                                 observer.disconnect();
                                             }
                                         }
@@ -1431,6 +1490,7 @@ class PdfBuilderAdmin
                                 // Timeout de sécurité
                                 setTimeout(() => {
                                     observer.disconnect();
+                                    console.log('[PDF Builder] MutationObserver arrêté après timeout');
                                 }, 10000);
                             }
 
