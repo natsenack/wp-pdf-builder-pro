@@ -655,12 +655,28 @@
                         var allInputs = modal.querySelectorAll('input, select, textarea');
                         console.log('Found inputs in modal:', allInputs.length);
                         
+                        // Grouper les checkboxes multiples par nom de base (sans [])
+                        var checkboxGroups = {};
+                        
                         allInputs.forEach(function(input) {
                             var name = input.name;
                             if (name) {
                                 if (input.type === 'checkbox') {
-                                    formData.append(name, input.checked ? '1' : '0');
-                                    console.log('Checkbox:', name, '=', input.checked ? '1' : '0');
+                                    // Traiter les checkboxes multiples (avec [])
+                                    if (name.endsWith('[]')) {
+                                        var baseName = name.slice(0, -2); // Retirer []
+                                        if (!checkboxGroups[baseName]) {
+                                            checkboxGroups[baseName] = [];
+                                        }
+                                        if (input.checked) {
+                                            checkboxGroups[baseName].push(input.value);
+                                        }
+                                        console.log('Checkbox group:', baseName, 'value:', input.value, 'checked:', input.checked);
+                                    } else {
+                                        // Checkbox simple
+                                        formData.append(name, input.checked ? '1' : '0');
+                                        console.log('Checkbox:', name, '=', input.checked ? '1' : '0');
+                                    }
                                 } else if (input.type === 'radio') {
                                     if (input.checked) {
                                         formData.append(name, input.value);
@@ -674,6 +690,19 @@
                                 }
                             }
                         });
+                        
+                        // Ajouter les groupes de checkboxes multiples
+                        for (var groupName in checkboxGroups) {
+                            var values = checkboxGroups[groupName];
+                            if (values.length > 0) {
+                                // Pour les tableaux, envoyer chaque valeur séparément avec le même nom
+                                values.forEach(function(value) {
+                                    formData.append(groupName + '[]', value);
+                                });
+                                console.log('Checkbox group saved:', groupName, '=', values.join(','));
+                            }
+                            // Ne pas envoyer les groupes vides - ils utiliseront la valeur par défaut
+                        }
 
                         console.log('📡 Sending AJAX request to:', ajaxurl);
                         
