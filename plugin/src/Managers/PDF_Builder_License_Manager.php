@@ -63,7 +63,7 @@ class PDF_Builder_License_Manager
 
     /**
      * Vérifier si l'utilisateur a une licence premium active
-     * Inclut les licences réelles, les clés de test, et les licences précédemment activées
+     * Inclut uniquement les licences réelles actives et les clés de test valides
      */
     public function isPremium()
     {
@@ -72,14 +72,7 @@ class PDF_Builder_License_Manager
             return true;
         }
 
-        // Vérifier si l'utilisateur a déjà eu une licence premium activée (même si expirée)
-        // Cela permet de garder l'accès premium même après suppression de la clé de test
-        $has_been_premium = pdf_builder_get_option('pdf_builder_has_been_premium', false);
-        if ($has_been_premium) {
-            return true;
-        }
-
-        // Vérifier les clés de test (maintenant dans des lignes séparées)
+        // Vérifier les clés de test valides uniquement
         $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
@@ -87,17 +80,15 @@ class PDF_Builder_License_Manager
             if (!empty($test_expires)) {
                 $expires_date = strtotime($test_expires);
                 if ($expires_date && $expires_date > time()) {
-                    // Marquer que l'utilisateur a été premium
-                    pdf_builder_update_option('pdf_builder_has_been_premium', true);
                     return true;
                 }
             } else {
-                // Si pas de date d'expiration, considérer comme valide
-                pdf_builder_update_option('pdf_builder_has_been_premium', true);
+                // Si pas de date d'expiration, considérer comme valide (pour compatibilité)
                 return true;
             }
         }
 
+        // Si aucune licence active ou clé de test valide, accès refusé aux fonctionnalités premium
         return false;
     }
 
