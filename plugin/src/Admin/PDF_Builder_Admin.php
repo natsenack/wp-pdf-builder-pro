@@ -1449,7 +1449,30 @@ class PdfBuilderAdmin
                                 });
                                 
                                 if (potentialCanvasElements.length > 0) {
-                                    console.log('[PDF Builder] Éléments potentiels trouvés:', potentialCanvasElements);
+                                    console.log('[PDF Builder] Éléments potentiels trouvés:', potentialCanvasElements.length, 'éléments');
+                                    potentialCanvasElements.forEach((item, index) => {
+                                        console.log(`[PDF Builder] Élément ${index + 1}:`, {
+                                            tagName: item.tagName,
+                                            id: item.id,
+                                            className: item.className,
+                                            element: item.element
+                                        });
+                                        
+                                        // Tester si on peut appliquer les styles à cet élément
+                                        if (item.element && item.element.style) {
+                                            try {
+                                                item.element.style.borderColor = borderColor;
+                                                item.element.style.borderWidth = borderWidth + 'px';
+                                                item.element.style.borderStyle = 'solid';
+                                                item.element.dataset.borderApplied = 'true';
+                                                
+                                                console.log(`[PDF Builder] ✅ Styles appliqués à l'élément ${index + 1} (${item.tagName}${item.id ? '#' + item.id : ''}${item.className ? '.' + item.className.split(' ').join('.') : ''})`);
+                                                return; // Sortir après avoir appliqué à un élément
+                                            } catch (styleError) {
+                                                console.warn(`[PDF Builder] ❌ Impossible d'appliquer les styles à l'élément ${index + 1}:`, styleError);
+                                            }
+                                        }
+                                    });
                                 } else {
                                     console.log('[PDF Builder] Aucun élément avec "canvas" dans le nom trouvé');
                                 }
