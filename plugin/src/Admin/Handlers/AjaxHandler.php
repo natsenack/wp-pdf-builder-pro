@@ -1903,7 +1903,7 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Starting generation process'); }
 
             // Générer une clé aléatoire
-            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
+            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 16));
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());

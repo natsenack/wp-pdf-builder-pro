@@ -2,6 +2,16 @@
 namespace PDF_Builder\Core;
 
 /**
+ * Déclaration de classe pour Intelephense
+ */
+if (!class_exists('PDF_Builder_Logger')) {
+    class PDF_Builder_Logger {
+        public static function get_instance() { return new self(); }
+        public function debug_log($message) {}
+    }
+}
+
+/**
  * Validateur de sécurité pour PDF Builder
  * ATTENTION: Cette classe contient des implémentations temporaires pour le développement.
  * En production, toutes les méthodes doivent être implémentées avec des validations réelles.

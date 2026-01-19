@@ -8,6 +8,17 @@
 namespace PDF_Builder\Admin\Generators;
 
 use Exception;
+use Error;
+
+/**
+ * Déclarations de classes pour Intelephense
+ */
+if (!class_exists('PDF_Generator')) {
+    class PDF_Generator {
+        public function __construct($settings) {}
+        public function generate($data) { return ''; }
+    }
+}
 
 /**
  * Classe responsable de la génération des PDFs

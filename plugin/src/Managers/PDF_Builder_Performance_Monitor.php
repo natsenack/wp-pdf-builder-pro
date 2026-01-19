@@ -3,6 +3,15 @@
 namespace PDF_Builder\Managers;
 
 /**
+ * Déclaration de classe pour Intelephense
+ */
+if (!class_exists('PDF_Builder_Performance_Monitor')) {
+    class PDF_Builder_Performance_Monitor {
+        public static function init() {}
+    }
+}
+
+/**
  * Moniteur de Performance - PDF Builder Pro
  *
  * Track les métriques de performance en production

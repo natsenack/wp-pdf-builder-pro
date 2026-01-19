@@ -7,6 +7,9 @@
 
 namespace PDF_Builder\Managers;
 
+// Utilisation des classes natives
+use Exception;
+
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }

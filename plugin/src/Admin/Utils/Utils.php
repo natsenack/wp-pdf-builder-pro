@@ -7,6 +7,10 @@
 
 namespace PDF_Builder\Admin\Utils;
 
+// Utilisation des classes SPL
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 /**
  * Classe responsable des utilitaires système
  */

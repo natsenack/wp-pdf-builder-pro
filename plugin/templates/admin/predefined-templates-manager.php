@@ -4,6 +4,12 @@ namespace PDF_Builder\Admin;
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
+/**
+ * Utilisation de la classe Exception native
+ */
+use Exception;
+
 /**
  * Predefined Templates Manager - PDF Builder Pro
  * Gestion des modèles prédéfinis pour la galerie

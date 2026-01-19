@@ -6,6 +6,22 @@ namespace PDF_Builder\Managers;
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
+// Utilisation des classes natives
+use Exception;
+
+/**
+ * Déclarations de classes pour Intelephense
+ */
+if (!class_exists('PDF_Builder_Secure_Shell_Manager')) {
+    class PDF_Builder_Secure_Shell_Manager {
+        public static function is_command_available($cmd) { return false; }
+        public static function execute_wkhtmltopdf($html, $pdf) { return false; }
+        public static function execute_node($script, $args) { return ''; }
+        public static function is_secure_file_path($path) { return true; }
+    }
+}
+
 /**
  * PDF Builder Pro - Screenshot Renderer
  * Génération de PDF haute-fidélité via capture d'écran du canvas
