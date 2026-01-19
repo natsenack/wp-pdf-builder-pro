@@ -9,9 +9,9 @@
 $canvas_defaults = [
     'width' => '794',
     'height' => '1123',
-    'dpi' => '96',
-    'formats' => 'A4',
-    'orientations' => 'portrait,landscape',
+    'dpi' => '72,96,150',  // Plusieurs résolutions par défaut
+    'formats' => 'A4,Letter',  // Plusieurs formats par défaut
+    'orientations' => 'portrait,landscape',  // Les deux orientations par défaut
     'format' => 'A4',
     'orientation' => 'portrait',
     'allow_portrait' => '1',
