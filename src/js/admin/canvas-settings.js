@@ -2,10 +2,13 @@
  * PDF Builder Canvas Settings JavaScript - Nouveau système de sauvegarde
  * Version: 2.0 - Refonte complète du système de sauvegarde des modals
  */
+console.log('🚀🚀🚀 CANVAS MODAL SCRIPT LOADING - START 🚀🚀🚀');
 console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file execution begins');
 
 (function($) {
     'use strict';
+
+    console.log('📦 CANVAS MODAL SCRIPT - jQuery wrapper entered');
 
     // LOG CRITIQUE - Script chargé
     console.log('[CANVAS_MODAL_SAVE] SCRIPT LOADED - canvas-settings.js has been loaded and executed');
@@ -117,8 +120,10 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
             });
 
             // Lier les événements maintenant que tout est prêt
+            console.log('🔗🔗🔗 ABOUT TO CALL bindEvents() 🔗🔗🔗');
             log(LOG_LEVELS.INFO, 'About to call bindEvents()');
             this.bindEvents();
+            console.log('✅✅✅ bindEvents() COMPLETED SUCCESSFULLY ✅✅✅');
             log(LOG_LEVELS.INFO, 'bindEvents() completed successfully');
         }
 
@@ -126,10 +131,12 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
          * Lie les événements pour tous les modals
          */
         bindEvents() {
+            console.log('🔗🔗🔗 BINDEVENTS CALLED - SETTING UP EVENT LISTENERS 🔗🔗🔗');
             log(LOG_LEVELS.DEBUG, 'Binding modal events...');
 
             // Boutons de configuration (pour ouvrir les modals)
             document.addEventListener('click', (e) => {
+                console.log('🖱️ DOCUMENT CLICK DETECTED:', e.target.tagName, e.target.className);
                 log(LOG_LEVELS.DEBUG, 'Document click detected', {
                     target: e.target.className,
                     tagName: e.target.tagName,
@@ -140,6 +147,8 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 });
                 const configBtn = e.target.closest('.canvas-configure-btn');
                 if (configBtn) {
+                    console.log('🎯🎯🎯 CONFIGURE BUTTON FOUND AND CLICKED! 🎯🎯🎯');
+                    console.log('Button details:', configBtn.className, configBtn.id, configBtn.textContent);
                     log(LOG_LEVELS.INFO, 'Configure button FOUND and clicked!', {
                         button: configBtn,
                         className: configBtn.className,
@@ -149,9 +158,11 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                         parentClass: configBtn.parentElement ? configBtn.parentElement.className : 'no parent'
                     });
                     e.preventDefault();
+                    console.log('🔄 CALLING handleConfigureButtonClick...');
                     log(LOG_LEVELS.INFO, 'Calling handleConfigureButtonClick...');
                     this.handleConfigureButtonClick(configBtn);
                 } else {
+                    console.log('❌ No configure button found in click target');
                     log(LOG_LEVELS.DEBUG, 'No configure button found in click target');
                 }
             });
@@ -191,6 +202,8 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
          * Gère le clic sur un bouton de configuration
          */
         handleConfigureButtonClick(button) {
+            console.log('🎯🎯🎯 handleConfigureButtonClick STARTED 🎯🎯🎯');
+            console.log('Button received:', button.className, button.id, button.textContent);
             log(LOG_LEVELS.INFO, 'handleConfigureButtonClick STARTED', {
                 button: button,
                 buttonClass: button.className,
@@ -207,8 +220,11 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 }))
             });
 
+            console.log('🔍 STEP 1: Looking for parent card...');
             log(LOG_LEVELS.INFO, 'Step 1: Looking for parent card...');
             const card = button.closest('.canvas-card');
+            console.log('🔍 STEP 1 RESULT:', card ? 'CARD FOUND' : 'NO CARD FOUND');
+            console.log('Card details:', card ? card.className : 'no card');
             log(LOG_LEVELS.INFO, 'Step 1 result:', {
                 cardFound: !!card,
                 card: card,
@@ -288,6 +304,7 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
          * Ouvre un modal spécifique
          */
         openModal(category) {
+            console.log('🚪🚪🚪 openModal STARTED for category:', category, '🚪🚪🚪');
             log(LOG_LEVELS.INFO, 'openModal STARTED', {
                 category: category,
                 availableModals: Object.keys(this.modals),
@@ -296,9 +313,11 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 isInitialized: this.isInitialized
             });
 
+            console.log('🔍 STEP 1: Checking modal data...');
             log(LOG_LEVELS.INFO, 'Step 1: Checking modal data...');
             const modalData = this.modals[category];
             if (!modalData) {
+                console.log('❌ STEP 1 FAILED: Unknown category', category);
                 log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`, {
                     availableCategories: Object.keys(this.modals),
                     requestedCategory: category
@@ -306,19 +325,23 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 return;
             }
 
+            console.log('✅ STEP 1 PASSED: Modal data found for', category);
             log(LOG_LEVELS.INFO, 'Step 1 PASSED: Modal data found', {
                 modalId: modalData.id,
                 modalElement: modalData.element,
                 modalExistsInDOM: !!modalData.element
             });
 
+            console.log('🔍 STEP 2: Getting modal element...');
             log(LOG_LEVELS.INFO, 'Step 2: Getting modal element...');
             const modalElement = modalData.element;
             if (!modalElement) {
+                console.log('❌ STEP 2 FAILED: Modal element not found for', category);
                 log(LOG_LEVELS.ERROR, `Modal element not found for category: ${category}`);
                 return;
             }
 
+            console.log('✅ STEP 2 PASSED: Modal element found');
             log(LOG_LEVELS.INFO, 'Step 2 PASSED: Modal element found', {
                 modalElement: modalElement,
                 modalId: modalElement.id,
@@ -350,6 +373,7 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
             log(LOG_LEVELS.INFO, 'Step 6: Checking syncModalValues function...');
             log(LOG_LEVELS.INFO, 'Step 6 PASSED: syncModalValues handled');
 
+            console.log('🎉🎉🎉 MODAL', category, 'OPENED SUCCESSFULLY - ALL STEPS COMPLETED 🎉🎉🎉');
             log(LOG_LEVELS.INFO, `Modal ${category} opened successfully - ALL STEPS COMPLETED`);
         }
 
@@ -562,16 +586,20 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
 
     // Initialisation globale
     $(document).ready(function() {
+        console.log('🎯🎯🎯 JQUERY DOCUMENT READY FIRED - DOM LOADED 🎯🎯🎯');
         console.log('[CANVAS_MODAL_SAVE] JQUERY DOCUMENT READY CALLED');
         log(LOG_LEVELS.INFO, 'jQuery document ready fired - DOM is loaded');
         log(LOG_LEVELS.INFO, 'Document ready, initializing Canvas Modal Manager...');
 
+        console.log('🔍 CHECKING JQUERY AVAILABILITY...');
         // Vérifier que jQuery est disponible
         if (typeof $ === 'undefined') {
+            console.error('❌❌❌ CRITICAL ERROR: jQuery not available!');
             console.error('[CANVAS_MODAL_SAVE] CRITICAL ERROR: jQuery not available!');
             return;
         }
 
+        console.log('✅ JQUERY AVAILABLE, CHECKING GLOBAL VARIABLES');
         console.log('[CANVAS_MODAL_SAVE] JQUERY AVAILABLE, CHECKING GLOBAL VARIABLES');
 
         // Vérifier que les variables globales sont disponibles
