@@ -8,16 +8,7 @@
 namespace PDF_Builder\AJAX;
 
 use Exception;
-
-/**
- * Déclaration de classe pour Intelephense
- */
-if (!class_exists('PDF_Builder_Logger')) {
-    class PDF_Builder_Logger {
-        public static function get_instance() { return new self(); }
-        public function debug_log($message) {}
-    }
-}
+use PDF_Builder_Logger;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
