@@ -121,6 +121,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions canvas
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
+        add_action('wp_ajax_pdf_builder_save_canvas_modal', [$this, 'handle_save_canvas_modal']);
     }
 
     /**
@@ -406,6 +407,160 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur récupération orientations: ' . $e->getMessage()); }
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Nouveau handler pour la sauvegarde des paramètres canvas par modal
+     */
+    public function handle_save_canvas_modal() {
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_MODAL_START - Nouveau système de sauvegarde par modal"); }
+
+        if (!$this->nonce_manager->validate_ajax_request('pdf_builder_canvas_settings')) {
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_MODAL_ERROR - Nonce validation failed"); }
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        $modal_category = sanitize_text_field($_POST['modal_category'] ?? '');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_MODAL - Catégorie: {$modal_category}"); }
+
+        if (empty($modal_category)) {
+            wp_send_json_error(['message' => 'Catégorie de modal manquante']);
+            return;
+        }
+
+        try {
+            $saved_count = 0;
+            $saved_options = [];
+
+            // Configuration des champs par modal
+            $modal_fields_config = [
+                'affichage' => [
+                    'pdf_builder_canvas_width',
+                    'pdf_builder_canvas_height',
+                    'pdf_builder_canvas_dpi',
+                    'pdf_builder_canvas_formats',
+                    'pdf_builder_canvas_orientations',
+                    'pdf_builder_canvas_bg_color',
+                    'pdf_builder_canvas_border_color',
+                    'pdf_builder_canvas_border_width',
+                    'pdf_builder_canvas_container_bg_color',
+                    'pdf_builder_canvas_shadow_enabled'
+                ],
+                'navigation' => [
+                    'pdf_builder_canvas_grid_enabled',
+                    'pdf_builder_canvas_grid_size',
+                    'pdf_builder_canvas_guides_enabled',
+                    'pdf_builder_canvas_snap_to_grid',
+                    'pdf_builder_canvas_zoom_min',
+                    'pdf_builder_canvas_zoom_max',
+                    'pdf_builder_canvas_zoom_default',
+                    'pdf_builder_canvas_zoom_step'
+                ],
+                'comportement' => [
+                    'pdf_builder_canvas_drag_enabled',
+                    'pdf_builder_canvas_resize_enabled',
+                    'pdf_builder_canvas_rotate_enabled',
+                    'pdf_builder_canvas_multi_select',
+                    'pdf_builder_canvas_selection_mode',
+                    'pdf_builder_canvas_keyboard_shortcuts',
+                    'pdf_builder_canvas_export_quality',
+                    'pdf_builder_canvas_export_format',
+                    'pdf_builder_canvas_export_transparent'
+                ],
+                'systeme' => [
+                    'pdf_builder_canvas_fps_target',
+                    'pdf_builder_canvas_memory_limit_js',
+                    'pdf_builder_canvas_response_timeout',
+                    'pdf_builder_canvas_lazy_loading_editor',
+                    'pdf_builder_canvas_preload_critical',
+                    'pdf_builder_canvas_lazy_loading_plugin',
+                    'pdf_builder_canvas_debug_enabled',
+                    'pdf_builder_canvas_performance_monitoring',
+                    'pdf_builder_canvas_error_reporting',
+                    'pdf_builder_canvas_memory_limit_php'
+                ]
+            ];
+
+            if (!isset($modal_fields_config[$modal_category])) {
+                wp_send_json_error(['message' => 'Configuration de modal inconnue']);
+                return;
+            }
+
+            $fields_to_process = $modal_fields_config[$modal_category];
+
+            // Traiter chaque champ de cette modal
+            foreach ($fields_to_process as $setting_key) {
+                if (isset($_POST[$setting_key])) {
+                    $value = $_POST[$setting_key];
+
+                    // Gestion spéciale pour les champs array
+                    $array_fields = ['pdf_builder_canvas_dpi', 'pdf_builder_canvas_formats', 'pdf_builder_canvas_orientations'];
+                    if (in_array($setting_key, $array_fields)) {
+                        if (is_array($value)) {
+                            $value = implode(',', array_map('sanitize_text_field', $value));
+                        } elseif (is_string($value)) {
+                            $value = sanitize_text_field($value);
+                        } else {
+                            $value = '';
+                        }
+                    } else {
+                        $value = sanitize_text_field($value);
+                    }
+
+                    // Validation spécifique selon le type de paramètre
+                    if ((strpos($setting_key, '_width') !== false && strpos($setting_key, '_border_width') === false) || strpos($setting_key, '_height') !== false) {
+                        $value = intval($value);
+                        $value = max(100, min(5000, $value));
+                    } elseif (strpos($setting_key, '_border_width') !== false) {
+                        $value = intval($value);
+                        $value = max(0, min(10, $value));
+                    } elseif (strpos($setting_key, '_dpi') !== false) {
+                        $value = intval($value);
+                        $value = max(72, min(600, $value));
+                    } elseif (strpos($setting_key, '_size') !== false || strpos($setting_key, '_limit') !== false) {
+                        $value = intval($value);
+                    } elseif (strpos($setting_key, '_enabled') !== false || strpos($setting_key, '_transparent') !== false) {
+                        $value = $value === '1' ? '1' : '0';
+                    } elseif (strpos($setting_key, '_color') !== false) {
+                        if (!preg_match('/^#[a-fA-F0-9]{6}$/', $value)) {
+                            $value = '#ffffff';
+                        }
+                    }
+
+                    // Sauvegarder dans les options individuelles
+                    pdf_builder_update_option($setting_key, $value);
+
+                    // Sauvegarder aussi dans le tableau principal des settings pour cohérence
+                    $settings = pdf_builder_get_option('pdf_builder_settings', array());
+                    $settings[$setting_key] = $value;
+                    pdf_builder_update_option('pdf_builder_settings', $settings);
+
+                    $saved_options[$setting_key] = $value;
+                    $saved_count++;
+
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] MODAL_{$modal_category} - Sauvegardé {$setting_key}: {$value}"); }
+                }
+            }
+
+            if ($saved_count > 0) {
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_MODAL_SUCCESS - {$modal_category}: {$saved_count} paramètres sauvegardés"); }
+                wp_send_json_success([
+                    'message' => 'Paramètres ' . $modal_category . ' sauvegardés avec succès',
+                    'modal_category' => $modal_category,
+                    'saved_count' => $saved_count,
+                    'saved_settings' => $saved_options,
+                    'new_nonce' => $this->nonce_manager->generate_nonce()
+                ]);
+            } else {
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_MODAL_WARNING - {$modal_category}: Aucun paramètre sauvegardé"); }
+                wp_send_json_error(['message' => 'Aucun paramètre sauvegardé pour ' . $modal_category]);
+            }
+
+        } catch (Exception $e) {
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur sauvegarde modal ' . $modal_category . ': ' . $e->getMessage()); }
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
