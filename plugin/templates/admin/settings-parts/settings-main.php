@@ -178,8 +178,7 @@
     <!-- Inclusion des modales Canvas (toujours disponibles peu importe l'onglet) -->
     <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
-    <!-- Inclusion du script canvas-settings.js pour la gestion des modals -->
-    <script src="<?php echo esc_url(PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-settings.min.js'); ?>?v=<?php echo time(); ?>"></script>
+    <!-- Le script canvas-settings.js est maintenant chargé via settings-loader.php -->
 
 </div> <!-- Fin du .wrap -->
 

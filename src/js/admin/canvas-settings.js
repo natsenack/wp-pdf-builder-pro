@@ -7,7 +7,7 @@
 (function($) {
     'use strict';
 
-    console.log('[CANVAS_MODAL] Starting simple modal system initialization');
+    console.log('[CANVAS_MODAL] Script loaded, jQuery available:', typeof $ !== 'undefined');
 
     // Simple modal manager
     var CanvasModalManager = {
@@ -24,6 +24,7 @@
                 var category = $card.data('category');
 
                 console.log('[CANVAS_MODAL] Category:', category);
+                console.log('[CANVAS_MODAL] Card element:', $card.length > 0 ? 'found' : 'not found');
 
                 if (category) {
                     CanvasModalManager.openModal(category);
@@ -166,15 +167,24 @@
     // Initialize when DOM is ready
     $(document).ready(function() {
         console.log('[CANVAS_MODAL] DOM ready, checking if we should initialize');
+        console.log('[CANVAS_MODAL] Current URL:', window.location.href);
+        console.log('[CANVAS_MODAL] jQuery available:', typeof jQuery !== 'undefined');
+        console.log('[CANVAS_MODAL] $ available:', typeof $ !== 'undefined');
 
         // Check if we're on the settings page (modals are now always available)
         if (window.location.href.indexOf('page=pdf-builder-settings') !== -1) {
 
             console.log('[CANVAS_MODAL] On settings page, initializing modals');
 
+            // Check if elements exist
+            console.log('[CANVAS_MODAL] Configure buttons found:', $('.canvas-configure-btn').length);
+            console.log('[CANVAS_MODAL] Modal overlays found:', $('.canvas-modal-overlay').length);
+
             // Small delay to ensure everything is loaded
             setTimeout(function() {
+                console.log('[CANVAS_MODAL] Executing init after timeout');
                 CanvasModalManager.init();
+                console.log('[CANVAS_MODAL] Init completed');
             }, 500);
 
         } else {
