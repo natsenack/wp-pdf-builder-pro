@@ -1058,12 +1058,13 @@ class PdfBuilderAdmin
         ?>
         <div class="wrap pdf-builder-editor-page">
             <div class="pdf-builder-editor-header">
-                <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
-                <?php if ($template_id) : ?>
-                    <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
-                <?php else : ?>
-                    <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
-                <?php endif; ?>
+                <h1><?php _e('Éditeur PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+                <div class="pdf-builder-editor-info">
+                    <p><?php _e('Éditeur avancé pour la création de templates PDF', 'pdf-builder-pro'); ?></p>
+                    <?php if ($template_id) : ?>
+                        <p class="template-info"><?php printf(__('Template ID: %d', 'pdf-builder-pro'), $template_id); ?></p>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- PDF Builder Loading Screen -->
@@ -1092,50 +1093,57 @@ class PdfBuilderAdmin
         }
 
         .pdf-builder-editor-header {
-            background: white;
+            background: #fff;
             padding: 20px;
-            border: 1px solid #ccd0d4;
-            border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
         }
 
         .pdf-builder-editor-header h1 {
             margin: 0 0 10px 0;
-            font-size: 24px;
-            font-weight: 600;
-            color: #1d2327;
+            padding: 0;
+            font-size: 23px;
+            font-weight: 400;
+            line-height: 1.3;
         }
 
-        .pdf-builder-editor-header p {
-            margin: 0;
-            color: #646970;
+        .pdf-builder-editor-info p {
+            margin: 0 0 5px 0;
+            color: #666;
             font-size: 14px;
         }
 
-        /* Loader Styles - contained within wp-content */
+        .template-info {
+            font-style: italic;
+            color: #007cba !important;
+        }
+
+        /* Loader Styles */
         .pdf-builder-loader {
+            display: none;
             position: relative;
-            background: rgba(255, 255, 255, 0.95);
+            background: #fff;
             border: 1px solid #ccd0d4;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 600px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            min-height: 400px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+        }
+
+        .pdf-builder-loader.show {
+            display: block;
         }
 
         .pdf-builder-loader-content {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 40px;
             gap: 20px;
         }
 
-        /* Custom spinner animation - completely isolated */
         .pdf-builder-spinner {
             width: 40px;
             height: 40px;
@@ -1146,92 +1154,57 @@ class PdfBuilderAdmin
             box-sizing: border-box;
         }
 
+        .pdf-builder-loader-text {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Editor Container Styles */
+        .pdf-builder-editor-container {
+            display: none;
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+            overflow: hidden;
+        }
+
+        .pdf-builder-editor-container.show {
+            display: block;
+        }
+
+        .pdf-builder-react-root {
+            min-height: 600px;
+            width: 100%;
+        }
+
+        /* Custom spinner animation */
         @keyframes pdfBuilderSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .pdf-builder-loader-text {
-            color: #646970;
-            font-size: 16px;
-            margin: 0;
-            font-weight: 500;
-        }
+        /* Responsive adjustments */
+        @media screen and (max-width: 782px) {
+            .pdf-builder-editor-page {
+                margin: 10px 0 0 0;
+            }
 
-        /* Editor Container */
-        .pdf-builder-editor-container {
-            background: #fff;
-            border: 1px solid #ccd0d4;
-            border-radius: 8px;
-            min-height: 600px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
+            .pdf-builder-editor-header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
 
-        .pdf-builder-react-root {
-            width: 100%;
-            height: 100%;
-            min-height: 600px;
-        }
+            .pdf-builder-loader-content {
+                padding: 30px 20px;
+            }
 
-        /* Error message styles */
-        .pdf-builder-error-message {
-            padding: 40px;
-            text-align: center;
-            background: #fff;
-            border: 2px solid #dc3232;
-            border-radius: 8px;
-            margin: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .pdf-builder-error-message h2 {
-            color: #dc3232;
-            margin-top: 0;
-            font-size: 20px;
-        }
-
-        .pdf-builder-error-message p {
-            color: #646970;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .pdf-builder-debug-info {
-            background: #f8f9fa;
-            border: 1px solid #e1e1e1;
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: left;
-            font-family: monospace;
-            font-size: 12px;
-            color: #333;
-        }
-
-        .pdf-builder-error-actions {
-            margin-top: 20px;
-        }
-
-        .pdf-builder-reload-btn {
-            background: #007cba;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-        }
-
-        .pdf-builder-reload-btn:hover {
-            background: #005a87;
-        }
-
-        .pdf-builder-error-note {
-            color: #646970;
-            font-size: 12px;
-            margin-top: 20px;
+            .pdf-builder-react-root {
+                min-height: 500px;
+            }
         }
         </style>
 
@@ -1243,15 +1216,10 @@ class PdfBuilderAdmin
             const urlParams = new URLSearchParams(window.location.search);
             const currentPage = urlParams.get('page');
 
-            
-
             // Ne charger React que sur la page appropriée
             if (currentPage !== 'pdf-builder-react-editor') {
-                
                 return;
             }
-
-            
 
             // Simple loader management
             const loader = {
@@ -1272,19 +1240,19 @@ class PdfBuilderAdmin
                     this.element = document.getElementById('pdf-builder-loader');
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
-
                     if (!this.element || !this.editor) {
                         return;
                     }
 
+                    // Show loader initially
+                    this.element.classList.add('show');
                     this.startChecking();
                 },
 
                 hide: function() {
                     if (this.element && this.editor) {
-                        this.element.classList.add('hidden');
-                        this.editor.classList.add('visible');
-                        this.editor.classList.remove('hidden');
+                        this.element.classList.remove('show');
+                        this.editor.classList.add('show');
                     }
                 },
 
@@ -1307,12 +1275,11 @@ class PdfBuilderAdmin
 
                     const checkInterval = setInterval(() => {
                         attempts++;
-                        
 
                         if (this.isReactReady() && this.isContainerReady()) {
                             clearInterval(checkInterval);
                             clearInterval(countdownInterval);
-                            
+
                             this.initializeReact();
                             return;
                         }
@@ -1320,7 +1287,7 @@ class PdfBuilderAdmin
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
                             clearInterval(countdownInterval);
-                            
+
                             this.showLoadingError();
                         }
                     }, 500);
@@ -1329,19 +1296,38 @@ class PdfBuilderAdmin
                 showLoadingError: function() {
                     // Hide loader
                     if (this.element) {
-                        this.element.classList.add('hidden');
+                        this.element.classList.remove('show');
                     }
 
                     // Show editor container with error message
                     if (this.editor) {
-                        this.editor.classList.add('visible');
-                        this.editor.classList.remove('hidden');
+                        this.editor.classList.add('show');
                         this.editor.innerHTML = `
-                            <div class="pdf-builder-error-message">
-                                <h2>❌ Erreur de chargement de l'éditeur PDF</h2>
-                                <p>L'éditeur React n'a pas pu se charger dans les 10 secondes imparties.</p>
+                            <div style="
+                                padding: 40px;
+                                text-align: center;
+                                background: #fff;
+                                border: 2px solid #dc3232;
+                                border-radius: 8px;
+                                margin: 20px;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            ">
+                                <h2 style="color: #dc3232; margin-top: 0;">❌ Erreur de chargement de l'éditeur PDF</h2>
+                                <p style="color: #666; font-size: 16px; margin-bottom: 20px;">
+                                    L'éditeur React n'a pas pu se charger dans les 10 secondes imparties.
+                                </p>
 
-                                <div class="pdf-builder-debug-info">
+                                <div style="
+                                    background: #f8f9fa;
+                                    border: 1px solid #e1e1e1;
+                                    border-radius: 4px;
+                                    padding: 15px;
+                                    margin: 20px 0;
+                                    text-align: left;
+                                    font-family: monospace;
+                                    font-size: 12px;
+                                    color: #333;
+                                ">
                                     <strong>Informations de débogage :</strong><br>
                                     • React disponible: ${typeof window.pdfBuilderReact !== 'undefined'}<br>
                                     • Fonction initPDFBuilderReact: ${typeof window.initPDFBuilderReact === 'function'}<br>
@@ -1351,78 +1337,57 @@ class PdfBuilderAdmin
                                     • Timestamp: ${new Date().toISOString()}
                                 </div>
 
-                                <div class="pdf-builder-error-actions">
-                                    <button onclick="location.reload()" class="pdf-builder-reload-btn">🔄 Recharger la page</button>
+                                <div style="margin-top: 20px;">
+                                    <button onclick="location.reload()" style="
+                                        background: #007cba;
+                                        color: white;
+                                        border: none;
+                                        padding: 10px 20px;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        font-size: 14px;
+                                        margin-right: 10px;
+                                    ">🔄 Recharger la page</button>
                                 </div>
 
-                                <p class="pdf-builder-error-note">Vérifiez la console du navigateur (F12) pour plus de détails sur l'erreur.</p>
+                                <p style="color: #666; font-size: 12px; margin-top: 20px;">
+                                    Vérifiez la console du navigateur (F12) pour plus de détails sur l'erreur.
+                                </p>
                             </div>
                         `;
                     }
 
                     // Log detailed error information
-                    
-                    
-                    
-                    
-                    
-                    
-
-                    // Check for script loading issues
                     const reactScripts = Array.from(document.querySelectorAll('script')).filter(s =>
                         s.src.includes('pdf-builder-react')
                     );
-                    
+
                     reactScripts.forEach((script, index) => {
-                        
+                        console.warn(`[PDF Builder] React script ${index + 1}:`, script.src, script.readyState);
                     });
                 },
 
                 initializeReact: function() {
-                    
-                    if (this.isReactReady()) {
-                        
-
-                        // Additional check: ensure container exists in DOM
-                        const container = document.getElementById('pdf-builder-react-root');
-                        if (!container) {
-                            
-                            return false;
+                    try {
+                        if (typeof window.initPDFBuilderReact === 'function') {
+                            window.initPDFBuilderReact();
                         }
-
-                        
-                        try {
-                            const result = window.initPDFBuilderReact();
-                            
-                            
-                            // Hide loader after successful init
-                            if (result) {
-                                this.hide();
-                            }
-                            return true;
-                        } catch (error) {
-                            
-                            return false;
-                        }
+                        this.hide();
+                    } catch (error) {
+                        console.error('[PDF Builder] Erreur lors de l\'initialisation React:', error);
+                        this.showLoadingError();
                     }
-                    
-                    return false;
                 }
             };
 
             // Initialize when DOM is ready
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
+                document.addEventListener('DOMContentLoaded', function() {
                     loader.init();
                 });
             } else {
                 loader.init();
             }
-
-            // Listen for React ready event
-            document.addEventListener('pdfBuilderReactLoaded', function() {
-                loader.initializeReact();
-            });
 
         })();
         </script>
