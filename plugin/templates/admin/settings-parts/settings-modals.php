@@ -460,7 +460,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">✋</span> Glisser activé</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('drag_enabled', $canvas_defaults['drag_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_drag_enabled', $canvas_defaults['drag_enabled']), '1'); ?>>
                         <label for="modal_canvas_drag_enabled"></label>
                     </div>
                 </div>
@@ -468,7 +468,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">📐</span> Redimensionnement activé</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('resize_enabled', $canvas_defaults['resize_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_resize_enabled', $canvas_defaults['resize_enabled']), '1'); ?>>
                         <label for="modal_canvas_resize_enabled"></label>
                     </div>
                 </div>
@@ -476,7 +476,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">🔄</span> Rotation activée</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('rotate_enabled', $canvas_defaults['rotate_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_rotate_enabled', $canvas_defaults['rotate_enabled']), '1'); ?>>
                         <label for="modal_canvas_rotate_enabled"></label>
                     </div>
                 </div>
@@ -484,7 +484,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">☑️</span> Sélection multiple</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_multi_select" name="pdf_builder_canvas_multi_select"
-                               value="1" <?php checked(get_canvas_modal_value('multi_select', $canvas_defaults['multi_select']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_multi_select', $canvas_defaults['multi_select']), '1'); ?>>
                         <label for="modal_canvas_multi_select"></label>
                     </div>
                 </div>
@@ -492,9 +492,9 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">🎯</span> Mode de sélection</label>
                     <?php $can_use_advanced_selection = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('advanced_selection'); ?>
                     <select id="modal_canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
-                        <option value="single" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'single'); ?>>Simple</option>
-                        <option value="multiple" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'multiple'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Multiple ⭐ PREMIUM' : 'Multiple'; ?></option>
-                        <option value="group" <?php selected(get_canvas_modal_value('selection_mode', $canvas_defaults['selection_mode']), 'group'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Groupe ⭐ PREMIUM' : 'Groupe'; ?></option>
+                        <option value="single" <?php selected(get_canvas_modal_value('canvas_selection_mode', $canvas_defaults['selection_mode']), 'single'); ?>>Simple</option>
+                        <option value="multiple" <?php selected(get_canvas_modal_value('canvas_selection_mode', $canvas_defaults['selection_mode']), 'multiple'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Multiple ⭐ PREMIUM' : 'Multiple'; ?></option>
+                        <option value="group" <?php selected(get_canvas_modal_value('canvas_selection_mode', $canvas_defaults['selection_mode']), 'group'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Groupe ⭐ PREMIUM' : 'Groupe'; ?></option>
                     </select>
                     <?php if (!$can_use_advanced_selection): ?>
                         <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
@@ -509,7 +509,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if ($can_use_keyboard_shortcuts): ?>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts"
-                               value="1" <?php checked(get_canvas_modal_value('keyboard_shortcuts', $canvas_defaults['keyboard_shortcuts']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_keyboard_shortcuts', $canvas_defaults['keyboard_shortcuts']), '1'); ?>>
                         <label for="modal_canvas_keyboard_shortcuts"></label>
                     </div>
                     <?php else: ?>
@@ -524,16 +524,16 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label for="modal_canvas_export_quality">Qualité export (%)</label>
                     <input type="number" id="modal_canvas_export_quality" name="pdf_builder_canvas_export_quality"
-                           value="<?php echo esc_attr(get_canvas_modal_value('export_quality', $canvas_defaults['export_quality'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_export_quality', $canvas_defaults['export_quality'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_export_format">Format export</label>
                     <?php $can_use_multi_format_export = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('multi_format_export'); ?>
                     <select id="modal_canvas_export_format" name="pdf_builder_canvas_export_format">
-                        <option value="pdf" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'pdf'); ?>>PDF</option>
-                        <option value="png" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
-                        <option value="jpg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'jpg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG'; ?></option>
-                        <option value="svg" <?php selected(get_canvas_modal_value('export_format', $canvas_defaults['export_format']), 'svg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG'; ?></option>
+                        <option value="pdf" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'pdf'); ?>>PDF</option>
+                        <option value="png" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
+                        <option value="jpg" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'jpg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG'; ?></option>
+                        <option value="svg" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'svg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG'; ?></option>
                     </select>
                     <?php if (!$can_use_multi_format_export): ?>
                         <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
@@ -546,7 +546,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label for="modal_canvas_export_transparent">Fond transparent</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_export_transparent" name="pdf_builder_canvas_export_transparent"
-                               value="1" <?php checked(get_canvas_modal_value('export_transparent', $canvas_defaults['export_transparent']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_export_transparent', $canvas_defaults['export_transparent']), '1'); ?>>
                         <label for="modal_canvas_export_transparent"></label>
                     </div>
                 </div>
