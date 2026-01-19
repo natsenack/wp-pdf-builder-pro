@@ -2500,30 +2500,6 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         return $templates[$template_id] ?? '<h1>Template</h1><p>Contenu par défaut</p>';
      }
-
-     /**
-      * Handler pour rafraîchir le statut de licence
-      */
-     public function handle_refresh_license_status() {
-         if (!$this->nonce_manager->validate_ajax_request()) {
-             return;
-         }
-
-         try {
-             $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-             $is_premium = $license_manager->refreshLicenseStatus();
-             $license_info = $license_manager->getLicenseInfo();
-
-             wp_send_json_success([
-                 'message' => 'Statut de licence rafraîchi.',
-                 'is_premium' => $is_premium,
-                 'license_info' => $license_info
-             ]);
-
-         } catch (Exception $e) {
-             wp_send_json_error(['message' => 'Erreur lors du rafraîchissement du statut de licence']);
-         }
-     }
 }
 
 
