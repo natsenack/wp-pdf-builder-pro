@@ -17,10 +17,19 @@
         $('.canvas-modal-apply').on('click', function(e) {
             e.preventDefault();
 
+            console.log('Canvas modal apply button clicked');
+
             var $button = $(this);
             var category = $button.data('category');
             var $modal = $button.closest('.canvas-modal-overlay');
             var $form = $modal.find('form');
+
+            console.log('Modal found:', $modal.length > 0);
+            console.log('Available variables:', {
+                ajaxurl: typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined',
+                pdf_builder_ajax: typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax : 'undefined',
+                pdf_builder_canvas_settings: typeof pdf_builder_canvas_settings !== 'undefined' ? pdf_builder_canvas_settings : 'undefined'
+            });
 
             // If no form, create one from modal inputs
             if ($form.length === 0) {
@@ -61,6 +70,11 @@
                     }
                 });
 
+                console.log('Collected form data entries:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(key + ':', value);
+                }
+
                 // Add nonce and action
                 formData.append('action', 'pdf_builder_save_canvas_settings');
                 formData.append('nonce', pdf_builder_canvas_settings.nonce || '');
@@ -70,7 +84,7 @@
 
                 // Send AJAX request
                 $.ajax({
-                    url: ajaxurl,
+                    url: pdf_builder_ajax.ajax_url || ajaxurl,
                     type: 'POST',
                     data: formData,
                     processData: false,
