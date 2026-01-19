@@ -1,6 +1,11 @@
 /**
  * PDF Builder Canvas Settings JavaScript
  */
+
+// LOG ABSOLU AU DÉBUT - AVANT TOUT
+console.log('🔥🔥🔥 CANVAS-SETTINGS.JS - FICHIER CHARGÉ IMMÉDIATEMENT 🔥🔥🔥');
+console.log('⏰ Timestamp absolu:', Date.now());
+
 (function($) {
     'use strict';
 
