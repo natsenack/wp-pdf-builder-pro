@@ -115,6 +115,11 @@ function pdf_builder_load_settings_assets($hook) {
                 PDF_BUILDER_VERSION . '-' . time(),
                 true // Chargé dans le footer
             );
+
+            // Localiser le script canvas-settings avec le nonce approprié
+            wp_localize_script('pdf-builder-canvas-settings', 'pdf_builder_canvas_settings', array(
+                'nonce' => wp_create_nonce('pdf_builder_canvas_settings')
+            ));
         }
     }
 
