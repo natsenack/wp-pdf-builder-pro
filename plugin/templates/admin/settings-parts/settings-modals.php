@@ -46,10 +46,18 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Récupérer directement depuis la table personnalisée avec la clé complète
+    // Récupérer depuis l'array pdf_builder_settings avec la clé complète
     $option_key = 'pdf_builder_' . $key;
-    $value = pdf_builder_get_option($option_key, $default);
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')"); }
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
+    $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
+
+    if ($value === null) {
+        $value = $default;
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: OPTION_NOT_FOUND - using default '{$default}'"); }
+    } else {
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')"); }
+    }
+
     return $value;
 }
 ?>
