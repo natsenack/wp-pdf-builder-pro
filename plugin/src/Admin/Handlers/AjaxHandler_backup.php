@@ -1691,8 +1691,95 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasModalSettings()
     {
-        // Version ultra-simplifiée pour debug
-        wp_send_json_success(['message' => 'Test réussi', 'category' => $_POST['category'] ?? 'unknown']);
+        try {
+            // Valider les permissions et nonce de manière unifiée
+            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
+            if (!$validation['success']) {
+                if ($validation['code'] === 'nonce_invalid') {
+                    NonceManager::sendNonceErrorResponse();
+                } else {
+                    NonceManager::sendPermissionErrorResponse();
+                }
+                return;
+            }
+
+            // Récupérer les paramètres depuis la requête
+            $category = sanitize_text_field($_POST['category'] ?? '');
+            $settings_to_save = [];
+
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] Starting save for category: {$category}");
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] POST data: " . print_r($_POST, true));
+            }
+
+            // Collecter TOUS les paramètres depuis POST (pas seulement ceux commençant par pdf_builder_canvas_)
+            foreach ($_POST as $key => $value) {
+                // Ignorer les champs spéciaux
+                if (in_array($key, ['action', 'nonce', 'category'])) {
+                    continue;
+                }
+
+                // Traiter les valeurs selon leur type
+                if (is_array($value)) {
+                    // Pour les tableaux (checkboxes multiples), imploser en chaîne
+                    $settings_to_save[$key] = implode(',', array_map('sanitize_text_field', $value));
+                } else {
+                    // Pour les valeurs simples, utiliser sanitize_text_field
+                    $settings_to_save[$key] = sanitize_text_field($value);
+                }
+            }
+
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] Settings to save: " . print_r($settings_to_save, true));
+            }
+
+            if (empty($settings_to_save)) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] ERROR: No data to save");
+                }
+                wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
+                return;
+            }
+
+            // Récupérer les paramètres existants
+            $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
+
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] Existing settings count: " . count($existing_settings));
+            }
+
+            // Mettre à jour les paramètres
+            $updated_count = 0;
+            foreach ($settings_to_save as $key => $value) {
+                $existing_settings[$key] = $value;
+                $updated_count++;
+            }
+
+            // Sauvegarder dans l'option unifiée
+            $saved = pdf_builder_update_option('pdf_builder_settings', $existing_settings);
+
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] Save result: " . ($saved ? 'SUCCESS' : 'FAILED'));
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] Updated count: {$updated_count}");
+                PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] Final settings count: " . count($existing_settings));
+            }
+
+            if ($saved) {
+                wp_send_json_success([
+                    'message' => 'Paramètres sauvegardés avec succès',
+                    'category' => $category,
+                    'updated_count' => $updated_count
+                ]);
+            } else {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] ERROR: Failed to save to database");
+                }
+                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+        }
     }
 
     /**
