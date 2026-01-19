@@ -488,6 +488,9 @@
 
                 // Le reste de la logique est géré par canvas-settings.js (CanvasModalManager)
             </script>
+
+            <!-- Inclusion du script canvas-settings.js pour la gestion des modals -->
+            <script src="<?php echo esc_url(PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-settings.min.js'); ?>?v=<?php echo time(); ?>"></script>
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
 
