@@ -32,7 +32,7 @@ class PreviewImageAPI
 // 1 minute
     private $rate_limit_max = 10;
 // 10 requêtes par minute
-    private $performance_metrics = [
+    private static $performance_metrics = [
         'requests_total' => 0,
         'requests_cached' => 0,
         'requests_generated' => 0,
@@ -439,7 +439,8 @@ class PreviewImageAPI
             return $this->getDefaultTemplate();
         }
 
-        $decoded = json_decode(stripslashes($data), true);
+        $sanitized_data = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($data);
+        $decoded = json_decode($sanitized_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->sendJsonError('Invalid template data: ' . json_last_error_msg(), 400);
         }
@@ -508,7 +509,7 @@ class PreviewImageAPI
     public function generateWithCache($params)
     {
         $start_time = microtime(true);
-        $this->performance_metrics['requests_total']++;
+        self::$performance_metrics['requests_total']++;
 
         $cache_key = $this->generateCacheKey($params);
 
@@ -517,9 +518,9 @@ class PreviewImageAPI
 
         // Vérifier si cache fichier valide (seul système de cache restant)
         if ($this->isCacheValid($cache_file, $params)) {
-            $this->performance_metrics['requests_cached']++;
+            self::$performance_metrics['requests_cached']++;
             $generation_time = microtime(true) - $start_time;
-            $this->performance_metrics['generation_times'][] = $generation_time;
+            self::$performance_metrics['generation_times'][] = $generation_time;
 
             return array(
                 'image_url' => $this->getCacheUrl($cache_key, $params['format']),
@@ -534,10 +535,10 @@ class PreviewImageAPI
         }
 
         // Générer l'image réelle
-        $this->performance_metrics['requests_generated']++;
+        self::$performance_metrics['requests_generated']++;
         $image_url = $this->generateRealImage($params, $cache_file);
         $generation_time = microtime(true) - $start_time;
-        $this->performance_metrics['generation_times'][] = $generation_time;
+        self::$performance_metrics['generation_times'][] = $generation_time;
 
         $result = array(
             'image_url' => $image_url,
@@ -884,6 +885,21 @@ class PreviewImageAPI
     }
 
     /**
+     * Retourne les données de template par défaut pour l'aperçu
+     *
+     * @return array Données de template par défaut
+     */
+    private function getDefaultTemplateData()
+    {
+        return [
+            'elements' => [],
+            'canvas_format' => 'A4',
+            'canvas_orientation' => 'portrait',
+            'canvas_dpi' => 150
+        ];
+    }
+
+    /**
      * Génère un aperçu PDF avec DomPDF (Jour 3-4) - Méthode publique pour tests
      *
      * @param array $validated_params Paramètres validés
@@ -1041,7 +1057,6 @@ class PreviewImageAPI
      */
     public static function getCacheMetrics()
     {
-        $instance = self::getInstance();
         // Système de cache intelligent supprimé
         $intelligent_metrics = [
             'status' => 'disabled',
@@ -1049,12 +1064,12 @@ class PreviewImageAPI
         ];
 
         // Calculer le taux de succès du cache
-        $total_requests = $instance->performance_metrics['requests_total'];
-        $cached_requests = $instance->performance_metrics['requests_cached'];
+        $total_requests = self::$performance_metrics['requests_total'];
+        $cached_requests = self::$performance_metrics['requests_cached'];
         $hit_rate = $total_requests > 0 ? round(($cached_requests / $total_requests) * 100, 2) : 0;
 
         // Calculer les temps moyens de génération
-        $generation_times = $instance->performance_metrics['generation_times'];
+        $generation_times = self::$performance_metrics['generation_times'];
         $avg_generation_time = !empty($generation_times) ? round(array_sum($generation_times) / count($generation_times), 3) : 0;
         $max_generation_time = !empty($generation_times) ? round(max($generation_times), 3) : 0;
 
@@ -1068,17 +1083,17 @@ class PreviewImageAPI
             'performance' => [
                 'total_requests' => $total_requests,
                 'cached_requests' => $cached_requests,
-                'generated_requests' => $instance->performance_metrics['requests_generated'],
+                'generated_requests' => self::$performance_metrics['requests_generated'],
                 'cache_hit_rate' => $hit_rate . '%',
                 'avg_generation_time' => $avg_generation_time . 's',
                 'max_generation_time' => $max_generation_time . 's',
-                'error_count' => $instance->performance_metrics['errors_total']
+                'error_count' => self::$performance_metrics['errors_total']
             ],
             'rate_limiting' => [
                 'window' => 60, // secondes
                 'max_requests' => 10
             ],
-            'last_cleanup' => $instance->performance_metrics['last_cleanup']
+            'last_cleanup' => self::$performance_metrics['last_cleanup']
         ];
     }
 }

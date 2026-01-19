@@ -1,4 +1,4 @@
-﻿<?php // Developer tab content - Updated: 2025-11-18 20:20:00
+<?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -810,18 +810,25 @@
         // Gestionnaire pour le bouton copier
         $('#copy_license_key_btn').on('click', function(e) {
             e.preventDefault();
+            console.log('🔐 [Test de Licence] Bouton "Copier Clé" cliqué');
+            
             const $input = $('#license_test_key');
             const key = $input.val();
 
             if (key) {
+                console.log('🔐 [Test de Licence] Tentative de copie de la clé dans le presse-papiers');
                 navigator.clipboard.writeText(key).then(function() {
                     $('#license_key_status').html('<span style="color: #28a745;">✅ Clé copiée dans le presse-papiers !</span>');
+                    console.log('🔐 [Test de Licence] Clé copiée avec succès dans le presse-papiers');
                     setTimeout(function() {
                         $('#license_key_status').html('');
                     }, 3000);
                 }).catch(function(err) {
                     $('#license_key_status').html('<span style="color: #dc3545;">❌ Erreur lors de la copie</span>');
+                    console.error('🔐 [Test de Licence] Erreur lors de la copie dans le presse-papiers:', err);
                 });
+            } else {
+                console.warn('🔐 [Test de Licence] Aucune clé à copier');
             }
         });
 
@@ -868,8 +875,10 @@
         // Gestionnaire pour le bouton de nettoyage complet de la licence
         $('#cleanup_license_btn').on('click', function(e) {
             e.preventDefault();
+            console.log('🔐 [Test de Licence] Bouton "Nettoyer Complètement" cliqué');
             
             if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUS les paramètres de licence et réinitialiser complètement le plugin à l\'état libre.\n\nCette action est IRRÉVERSIBLE.\n\nÊtes-vous absolument sûr de vouloir continuer ?')) {
+                console.log('🔐 [Test de Licence] Nettoyage annulé par l\'utilisateur');
                 return;
             }
             
@@ -880,6 +889,7 @@
             // Désactiver le bouton pendant le nettoyage
             $btn.prop('disabled', true).text('🧹 Nettoyage en cours...');
             $status.html('<span style="color: #007cba;">Nettoyage complet en cours...</span>');
+            console.log('🔐 [Test de Licence] Début du nettoyage complet de la licence');
 
             // Requête AJAX
             $.ajax({
@@ -891,22 +901,27 @@
                     nonce: nonce
                 },
                 success: function(response) {
+                    console.log('🔐 [Test de Licence] Réponse AJAX nettoyage reçue:', response);
                     if (response.success) {
                         $status.html('<span style="color: #28a745;">✅ Nettoyage complet réussi ! Le plugin a été réinitialisé à l\'état libre.</span>');
                         $btn.hide();
+                        console.log('🔐 [Test de Licence] Nettoyage complet réussi, rechargement de la page dans 2 secondes');
                         // Recharger la page après 2 secondes pour voir les changements
                         setTimeout(function() {
                             location.reload();
                         }, 2000);
                     } else {
+                        console.error('🔐 [Test de Licence] Erreur lors du nettoyage:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
                     }
                 },
                 error: function(xhr, status, error) {
+                    console.error('🔐 [Test de Licence] Erreur AJAX lors du nettoyage:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
+                    console.log('🔐 [Test de Licence] Nettoyage terminé');
                 }
             });
         });
@@ -914,6 +929,7 @@
         // Gestionnaire pour le bouton toggle du mode test
         $('#toggle_license_test_mode_btn').on('click', function(e) {
             e.preventDefault();
+            console.log('🔐 [Test de Licence] Bouton "Toggle Mode Test" cliqué');
             
             const $btn = $(this);
             const $status = $('#license_test_mode_status');
@@ -922,6 +938,7 @@
             // Désactiver le bouton pendant l'opération
             $btn.prop('disabled', true).text('🔄 Basculement...');
             $status.html('<span style="color: #007cba;">Basculement en cours...</span>');
+            console.log('🔐 [Test de Licence] Début du basculement du mode test');
 
             // Requête AJAX
             $.ajax({
@@ -933,6 +950,7 @@
                     nonce: nonce
                 },
                 success: function(response) {
+                    console.log('🔐 [Test de Licence] Réponse AJAX reçue:', response);
                     if (response.success) {
                         const newMode = response.data.new_mode;
                         const isActive = newMode === '1';
@@ -941,6 +959,7 @@
                         
                         // Mettre à jour le checkbox caché
                         $('#license_test_mode').prop('checked', isActive);
+                        console.log('🔐 [Test de Licence] Mode test ' + (isActive ? 'activé' : 'désactivé') + ' avec succès');
                         
                         // Recharger la page après 1 seconde pour voir les changements dans l'onglet licence
                         // Ajouter un paramètre de cache busting pour forcer le rechargement des options
@@ -951,16 +970,19 @@
                             window.location.href = currentUrl.toString();
                         }, 1000);
                     } else {
+                        console.error('🔐 [Test de Licence] Erreur lors du basculement:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
                     }
                 },
                 error: function(xhr, status, error) {
+                    console.error('🔐 [Test de Licence] Erreur AJAX lors du basculement:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
                 },
                 complete: function() {
                     const currentMode = $('#license_test_mode').is(':checked') ? '1' : '0';
                     const isActive = currentMode === '1';
                     $btn.prop('disabled', false).text(isActive ? '🎚️ Désactiver Mode Test' : '🎚️ Activer Mode Test');
+                    console.log('🔐 [Test de Licence] Basculement terminé');
                 }
             });
         });
@@ -968,6 +990,7 @@
         // Gestionnaire pour le bouton de génération de clé de test
         $('#generate_license_key_btn').on('click', function(e) {
             e.preventDefault();
+            console.log('🔐 [Test de Licence] Bouton "Générer Clé" cliqué');
             
             const $btn = $(this);
             const $status = $('#license_key_status');
@@ -976,6 +999,7 @@
             // Désactiver le bouton pendant la génération
             $btn.prop('disabled', true).text('🔄 Génération...');
             $status.html('<span style="color: #007cba;">Génération de la clé en cours...</span>');
+            console.log('🔐 [Test de Licence] Début de la génération de clé de test');
 
             // Requête AJAX
             $.ajax({
@@ -987,19 +1011,24 @@
                     nonce: nonce
                 },
                 success: function(response) {
+                    console.log('🔐 [Test de Licence] Réponse AJAX génération reçue:', response);
                     if (response.success) {
                         $('#license_test_key').val(response.data.test_key);
                         $status.html('<span style="color: #28a745;">✅ Clé générée: ' + response.data.test_key + '</span>');
                         $('#delete_license_key_btn').show();
+                        console.log('🔐 [Test de Licence] Clé générée avec succès:', response.data.test_key);
                     } else {
+                        console.error('🔐 [Test de Licence] Erreur lors de la génération:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
                     }
                 },
                 error: function(xhr, status, error) {
+                    console.error('🔐 [Test de Licence] Erreur AJAX lors de la génération:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🔑 Générer');
+                    console.log('🔐 [Test de Licence] Génération de clé terminée');
                 }
             });
         });
@@ -1007,8 +1036,10 @@
         // Gestionnaire pour le bouton de suppression de clé de test
         $('#delete_license_key_btn').on('click', function(e) {
             e.preventDefault();
+            console.log('🔐 [Test de Licence] Bouton "Supprimer Clé" cliqué');
             
             if (!confirm('Êtes-vous sûr de vouloir supprimer la clé de test ?')) {
+                console.log('🔐 [Test de Licence] Suppression annulée par l\'utilisateur');
                 return;
             }
             
@@ -1019,6 +1050,7 @@
             // Désactiver le bouton pendant la suppression
             $btn.prop('disabled', true).text('🗑️ Suppression...');
             $status.html('<span style="color: #007cba;">Suppression en cours...</span>');
+            console.log('🔐 [Test de Licence] Début de la suppression de la clé de test');
 
             // Requête AJAX
             $.ajax({
@@ -1030,19 +1062,24 @@
                     nonce: nonce
                 },
                 success: function(response) {
+                    console.log('🔐 [Test de Licence] Réponse AJAX suppression reçue:', response);
                     if (response.success) {
                         $('#license_test_key').val('');
                         $status.html('<span style="color: #28a745;">✅ Clé supprimée avec succès</span>');
                         $btn.hide();
+                        console.log('🔐 [Test de Licence] Clé supprimée avec succès');
                     } else {
+                        console.error('🔐 [Test de Licence] Erreur lors de la suppression:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
                     }
                 },
                 error: function(xhr, status, error) {
+                    console.error('🔐 [Test de Licence] Erreur AJAX lors de la suppression:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🗑️ Supprimer');
+                    console.log('🔐 [Test de Licence] Suppression de clé terminée');
                 }
             });
         });

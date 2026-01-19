@@ -8,6 +8,34 @@
 namespace PDF_Builder\Admin\Generators;
 
 use Exception;
+use Error;
+
+/**
+ * Déclarations de classes pour Intelephense
+ */
+if (!class_exists('PDF_Generator')) {
+    class PDF_Generator {
+        public function __construct($settings) {}
+        public function generate($data) { return ''; }
+        public function generate_from_elements($elements) { return ''; }
+    }
+}
+
+if (!class_exists('Dompdf\Dompdf')) {
+    class Dompdf {
+        public function __construct($options = null) {}
+        public function loadHtml($html) {}
+        public function setPaper($size, $orientation) {}
+        public function render() {}
+        public function output() { return ''; }
+    }
+}
+
+if (!class_exists('Dompdf\Options')) {
+    class Options {
+        public function set($key, $value) {}
+    }
+}
 
 /**
  * Classe responsable de la génération des PDFs
@@ -101,46 +129,47 @@ class PDFGenerator
 
             if (class_exists('Dompdf\Dompdf')) {
                 // Créer les options Dompdf pour éviter l'erreur de dépréciation
-                $options = new Dompdf\Options();
-                $dompdf = new Dompdf\Dompdf($options);
-                $dompdf->set_option('isRemoteEnabled', true);
-                $dompdf->set_option('isHtml5ParserEnabled', true);
-                $dompdf->set_option('defaultFont', 'Arial');
+                $options = new Options();
+                $options->set('isRemoteEnabled', true);
+                $options->set('isHtml5ParserEnabled', true);
+                $options->set('defaultFont', 'Arial');
 
                 // Appliquer les paramètres de qualité
                 switch ($pdf_quality) {
                     case 'low':
-                        $dompdf->set_option('dpi', 72);
-                        $dompdf->set_option('defaultMediaType', 'screen');
+                        $options->set('dpi', 72);
+                        $options->set('defaultMediaType', 'screen');
                         break;
                     case 'medium':
-                        $dompdf->set_option('dpi', 96);
-                        $dompdf->set_option('defaultMediaType', 'screen');
+                        $options->set('dpi', 96);
+                        $options->set('defaultMediaType', 'screen');
                         break;
                     case 'high':
                     default:
-                        $dompdf->set_option('dpi', 150);
-                        $dompdf->set_option('defaultMediaType', 'print');
+                        $options->set('dpi', 150);
+                        $options->set('defaultMediaType', 'print');
                         break;
                 }
 
                 // Appliquer la compression
                 if ($pdf_compression === 'high') {
-                    $dompdf->set_option('compress', true);
+                    $options->set('compress', true);
                 } elseif ($pdf_compression === 'low') {
-                    $dompdf->set_option('compress', false);
+                    $options->set('compress', false);
                 } // medium = default
 
                 // Métadonnées
                 if ($pdf_metadata_enabled) {
-                    $dompdf->set_option('enable_remote', true);
+                    $options->set('enable_remote', true);
                     // Les métadonnées peuvent être ajoutées via des options supplémentaires si nécessaire
                 }
 
                 // Optimisation pour l'impression
                 if ($pdf_print_optimized) {
-                    $dompdf->set_option('defaultMediaType', 'print');
+                    $options->set('defaultMediaType', 'print');
                 }
+
+                $dompdf = new Dompdf($options);
 
                 $dompdf->loadHtml($html_content);
                 $dompdf->setPaper($pdf_page_size, $pdf_orientation);

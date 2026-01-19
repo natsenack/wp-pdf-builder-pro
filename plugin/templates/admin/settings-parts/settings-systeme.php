@@ -1,4 +1,4 @@
-﻿<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
+<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     // Log PHP pour vérifier que le fichier s'exécute
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-main.php LOADED at line ' . __LINE__); }
     echo '<!-- PHP DEBUG: settings-main.php loaded at ' . current_time('H:i:s') . ' -->';
@@ -34,7 +34,7 @@
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Current tab: ' . $current_tab); }
     
     // Gestion des onglets via URL
-    $current_tab = $_GET['tab'] ?? 'general';
+    $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
     $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
     if (!in_array($current_tab, $valid_tabs)) {
         $current_tab = 'general';
@@ -177,6 +177,10 @@
 
 </div> <!-- Fin du .wrap -->
 
+<?php
+// Inclure les modales canvas à la fin pour éviter les conflits de structure
+require_once __DIR__ . '/settings-modals.php';
+?>
 
-
-
+</body>
+</html>

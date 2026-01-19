@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * PDF Builder Pro - Gestionnaire AJAX
@@ -88,7 +88,9 @@ class AjaxHandler
             }
 
             // Récupérer les données
-            $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
+            $template_data_raw = $_POST['template_data'] ?? '';
+            $template_data_json = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($template_data_raw);
+            $template_data = json_decode($template_data_json, true);
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
 
             if (!$template_data) {
@@ -213,7 +215,9 @@ class AjaxHandler
                 return;
             }
 
-            $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
+            $template_data_raw = $_POST['template_data'] ?? '';
+            $template_data_json = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($template_data_raw);
+            $template_data = json_decode($template_data_json, true);
             $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
 

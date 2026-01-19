@@ -76,9 +76,7 @@ function pdf_builder_activate()
         $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows();
         if ($migrated_count > 0) {
             update_option('pdf_builder_license_keys_migrated', true);
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
-            }
+            error_log('[PDF Builder] Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
         }
     }
     // ================================================================
@@ -1082,7 +1080,11 @@ function pdf_builder_init()
         return;
     }
 
-    // Autoloader Composer chargé centralement dans bootstrap.php
+    // Charger l'autoloader Composer
+    $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+    if (file_exists($autoload_path)) {
+        require_once $autoload_path;
+    }
 
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';

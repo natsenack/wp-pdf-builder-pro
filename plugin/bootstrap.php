@@ -385,12 +385,7 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/config-manager.php';
     }
 
-    // Initialiser le système de migration après le chargement des constantes
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
-        // Initialiser le système de migration maintenant que les constantes sont chargées
-        PDF_Builder_Migration_System::getInstance();
-    }
+
 
     // HOTFIX: Charger le correctif pour les notifications avant PDF_Builder_Core
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'hotfix-notifications.php')) {
@@ -408,9 +403,9 @@ function pdf_builder_load_core()
         // 'PDF_Builder_Backup_Restore_Manager.php',
         // 'PDF_Builder_Canvas_Manager.php',
         // 'PDF_Builder_Drag_Drop_Manager.php',
-        // 'PDF_Builder_Feature_Manager.php',
+        'PDF_Builder_Feature_Manager.php', // Chargé pour les fonctionnalités freemium
         'PDF_Builder_License_Manager.php', // Manuellement chargé car autoloader désactivé
-        // 'PDF_Builder_Logger.php',
+        'PDF_Builder_Logger.php', // Logger pour le débogage
         // 'PDF_Builder_PDF_Generator.php',
         // 'PDF_Builder_Resize_Manager.php',
         // 'PDF_Builder_Settings_Manager.php',

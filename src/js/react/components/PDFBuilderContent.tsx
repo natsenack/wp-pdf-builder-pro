@@ -206,7 +206,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           display: "flex",
           flexDirection: "column",
           width: "100%",
-          height: "100%",
           gap: "0px",
           padding: "0px",
           backgroundColor: "#ffffff",

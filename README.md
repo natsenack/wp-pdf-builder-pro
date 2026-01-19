@@ -119,13 +119,11 @@ Le système de génération utilise une approche hybride :
 - **Problème** : 50+ appels à `error_log()` dans les templates
 - **Impact** : Pollution des logs, performance dégradée
 - **Solution** : Remplacer par système de logging conditionnel
-- **Statut** : ✅ Corrigé - Logger conditionnel activé
 
 #### 3. Chargement Composer redondant
 - **Problème** : Autoloader chargé 8+ fois dans différents fichiers
 - **Impact** : Performance, conflits potentiels
 - **Solution** : Centraliser le chargement dans bootstrap.php
-- **Statut** : ✅ Corrigé - Chargement centralisé dans bootstrap.php
 
 #### 4. Sanitisation incomplète
 - **Problème** : Certaines entrées utilisateur non sanitizées

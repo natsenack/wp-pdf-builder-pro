@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Système de logging avancé
  * Système structuré et configurable pour le logging
@@ -91,7 +91,7 @@ class PDF_Builder_Logger {
 
         // Log aussi les erreurs critiques dans error_log de PHP
         if ($level >= self::LEVEL_ERROR) {
-            // // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ' . $message); }
+            // // error_log('[PDF Builder] ' . $message);
         }
     }
 
@@ -99,23 +99,23 @@ class PDF_Builder_Logger {
      * Méthodes de convenance pour différents niveaux
      */
     public function debug($message, $context = []) {
-        $this->log(self::LEVEL_DEBUG, $message, $context);
+        // $this->log(self::LEVEL_DEBUG, $message, $context);
     }
 
     public function info($message, $context = []) {
-        $this->log(self::LEVEL_INFO, $message, $context);
+        // $this->log(self::LEVEL_INFO, $message, $context);
     }
 
     public function warning($message, $context = []) {
-        $this->log(self::LEVEL_WARNING, $message, $context);
+        // $this->log(self::LEVEL_WARNING, $message, $context);
     }
 
     public function error($message, $context = []) {
-        $this->log(self::LEVEL_ERROR, $message, $context);
+        // $this->log(self::LEVEL_ERROR, $message, $context);
     }
 
     public function critical($message, $context = []) {
-        $this->log(self::LEVEL_CRITICAL, $message, $context);
+        // $this->log(self::LEVEL_CRITICAL, $message, $context);
     }
 
     /**
@@ -126,7 +126,7 @@ class PDF_Builder_Logger {
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
 
         if ($debug_php_errors) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder Debug] ' . $message); }
+            // // error_log('[PDF Builder Debug] ' . $message);
         }
     }
 
@@ -389,6 +389,5 @@ function pdf_builder_log_critical($message, $context = []) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Logger::get_instance();
 });
-
 
 

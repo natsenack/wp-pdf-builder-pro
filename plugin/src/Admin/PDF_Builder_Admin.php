@@ -124,8 +124,13 @@ class PdfBuilderAdmin
 
         if (!class_exists('PDF_Builder\Admin\Processors\TemplateProcessor')) {
             $template_processor_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Processors/TemplateProcessor.php';
+            error_log('[DEBUG] PDF Builder: Looking for TemplateProcessor at: ' . $template_processor_file);
             if (file_exists($template_processor_file)) {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor file exists, requiring it');
                 require_once $template_processor_file;
+                error_log('[DEBUG] PDF Builder: TemplateProcessor file loaded, class exists: ' . (class_exists('PDF_Builder\Admin\Processors\TemplateProcessor') ? 'YES' : 'NO'));
+            } else {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor file does not exist');
             }
         }
 
@@ -168,7 +173,9 @@ class PdfBuilderAdmin
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+            error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully');
         } catch (Exception $e) {
+            error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed: ' . $e->getMessage());
             $this->template_processor = null;
         }
 
@@ -857,9 +864,6 @@ class PdfBuilderAdmin
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
 
-        // 🔧 MIGRATION BASE DE DONNÉES - Gérée automatiquement par PDF_Builder_Migration_System
-        // add_action('admin_init', [$this, 'run_database_migrations']);
-
         // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
         // Désactiver temporairement la mise à jour automatique des noms
         // add_action('admin_init', [$this, 'update_template_names']);
@@ -1056,70 +1060,146 @@ class PdfBuilderAdmin
         // Enqueue React scripts are now handled in enqueueAdminScripts()
 
         ?>
-        <div class="wrap">
+        <div class="wrap pdf-builder-editor-page">
+
             <!-- PDF Builder Loading Screen -->
-            <div id="pdf-builder-loader" style="
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(255, 255, 255, 0.95);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                z-index: 999999;
-                text-align: center;
-            ">
-                <div style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 20px;
-                ">
+            <div id="pdf-builder-loader" class="pdf-builder-loader">
+                <div class="pdf-builder-loader-content">
                     <!-- Custom Spinner - no global classes -->
-                    <div id="pdf-builder-custom-spinner" style="
-                        width: 40px;
-                        height: 40px;
-                        border: 4px solid #f3f3f3;
-                        border-top: 4px solid #007cba;
-                        border-radius: 50%;
-                        animation: pdfBuilderSpin 1s linear infinite;
-                    "></div>
-                    <p style="
-                        color: #666;
-                        font-size: 16px;
-                        margin: 0;
-                        font-weight: 500;
-                        animation: none;
-                        transform: none;
-                    "><?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?> <span id="pdf-builder-timeout-counter">(10s)</span></p>
+                    <div id="pdf-builder-custom-spinner" class="pdf-builder-spinner"></div>
+                    <p class="pdf-builder-loader-text">
+                        <?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?>
+                        <span id="pdf-builder-timeout-counter">(10s)</span>
+                    </p>
                 </div>
             </div>
 
             <!-- Main React Editor Container -->
-            <div id="pdf-builder-editor-container" style="
-                display: block;
-                background: #fff;
-                border: 1px solid #ccd0d4;
-                border-radius: 8px;
-                min-height: 600px;
-            ">
-                <div id="pdf-builder-react-root"></div>
+            <div id="pdf-builder-editor-container" class="pdf-builder-editor-container">
+                <div id="pdf-builder-react-root" class="pdf-builder-react-root"></div>
             </div>
         </div>
 
         <style>
-        /* Custom spinner animation - completely isolated */
+        /* PDF Builder Editor Page Styles */
+        .pdf-builder-editor-page {
+            margin: 20px 0 0 0;
+            max-width: none;
+        }
+
+        .pdf-builder-editor-header {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+        }
+
+        .pdf-builder-editor-header h1 {
+            margin: 0 0 10px 0;
+            padding: 0;
+            font-size: 23px;
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
+        .pdf-builder-editor-info p {
+            margin: 0 0 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .template-info {
+            font-style: italic;
+            color: #007cba !important;
+        }
+
+        /* Loader Styles */
+        .pdf-builder-loader {
+            display: none;
+            position: relative;
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            min-height: 400px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+        }
+
+        .pdf-builder-loader.show {
+            display: block;
+        }
+
+        .pdf-builder-loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            gap: 20px;
+        }
+
+        .pdf-builder-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007cba;
+            border-radius: 50%;
+            animation: pdfBuilderSpin 1s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .pdf-builder-loader-text {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Editor Container Styles */
+        .pdf-builder-editor-container {
+            display: none;
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+            overflow: hidden;
+        }
+
+        .pdf-builder-editor-container.show {
+            display: block;
+        }
+
+        .pdf-builder-react-root {
+            min-height: 600px;
+            width: 100%;
+        }
+
+        /* Custom spinner animation */
         @keyframes pdfBuilderSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* Ensure no interference from global styles */
-        #pdf-builder-custom-spinner {
-            box-sizing: border-box !important;
+        /* Responsive adjustments */
+        @media screen and (max-width: 782px) {
+            .pdf-builder-editor-page {
+                margin: 10px 0 0 0;
+            }
+
+            .pdf-builder-editor-header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .pdf-builder-loader-content {
+                padding: 30px 20px;
+            }
+
+            .pdf-builder-react-root {
+                min-height: 500px;
+            }
         }
         </style>
 
@@ -1131,15 +1211,10 @@ class PdfBuilderAdmin
             const urlParams = new URLSearchParams(window.location.search);
             const currentPage = urlParams.get('page');
 
-            
-
             // Ne charger React que sur la page appropriée
             if (currentPage !== 'pdf-builder-react-editor') {
-                
                 return;
             }
-
-            
 
             // Simple loader management
             const loader = {
@@ -1160,18 +1235,19 @@ class PdfBuilderAdmin
                     this.element = document.getElementById('pdf-builder-loader');
                     this.editor = document.getElementById('pdf-builder-editor-container');
 
-
                     if (!this.element || !this.editor) {
                         return;
                     }
 
+                    // Show loader initially
+                    this.element.classList.add('show');
                     this.startChecking();
                 },
 
                 hide: function() {
                     if (this.element && this.editor) {
-                        this.element.style.display = 'none';
-                        this.editor.style.display = 'block';
+                        this.element.classList.remove('show');
+                        this.editor.classList.add('show');
                     }
                 },
 
@@ -1194,12 +1270,11 @@ class PdfBuilderAdmin
 
                     const checkInterval = setInterval(() => {
                         attempts++;
-                        
 
                         if (this.isReactReady() && this.isContainerReady()) {
                             clearInterval(checkInterval);
                             clearInterval(countdownInterval);
-                            
+
                             this.initializeReact();
                             return;
                         }
@@ -1207,7 +1282,7 @@ class PdfBuilderAdmin
                         if (attempts >= maxAttempts) {
                             clearInterval(checkInterval);
                             clearInterval(countdownInterval);
-                            
+
                             this.showLoadingError();
                         }
                     }, 500);
@@ -1216,12 +1291,12 @@ class PdfBuilderAdmin
                 showLoadingError: function() {
                     // Hide loader
                     if (this.element) {
-                        this.element.style.display = 'none';
+                        this.element.classList.remove('show');
                     }
 
                     // Show editor container with error message
                     if (this.editor) {
-                        this.editor.style.display = 'block';
+                        this.editor.classList.add('show');
                         this.editor.innerHTML = `
                             <div style="
                                 padding: 40px;
@@ -1278,68 +1353,36 @@ class PdfBuilderAdmin
                     }
 
                     // Log detailed error information
-                    
-                    
-                    
-                    
-                    
-                    
-
-                    // Check for script loading issues
                     const reactScripts = Array.from(document.querySelectorAll('script')).filter(s =>
                         s.src.includes('pdf-builder-react')
                     );
-                    
+
                     reactScripts.forEach((script, index) => {
-                        
+                        console.warn(`[PDF Builder] React script ${index + 1}:`, script.src, script.readyState);
                     });
                 },
 
                 initializeReact: function() {
-                    
-                    if (this.isReactReady()) {
-                        
-
-                        // Additional check: ensure container exists in DOM
-                        const container = document.getElementById('pdf-builder-react-root');
-                        if (!container) {
-                            
-                            return false;
+                    try {
+                        if (typeof window.initPDFBuilderReact === 'function') {
+                            window.initPDFBuilderReact();
                         }
-
-                        
-                        try {
-                            const result = window.initPDFBuilderReact();
-                            
-                            
-                            // Hide loader after successful init
-                            if (result) {
-                                this.hide();
-                            }
-                            return true;
-                        } catch (error) {
-                            
-                            return false;
-                        }
+                        this.hide();
+                    } catch (error) {
+                        console.error('[PDF Builder] Erreur lors de l\'initialisation React:', error);
+                        this.showLoadingError();
                     }
-                    
-                    return false;
                 }
             };
 
             // Initialize when DOM is ready
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
+                document.addEventListener('DOMContentLoaded', function() {
                     loader.init();
                 });
             } else {
                 loader.init();
             }
-
-            // Listen for React ready event
-            document.addEventListener('pdfBuilderReactLoaded', function() {
-                loader.initializeReact();
-            });
 
         })();
         </script>
@@ -1385,7 +1428,7 @@ class PdfBuilderAdmin
         $current_user = wp_get_current_user();
 
         // Gestion des onglets via URL
-        $current_tab = $_GET['tab'] ?? 'general';
+        $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
         $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
         if (!in_array($current_tab, $valid_tabs)) {
             $current_tab = 'general';
@@ -1555,6 +1598,24 @@ class PdfBuilderAdmin
 
         </div> <!-- Fin du .wrap -->
         <?php
+    }
+
+    /**
+     * Getter pour le TemplateProcessor avec création à la demande
+     */
+    public function getTemplateProcessor()
+    {
+        if ($this->template_processor === null) {
+            error_log('[DEBUG] PDF Builder: TemplateProcessor not available, creating it now in getter');
+            try {
+                $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+                error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully in getter');
+            } catch (Exception $e) {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed in getter: ' . $e->getMessage());
+                $this->template_processor = null;
+            }
+        }
+        return $this->template_processor;
     }
 }
 

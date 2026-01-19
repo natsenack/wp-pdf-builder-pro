@@ -7,6 +7,10 @@
 
 namespace PDF_Builder\Admin\Utils;
 
+// Utilisation des classes SPL
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 /**
  * Classe responsable des utilitaires système
  */
@@ -101,6 +105,57 @@ class Utils
             }
         }
         return $size;
+    }
+
+    /**
+     * Sanitize JSON input for template configuration
+     */
+    public static function sanitizeJsonInput($json_string)
+    {
+        if (empty($json_string)) {
+            return '';
+        }
+
+        // Remove any potential script tags or dangerous content
+        $json_string = wp_kses($json_string, array());
+
+        // Decode JSON to validate and sanitize
+        $data = json_decode($json_string, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return '';
+        }
+
+        // Recursively sanitize the data
+        $data = self::sanitizeJsonData($data);
+
+        // Re-encode to JSON
+        return wp_json_encode($data);
+    }
+
+    /**
+     * Recursively sanitize JSON data
+     */
+    private static function sanitizeJsonData($data)
+    {
+        if (is_array($data)) {
+            $sanitized = array();
+            foreach ($data as $key => $value) {
+                // Sanitize keys
+                $sanitized_key = sanitize_key($key);
+                $sanitized[$sanitized_key] = self::sanitizeJsonData($value);
+            }
+            return $sanitized;
+        } elseif (is_string($data)) {
+            // For string values, use sanitize_text_field but preserve JSON structure
+            return sanitize_text_field($data);
+        } elseif (is_numeric($data)) {
+            return $data;
+        } elseif (is_bool($data)) {
+            return $data;
+        } else {
+            // For other types, convert to string and sanitize
+            return sanitize_text_field((string)$data);
+        }
     }
 }
 

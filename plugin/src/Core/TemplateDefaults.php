@@ -1,6 +1,16 @@
-﻿<?php
+<?php
 
 namespace PDF_Builder;
+
+/**
+ * Déclaration de classe pour Intelephense
+ */
+if (!class_exists('PDF_Builder_Logger')) {
+    class PDF_Builder_Logger {
+        public static function get_instance() { return new self(); }
+        public function debug_log($message) {}
+    }
+}
 
 /**
  * Gestionnaire des templates par défaut pour le système freemium

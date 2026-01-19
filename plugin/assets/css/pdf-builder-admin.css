@@ -1,6 +1,16 @@
 /* PDF Builder Pro Admin Styles */
 /* Cross-browser compatibility with vendor prefixes */
-
+.php-error #adminmenuback, .php-error #adminmenuwrap {
+    margin-top: 0px;
+}
+.pdf-builder-editor-page {
+    margin: 0px !important;
+}
+#wpcontent {
+    height: 100%;
+    padding-left: 0px;
+    margin-top: 0px;
+}
 /* PDF Preview Modal Styles */
 .pdf-preview-modal-overlay {
   position: fixed;

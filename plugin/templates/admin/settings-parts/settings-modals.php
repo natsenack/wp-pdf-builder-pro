@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Canvas Settings Modals
  * Modal dialogs for canvas configuration
@@ -46,11 +46,20 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Récupérer depuis l'option unifiée pdf_builder_settings
-    $settings = pdf_builder_get_option('pdf_builder_settings', []);
+    // Récupérer directement depuis la table personnalisée avec la clé complète
     $option_key = 'pdf_builder_' . $key;
+    $value = pdf_builder_get_option($option_key, $default);
 
-    $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
+    // Validation spéciale pour les champs array corrompus
+    $array_fields = ['dpi', 'formats', 'orientations'];
+    if (in_array($key, $array_fields)) {
+        // Si la valeur contient '0' ou est vide/invalide, utiliser la valeur par défaut
+        if (empty($value) || $value === '0' || strpos($value, '0,') === 0 || $value === '0,0' || $value === '0,0,0,0,0') {
+            $value = $default;
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Using default for corrupted {$option_key}: '{$value}'"); }
+        }
+    }
+
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')"); }
     return $value;
 }

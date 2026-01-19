@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Settings Loader
  * Charge les styles et scripts pour la page de paramètres
@@ -106,15 +106,21 @@ function pdf_builder_load_settings_assets($hook) {
         );
 
         // Charger le script des paramètres canvas - seulement si le fichier existe et que settings-main est chargé
-        $canvas_settings_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/canvas-settings.js';
+        $canvas_settings_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/canvas-settings.min.js';
         if (file_exists($canvas_settings_js)) {
             wp_enqueue_script(
                 'pdf-builder-canvas-settings',
-                PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.js',
+                PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.min.js',
                 array('jquery', 'pdf-builder-settings-main'),
                 PDF_BUILDER_VERSION . '-' . time(),
                 true // Chargé dans le footer
             );
+
+            // Localiser le script canvas-settings avec le nonce approprié et l'URL AJAX
+            wp_localize_script('pdf-builder-canvas-settings', 'pdf_builder_canvas_settings', array(
+                'nonce' => wp_create_nonce('pdf_builder_canvas_settings'),
+                'ajax_url' => admin_url('admin-ajax.php')
+            ));
         }
     }
 

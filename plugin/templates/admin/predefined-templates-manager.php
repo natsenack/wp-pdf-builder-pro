@@ -4,6 +4,12 @@ namespace PDF_Builder\Admin;
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+
+/**
+ * Utilisation de la classe Exception native
+ */
+use Exception;
+
 /**
  * Predefined Templates Manager - PDF Builder Pro
  * Gestion des modèles prédéfinis pour la galerie
@@ -743,7 +749,8 @@ class PDF_Builder_Predefined_Templates_Manager
             $category = sanitize_key($_POST['category'] ?? $_GET['category'] ?? '');
             $description = sanitize_textarea_field($_POST['description'] ?? $_GET['description'] ?? '');
             $icon = sanitize_text_field($_POST['icon'] ?? $_GET['icon'] ?? '📄');
-            $json_config = stripslashes($_POST['json'] ?? $_GET['json'] ?? '');
+            $json_config_raw = $_POST['json'] ?? $_GET['json'] ?? '';
+            $json_config = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($json_config_raw);
 // Validation
             if (empty($slug) || empty($name) || empty($category) || empty($json_config)) {
                 wp_send_json_error('Tous les champs obligatoires doivent être remplis');

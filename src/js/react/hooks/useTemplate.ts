@@ -43,8 +43,10 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = useCallback(
     async (templateId: string) => {
-      
-      
+      console.log('[LOAD TEMPLATE] Starting load for template ID:', templateId);
+      console.log('[LOAD TEMPLATE] window.pdfBuilderData:', window.pdfBuilderData);
+      console.log('[LOAD TEMPLATE] hasExistingData:', window.pdfBuilderData?.hasExistingData);
+      console.log('[LOAD TEMPLATE] existingTemplate:', window.pdfBuilderData?.existingTemplate);
       
       
       

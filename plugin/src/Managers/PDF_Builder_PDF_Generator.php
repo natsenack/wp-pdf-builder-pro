@@ -124,43 +124,44 @@ class PdfBuilderPdfGenerator
 
         // Créer les options Dompdf pour éviter l'erreur de dépréciation (version corrigée)
         $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('defaultFont', 'Arial');
+
         $dompdf = new Dompdf($options);
-        $dompdf->set_option('isRemoteEnabled', true);
-        $dompdf->set_option('isHtml5ParserEnabled', true);
-        $dompdf->set_option('defaultFont', 'Arial');
 
         // Appliquer les paramètres de qualité
         switch ($pdf_quality) {
             case 'low':
-                $dompdf->set_option('dpi', 72);
-                $dompdf->set_option('defaultMediaType', 'screen');
+                $options->set('dpi', 72);
+                $options->set('defaultMediaType', 'screen');
                 break;
             case 'medium':
-                $dompdf->set_option('dpi', 96);
-                $dompdf->set_option('defaultMediaType', 'screen');
+                $options->set('dpi', 96);
+                $options->set('defaultMediaType', 'screen');
                 break;
             case 'high':
             default:
-                $dompdf->set_option('dpi', 150);
-                $dompdf->set_option('defaultMediaType', 'print');
+                $options->set('dpi', 150);
+                $options->set('defaultMediaType', 'print');
                 break;
         }
 
         // Appliquer la compression
         if ($pdf_compression === 'high') {
-            $dompdf->set_option('compress', true);
+            $options->set('compress', true);
         } elseif ($pdf_compression === 'low') {
-            $dompdf->set_option('compress', false);
+            $options->set('compress', false);
         } // medium = default
 
         // Métadonnées
         if ($pdf_metadata_enabled) {
-            $dompdf->set_option('enable_remote', true);
+            $options->set('enable_remote', true);
         }
 
         // Optimisation pour l'impression
         if ($pdf_print_optimized) {
-            $dompdf->set_option('defaultMediaType', 'print');
+            $options->set('defaultMediaType', 'print');
         }
 
         // Configuration PDF
@@ -456,43 +457,44 @@ class PdfBuilderPdfGenerator
 
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
             $options = new Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('defaultFont', 'Arial');
+
             $dompdf = new Dompdf($options);
-            $dompdf->set_option('isRemoteEnabled', true);
-            $dompdf->set_option('isHtml5ParserEnabled', true);
-            $dompdf->set_option('defaultFont', 'Arial');
 
             // Appliquer les paramètres de qualité
             switch ($pdf_quality) {
                 case 'low':
-                    $dompdf->set_option('dpi', 72);
-                    $dompdf->set_option('defaultMediaType', 'screen');
+                    $options->set('dpi', 72);
+                    $options->set('defaultMediaType', 'screen');
                     break;
                 case 'medium':
-                    $dompdf->set_option('dpi', 96);
-                    $dompdf->set_option('defaultMediaType', 'screen');
+                    $options->set('dpi', 96);
+                    $options->set('defaultMediaType', 'screen');
                     break;
                 case 'high':
                 default:
-                    $dompdf->set_option('dpi', 150);
-                    $dompdf->set_option('defaultMediaType', 'print');
+                    $options->set('dpi', 150);
+                    $options->set('defaultMediaType', 'print');
                     break;
             }
 
             // Appliquer la compression
             if ($pdf_compression === 'high') {
-                $dompdf->set_option('compress', true);
+                $options->set('compress', true);
             } elseif ($pdf_compression === 'low') {
-                $dompdf->set_option('compress', false);
+                $options->set('compress', false);
             } // medium = default
 
             // Métadonnées
             if ($pdf_metadata_enabled) {
-                $dompdf->set_option('enable_remote', true);
+                $options->set('enable_remote', true);
             }
 
             // Optimisation pour l'impression
             if ($pdf_print_optimized) {
-                $dompdf->set_option('defaultMediaType', 'print');
+                $options->set('defaultMediaType', 'print');
             }
 
             $dompdf->loadHtml($html_content);

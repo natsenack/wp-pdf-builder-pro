@@ -1,9 +1,43 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Handler AJAX unifié
  * Point d'entrée unique pour toutes les actions AJAX avec gestion centralisée des nonces
  * Version: 2.1.3 - Correction erreurs PHP et cron (05/12/2025)
  */
+
+// Charger les fonctions utilitaires depuis bootstrap.php
+require_once dirname(dirname(dirname(__FILE__))) . '/bootstrap.php';
+
+/**
+ * Déclarations de fonctions pour Intelephense
+ * Ces fonctions sont définies dans bootstrap.php mais Intelephense ne les reconnaît pas
+ */
+if (!function_exists('pdf_builder_get_option')) {
+    /**
+     * @param string $option_name
+     * @param mixed $default
+     * @return mixed
+     */
+    function pdf_builder_get_option($option_name, $default = false) {}
+}
+
+if (!function_exists('pdf_builder_update_option')) {
+    /**
+     * @param string $option_name
+     * @param mixed $option_value
+     * @param string $autoload
+     * @return bool
+     */
+    function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {}
+}
+
+if (!function_exists('pdf_builder_delete_option')) {
+    /**
+     * @param string $option_name
+     * @return bool
+     */
+    function pdf_builder_delete_option($option_name) {}
+}
 
 class PDF_Builder_Unified_Ajax_Handler {
 
@@ -84,6 +118,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'handle_get_fresh_nonce']);
         add_action('wp_ajax_pdf_builder_system_info', [$this, 'handle_system_info']);
         add_action('wp_ajax_pdf_builder_reset_dev_settings', [$this, 'handle_reset_dev_settings']);
+
+        // Actions canvas
+        add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
     }
 
     /**
@@ -184,11 +221,15 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour la sauvegarde des paramètres Canvas
      */
     public function handle_save_canvas_settings() {
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Handler called"); }
+
         if (!$this->nonce_manager->validate_ajax_request('pdf_builder_canvas_settings')) {
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_ERROR - Nonce validation failed"); }
+            wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Received POST data: " . print_r($_POST, true)); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Nonce valid, processing POST data: " . print_r($_POST, true)); }
 
         try {
             $saved_count = 0;
@@ -200,6 +241,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_canvas_height',
                 'pdf_builder_canvas_dpi',
                 'pdf_builder_canvas_format',
+                'pdf_builder_canvas_formats',
+                'pdf_builder_canvas_orientations',
                 'pdf_builder_canvas_bg_color',
                 'pdf_builder_canvas_border_color',
                 'pdf_builder_canvas_border_width',
@@ -238,7 +281,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Sauvegarder chaque paramètre
             foreach ($canvas_settings as $setting_key) {
                 if (isset($_POST[$setting_key])) {
-                    $value = sanitize_text_field($_POST[$setting_key]);
+                    $value = $_POST[$setting_key];
+                    
+                    // Gestion spéciale pour les champs array (dpi, formats, orientations)
+                    $array_fields = ['pdf_builder_canvas_dpi', 'pdf_builder_canvas_formats', 'pdf_builder_canvas_orientations'];
+                    if (in_array($setting_key, $array_fields)) {
+                        if (is_array($value)) {
+                            $value = implode(',', array_map('sanitize_text_field', $value));
+                        } elseif (is_string($value)) {
+                            $value = sanitize_text_field($value);
+                        } else {
+                            $value = '';
+                        }
+                    } else {
+                        $value = sanitize_text_field($value);
+                    }
                     
                     // Log pour déboguer
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Sauvegarde Canvas - {$setting_key}: {$value}"); }
@@ -276,6 +333,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
 
                     pdf_builder_update_option($setting_key, $value);
+                    
+                    // Also update the settings array to keep consistency with the main form
+                    $settings = pdf_builder_get_option('pdf_builder_settings', array());
+                    $settings[$setting_key] = $value;
+                    pdf_builder_update_option('pdf_builder_settings', $settings);
+                    
                     $saved_options[$setting_key] = $value;
                     $saved_count++;
                     
@@ -291,6 +354,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             if ($saved_count > 0) {
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_SUCCESS - {$saved_count} paramètres sauvegardés: " . implode(', ', array_keys($saved_options))); }
                 wp_send_json_success([
                     'message' => 'Paramètres Canvas sauvegardés avec succès',
                     'saved_count' => $saved_count,
@@ -298,6 +362,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'new_nonce' => $this->nonce_manager->generate_nonce()
                 ]);
             } else {
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_WARNING - Aucun paramètre sauvegardé"); }
                 wp_send_json_error(['message' => 'Aucun paramètre Canvas sauvegardé']);
             }
 

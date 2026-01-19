@@ -134,26 +134,18 @@
         // Chargement des mappings
         private function load_mappings() {
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-templates.php load_mappings - settings count: ' . count($settings));
-            }
+            error_log('[PDF Builder] settings-templates.php load_mappings - settings count: ' . count($settings));
             $raw_option = $settings['pdf_builder_order_status_templates'] ?? [];
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->debug_log('DEBUG: Raw option value from DB: ' . print_r($raw_option, true));
-            }
+            error_log('DEBUG: Raw option value from DB: ' . print_r($raw_option, true));
             
             $this->current_mappings = $raw_option;
 
             // S'assurer que c'est un tableau
             if (!is_array($this->current_mappings)) {
                 $this->current_mappings = [];
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->debug_log('DEBUG: current_mappings was not array, set to empty');
-                }
+                error_log('DEBUG: current_mappings was not array, set to empty');
             } else {
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->debug_log('DEBUG: current_mappings loaded: ' . print_r($this->current_mappings, true));
-                }
+                error_log('DEBUG: current_mappings loaded: ' . print_r($this->current_mappings, true));
             }
 
             // Nettoyer les mappings obsolètes
@@ -427,10 +419,8 @@
     $current_mappings = $status_manager->get_current_mappings();
 
     // Debug temporaire
-    if (class_exists('PDF_Builder_Logger')) {
-        PDF_Builder_Logger::get_instance()->debug_log("DEBUG Template Load: current_mappings = " . json_encode($current_mappings));
-        PDF_Builder_Logger::get_instance()->debug_log("DEBUG Template Load: templates = " . json_encode($templates));
-    }
+    error_log("DEBUG Template Load: current_mappings = " . json_encode($current_mappings));
+    error_log("DEBUG Template Load: templates = " . json_encode($templates));
 
     // =============================================================================
     // AFFICHAGE HTML
