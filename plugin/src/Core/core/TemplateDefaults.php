@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * TemplateDefaults - Templates par défaut pour utilisateurs gratuits
  * PDF Builder Pro
@@ -91,10 +91,10 @@ class TemplateDefaults
             );
 
             if ($result === false) {
-                error_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error);
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error); }
                 return false;
             } else {
-                error_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $default_template_data['name']);
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $default_template_data['name']); }
                 return true;
             }
         }
@@ -117,4 +117,5 @@ class TemplateDefaults
         return $template_type === 'default';
     }
 }
+
 

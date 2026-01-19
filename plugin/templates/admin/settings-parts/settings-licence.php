@@ -1,4 +1,4 @@
-<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
@@ -556,7 +556,7 @@
                 <?php
                     // Récupération des paramètres depuis le tableau unifié
                     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-                    error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings)); }
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
                     $license_key = $settings['pdf_builder_license_key'] ?? '';
@@ -1098,5 +1098,6 @@
                             }
                         }
                     </script>
+
 
 

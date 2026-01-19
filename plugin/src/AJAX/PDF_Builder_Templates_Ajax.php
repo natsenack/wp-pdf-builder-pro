@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Templates AJAX Handler
@@ -225,7 +225,7 @@ class PdfBuilderTemplatesAjax
     public function loadTemplateSettings()
     {
         try {
-            error_log('PDF Builder: loadTemplateSettings called with POST: ' . print_r($_POST, true));
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: loadTemplateSettings called with POST: ' . print_r($_POST, true)); }
 // Vérification des permissions
             if (!current_user_can('manage_options')) {
                 wp_send_json_error('Permissions insuffisantes');
@@ -249,11 +249,11 @@ class PdfBuilderTemplatesAjax
                 wp_send_json_error('Template non trouvé');
             }
 
-            error_log('PDF Builder: Template found: ' . print_r($template, true));
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Template found: ' . print_r($template, true)); }
 
             // Extraire les informations depuis template_data si elles existent
             $template_data = json_decode($template['template_data'] ?? '{}', true);
-            error_log('PDF Builder: Template data decoded: ' . print_r($template_data, true));
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Template data decoded: ' . print_r($template_data, true)); }
 
             // Si description ou category ne sont pas dans template_data, essayer de les deviner
             $description = $template_data['description'] ?? '';
@@ -307,10 +307,10 @@ class PdfBuilderTemplatesAjax
                 )
             );
 
-            error_log('PDF Builder: Settings to return: ' . print_r($settings, true));
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Settings to return: ' . print_r($settings, true)); }
             wp_send_json_success(array('template' => $settings));
         } catch (Exception $e) {
-            error_log('PDF Builder: Exception in loadTemplateSettings: ' . $e->getMessage());
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Exception in loadTemplateSettings: ' . $e->getMessage()); }
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
     }
@@ -603,5 +603,6 @@ class PdfBuilderTemplatesAjax
 
 // Initialiser le handler AJAX
 new PdfBuilderTemplatesAjax();
+
 
 

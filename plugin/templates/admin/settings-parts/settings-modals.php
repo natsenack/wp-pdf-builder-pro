@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Canvas Settings Modals
  * Modal dialogs for canvas configuration
@@ -51,7 +51,7 @@ function get_canvas_modal_value($key, $default = '') {
     $option_key = 'pdf_builder_' . $key;
 
     $value = isset($settings[$option_key]) ? $settings[$option_key] : $default;
-    error_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')");
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')"); }
     return $value;
 }
 ?>
@@ -1015,6 +1015,7 @@ function closeUpgradeModal() {
 </script>
 
 <?php
+
 
 
 

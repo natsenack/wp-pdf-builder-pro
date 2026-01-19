@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Notification Manager
  * Système centralisé de gestion des notifications
@@ -112,7 +112,7 @@ class PDF_Builder_Notification_Manager {
                 '1.0.0-' . time(),
                 false
             );
-            error_log('PDF_Builder_Notification_Manager: script enqueued');
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF_Builder_Notification_Manager: script enqueued'); }
         }
 
         // Localiser le script avec les paramètres
@@ -359,5 +359,6 @@ function pdf_builder_notify_warning($message, $options = []) {
 function pdf_builder_notify_info($message, $options = []) {
     return pdf_builder_notifications()->info($message, $options);
 }
+
 
 

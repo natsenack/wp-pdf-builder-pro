@@ -97,7 +97,7 @@ class PDFGenerator
             $pdf_metadata_enabled = pdf_builder_get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
             $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
             // Utiliser Dompdf pour générer le PDF
-            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+            // Autoloader chargé centralement dans bootstrap.php
 
             if (class_exists('Dompdf\Dompdf')) {
                 // Créer les options Dompdf pour éviter l'erreur de dépréciation

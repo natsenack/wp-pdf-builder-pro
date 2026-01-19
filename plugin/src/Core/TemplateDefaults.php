@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder;
 
@@ -112,9 +112,9 @@ class TemplateDefaults {
             );
 
             if ($result === false) {
-                error_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error);
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error); }
             } else {
-                error_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $template_data['name']);
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $template_data['name']); }
             }
         }
     }
@@ -559,6 +559,7 @@ class TemplateDefaults {
         return null;
     }
 }
+
 
 
 

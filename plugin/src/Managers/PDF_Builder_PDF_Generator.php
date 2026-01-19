@@ -112,7 +112,7 @@ class PdfBuilderPdfGenerator
         $pdf_path = $pdf_dir . '/' . $filename;
 
         // Générer le PDF avec Dompdf
-        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+        // Autoloader chargé centralement dans bootstrap.php
 
         // Récupérer les paramètres PDF depuis les options
         $pdf_quality = pdf_builder_get_option('pdf_builder_pdf_quality', 'high');
@@ -439,7 +439,7 @@ class PdfBuilderPdfGenerator
     public function generatePdf($html_content, $filename = 'document.pdf', $context = [])
     {
         try {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+            // Autoloader chargé centralement dans bootstrap.php
 
             // Ajouter watermark pour utilisateurs gratuits
             if (!$this->isUserPremium()) {

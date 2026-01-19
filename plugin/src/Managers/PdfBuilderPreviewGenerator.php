@@ -98,14 +98,7 @@ class PdfBuilderPreviewGenerator
             spl_autoload_unregister(['PDF_Builder\Core\PdfBuilderAutoloader', 'autoload']);
         }
 
-        // Charger l'autoloader de Composer pour Dompdf
-        $composer_autoload = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
-        if (file_exists($composer_autoload)) {
-            require_once $composer_autoload;
-        } else {
-            throw new Exception('Autoloader de Composer introuvable. Vérifiez que les dépendances sont installées.');
-        }
-
+        // Autoloader de Composer chargé centralement dans bootstrap.php
         // Vérifier que Dompdf est disponible
         if (!class_exists('\Dompdf\Dompdf')) {
             throw new Exception('Impossible de charger Dompdf via Composer. Vérifiez que le package est installé.');

@@ -295,7 +295,7 @@ class PdfBuilderScreenshotRenderer
     private function generateWithDompdfFallback($html_file, $pdf_path)
     {
         try {
-            require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+            // Autoloader chargé centralement dans bootstrap.php
 
             // Récupérer les paramètres PDF depuis les options
             $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');

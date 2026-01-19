@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * PDF Builder Pro - Content Settings Tab
      * Canvas and design configuration settings
@@ -18,9 +18,9 @@
 
         if ($value === null) {
             $value = $default;
-            error_log("[PDF Builder] PAGE_LOAD - {$key}: OPTION_NOT_FOUND - using default '{$default}' - KEY: {$option_key}");
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] PAGE_LOAD - {$key}: OPTION_NOT_FOUND - using default '{$default}' - KEY: {$option_key}"); }
         } else {
-            error_log("[PDF Builder] PAGE_LOAD - {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key}");
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] PAGE_LOAD - {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key}"); }
         }
 
         return $value;
@@ -69,7 +69,7 @@
     foreach ($default_canvas_options as $option_name => $default_value) {
         if (get_option($option_name) === false) {
             add_option($option_name, $default_value);
-            error_log("[INIT CANVAS OPTIONS] Created option: $option_name = $default_value");
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[INIT CANVAS OPTIONS] Created option: $option_name = $default_value"); }
         }
     }
 ?>
@@ -85,7 +85,7 @@
 ?>
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
-                <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); ?>
+                <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); } ?>
                 <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                     <span>
                         🎨 Canvas
@@ -97,7 +97,7 @@
 
                 <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
-                <?php error_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields"); ?>
+                <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields"); } ?>
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
                 <!-- DEBUG: Hidden fields rendering started -->
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_width]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_width', '794')); ?>">
@@ -112,20 +112,20 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_grid_enabled]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_grid_enabled', '1')); ?>">
                     <?php
                     $grid_enabled_value = get_canvas_option_contenu('canvas_grid_enabled', '1');
-                    error_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_grid_enabled: " . $grid_enabled_value);
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_grid_enabled: " . $grid_enabled_value); }
                     echo "<!-- DEBUG: canvas_grid_enabled = $grid_enabled_value -->";
                     ?>
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_grid_size]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_grid_size', '20')); ?>">
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_guides_enabled]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_guides_enabled', '1')); ?>">
                     <?php
                     $guides_enabled_value = get_canvas_option_contenu('canvas_guides_enabled', '1');
-                    error_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_guides_enabled: " . $guides_enabled_value);
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_guides_enabled: " . $guides_enabled_value); }
                     echo "<!-- DEBUG: canvas_guides_enabled = $guides_enabled_value -->";
                     ?>
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_snap_to_grid]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_snap_to_grid', '1')); ?>">
                     <?php
                     $snap_enabled_value = get_canvas_option_contenu('canvas_snap_to_grid', '1');
-                    error_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_snap_to_grid: " . $snap_enabled_value);
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELD_RENDER - canvas_snap_to_grid: " . $snap_enabled_value); }
                     echo "<!-- DEBUG: canvas_snap_to_grid = $snap_enabled_value -->";
                     ?>
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_zoom_min]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>">
@@ -155,7 +155,7 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_landscape]" value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_canvas_allow_landscape', '1')); ?>">
 
                     <!-- DEBUG: Hidden fields rendering completed -->
-                    <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
+                    <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); } ?>
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
@@ -780,6 +780,7 @@
             </script>
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
+
 
 
 

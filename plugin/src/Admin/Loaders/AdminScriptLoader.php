@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Admin Script Loader
@@ -33,7 +33,7 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
-        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
@@ -45,7 +45,7 @@ class AdminScriptLoader
             add_action('shutdown', [$this, 'endOutputBuffering'], 999);
         }
 
-        // error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook); }
 
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
@@ -54,7 +54,7 @@ class AdminScriptLoader
         // Simplifier la condition - charger pour toutes les pages admin contenant pdf-builder
         $current_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
         if (strpos($current_url, 'pdf-builder') !== false) {
-            error_log('[WP AdminScriptLoader] Loading settings scripts - URL contains pdf-builder: ' . $current_url);
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading settings scripts - URL contains pdf-builder: ' . $current_url); }
 
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';
@@ -84,10 +84,10 @@ class AdminScriptLoader
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
-                error_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-tabs script - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js');
-                error_log('[WP AdminScriptLoader] Current REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-tabs script - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js'); }
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
             } else {
-                error_log('[WP AdminScriptLoader] pdf-builder-settings-tabs already enqueued');
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] pdf-builder-settings-tabs already enqueued'); }
             }
 
             // Charger settings-main.min.js pour les fonctions de licence
@@ -99,7 +99,7 @@ class AdminScriptLoader
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
-                error_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-main script');
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-settings-main script'); }
             }
 
             // Charger le système de notifications pour les pages de paramètres - seulement si le fichier existe
@@ -208,9 +208,9 @@ class AdminScriptLoader
         if (file_exists($developer_tools_js)) {
             wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
         }
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js');
-        // error_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
-        // error_log('[WP AdminScriptLoader] Current hook: ' . $hook);
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js'); }
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set')); }
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current hook: ' . $hook); }
 
         // Localize pdfBuilderAjax for API Preview scripts
         wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
@@ -229,15 +229,15 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-            error_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']);
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']); }
             $this->loadReactEditorScripts();
         } else {
-            error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook); }
         }
 
         // Charger aussi les scripts React si on est sur une page qui contient "react-editor" dans l'URL
         if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-react-editor') !== false) {
-            error_log('[WP AdminScriptLoader] Loading React editor scripts from REQUEST_URI: ' . $_SERVER['REQUEST_URI']);
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts from REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
             $this->loadReactEditorScripts();
         }
     }
@@ -247,30 +247,30 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts()
     {
-        error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown'));
-        error_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
-        error_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown')); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
 
         $cache_bust = microtime(true) . '-' . rand(1000, 9999);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
-        error_log('[WP AdminScriptLoader] Cache bust: ' . $cache_bust);
-        error_log('[WP AdminScriptLoader] Version param: ' . $version_param);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Cache bust: ' . $cache_bust); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Version param: ' . $version_param); }
 
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/ajax-throttle.min.js';
         wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url . ' with cache_bust: ' . $cache_bust);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url . ' with cache_bust: ' . $cache_bust); }
 
         // Notifications system
         $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js';
         wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url . ' with cache_bust: ' . $cache_bust);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url . ' with cache_bust: ' . $cache_bust); }
 
         // Notifications CSS
         $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css';
         wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url . ' with cache_bust: ' . $cache_bust);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url . ' with cache_bust: ' . $cache_bust); }
 
         // Localize notifications data
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
@@ -306,7 +306,7 @@ class AdminScriptLoader
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url); }
 
         // FORCE COMPLETE RELOAD - Use ULTRA NUCLEAR aggressive version parameters to bypass ALL caching
         $nuclear_suffix = '-ULTRA-NUCLEAR-' . microtime(true) . '-' . time() . '-' . uniqid('ULTRA-NUKE', true) . '-FORCE-RELOAD-' . rand(10000000, 99999999);
@@ -320,13 +320,13 @@ class AdminScriptLoader
         $react_vendors_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js' . $random_param;
         wp_enqueue_script('pdf-builder-react-vendors', $react_vendors_url, ['pdf-builder-wrap'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-vendors', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendors');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendors'); }
 
         // Runtime script
         $runtime_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/runtime.min.js' . $random_param;
         wp_enqueue_script('pdf-builder-runtime', $runtime_url, ['pdf-builder-react-vendors'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-runtime', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-runtime');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-runtime'); }
 
         // CSS pour l'éditeur React
         $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css';
@@ -336,7 +336,7 @@ class AdminScriptLoader
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
         wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main'); }
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
@@ -405,12 +405,12 @@ class AdminScriptLoader
             'window.availableOrientations = ' . wp_json_encode($available_orientations) . ';'
         );
 
-        // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true)); }
 
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
-            // error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
+            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id); }
 
             // Vérifier que template_processor existe
             if (isset($this->admin->template_processor) && $this->admin->template_processor) {
@@ -419,23 +419,23 @@ class AdminScriptLoader
                     $localize_data['initialElements'] = $existing_template_data['elements'];
                     $localize_data['existingTemplate'] = $existing_template_data;
                     $localize_data['hasExistingData'] = true;
-                    // error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
-                    // error_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
-                    // error_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data));
+                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id); }
+                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND')); }
+                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data)); }
                 } else {
-                    // error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
+                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true)); }
                 }
             } else {
-                // error_log('[WP AdminScriptLoader] Template processor not available, skipping template data loading');
+                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template processor not available, skipping template data loading'); }
             }
         }
 
         wp_localize_script('pdf-builder-react-main', 'pdfBuilderData', $localize_data);
-        // error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react-main');
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react-main'); }
 
         // Also set window.pdfBuilderData directly before React initializes
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
-        // error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData'); }
 
         // Emergency reload script - DISABLED - Don't force reload
         // The React wrapper handles its own initialization without hard reload requirements
@@ -463,13 +463,13 @@ class AdminScriptLoader
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.min.js';
         wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-main'], $cache_bust, true);
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url); }
 
         // React initialization script - initializes PDFBuilderReact component
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
         wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer'); }
 
         // Scripts de l'API Preview
         $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.min.js';
@@ -499,7 +499,7 @@ class AdminScriptLoader
         }, 100);
         ";
         wp_add_inline_script('pdf-builder-react-main', $init_script, 'after');
-        // error_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react-main');
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react-main'); }
 
         // Script de diagnostic supplémentaire qui s'exécute plus tôt
         $diagnostic_script = "
@@ -523,7 +523,7 @@ class AdminScriptLoader
         });
         ";
         wp_add_inline_script('jquery', $diagnostic_script, 'after');
-        // error_log('[WP AdminScriptLoader] Diagnostic script added to jquery');
+        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Diagnostic script added to jquery'); }
     }
 
     /**
@@ -533,13 +533,13 @@ class AdminScriptLoader
     public function fixElementorTemplates($tag, $handle, $src)
     {
         // Debug: Log all script tags to see what's being processed
-        error_log('[PDF Builder] Processing script tag for handle: ' . $handle . ', src: ' . ($src ?: 'inline'));
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Processing script tag for handle: ' . $handle . ', src: ' . ($src ?: 'inline')); }
 
         // Vérifier si c'est un script inline (pas de src)
         if (empty($src)) {
             // Check if the script content starts with HTML (indicating it's a template)
             if (preg_match('/^\s*<[^>]+>/', $tag)) {
-                error_log('[PDF Builder] Found HTML template script, changing type to text/template for handle: ' . $handle);
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Found HTML template script, changing type to text/template for handle: ' . $handle); }
                 // Change type to text/template instead of removing
                 $tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $tag);
                 return $tag;
@@ -553,7 +553,7 @@ class AdminScriptLoader
                 strpos($tag, 'elementor-finder__results__category__title') !== false ||
                 strpos($tag, 'elementor-finder__results__item__link') !== false) {
 
-                error_log('[PDF Builder] Found Elementor template script, changing type to text/template for handle: ' . $handle);
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Found Elementor template script, changing type to text/template for handle: ' . $handle); }
 
                 // Change type to text/template instead of removing
                 $tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $tag);
@@ -569,7 +569,7 @@ class AdminScriptLoader
      */
     public function startOutputBuffering()
     {
-        error_log('[PDF Builder] Starting output buffering for Elementor script filtering');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Starting output buffering for Elementor script filtering'); }
         ob_start();
     }
 
@@ -579,7 +579,7 @@ class AdminScriptLoader
     public function endOutputBuffering()
     {
         $content = ob_get_clean();
-        error_log('[PDF Builder] Ending output buffering, content length: ' . strlen($content));
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Ending output buffering, content length: ' . strlen($content)); }
         $content = $this->filterElementorInlineScripts($content);
         echo $content;
     }
@@ -589,7 +589,7 @@ class AdminScriptLoader
      */
     private function filterElementorInlineScripts($content)
     {
-        error_log('[PDF Builder] Starting Elementor script filtering');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Starting Elementor script filtering'); }
         
         // Regex pour trouver les scripts inline contenant du HTML au début
         $pattern = '/<script[^>]*>(?:\s*<[^>]+>.*?)<\/script>/is';
@@ -604,7 +604,7 @@ class AdminScriptLoader
                 // Vérifier si le contenu commence par du HTML (après espaces)
                 if (preg_match('/^\s*<[^>]+>/', $inner_content)) {
                     // C'est un template HTML, changer le type au lieu de supprimer
-                    error_log('[PDF Builder] Changing Elementor HTML template script type to text/template: ' . substr($inner_content, 0, 100) . '...');
+                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Changing Elementor HTML template script type to text/template: ' . substr($inner_content, 0, 100) . '...'); }
                     
                     // Remplacer type="text/javascript" par type="text/template"
                     $modified_tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $script_tag);
@@ -616,9 +616,10 @@ class AdminScriptLoader
             return $script_tag;
         }, $content);
         
-        error_log('[PDF Builder] Finished Elementor script filtering');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Finished Elementor script filtering'); }
         return $content;
     }
 }
+
 
 

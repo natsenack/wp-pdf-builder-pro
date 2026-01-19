@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * Paramètres Généraux - PDF Builder Pro (Version compressée)
      * Onglet principal des paramètres généraux avec informations entreprise
@@ -17,7 +17,7 @@
     $company_rcs = pdf_builder_get_option('pdf_builder_company_rcs', '');
     $company_capital = pdf_builder_get_option('pdf_builder_company_capital', '');
     
-    error_log('[PDF Builder] settings-general.php - Individual fields loaded: phone=' . $company_phone_manual . ', siret=' . $company_siret);
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-general.php - Individual fields loaded: phone=' . $company_phone_manual . ', siret=' . $company_siret); }
 
     // Récupération des informations WooCommerce
     $store_name = get_option('woocommerce_store_name', get_bloginfo('name'));
@@ -31,7 +31,7 @@
     $address_parts = array_filter([$store_address, $store_city, $store_postcode, $store_country]);
     $full_address = implode(', ', $address_parts);
 
-    error_log('[PDF Builder] settings-general.php loaded - settings count: ' . count($settings) . ', store_name: ' . $store_name);
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-general.php loaded - settings count: ' . count($settings) . ', store_name: ' . $store_name); }
 ?>
 
 <section id="general" class="settings-section general-settings" role="tabpanel" aria-labelledby="tab-general">
@@ -140,5 +140,6 @@
     .form-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f0f0f1; text-align: center; }
     @media (max-width: 782px) { .form-grid-compact { grid-template-columns: 1fr; } .card-header, .card-content { padding: 1rem; } }
 </style>
+
 
 

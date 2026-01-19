@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Gestionnaire centralisé des Nonces
@@ -177,7 +177,7 @@ class NonceManager
     private static function logError(string $message): void
     {
         $log_message = '[PDF Builder] [NonceManager] [ERROR] ' . $message;
-        error_log($log_message);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log($log_message); }
     }
 
     /**
@@ -189,7 +189,7 @@ class NonceManager
     public static function logInfo(string $message): void
     {
         $log_message = '[PDF Builder] [NonceManager] [INFO] ' . $message;
-        error_log($log_message);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log($log_message); }
     }
 
     /**
@@ -207,4 +207,5 @@ class NonceManager
         ];
     }
 }
+
 

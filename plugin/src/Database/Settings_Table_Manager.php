@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Database Table Management
  * Gère la table wp_pdf_builder_settings personnalisée
@@ -37,7 +37,7 @@ class Settings_Table_Manager {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
         
-        error_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès'); }
         return true;
     }
     
@@ -140,8 +140,9 @@ class Settings_Table_Manager {
         
         $result = $wpdb->query("TRUNCATE TABLE $table_name");
         
-        error_log('[PDF Builder] Table wp_pdf_builder_settings vidée');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings vidée'); }
         
         return $result !== false;
     }
 }
+

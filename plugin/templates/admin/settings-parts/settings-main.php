@@ -1,6 +1,6 @@
-<?php
+﻿<?php
     // Log PHP pour vérifier que le fichier s'exécute
-    error_log('[PDF Builder] settings-main.php LOADED at line ' . __LINE__);
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-main.php LOADED at line ' . __LINE__); }
     echo '<!-- PHP DEBUG: settings-main.php loaded at ' . current_time('H:i:s') . ' -->';
 ?>
 
@@ -29,9 +29,9 @@
     $current_user = wp_get_current_user();
 
     // LOG pour déboguer la soumission du formulaire
-    error_log('[PDF Builder] === SETTINGS PAGE LOADED ===');
-    error_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-    error_log('[PDF Builder] Current tab: ' . $current_tab);
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SETTINGS PAGE LOADED ==='); }
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']); }
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Current tab: ' . $current_tab); }
     
     // Gestion des onglets via URL
     $current_tab = $_GET['tab'] ?? 'general';
@@ -68,9 +68,9 @@
 
     <form method="post" action="options.php">
         <?php 
-        error_log('[PDF Builder] About to call settings_fields for pdf_builder_settings');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] About to call settings_fields for pdf_builder_settings'); }
         settings_fields('pdf_builder_settings'); 
-        error_log('[PDF Builder] settings_fields called');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings_fields called'); }
         ?>
 
         <!-- Navigation par onglets moderne -->
@@ -176,6 +176,7 @@
     <div id="pdf-builder-tab-content" style="display: none;"></div>
 
 </div> <!-- Fin du .wrap -->
+
 
 
 
