@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace PDF_Builder\Core;
 
 /**
@@ -123,5 +123,3 @@ function pdf_builder_sanitize_settings($settings) {
     $validator = PDF_Builder_Security_Validator::get_instance();
     return $validator->sanitize_settings($settings);
 }
-
-
