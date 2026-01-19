@@ -122,18 +122,6 @@ class PdfBuilderPdfGenerator
         $pdf_metadata_enabled = pdf_builder_get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
         $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
-        // Récupérer les paramètres canvas depuis les modals
-        $canvas_dpi_string = pdf_builder_get_option('pdf_builder_canvas_canvas_dpi', '96');
-        // Si c'est une chaîne avec des virgules, prendre la première valeur
-        if (strpos($canvas_dpi_string, ',') !== false) {
-            $canvas_dpis = explode(',', $canvas_dpi_string);
-            $canvas_dpi = intval(trim($canvas_dpis[0]));
-        } else {
-            $canvas_dpi = intval($canvas_dpi_string);
-        }
-        // S'assurer que le DPI est dans une plage valide
-        $canvas_dpi = max(72, min(600, $canvas_dpi));
-
         // Créer les options Dompdf pour éviter l'erreur de dépréciation (version corrigée)
         $options = new Options();
         $options->set('isRemoteEnabled', true);
@@ -142,19 +130,19 @@ class PdfBuilderPdfGenerator
 
         $dompdf = new Dompdf($options);
 
-        // Appliquer les paramètres de qualité - utiliser le DPI canvas personnalisé
+        // Appliquer les paramètres de qualité
         switch ($pdf_quality) {
             case 'low':
-                $options->set('dpi', max(72, $canvas_dpi - 24)); // 24 DPI de moins que la valeur canvas
+                $options->set('dpi', 72);
                 $options->set('defaultMediaType', 'screen');
                 break;
             case 'medium':
-                $options->set('dpi', $canvas_dpi); // Utiliser directement la valeur canvas
+                $options->set('dpi', 96);
                 $options->set('defaultMediaType', 'screen');
                 break;
             case 'high':
             default:
-                $options->set('dpi', min(600, $canvas_dpi + 54)); // 54 DPI de plus que la valeur canvas, max 600
+                $options->set('dpi', 150);
                 $options->set('defaultMediaType', 'print');
                 break;
         }
@@ -467,18 +455,6 @@ class PdfBuilderPdfGenerator
             $pdf_metadata_enabled = pdf_builder_get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
             $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
-            // Récupérer les paramètres canvas depuis les modals
-            $canvas_dpi_string = pdf_builder_get_option('pdf_builder_canvas_canvas_dpi', '96');
-            // Si c'est une chaîne avec des virgules, prendre la première valeur
-            if (strpos($canvas_dpi_string, ',') !== false) {
-                $canvas_dpis = explode(',', $canvas_dpi_string);
-                $canvas_dpi = intval(trim($canvas_dpis[0]));
-            } else {
-                $canvas_dpi = intval($canvas_dpi_string);
-            }
-            // S'assurer que le DPI est dans une plage valide
-            $canvas_dpi = max(72, min(600, $canvas_dpi));
-
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
             $options = new Options();
             $options->set('isRemoteEnabled', true);
@@ -487,19 +463,19 @@ class PdfBuilderPdfGenerator
 
             $dompdf = new Dompdf($options);
 
-            // Appliquer les paramètres de qualité - utiliser le DPI canvas personnalisé
+            // Appliquer les paramètres de qualité
             switch ($pdf_quality) {
                 case 'low':
-                    $options->set('dpi', max(72, $canvas_dpi - 24)); // 24 DPI de moins que la valeur canvas
+                    $options->set('dpi', 72);
                     $options->set('defaultMediaType', 'screen');
                     break;
                 case 'medium':
-                    $options->set('dpi', $canvas_dpi); // Utiliser directement la valeur canvas
+                    $options->set('dpi', 96);
                     $options->set('defaultMediaType', 'screen');
                     break;
                 case 'high':
                 default:
-                    $options->set('dpi', min(600, $canvas_dpi + 54)); // 54 DPI de plus que la valeur canvas, max 600
+                    $options->set('dpi', 150);
                     $options->set('defaultMediaType', 'print');
                     break;
             }
