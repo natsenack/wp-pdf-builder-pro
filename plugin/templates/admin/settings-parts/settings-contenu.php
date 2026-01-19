@@ -758,7 +758,7 @@
                                 e.preventDefault();
                                 var category = applyBtn.getAttribute('data-category');
                                 if (category) {
-                                    applyModalSettings(category);
+                                    applyModalSettings(applyBtn);
                                 }
                                 return;
                             }
