@@ -2263,7 +2263,7 @@ function pdf_builder_check_advanced_systems_status() {
         'config_manager' => class_exists('PDF_Builder_Config_Manager') && PDF_Builder_Config_Manager::get_instance() !== null,
         'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
         'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
-        'update_manager' => class_exists('PDF_Builder_Update_Manager') && PDF_Builder_Update_Manager::get_instance() !== null,
+        'update_manager' => false, // Désactivé - système réservé pour mise à jour distant
         'health_monitor' => class_exists('PDF_Builder_Health_Monitor') && PDF_Builder_Health_Monitor::get_instance() !== null,
         'api_manager' => class_exists('PDF_Builder_API_Manager') && PDF_Builder_API_Manager::get_instance() !== null,
         'user_manager' => class_exists('PDF_Builder_User_Manager') && PDF_Builder_User_Manager::get_instance() !== null,

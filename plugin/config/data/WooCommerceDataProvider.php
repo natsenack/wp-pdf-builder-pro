@@ -563,7 +563,18 @@ class WooCommerceDataProvider implements DataProviderInterface
      */
     private function getCurrencySymbol(): string
     {
-        return \get_woocommerce_currency_symbol($this->order->getCurrency());
+        // Récupère le symbole de devise depuis les options WordPress
+        $currency = \get_option('woocommerce_currency', 'USD');
+        $symbols = [
+            'USD' => '$',
+            'EUR' => '€',
+            'GBP' => '£',
+            'JPY' => '¥',
+            'CAD' => 'C$',
+            'AUD' => 'A$',
+        ];
+
+        return $symbols[$currency] ?? '$';
     }
 
     /**

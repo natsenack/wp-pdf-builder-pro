@@ -385,12 +385,7 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/config-manager.php';
     }
 
-    // Initialiser le système de migration après le chargement des constantes
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
-        // Initialiser le système de migration maintenant que les constantes sont chargées
-        PDF_Builder_Migration_System::getInstance();
-    }
+
 
     // HOTFIX: Charger le correctif pour les notifications avant PDF_Builder_Core
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'hotfix-notifications.php')) {

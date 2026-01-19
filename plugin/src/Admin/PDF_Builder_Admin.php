@@ -864,9 +864,6 @@ class PdfBuilderAdmin
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
 
-        // 🔧 MIGRATION BASE DE DONNÉES - Gérée automatiquement par PDF_Builder_Migration_System
-        // add_action('admin_init', [$this, 'run_database_migrations']);
-
         // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
         // Désactiver temporairement la mise à jour automatique des noms
         // add_action('admin_init', [$this, 'update_template_names']);
