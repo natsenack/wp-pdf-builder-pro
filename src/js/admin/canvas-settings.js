@@ -2,6 +2,12 @@
  * PDF Builder Canvas Settings JavaScript - Nouveau système de sauvegarde
  * Version: 2.0 - Refonte complète du système de sauvegarde des modals
  */
+
+// LOG ULTRA-SIMPLE POUR TESTER LE CHARGEMENT
+console.log('🔥🔥🔥 CANVAS-SETTINGS.JS FILE LOADED SUCCESSFULLY 🔥🔥🔥');
+console.log('File path: canvas-settings.js');
+console.log('Timestamp:', new Date().toISOString());
+
 console.log('🚀🚀🚀 CANVAS MODAL SCRIPT LOADING - START 🚀🚀🚀');
 console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file execution begins');
 
