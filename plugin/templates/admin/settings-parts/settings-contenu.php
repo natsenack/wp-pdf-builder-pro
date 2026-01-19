@@ -446,6 +446,8 @@
 
                 // Initialiser les paramètres canvas pour la compatibilité
                 window.pdfBuilderCanvasSettings = {
+                    ajax_url: '<?php echo esc_js(admin_url('admin-ajax.php')); ?>',
+                    nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_canvas_settings')); ?>',
                     width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
                     height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123')); ?>,
                     dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
