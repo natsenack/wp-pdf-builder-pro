@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * PDF Builder Pro - Gestionnaire centralisé des Nonces

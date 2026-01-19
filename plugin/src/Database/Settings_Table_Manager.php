@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Database Table Management
  * Gère la table wp_pdf_builder_settings personnalisée
