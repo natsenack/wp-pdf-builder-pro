@@ -134,6 +134,12 @@ $canvas_settings_js = array(
     'memory_limit_php' => get_canvas_option_editor('canvas_memory_limit_php', '128')
 );
 
+// Debug: Afficher les paramètres dans les logs PHP
+error_log('[PDF BUILDER EDITOR] Canvas settings to be localized: ' . print_r($canvas_settings_js, true));
+
 wp_localize_script('pdf-builder-react-init', 'pdfBuilderCanvasSettings', $canvas_settings_js);
+
+// Debug: Vérifier que la localisation a été faite
+error_log('[PDF BUILDER EDITOR] wp_localize_script called for pdf-builder-react-init with handle check');
 ?>
 

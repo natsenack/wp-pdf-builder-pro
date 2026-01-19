@@ -75,6 +75,8 @@
     // Fonction pour appliquer les paramètres de bordure du canvas
     function applyCanvasBorderSettings() {
         console.log('[PDF Builder] 🔍 Début de applyCanvasBorderSettings');
+        console.log('[PDF Builder] 🔍 window.pdfBuilderCanvasSettings disponible:', typeof window.pdfBuilderCanvasSettings !== 'undefined');
+        console.log('[PDF Builder] 🔍 Contenu de window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
 
         try {
             // Vérifier si les paramètres sont disponibles
