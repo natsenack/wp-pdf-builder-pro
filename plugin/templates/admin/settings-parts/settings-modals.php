@@ -571,23 +571,23 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🎮</span> FPS cible</label>
                     <input type="number" id="modal_canvas_fps_target" name="pdf_builder_canvas_fps_target"
-                           value="<?php echo esc_attr(get_canvas_modal_value('fps_target', $canvas_defaults['fps_target'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_fps_target', $canvas_defaults['fps_target'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🧠</span> Limite mémoire JS (MB)</label>
                     <input type="number" id="modal_canvas_memory_limit_js" name="pdf_builder_canvas_memory_limit_js"
-                           value="<?php echo esc_attr(get_canvas_modal_value('memory_limit_js', $canvas_defaults['memory_limit_js'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_memory_limit_js', $canvas_defaults['memory_limit_js'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">⏱️</span> Timeout réponse (ms)</label>
                     <input type="number" id="modal_canvas_response_timeout" name="pdf_builder_canvas_response_timeout"
-                           value="<?php echo esc_attr(get_canvas_modal_value('response_timeout', $canvas_defaults['response_timeout'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_response_timeout', $canvas_defaults['response_timeout'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🐛</span> Debug activé</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('debug_enabled', $canvas_defaults['debug_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_debug_enabled', $canvas_defaults['debug_enabled']), '1'); ?>>
                         <label for="modal_canvas_debug_enabled"></label>
                     </div>
                 </div>
@@ -595,7 +595,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">📊</span> Monitoring performance</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring"
-                               value="1" <?php checked(get_canvas_modal_value('performance_monitoring', $canvas_defaults['performance_monitoring']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_performance_monitoring', $canvas_defaults['performance_monitoring']), '1'); ?>>
                         <label for="modal_canvas_performance_monitoring"></label>
                     </div>
                 </div>
@@ -603,7 +603,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">🚨</span> Rapport d'erreurs</label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_error_reporting" name="pdf_builder_canvas_error_reporting"
-                               value="1" <?php checked(get_canvas_modal_value('error_reporting', $canvas_defaults['error_reporting']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_error_reporting', $canvas_defaults['error_reporting']), '1'); ?>>
                         <label for="modal_canvas_error_reporting"></label>
                     </div>
                 </div>
