@@ -333,6 +333,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
 
                     pdf_builder_update_option($setting_key, $value);
+                    
+                    // Also update the settings array to keep consistency with the main form
+                    $settings = pdf_builder_get_option('pdf_builder_settings', array());
+                    $settings[$setting_key] = $value;
+                    pdf_builder_update_option('pdf_builder_settings', $settings);
+                    
                     $saved_options[$setting_key] = $value;
                     $saved_count++;
                     
