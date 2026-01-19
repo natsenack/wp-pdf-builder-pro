@@ -56,6 +56,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL AFFICHAGE -->
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
+    <script>console.log('📐 MODAL AFFICHAGE HTML CHARGÉE');</script>
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
@@ -321,14 +322,15 @@ function get_canvas_modal_value($key, $default = '') {
             </div>
         </div>
         <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">✅ Appliquer</button>
+            <button type="button" class="button canvas-modal-cancel" onclick="console.log('🔴 MODAL CANCEL CLICKED - AFFICHAGE'); console.log('Timestamp:', new Date().toISOString());">❌ Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage" onclick="console.log('🟢 MODAL APPLY CLICKED - AFFICHAGE'); console.log('Category:', 'affichage'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
         </div>
     </div>
 </div>
 
 <!-- MODAL NAVIGATION -->
 <div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" style="display: none;">
+    <script>console.log('🧭 MODAL NAVIGATION HTML CHARGÉE');</script>
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">🧭</span> Paramètres de Navigation</h3>
@@ -424,13 +426,14 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation" onclick="console.log('🟢 MODAL APPLY CLICKED - NAVIGATION'); console.log('Category:', 'navigation'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
         </div>
     </div>
 </div>
 
 <!-- MODAL COMPORTEMENT -->
 <div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" style="display: none;">
+    <script>console.log('🎯 MODAL COMPORTEMENT HTML CHARGÉE');</script>
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">🎯</span> Paramètres de Comportement</h3>
@@ -536,7 +539,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement" onclick="console.log('🟢 MODAL APPLY CLICKED - COMPORTEMENT'); console.log('Category:', 'comportement'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
         </div>
     </div>
 </div>
@@ -593,7 +596,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme" onclick="console.log('🟢 MODAL APPLY CLICKED - SYSTEME'); console.log('Category:', 'systeme'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
         </div>
     </div>
 </div>

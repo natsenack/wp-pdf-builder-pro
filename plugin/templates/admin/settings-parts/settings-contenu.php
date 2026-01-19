@@ -614,12 +614,35 @@
                         });
                     }
 
-                    function applyModalSettings(category) {
+                    function applyModalSettings(buttonElement) {
+                        console.log('🔄 APPLY MODAL SETTINGS - START');
+                        console.log('Button element:', buttonElement);
+                        
+                        var category = buttonElement.getAttribute('data-category');
+                        console.log('Category from data-category:', category);
+                        
+                        if (!category) {
+                            console.error('❌ No category found on button');
+                            return;
+                        }
+
                         var modalId = modalConfig[category];
-                        if (!modalId) return;
+                        console.log('Modal ID from config:', modalId);
+                        
+                        if (!modalId) {
+                            console.error('❌ No modal ID found for category:', category);
+                            return;
+                        }
 
                         var modal = document.getElementById(modalId);
-                        if (!modal) return;
+                        console.log('Modal element found:', modal);
+                        
+                        if (!modal) {
+                            console.error('❌ Modal element not found:', modalId);
+                            return;
+                        }
+
+                        console.log('✅ Modal found, collecting form data...');
 
                         // Collecter les données à sauvegarder
                         var formData = new FormData();
@@ -629,41 +652,59 @@
 
                         // Collecter TOUS les champs de formulaire dans la modale
                         var allInputs = modal.querySelectorAll('input, select, textarea');
+                        console.log('Found inputs in modal:', allInputs.length);
+                        
                         allInputs.forEach(function(input) {
                             var name = input.name;
                             if (name) {
                                 if (input.type === 'checkbox') {
                                     formData.append(name, input.checked ? '1' : '0');
+                                    console.log('Checkbox:', name, '=', input.checked ? '1' : '0');
                                 } else if (input.type === 'radio') {
                                     if (input.checked) {
                                         formData.append(name, input.value);
+                                        console.log('Radio:', name, '=', input.value);
                                     }
                                 } else if (input.type === 'file') {
                                     // Ne pas traiter les fichiers pour le moment
                                 } else {
                                     formData.append(name, input.value);
+                                    console.log('Input:', name, '=', input.value);
                                 }
                             }
                         });
 
+                        console.log('📡 Sending AJAX request to:', ajaxurl);
+                        
+                        // Vérifier que ajaxurl est défini
+                        if (typeof ajaxurl === 'undefined') {
+                            console.error('❌ ajaxurl is not defined!');
+                            showNotification('Erreur: ajaxurl non défini', 'error');
+                            return;
+                        }
+                        
                         // Sauvegarder via AJAX
                         fetch(ajaxurl, {
                             method: 'POST',
                             body: formData
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            console.log('📡 AJAX Response status:', response.status);
+                            return response.json();
+                        })
                         .then(data => {
+                            console.log('📡 AJAX Response data:', data);
                             if (data.success) {
-                                
+                                console.log('✅ Settings saved successfully');
                                 showNotification('Paramètres sauvegardés avec succès', 'success');
                             } else {
-                                
-                                showNotification('Erreur lors de la sauvegarde', 'error');
+                                console.error('❌ Save failed:', data);
+                                showNotification('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'), 'error');
                             }
                         })
                         .catch(error => {
-                            
-                            showNotification('Erreur de connexion', 'error');
+                            console.error('❌ AJAX Error:', error);
+                            showNotification('Erreur de connexion: ' + error.message, 'error');
                         });
 
                         // Mettre à jour les hidden fields et fermer la modal (logique existante)
