@@ -615,11 +615,18 @@
                     }
 
                     function applyModalSettings(category) {
+                        console.log('applyModalSettings called with category:', category);
                         var modalId = modalConfig[category];
-                        if (!modalId) return;
+                        if (!modalId) {
+                            console.error('No modalId found for category:', category);
+                            return;
+                        }
 
                         var modal = document.getElementById(modalId);
-                        if (!modal) return;
+                        if (!modal) {
+                            console.error('Modal not found:', modalId);
+                            return;
+                        }
 
                         // Collecter les données à sauvegarder
                         var formData = new FormData();
@@ -629,40 +636,49 @@
 
                         // Collecter TOUS les champs de formulaire dans la modale
                         var allInputs = modal.querySelectorAll('input, select, textarea');
+                        console.log('Found inputs in modal:', allInputs.length);
                         allInputs.forEach(function(input) {
                             var name = input.name;
                             if (name) {
                                 if (input.type === 'checkbox') {
                                     formData.append(name, input.checked ? '1' : '0');
+                                    console.log('Checkbox:', name, '=', input.checked ? '1' : '0');
                                 } else if (input.type === 'radio') {
                                     if (input.checked) {
                                         formData.append(name, input.value);
+                                        console.log('Radio:', name, '=', input.value);
                                     }
                                 } else if (input.type === 'file') {
                                     // Ne pas traiter les fichiers pour le moment
                                 } else {
                                     formData.append(name, input.value);
+                                    console.log('Input:', name, '=', input.value);
                                 }
                             }
                         });
 
+                        console.log('Sending AJAX request...');
                         // Sauvegarder via AJAX
                         fetch(ajaxurl, {
                             method: 'POST',
                             body: formData
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            console.log('AJAX response received:', response);
+                            return response.json();
+                        })
                         .then(data => {
+                            console.log('AJAX data:', data);
                             if (data.success) {
-                                
+                                console.log('Success: Parameters saved');
                                 showNotification('Paramètres sauvegardés avec succès', 'success');
                             } else {
-                                
+                                console.error('Error saving:', data.message);
                                 showNotification('Erreur lors de la sauvegarde', 'error');
                             }
                         })
                         .catch(error => {
-                            
+                            console.error('AJAX error:', error);
                             showNotification('Erreur de connexion', 'error');
                         });
 
