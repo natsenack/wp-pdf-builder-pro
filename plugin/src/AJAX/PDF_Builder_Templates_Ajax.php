@@ -51,7 +51,7 @@ class PdfBuilderTemplatesAjax
             }
 
             // Chemin vers le dossier des templates prédéfinis
-            $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/predefined/';
+            $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/predefined/';
             $template_file = $predefined_dir . $template_slug . '.json';
             if (!file_exists($template_file)) {
                 wp_send_json_error('Template prédéfini non trouvé');
@@ -100,7 +100,7 @@ class PdfBuilderTemplatesAjax
             }
 
             // Charger d'abord le template prédéfini
-            $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/predefined/';
+            $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/predefined/';
             $template_file = $predefined_dir . $template_slug . '.json';
             if (!file_exists($template_file)) {
                 wp_send_json_error('Template prédéfini non trouvé');
@@ -163,7 +163,7 @@ class PdfBuilderTemplatesAjax
             }
 
             // Charger le modèle prédéfini depuis le fichier
-            $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/predefined/';
+            $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/predefined/';
             $template_file = $predefined_dir . $template_slug . '.json';
             if (!file_exists($template_file)) {
                 wp_send_json_error('Modèle prédéfini introuvable');
