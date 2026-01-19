@@ -2061,8 +2061,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
             pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
             pdf_builder_update_option('pdf_builder_license_status', 'test'); // Mettre le statut à "test" quand une clé de test est générée
-            // Marquer que l'utilisateur a été premium
-            pdf_builder_update_option('pdf_builder_has_been_premium', true);
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Test license key generated: ' . $test_key); }
 

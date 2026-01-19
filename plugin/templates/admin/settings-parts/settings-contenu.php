@@ -456,12 +456,6 @@
                         <?php
                         // Vérifier si l'utilisateur est premium pour les paramètres de style avancés
                         $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
-
-                        // Debug temporaire
-                        if (class_exists('PDF_Builder_Logger')) {
-                            \PDF_Builder_Logger::get_instance()->debug_log('[CANVAS SETTINGS] is_premium_user result: ' . ($is_premium ? 'TRUE' : 'FALSE'));
-                        }
-
                         if ($is_premium) {
                             // Utilisateur premium : utiliser les paramètres configurés
                             echo 'borderColor: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')) . ',' . "\n";

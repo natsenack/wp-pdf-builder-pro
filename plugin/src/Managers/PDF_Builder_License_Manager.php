@@ -63,62 +63,31 @@ class PDF_Builder_License_Manager
 
     /**
      * Vérifier si l'utilisateur a une licence premium active
-     * Inclut uniquement les licences réelles actives et les clés de test valides
+     * Inclut les licences réelles ET les clés de test
      */
     public function isPremium()
     {
-        // Debug temporaire
-        if (class_exists('PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] Checking premium status...');
-            \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] license_status: ' . $this->license_status);
-        }
-
-        // Vérifier d'abord la licence réelle active
+        // Vérifier d'abord la licence réelle
         if ($this->license_status === 'active') {
-            if (class_exists('PDF_Builder_Logger')) {
-                \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] Real license is active - PREMIUM: TRUE');
-            }
             return true;
         }
 
-        // Vérifier les clés de test valides uniquement
+        // Vérifier les clés de test (maintenant dans des lignes séparées)
         $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
-        if (class_exists('PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] test_key: ' . (!empty($test_key) ? 'EXISTS' : 'NOT FOUND'));
-        }
-
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
             $test_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
-            if (class_exists('PDF_Builder_Logger')) {
-                \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] test_expires: ' . $test_expires);
-            }
-
             if (!empty($test_expires)) {
                 $expires_date = strtotime($test_expires);
                 if ($expires_date && $expires_date > time()) {
-                    if (class_exists('PDF_Builder_Logger')) {
-                        \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] Test key is valid - PREMIUM: TRUE');
-                    }
                     return true;
-                } else {
-                    if (class_exists('PDF_Builder_Logger')) {
-                        \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] Test key is expired - PREMIUM: FALSE');
-                    }
                 }
             } else {
-                // Si pas de date d'expiration, considérer comme valide (pour compatibilité)
-                if (class_exists('PDF_Builder_Logger')) {
-                    \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] Test key without expiration - PREMIUM: TRUE');
-                }
+                // Si pas de date d'expiration, considérer comme valide
                 return true;
             }
         }
 
-        // Si aucune licence active ou clé de test valide, accès refusé aux fonctionnalités premium
-        if (class_exists('PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[LICENSE] No active license or valid test key - PREMIUM: FALSE');
-        }
         return false;
     }
 
@@ -163,8 +132,6 @@ class PDF_Builder_License_Manager
             pdf_builder_update_option('pdf_builder_license_key', $license_key);
             pdf_builder_update_option('pdf_builder_license_status', 'active');
             pdf_builder_update_option('pdf_builder_license_data', $result['data']);
-            // Marquer que l'utilisateur a été premium
-            pdf_builder_update_option('pdf_builder_has_been_premium', true);
 
             $this->license_key = $license_key;
             $this->license_status = 'active';
