@@ -1,13 +1,13 @@
 ﻿<?php
 
+namespace PDF_Builder\License;
+
 /**
  * License Test Handler - Gère la génération et validation des clés de test de licence
  *
  * @package PDF_Builder_Pro
  * @version 1.0.0
  */
-
-namespace PDF_Builder\License;
 
 if (!defined('ABSPATH')) {
     exit;
