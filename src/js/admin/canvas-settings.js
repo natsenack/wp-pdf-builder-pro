@@ -78,6 +78,16 @@ try {
         }
 
         /**
+         * Initialise le gestionnaire de modals
+         */
+        init() {
+            log(LOG_LEVELS.INFO, 'CanvasModalManager init() called');
+            this.registerModals();
+            this.isInitialized = true;
+            log(LOG_LEVELS.INFO, 'CanvasModalManager initialization completed');
+        }
+
+        /**
          * Enregistre tous les modals disponibles
          */
         registerModals() {

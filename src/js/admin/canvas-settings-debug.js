@@ -1,53 +1,27 @@
 /**
- * PDF Builder Canvas Settings JavaScript - Nouveau système de sauvegarde
+ * PDF Builder Canvas Settings JavaScript - Production Version
  * Version: 2.0 - Refonte complète du système de sauvegarde des modals
  */
 
-// LOG ULTRA-SIMPLE POUR TESTER LE CHARGEMENT
-console.log('🔥🔥🔥 CANVAS-SETTINGS.JS FILE LOADED SUCCESSFULLY 🔥🔥🔥');
-console.log('File path: canvas-settings.js');
-console.log('Timestamp:', new Date().toISOString());
-
 try {
-    console.log('🚀🚀🚀 CANVAS MODAL SCRIPT LOADING - START 🚀🚀🚀');
-    console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file execution begins');
-
     (function($) {
         'use strict';
 
-        console.log('📦 CANVAS MODAL SCRIPT - jQuery wrapper entered');
+        // Configuration minimale du système de logs
+        const LOG_PREFIX = '[CANVAS_MODAL]';
+        const LOG_LEVELS = {
+            DEBUG: 'DEBUG',
+            INFO: 'INFO',
+            WARN: 'WARN',
+            ERROR: 'ERROR'
+        };
 
-        // LOG CRITIQUE - Script chargé
-        console.log('[CANVAS_MODAL_SAVE] SCRIPT LOADED - canvas-settings.js has been loaded and executed');
-
-    // Configuration du système de logs
-    const LOG_PREFIX = '[CANVAS_MODAL_SAVE]';
-    const LOG_LEVELS = {
-        DEBUG: 'DEBUG',
-        INFO: 'INFO',
-        WARN: 'WARN',
-        ERROR: 'ERROR'
-    };
-
-    // Fonction de logging unifiée
-    function log(level, message, data = null) {
-        const timestamp = new Date().toISOString();
-        const logMessage = `${LOG_PREFIX} ${timestamp} [${level}] ${message}`;
-
-        console.log(logMessage);
-        if (data) {
-            console.log(`${LOG_PREFIX} Data:`, data);
+        // Fonction de logging simplifiée pour production
+        function log(level, message, data = null) {
+            if (level === LOG_LEVELS.ERROR) {
+                console.error(`${LOG_PREFIX} ${message}`, data || '');
+            }
         }
-
-        // Envoyer aussi au système de logs PHP si disponible
-        try {
-            if (typeof window.pdfBuilderCanvasSettings !== 'undefined' &&
-                window.pdfBuilderCanvasSettings.ajax_url &&
-                typeof $ !== 'undefined') {
-                $.ajax({
-                    url: window.pdfBuilderCanvasSettings.ajax_url,
-                    type: 'POST',
-                    data: {
                         action: 'pdf_builder_log_client_event',
                         level: level,
                         message: message,
@@ -75,6 +49,16 @@ try {
             this.currentModal = null;
             this.isInitialized = false;
             log('INFO', 'CanvasModalManager constructor called');
+        }
+
+        /**
+         * Initialise le gestionnaire de modals
+         */
+        init() {
+            log(LOG_LEVELS.INFO, 'CanvasModalManager init() called');
+            this.registerModals();
+            this.isInitialized = true;
+            log(LOG_LEVELS.INFO, 'CanvasModalManager initialization completed');
         }
 
         /**
