@@ -72,6 +72,8 @@
          * Enregistre tous les modals disponibles
          */
         registerModals() {
+            log(LOG_LEVELS.INFO, 'registerModals called - looking for modal elements');
+
             const modalIds = [
                 'canvas-affichage-modal-overlay',
                 'canvas-navigation-modal-overlay',
@@ -79,8 +81,12 @@
                 'canvas-systeme-modal-overlay'
             ];
 
+            log(LOG_LEVELS.INFO, 'Searching for modal IDs:', modalIds);
+
             modalIds.forEach(modalId => {
                 const modal = document.getElementById(modalId);
+                log(LOG_LEVELS.DEBUG, `Checking modal ${modalId}:`, { found: !!modal, element: modal });
+
                 if (modal) {
                     const category = modalId.replace('canvas-', '').replace('-modal-overlay', '');
                     this.modals[category] = {
@@ -95,6 +101,20 @@
                 } else {
                     log(LOG_LEVELS.WARN, `Modal not found: ${modalId}`);
                 }
+            });
+
+            log(LOG_LEVELS.INFO, `Modal registration complete. Registered ${Object.keys(this.modals).length} modals:`, Object.keys(this.modals));
+
+            // Vérifier les boutons de configuration
+            const configButtons = document.querySelectorAll('.canvas-configure-btn');
+            log(LOG_LEVELS.INFO, `Found ${configButtons.length} configure buttons in DOM`);
+            configButtons.forEach((btn, index) => {
+                log(LOG_LEVELS.DEBUG, `Configure button ${index}:`, {
+                    element: btn,
+                    className: btn.className,
+                    parentElement: btn.parentElement,
+                    parentClass: btn.parentElement ? btn.parentElement.className : 'no parent'
+                });
             });
         }
 
@@ -142,6 +162,7 @@
                 }
             });
 
+            log(LOG_LEVELS.INFO, 'All event listeners attached successfully');
             log(LOG_LEVELS.DEBUG, 'Modal events bound successfully');
         }
 
@@ -434,6 +455,7 @@
 
     // Initialisation globale
     $(document).ready(function() {
+        log(LOG_LEVELS.INFO, 'jQuery document ready fired - DOM is loaded');
         log(LOG_LEVELS.INFO, 'Document ready, initializing Canvas Modal Manager...');
 
         // Vérifier que jQuery est disponible
@@ -452,6 +474,16 @@
             hasAjaxUrl: !!window.pdfBuilderCanvasSettings.ajax_url,
             hasNonce: !!window.pdfBuilderCanvasSettings.nonce,
             settingsKeys: Object.keys(window.pdfBuilderCanvasSettings)
+        });
+
+        // Vérifier qu'on est sur la bonne page
+        const currentUrl = window.location.href;
+        const isSettingsPage = currentUrl.includes('pdf-builder-settings') && currentUrl.includes('tab=contenu');
+        log(LOG_LEVELS.INFO, 'Page check:', {
+            currentUrl: currentUrl,
+            isSettingsPage: isSettingsPage,
+            hasTabContenu: currentUrl.includes('tab=contenu'),
+            hasPdfBuilderSettings: currentUrl.includes('pdf-builder-settings')
         });
 
         // Vérifier que les éléments DOM existent
@@ -482,6 +514,8 @@
         }
 
         log(LOG_LEVELS.INFO, `Found ${configButtons.length} configure buttons and all modals`);
+
+        log(LOG_LEVELS.INFO, 'All DOM checks passed - proceeding with initialization');
 
         // Créer et initialiser le gestionnaire de modals
         try {
