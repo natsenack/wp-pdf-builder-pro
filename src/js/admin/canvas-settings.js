@@ -134,13 +134,13 @@
         async handleApplyButtonClick(button) {
             const modal = button.closest('.canvas-modal-overlay');
             if (!modal) {
-                
+                console.error('[CANVAS_MODAL] Apply button clicked but no parent modal found');
                 return;
             }
 
             const category = button.getAttribute('data-category');
             if (!category) {
-                
+                console.error('[CANVAS_MODAL] Apply button clicked but no category found');
                 return;
             }
 
@@ -235,7 +235,7 @@
                 }
 
             } catch (error) {
-                
+                console.error('[CANVAS_MODAL] Save failed:', error);
 
                 // Afficher une notification d'erreur
                 this.showNotification(`Erreur lors de la sauvegarde: ${error.message}`, 'error');
@@ -350,12 +350,12 @@
     $(document).ready(function() {
         // Vérifications préalables
         if (typeof $ === 'undefined') {
-            
+            console.error('[CANVAS_MODAL] jQuery not available');
             return;
         }
 
         if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-            
+            console.error('[CANVAS_MODAL] pdfBuilderCanvasSettings not defined');
             return;
         }
 
@@ -375,361 +375,29 @@
 
         const missingModals = modalIds.filter(id => !document.getElementById(id));
         if (missingModals.length > 0) {
-            
+            console.error('[CANVAS_MODAL] Missing modal elements:', missingModals);
             return;
         }
 
         // Vérifier que les boutons de configuration existent
         const configButtons = document.querySelectorAll('.canvas-configure-btn');
         if (configButtons.length === 0) {
-            
+            console.error('[CANVAS_MODAL] No configure buttons found!');
             return;
         }
 
+        console.log('[CANVAS_MODAL] Found', configButtons.length, 'configure buttons');
+
         // Créer et initialiser le gestionnaire de modals
         try {
+            console.log('[CANVAS_MODAL] Creating CanvasModalManager...');
             window.canvasModalManager = new CanvasModalManager();
+            console.log('[CANVAS_MODAL] Calling init()...');
             window.canvasModalManager.init();
+            console.log('[CANVAS_MODAL] Canvas Modal System ready');
         } catch (error) {
-            
+            console.error('[CANVAS_MODAL] Exception during initialization:', error);
         }
     });
 
 })(jQuery);
-            
-            const modalElement = modalData.element;
-            if (!modalElement) {
-                console.log('❌ STEP 2 FAILED: Modal element not found for', category);
-                
-                return;
-            }
-
-            console.log('✅ STEP 2 PASSED: Modal element found');
-            log(LOG_LEVELS.ERROR, 'Step 2 PASSED: Modal element found', {
-                modalElement: modalElement,
-                modalId: modalElement.id,
-                modalClass: modalElement.className,
-                currentDisplay: modalElement.style.display
-            });
-
-            
-            this.closeAllModals();
-            
-
-            
-            modalData.element.style.display = 'flex';
-            
-
-            
-            document.body.style.overflow = 'hidden';
-            this.currentModal = modalData;
-            
-
-            log(LOG_LEVELS.ERROR, `Modal ${category} display set to flex`, {
-                modalElement: modalData.element,
-                newDisplay: modalData.element.style.display,
-                bodyOverflow: document.body.style.overflow,
-                modalVisibility: modalData.element ? window.getComputedStyle(modalData.element).visibility : 'no element',
-                modalOpacity: modalData.element ? window.getComputedStyle(modalData.element).opacity : 'no element'
-            });
-
-            
-            
-
-            console.log('🎉🎉🎉 MODAL', category, 'OPENED SUCCESSFULLY - ALL STEPS COMPLETED 🎉🎉🎉');
-            
-        }
-
-        /**
-         * Ferme un modal spécifique
-         */
-        closeModal(modalElement) {
-            if (!modalElement) return;
-
-            const category = this.getModalCategory(modalElement);
-            
-
-            modalElement.style.display = 'none';
-            document.body.style.overflow = '';
-            this.currentModal = null;
-        }
-
-        /**
-         * Ferme tous les modals
-         */
-        closeAllModals() {
-            Object.values(this.modals).forEach(modalData => {
-                modalData.element.style.display = 'none';
-            });
-            document.body.style.overflow = '';
-            this.currentModal = null;
-        }
-
-        /**
-         * Synchronise les valeurs du modal avec les paramètres actuels
-         */
-        syncModalValues(modalData) {
-            
-
-            // Cette fonction peut être étendue pour synchroniser les valeurs
-            // Pour l'instant, on suppose que les valeurs sont déjà correctes
-        }
-
-        /**
-         * Sauvegarde les paramètres d'un modal
-         */
-        async saveModalSettings(modalElement, category) {
-            
-
-            try {
-                // Collecter les données du formulaire
-                const formData = this.collectModalData(modalElement, category);
-
-                log(LOG_LEVELS.ERROR, `Collected form data for ${category}:`, {
-                    fieldCount: formData.getAll ? formData.getAll('field_count')[0] : 'unknown',
-                    action: formData.get('action'),
-                    category: formData.get('category')
-                });
-
-                // Désactiver le bouton pendant la sauvegarde
-                const applyButton = modalElement.querySelector('.canvas-modal-apply');
-                if (applyButton) {
-                    applyButton.disabled = true;
-                    applyButton.textContent = '⏳ Sauvegarde...';
-                }
-
-                // Envoyer la requête AJAX
-                const response = await this.sendSaveRequest(formData);
-
-                
-
-                if (response.success) {
-                    
-
-                    // Afficher une notification de succès
-                    this.showNotification('Paramètres sauvegardés avec succès !', 'success');
-
-                    // Fermer le modal
-                    this.closeModal(modalElement);
-
-                    // Recharger la page pour refléter les changements
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-
-                } else {
-                    throw new Error(response.data?.message || 'Erreur inconnue lors de la sauvegarde');
-                }
-
-            } catch (error) {
-                
-
-                // Afficher une notification d'erreur
-                this.showNotification(`Erreur lors de la sauvegarde: ${error.message}`, 'error');
-
-            } finally {
-                // Réactiver le bouton
-                const applyButton = modalElement.querySelector('.canvas-modal-apply');
-                if (applyButton) {
-                    applyButton.disabled = false;
-                    applyButton.textContent = '✅ Appliquer';
-                }
-            }
-        }
-
-        /**
-         * Collecte les données d'un modal
-         */
-        collectModalData(modalElement, category) {
-            
-
-            const formData = new FormData();
-            let fieldCount = 0;
-
-            // Ajouter les métadonnées
-            formData.append('action', 'pdf_builder_save_canvas_modal');
-            formData.append('category', category);
-            formData.append('nonce', window.pdfBuilderCanvasSettings?.nonce || '');
-
-            // Collecter tous les inputs du modal
-            const inputs = modalElement.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                const name = input.name;
-                const type = input.type;
-
-                if (!name || input.disabled) {
-                    return; // Ignorer les inputs sans nom ou désactivés
-                }
-
-                let value = null;
-
-                if (type === 'checkbox') {
-                    value = input.checked ? '1' : '0';
-                } else if (type === 'radio') {
-                    if (input.checked) {
-                        value = input.value;
-                    } else {
-                        return; // Ne pas ajouter les radios non cochées
-                    }
-                } else {
-                    value = input.value;
-                }
-
-                if (value !== null) {
-                    formData.append(name, value);
-                    fieldCount++;
-
-                    
-                }
-            });
-
-            formData.append('field_count', fieldCount.toString());
-
-            
-            return formData;
-        }
-
-        /**
-         * Envoie la requête de sauvegarde
-         */
-        async sendSaveRequest(formData) {
-            const url = window.pdfBuilderCanvasSettings?.ajax_url || ajaxurl;
-
-            
-
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: (response) => {
-                        
-                        resolve(response);
-                    },
-                    error: (xhr, status, error) => {
-                        
-                        reject(new Error(`Erreur AJAX: ${error}`));
-                    }
-                });
-            });
-        }
-
-        /**
-         * Affiche une notification
-         */
-        showNotification(message, type) {
-            
-
-            // Essayer d'utiliser le système de notification existant
-            if (typeof showSystemNotification !== 'undefined') {
-                showSystemNotification(message, type);
-            } else {
-                // Fallback vers alert
-                alert(message);
-            }
-        }
-
-        /**
-         * Obtient la catégorie d'un modal à partir de son élément
-         */
-        getModalCategory(modalElement) {
-            for (const [category, modalData] of Object.entries(this.modals)) {
-                if (modalData.element === modalElement) {
-                    return category;
-                }
-            }
-            return null;
-        }
-    }
-
-    // LOG CRITIQUE - Classe complètement définie
-    console.log('[CANVAS_MODAL_SAVE] CanvasModalManager class fully defined');
-
-    // Initialisation globale
-    $(document).ready(function() {
-        console.log('🎯🎯🎯 JQUERY DOCUMENT READY FIRED - DOM LOADED 🎯🎯🎯');
-        console.log('[CANVAS_MODAL_SAVE] JQUERY DOCUMENT READY CALLED');
-        
-        
-
-        console.log('🔍 CHECKING JQUERY AVAILABILITY...');
-        // Vérifier que jQuery est disponible
-        if (typeof $ === 'undefined') {
-            console.error('❌❌❌ CRITICAL ERROR: jQuery not available!');
-            console.error('[CANVAS_MODAL_SAVE] CRITICAL ERROR: jQuery not available!');
-            return;
-        }
-
-        console.log('✅ JQUERY AVAILABLE, CHECKING GLOBAL VARIABLES');
-        console.log('[CANVAS_MODAL_SAVE] JQUERY AVAILABLE, CHECKING GLOBAL VARIABLES');
-
-        // Vérifier que les variables globales sont disponibles
-        if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-            
-            return;
-        }
-
-        log(LOG_LEVELS.ERROR, 'window.pdfBuilderCanvasSettings is defined', {
-            hasAjaxUrl: !!window.pdfBuilderCanvasSettings.ajax_url,
-            hasNonce: !!window.pdfBuilderCanvasSettings.nonce,
-            settingsKeys: Object.keys(window.pdfBuilderCanvasSettings)
-        });
-
-        // Vérifier qu'on est sur la bonne page
-        const currentUrl = window.location.href;
-        const isSettingsPage = currentUrl.includes('pdf-builder-settings') && currentUrl.includes('tab=contenu');
-        log(LOG_LEVELS.ERROR, 'Page check:', {
-            currentUrl: currentUrl,
-            isSettingsPage: isSettingsPage,
-            hasTabContenu: currentUrl.includes('tab=contenu'),
-            hasPdfBuilderSettings: currentUrl.includes('pdf-builder-settings')
-        });
-
-        // Vérifier que les éléments DOM existent
-        const modalIds = [
-            'canvas-affichage-modal-overlay',
-            'canvas-navigation-modal-overlay',
-            'canvas-comportement-modal-overlay',
-            'canvas-systeme-modal-overlay'
-        ];
-
-        let missingModals = [];
-        modalIds.forEach(id => {
-            if (!document.getElementById(id)) {
-                missingModals.push(id);
-            }
-        });
-
-        if (missingModals.length > 0) {
-            
-            return;
-        }
-
-        // Vérifier que les boutons de configuration existent
-        const configButtons = document.querySelectorAll('.canvas-configure-btn');
-        if (configButtons.length === 0) {
-            
-            return;
-        }
-
-        
-
-        
-
-        // Créer et initialiser le gestionnaire de modals
-        try {
-            
-            window.canvasModalManager = new CanvasModalManager();
-            
-            window.canvasModalManager.init();
-            
-        } catch (error) {
-            
-            console.error('[CANVAS_MODAL_SAVE] Exception during initialization:', error);
-        }
-    });
-
-})(jQuery);
-
