@@ -75,6 +75,9 @@
 ?>
 <section id="contenu" class="settings-section contenu-settings" role="tabpanel" aria-labelledby="tab-contenu">
 
+    <!-- Inclusion des modales Canvas -->
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
     <div class="settings-content">
 <?php
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -436,58 +439,345 @@
             <style>
             </style>
 
-            <!-- JavaScript minimal pour le nouveau système de modals -->
             <script>
-                // Définir ajaxurl pour la compatibilité
                 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
+                (function() {
+                    'use strict';
 
-                // Initialiser les paramètres canvas pour la compatibilité
-                window.pdfBuilderCanvasSettings = {
-                    ajax_url: '<?php echo esc_js(admin_url('admin-ajax.php')); ?>',
-                    nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_canvas_settings')); ?>',
-                    width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
-                    height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123')); ?>,
-                    dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
-                    format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4')); ?>,
-                    bgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
-                    borderColor: <?php echo json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')); ?>,
-                    borderWidth: <?php echo json_encode(get_canvas_option_contenu('canvas_border_width', '1')); ?>,
-                    containerBgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')); ?>,
-                    shadowEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'); ?>,
-                    gridEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1'); ?>,
-                    gridSize: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20')); ?>,
-                    guidesEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1'); ?>,
-                    snapToGrid: <?php echo json_encode(get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1'); ?>,
-                    zoomMin: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>,
-                    zoomMax: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_max', '500')); ?>,
-                    zoomDefault: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>,
-                    zoomStep: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_step', '25')); ?>,
-                    exportQuality: <?php echo json_encode(get_canvas_option_contenu('canvas_export_quality', '90')); ?>,
-                    exportFormat: <?php echo json_encode(get_canvas_option_contenu('canvas_export_format', 'png')); ?>,
-                    exportTransparent: <?php echo json_encode(get_canvas_option_contenu('canvas_export_transparent', '0') === '1'); ?>,
-                    dragEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_drag_enabled', '1') === '1'); ?>,
-                    resizeEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1'); ?>,
-                    rotateEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1'); ?>,
-                    multiSelect: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1'); ?>,
-                    selectionMode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single')); ?>,
-                    keyboardShortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1'); ?>,
-                    fpsTarget: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60')); ?>,
-                    memoryLimitJs: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>,
-                    responseTimeout: <?php echo json_encode(get_canvas_option_contenu('canvas_response_timeout', '5000')); ?>,
-                    lazyLoadingEditor: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_editor', '1') === '1'); ?>,
-                    preloadCritical: <?php echo json_encode(get_canvas_option_contenu('canvas_preload_critical', '1') === '1'); ?>,
-                    lazyLoadingPlugin: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1') === '1'); ?>,
-                    debugEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_debug_enabled', '0') === '1'); ?>,
-                    performanceMonitoring: <?php echo json_encode(get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1'); ?>,
-                    errorReporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1'); ?>,
-                    memoryLimitPhp: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>
-                };
+                    
 
-                // Le reste de la logique est géré par canvas-settings.js (CanvasModalManager)
+                    // Initialize window.pdfBuilderCanvasSettings with current DB values
+                    window.pdfBuilderCanvasSettings = {
+                        width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
+                        height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123')); ?>,
+                        dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
+                        format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4')); ?>,
+                        bgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
+                        borderColor: <?php echo json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')); ?>,
+                        borderWidth: <?php echo json_encode(get_canvas_option_contenu('canvas_border_width', '1')); ?>,
+                        containerBgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')); ?>,
+                        shadowEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'); ?>,
+                        gridEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1'); ?>,
+                        gridSize: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20')); ?>,
+                        guidesEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1'); ?>,
+                        snapToGrid: <?php echo json_encode(get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1'); ?>,
+                        zoomMin: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>,
+                        zoomMax: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_max', '500')); ?>,
+                        zoomDefault: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>,
+                        zoomStep: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_step', '25')); ?>,
+                        exportQuality: <?php echo json_encode(get_canvas_option_contenu('canvas_export_quality', '90')); ?>,
+                        exportFormat: <?php echo json_encode(get_canvas_option_contenu('canvas_export_format', 'png')); ?>,
+                        exportTransparent: <?php echo json_encode(get_canvas_option_contenu('canvas_export_transparent', '0') === '1'); ?>,
+                        dragEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_drag_enabled', '1') === '1'); ?>,
+                        resizeEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1'); ?>,
+                        rotateEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1'); ?>,
+                        multiSelect: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1'); ?>,
+                        selectionMode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single')); ?>,
+                        keyboardShortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1'); ?>,
+                        fpsTarget: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60')); ?>,
+                        memoryLimitJs: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>,
+                        responseTimeout: <?php echo json_encode(get_canvas_option_contenu('canvas_response_timeout', '5000')); ?>,
+                        lazyLoadingEditor: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_editor', '1') === '1'); ?>,
+                        preloadCritical: <?php echo json_encode(get_canvas_option_contenu('canvas_preload_critical', '1') === '1'); ?>,
+                        lazyLoadingPlugin: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1') === '1'); ?>,
+                        debugEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_debug_enabled', '0') === '1'); ?>,
+                        performanceMonitoring: <?php echo json_encode(get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1'); ?>,
+                        errorReporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1'); ?>,
+                        memoryLimitPhp: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>
+                    };
+                    
+
+                    // Configuration des modals
+                    var modalConfig = {
+                        'affichage': 'canvas-affichage-modal-overlay',
+                        'navigation': 'canvas-navigation-modal-overlay',
+                        'comportement': 'canvas-comportement-modal-overlay',
+                        'systeme': 'canvas-systeme-modal-overlay'
+                    };
+
+                    // ==================== NOUVELLE LOGIQUE DE SAUVEGARDE DES TOGGLES ====================
+
+                    // Définition des toggles par modal
+                    var modalToggles = {
+                        'affichage': ['pdf_builder_canvas_shadow_enabled'],
+                        'navigation': ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'],
+                        'comportement': ['pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts', 'pdf_builder_canvas_export_transparent'],
+                        'systeme': ['pdf_builder_canvas_debug_enabled', 'pdf_builder_canvas_performance_monitoring', 'pdf_builder_canvas_error_reporting']
+                    };
+
+                    // Mapping des noms d'input vers les clés camelCase pour window.pdfBuilderCanvasSettings
+                    var inputToSettingMap = {
+                        'pdf_builder_canvas_shadow_enabled': 'shadowEnabled',
+                        'pdf_builder_canvas_grid_enabled': 'gridEnabled',
+                        'pdf_builder_canvas_guides_enabled': 'guidesEnabled',
+                        'pdf_builder_canvas_snap_to_grid': 'snapToGrid',
+                        'pdf_builder_canvas_drag_enabled': 'dragEnabled',
+                        'pdf_builder_canvas_resize_enabled': 'resizeEnabled',
+                        'pdf_builder_canvas_rotate_enabled': 'rotateEnabled',
+                        'pdf_builder_canvas_multi_select': 'multiSelect',
+                        'pdf_builder_canvas_keyboard_shortcuts': 'keyboardShortcuts',
+                        'pdf_builder_canvas_export_transparent': 'exportTransparent',
+                        'pdf_builder_canvas_debug_enabled': 'debugEnabled',
+                        'pdf_builder_canvas_performance_monitoring': 'performanceMonitoring',
+                        'pdf_builder_canvas_error_reporting': 'errorReporting'
+                    };
+
+                    // Fonction pour sauvegarder les toggles d'une modal (agressive : force la synchronisation)
+                    function saveModalToggles(category) {
+                        var modalId = modalConfig[category];
+                        if (!modalId) return;
+
+                        var modal = document.getElementById(modalId);
+                        if (!modal) return;
+
+                        var togglesForModal = modalToggles[category] || [];
+                        if (togglesForModal.length === 0) return;
+
+                        // Synchronisation agressive : mettre à jour tous les hidden fields pour cette modal
+                        togglesForModal.forEach(function(toggleName) {
+                            var modalInput = modal.querySelector('[name="' + toggleName + '"]');
+                            if (modalInput && modalInput.type === 'checkbox') {
+                                var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + toggleName + ']"]');
+                                if (hiddenField) {
+                                    hiddenField.value = modalInput.checked ? '1' : '0';
+                                    
+                                }
+                            }
+                        });
+
+                        // Fermer la modal
+                        closeModal(modal);
+                    }
+
+
+
+                    // Fonction simple pour ouvrir une modal
+                    function openModal(category) {
+                        var modalId = modalConfig[category];
+                        if (!modalId) return;
+
+                        var modal = document.getElementById(modalId);
+                        if (modal) {
+                            syncModalInputsWithHiddenFields(modal, category);
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                        }
+                    }
+
+                    // Fonction pour synchroniser les inputs du modal avec les hidden fields
+                    function syncModalInputsWithHiddenFields(modal, category) {
+                        if (!modal) return;
+
+                        var togglesForModal = modalToggles[category] || [];
+                        togglesForModal.forEach(function(inputName) {
+                            var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
+                            var modalInput = modal.querySelector('[name="' + inputName + '"]');
+
+                            if (hiddenField && modalInput && modalInput.type === 'checkbox') {
+                                modalInput.checked = hiddenField.value === '1';
+                            }
+                        });
+                    }
+
+                    // Fonction simple pour fermer une modal
+                    function closeModal(modalElement) {
+                        if (modalElement) {
+                            modalElement.style.display = 'none';
+                            document.body.style.overflow = '';
+                            
+                        }
+                    }
+
+                    // Appliquer les paramètres d'une modal
+                    // Fonction utilitaire pour afficher des notifications via le système unifié
+                    function showNotification(message, type) {
+                        // Utiliser le système de notification unifié du plugin
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_show_notification',
+                                message: message,
+                                type: type,
+                                nonce: '<?php echo wp_create_nonce("pdf_builder_notifications"); ?>'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    
+                                } else {
+                                    
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                
+                            }
+                        });
+                    }
+
+                    function applyModalSettings(category) {
+                        var modalId = modalConfig[category];
+                        if (!modalId) return;
+
+                        var modal = document.getElementById(modalId);
+                        if (!modal) return;
+
+                        // Collecter les données à sauvegarder
+                        var formData = new FormData();
+                        formData.append('action', 'pdf_builder_save_canvas_modal_settings');
+                        formData.append('nonce', '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>');
+                        formData.append('category', category);
+
+                        // Collecter TOUS les champs de formulaire dans la modale
+                        var allInputs = modal.querySelectorAll('input, select, textarea');
+                        allInputs.forEach(function(input) {
+                            var name = input.name;
+                            if (name) {
+                                if (input.type === 'checkbox') {
+                                    formData.append(name, input.checked ? '1' : '0');
+                                } else if (input.type === 'radio') {
+                                    if (input.checked) {
+                                        formData.append(name, input.value);
+                                    }
+                                } else if (input.type === 'file') {
+                                    // Ne pas traiter les fichiers pour le moment
+                                } else {
+                                    formData.append(name, input.value);
+                                }
+                            }
+                        });
+
+                        // Sauvegarder via AJAX
+                        fetch(ajaxurl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                
+                                showNotification('Paramètres sauvegardés avec succès', 'success');
+                            } else {
+                                
+                                showNotification('Erreur lors de la sauvegarde', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            
+                            showNotification('Erreur de connexion', 'error');
+                        });
+
+                        // Mettre à jour les hidden fields et fermer la modal (logique existante)
+                        saveModalToggles(category);
+                    }
+
+                    // Initialisation des événements
+                    function initEvents() {
+                        
+
+                        // Boutons de configuration
+                        document.addEventListener('click', function(e) {
+                            
+
+                            // Ouvrir modal
+                            var configBtn = e.target.closest('.canvas-configure-btn');
+                            if (configBtn) {
+                                
+                                e.preventDefault();
+                                var card = configBtn.closest('.canvas-card');
+                                if (card) {
+                                    var category = card.getAttribute('data-category');
+                                    
+                                    if (category && modalConfig[category]) {
+                                        
+                                        openModal(category);
+                                    } else {
+                                        
+                                    }
+                                } else {
+                                    
+                                }
+                                return;
+                            }
+
+                            // Fermer modal
+                            var closeBtn = e.target.closest('.canvas-modal-close, .canvas-modal-cancel');
+                            if (closeBtn) {
+                                e.preventDefault();
+                                var modal = closeBtn.closest('.canvas-modal-overlay');
+                                if (modal) {
+                                    closeModal(modal);
+                                }
+                                return;
+                            }
+
+                            // Appliquer paramètres
+                            var applyBtn = e.target.closest('.canvas-modal-apply');
+                            if (applyBtn) {
+                                e.preventDefault();
+                                var category = applyBtn.getAttribute('data-category');
+                                if (category) {
+                                    applyModalSettings(category);
+                                }
+                                return;
+                            }
+
+                            // Clic sur overlay
+                            if (e.target.classList.contains('canvas-modal-overlay')) {
+                                closeModal(e.target);
+                                return;
+                            }
+                        });
+
+                        // Synchronisation agressive : mettre à jour les hidden fields en temps réel lors des changements dans les modales
+                        document.addEventListener('change', function(e) {
+                            var input = e.target;
+                            if (input.type === 'checkbox' && input.closest('.canvas-modal-overlay')) {
+                                var inputName = input.name;
+                                if (inputName) {
+                                    var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
+                                    if (hiddenField) {
+                                        hiddenField.value = input.checked ? '1' : '0';
+                                        
+                                    }
+                                }
+                            }
+                        });
+
+                        // Touche Échap
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                var openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                                openModals.forEach(function(modal) {
+                                    closeModal(modal);
+                                });
+                            }
+                        });
+
+                        
+                    }
+
+                    // Initialisation au chargement du DOM
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // S'assurer que tous les modals sont cachés au chargement
+                            var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                            allModals.forEach(function(modal) {
+                                modal.style.display = 'none';
+                            });
+                            initEvents();
+                        });
+                    } else {
+                        // S'assurer que tous les modals sont cachés au chargement
+                        var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                        allModals.forEach(function(modal) {
+                            modal.style.display = 'none';
+                        });
+                        initEvents();
+                    }
+
+                    
+                })();
             </script>
-
-            <!-- Les modals Canvas sont maintenant inclus dans settings-main.php pour être toujours disponibles -->
-
 
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
