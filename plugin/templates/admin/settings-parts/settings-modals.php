@@ -604,9 +604,6 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" id="repair-corrupted-arrays-btn" class="button button-warning" style="background: #ffc107; border-color: #ffc107; color: #212529; margin-right: 10px;">
-                🔧 Réparer Arrays Corrompus
-            </button>
             <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">✅ Appliquer</button>
         </div>
     </div>

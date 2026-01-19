@@ -118,7 +118,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'handle_get_fresh_nonce']);
         add_action('wp_ajax_pdf_builder_system_info', [$this, 'handle_system_info']);
         add_action('wp_ajax_pdf_builder_reset_dev_settings', [$this, 'handle_reset_dev_settings']);
-        add_action('wp_ajax_pdf_builder_repair_corrupted_arrays', [$this, 'handle_repair_corrupted_arrays']);
 
         // Actions canvas
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
@@ -2447,80 +2446,6 @@ class PDF_Builder_Unified_Ajax_Handler {
          } catch (Exception $e) {
              // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur reset paramètres dev: ' . $e->getMessage()); }
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
-         }
-     }
-
-     /**
-      * Handler pour réparer les arrays corrompus
-      */
-     public function handle_repair_corrupted_arrays() {
-         if (!$this->nonce_manager->validate_ajax_request('repair_corrupted_arrays')) {
-             return;
-         }
-
-         if (!current_user_can('manage_options')) {
-             wp_send_json_error(['message' => 'Permissions insuffisantes']);
-             return;
-         }
-
-         try {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Starting repair of corrupted arrays'); }
-
-             // Définition des valeurs par défaut pour les champs array corrompus
-             $corrupted_fields_defaults = [
-                 'pdf_builder_canvas_dpi' => '96',
-                 'pdf_builder_canvas_formats' => 'A4',
-                 'pdf_builder_canvas_orientations' => 'portrait,landscape'
-             ];
-
-             $repaired_count = 0;
-             $repaired_fields = [];
-
-             foreach ($corrupted_fields_defaults as $option_key => $default_value) {
-                 $current_value = pdf_builder_get_option($option_key, '');
-
-                 // Détecter les valeurs corrompues
-                 $is_corrupted = false;
-                 if (empty($current_value)) {
-                     $is_corrupted = true;
-                 } elseif ($current_value === '0') {
-                     $is_corrupted = true;
-                 } elseif (strpos($current_value, '0,') === 0) {
-                     $is_corrupted = true;
-                 } elseif ($current_value === '0,0' || $current_value === '0,0,0,0,0') {
-                     $is_corrupted = true;
-                 }
-
-                 if ($is_corrupted) {
-                     // Sauvegarder la valeur par défaut
-                     pdf_builder_update_option($option_key, $default_value);
-                     $repaired_count++;
-                     $repaired_fields[] = $option_key . ': "' . $current_value . '" → "' . $default_value . '"';
-
-                     if (class_exists('PDF_Builder_Logger')) {
-                         PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Repaired corrupted array {$option_key}: '{$current_value}' → '{$default_value}'");
-                     }
-                 }
-             }
-
-             $message = "✅ Réparation des arrays corrompus terminée\n";
-             $message .= "• Champs réparés: {$repaired_count}\n";
-
-             if (!empty($repaired_fields)) {
-                 $message .= "• Détails des réparations:\n" . implode("\n", array_map(function($field) { return "  - {$field}"; }, $repaired_fields));
-             } else {
-                 $message .= "• Aucun champ corrompu détecté";
-             }
-
-             wp_send_json_success([
-                 'message' => $message,
-                 'repaired_count' => $repaired_count,
-                 'repaired_fields' => $repaired_fields
-             ]);
-
-         } catch (Exception $e) {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur réparation arrays corrompus: ' . $e->getMessage()); }
-             wp_send_json_error(['message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
          }
      }
 
