@@ -7,6 +7,9 @@
 
 namespace PDF_Builder\Admin\Loaders;
 
+// Import the logger class
+use PDF_Builder_Logger;
+
 /**
  * Classe responsable du chargement des scripts et styles admin
  */
@@ -23,6 +26,14 @@ class AdminScriptLoader
     public function __construct($admin)
     {
         $this->admin = $admin;
+
+        // Ensure logger is loaded
+        if (!class_exists('PDF_Builder_Logger')) {
+            $logger_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Managers/PDF_Builder_Advanced_Logger.php';
+            if (file_exists($logger_file)) {
+                require_once $logger_file;
+            }
+        }
 
         // Enregistrer le hook pour charger les scripts admin
         add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
