@@ -289,8 +289,18 @@ class PDF_Builder_Loader {
      */
     private function require_file($relative_path) {
         $full_path = PDF_BUILDER_PLUGIN_DIR . $relative_path;
-        if (file_exists($full_path) && !class_exists($this->get_class_name_from_path($relative_path))) {
-            require_once $full_path;
+        if (file_exists($full_path)) {
+            // Pour PDF_Builder_Admin.php, vérifier le namespace complet
+            if (strpos($relative_path, 'PDF_Builder_Admin.php') !== false) {
+                if (!class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+                    require_once $full_path;
+                }
+            } else {
+                // Pour les autres fichiers, utiliser la logique existante
+                if (!class_exists($this->get_class_name_from_path($relative_path))) {
+                    require_once $full_path;
+                }
+            }
         }
     }
 

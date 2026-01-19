@@ -455,7 +455,7 @@
                         bgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
                         <?php
                         // Vérifier si l'utilisateur est premium pour les paramètres de style avancés
-                        $is_premium = \PDF_Builder\Admin\PDF_Builder_Admin::is_premium_user();
+                        $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
                         if ($is_premium) {
                             // Utilisateur premium : utiliser les paramètres configurés
                             echo 'borderColor: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')) . ',' . "\n";

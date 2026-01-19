@@ -94,7 +94,7 @@ class PdfBuilderCore
         }
 
         // Charger la classe d'administration
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php') && !class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
