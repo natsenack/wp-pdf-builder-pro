@@ -221,11 +221,15 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour la sauvegarde des paramètres Canvas
      */
     public function handle_save_canvas_settings() {
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Handler called"); }
+
         if (!$this->nonce_manager->validate_ajax_request('pdf_builder_canvas_settings')) {
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_ERROR - Nonce validation failed"); }
+            wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Received POST data: " . print_r($_POST, true)); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Nonce valid, processing POST data: " . print_r($_POST, true)); }
 
         try {
             $saved_count = 0;
@@ -328,6 +332,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             if ($saved_count > 0) {
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_SUCCESS - {$saved_count} paramètres sauvegardés: " . implode(', ', array_keys($saved_options))); }
                 wp_send_json_success([
                     'message' => 'Paramètres Canvas sauvegardés avec succès',
                     'saved_count' => $saved_count,
@@ -335,6 +340,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'new_nonce' => $this->nonce_manager->generate_nonce()
                 ]);
             } else {
+                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_WARNING - Aucun paramètre sauvegardé"); }
                 wp_send_json_error(['message' => 'Aucun paramètre Canvas sauvegardé']);
             }
 
