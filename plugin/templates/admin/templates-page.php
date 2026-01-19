@@ -48,17 +48,6 @@ echo "<!-- DEBUG: available_dpi_string = '$available_dpi_string' -->";
 if (class_exists('PDF_Builder_Logger')) {
     \PDF_Builder_Logger::get_instance()->debug_log("[TEMPLATES PAGE] Available DPI string: '$available_dpi_string'");
 }
-
-// DEBUG: Vérifier aussi dans wp_options directement
-$wp_options_dpi = get_option('pdf_builder_canvas_dpi', 'NOT_FOUND');
-echo "<!-- DEBUG: wp_options pdf_builder_canvas_dpi = '$wp_options_dpi' -->";
-
-// DEBUG: Vérifier la table wp_pdf_builder_settings
-global $wpdb;
-$table_name = $wpdb->prefix . 'pdf_builder_settings';
-$settings_row = $wpdb->get_row($wpdb->prepare("SELECT option_value FROM $table_name WHERE option_name = %s", 'pdf_builder_canvas_dpi'));
-$settings_dpi = $settings_row ? $settings_row->option_value : 'NOT_FOUND_IN_TABLE';
-echo "<!-- DEBUG: wp_pdf_builder_settings pdf_builder_canvas_dpi = '$settings_dpi' -->";
 if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== false) {
     $available_dpis = explode(',', $available_dpi_string);
 } elseif (is_array($available_dpi_string)) {
