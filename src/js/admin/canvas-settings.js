@@ -129,6 +129,52 @@
                 $(this).hide();
             }
         });
+
+        // Add repair corrupted arrays button handler
+        $('#repair-corrupted-arrays-btn').on('click', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var originalText = $button.text();
+
+            // Show confirmation
+            if (!confirm('Êtes-vous sûr de vouloir réparer les arrays corrompus ? Cette action va remplacer les valeurs invalides par les valeurs par défaut.')) {
+                return;
+            }
+
+            // Show loading state
+            $button.prop('disabled', true).html('🔧 Réparation en cours...');
+
+            // Send AJAX request
+            $.ajax({
+                url: pdf_builder_canvas_settings.ajax_url || ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_repair_corrupted_arrays',
+                    nonce: pdf_builder_canvas_settings.nonce || ''
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        showNotification(response.data.message, 'success');
+
+                        // Reload page to reflect changes
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showNotification('Erreur lors de la réparation : ' + (response.data.message || 'Erreur inconnue'), 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showNotification('Erreur AJAX : ' + error, 'error');
+                },
+                complete: function() {
+                    // Reset button state
+                    $button.prop('disabled', false).text(originalText);
+                }
+            });
+        });
     });
 
     // Helper function to show notifications
