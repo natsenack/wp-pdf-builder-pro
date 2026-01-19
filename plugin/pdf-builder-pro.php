@@ -36,16 +36,6 @@ if (!class_exists('PDF_Builder_Analytics_Manager')) {
     }
 }
 
-/**
- * Déclarations de fonctions pour Intelephense
- */
-if (!function_exists('pdf_builder_load_bootstrap')) {
-    /**
-     * @return void
-     */
-    function pdf_builder_load_bootstrap() {}
-}
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
