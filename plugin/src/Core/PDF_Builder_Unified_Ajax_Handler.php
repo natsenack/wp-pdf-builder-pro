@@ -241,6 +241,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_canvas_height',
                 'pdf_builder_canvas_dpi',
                 'pdf_builder_canvas_format',
+                'pdf_builder_canvas_formats',
+                'pdf_builder_canvas_orientations',
                 'pdf_builder_canvas_bg_color',
                 'pdf_builder_canvas_border_color',
                 'pdf_builder_canvas_border_width',
@@ -279,7 +281,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Sauvegarder chaque paramètre
             foreach ($canvas_settings as $setting_key) {
                 if (isset($_POST[$setting_key])) {
-                    $value = sanitize_text_field($_POST[$setting_key]);
+                    $value = $_POST[$setting_key];
+                    
+                    // Gestion spéciale pour les champs array (dpi, formats, orientations)
+                    $array_fields = ['pdf_builder_canvas_dpi', 'pdf_builder_canvas_formats', 'pdf_builder_canvas_orientations'];
+                    if (in_array($setting_key, $array_fields)) {
+                        if (is_array($value)) {
+                            $value = implode(',', array_map('sanitize_text_field', $value));
+                        } elseif (is_string($value)) {
+                            $value = sanitize_text_field($value);
+                        } else {
+                            $value = '';
+                        }
+                    } else {
+                        $value = sanitize_text_field($value);
+                    }
                     
                     // Log pour déboguer
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Sauvegarde Canvas - {$setting_key}: {$value}"); }

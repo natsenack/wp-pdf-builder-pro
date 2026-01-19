@@ -590,7 +590,7 @@
 
                     // Appliquer les paramètres d'une modal
                     // Fonction utilitaire pour afficher des notifications via le système unifié
-                    window.showNotification = function(message, type) {
+                    function showNotification(message, type) {
                         // Utiliser le système de notification unifié du plugin
                         jQuery.ajax({
                             url: ajaxurl,
@@ -612,38 +612,14 @@
                                 
                             }
                         });
-                    };
+                    }
 
-                    // Rendre la fonction globale pour qu'elle soit accessible depuis les onclick inline
-                    window.applyModalSettings = function(buttonElement) {
-                        console.log('🔄 APPLY MODAL SETTINGS - START');
-                        console.log('Button element:', buttonElement);
-                        
-                        var category = buttonElement.getAttribute('data-category');
-                        console.log('Category from data-category:', category);
-                        
-                        if (!category) {
-                            console.error('❌ No category found on button');
-                            return;
-                        }
-
+                    function applyModalSettings(category) {
                         var modalId = modalConfig[category];
-                        console.log('Modal ID from config:', modalId);
-                        
-                        if (!modalId) {
-                            console.error('❌ No modal ID found for category:', category);
-                            return;
-                        }
+                        if (!modalId) return;
 
                         var modal = document.getElementById(modalId);
-                        console.log('Modal element found:', modal);
-                        
-                        if (!modal) {
-                            console.error('❌ Modal element not found:', modalId);
-                            return;
-                        }
-
-                        console.log('✅ Modal found, collecting form data...');
+                        if (!modal) return;
 
                         // Collecter les données à sauvegarder
                         var formData = new FormData();
@@ -653,93 +629,46 @@
 
                         // Collecter TOUS les champs de formulaire dans la modale
                         var allInputs = modal.querySelectorAll('input, select, textarea');
-                        console.log('Found inputs in modal:', allInputs.length);
-                        
-                        // Grouper les checkboxes multiples par nom de base (sans [])
-                        var checkboxGroups = {};
-                        
                         allInputs.forEach(function(input) {
                             var name = input.name;
                             if (name) {
                                 if (input.type === 'checkbox') {
-                                    // Traiter les checkboxes multiples (avec [])
-                                    if (name.endsWith('[]')) {
-                                        var baseName = name.slice(0, -2); // Retirer []
-                                        if (!checkboxGroups[baseName]) {
-                                            checkboxGroups[baseName] = [];
-                                        }
-                                        if (input.checked) {
-                                            checkboxGroups[baseName].push(input.value);
-                                        }
-                                        console.log('Checkbox group:', baseName, 'value:', input.value, 'checked:', input.checked);
-                                    } else {
-                                        // Checkbox simple
-                                        formData.append(name, input.checked ? '1' : '0');
-                                        console.log('Checkbox:', name, '=', input.checked ? '1' : '0');
-                                    }
+                                    formData.append(name, input.checked ? '1' : '0');
                                 } else if (input.type === 'radio') {
                                     if (input.checked) {
                                         formData.append(name, input.value);
-                                        console.log('Radio:', name, '=', input.value);
                                     }
                                 } else if (input.type === 'file') {
                                     // Ne pas traiter les fichiers pour le moment
                                 } else {
                                     formData.append(name, input.value);
-                                    console.log('Input:', name, '=', input.value);
                                 }
                             }
                         });
-                        
-                        // Ajouter les groupes de checkboxes multiples
-                        for (var groupName in checkboxGroups) {
-                            var values = checkboxGroups[groupName];
-                            if (values.length > 0) {
-                                // Pour les tableaux, envoyer chaque valeur séparément avec le même nom
-                                values.forEach(function(value) {
-                                    formData.append(groupName + '[]', value);
-                                });
-                                console.log('Checkbox group saved:', groupName, '=', values.join(','));
-                            }
-                            // Ne pas envoyer les groupes vides - ils utiliseront la valeur par défaut
-                        }
 
-                        console.log('📡 Sending AJAX request to:', ajaxurl);
-                        
-                        // Vérifier que ajaxurl est défini
-                        if (typeof ajaxurl === 'undefined') {
-                            console.error('❌ ajaxurl is not defined!');
-                            showNotification('Erreur: ajaxurl non défini', 'error');
-                            return;
-                        }
-                        
                         // Sauvegarder via AJAX
                         fetch(ajaxurl, {
                             method: 'POST',
                             body: formData
                         })
-                        .then(response => {
-                            console.log('📡 AJAX Response status:', response.status);
-                            return response.json();
-                        })
+                        .then(response => response.json())
                         .then(data => {
-                            console.log('📡 AJAX Response data:', data);
                             if (data.success) {
-                                console.log('✅ Settings saved successfully');
+                                
                                 showNotification('Paramètres sauvegardés avec succès', 'success');
                             } else {
-                                console.error('❌ Save failed:', data);
-                                showNotification('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'), 'error');
+                                
+                                showNotification('Erreur lors de la sauvegarde', 'error');
                             }
                         })
                         .catch(error => {
-                            console.error('❌ AJAX Error:', error);
-                            showNotification('Erreur de connexion: ' + error.message, 'error');
+                            
+                            showNotification('Erreur de connexion', 'error');
                         });
 
                         // Mettre à jour les hidden fields et fermer la modal (logique existante)
                         saveModalToggles(category);
-                    };
+                    }
 
                     // Initialisation des événements
                     function initEvents() {
@@ -787,7 +716,7 @@
                                 e.preventDefault();
                                 var category = applyBtn.getAttribute('data-category');
                                 if (category) {
-                                    applyModalSettings(applyBtn);
+                                    applyModalSettings(category);
                                 }
                                 return;
                             }

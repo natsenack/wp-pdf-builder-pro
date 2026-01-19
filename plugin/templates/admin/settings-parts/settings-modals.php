@@ -9,9 +9,7 @@
 $canvas_defaults = [
     'width' => '794',
     'height' => '1123',
-    'dpi' => '96',  // Une résolution par défaut
-    'formats' => 'A4',  // Un format par défaut
-    'orientations' => 'portrait',  // Une orientation par défaut
+    'dpi' => '96',
     'format' => 'A4',
     'orientation' => 'portrait',
     'allow_portrait' => '1',
@@ -48,25 +46,16 @@ $canvas_defaults = [
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Récupérer depuis l'array pdf_builder_settings avec la clé complète
-    $option_key = 'pdf_builder_canvas_' . $key;
-    $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
-
-    if ($value === null) {
-        $value = $default;
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: OPTION_NOT_FOUND - using default '{$default}'"); }
-    } else {
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')"); }
-    }
-
+    // Récupérer directement depuis la table personnalisée avec la clé complète
+    $option_key = 'pdf_builder_' . $key;
+    $value = pdf_builder_get_option($option_key, $default);
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Reading {$option_key}: '{$value}' (default: '{$default}')"); }
     return $value;
 }
 ?>
 
 <!-- MODAL AFFICHAGE -->
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <script>console.log('📐 MODAL AFFICHAGE HTML CHARGÉE');</script>
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
@@ -332,15 +321,14 @@ function get_canvas_modal_value($key, $default = '') {
             </div>
         </div>
         <div class="canvas-modal-footer">
-            <button type="button" class="button canvas-modal-cancel" onclick="console.log('🔴 MODAL CANCEL CLICKED - AFFICHAGE'); console.log('Timestamp:', new Date().toISOString());">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage" onclick="console.log('🟢 MODAL APPLY CLICKED - AFFICHAGE'); console.log('Category:', 'affichage'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
+            <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">✅ Appliquer</button>
         </div>
     </div>
 </div>
 
 <!-- MODAL NAVIGATION -->
 <div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <script>console.log('🧭 MODAL NAVIGATION HTML CHARGÉE');</script>
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">🧭</span> Paramètres de Navigation</h3>
@@ -436,14 +424,13 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation" onclick="console.log('🟢 MODAL APPLY CLICKED - NAVIGATION'); console.log('Category:', 'navigation'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">✅ Appliquer</button>
         </div>
     </div>
 </div>
 
 <!-- MODAL COMPORTEMENT -->
 <div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <script>console.log('🎯 MODAL COMPORTEMENT HTML CHARGÉE');</script>
     <div class="canvas-modal-container" style="display: block; z-index: 10001;">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">🎯</span> Paramètres de Comportement</h3>
@@ -549,7 +536,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement" onclick="console.log('🟢 MODAL APPLY CLICKED - COMPORTEMENT'); console.log('Category:', 'comportement'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">✅ Appliquer</button>
         </div>
     </div>
 </div>
@@ -606,7 +593,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
-            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme" onclick="console.log('🟢 MODAL APPLY CLICKED - SYSTEME'); console.log('Category:', 'systeme'); console.log('Timestamp:', new Date().toISOString()); applyModalSettings(this);">✅ Appliquer</button>
+            <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">✅ Appliquer</button>
         </div>
     </div>
 </div>
