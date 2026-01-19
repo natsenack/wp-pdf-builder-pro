@@ -58,12 +58,15 @@ class PDF_Builder_License_Manager
         $this->license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
         $this->license_data = pdf_builder_get_option('pdf_builder_license_data', []);
 
+        // Nettoyer automatiquement les clés de test expirées au démarrage
+        $this->cleanupExpiredTestKeysOnInit();
+
         add_action('admin_init', array($this, 'check_license_status'));
     }
 
     /**
      * Vérifier si l'utilisateur a une licence premium active
-     * Inclut les licences réelles ET les clés de test
+     * Inclut les licences réelles ET les clés de test valides uniquement
      */
     public function isPremium()
     {
@@ -72,7 +75,7 @@ class PDF_Builder_License_Manager
             return true;
         }
 
-        // Vérifier les clés de test (maintenant dans des lignes séparées)
+        // Vérifier les clés de test (avec validation stricte)
         $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
@@ -81,11 +84,12 @@ class PDF_Builder_License_Manager
                 $expires_date = strtotime($test_expires);
                 if ($expires_date && $expires_date > time()) {
                     return true;
+                } else {
+                    // Clé expirée - nettoyer automatiquement
+                    $this->cleanupExpiredTestKey();
                 }
-            } else {
-                // Si pas de date d'expiration, considérer comme valide
-                return true;
             }
+            // Si pas de date d'expiration définie, la clé n'est pas valide
         }
 
         return false;
@@ -231,17 +235,61 @@ class PDF_Builder_License_Manager
     }
 
     /**
-     * Obtenir les informations de licence formatées
+     * Nettoyer automatiquement les clés de test expirées lors de l'initialisation
      */
-    public function getLicenseInfo()
+    private function cleanupExpiredTestKeysOnInit()
     {
-        return [
-            'status' => $this->license_status,
-            'is_premium' => $this->is_premium(),
-            'tier' => isset($this->license_data['tier']) ? $this->license_data['tier'] : 'free',
-            'expires' => isset($this->license_data['expires']) ? date('d/m/Y', $this->license_data['expires']) : null,
-            'features' => isset($this->license_data['features']) ? $this->license_data['features'] : []
-        ];
+        $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
+        if (!empty($test_key)) {
+            $test_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
+            if (!empty($test_expires)) {
+                $expires_date = strtotime($test_expires);
+                if (!$expires_date || $expires_date <= time()) {
+                    // Clé expirée - nettoyer
+                    $this->cleanupExpiredTestKey();
+                }
+            } else {
+                // Pas de date d'expiration - clé invalide, nettoyer
+                $this->cleanupExpiredTestKey();
+            }
+        }
+    }
+
+    /**
+     * Nettoyer les clés de test expirées
+     */
+    private function cleanupExpiredTestKey()
+    {
+        pdf_builder_delete_option('pdf_builder_license_test_key');
+        pdf_builder_delete_option('pdf_builder_license_test_key_expires');
+        pdf_builder_delete_option('pdf_builder_license_test_mode_enabled');
+        pdf_builder_delete_option('pdf_builder_license_email_reminders');
+        pdf_builder_delete_option('pdf_builder_license_reminder_email');
+    }
+
+    /**
+     * Forcer le rafraîchissement du statut de licence
+     */
+    public function refreshLicenseStatus()
+    {
+        // Recharger les données depuis la base
+        $this->license_key = pdf_builder_get_option('pdf_builder_license_key', '');
+        $this->license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+        $this->license_data = pdf_builder_get_option('pdf_builder_license_data', []);
+
+        // Nettoyer les clés expirées
+        $this->cleanupExpiredTestKeysOnInit();
+
+        return $this->isPremium();
+    }
+
+    /**
+     * Supprimer manuellement une clé de test
+     */
+    public function removeTestKey()
+    {
+        $this->cleanupExpiredTestKey();
+        return ['success' => true, 'message' => 'Clé de test supprimée'];
     }
 }
 }

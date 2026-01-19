@@ -102,6 +102,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handle_generate_test_license_key']);
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_license_key']);
         add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
+        add_action('wp_ajax_pdf_builder_refresh_license_status', [$this, 'handle_refresh_license_status']);
 
         // Actions de diagnostic
         add_action('wp_ajax_pdf_builder_export_diagnostic', [$this, 'handle_export_diagnostic']);
@@ -2107,15 +2108,30 @@ class PDF_Builder_Unified_Ajax_Handler {
      }
 
      /**
-      * Handler pour nettoyer complètement la licence
+      * Handler pour rafraîchir le statut de licence
       */
-     public function handle_cleanup_license() {
+     public function handle_refresh_license_status() {
          if (!$this->nonce_manager->validate_ajax_request()) {
              return;
          }
 
          try {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Starting license cleanup'); }
+             $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+             $is_premium = $license_manager->refreshLicenseStatus();
+             $license_info = $license_manager->getLicenseInfo();
+
+             wp_send_json_success([
+                 'message' => 'Statut de licence rafraîchi.',
+                 'is_premium' => $is_premium,
+                 'license_info' => $license_info
+             ]);
+
+         } catch (Exception $e) {
+             wp_send_json_error(['message' => 'Erreur lors du rafraîchissement du statut de licence']);
+         }
+     }
+
+     /**
 
              // Vérifier si le mode test est actif AVANT de commencer le nettoyage
              $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0') === '1';
@@ -2483,6 +2499,30 @@ class PDF_Builder_Unified_Ajax_Handler {
         ];
 
         return $templates[$template_id] ?? '<h1>Template</h1><p>Contenu par défaut</p>';
+     }
+
+     /**
+      * Handler pour rafraîchir le statut de licence
+      */
+     public function handle_refresh_license_status() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+             $is_premium = $license_manager->refreshLicenseStatus();
+             $license_info = $license_manager->getLicenseInfo();
+
+             wp_send_json_success([
+                 'message' => 'Statut de licence rafraîchi.',
+                 'is_premium' => $is_premium,
+                 'license_info' => $license_info
+             ]);
+
+         } catch (Exception $e) {
+             wp_send_json_error(['message' => 'Erreur lors du rafraîchissement du statut de licence']);
+         }
      }
 }
 
