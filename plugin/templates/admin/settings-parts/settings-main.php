@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     // Log PHP pour vérifier que le fichier s'exécute
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-main.php LOADED at line ' . __LINE__); }
     echo '<!-- PHP DEBUG: settings-main.php loaded at ' . current_time('H:i:s') . ' -->';

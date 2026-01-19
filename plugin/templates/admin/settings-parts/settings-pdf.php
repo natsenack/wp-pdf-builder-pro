@@ -1,4 +1,4 @@
-﻿<?php // PDF tab content - Updated: 2025-11-19 01:40:00
+<?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings)); }

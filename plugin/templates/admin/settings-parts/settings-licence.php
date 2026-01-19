@@ -1,4 +1,4 @@
-﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
