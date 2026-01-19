@@ -864,50 +864,6 @@
                 })();
             </script>
 
-            <?php
-            // Localiser les paramètres canvas pour JavaScript
-            $canvas_settings_js = array(
-                'border_color' => get_canvas_option_contenu('canvas_border_color', '#cccccc'),
-                'border_width' => get_canvas_option_contenu('canvas_border_width', '1'),
-                'bg_color' => get_canvas_option_contenu('canvas_bg_color', '#ffffff'),
-                'container_bg_color' => get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa'),
-                'width' => get_canvas_option_contenu('canvas_width', '794'),
-                'height' => get_canvas_option_contenu('canvas_height', '1123'),
-                'dpi' => get_canvas_option_contenu('canvas_dpi', '96'),
-                'format' => get_canvas_option_contenu('canvas_format', 'A4'),
-                'grid_enabled' => get_canvas_option_contenu('canvas_grid_enabled', '1'),
-                'grid_size' => get_canvas_option_contenu('canvas_grid_size', '20'),
-                'guides_enabled' => get_canvas_option_contenu('canvas_guides_enabled', '1'),
-                'snap_to_grid' => get_canvas_option_contenu('canvas_snap_to_grid', '1'),
-                'zoom_min' => get_canvas_option_contenu('canvas_zoom_min', '25'),
-                'zoom_max' => get_canvas_option_contenu('canvas_zoom_max', '500'),
-                'zoom_default' => get_canvas_option_contenu('canvas_zoom_default', '100'),
-                'zoom_step' => get_canvas_option_contenu('canvas_zoom_step', '25'),
-                'shadow_enabled' => get_canvas_option_contenu('canvas_shadow_enabled', '0'),
-                'export_quality' => get_canvas_option_contenu('canvas_export_quality', '90'),
-                'export_format' => get_canvas_option_contenu('canvas_export_format', 'png'),
-                'export_transparent' => get_canvas_option_contenu('canvas_export_transparent', '0'),
-                'drag_enabled' => get_canvas_option_contenu('canvas_drag_enabled', '1'),
-                'resize_enabled' => get_canvas_option_contenu('canvas_resize_enabled', '1'),
-                'rotate_enabled' => get_canvas_option_contenu('canvas_rotate_enabled', '1'),
-                'multi_select' => get_canvas_option_contenu('canvas_multi_select', '1'),
-                'selection_mode' => get_canvas_option_contenu('canvas_selection_mode', 'single'),
-                'keyboard_shortcuts' => get_canvas_option_contenu('canvas_keyboard_shortcuts', '1'),
-                'fps_target' => get_canvas_option_contenu('canvas_fps_target', '60'),
-                'memory_limit_js' => get_canvas_option_contenu('canvas_memory_limit_js', '50'),
-                'response_timeout' => get_canvas_option_contenu('canvas_response_timeout', '5000'),
-                'lazy_loading_editor' => get_canvas_option_contenu('canvas_lazy_loading_editor', '1'),
-                'preload_critical' => get_canvas_option_contenu('canvas_preload_critical', '1'),
-                'lazy_loading_plugin' => get_canvas_option_contenu('canvas_lazy_loading_plugin', '1'),
-                'debug_enabled' => get_canvas_option_contenu('canvas_debug_enabled', '0'),
-                'performance_monitoring' => get_canvas_option_contenu('canvas_performance_monitoring', '0'),
-                'error_reporting' => get_canvas_option_contenu('canvas_error_reporting', '0'),
-                'memory_limit_php' => get_canvas_option_contenu('canvas_memory_limit_php', '128')
-            );
-
-            wp_localize_script('canvas-settings', 'pdfBuilderCanvasSettings', $canvas_settings_js);
-            ?>
-
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
 

@@ -3488,6 +3488,9 @@ export const Canvas = function Canvas({
             height: `${displayHeight}px`,
             cursor: "crosshair",
             backgroundColor: canvasSettings?.canvasBackgroundColor || "#ffffff",
+            border: canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0 
+              ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || "#cccccc"}` 
+              : "none",
             boxShadow: canvasSettings?.shadowEnabled
               ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)"
               : "none",
