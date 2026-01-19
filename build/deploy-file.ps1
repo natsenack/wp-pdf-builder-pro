@@ -37,6 +37,8 @@ try {
 
 # Calculer le chemin relatif pour le serveur
 $RelativePath = $FilePath.Replace("I:\wp-pdf-builder-pro\", "").Replace("D:\wp-pdf-builder-pro\", "").Replace("\", "/")
+# Supprimer le préfixe 'plugin/' si présent pour correspondre à la structure du serveur
+$RelativePath = $RelativePath -replace "^plugin/", ""
 $RemoteFilePath = "ftp://$FtpServer$RemotePath/$RelativePath"
 
 # Créer les répertoires nécessaires récursivement
