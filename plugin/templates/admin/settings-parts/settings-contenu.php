@@ -75,9 +75,6 @@
 ?>
 <section id="contenu" class="settings-section contenu-settings" role="tabpanel" aria-labelledby="tab-contenu">
 
-    <!-- Inclusion des modales Canvas -->
-    <?php require_once __DIR__ . '/settings-modals.php'; ?>
-
     <div class="settings-content">
 <?php
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -488,6 +485,9 @@
 
                 // Le reste de la logique est géré par canvas-settings.js (CanvasModalManager)
             </script>
+
+            <!-- Inclusion des modales Canvas -->
+            <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
             <!-- Inclusion du script canvas-settings.js pour la gestion des modals -->
             <script src="<?php echo esc_url(PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-settings.min.js'); ?>?v=<?php echo time(); ?>"></script>

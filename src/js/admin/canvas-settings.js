@@ -69,9 +69,14 @@
          * Lie les événements pour tous les modals
          */
         bindEvents() {
+            console.log('[CANVAS_MODAL] bindEvents called');
+
             // Boutons de configuration (pour ouvrir les modals)
             document.addEventListener('click', (e) => {
                 const configBtn = e.target.closest('.canvas-configure-btn');
+                console.log('[CANVAS_MODAL] Click detected, target:', e.target);
+                console.log('[CANVAS_MODAL] Closest .canvas-configure-btn:', configBtn);
+
                 if (configBtn) {
                     console.log('[CANVAS_MODAL] Configure button clicked:', configBtn);
                     e.preventDefault();
@@ -112,13 +117,20 @@
          */
         handleConfigureButtonClick(button) {
             console.log('[CANVAS_MODAL] handleConfigureButtonClick called with button:', button);
+            console.log('[CANVAS_MODAL] Button classes:', button.className);
+            console.log('[CANVAS_MODAL] Button parent element:', button.parentElement);
+
             const card = button.closest('.canvas-card');
+            console.log('[CANVAS_MODAL] Found card element:', card);
+
             if (!card) {
                 console.error('[CANVAS_MODAL] No parent card found for button');
                 return;
             }
 
             const category = card.getAttribute('data-category');
+            console.log('[CANVAS_MODAL] Card data-category:', category);
+
             if (!category) {
                 console.error('[CANVAS_MODAL] No category found on card');
                 return;
@@ -347,12 +359,27 @@
     }
 
     // Initialisation au chargement de la page
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[CANVAS_MODAL] DOMContentLoaded, starting initialization');
+
+        // Petit délai pour s'assurer que tout est bien chargé
+        setTimeout(function() {
+            initCanvasModals();
+        }, 100);
+    });
+
+    // Fonction d'initialisation séparée pour plus de clarté
+    function initCanvasModals() {
+        console.log('[CANVAS_MODAL] initCanvasModals called');
+
         // Vérifications préalables
-        if (typeof $ === 'undefined') {
+        if (typeof window.jQuery === 'undefined' && typeof $ === 'undefined') {
             console.error('[CANVAS_MODAL] jQuery not available');
             return;
         }
+
+        // Utiliser jQuery s'il est disponible
+        var $ = window.jQuery || window.$;
 
         if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
             console.error('[CANVAS_MODAL] pdfBuilderCanvasSettings not defined');
@@ -361,7 +388,10 @@
 
         // Vérifier la page actuelle
         const currentUrl = window.location.href;
+        console.log('[CANVAS_MODAL] Current URL:', currentUrl);
+
         if (!currentUrl.includes('page=pdf-builder-settings') || !currentUrl.includes('tab=contenu')) {
+            console.log('[CANVAS_MODAL] Not on settings page, exiting');
             return; // Pas sur la page des paramètres
         }
 
@@ -373,6 +403,12 @@
             'canvas-systeme-modal-overlay'
         ];
 
+        console.log('[CANVAS_MODAL] Checking for modal elements...');
+        modalIds.forEach(id => {
+            const element = document.getElementById(id);
+            console.log(`[CANVAS_MODAL] Modal ${id}:`, element ? 'FOUND' : 'NOT FOUND');
+        });
+
         const missingModals = modalIds.filter(id => !document.getElementById(id));
         if (missingModals.length > 0) {
             console.error('[CANVAS_MODAL] Missing modal elements:', missingModals);
@@ -381,6 +417,7 @@
 
         // Vérifier que les boutons de configuration existent
         const configButtons = document.querySelectorAll('.canvas-configure-btn');
+        console.log('[CANVAS_MODAL] Found configure buttons:', configButtons.length);
         if (configButtons.length === 0) {
             console.error('[CANVAS_MODAL] No configure buttons found!');
             return;
@@ -398,6 +435,6 @@
         } catch (error) {
             console.error('[CANVAS_MODAL] Exception during initialization:', error);
         }
-    });
+    }
 
 })(jQuery);
