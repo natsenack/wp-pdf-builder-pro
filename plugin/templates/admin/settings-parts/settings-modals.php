@@ -360,7 +360,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if ($can_use_grid_navigation): ?>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
                         <label for="modal_canvas_grid_enabled"></label>
                     </div>
                     <?php else: ?>
@@ -376,10 +376,10 @@ function get_canvas_modal_value($key, $default = '') {
                     <label><span style="font-size: 16px;">📏</span> Taille grille (px)</label>
                     <?php if ($can_use_grid_navigation): ?>
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
-                           value="<?php echo esc_attr(get_canvas_modal_value('grid_size', $canvas_defaults['grid_size'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_grid_size', $canvas_defaults['grid_size'])); ?>">
                     <?php else: ?>
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
-                           value="<?php echo esc_attr(get_canvas_modal_value('grid_size', $canvas_defaults['grid_size'])); ?>" disabled
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_grid_size', $canvas_defaults['grid_size'])); ?>" disabled
                            style="opacity: 0.6; cursor: not-allowed;">
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
@@ -389,7 +389,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if ($can_use_grid_navigation): ?>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
                         <label for="modal_canvas_guides_enabled"></label>
                     </div>
                     <?php else: ?>
@@ -406,7 +406,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if ($can_use_grid_navigation): ?>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
-                               value="1" <?php checked(get_canvas_modal_value('snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
+                               value="1" <?php checked(get_canvas_modal_value('canvas_snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
                         <label for="modal_canvas_snap_to_grid"></label>
                     </div>
                     <?php else: ?>
@@ -421,22 +421,22 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%)</label>
                     <input type="number" id="modal_canvas_zoom_min" name="pdf_builder_canvas_zoom_min"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_min', $canvas_defaults['zoom_min'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_min', $canvas_defaults['zoom_min'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
                     <input type="number" id="modal_canvas_zoom_max" name="pdf_builder_canvas_zoom_max"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_max', $canvas_defaults['zoom_max'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_max', $canvas_defaults['zoom_max'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
                     <input type="number" id="modal_canvas_zoom_default" name="pdf_builder_canvas_zoom_default"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_default', $canvas_defaults['zoom_default'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_default', $canvas_defaults['zoom_default'])); ?>">
                 </div>
                 <div class="setting-group">
                     <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
                     <input type="number" id="modal_canvas_zoom_step" name="pdf_builder_canvas_zoom_step"
-                           value="<?php echo esc_attr(get_canvas_modal_value('zoom_step', $canvas_defaults['zoom_step'])); ?>">
+                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_step', $canvas_defaults['zoom_step'])); ?>">
                 </div>
             </div>
         </div>
