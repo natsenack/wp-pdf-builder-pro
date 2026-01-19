@@ -116,7 +116,7 @@ function pdf_builder_load_settings_assets($hook) {
                 PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.min.js',
                 array('jquery', 'pdf-builder-settings-main'),
                 PDF_BUILDER_VERSION . '-' . time(),
-                true // Chargé dans le footer
+                false // CHANGÉ : Chargé dans le header pour disponibilité immédiate
             );
 
             // Localiser le script canvas-settings avec le nonce approprié et l'URL AJAX
