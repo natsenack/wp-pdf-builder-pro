@@ -824,14 +824,7 @@ class PdfBuilderAdmin
      */
     public static function is_premium_user() {
         $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-        $is_premium = $license_manager->is_premium();
-
-        // Log temporaire pour débogage
-        error_log('PDF Builder Debug - is_premium_user: ' . ($is_premium ? 'true' : 'false'));
-        $license_info = $license_manager->getLicenseInfo();
-        error_log('PDF Builder Debug - License Info: ' . json_encode($license_info));
-
-        return $is_premium;
+        return $license_manager->is_premium();
     }
 
     /**
