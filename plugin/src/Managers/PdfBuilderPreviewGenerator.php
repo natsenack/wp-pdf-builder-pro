@@ -84,10 +84,12 @@ class PdfBuilderPreviewGenerator
         // Vérifier si Dompdf est déjà chargé par un autre autoloader
         if (class_exists('\Dompdf\Dompdf')) {
             // Dompdf est déjà disponible, utiliser directement
-            $this->dompdf = new \Dompdf\Dompdf();
-            $this->dompdf->set_option('isRemoteEnabled', true);
-            $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
-            $this->dompdf->set_option('defaultFont', 'Arial');
+            $options = new \Dompdf\Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
+            $options->set('defaultFont', 'Arial');
+
+            $this->dompdf = new \Dompdf\Dompdf($options);
 
             // Récupérer les paramètres PDF depuis les options pour la prévisualisation
             $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
@@ -111,10 +113,12 @@ class PdfBuilderPreviewGenerator
         $pdf_page_size = pdf_builder_get_option('pdf_builder_pdf_page_size', 'A4');
         $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
 
-        $this->dompdf = new \Dompdf\Dompdf();
-        $this->dompdf->set_option('isRemoteEnabled', true);
-        $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
-        $this->dompdf->set_option('defaultFont', 'Arial');
+        $options = new \Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
+        $options->set('defaultFont', 'Arial');
+
+        $this->dompdf = new \Dompdf\Dompdf($options);
         $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
     }
 

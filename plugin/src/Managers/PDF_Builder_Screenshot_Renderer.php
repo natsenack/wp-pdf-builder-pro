@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
 
 // Utilisation des classes natives
 use Exception;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 /**
  * Déclarations de classes pour Intelephense
@@ -63,14 +65,14 @@ class PdfBuilderScreenshotRenderer
             $pdf_path = $pdf_dir . '/' . $filename;
 
             // Générer le HTML du canvas
-            $html = $this->generate_canvas_html($canvas_data);
+            $html = $this->generateCanvasHtml($canvas_data);
 
             // Créer un fichier HTML temporaire pour la capture
             $temp_html_file = $pdf_dir . '/temp_' . time() . '.html';
             file_put_contents($temp_html_file, $html);
 
             // Générer le PDF via Puppeteer/Playwright ou wkhtmltopdf
-            $success = $this->generate_pdf_from_html($temp_html_file, $pdf_path);
+            $success = $this->generatePdfFromHtml($temp_html_file, $pdf_path);
 
             // Nettoyer le fichier temporaire
             if (file_exists($temp_html_file)) {
@@ -144,7 +146,7 @@ class PdfBuilderScreenshotRenderer
     <div class="pdf-canvas">';
 
         foreach ($canvas_data as $element) {
-            $html .= $this->render_canvas_element($element);
+            $html .= $this->renderCanvasElement($element);
         }
 
         $html .= '
@@ -165,7 +167,7 @@ class PdfBuilderScreenshotRenderer
         }
 
         $props = $element['properties'];
-        $style = $this->build_element_style($props);
+        $style = $this->buildElementStyle($props);
 
         $html = '<div class="canvas-element ' . esc_attr($element['type']) . '-element" style="' . $style . '">';
 
@@ -244,17 +246,17 @@ class PdfBuilderScreenshotRenderer
     private function generatePdfFromHtml($html_file, $pdf_path)
     {
         // Méthode 1: wkhtmltopdf (si disponible)
-        if ($this->is_wkhtmltopdf_available()) {
-            return $this->generate_with_wkhtmltopdf($html_file, $pdf_path);
+        if ($this->isWkhtmltopdfAvailable()) {
+            return $this->generateWithWkhtmltopdf($html_file, $pdf_path);
         }
 
         // Méthode 2: Puppeteer via Node.js (si disponible)
-        if ($this->is_puppeteer_available()) {
-            return $this->generate_with_puppeteer($html_file, $pdf_path);
+        if ($this->isPuppeteerAvailable()) {
+            return $this->generateWithPuppeteer($html_file, $pdf_path);
         }
 
         // Méthode 3: Dompdf comme fallback (qualité réduite)
-        return $this->generate_with_dompdf_fallback($html_file, $pdf_path);
+        return $this->generateWithDompdfFallback($html_file, $pdf_path);
     }
 
     /**
@@ -318,11 +320,12 @@ class PdfBuilderScreenshotRenderer
             $pdf_orientation = pdf_builder_get_option('pdf_builder_pdf_orientation', 'portrait');
 
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
-            $options = new Dompdf\Options();
-            $dompdf = new Dompdf\Dompdf($options);
-            $dompdf->set_option('isRemoteEnabled', true);
-            $dompdf->set_option('isHtml5ParserEnabled', true);
-            $dompdf->set_option('defaultFont', 'Arial');
+            $options = new Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('defaultFont', 'Arial');
+
+            $dompdf = new Dompdf($options);
 
             // Lire le HTML et l'ajouter au PDF
             $html_content = file_get_contents($html_file);
@@ -343,8 +346,8 @@ class PdfBuilderScreenshotRenderer
     public function getSystemCapabilities()
     {
         return [
-            'wkhtmltopdf' => $this->is_wkhtmltopdf_available(),
-            'puppeteer' => $this->is_puppeteer_available(),
+            'wkhtmltopdf' => $this->isWkhtmltopdfAvailable(),
+            'puppeteer' => $this->isPuppeteerAvailable(),
             'dompdf_fallback' => true
         ];
     }

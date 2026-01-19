@@ -1,8 +1,4 @@
 <?php
-/**
- * TemplateDefaults - Templates par défaut pour utilisateurs gratuits
- * PDF Builder Pro
- */
 
 namespace PDF_Builder;
 
