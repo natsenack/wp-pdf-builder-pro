@@ -10,9 +10,6 @@ namespace PDF_Builder\Admin\Handlers;
 use Exception;
 use WP_Error;
 
-// Import the logger class
-use PDF_Builder_Logger;
-
 /**
  * Classe responsable de la gestion des appels AJAX
  */
@@ -29,14 +26,6 @@ class AjaxHandler
     public function __construct($admin)
     {
         $this->admin = $admin;
-
-        // Ensure logger is loaded
-        if (!class_exists('PDF_Builder_Logger')) {
-            $logger_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Managers/PDF_Builder_Advanced_Logger.php';
-            if (file_exists($logger_file)) {
-                require_once $logger_file;
-            }
-        }
 
         // Ensure NonceManager is loaded
         if (!class_exists('PDF_Builder\Admin\Handlers\NonceManager')) {
@@ -413,10 +402,6 @@ class AjaxHandler
     public function ajaxGenerateOrderPdf()
     {
         try {
-            // Récupérer les paramètres depuis la requête POST
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-            $template_id = isset($_POST['template_id']) ? sanitize_text_field($_POST['template_id']) : '';
-
             // Valider les permissions et nonce de manière unifiée
             $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
             if (!$validation['success']) {
@@ -1903,7 +1888,7 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Starting generation process'); }
 
             // Générer une clé aléatoire
-            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 16));
+            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
