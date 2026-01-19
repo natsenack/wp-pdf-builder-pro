@@ -1691,8 +1691,55 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasModalSettings()
     {
-        // Version ultra-simplifiée pour debug
-        wp_send_json_success(['message' => 'Test réussi', 'category' => $_POST['category'] ?? 'unknown']);
+        try {
+            // Récupérer les paramètres depuis la requête
+            $category = sanitize_text_field($_POST['category'] ?? '');
+            $settings_to_save = [];
+
+            // Collecter TOUS les paramètres depuis POST
+            foreach ($_POST as $key => $value) {
+                if (in_array($key, ['action', 'nonce', 'category'])) {
+                    continue;
+                }
+
+                if (is_array($value)) {
+                    $settings_to_save[$key] = implode(',', array_map('sanitize_text_field', $value));
+                } else {
+                    $settings_to_save[$key] = sanitize_text_field($value);
+                }
+            }
+
+            if (empty($settings_to_save)) {
+                wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
+                return;
+            }
+
+            // Récupérer les paramètres existants
+            $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
+
+            // Mettre à jour les paramètres
+            $updated_count = 0;
+            foreach ($settings_to_save as $key => $value) {
+                $existing_settings[$key] = $value;
+                $updated_count++;
+            }
+
+            // Sauvegarder dans l'option unifiée
+            $saved = pdf_builder_update_option('pdf_builder_settings', $existing_settings);
+
+            if ($saved) {
+                wp_send_json_success([
+                    'message' => 'Paramètres sauvegardés avec succès',
+                    'category' => $category,
+                    'updated_count' => $updated_count
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+        }
     }
 
     /**
