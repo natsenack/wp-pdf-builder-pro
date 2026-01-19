@@ -6,6 +6,18 @@
 console.log('🔥🔥🔥 CANVAS-SETTINGS.JS - FICHIER CHARGÉ IMMÉDIATEMENT 🔥🔥🔥');
 console.log('⏰ Timestamp absolu:', Date.now());
 
+// LOG AVEC DÉLAI - POUR VOIR SI LE SCRIPT S'EXÉCUTE PLUS TARD
+setTimeout(function() {
+    console.log('⏳⏳⏳ CANVAS-SETTINGS.JS - EXÉCUTÉ APRÈS 1 SECONDE ⏳⏳⏳');
+    console.log('⏰ Timestamp après délai:', Date.now());
+}, 1000);
+
+// LOG AVEC DÉLAI PLUS LONG
+setTimeout(function() {
+    console.log('🐌🐌🐌 CANVAS-SETTINGS.JS - EXÉCUTÉ APRÈS 5 SECONDES 🐌🐌🐌');
+    console.log('⏰ Timestamp après 5s:', Date.now());
+}, 5000);
+
 (function($) {
     'use strict';
 
