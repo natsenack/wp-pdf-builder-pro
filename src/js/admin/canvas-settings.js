@@ -8,16 +8,17 @@ console.log('🔥🔥🔥 CANVAS-SETTINGS.JS FILE LOADED SUCCESSFULLY 🔥🔥�
 console.log('File path: canvas-settings.js');
 console.log('Timestamp:', new Date().toISOString());
 
-console.log('🚀🚀🚀 CANVAS MODAL SCRIPT LOADING - START 🚀🚀🚀');
-console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file execution begins');
+try {
+    console.log('🚀🚀🚀 CANVAS MODAL SCRIPT LOADING - START 🚀🚀🚀');
+    console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file execution begins');
 
-(function($) {
-    'use strict';
+    (function($) {
+        'use strict';
 
-    console.log('📦 CANVAS MODAL SCRIPT - jQuery wrapper entered');
+        console.log('📦 CANVAS MODAL SCRIPT - jQuery wrapper entered');
 
-    // LOG CRITIQUE - Script chargé
-    console.log('[CANVAS_MODAL_SAVE] SCRIPT LOADED - canvas-settings.js has been loaded and executed');
+        // LOG CRITIQUE - Script chargé
+        console.log('[CANVAS_MODAL_SAVE] SCRIPT LOADED - canvas-settings.js has been loaded and executed');
 
     // Configuration du système de logs
     const LOG_PREFIX = '[CANVAS_MODAL_SAVE]';
@@ -675,4 +676,11 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
     });
 
 })(jQuery);
+
+} catch (error) {
+    console.error('💥💥💥 CRITICAL ERROR IN CANVAS-SETTINGS.JS 💥💥💥');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', error);
+}
 
