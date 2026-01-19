@@ -4,10 +4,54 @@
  * Version: 3.0 - Complete rewrite from scratch
  */
 
+// Log immédiat au chargement du script
+console.log('[CANVAS_MODAL] Script file loaded at:', new Date().toISOString());
+
 (function($) {
     'use strict';
 
     console.log('[CANVAS_MODAL] Script loaded, jQuery available:', typeof $ !== 'undefined');
+
+    // Test immédiat pour voir si les éléments existent
+    $(document).ready(function() {
+        console.log('[CANVAS_MODAL] DOM ready - immediate check');
+        console.log('[CANVAS_MODAL] Configure buttons found:', $('.canvas-configure-btn').length);
+        console.log('[CANVAS_MODAL] Modal overlays found:', $('.canvas-modal-overlay').length);
+        console.log('[CANVAS_MODAL] Canvas cards found:', $('.canvas-card').length);
+
+        // Vérifier la visibilité des éléments
+        $('.canvas-configure-btn').each(function(index) {
+            console.log('[CANVAS_MODAL] Button', index, '- visible:', $(this).is(':visible'), '- display:', $(this).css('display'));
+        });
+
+        $('.canvas-card').each(function(index) {
+            var $card = $(this);
+            var category = $card.data('category');
+            console.log('[CANVAS_MODAL] Card', index, '- category:', category, '- visible:', $card.is(':visible'));
+        });
+
+        // Test click event binding
+        $(document).on('click', '.canvas-configure-btn', function(e) {
+            console.log('[CANVAS_MODAL] CLICK DETECTED on button!');
+            console.log('[CANVAS_MODAL] Event target:', e.target);
+            console.log('[CANVAS_MODAL] Button element:', this);
+            e.preventDefault();
+            return false;
+        });
+    });
+
+    // Listen for tab changes to show/hide canvas cards
+    $(document).on('pdfBuilderTabChanged', function(event, tabId) {
+        console.log('[CANVAS_MODAL] Tab changed to:', tabId);
+        var $canvasContainer = $('#canvas-cards-container');
+        if (tabId === 'contenu') {
+            $canvasContainer.show();
+            console.log('[CANVAS_MODAL] Canvas cards shown');
+        } else {
+            $canvasContainer.hide();
+            console.log('[CANVAS_MODAL] Canvas cards hidden');
+        }
+    });
 
     // Simple modal manager
     var CanvasModalManager = {
