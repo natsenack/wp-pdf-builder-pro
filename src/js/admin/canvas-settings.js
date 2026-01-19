@@ -25,36 +25,31 @@
         }
 
         // Envoyer aussi au système de logs PHP si disponible
-        if (typeof pdf_builder_canvas_settings !== 'undefined' && pdf_builder_canvas_settings.ajax_url) {
-            $.ajax({
-                url: pdf_builder_canvas_settings.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_log_client_event',
-                    level: level,
-                    message: message,
-                    data: JSON.stringify(data),
-                    nonce: pdf_builder_canvas_settings.nonce
-                },
-                async: true,
-                error: function() {
-                    // Silent fail pour les logs
-                }
-            });
-        }
-    }
-
-    // Classe principale pour la gestion des modals canvas
-    class CanvasModalManager {
-        constructor() {
-            this.modals = {};
-            this.currentModal = null;
-            this.isInitialized = false;
-            log(LOG_LEVELS.INFO, 'CanvasModalManager initialized');
-        }
+        try {
+            if (typeof pdf_builder_canvas_settings !== 'undefined' &&
+                pdf_builder_canvas_settings.ajax_url &&
+                typeof $ !== 'undefined') {
+                $.ajax({
+                    url: pdf_builder_canvas_settings.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_log_client_event',
+                        level: level,
+                        message: message,
+                        data: JSON.stringify(data),
+                        nonce: pdf_builder_canvas_settings.nonce
+                    },
+                    async: true,
+                    error: function() {
+                        // Silent fail pour les logs
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn(`${LOG_PREFIX} Failed to send log to server:`, e);
 
         /**
-         * Initialise le système de gestion des modals
+         * Initialise le systeme de gestion des modals
          */
         init() {
             if (this.isInitialized) {
@@ -433,7 +428,13 @@
 
         // Vérifier que jQuery est disponible
         if (typeof $ === 'undefined') {
-            console.error('[CANVAS_MODAL_SAVE] jQuery not available!');
+            console.error('[CANVAS_MODAL_SAVE] CRITICAL ERROR: jQuery not available!');
+            return;
+        }
+
+        // Vérifier que les variables globales sont disponibles
+        if (typeof pdf_builder_canvas_settings === 'undefined') {
+            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: pdf_builder_canvas_settings not defined! Script localization failed.');
             return;
         }
 
@@ -453,14 +454,14 @@
         });
 
         if (missingModals.length > 0) {
-            log(LOG_LEVELS.ERROR, 'Missing modal elements:', missingModals);
+            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: Missing modal elements:', missingModals);
             return;
         }
 
         // Vérifier que les boutons de configuration existent
         const configButtons = document.querySelectorAll('.canvas-configure-btn');
         if (configButtons.length === 0) {
-            log(LOG_LEVELS.ERROR, 'No configure buttons found!');
+            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: No configure buttons found!');
             return;
         }
 
@@ -472,7 +473,8 @@
             window.canvasModalManager.init();
             log(LOG_LEVELS.INFO, 'Canvas Modal System ready');
         } catch (error) {
-            log(LOG_LEVELS.ERROR, 'Failed to initialize CanvasModalManager:', error);
+            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: Failed to initialize CanvasModalManager:', error);
+            console.error('[CANVAS_MODAL_SAVE] Exception during initialization:', error);
         }
     });
 
