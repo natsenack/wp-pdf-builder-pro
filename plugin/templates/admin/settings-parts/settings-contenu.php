@@ -664,7 +664,7 @@
                         // Collecter TOUS les champs de formulaire dans la modale
                         var allInputs = modal.querySelectorAll('input, select, textarea');
                         console.log('Found inputs in modal:', allInputs.length);
-                        
+
                         // Grouper les inputs par nom pour gérer les arrays
                         var inputsByName = {};
                         allInputs.forEach(function(input) {
@@ -676,12 +676,12 @@
                                 inputsByName[name].push(input);
                             }
                         });
-                        
+
                         // Traiter chaque groupe d'inputs
                         for (var name in inputsByName) {
                             var inputs = inputsByName[name];
                             var firstInput = inputs[0];
-                            
+
                             if (firstInput.type === 'checkbox') {
                                 if (name.endsWith('[]')) {
                                     // Checkbox array - collect all checked values
@@ -725,21 +725,30 @@
                         })
                         .then(response => {
                             console.log('AJAX response received:', response);
+                            console.log('Response status:', response.status);
+                            console.log('Response ok:', response.ok);
                             return response.json();
                         })
                         .then(data => {
                             console.log('AJAX data:', data);
                             if (data.success) {
                                 console.log('Success: Parameters saved');
+                                console.log('Updated count:', data.updated_count);
+                                console.log('Category:', data.category);
                                 showNotification('Paramètres sauvegardés avec succès', 'success');
+
+                                // Forcer la synchronisation des hidden fields après sauvegarde
+                                saveModalToggles(category);
                             } else {
                                 console.error('Error saving:', data.message);
-                                showNotification('Erreur lors de la sauvegarde', 'error');
+                                console.error('Full error data:', data);
+                                showNotification('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'), 'error');
                             }
                         })
                         .catch(error => {
                             console.error('AJAX error:', error);
-                            showNotification('Erreur de connexion', 'error');
+                            console.error('Error details:', error.message);
+                            showNotification('Erreur de connexion: ' + error.message, 'error');
                         });
 
                         // Mettre à jour les hidden fields et fermer la modal (logique existante)
