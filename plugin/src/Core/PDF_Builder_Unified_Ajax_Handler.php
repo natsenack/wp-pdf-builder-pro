@@ -5,6 +5,40 @@
  * Version: 2.1.3 - Correction erreurs PHP et cron (05/12/2025)
  */
 
+// Charger les fonctions utilitaires depuis bootstrap.php
+require_once dirname(dirname(dirname(__FILE__))) . '/bootstrap.php';
+
+/**
+ * Déclarations de fonctions pour Intelephense
+ * Ces fonctions sont définies dans bootstrap.php mais Intelephense ne les reconnaît pas
+ */
+if (!function_exists('pdf_builder_get_option')) {
+    /**
+     * @param string $option_name
+     * @param mixed $default
+     * @return mixed
+     */
+    function pdf_builder_get_option($option_name, $default = false) {}
+}
+
+if (!function_exists('pdf_builder_update_option')) {
+    /**
+     * @param string $option_name
+     * @param mixed $option_value
+     * @param string $autoload
+     * @return bool
+     */
+    function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {}
+}
+
+if (!function_exists('pdf_builder_delete_option')) {
+    /**
+     * @param string $option_name
+     * @return bool
+     */
+    function pdf_builder_delete_option($option_name) {}
+}
+
 class PDF_Builder_Unified_Ajax_Handler {
 
     private static $instance = null;
