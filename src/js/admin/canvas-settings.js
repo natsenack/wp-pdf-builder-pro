@@ -112,13 +112,13 @@
         handleConfigureButtonClick(button) {
             const card = button.closest('.canvas-card');
             if (!card) {
-                log(LOG_LEVELS.ERROR, 'Configure button clicked but no parent card found');
+                
                 return;
             }
 
             const category = card.getAttribute('data-category');
             if (!category) {
-                log(LOG_LEVELS.ERROR, 'Configure button clicked but no category found on card');
+                
                 return;
             }
 
@@ -131,13 +131,13 @@
         async handleApplyButtonClick(button) {
             const modal = button.closest('.canvas-modal-overlay');
             if (!modal) {
-                log(LOG_LEVELS.ERROR, 'Apply button clicked but no parent modal found');
+                
                 return;
             }
 
             const category = button.getAttribute('data-category');
             if (!category) {
-                log(LOG_LEVELS.ERROR, 'Apply button clicked but no category found');
+                
                 return;
             }
 
@@ -160,13 +160,13 @@
         openModal(category) {
             const modalData = this.modals[category];
             if (!modalData) {
-                log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`);
+                
                 return;
             }
 
             const modalElement = modalData.element;
             if (!modalElement) {
-                log(LOG_LEVELS.ERROR, `Modal element not found for category: ${category}`);
+                
                 return;
             }
 
@@ -230,7 +230,7 @@
                 }
 
             } catch (error) {
-                log(LOG_LEVELS.ERROR, `Save failed for modal ${category}:`, error);
+                
 
                 // Afficher une notification d'erreur
                 this.showNotification(`Erreur lors de la sauvegarde: ${error.message}`, 'error');
@@ -345,12 +345,12 @@
     $(document).ready(function() {
         // Vérifications préalables
         if (typeof $ === 'undefined') {
-            log(LOG_LEVELS.ERROR, 'jQuery not available');
+            
             return;
         }
 
         if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-            log(LOG_LEVELS.ERROR, 'pdfBuilderCanvasSettings not defined');
+            
             return;
         }
 
@@ -370,14 +370,14 @@
 
         const missingModals = modalIds.filter(id => !document.getElementById(id));
         if (missingModals.length > 0) {
-            log(LOG_LEVELS.ERROR, 'Missing modal elements:', missingModals);
+            
             return;
         }
 
         // Vérifier que les boutons de configuration existent
         const configButtons = document.querySelectorAll('.canvas-configure-btn');
         if (configButtons.length === 0) {
-            log(LOG_LEVELS.ERROR, 'No configure buttons found!');
+            
             return;
         }
 
@@ -386,41 +386,41 @@
             window.canvasModalManager = new CanvasModalManager();
             window.canvasModalManager.init();
         } catch (error) {
-            log(LOG_LEVELS.ERROR, 'Failed to initialize CanvasModalManager:', error);
+            
         }
     });
 
 })(jQuery);
-            log(LOG_LEVELS.INFO, 'Step 2: Getting modal element...');
+            
             const modalElement = modalData.element;
             if (!modalElement) {
                 console.log('❌ STEP 2 FAILED: Modal element not found for', category);
-                log(LOG_LEVELS.ERROR, `Modal element not found for category: ${category}`);
+                
                 return;
             }
 
             console.log('✅ STEP 2 PASSED: Modal element found');
-            log(LOG_LEVELS.INFO, 'Step 2 PASSED: Modal element found', {
+            log(LOG_LEVELS.ERROR, 'Step 2 PASSED: Modal element found', {
                 modalElement: modalElement,
                 modalId: modalElement.id,
                 modalClass: modalElement.className,
                 currentDisplay: modalElement.style.display
             });
 
-            log(LOG_LEVELS.INFO, 'Step 3: Closing any open modals...');
+            
             this.closeAllModals();
-            log(LOG_LEVELS.INFO, 'Step 3 PASSED: closeAllModals completed');
+            
 
-            log(LOG_LEVELS.INFO, 'Step 4: Setting modal display to flex...');
+            
             modalData.element.style.display = 'flex';
-            log(LOG_LEVELS.INFO, 'Step 4 PASSED: Modal display set to flex');
+            
 
-            log(LOG_LEVELS.INFO, 'Step 5: Setting body overflow and current modal...');
+            
             document.body.style.overflow = 'hidden';
             this.currentModal = modalData;
-            log(LOG_LEVELS.INFO, 'Step 5 PASSED: Body overflow hidden and current modal set');
+            
 
-            log(LOG_LEVELS.INFO, `Modal ${category} display set to flex`, {
+            log(LOG_LEVELS.ERROR, `Modal ${category} display set to flex`, {
                 modalElement: modalData.element,
                 newDisplay: modalData.element.style.display,
                 bodyOverflow: document.body.style.overflow,
@@ -428,11 +428,11 @@
                 modalOpacity: modalData.element ? window.getComputedStyle(modalData.element).opacity : 'no element'
             });
 
-            log(LOG_LEVELS.INFO, 'Step 6: Checking syncModalValues function...');
-            log(LOG_LEVELS.INFO, 'Step 6 PASSED: syncModalValues handled');
+            
+            
 
             console.log('🎉🎉🎉 MODAL', category, 'OPENED SUCCESSFULLY - ALL STEPS COMPLETED 🎉🎉🎉');
-            log(LOG_LEVELS.INFO, `Modal ${category} opened successfully - ALL STEPS COMPLETED`);
+            
         }
 
         /**
@@ -442,7 +442,7 @@
             if (!modalElement) return;
 
             const category = this.getModalCategory(modalElement);
-            log(LOG_LEVELS.DEBUG, `Closing modal: ${category || 'unknown'}`);
+            
 
             modalElement.style.display = 'none';
             document.body.style.overflow = '';
@@ -464,7 +464,7 @@
          * Synchronise les valeurs du modal avec les paramètres actuels
          */
         syncModalValues(modalData) {
-            log(LOG_LEVELS.DEBUG, `Syncing values for modal: ${modalData.category}`);
+            
 
             // Cette fonction peut être étendue pour synchroniser les valeurs
             // Pour l'instant, on suppose que les valeurs sont déjà correctes
@@ -474,13 +474,13 @@
          * Sauvegarde les paramètres d'un modal
          */
         async saveModalSettings(modalElement, category) {
-            log(LOG_LEVELS.INFO, `Starting save process for modal: ${category}`);
+            
 
             try {
                 // Collecter les données du formulaire
                 const formData = this.collectModalData(modalElement, category);
 
-                log(LOG_LEVELS.DEBUG, `Collected form data for ${category}:`, {
+                log(LOG_LEVELS.ERROR, `Collected form data for ${category}:`, {
                     fieldCount: formData.getAll ? formData.getAll('field_count')[0] : 'unknown',
                     action: formData.get('action'),
                     category: formData.get('category')
@@ -496,10 +496,10 @@
                 // Envoyer la requête AJAX
                 const response = await this.sendSaveRequest(formData);
 
-                log(LOG_LEVELS.INFO, `Save response received for ${category}:`, response);
+                
 
                 if (response.success) {
-                    log(LOG_LEVELS.INFO, `Settings saved successfully for ${category}`);
+                    
 
                     // Afficher une notification de succès
                     this.showNotification('Paramètres sauvegardés avec succès !', 'success');
@@ -517,7 +517,7 @@
                 }
 
             } catch (error) {
-                log(LOG_LEVELS.ERROR, `Save failed for modal ${category}:`, error);
+                
 
                 // Afficher une notification d'erreur
                 this.showNotification(`Erreur lors de la sauvegarde: ${error.message}`, 'error');
@@ -536,7 +536,7 @@
          * Collecte les données d'un modal
          */
         collectModalData(modalElement, category) {
-            log(LOG_LEVELS.DEBUG, `Collecting data from modal: ${category}`);
+            
 
             const formData = new FormData();
             let fieldCount = 0;
@@ -574,13 +574,13 @@
                     formData.append(name, value);
                     fieldCount++;
 
-                    log(LOG_LEVELS.DEBUG, `Collected field: ${name} = ${value}`);
+                    
                 }
             });
 
             formData.append('field_count', fieldCount.toString());
 
-            log(LOG_LEVELS.INFO, `Collected ${fieldCount} fields from modal ${category}`);
+            
             return formData;
         }
 
@@ -590,7 +590,7 @@
         async sendSaveRequest(formData) {
             const url = window.pdfBuilderCanvasSettings?.ajax_url || ajaxurl;
 
-            log(LOG_LEVELS.DEBUG, `Sending AJAX request to: ${url}`);
+            
 
             return new Promise((resolve, reject) => {
                 $.ajax({
@@ -600,11 +600,11 @@
                     processData: false,
                     contentType: false,
                     success: (response) => {
-                        log(LOG_LEVELS.DEBUG, 'AJAX request successful', response);
+                        
                         resolve(response);
                     },
                     error: (xhr, status, error) => {
-                        log(LOG_LEVELS.ERROR, 'AJAX request failed', { xhr, status, error });
+                        
                         reject(new Error(`Erreur AJAX: ${error}`));
                     }
                 });
@@ -615,7 +615,7 @@
          * Affiche une notification
          */
         showNotification(message, type) {
-            log(LOG_LEVELS.DEBUG, `Showing notification: ${type} - ${message}`);
+            
 
             // Essayer d'utiliser le système de notification existant
             if (typeof showSystemNotification !== 'undefined') {
@@ -646,8 +646,8 @@
     $(document).ready(function() {
         console.log('🎯🎯🎯 JQUERY DOCUMENT READY FIRED - DOM LOADED 🎯🎯🎯');
         console.log('[CANVAS_MODAL_SAVE] JQUERY DOCUMENT READY CALLED');
-        log(LOG_LEVELS.INFO, 'jQuery document ready fired - DOM is loaded');
-        log(LOG_LEVELS.INFO, 'Document ready, initializing Canvas Modal Manager...');
+        
+        
 
         console.log('🔍 CHECKING JQUERY AVAILABILITY...');
         // Vérifier que jQuery est disponible
@@ -662,11 +662,11 @@
 
         // Vérifier que les variables globales sont disponibles
         if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: window.pdfBuilderCanvasSettings not defined! Script localization failed.');
+            
             return;
         }
 
-        log(LOG_LEVELS.INFO, 'window.pdfBuilderCanvasSettings is defined', {
+        log(LOG_LEVELS.ERROR, 'window.pdfBuilderCanvasSettings is defined', {
             hasAjaxUrl: !!window.pdfBuilderCanvasSettings.ajax_url,
             hasNonce: !!window.pdfBuilderCanvasSettings.nonce,
             settingsKeys: Object.keys(window.pdfBuilderCanvasSettings)
@@ -675,7 +675,7 @@
         // Vérifier qu'on est sur la bonne page
         const currentUrl = window.location.href;
         const isSettingsPage = currentUrl.includes('pdf-builder-settings') && currentUrl.includes('tab=contenu');
-        log(LOG_LEVELS.INFO, 'Page check:', {
+        log(LOG_LEVELS.ERROR, 'Page check:', {
             currentUrl: currentUrl,
             isSettingsPage: isSettingsPage,
             hasTabContenu: currentUrl.includes('tab=contenu'),
@@ -698,40 +698,33 @@
         });
 
         if (missingModals.length > 0) {
-            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: Missing modal elements:', missingModals);
+            
             return;
         }
 
         // Vérifier que les boutons de configuration existent
         const configButtons = document.querySelectorAll('.canvas-configure-btn');
         if (configButtons.length === 0) {
-            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: No configure buttons found!');
+            
             return;
         }
 
-        log(LOG_LEVELS.INFO, `Found ${configButtons.length} configure buttons and all modals`);
+        
 
-        log(LOG_LEVELS.INFO, 'All DOM checks passed - proceeding with initialization');
+        
 
         // Créer et initialiser le gestionnaire de modals
         try {
-            log(LOG_LEVELS.INFO, 'About to create CanvasModalManager instance');
+            
             window.canvasModalManager = new CanvasModalManager();
-            log(LOG_LEVELS.INFO, 'CanvasModalManager instance created, calling init()');
+            
             window.canvasModalManager.init();
-            log(LOG_LEVELS.INFO, 'Canvas Modal System ready');
+            
         } catch (error) {
-            log(LOG_LEVELS.ERROR, 'CRITICAL ERROR: Failed to initialize CanvasModalManager:', error);
+            
             console.error('[CANVAS_MODAL_SAVE] Exception during initialization:', error);
         }
     });
 
 })(jQuery);
-
-} catch (error) {
-    console.error('💥💥💥 CRITICAL ERROR IN CANVAS-SETTINGS.JS 💥💥💥');
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    console.error('Error details:', error);
-}
 
