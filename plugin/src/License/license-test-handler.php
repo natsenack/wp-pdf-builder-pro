@@ -98,7 +98,7 @@ class LicenseTestHandler
     public function generateTestKey()
     {
         // Générer une clé aléatoire
-        $random_part = bin2hex(random_bytes(16));
+        $random_part = bin2hex(openssl_random_pseudo_bytes(16));
 // 32 caractères hex
         $key = self::TEST_KEY_PREFIX . strtoupper($random_part);
         return $key;
@@ -274,12 +274,12 @@ class LicenseTestHandler
     public function handleToggleTestMode()
     {
         // Log pour debug
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode called'); }
+        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode called'); }
 
         // Vérifier la nonce (accepte le nonce central 'pdf_builder_ajax' pour compatibilité)
         $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
         if (empty($nonce) || (!wp_verify_nonce($nonce, 'pdf_builder_toggle_test_mode') && !wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: nonce invalide'); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: nonce invalide'); }
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
@@ -288,7 +288,7 @@ class LicenseTestHandler
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: permissions insuffisantes'); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: permissions insuffisantes'); }
             wp_send_json_error([
                 'message' => 'Permissions insuffisantes'
             ], 403);
@@ -298,12 +298,12 @@ class LicenseTestHandler
         try {
             // Récupérer l'état actuel
             $current_state = $this->isTestModeEnabled();
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: état actuel = ' . ($current_state ? 'true' : 'false')); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: état actuel = ' . ($current_state ? 'true' : 'false')); }
             
 
             // Basculer l'état
             $new_state = !$current_state;
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: nouvel état = ' . ($new_state ? 'true' : 'false')); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: nouvel état = ' . ($new_state ? 'true' : 'false')); }
             
 
             // Si on active le mode test, générer une clé de test automatiquement
@@ -312,25 +312,25 @@ class LicenseTestHandler
                 $this->saveTestKey($test_key);
                 $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
                 pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: clé de test générée = ' . substr($test_key, 0, 10) . '...'); }
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: clé de test générée = ' . substr($test_key, 0, 10) . '...'); }
             }
             
             // Si on désactive le mode test, supprimer la clé de test
             if (!$new_state && $this->getTestKey()) {
                 delete_option('pdf_builder_license_test_key');
                 delete_option('pdf_builder_license_test_key_expires');
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: clé de test supprimée'); }
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: clé de test supprimée'); }
             }
             
 
             // Sauvegarder le nouvel état
             $saved = $this->setTestModeEnabled($new_state);
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: sauvegarde = ' . ($saved ? 'success' : 'failed')); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: sauvegarde = ' . ($saved ? 'success' : 'failed')); }
             
 
             // Vérifier que c'est bien sauvegardé
             $verify_state = $this->isTestModeEnabled();
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: état vérifié = ' . ($verify_state ? 'true' : 'false')); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: état vérifié = ' . ($verify_state ? 'true' : 'false')); }
 
             // Retourner le nouvel état
             wp_send_json_success([
@@ -340,7 +340,7 @@ class LicenseTestHandler
             ]);
             
         } catch (\Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: exception = ' . $e->getMessage()); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: exception = ' . $e->getMessage()); }
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
             ]);
@@ -390,7 +390,7 @@ class LicenseTestHandler
      */
     public function handleCleanupLicense()
     {
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - handleCleanupLicense called'); }
+        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - handleCleanupLicense called'); }
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
@@ -406,12 +406,12 @@ class LicenseTestHandler
         }
 
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Starting cleanup'); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Starting cleanup'); }
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO')); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO')); }
 
             // Options à supprimer (nettoyage complet)
             $options = [
@@ -425,23 +425,23 @@ class LicenseTestHandler
                 'pdf_builder_license_test_mode'
             ];
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Options to delete: ' . implode(', ', $options)); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Options to delete: ' . implode(', ', $options)); }
 
             foreach ($options as $option) {
                 $old_value = get_option($option, 'NOT_SET');
                 delete_option($option);
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Deleted option: ' . $option . ' (was: ' . $old_value . ')'); }
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Deleted option: ' . $option . ' (was: ' . $old_value . ')'); }
             }
 
             // Définir l'état clean
             pdf_builder_update_option('pdf_builder_license_status', 'free');
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Set license status to free'); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Set license status to free'); }
 
             wp_send_json_success([
                 'message' => '✨ Licence complètement nettoyée et réinitialisée'
             ]);
         } catch (\Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Error: ' . $e->getMessage()); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Error: ' . $e->getMessage()); }
             wp_send_json_error([
                 'message' => 'Erreur lors du nettoyage: ' . $e->getMessage()
             ]);
