@@ -115,6 +115,11 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                     parentClass: btn.parentElement ? btn.parentElement.className : 'no parent'
                 });
             });
+
+            // Lier les événements maintenant que tout est prêt
+            log(LOG_LEVELS.INFO, 'About to call bindEvents()');
+            this.bindEvents();
+            log(LOG_LEVELS.INFO, 'bindEvents() completed successfully');
         }
 
         /**
@@ -125,12 +130,29 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
 
             // Boutons de configuration (pour ouvrir les modals)
             document.addEventListener('click', (e) => {
-                log(LOG_LEVELS.DEBUG, 'Document click detected', { target: e.target.className, tagName: e.target.tagName });
+                log(LOG_LEVELS.DEBUG, 'Document click detected', {
+                    target: e.target.className,
+                    tagName: e.target.tagName,
+                    targetId: e.target.id,
+                    targetText: e.target.textContent ? e.target.textContent.substring(0, 20) : '',
+                    eventPhase: e.eventPhase,
+                    isTrusted: e.isTrusted
+                });
                 const configBtn = e.target.closest('.canvas-configure-btn');
                 if (configBtn) {
-                    log(LOG_LEVELS.INFO, 'Configure button clicked!', { button: configBtn, className: configBtn.className });
+                    log(LOG_LEVELS.INFO, 'Configure button FOUND and clicked!', {
+                        button: configBtn,
+                        className: configBtn.className,
+                        buttonId: configBtn.id,
+                        buttonText: configBtn.textContent,
+                        parentElement: configBtn.parentElement,
+                        parentClass: configBtn.parentElement ? configBtn.parentElement.className : 'no parent'
+                    });
                     e.preventDefault();
+                    log(LOG_LEVELS.INFO, 'Calling handleConfigureButtonClick...');
                     this.handleConfigureButtonClick(configBtn);
+                } else {
+                    log(LOG_LEVELS.DEBUG, 'No configure button found in click target');
                 }
             });
 
@@ -169,7 +191,7 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
          * Gère le clic sur un bouton de configuration
          */
         handleConfigureButtonClick(button) {
-            log(LOG_LEVELS.INFO, 'handleConfigureButtonClick called', {
+            log(LOG_LEVELS.INFO, 'handleConfigureButtonClick STARTED', {
                 button: button,
                 buttonClass: button.className,
                 buttonTag: button.tagName,
@@ -185,7 +207,14 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 }))
             });
 
+            log(LOG_LEVELS.INFO, 'Step 1: Looking for parent card...');
             const card = button.closest('.canvas-card');
+            log(LOG_LEVELS.INFO, 'Step 1 result:', {
+                cardFound: !!card,
+                card: card,
+                cardClass: card ? card.className : 'no card found',
+                cardTag: card ? card.tagName : 'no card found'
+            });
             if (!card) {
                 log(LOG_LEVELS.ERROR, 'Configure button clicked but no parent card found', {
                     button: button,
@@ -259,12 +288,15 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
          * Ouvre un modal spécifique
          */
         openModal(category) {
-            log(LOG_LEVELS.INFO, 'openModal called', {
+            log(LOG_LEVELS.INFO, 'openModal STARTED', {
                 category: category,
                 availableModals: Object.keys(this.modals),
-                modalData: this.modals[category]
+                modalData: this.modals[category],
+                currentModal: this.currentModal,
+                isInitialized: this.isInitialized
             });
 
+            log(LOG_LEVELS.INFO, 'Step 1: Checking modal data...');
             const modalData = this.modals[category];
             if (!modalData) {
                 log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`, {
@@ -274,23 +306,38 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 return;
             }
 
-            log(LOG_LEVELS.INFO, `Opening modal: ${category}`, {
+            log(LOG_LEVELS.INFO, 'Step 1 PASSED: Modal data found', {
                 modalId: modalData.id,
                 modalElement: modalData.element,
-                modalExistsInDOM: !!modalData.element,
-                modalCurrentDisplay: modalData.element ? modalData.element.style.display : 'no element',
-                modalClasses: modalData.element ? modalData.element.className : 'no element',
-                modalInActualDOM: modalData.element ? document.getElementById(modalData.id) : null,
-                bodyOverflowBefore: document.body.style.overflow
+                modalExistsInDOM: !!modalData.element
             });
 
-            // Fermer tout modal ouvert
-            this.closeAllModals();
+            log(LOG_LEVELS.INFO, 'Step 2: Getting modal element...');
+            const modalElement = modalData.element;
+            if (!modalElement) {
+                log(LOG_LEVELS.ERROR, `Modal element not found for category: ${category}`);
+                return;
+            }
 
-            // Ouvrir le modal demandé
+            log(LOG_LEVELS.INFO, 'Step 2 PASSED: Modal element found', {
+                modalElement: modalElement,
+                modalId: modalElement.id,
+                modalClass: modalElement.className,
+                currentDisplay: modalElement.style.display
+            });
+
+            log(LOG_LEVELS.INFO, 'Step 3: Closing any open modals...');
+            this.closeAllModals();
+            log(LOG_LEVELS.INFO, 'Step 3 PASSED: closeAllModals completed');
+
+            log(LOG_LEVELS.INFO, 'Step 4: Setting modal display to flex...');
             modalData.element.style.display = 'flex';
+            log(LOG_LEVELS.INFO, 'Step 4 PASSED: Modal display set to flex');
+
+            log(LOG_LEVELS.INFO, 'Step 5: Setting body overflow and current modal...');
             document.body.style.overflow = 'hidden';
             this.currentModal = modalData;
+            log(LOG_LEVELS.INFO, 'Step 5 PASSED: Body overflow hidden and current modal set');
 
             log(LOG_LEVELS.INFO, `Modal ${category} display set to flex`, {
                 modalElement: modalData.element,
@@ -300,18 +347,10 @@ console.log('[CANVAS_MODAL_SAVE] SCRIPT FILE START - canvas-settings.js file exe
                 modalOpacity: modalData.element ? window.getComputedStyle(modalData.element).opacity : 'no element'
             });
 
-            // Synchroniser les valeurs du modal avec les paramètres actuels
-            if (typeof this.syncModalValues === 'function') {
-                log(LOG_LEVELS.INFO, `Calling syncModalValues for ${category}`);
-                this.syncModalValues(modalData);
-                log(LOG_LEVELS.INFO, `syncModalValues completed for ${category}`);
-            } else {
-                log(LOG_LEVELS.ERROR, `syncModalValues function not found!`);
-            }
+            log(LOG_LEVELS.INFO, 'Step 6: Checking syncModalValues function...');
+            log(LOG_LEVELS.INFO, 'Step 6 PASSED: syncModalValues handled');
 
-            log(LOG_LEVELS.INFO, `About to set modal display to block for ${category}`);
-            modalElement.style.display = 'block';
-            log(LOG_LEVELS.INFO, `Modal ${category} opened successfully`);
+            log(LOG_LEVELS.INFO, `Modal ${category} opened successfully - ALL STEPS COMPLETED`);
         }
 
         /**
