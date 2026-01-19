@@ -1965,6 +1965,67 @@ class PdfBuilderProGenerator
     }
 
     /**
+     * Générer un PDF à partir de HTML
+     */
+    public function generateFromHtml($html_content, $filename)
+    {
+        try {
+            // Vérifier si Dompdf est disponible
+            if (!class_exists('Dompdf\Dompdf')) {
+                // Essayer de charger Dompdf depuis vendor
+                $dompdf_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'vendor/dompdf/dompdf/src/Dompdf.php';
+                if (file_exists($dompdf_path)) {
+                    require_once $dompdf_path;
+                } else {
+                    throw new Exception('Dompdf library not found');
+                }
+            }
+
+            // Créer une instance Dompdf
+            $dompdf = new \Dompdf\Dompdf();
+            
+            // Configurer les options
+            $options = $dompdf->getOptions();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isRemoteEnabled', false);
+            $dompdf->setOptions($options);
+
+            // Charger le HTML
+            $dompdf->loadHtml($html_content);
+            
+            // Configurer le papier
+            $dompdf->setPaper('A4', 'portrait');
+            
+            // Rendre le PDF
+            $dompdf->render();
+            
+            // Créer le répertoire de destination s'il n'existe pas
+            $upload_dir = wp_upload_dir();
+            $pdf_dir = $upload_dir['basedir'] . '/pdf-builder/';
+            if (!file_exists($pdf_dir)) {
+                wp_mkdir_p($pdf_dir);
+            }
+            
+            // Générer le chemin complet du fichier
+            $file_path = $pdf_dir . $filename;
+            $file_url = $upload_dir['baseurl'] . '/pdf-builder/' . $filename;
+            
+            // Sauvegarder le PDF
+            file_put_contents($file_path, $dompdf->output());
+            
+            return [
+                'path' => $file_path,
+                'url' => $file_url,
+                'success' => true
+            ];
+            
+        } catch (Exception $e) {
+            $this->logError('Erreur lors de la génération PDF depuis HTML: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Formate une adresse de commande manuellement pour éviter l'autoloading WooCommerce
      */
     private static function formatOrderAddress($order, $type = 'billing')
