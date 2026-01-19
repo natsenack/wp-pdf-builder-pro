@@ -8,8 +8,10 @@
     console.log('🔧🔧🔧 SETTINGS-MAIN.JS CHARGÉ ET EXÉCUTÉ 🔧🔧🔧');
     console.log('⏰ Timestamp settings-main:', new Date().toISOString());
 
-    
-
+// Vérifier si canvas-settings peut être chargé
+console.log('🔗 SETTINGS-MAIN: Vérification des dépendances pour canvas-settings...');
+console.log('🔗 jQuery disponible:', typeof jQuery !== 'undefined');
+console.log('🔗 settings-main disponible:', typeof window !== 'undefined');
     // Define global functions immediately for modal control
     window.closeDeactivateModal = function() {
         $('#deactivate_modal').hide();
