@@ -453,9 +453,21 @@
                         dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
                         format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4')); ?>,
                         bgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
-                        borderColor: <?php echo json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')); ?>,
-                        borderWidth: <?php echo json_encode(get_canvas_option_contenu('canvas_border_width', '1')); ?>,
-                        containerBgColor: <?php echo json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')); ?>,
+                        <?php
+                        // Vérifier si l'utilisateur est premium pour les paramètres de style avancés
+                        $is_premium = \PDF_Builder\Admin\PDF_Builder_Admin::is_premium_user();
+                        if ($is_premium) {
+                            // Utilisateur premium : utiliser les paramètres configurés
+                            echo 'borderColor: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')) . ',' . "\n";
+                            echo 'borderWidth: ' . json_encode(get_canvas_option_contenu('canvas_border_width', '1')) . ',' . "\n";
+                            echo 'containerBgColor: ' . json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')) . ',' . "\n";
+                        } else {
+                            // Utilisateur non-premium : forcer des paramètres par défaut
+                            echo 'borderColor: "#cccccc",' . "\n";
+                            echo 'borderWidth: "1",' . "\n";
+                            echo 'containerBgColor: "#f8f9fa",' . "\n";
+                        }
+                        ?>
                         shadowEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'); ?>,
                         gridEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1'); ?>,
                         gridSize: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20')); ?>,
