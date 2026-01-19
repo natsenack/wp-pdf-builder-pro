@@ -49,7 +49,7 @@ $canvas_defaults = [
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
     // Récupérer depuis l'array pdf_builder_settings avec la clé complète
-    $option_key = 'pdf_builder_' . $key;
+    $option_key = 'pdf_builder_canvas_' . $key;
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
     $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
 
