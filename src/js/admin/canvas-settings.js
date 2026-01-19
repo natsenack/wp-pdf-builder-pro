@@ -73,6 +73,7 @@
             document.addEventListener('click', (e) => {
                 const configBtn = e.target.closest('.canvas-configure-btn');
                 if (configBtn) {
+                    console.log('[CANVAS_MODAL] Configure button clicked:', configBtn);
                     e.preventDefault();
                     this.handleConfigureButtonClick(configBtn);
                 }
@@ -110,18 +111,20 @@
          * Gère le clic sur un bouton de configuration
          */
         handleConfigureButtonClick(button) {
+            console.log('[CANVAS_MODAL] handleConfigureButtonClick called with button:', button);
             const card = button.closest('.canvas-card');
             if (!card) {
-                
+                console.error('[CANVAS_MODAL] No parent card found for button');
                 return;
             }
 
             const category = card.getAttribute('data-category');
             if (!category) {
-                
+                console.error('[CANVAS_MODAL] No category found on card');
                 return;
             }
 
+            console.log('[CANVAS_MODAL] Opening modal for category:', category);
             this.openModal(category);
         }
 
@@ -158,18 +161,20 @@
          * Ouvre un modal spécifique
          */
         openModal(category) {
+            console.log('[CANVAS_MODAL] openModal called for category:', category);
             const modalData = this.modals[category];
             if (!modalData) {
-                
+                console.error('[CANVAS_MODAL] Unknown category:', category);
                 return;
             }
 
             const modalElement = modalData.element;
             if (!modalElement) {
-                
+                console.error('[CANVAS_MODAL] Modal element not found for category:', category);
                 return;
             }
 
+            console.log('[CANVAS_MODAL] Opening modal element:', modalElement.id);
             this.closeAllModals();
             modalElement.style.display = 'flex';
             document.body.style.overflow = 'hidden';
