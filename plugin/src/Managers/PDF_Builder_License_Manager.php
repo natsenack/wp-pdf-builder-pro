@@ -75,7 +75,7 @@ class PDF_Builder_License_Manager
             return true;
         }
 
-        // Vérifier les clés de test (avec validation stricte)
+        // Vérifier les clés de test (avec validation)
         $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
@@ -88,8 +88,11 @@ class PDF_Builder_License_Manager
                     // Clé expirée - nettoyer automatiquement
                     $this->cleanupExpiredTestKey();
                 }
+            } else {
+                // Si pas de date d'expiration définie mais clé existe, considérer comme valide (cas de clés existantes)
+                // Cela permet la compatibilité avec les anciennes clés de test
+                return true;
             }
-            // Si pas de date d'expiration définie, la clé n'est pas valide
         }
 
         return false;
@@ -290,6 +293,38 @@ class PDF_Builder_License_Manager
     {
         $this->cleanupExpiredTestKey();
         return ['success' => true, 'message' => 'Clé de test supprimée'];
+    }
+
+    /**
+     * Obtenir les informations de licence formatées (avec débogage)
+     */
+    public function getLicenseInfo()
+    {
+        $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
+        $test_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
+        $is_test_valid = false;
+
+        if (!empty($test_key)) {
+            if (!empty($test_expires)) {
+                $expires_date = strtotime($test_expires);
+                $is_test_valid = ($expires_date && $expires_date > time());
+            } else {
+                // Clé sans date d'expiration - considérée valide pour compatibilité
+                $is_test_valid = true;
+            }
+        }
+
+        return [
+            'status' => $this->license_status,
+            'is_premium' => $this->is_premium(),
+            'has_real_license' => ($this->license_status === 'active'),
+            'has_test_key' => !empty($test_key),
+            'test_key_valid' => $is_test_valid,
+            'test_expires' => $test_expires,
+            'tier' => isset($this->license_data['tier']) ? $this->license_data['tier'] : 'free',
+            'expires' => isset($this->license_data['expires']) ? date('d/m/Y', $this->license_data['expires']) : null,
+            'features' => isset($this->license_data['features']) ? $this->license_data['features'] : []
+        ];
     }
 }
 }
