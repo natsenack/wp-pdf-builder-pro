@@ -431,11 +431,49 @@
     $(document).ready(function() {
         log(LOG_LEVELS.INFO, 'Document ready, initializing Canvas Modal Manager...');
 
-        // Créer et initialiser le gestionnaire de modals
-        window.canvasModalManager = new CanvasModalManager();
-        window.canvasModalManager.init();
+        // Vérifier que jQuery est disponible
+        if (typeof $ === 'undefined') {
+            console.error('[CANVAS_MODAL_SAVE] jQuery not available!');
+            return;
+        }
 
-        log(LOG_LEVELS.INFO, 'Canvas Modal System ready');
+        // Vérifier que les éléments DOM existent
+        const modalIds = [
+            'canvas-affichage-modal-overlay',
+            'canvas-navigation-modal-overlay',
+            'canvas-comportement-modal-overlay',
+            'canvas-systeme-modal-overlay'
+        ];
+
+        let missingModals = [];
+        modalIds.forEach(id => {
+            if (!document.getElementById(id)) {
+                missingModals.push(id);
+            }
+        });
+
+        if (missingModals.length > 0) {
+            log(LOG_LEVELS.ERROR, 'Missing modal elements:', missingModals);
+            return;
+        }
+
+        // Vérifier que les boutons de configuration existent
+        const configButtons = document.querySelectorAll('.canvas-configure-btn');
+        if (configButtons.length === 0) {
+            log(LOG_LEVELS.ERROR, 'No configure buttons found!');
+            return;
+        }
+
+        log(LOG_LEVELS.INFO, `Found ${configButtons.length} configure buttons and all modals`);
+
+        // Créer et initialiser le gestionnaire de modals
+        try {
+            window.canvasModalManager = new CanvasModalManager();
+            window.canvasModalManager.init();
+            log(LOG_LEVELS.INFO, 'Canvas Modal System ready');
+        } catch (error) {
+            log(LOG_LEVELS.ERROR, 'Failed to initialize CanvasModalManager:', error);
+        }
     });
 
 })(jQuery);
