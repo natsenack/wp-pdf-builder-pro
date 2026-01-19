@@ -33,6 +33,7 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
@@ -247,6 +248,7 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts()
     {
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts called');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
@@ -410,6 +412,7 @@ class AdminScriptLoader
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
+            error_log('[DEBUG] PDF Builder: Template ID detected: ' . $template_id);
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id . ', REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
 
             // Vérifier que template_processor existe
