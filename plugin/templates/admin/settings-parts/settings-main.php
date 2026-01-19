@@ -175,6 +175,12 @@
     <div id="pdf-builder-tabs" style="display: none;"></div>
     <div id="pdf-builder-tab-content" style="display: none;"></div>
 
+    <!-- Inclusion des modales Canvas (toujours disponibles peu importe l'onglet) -->
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
+    <!-- Inclusion du script canvas-settings.js pour la gestion des modals -->
+    <script src="<?php echo esc_url(PDF_BUILDER_PRO_ASSETS_URL . 'js/canvas-settings.min.js'); ?>?v=<?php echo time(); ?>"></script>
+
 </div> <!-- Fin du .wrap -->
 
 </body>
