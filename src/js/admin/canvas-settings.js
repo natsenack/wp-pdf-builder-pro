@@ -5,6 +5,9 @@
 (function($) {
     'use strict';
 
+    // LOG CRITIQUE - Script chargé
+    console.log('[CANVAS_MODAL_SAVE] SCRIPT LOADED - canvas-settings.js has been loaded and executed');
+
     // Configuration du système de logs
     const LOG_PREFIX = '[CANVAS_MODAL_SAVE]';
     const LOG_LEVELS = {
@@ -47,25 +50,19 @@
             }
         } catch (e) {
             console.warn(`${LOG_PREFIX} Failed to send log to server:`, e);
+        }
+    }
 
-        /**
-         * Initialise le systeme de gestion des modals
-         */
-        init() {
-            log(LOG_LEVELS.INFO, 'CanvasModalManager.init() called - STARTING INITIALIZATION');
+    // LOG CRITIQUE - Définition de la classe
+    console.log('[CANVAS_MODAL_SAVE] DEFINING CanvasModalManager class');
 
-            if (this.isInitialized) {
-                log(LOG_LEVELS.WARN, 'CanvasModalManager already initialized');
-                return;
-            }
-
-            log(LOG_LEVELS.INFO, 'Initializing Canvas Modal System...');
-
-            this.registerModals();
-            this.bindEvents();
-            this.isInitialized = true;
-
-            log(LOG_LEVELS.INFO, 'Canvas Modal System initialized successfully');
+    // Classe principale pour la gestion des modals canvas
+    class CanvasModalManager {
+        constructor() {
+            this.modals = {};
+            this.currentModal = null;
+            this.isInitialized = false;
+            log('INFO', 'CanvasModalManager constructor called');
         }
 
         /**
@@ -170,15 +167,40 @@
          * Gère le clic sur un bouton de configuration
          */
         handleConfigureButtonClick(button) {
-            log(LOG_LEVELS.INFO, 'handleConfigureButtonClick called', { button: button, buttonClass: button.className });
+            log(LOG_LEVELS.INFO, 'handleConfigureButtonClick called', {
+                button: button,
+                buttonClass: button.className,
+                buttonTag: button.tagName,
+                buttonId: button.id,
+                buttonParent: button.parentElement,
+                buttonParentClass: button.parentElement ? button.parentElement.className : 'no parent'
+            });
 
             const card = button.closest('.canvas-card');
             if (!card) {
-                log(LOG_LEVELS.ERROR, 'Configure button clicked but no parent card found');
+                log(LOG_LEVELS.ERROR, 'Configure button clicked but no parent card found', {
+                    button: button,
+                    allCardsInDOM: document.querySelectorAll('.canvas-card').length,
+                    allCards: Array.from(document.querySelectorAll('.canvas-card')).map(card => ({
+                        element: card,
+                        className: card.className,
+                        dataCategory: card.getAttribute('data-category')
+                    }))
+                });
                 return;
             }
 
-            log(LOG_LEVELS.INFO, 'Parent card found', { card: card, cardClass: card.className });
+            log(LOG_LEVELS.INFO, 'Parent card found', {
+                card: card,
+                cardClass: card.className,
+                cardTag: card.tagName,
+                cardDataCategory: card.getAttribute('data-category'),
+                cardChildren: Array.from(card.children).map(child => ({
+                    tag: child.tagName,
+                    class: child.className,
+                    id: child.id
+                }))
+            });
 
             const category = card.getAttribute('data-category');
             if (!category) {
@@ -225,15 +247,28 @@
          * Ouvre un modal spécifique
          */
         openModal(category) {
-            log(LOG_LEVELS.INFO, 'openModal called', { category: category, availableModals: Object.keys(this.modals) });
+            log(LOG_LEVELS.INFO, 'openModal called', {
+                category: category,
+                availableModals: Object.keys(this.modals),
+                modalData: this.modals[category]
+            });
 
             const modalData = this.modals[category];
             if (!modalData) {
-                log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`);
+                log(LOG_LEVELS.ERROR, `Cannot open modal: unknown category ${category}`, {
+                    availableCategories: Object.keys(this.modals),
+                    requestedCategory: category
+                });
                 return;
             }
 
-            log(LOG_LEVELS.INFO, `Opening modal: ${category}`, { modalId: modalData.id });
+            log(LOG_LEVELS.INFO, `Opening modal: ${category}`, {
+                modalId: modalData.id,
+                modalElement: modalData.element,
+                modalExistsInDOM: !!modalData.element,
+                modalCurrentDisplay: modalData.element ? modalData.element.style.display : 'no element',
+                modalClasses: modalData.element ? modalData.element.className : 'no element'
+            });
 
             // Fermer tout modal ouvert
             this.closeAllModals();
@@ -243,8 +278,20 @@
             document.body.style.overflow = 'hidden';
             this.currentModal = modalData;
 
+            log(LOG_LEVELS.INFO, `Modal ${category} display set to flex`, {
+                modalElement: modalData.element,
+                newDisplay: modalData.element.style.display,
+                bodyOverflow: document.body.style.overflow
+            });
+
             // Synchroniser les valeurs du modal avec les paramètres actuels
-            this.syncModalValues(modalData);
+            if (typeof this.syncModalValues === 'function') {
+                log(LOG_LEVELS.INFO, `Calling syncModalValues for ${category}`);
+                this.syncModalValues(modalData);
+                log(LOG_LEVELS.INFO, `syncModalValues completed for ${category}`);
+            } else {
+                log(LOG_LEVELS.ERROR, `syncModalValues function not found!`);
+            }
 
             log(LOG_LEVELS.INFO, `Modal ${category} opened successfully`);
         }
@@ -455,6 +502,7 @@
 
     // Initialisation globale
     $(document).ready(function() {
+        console.log('[CANVAS_MODAL_SAVE] JQUERY DOCUMENT READY CALLED');
         log(LOG_LEVELS.INFO, 'jQuery document ready fired - DOM is loaded');
         log(LOG_LEVELS.INFO, 'Document ready, initializing Canvas Modal Manager...');
 
@@ -463,6 +511,8 @@
             console.error('[CANVAS_MODAL_SAVE] CRITICAL ERROR: jQuery not available!');
             return;
         }
+
+        console.log('[CANVAS_MODAL_SAVE] JQUERY AVAILABLE, CHECKING GLOBAL VARIABLES');
 
         // Vérifier que les variables globales sont disponibles
         if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
