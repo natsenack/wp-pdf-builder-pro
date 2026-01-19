@@ -692,8 +692,9 @@
                                         }
                                     });
                                     if (checkedValues.length > 0) {
-                                        formData.append(name, checkedValues.join(','));
-                                        console.log('Checkbox array:', name, '=', checkedValues.join(','));
+                                        var cleanName = name.slice(0, -2); // Remove [] from name
+                                        formData.append(cleanName, checkedValues.join(','));
+                                        console.log('Checkbox array:', cleanName, '=', checkedValues.join(','));
                                     }
                                 } else {
                                     // Single checkbox
