@@ -123,7 +123,7 @@ class PdfBuilderPdfGenerator
         $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
         // Récupérer les paramètres canvas depuis les modals
-        $canvas_dpi_string = pdf_builder_get_option('pdf_builder_canvas_canvas_dpi', '96');
+        $canvas_dpi_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '96');
         // Si c'est une chaîne avec des virgules, prendre la première valeur
         if (strpos($canvas_dpi_string, ',') !== false) {
             $canvas_dpis = explode(',', $canvas_dpi_string);
@@ -468,7 +468,7 @@ class PdfBuilderPdfGenerator
             $pdf_print_optimized = pdf_builder_get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
             // Récupérer les paramètres canvas depuis les modals
-            $canvas_dpi_string = pdf_builder_get_option('pdf_builder_canvas_canvas_dpi', '96');
+            $canvas_dpi_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '96');
             // Si c'est une chaîne avec des virgules, prendre la première valeur
             if (strpos($canvas_dpi_string, ',') !== false) {
                 $canvas_dpis = explode(',', $canvas_dpi_string);
