@@ -13,6 +13,9 @@ if (!defined('ABSPATH')) {
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
+    // LOG DE DEBUG - FONCTION APPELEE
+    error_log('🚀🚀🚀 PDF_BUILDER_LOAD_SETTINGS_ASSETS CALLED - Hook: ' . $hook . ' 🚀🚀🚀');
+
     // DEBUG: Fonction appelée
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - pdf_builder_load_settings_assets appelée pour hook: ' . $hook . ' - DÉBUT FONCTION'); }
 
