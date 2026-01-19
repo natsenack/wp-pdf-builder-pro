@@ -132,11 +132,4 @@ function pdf_builder_sanitize_template_data($data) {
 function pdf_builder_sanitize_settings($settings) {
     $validator = PDF_Builder_Security_Validator::get_instance();
     return $validator->sanitize_settings($settings);
-<<<<<<< HEAD
 }
-
-
-
-=======
-}
->>>>>>> d0ebafc04ebbdf813859fc41932d50ded2e00f5b
