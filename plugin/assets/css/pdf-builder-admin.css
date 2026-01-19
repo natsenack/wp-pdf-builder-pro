@@ -6,6 +6,11 @@
 .pdf-builder-editor-page {
     margin: 0px !important;
 }
+#wpcontent {
+    height: 100%;
+    padding-left: 0px;
+    margin-top: -20px;
+}
 /* PDF Preview Modal Styles */
 .pdf-preview-modal-overlay {
   position: fixed;
