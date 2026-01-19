@@ -1056,70 +1056,182 @@ class PdfBuilderAdmin
         // Enqueue React scripts are now handled in enqueueAdminScripts()
 
         ?>
-        <div class="wrap">
+        <div class="wrap pdf-builder-editor-page">
+            <div class="pdf-builder-editor-header">
+                <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
+                <?php if ($template_id) : ?>
+                    <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
+                <?php else : ?>
+                    <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
+                <?php endif; ?>
+            </div>
+
             <!-- PDF Builder Loading Screen -->
-            <div id="pdf-builder-loader" style="
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(255, 255, 255, 0.95);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                z-index: 999999;
-                text-align: center;
-             ">
-                <div style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 20px;
-                 ">
+            <div id="pdf-builder-loader" class="pdf-builder-loader">
+                <div class="pdf-builder-loader-content">
                     <!-- Custom Spinner - no global classes -->
-                    <div id="pdf-builder-custom-spinner" style="
-                        width: 40px;
-                        height: 40px;
-                        border: 4px solid #f3f3f3;
-                        border-top: 4px solid #007cba;
-                        border-radius: 50%;
-                        animation: pdfBuilderSpin 1s linear infinite;
-                    "></div>
-                    <p style="
-                        color: #666;
-                        font-size: 16px;
-                        margin: 0;
-                        font-weight: 500;
-                        animation: none;
-                        transform: none;
-                    "><?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?> <span id="pdf-builder-timeout-counter">(10s)</span></p>
+                    <div id="pdf-builder-custom-spinner" class="pdf-builder-spinner"></div>
+                    <p class="pdf-builder-loader-text">
+                        <?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?>
+                        <span id="pdf-builder-timeout-counter">(10s)</span>
+                    </p>
                 </div>
             </div>
 
             <!-- Main React Editor Container -->
-            <div id="pdf-builder-editor-container" style="
-                display: block;
-                background: #fff;
-                border: 1px solid #ccd0d4;
-                border-radius: 8px;
-                min-height: 600px;
-            ">
-                <div id="pdf-builder-react-root"></div>
+            <div id="pdf-builder-editor-container" class="pdf-builder-editor-container">
+                <div id="pdf-builder-react-root" class="pdf-builder-react-root"></div>
             </div>
         </div>
 
         <style>
+        /* PDF Builder Editor Page Styles */
+        .pdf-builder-editor-page {
+            margin: 20px 0 0 0;
+            max-width: none;
+        }
+
+        .pdf-builder-editor-header {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .pdf-builder-editor-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d2327;
+        }
+
+        .pdf-builder-editor-header p {
+            margin: 0;
+            color: #646970;
+            font-size: 14px;
+        }
+
+        /* Loader Styles - contained within wp-content */
+        .pdf-builder-loader {
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .pdf-builder-loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
         /* Custom spinner animation - completely isolated */
+        .pdf-builder-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007cba;
+            border-radius: 50%;
+            animation: pdfBuilderSpin 1s linear infinite;
+            box-sizing: border-box;
+        }
+
         @keyframes pdfBuilderSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* Ensure no interference from global styles */
-        #pdf-builder-custom-spinner {
-            box-sizing: border-box !important;
+        .pdf-builder-loader-text {
+            color: #646970;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Editor Container */
+        .pdf-builder-editor-container {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            min-height: 600px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .pdf-builder-react-root {
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+        }
+
+        /* Error message styles */
+        .pdf-builder-error-message {
+            padding: 40px;
+            text-align: center;
+            background: #fff;
+            border: 2px solid #dc3232;
+            border-radius: 8px;
+            margin: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .pdf-builder-error-message h2 {
+            color: #dc3232;
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .pdf-builder-error-message p {
+            color: #646970;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-builder-debug-info {
+            background: #f8f9fa;
+            border: 1px solid #e1e1e1;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .pdf-builder-error-actions {
+            margin-top: 20px;
+        }
+
+        .pdf-builder-reload-btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .pdf-builder-reload-btn:hover {
+            background: #005a87;
+        }
+
+        .pdf-builder-error-note {
+            color: #646970;
+            font-size: 12px;
+            margin-top: 20px;
         }
         </style>
 
@@ -1170,8 +1282,9 @@ class PdfBuilderAdmin
 
                 hide: function() {
                     if (this.element && this.editor) {
-                        this.element.style.display = 'none';
-                        this.editor.style.display = 'block';
+                        this.element.classList.add('hidden');
+                        this.editor.classList.add('visible');
+                        this.editor.classList.remove('hidden');
                     }
                 },
 
@@ -1216,38 +1329,19 @@ class PdfBuilderAdmin
                 showLoadingError: function() {
                     // Hide loader
                     if (this.element) {
-                        this.element.style.display = 'none';
+                        this.element.classList.add('hidden');
                     }
 
                     // Show editor container with error message
                     if (this.editor) {
-                        this.editor.style.display = 'block';
+                        this.editor.classList.add('visible');
+                        this.editor.classList.remove('hidden');
                         this.editor.innerHTML = `
-                            <div style="
-                                padding: 40px;
-                                text-align: center;
-                                background: #fff;
-                                border: 2px solid #dc3232;
-                                border-radius: 8px;
-                                margin: 20px;
-                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                            ">
-                                <h2 style="color: #dc3232; margin-top: 0;">❌ Erreur de chargement de l'éditeur PDF</h2>
-                                <p style="color: #666; font-size: 16px; margin-bottom: 20px;">
-                                    L'éditeur React n'a pas pu se charger dans les 10 secondes imparties.
-                                </p>
+                            <div class="pdf-builder-error-message">
+                                <h2>❌ Erreur de chargement de l'éditeur PDF</h2>
+                                <p>L'éditeur React n'a pas pu se charger dans les 10 secondes imparties.</p>
 
-                                <div style="
-                                    background: #f8f9fa;
-                                    border: 1px solid #e1e1e1;
-                                    border-radius: 4px;
-                                    padding: 15px;
-                                    margin: 20px 0;
-                                    text-align: left;
-                                    font-family: monospace;
-                                    font-size: 12px;
-                                    color: #333;
-                                ">
+                                <div class="pdf-builder-debug-info">
                                     <strong>Informations de débogage :</strong><br>
                                     • React disponible: ${typeof window.pdfBuilderReact !== 'undefined'}<br>
                                     • Fonction initPDFBuilderReact: ${typeof window.initPDFBuilderReact === 'function'}<br>
@@ -1257,22 +1351,11 @@ class PdfBuilderAdmin
                                     • Timestamp: ${new Date().toISOString()}
                                 </div>
 
-                                <div style="margin-top: 20px;">
-                                    <button onclick="location.reload()" style="
-                                        background: #007cba;
-                                        color: white;
-                                        border: none;
-                                        padding: 10px 20px;
-                                        border-radius: 4px;
-                                        cursor: pointer;
-                                        font-size: 14px;
-                                        margin-right: 10px;
-                                    ">🔄 Recharger la page</button>
+                                <div class="pdf-builder-error-actions">
+                                    <button onclick="location.reload()" class="pdf-builder-reload-btn">🔄 Recharger la page</button>
                                 </div>
 
-                                <p style="color: #666; font-size: 12px; margin-top: 20px;">
-                                    Vérifiez la console du navigateur (F12) pour plus de détails sur l'erreur.
-                                </p>
+                                <p class="pdf-builder-error-note">Vérifiez la console du navigateur (F12) pour plus de détails sur l'erreur.</p>
                             </div>
                         `;
                     }
