@@ -41,7 +41,7 @@ if ($templates_count === 0 && !$is_premium) {
 }
 
 // Récupérer les DPI disponibles depuis les paramètres canvas
-$available_dpi_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '72,96,150');
+$available_dpi_string = pdf_builder_get_option('pdf_builder_canvas_canvas_dpi', '72,96,150');
 if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== false) {
     $available_dpis = explode(',', $available_dpi_string);
 } elseif (is_array($available_dpi_string)) {
