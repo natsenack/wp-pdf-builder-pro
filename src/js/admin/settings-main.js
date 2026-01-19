@@ -4,6 +4,10 @@
 (function($) {
     'use strict';
 
+    // LOG DE TEST - SETTINGS-MAIN CHARGÉ
+    console.log('🔧🔧🔧 SETTINGS-MAIN.JS CHARGÉ ET EXÉCUTÉ 🔧🔧🔧');
+    console.log('⏰ Timestamp settings-main:', new Date().toISOString());
+
     
 
     // Define global functions immediately for modal control
