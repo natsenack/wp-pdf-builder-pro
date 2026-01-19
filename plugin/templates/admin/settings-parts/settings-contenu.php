@@ -485,6 +485,7 @@
                 };
 
                 // Le reste de la logique est géré par canvas-settings.js (CanvasModalManager)
+            </script>
 </section> <!-- Fermeture de settings-section contenu-settings -->
 
 
