@@ -24,9 +24,7 @@ module.exports = {
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
     "pdf-preview-api-client": "./src/js/admin/pdf-preview-api-client.js",
     "pdf-preview-integration": "./src/js/admin/pdf-preview-integration.js",
-    "onboarding": "./plugin/assets/js/onboarding.js",
     "notifications": "./src/css/notifications.css",
-    "onboarding-css": "./plugin/assets/css/onboarding.css",
   },
   output: {
     path: outputPath,

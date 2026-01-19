@@ -15,14 +15,15 @@ class AdminPages {
      * Ajoute les pages d'admin dans le menu WordPress
      */
     public static function add_menu_pages() {
-        // Page principale
+        // Page principale - Redirection directe vers l'éditeur
         add_menu_page(
             __('PDF Builder Pro', 'pdf-builder-pro'),
             __('PDF Builder', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder',
             function() {
-                include dirname(__DIR__) . '/pages/welcome.php';
+                wp_redirect(admin_url('admin.php?page=pdf-builder-react-editor'));
+                exit;
             },
             'dashicons-pdf',
             76
