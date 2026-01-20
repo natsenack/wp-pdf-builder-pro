@@ -170,7 +170,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "order-number",
+    type: "order_number",
     label: "Numéro de Commande",
     icon: "🔢",
     description: "Référence de commande avec date",
@@ -203,7 +203,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "woocommerce-order-date",
+    type: "woocommerce_order_date",
     label: "Date de Commande",
     icon: "📅",
     description: "Date de création de la commande",
@@ -236,7 +236,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "woocommerce-invoice-number",
+    type: "woocommerce_invoice_number",
     label: "Numéro de Facture",
     icon: "📄",
     description: "Numéro de facture généré",
@@ -303,7 +303,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "dynamic-text",
+    type: "dynamic_text",
     label: "Texte Dynamique",
     icon: "📝",
     description: "Texte avec variables dynamiques",
