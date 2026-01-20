@@ -179,6 +179,9 @@ const DEFAULT_SETTINGS: Omit<
   refreshSettings: () => {},
 };
 
+// Export des valeurs par défaut pour utilisation dans les composants
+export { DEFAULT_SETTINGS };
+
 interface CanvasSettingsProviderProps {
   children: ReactNode;
 }

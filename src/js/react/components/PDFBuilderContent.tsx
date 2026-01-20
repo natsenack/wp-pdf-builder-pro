@@ -5,7 +5,7 @@ import { PropertiesPanel } from "./properties/PropertiesPanel";
 import { Header } from "./header/Header";
 import { ElementLibrary } from "./element-library/ElementLibrary";
 import { useTemplate } from "../hooks/useTemplate";
-import { useCanvasSettings } from "../contexts/CanvasSettingsContext";
+import { useCanvasSettings, DEFAULT_SETTINGS } from "../contexts/CanvasSettingsContext";
 import {
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
@@ -59,6 +59,9 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
   const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
+
+  // Vérification de licence pour les fonctionnalités premium
+  const isPremium = window.pdfBuilderData?.license?.isPremium || false;
 
   debugLog("📱 PDFBuilderContent: Initial state set:", {
     isHeaderFixed,
@@ -259,7 +262,9 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: canvasSettings.containerBackgroundColor || "#f8f8f8",
+                backgroundColor: !isPremium
+                  ? DEFAULT_SETTINGS.containerBackgroundColor // Fond par défaut en mode gratuit
+                  : (canvasSettings.containerBackgroundColor || DEFAULT_SETTINGS.containerBackgroundColor),
                 border: "1px solid #e0e0e0",
                 borderRadius: "4px",
                 overflow: "auto",

@@ -76,16 +76,10 @@ class Canvas_Manager
             'default_canvas_height' => intval(pdf_builder_get_option('pdf_builder_canvas_height', 1123)),
             'canvas_background_color' => $settings['pdf_builder_canvas_bg_color'] ?? '#ffffff',
             'canvas_show_transparency' => ($settings['pdf_builder_canvas_show_transparency'] ?? '0') == '1',
-            'container_background_color' => \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('custom_colors')
-                ? ($settings['pdf_builder_canvas_container_bg_color'] ?? '#f8f9fa')
-                : '#f8f9fa',
+            'container_background_color' => $is_premium ? '#ffffff' : ($settings['pdf_builder_canvas_container_bg_color'] ?? '#f8f9fa'),
             'container_show_transparency' => ($settings['pdf_builder_canvas_container_show_transparency'] ?? '0') == '1',
-            'border_color' => \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('custom_colors')
-                ? ($settings['pdf_builder_canvas_border_color'] ?? '#cccccc')
-                : '#cccccc',
-            'border_width' => \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('custom_colors')
-                ? intval($settings['pdf_builder_canvas_border_width'] ?? 1)
-                : 1,
+            'border_color' => $is_premium ? '#007cba' : ($settings['pdf_builder_canvas_border_color'] ?? '#cccccc'),
+            'border_width' => $is_premium ? 2 : intval($settings['pdf_builder_canvas_border_width'] ?? 1),
             'shadow_enabled' => ($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') == '1',
             'margin_top' => intval($settings['pdf_builder_canvas_margin_top'] ?? 28),
             'margin_right' => intval($settings['pdf_builder_canvas_margin_right'] ?? 28),
