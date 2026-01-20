@@ -3435,6 +3435,7 @@ export const Canvas = function Canvas({
           justifyContent: "center",
           border: borderStyle,
           borderRadius: "4px",
+          backgroundColor: canvasSettings?.containerBackgroundColor || "#f8f9fa",
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           boxShadow: isDragOver ? "0 0 0 2px rgba(0, 122, 204, 0.2)" : "none",
           pointerEvents: "auto",
