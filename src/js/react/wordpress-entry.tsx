@@ -36,7 +36,7 @@ window.initPDFBuilderReact = window.pdfBuilderReact.initPDFBuilderReact;
 
 
 // DEBUG: Log that the script is loading
-console.log('🚀 [WORDPRESS-ENTRY] Script loading started - before try block');
+// console.log('🚀 [WORDPRESS-ENTRY] Script loading started - before try block');
 
 // Now try the full React implementation
 try {
@@ -143,7 +143,7 @@ declare global {
 
 export function initPDFBuilderReact() {
   // LOG CRITIQUE - DÉBUT
-  console.log('🚀 [WORDPRESS-ENTRY] initPDFBuilderReact FUNCTION CALLED - STARTING INITIALIZATION');
+  // console.log('🚀 [WORDPRESS-ENTRY] initPDFBuilderReact FUNCTION CALLED - STARTING INITIALIZATION');
   addDebugToDOM('💥 initPDFBuilderReact STARTED at ' + new Date().toISOString());
 
   try {

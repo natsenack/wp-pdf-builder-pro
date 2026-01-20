@@ -64,11 +64,11 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const isPremium = window.pdfBuilderData?.license?.isPremium || false;
 
   // DEBUG: Log license data reception
-  console.log('🔑 [PDFBuilderContent DEBUG] License data:', {
-    windowPdfBuilderData: window.pdfBuilderData,
-    license: window.pdfBuilderData?.license,
-    isPremium: isPremium
-  });
+  // console.log('🔑 [PDFBuilderContent DEBUG] License data:', {
+  //   windowPdfBuilderData: window.pdfBuilderData,
+  //   license: window.pdfBuilderData?.license,
+  //   isPremium: isPremium
+  // });
 
   debugLog("📱 PDFBuilderContent: Initial state set:", {
     isHeaderFixed,
