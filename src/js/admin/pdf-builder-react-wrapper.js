@@ -20,6 +20,13 @@
     
     // Log visible pour confirmer l'exécution
     console.warn('⚠️ [WRAPPER] Wrapper React chargé - vérification du container...');
+    
+    // Ajouter un indicateur visuel dans le DOM pour confirmer l'exécution
+    var indicator = document.createElement('div');
+    indicator.id = 'pdf-builder-wrapper-indicator';
+    indicator.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #007cba; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+    indicator.textContent = 'Wrapper chargé - ' + new Date().toLocaleTimeString();
+    document.body.appendChild(indicator);
 
     // Attendre que les bundles React soient chargés
     function waitForReactBundle(maxRetries = 50) {
@@ -32,6 +39,11 @@
 
             if (retries > maxRetries) {
                 console.error('❌ [WRAPPER] Nombre maximum de tentatives atteint, abandon - Container #pdf-builder-react-root non trouvé');
+                // Indicateur visuel d'échec
+                var failIndicator = document.createElement('div');
+                failIndicator.style.cssText = 'position: fixed; top: 40px; right: 10px; background: #dc3232; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+                failIndicator.textContent = 'ÉCHEC: Container non trouvé';
+                document.body.appendChild(failIndicator);
                 return;
             }
 
@@ -44,6 +56,11 @@
             }
 
             console.warn('✅ [WRAPPER] Container #pdf-builder-react-root trouvé:', container);
+            // Indicateur visuel de succès
+            var successIndicator = document.createElement('div');
+            successIndicator.style.cssText = 'position: fixed; top: 70px; right: 10px; background: #46b450; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+            successIndicator.textContent = 'Container trouvé';
+            document.body.appendChild(successIndicator);
             if (typeof window.pdfBuilderReact === 'undefined' || typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
                 console.warn('⏳ [WRAPPER] pdfBuilderReact pas prêt:', {
                     pdfBuilderReact: typeof window.pdfBuilderReact,
@@ -61,11 +78,26 @@
 
                 if (success) {
                     console.warn('✅ [WRAPPER] Initialisation React réussie - Éditeur chargé !');
+                    // Indicateur visuel de succès d'initialisation
+                    var initSuccessIndicator = document.createElement('div');
+                    initSuccessIndicator.style.cssText = 'position: fixed; top: 100px; right: 10px; background: #00a32a; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+                    initSuccessIndicator.textContent = 'React initialisé avec succès';
+                    document.body.appendChild(initSuccessIndicator);
                 } else {
                     console.error('❌ [WRAPPER] Initialisation React échouée - Fonction initPDFBuilderReact a retourné false');
+                    // Indicateur visuel d'échec d'initialisation
+                    var initFailIndicator = document.createElement('div');
+                    initFailIndicator.style.cssText = 'position: fixed; top: 100px; right: 10px; background: #dc3232; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+                    initFailIndicator.textContent = 'ÉCHEC: React non initialisé';
+                    document.body.appendChild(initFailIndicator);
                 }
             } catch (error) {
                 console.error('❌ [WRAPPER] Erreur lors de l\'initialisation React:', error);
+                // Indicateur visuel d'erreur
+                var errorIndicator = document.createElement('div');
+                errorIndicator.style.cssText = 'position: fixed; top: 100px; right: 10px; background: #dc3232; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+                errorIndicator.textContent = 'ERREUR: ' + error.message;
+                document.body.appendChild(errorIndicator);
             }
         }
 
