@@ -914,6 +914,17 @@
                 success: function(response) {
                     console.log('🔐 [Test de Licence] Réponse AJAX nettoyage reçue:', response);
                     if (response.success) {
+                        // Supprimer immédiatement la clé de test du champ
+                        $('#license_test_key').val('');
+                        
+                        // Désactiver le mode test
+                        $('#license_test_mode').prop('checked', false);
+                        $('#license_test_mode_status')
+                            .removeClass('license-test-mode-active')
+                            .addClass('license-test-mode-inactive')
+                            .text('❌ Mode test inactif');
+                        $('#toggle_license_test_mode_btn').text('🎚️ Activer Mode Test');
+                        
                         $status.html('<span style="color: #28a745;">✅ Nettoyage complet réussi ! Le plugin a été réinitialisé à l\'état libre.</span>');
                         $btn.hide();
                         console.log('🔐 [Test de Licence] Nettoyage complet réussi, rechargement de la page dans 2 secondes');
