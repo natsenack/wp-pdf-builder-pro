@@ -1543,12 +1543,8 @@ function duplicateTemplate(templateId, templateName) {
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action est irréversible.')) {
-        // Implémentation de la suppression
-        
-        // TODO: Implémenter la suppression via AJAX
-        alert('Fonction de suppression à implémenter');
-    }
+    // Cette fonction est définie plus haut dans le fichier avec l'implémentation AJAX complète
+    // Ne pas redéfinir ici pour éviter l'écrasement
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
