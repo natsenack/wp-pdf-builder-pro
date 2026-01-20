@@ -9,6 +9,12 @@ debugLog('🔧 [PDFBuilder.tsx] Import successful. React:', typeof React, 'useSt
 debugLog('🔧 [PDFBuilder.tsx] window.pdfBuilderData at import time:', window.pdfBuilderData);
 debugLog('🔧 [PDFBuilder.tsx] window keys at import time:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
 
+// DIRECT CONSOLE LOGS FOR DEBUGGING
+console.log('🔥 [PDFBuilder.tsx] COMPONENT FILE LOADED - DIRECT CONSOLE LOG');
+console.log('🔥 [PDFBuilder.tsx] window.pdfBuilderData:', window.pdfBuilderData);
+console.log('🔥 [PDFBuilder.tsx] React available:', typeof React);
+console.log('🔥 [PDFBuilder.tsx] useState available:', typeof useState);
+
 interface PDFBuilderProps {
   width?: number;
   height?: number;
@@ -20,6 +26,7 @@ export function PDFBuilder({
   height: initialHeight = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderProps) {
+  console.log('🔥 [PDFBuilder] COMPONENT FUNCTION CALLED with props:', { initialWidth, initialHeight, className });
   debugLog('🔧 PDFBuilder: Component initialized with props:', { initialWidth, initialHeight, className });
   debugLog('🔧 PDFBuilder: window.pdfBuilderData at component init:', window.pdfBuilderData);
   debugLog('🔧 PDFBuilder: window.pdfBuilderData?.ajaxUrl:', window.pdfBuilderData?.ajaxUrl);

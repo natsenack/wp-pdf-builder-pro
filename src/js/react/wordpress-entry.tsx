@@ -143,7 +143,7 @@ declare global {
 
 export function initPDFBuilderReact() {
   // LOG CRITIQUE - DÉBUT
-  
+  console.log('🚀 [WORDPRESS-ENTRY] initPDFBuilderReact FUNCTION CALLED - STARTING INITIALIZATION');
   addDebugToDOM('💥 initPDFBuilderReact STARTED at ' + new Date().toISOString());
 
   try {
