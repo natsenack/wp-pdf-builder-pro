@@ -338,7 +338,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template" onclick="console.log(\'[PDF Builder] Edit button clicked for template ID: ' . intval($template_id) . '\'); console.log(\'[PDF Builder] Navigating to editor for template: ' . esc_js($template_name) . '\');">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . esc_js($button_action) . '(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Paramètres">⚙️</button>';
                     echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Dupliquer ce template">📋</button>';
-                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer">🗑️</button>';
+                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="console.log(\'[DEBUG] Bouton supprimer cliqué pour template ID:\', ' . intval($template_id) . '); confirmDeleteTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
@@ -1025,7 +1025,21 @@ function duplicateTemplate(templateId, templateName) {
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
+    console.log('[DEBUG] confirmDeleteTemplate appelée avec:', templateId, templateName);
+
     if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action ne peut pas être annulée.')) {
+        console.log('[DEBUG] Utilisateur a confirmé la suppression');
+
+        // Vérifier que jQuery est disponible
+        if (typeof jQuery === 'undefined') {
+            console.error('[DEBUG] jQuery n\'est pas disponible');
+            alert('Erreur: jQuery n\'est pas chargé');
+            return;
+        }
+
+        console.log('[DEBUG] jQuery disponible, ajaxurl:', ajaxurl);
+        console.log('[DEBUG] pdfBuilderTemplatesNonce:', pdfBuilderTemplatesNonce);
+
         // Utiliser jQuery AJAX au lieu de fetch pour la compatibilité
         jQuery.ajax({
             url: ajaxurl,
@@ -1036,17 +1050,23 @@ function confirmDeleteTemplate(templateId, templateName) {
                 nonce: pdfBuilderTemplatesNonce
             },
             success: function(response) {
+                console.log('[DEBUG] Réponse AJAX reçue:', response);
                 if (response.success) {
+                    console.log('[DEBUG] Suppression réussie');
                     alert('Template supprimé avec succès !');
                     location.reload();
                 } else {
+                    console.error('[DEBUG] Erreur dans la réponse:', response);
                     alert('Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue'));
                 }
             },
-            error: function() {
-                alert('Erreur lors de la suppression du template');
+            error: function(xhr, status, error) {
+                console.error('[DEBUG] Erreur AJAX:', xhr, status, error);
+                alert('Erreur lors de la suppression du template: ' + error);
             }
         });
+    } else {
+        console.log('[DEBUG] Utilisateur a annulé la suppression');
     }
 }
 
