@@ -337,13 +337,18 @@ class PdfBuilderScreenshotRenderer
             }
 
             // Lire le HTML et l'ajouter au PDF
-            $html_content = file_get_contents($html_file);
-            $dompdf->loadHtml($html_content);
-            $dompdf->setPaper($pdf_page_size, $pdf_orientation);
-            $dompdf->render();
+            try {
+                $html_content = file_get_contents($html_file);
+                $dompdf->loadHtml($html_content);
+                $dompdf->setPaper($pdf_page_size, $pdf_orientation);
+                $dompdf->render();
 
-            file_put_contents($pdf_path, $dompdf->output());
-            return file_exists($pdf_path);
+                file_put_contents($pdf_path, $dompdf->output());
+                return file_exists($pdf_path);
+            } catch (\Throwable $e) {
+                error_log('[PDF Builder] Error during PDF generation in screenshot renderer: ' . $e->getMessage());
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }

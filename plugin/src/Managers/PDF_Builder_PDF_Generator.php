@@ -174,12 +174,17 @@ class PdfBuilderPdfGenerator
         }
 
         // Configuration PDF
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper($pdf_page_size, $pdf_orientation);
-        $dompdf->render();
+        try {
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper($pdf_page_size, $pdf_orientation);
+            $dompdf->render();
 
-        // Sauvegarder le PDF
-        file_put_contents($pdf_path, $dompdf->output());
+            // Sauvegarder le PDF
+            file_put_contents($pdf_path, $dompdf->output());
+        } catch (\Throwable $e) {
+            error_log('[PDF Builder] Error during PDF generation: ' . $e->getMessage());
+            return false; // Or handle error appropriately
+        }
 
         return $pdf_path;
     }
