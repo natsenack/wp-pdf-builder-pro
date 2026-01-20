@@ -1050,62 +1050,13 @@
                 </div>
 
                 <!-- Bouton de sauvegarde -->
-                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; text-align: right;">
-                    <button type="button"
-                            id="save_email_reminders"
-                            class="button button-primary"
-                            style="padding: 0.75rem 1.5rem; font-weight: 600;">
-                        💾 Sauvegarder les paramètres
-                    </button>
-                    <span id="email_reminders_status" style="margin-left: 1rem;"></span>
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; text-align: center;">
+                    <p style="margin: 0; font-size: 0.9rem; color: #6c757d;">
+                        💡 Utilisez le bouton "Enregistrer" flottant en bas de la page pour sauvegarder vos paramètres.
+                    </p>
                 </div>
 
-                <!-- JavaScript pour la gestion AJAX -->
-                <script type="text/javascript">
-                jQuery(document).ready(function($) {
-                    $('#save_email_reminders').on('click', function(e) {
-                        e.preventDefault();
-
-                        const $btn = $(this);
-                        const $status = $('#email_reminders_status');
-                        const nonce = '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
-
-                        // Récupérer les valeurs
-                        const emailReminders = $('#license_email_reminders').is(':checked') ? '1' : '0';
-                        const reminderEmail = $('#license_reminder_email').val();
-
-                        // Désactiver le bouton
-                        $btn.prop('disabled', true).text('Sauvegarde en cours...');
-                        $status.html('<span style="color: #007cba;">Sauvegarde en cours...</span>');
-
-                        // Requête AJAX
-                        $.ajax({
-                            url: pdf_builder_ajax.ajax_url,
-                            type: 'POST',
-                            data: {
-                                action: 'pdf_builder_ajax_handler',
-                                action_type: 'save_license_settings',
-                                nonce: nonce,
-                                license_email_reminders: emailReminders,
-                                license_reminder_email: reminderEmail
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    $status.html('<span style="color: #28a745;">✅ Paramètres sauvegardés avec succès !</span>');
-                                } else {
-                                    $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
-                            },
-                            complete: function() {
-                                $btn.prop('disabled', false).text('💾 Sauvegarder les paramètres');
-                            }
-                        });
-                    });
-                });
-                </script>
+                <!-- JavaScript pour la gestion AJAX déplacé vers settings-main.php pour éviter les conflits -->
             </section>
 
                     <!-- JavaScript AJAX déplacé vers settings-main.php pour éviter les conflits -->

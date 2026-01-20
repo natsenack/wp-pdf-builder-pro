@@ -661,9 +661,6 @@ class AjaxHandler
                 case 'check_license_expiration':
                     $this->handleCheckLicenseExpiration();
                     break;
-                case 'save_license_settings':
-                    $this->handleSaveLicenseSettings();
-                    break;
 
                 // Gestion de la base de données
                 case 'manage_database_table':
@@ -1845,39 +1842,6 @@ class AjaxHandler
         } catch (Exception $e) {
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckLicenseExpiration - Error: ' . $e->getMessage()); }
             wp_send_json_error(['message' => 'Erreur lors de la vérification d\'expiration']);
-        }
-    }
-
-    /**
-     * Sauvegarder les paramètres de licence (rappels email)
-     */
-    private function handleSaveLicenseSettings()
-    {
-        try {
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleSaveLicenseSettings - Starting save process'); }
-
-            // Récupérer les paramètres depuis POST
-            $email_reminders = !empty($_POST['license_email_reminders']) ? '1' : '0';
-            $reminder_email = sanitize_email($_POST['license_reminder_email'] ?? '');
-
-            // Sauvegarder les paramètres
-            pdf_builder_update_option('pdf_builder_license_email_reminders', $email_reminders);
-            pdf_builder_update_option('pdf_builder_license_reminder_email', $reminder_email);
-
-            // Supprimer l'ancienne option si elle existe
-            delete_option('pdf_builder_license_enable_notifications');
-
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleSaveLicenseSettings - Saved email_reminders=' . $email_reminders . ', reminder_email=' . $reminder_email); }
-
-            wp_send_json_success([
-                'message' => 'Paramètres de rappel par email sauvegardés avec succès.',
-                'email_reminders' => $email_reminders,
-                'reminder_email' => $reminder_email
-            ]);
-
-        } catch (Exception $e) {
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleSaveLicenseSettings - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde: ' . $e->getMessage()]);
         }
     }
 
