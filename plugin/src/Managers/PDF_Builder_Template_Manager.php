@@ -1059,6 +1059,16 @@ class PdfBuilderTemplateManager
             }
         }
 
+        // Validation spécifique pour les éléments spéciaux
+        if ($normalized_type === 'order_number' || $normalized_type_dash === 'order_number') {
+            // Les éléments order_number doivent avoir une propriété 'format'
+            if (!isset($element['format'])) {
+                $errors[] = "Élément $index ($element_id): propriété 'format' obligatoire manquante pour les éléments order_number";
+            } elseif (!is_string($element['format'])) {
+                $errors[] = "Élément $index ($element_id): propriété 'format' doit être une chaîne de caractères";
+            }
+        }
+
         return $errors;
     }
 
