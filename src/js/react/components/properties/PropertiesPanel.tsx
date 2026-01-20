@@ -7,6 +7,8 @@ import { CustomerInfoProperties } from './CustomerInfoProperties';
 import { CompanyInfoProperties } from './CompanyInfoProperties';
 import { CompanyLogoProperties } from './CompanyLogoProperties';
 import { OrderNumberProperties } from './OrderNumberProperties';
+import { WoocommerceOrderDateProperties } from './WoocommerceOrderDateProperties';
+import { WoocommerceInvoiceNumberProperties } from './WoocommerceInvoiceNumberProperties';
 import { DynamicTextProperties } from './DynamicTextProperties';
 import { MentionsProperties } from './MentionsProperties';
 import { DocumentTypeProperties } from './DocumentTypeProperties';
@@ -295,6 +297,20 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
               setActiveTab={setActiveTab}
             />
           )}
+          {element.type === 'woocommerce_order_date' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <WoocommerceOrderDateProperties
+              element={element as any}
+              onUpdate={(updatedElement) => updateElement(element.id, updatedElement)}
+            />
+          )}
+          {element.type === 'woocommerce_invoice_number' && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <WoocommerceInvoiceNumberProperties
+              element={element as any}
+              onUpdate={(updatedElement) => updateElement(element.id, updatedElement)}
+            />
+          )}
           {element.type === 'document_type' && (
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <DocumentTypeProperties
@@ -358,7 +374,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
               setActiveTab={setActiveTab}
             />
           )}
-          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic_text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line') && (
+          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic_text' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line') && (
             <ElementProperties
               element={element}
               onChange={handlePropertyChange}

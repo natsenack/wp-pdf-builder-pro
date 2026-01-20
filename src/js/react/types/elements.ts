@@ -63,7 +63,7 @@ export interface BaseElement {
 export type Element = BaseElement;
 
 export interface OrderNumberElement extends BaseElement {
-  type: 'order-number';
+  type: 'order_number' | 'order-number';
   showLabel?: boolean;
   labelText?: string;
   labelPosition?: string;
@@ -72,10 +72,58 @@ export interface OrderNumberElement extends BaseElement {
   fontSize?: string | number;
   fontFamily?: string;
   fontWeight?: string;
+  properties?: {
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    fontWeight?: string;
+    fontStyle?: string;
+    textAlign?: string;
+    padding?: { top?: number; right?: number; bottom?: number; left?: number };
+    border?: { width?: number; style?: string; color?: string };
+    backgroundColor?: string;
+    [key: string]: any;
+  };
+}
+
+export interface WoocommerceOrderDateElement extends BaseElement {
+  type: 'woocommerce_order_date';
+  properties?: {
+    dateFormat?: string;
+    showTime?: boolean;
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    fontWeight?: string;
+    fontStyle?: string;
+    textAlign?: string;
+    padding?: { top?: number; right?: number; bottom?: number; left?: number };
+    border?: { width?: number; style?: string; color?: string };
+    backgroundColor?: string;
+    [key: string]: any;
+  };
+}
+
+export interface WoocommerceInvoiceNumberElement extends BaseElement {
+  type: 'woocommerce_invoice_number';
+  properties?: {
+    prefix?: string;
+    suffix?: string;
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    fontWeight?: string;
+    fontStyle?: string;
+    textAlign?: string;
+    padding?: { top?: number; right?: number; bottom?: number; left?: number };
+    border?: { width?: number; style?: string; color?: string };
+    backgroundColor?: string;
+    [key: string]: any;
+  };
 }
 
 export interface DynamicTextElement extends BaseElement {
-  type: 'dynamic-text';
+  type: 'dynamic_text' | 'dynamic-text';
   textTemplate?: string;
   autoWrap?: boolean;
   theme?: string;

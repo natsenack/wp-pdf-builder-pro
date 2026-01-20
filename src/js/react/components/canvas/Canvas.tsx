@@ -1349,6 +1349,169 @@ const drawOrderNumber = (
   }
 };
 
+const drawWoocommerceOrderDate = (
+  ctx: CanvasRenderingContext2D,
+  element: Element,
+  state: BuilderState
+) => {
+  const props = element.properties || {};
+  const fontSize = props.fontSize || 12;
+  const fontFamily = props.fontFamily || "Arial";
+  const fontWeight = props.fontWeight || "normal";
+  const fontStyle = props.fontStyle || "normal";
+  const textAlign = props.textAlign || "left";
+  const color = props.color || "#000000";
+  const backgroundColor = props.backgroundColor || "transparent";
+  const dateFormat = props.dateFormat || "d/m/Y";
+  const showTime = props.showTime || false;
+
+  // Appliquer le fond si spécifié
+  if (backgroundColor !== "transparent") {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Appliquer la bordure si spécifiée
+  if (props.border && props.border.width > 0) {
+    ctx.strokeStyle = props.border.color || "#000000";
+    ctx.lineWidth = props.border.width;
+    if (props.border.style === "dashed") {
+      ctx.setLineDash([5, 5]);
+    } else if (props.border.style === "dotted") {
+      ctx.setLineDash([2, 2]);
+    }
+    ctx.strokeRect(0, 0, element.width, element.height);
+    ctx.setLineDash([]);
+  }
+
+  // Récupérer la date de la commande
+  let orderDate: string;
+  if (state.previewMode === "command") {
+    orderDate = wooCommerceManager.getOrderDate();
+  } else {
+    orderDate = wooCommerceManager.getOrderDate() || "27/10/2024";
+  }
+
+  // Formater la date selon le format spécifié
+  let displayDate = orderDate;
+  try {
+    const dateObj = new Date(orderDate);
+    if (!isNaN(dateObj.getTime())) {
+      // Formater selon le format spécifié
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const year = dateObj.getFullYear();
+      
+      if (dateFormat === "m/d/Y") {
+        displayDate = `${month}/${day}/${year}`;
+      } else if (dateFormat === "Y-m-d") {
+        displayDate = `${year}-${month}-${day}`;
+      } else if (dateFormat === "d-m-Y") {
+        displayDate = `${day}-${month}-${year}`;
+      } else if (dateFormat === "d.m.Y") {
+        displayDate = `${day}.${month}.${year}`;
+      } else {
+        // d/m/Y par défaut
+        displayDate = `${day}/${month}/${year}`;
+      }
+
+      // Ajouter l'heure si demandé
+      if (showTime) {
+        const hours = String(dateObj.getHours()).padStart(2, "0");
+        const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+        displayDate += ` ${hours}:${minutes}`;
+      }
+    }
+  } catch (e) {
+    // Utiliser la date brute en cas d'erreur
+  }
+
+  // Appliquer le padding
+  const padding = props.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+  const yOffset = padding.top || 0;
+  const xOffset = padding.left || 0;
+
+  // Configurer le contexte de rendu
+  ctx.fillStyle = color;
+  ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+  ctx.textAlign = textAlign as CanvasTextAlign;
+  ctx.textBaseline = "top";
+
+  // Calculer la position X selon l'alignement
+  let x = xOffset;
+  if (textAlign === "center") {
+    x = element.width / 2;
+  } else if (textAlign === "right") {
+    x = element.width - (padding.right || 0);
+  }
+
+  // Afficher la date
+  ctx.fillText(displayDate, x, yOffset + 10);
+};
+
+const drawWoocommerceInvoiceNumber = (
+  ctx: CanvasRenderingContext2D,
+  element: Element
+) => {
+  const props = element.properties || {};
+  const fontSize = props.fontSize || 12;
+  const fontFamily = props.fontFamily || "Arial";
+  const fontWeight = props.fontWeight || "normal";
+  const fontStyle = props.fontStyle || "normal";
+  const textAlign = props.textAlign || "left";
+  const color = props.color || "#000000";
+  const backgroundColor = props.backgroundColor || "transparent";
+  const prefix = props.prefix || "";
+  const suffix = props.suffix || "";
+
+  // Appliquer le fond si spécifié
+  if (backgroundColor !== "transparent") {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, element.width, element.height);
+  }
+
+  // Appliquer la bordure si spécifiée
+  if (props.border && props.border.width > 0) {
+    ctx.strokeStyle = props.border.color || "#000000";
+    ctx.lineWidth = props.border.width;
+    if (props.border.style === "dashed") {
+      ctx.setLineDash([5, 5]);
+    } else if (props.border.style === "dotted") {
+      ctx.setLineDash([2, 2]);
+    }
+    ctx.strokeRect(0, 0, element.width, element.height);
+    ctx.setLineDash([]);
+  }
+
+  // Récupérer le numéro de facture WooCommerce
+  const invoiceNumber = wooCommerceManager.getInvoiceNumber?.() || "INV-2024-00001";
+
+  // Construire le texte avec préfixe et suffixe
+  const displayText = `${prefix}${invoiceNumber}${suffix}`;
+
+  // Appliquer le padding
+  const padding = props.padding || { top: 0, right: 0, bottom: 0, left: 0 };
+  const yOffset = padding.top || 0;
+  const xOffset = padding.left || 0;
+
+  // Configurer le contexte de rendu
+  ctx.fillStyle = color;
+  ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+  ctx.textAlign = textAlign as CanvasTextAlign;
+  ctx.textBaseline = "top";
+
+  // Calculer la position X selon l'alignement
+  let x = xOffset;
+  if (textAlign === "center") {
+    x = element.width / 2;
+  } else if (textAlign === "right") {
+    x = element.width - (padding.right || 0);
+  }
+
+  // Afficher le numéro de facture
+  ctx.fillText(displayText, x, yOffset + 10);
+};
+
 const drawDocumentType = (
   ctx: CanvasRenderingContext2D,
   element: Element,
@@ -2403,6 +2566,14 @@ export const Canvas = function Canvas({
         case "order_number":
           debugLog(`[Canvas] Rendering order number element: ${element.id}`);
           drawOrderNumber(ctx, element, currentState);
+          break;
+        case "woocommerce_order_date":
+          debugLog(`[Canvas] Rendering woocommerce order date element: ${element.id}`);
+          drawWoocommerceOrderDate(ctx, element, currentState);
+          break;
+        case "woocommerce_invoice_number":
+          debugLog(`[Canvas] Rendering woocommerce invoice number element: ${element.id}`);
+          drawWoocommerceInvoiceNumber(ctx, element);
           break;
         case "document_type":
           debugLog(`[Canvas] Rendering document type element: ${element.id}`);
