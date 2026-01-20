@@ -590,13 +590,65 @@ class SettingsManager
             $sanitized['pdf_builder_performance_monitoring'] = $input['pdf_builder_performance_monitoring'] ? '1' : '0';
         }
 
-        // Sanitisation des paramètres de licence
+        // Sanitisation des paramètres de licence avec conformité RGPD
         if (isset($input['pdf_builder_license_email_reminders'])) {
-            $sanitized['pdf_builder_license_email_reminders'] = $input['pdf_builder_license_email_reminders'] ? '1' : '0';
+            $email_reminders_enabled = $input['pdf_builder_license_email_reminders'] ? '1' : '0';
+            $sanitized['pdf_builder_license_email_reminders'] = $email_reminders_enabled;
+
+            // RGPD : Si les rappels sont désactivés, supprimer automatiquement l'adresse email
+            if ($email_reminders_enabled === '0') {
+                $sanitized['pdf_builder_license_reminder_email'] = '';
+                if (class_exists('\PDF_Builder_Logger')) {
+                    \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Rappels désactivés - adresse email supprimée automatiquement');
+                }
+                // Passer au traitement suivant (ne pas traiter l'email)
+                goto after_email_processing;
+            }
         }
+
         if (isset($input['pdf_builder_license_reminder_email'])) {
-            $sanitized['pdf_builder_license_reminder_email'] = sanitize_email($input['pdf_builder_license_reminder_email']);
+            $email = trim($input['pdf_builder_license_reminder_email']);
+
+            // Vérifications RGPD pour l'adresse email
+            if (!empty($email)) {
+                // 1. Validation de l'email
+                if (!is_email($email)) {
+                    // Email invalide - ne pas sauvegarder
+                    if (class_exists('\PDF_Builder_Logger')) {
+                        \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Email invalide fourni pour les rappels: ' . $email);
+                    }
+                    $email = '';
+                } else {
+                    // 2. Sanitisation de l'email
+                    $email = sanitize_email($email);
+
+                    // 3. Vérification du consentement (case cochée)
+                    $consent_given = isset($input['pdf_builder_license_email_reminders']) && $input['pdf_builder_license_email_reminders'] === '1';
+
+                    if (!$consent_given) {
+                        // Pas de consentement - ne pas sauvegarder l'email
+                        if (class_exists('\PDF_Builder_Logger')) {
+                            \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Consentement non donné pour l\'email: ' . $email);
+                        }
+                        $email = '';
+                    } else {
+                        // 4. Finalité légitime : rappels de licence uniquement
+                        // L'email ne sera utilisé que pour les notifications de licence
+
+                        // 5. Conservation limitée : liée à la durée de validité de la licence
+                        // L'email sera automatiquement supprimé lors de la désactivation du mode test
+
+                        if (class_exists('\PDF_Builder_Logger')) {
+                            \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Email validé et consenti pour les rappels: ' . $email);
+                        }
+                    }
+                }
+            }
+
+            $sanitized['pdf_builder_license_reminder_email'] = $email;
         }
+
+        after_email_processing:
 
         // Sanitisation des paramètres PDF
         if (isset($input['pdf_builder_pdf_quality'])) {

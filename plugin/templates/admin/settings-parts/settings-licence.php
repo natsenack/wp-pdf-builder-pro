@@ -1046,6 +1046,9 @@
                         <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #6c757d;">
                             Laissez vide pour utiliser l'email administrateur du site.
                         </p>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #8e8e8e; font-style: italic;">
+                            🔒 RGPD : Cette adresse ne sera utilisée que pour les rappels de licence. Vous pouvez la supprimer à tout moment en décochant la case ci-dessus.
+                        </p>
                     </div>
                 </div>
 
