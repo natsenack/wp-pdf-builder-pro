@@ -669,7 +669,143 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          {/* Accordéon Police du libellé */}
+          {/* Accordéon Propriétés de texte générales */}
+          <Accordion title="Propriétés de texte générales" defaultOpen={false}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Police générale
+              </label>
+              <select
+                value={element.fontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Courier New">Courier New</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Taille de police générale
+              </label>
+              <input
+                type="number"
+                min="8"
+                max="72"
+                value={element.fontSize || 14}
+                onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 14)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Couleur de texte générale
+              </label>
+              <input
+                type="color"
+                value={element.color || element.textColor || '#000000'}
+                onChange={(e) => onChange(element.id, 'color', e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style de police général
+              </label>
+              <select
+                value={element.fontWeight || 'normal'}
+                onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="bold">Gras</option>
+                <option value="100">Très fin (100)</option>
+                <option value="200">Fin (200)</option>
+                <option value="300">Léger (300)</option>
+                <option value="400">Normal (400)</option>
+                <option value="500">Moyen (500)</option>
+                <option value="600">Semi-gras (600)</option>
+                <option value="700">Gras (700)</option>
+                <option value="800">Très gras (800)</option>
+                <option value="900">Ultra-gras (900)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Style italique général
+              </label>
+              <select
+                value={element.fontStyle || 'normal'}
+                onChange={(e) => onChange(element.id, 'fontStyle', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="italic">Italique</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Alignement du texte
+              </label>
+              <select
+                value={element.textAlign || 'left'}
+                onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '12px'
+                }}
+              >
+                <option value="left">Gauche</option>
+                <option value="center">Centre</option>
+                <option value="right">Droite</option>
+                <option value="justify">Justifié</option>
+              </select>
+            </div>
+          </Accordion>
+
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
           {element.showLabel !== false && element.showHeaders !== false && (
             <Accordion title="Police du libellé" defaultOpen={false}>
               <div style={{ marginBottom: '8px' }}>
