@@ -597,35 +597,37 @@ class AdminScriptLoader
         wp_add_inline_script('jquery', $diagnostic_script, 'after');
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Diagnostic script added to jquery'); }
 
-        // TEST: Ajouter un script de test pour diagnostiquer la page actuelle
-        wp_add_inline_script('jquery', '
-            (function() {
-                try {
-                    console.log("🔍 [PAGE DIAGNOSTIC] URL actuelle:", window.location.href);
-                    console.log("🔍 [PAGE DIAGNOSTIC] Paramètre page:", new URLSearchParams(window.location.search).get("page"));
-                    console.log("🔍 [PAGE DIAGNOSTIC] Hook détecté:", "' . ($hook ?: 'null') . '");
-                    
-                    // Tester si le wrapper React est chargé
-                    setTimeout(function() {
-                        console.log("🔍 [PAGE DIAGNOSTIC] Wrapper pdf-builder-react-wrapper.min.js chargé:", typeof window.pdfBuilderReactWrapper !== "undefined");
-                        console.log("🔍 [PAGE DIAGNOSTIC] pdfBuilderReact disponible:", typeof window.pdfBuilderReact !== "undefined");
-                        if (window.pdfBuilderReact) {
-                            console.log("🔍 [PAGE DIAGNOSTIC] initPDFBuilderReact disponible:", typeof window.pdfBuilderReact.initPDFBuilderReact !== "undefined");
-                        }
+        // Charger les scripts de diagnostic seulement en mode développement
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            wp_add_inline_script('jquery', '
+                (function() {
+                    try {
+                        console.log("🔍 [PAGE DIAGNOSTIC] URL actuelle:", window.location.href);
+                        console.log("🔍 [PAGE DIAGNOSTIC] Paramètre page:", new URLSearchParams(window.location.search).get("page"));
+                        console.log("🔍 [PAGE DIAGNOSTIC] Hook détecté:", "' . ($hook ?: 'null') . '");
                         
-                        // Vérifier si le script wrapper a été chargé dans le DOM
-                        var wrapperScript = document.querySelector(\'script[src*="pdf-builder-react-wrapper.min.js"]\');
-                        console.log("🔍 [PAGE DIAGNOSTIC] Script wrapper dans DOM:", wrapperScript ? "trouvé" : "non trouvé");
-                        if (wrapperScript) {
-                            console.log("🔍 [PAGE DIAGNOSTIC] URL du script wrapper:", wrapperScript.src);
-                        }
-                    }, 1000);
-                    
-                } catch (error) {
-                    console.error("🔍 [PAGE DIAGNOSTIC] Erreur:", error);
-                }
-            })();
-        ');
+                        // Tester si le wrapper React est chargé
+                        setTimeout(function() {
+                            console.log("🔍 [PAGE DIAGNOSTIC] Wrapper pdf-builder-react-wrapper.min.js chargé:", typeof window.pdfBuilderReactWrapper !== "undefined");
+                            console.log("🔍 [PAGE DIAGNOSTIC] pdfBuilderReact disponible:", typeof window.pdfBuilderReact !== "undefined");
+                            if (window.pdfBuilderReact) {
+                                console.log("🔍 [PAGE DIAGNOSTIC] initPDFBuilderReact disponible:", typeof window.pdfBuilderReact.initPDFBuilderReact !== "undefined");
+                            }
+                            
+                            // Vérifier si le script wrapper a été chargé dans le DOM
+                            var wrapperScript = document.querySelector(\'script[src*="pdf-builder-react-wrapper.min.js"]\');
+                            console.log("🔍 [PAGE DIAGNOSTIC] Script wrapper dans DOM:", wrapperScript ? "trouvé" : "non trouvé");
+                            if (wrapperScript) {
+                                console.log("🔍 [PAGE DIAGNOSTIC] URL du script wrapper:", wrapperScript.src);
+                            }
+                        }, 1000);
+                        
+                    } catch (error) {
+                        console.error("🔍 [PAGE DIAGNOSTIC] Erreur:", error);
+                    }
+                })();
+            ');
+        }
     }
 
     /**
