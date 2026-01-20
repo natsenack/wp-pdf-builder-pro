@@ -1756,7 +1756,7 @@ class AjaxHandler
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings))); }
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-            $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
+            $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode_enabled'] ?? '0') === '1';
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO')); }
 
             // Liste des clés de licence à supprimer (nettoyage complet)
@@ -1769,7 +1769,7 @@ class AjaxHandler
                 'pdf_builder_license_validated',
                 'pdf_builder_license_test_key',
                 'pdf_builder_license_test_key_expires',
-                'pdf_builder_license_test_mode'
+                'pdf_builder_license_test_mode_enabled'
             ];
 
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Keys to remove: ' . implode(', ', $license_keys_to_remove)); }
@@ -1836,18 +1836,18 @@ class AjaxHandler
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $current_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
+            $current_mode = $settings['pdf_builder_license_test_mode_enabled'] ?? '0';
 
             // Basculer le mode
             $new_mode = $current_mode === '1' ? '0' : '1';
-            $settings['pdf_builder_license_test_mode'] = $new_mode;
+            $settings['pdf_builder_license_test_mode_enabled'] = $new_mode;
 
             // Sauvegarder
             $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
             // Vérifier que la sauvegarde a bien fonctionné
             $verify_settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $verify_mode = $verify_settings['pdf_builder_license_test_mode'] ?? 'NOT_SET';
+            $verify_mode = $verify_settings['pdf_builder_license_test_mode_enabled'] ?? 'NOT_SET';
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - VERIFICATION: saved=' . $new_mode . ' retrieved=' . $verify_mode); }
 
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode); }

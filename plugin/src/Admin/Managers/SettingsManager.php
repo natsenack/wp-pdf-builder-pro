@@ -550,8 +550,8 @@ class SettingsManager
         if (isset($input['pdf_builder_developer_password'])) {
             $sanitized['pdf_builder_developer_password'] = sanitize_text_field($input['pdf_builder_developer_password']);
         }
-        if (isset($input['pdf_builder_license_test_mode'])) {
-            $sanitized['pdf_builder_license_test_mode'] = $input['pdf_builder_license_test_mode'] ? '1' : '0';
+        if (isset($input['pdf_builder_license_test_mode_enabled'])) {
+            $sanitized['pdf_builder_license_test_mode_enabled'] = $input['pdf_builder_license_test_mode_enabled'] ? '1' : '0';
         }
         if (isset($input['pdf_builder_debug_php_errors'])) {
             $sanitized['pdf_builder_debug_php_errors'] = $input['pdf_builder_debug_php_errors'] ? '1' : '0';

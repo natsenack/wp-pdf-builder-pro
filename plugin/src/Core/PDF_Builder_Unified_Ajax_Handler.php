@@ -814,7 +814,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_canvas_canvas_export_transparent', 'pdf_builder_canvas_canvas_lazy_loading_editor', 'pdf_builder_canvas_canvas_preload_critical', 'pdf_builder_canvas_canvas_lazy_loading_plugin',
                 'pdf_builder_canvas_canvas_debug_enabled', 'pdf_builder_canvas_canvas_performance_monitoring', 'pdf_builder_canvas_canvas_error_reporting', 'pdf_builder_canvas_canvas_shadow_enabled',
                 // Additional toggles from templates
-                'pdf_builder_license_test_mode', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
+                'pdf_builder_license_test_mode_enabled', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
                 'pdf_builder_enable_logging', 'pdf_builder_gdpr_enabled', 'pdf_builder_gdpr_consent_required', 'pdf_builder_gdpr_audit_enabled', 'pdf_builder_gdpr_encryption_enabled',
                 'pdf_builder_gdpr_consent_analytics', 'pdf_builder_gdpr_consent_templates', 'pdf_builder_gdpr_consent_marketing',
                 'pdf_builder_pdf_metadata_enabled', 'pdf_builder_pdf_print_optimized'
@@ -1084,7 +1084,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             'license_test_mode_enabled' => 'pdf_builder_license_test_mode_enabled',
             'license_key' => 'pdf_builder_license_key',
             'license_test_key' => 'pdf_builder_license_test_key',
-            'license_test_mode' => 'pdf_builder_license_test_mode',
+            'license_test_mode' => 'pdf_builder_license_test_mode_enabled',
             'auto_maintenance' => 'pdf_builder_auto_maintenance',
             'auto_backup' => 'pdf_builder_auto_backup',
             'auto_backup_frequency' => 'pdf_builder_auto_backup_frequency',
@@ -2015,7 +2015,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
                      pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
                      pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
-                     pdf_builder_update_option('pdf_builder_license_status', 'test');
+                     pdf_builder_update_option('pdf_builder_license_status', 'active');
 
                      $response_data['test_key'] = $test_key;
                      $response_data['expires'] = $expires_in_30_days;
@@ -2060,7 +2060,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Sauvegarder individuellement
             pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
             pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
-            pdf_builder_update_option('pdf_builder_license_status', 'test'); // Mettre le statut à "test" quand une clé de test est générée
+            pdf_builder_update_option('pdf_builder_license_status', 'active'); // Mettre le statut à "active" quand une clé de test est générée
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Test license key generated: ' . $test_key); }
 
@@ -2090,9 +2090,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             pdf_builder_delete_option('pdf_builder_license_test_key_expires');
             pdf_builder_update_option('pdf_builder_license_test_mode_enabled', '0');
             
-            // Si le statut était 'test', remettre à 'free' en supprimant la clé de test
+            // Si le statut était 'active' (licence de test), remettre à 'free' en supprimant la clé de test
             $current_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
-            if ($current_status === 'test') {
+            if ($current_status === 'active' && !pdf_builder_get_option('pdf_builder_license_key', '')) {
                 pdf_builder_update_option('pdf_builder_license_status', 'free');
             }
 

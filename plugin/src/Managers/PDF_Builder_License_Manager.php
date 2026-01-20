@@ -67,7 +67,7 @@ class PDF_Builder_License_Manager
      */
     public function isPremium()
     {
-        // Seules les licences payantes actives donnent accès aux fonctions premium
+        // Seules les licences actives donnent accès aux fonctions premium
         return $this->license_status === 'active';
     }
 

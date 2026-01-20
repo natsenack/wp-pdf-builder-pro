@@ -410,7 +410,7 @@ class LicenseTestHandler
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode'] ?? '0') === '1';
+            $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode_enabled'] ?? '0') === '1';
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO')); }
 
             // Options à supprimer (nettoyage complet)
@@ -421,8 +421,7 @@ class LicenseTestHandler
                 'pdf_builder_license_activated_at',
                 'pdf_builder_license_test_mode_enabled',
                 'pdf_builder_license_test_key',
-                'pdf_builder_license_test_key_expires',
-                'pdf_builder_license_test_mode'
+                'pdf_builder_license_test_key_expires'
             ];
 
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] license-test-handler.php - Options to delete: ' . implode(', ', $options)); }

@@ -2,10 +2,10 @@
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode'] ?? 'not set') . ', settings count: ' . count($settings)); }
+    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode_enabled'] ?? 'not set') . ', settings count: ' . count($settings)); }
 
     // Variables nécessaires pour l'onglet développeur
-    $license_test_mode = $settings['pdf_builder_license_test_mode'] ?? '0';
+    $license_test_mode = $settings['pdf_builder_license_test_mode_enabled'] ?? '0';
     $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
 ?>
             <h3 style="display: flex; justify-content: flex-start; align-items: center;">
@@ -73,8 +73,8 @@
                                 </span>
                             </div>
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
-                            <input type="hidden" name="pdf_builder_settings[pdf_builder_license_test_mode]" value="0">
-                            <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode]" value="1" <?php checked($license_test_mode, '1'); ?> class="hidden-element" />
+                            <input type="hidden" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="0">
+                            <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="1" <?php checked($license_test_mode, '1'); ?> class="hidden-element" />
                             <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
                         </td>
                     </tr>
