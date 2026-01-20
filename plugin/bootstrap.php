@@ -646,7 +646,7 @@ function pdf_builder_load_core()
 
         // Charger seulement le bundle sur la page de l'éditeur React
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook); }
+            error_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook . ', page: ' . (isset($_GET['page']) ? $_GET['page'] : 'none'));
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)
             $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
