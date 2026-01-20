@@ -3405,16 +3405,12 @@ export const Canvas = function Canvas({
     // Silent initialization
   }, []);
 
-  // Calculate border style based on canvas settings and license
-  const isPremium = window.pdfBuilderData?.license?.isPremium || false;
-  const borderStyle = isDragOver 
-    ? "2px solid #007acc" 
-    : (!isPremium 
-        ? "none" // Pas de bordure en mode gratuit
-        : (canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0 
-            ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || "#cccccc"}` 
-            : "none")
-    );
+  // Calculate border style based on canvas settings
+  const borderStyle = isDragOver
+    ? "2px solid #007acc"
+    : (canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0
+        ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || "#cccccc"}`
+        : "none");
 
   // Calculate canvas display size based on zoom
   const zoomScale = state.canvas.zoom / 100;
@@ -3439,11 +3435,9 @@ export const Canvas = function Canvas({
           justifyContent: "center",
           border: borderStyle,
           borderRadius: "4px",
-          backgroundColor: !isPremium 
-            ? "#ffffff" // Fond blanc simple en mode gratuit
-            : (canvasSettings?.containerBackgroundColor || "#f8f9fa"),
+          backgroundColor: canvasSettings?.containerBackgroundColor || "#f8f9fa",
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-          boxShadow: isDragOver ? "0 0 0 2px rgba(0, 122, 204, 0.2)" : (!isPremium ? "none" : "none"),
+          boxShadow: isDragOver ? "0 0 0 2px rgba(0, 122, 204, 0.2)" : "none",
           pointerEvents: "auto",
         }}
       >

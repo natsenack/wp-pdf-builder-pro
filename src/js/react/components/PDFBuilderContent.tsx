@@ -60,9 +60,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
   const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
 
-  // Vérification de licence pour les fonctionnalités premium
-  const isPremium = window.pdfBuilderData?.license?.isPremium || false;
-
   debugLog("📱 PDFBuilderContent: Initial state set:", {
     isHeaderFixed,
     isPropertiesPanelOpen,
@@ -262,9 +259,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: !isPremium
-                  ? "#f8f8f8" // Fond gris clair simple en mode gratuit
-                  : (canvasSettings.containerBackgroundColor || "#f8f8f8"),
+                backgroundColor: canvasSettings.containerBackgroundColor || "#f8f8f8",
                 border: "1px solid #e0e0e0",
                 borderRadius: "4px",
                 overflow: "auto",
