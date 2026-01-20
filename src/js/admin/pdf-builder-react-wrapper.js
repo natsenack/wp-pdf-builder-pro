@@ -9,7 +9,14 @@
 
     console.log('🚀 [WRAPPER] Script pdf-builder-react-wrapper.js chargé et exécuté');
 
+    // Définir une variable globale pour indiquer que le wrapper est chargé
+    window.pdfBuilderReactWrapper = {
+        loaded: true,
+        version: '2.0.0',
+        timestamp: Date.now()
+    };
     
+    console.log('✅ [WRAPPER] Variable globale pdfBuilderReactWrapper définie');
 
     // Attendre que les bundles React soient chargés
     function waitForReactBundle(maxRetries = 50) {

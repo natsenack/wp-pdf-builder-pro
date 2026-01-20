@@ -612,6 +612,13 @@ class AdminScriptLoader
                         if (window.pdfBuilderReact) {
                             console.log("🔍 [PAGE DIAGNOSTIC] initPDFBuilderReact disponible:", typeof window.pdfBuilderReact.initPDFBuilderReact !== "undefined");
                         }
+                        
+                        // Vérifier si le script wrapper a été chargé dans le DOM
+                        var wrapperScript = document.querySelector(\'script[src*="pdf-builder-react-wrapper.min.js"]\');
+                        console.log("🔍 [PAGE DIAGNOSTIC] Script wrapper dans DOM:", wrapperScript ? "trouvé" : "non trouvé");
+                        if (wrapperScript) {
+                            console.log("🔍 [PAGE DIAGNOSTIC] URL du script wrapper:", wrapperScript.src);
+                        }
                     }, 1000);
                     
                 } catch (error) {
