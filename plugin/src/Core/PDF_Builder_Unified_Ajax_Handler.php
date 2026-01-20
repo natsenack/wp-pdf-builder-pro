@@ -1348,17 +1348,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Notifications removed from the license settings — ensure any old option is deleted
         delete_option('pdf_builder_license_enable_notifications');
 
-        // Paramètres de rappel par email
-        $settings = [
-            'license_email_reminders' => !empty($_POST['license_email_reminders']) ? '1' : '0',
-            'license_reminder_email' => sanitize_email($_POST['license_reminder_email'] ?? ''),
-        ];
+        // Paramètres de rappel par email - maintenant gérés par WordPress standard
+        // Ces paramètres sont sauvegardés automatiquement via le formulaire WordPress
+        // Ils sont dans $_POST['pdf_builder_settings']['pdf_builder_license_email_reminders']
+        // et $_POST['pdf_builder_settings']['pdf_builder_license_reminder_email']
 
-        foreach ($settings as $key => $value) {
-            pdf_builder_update_option('pdf_builder_' . $key, $value);
-        }
-
-        return count($settings);
+        // La fonction ne traite plus ces paramètres car ils sont gérés par WordPress
+        return 0;
     }
 
     /**

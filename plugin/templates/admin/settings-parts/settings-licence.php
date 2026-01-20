@@ -1021,7 +1021,7 @@
                         <label for="license_email_reminders" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #495057;">
                             <input type="checkbox"
                                    id="license_email_reminders"
-                                   name="license_email_reminders"
+                                   name="pdf_builder_settings[pdf_builder_license_email_reminders]"
                                    value="1"
                                    <?php checked($license_email_reminders, '1'); ?>
                                    style="margin-right: 0.5rem;">
@@ -1039,7 +1039,7 @@
                         </label>
                         <input type="email"
                                id="license_reminder_email"
-                               name="license_reminder_email"
+                               name="pdf_builder_settings[pdf_builder_license_reminder_email]"
                                value="<?php echo esc_attr($license_reminder_email); ?>"
                                placeholder="<?php echo esc_attr(get_option('admin_email', '')); ?>"
                                style="width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem;">
