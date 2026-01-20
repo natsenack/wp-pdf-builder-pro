@@ -8,6 +8,12 @@
 
 namespace PDF_Builder\Admin;
 
+// Prevent multiple inclusions
+if (defined('PDF_BUILDER_ADMIN_LOADED')) {
+    return;
+}
+define('PDF_BUILDER_ADMIN_LOADED', true);
+
 // Importer les classes spécialisées
 use PDF_Builder\Admin\Managers\SettingsManager;
 use PDF_Builder\Admin\Handlers\AjaxHandler;
