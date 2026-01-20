@@ -3427,11 +3427,9 @@ export const Canvas = function Canvas({
 
   const borderStyle = isDragOver 
     ? "2px solid #007acc" 
-    : (!isPremium 
-        ? `${DEFAULT_SETTINGS.borderWidth}px solid ${DEFAULT_SETTINGS.borderColor}` // Bordure par défaut en mode gratuit
-        : (canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0 
-            ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || DEFAULT_SETTINGS.borderColor}` 
-            : "none")
+    : (isPremium && canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0 
+        ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || DEFAULT_SETTINGS.borderColor}` 
+        : "none"
     );
 
   // Calculate canvas display size based on zoom
