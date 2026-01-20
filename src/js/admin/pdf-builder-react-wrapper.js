@@ -108,13 +108,43 @@
     // Attendre que le document soit prêt
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            
+            console.warn('⚠️ [WRAPPER] DOM prêt, démarrage de l\'initialisation');
             waitForReactBundle();
         });
     } else {
-        
+        console.warn('⚠️ [WRAPPER] DOM déjà prêt, démarrage immédiat de l\'initialisation');
         waitForReactBundle();
     }
+
+    // ESSAI IMMÉDIAT : Tenter l'initialisation immédiatement aussi
+    console.warn('🚀 [WRAPPER] Tentative d\'initialisation immédiate');
+    setTimeout(function() {
+        const container = document.getElementById('pdf-builder-react-root');
+        if (container && window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
+            console.warn('✅ [WRAPPER] Conditions réunies pour initialisation immédiate');
+            try {
+                const success = window.pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
+                if (success) {
+                    console.warn('🎉 [WRAPPER] Initialisation immédiate RÉUSSIE !');
+                    // Indicateur visuel de succès immédiat
+                    var immediateSuccess = document.createElement('div');
+                    immediateSuccess.style.cssText = 'position: fixed; top: 130px; right: 10px; background: #00a32a; color: white; padding: 5px 10px; border-radius: 3px; font-size: 12px; z-index: 9999;';
+                    immediateSuccess.textContent = 'Initialisation immédiate réussie';
+                    document.body.appendChild(immediateSuccess);
+                } else {
+                    console.warn('⚠️ [WRAPPER] Initialisation immédiate a retourné false');
+                }
+            } catch (error) {
+                console.error('❌ [WRAPPER] Erreur lors de l\'initialisation immédiate:', error);
+            }
+        } else {
+            console.warn('⏳ [WRAPPER] Conditions pas réunies pour initialisation immédiate:', {
+                container: !!container,
+                pdfBuilderReact: !!window.pdfBuilderReact,
+                initFunction: !!(window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact)
+            });
+        }
+    }, 100);
 
 })();
 
