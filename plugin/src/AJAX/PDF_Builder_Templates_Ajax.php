@@ -474,11 +474,13 @@ class PdfBuilderTemplatesAjax
 
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-// Vérifier que le template existe
-            $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
-            if (!$existing) {
+// Vérifier que le template existe et récupérer son nom
+            $template = $wpdb->get_row($wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+            if (!$template) {
                 wp_send_json_error('Template non trouvé');
             }
+
+            $template_name = $template['name'];
 
             // Supprimer le template
             $result = $wpdb->delete($table_templates, array('id' => $template_id), array('%d'));
@@ -486,8 +488,6 @@ class PdfBuilderTemplatesAjax
                 wp_send_json_error('Erreur lors de la suppression du template');
             }
 
-            // Récupérer le nom du template pour la notification
-            $template_name = $wpdb->get_var($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id));
 // Déclencher le hook de suppression de template
             do_action('pdf_builder_template_deleted', $template_id, $template_name ?: 'Template #' . $template_id);
             wp_send_json_success(array(
