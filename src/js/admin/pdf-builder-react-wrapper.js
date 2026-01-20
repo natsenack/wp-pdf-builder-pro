@@ -16,7 +16,10 @@
         timestamp: Date.now()
     };
     
-    console.log('✅ [WRAPPER] Variable globale pdfBuilderReactWrapper définie');
+    console.log('✅ [WRAPPER] Variable globale pdfBuilderReactWrapper définie:', window.pdfBuilderReactWrapper);
+    
+    // Log visible pour confirmer l'exécution
+    console.warn('⚠️ [WRAPPER] Wrapper React chargé - vérification du container...');
 
     // Attendre que les bundles React soient chargés
     function waitForReactBundle(maxRetries = 50) {
@@ -25,26 +28,24 @@
         function checkAndInit() {
             retries++;
 
-            console.log('🔄 [WRAPPER] Tentative', retries, '/', maxRetries);
+            console.warn('🔄 [WRAPPER] Tentative', retries, '/', maxRetries, '- Recherche du container React');
 
             if (retries > maxRetries) {
-                console.log('❌ [WRAPPER] Nombre maximum de tentatives atteint, abandon');
+                console.error('❌ [WRAPPER] Nombre maximum de tentatives atteint, abandon - Container #pdf-builder-react-root non trouvé');
                 return;
             }
 
             const container = document.getElementById('pdf-builder-react-root');
 
             if (!container) {
-                console.log('⏳ [WRAPPER] Container #pdf-builder-react-root pas trouvé, retry dans 100ms');
+                console.warn('⏳ [WRAPPER] Container #pdf-builder-react-root pas trouvé, retry dans 100ms');
                 setTimeout(checkAndInit, 100);
                 return;
             }
 
-            console.log('✅ [WRAPPER] Container trouvé:', container);
-
-            // Vérifier que pdfBuilderReact est disponible
+            console.warn('✅ [WRAPPER] Container #pdf-builder-react-root trouvé:', container);
             if (typeof window.pdfBuilderReact === 'undefined' || typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
-                console.log('⏳ [WRAPPER] pdfBuilderReact pas prêt:', {
+                console.warn('⏳ [WRAPPER] pdfBuilderReact pas prêt:', {
                     pdfBuilderReact: typeof window.pdfBuilderReact,
                     initFunction: typeof window.pdfBuilderReact?.initPDFBuilderReact
                 });
@@ -52,19 +53,19 @@
                 return;
             }
 
-            console.log('✅ [WRAPPER] pdfBuilderReact prêt, appel de initPDFBuilderReact');
+            console.warn('✅ [WRAPPER] pdfBuilderReact prêt, appel de initPDFBuilderReact');
 
             try {
                 // Initialiser l'éditeur React
                 const success = window.pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
 
                 if (success) {
-                    console.log('✅ [WRAPPER] Initialisation réussie');
+                    console.warn('✅ [WRAPPER] Initialisation React réussie - Éditeur chargé !');
                 } else {
-                    console.log('❌ [WRAPPER] Initialisation échouée');
+                    console.error('❌ [WRAPPER] Initialisation React échouée - Fonction initPDFBuilderReact a retourné false');
                 }
             } catch (error) {
-                
+                console.error('❌ [WRAPPER] Erreur lors de l\'initialisation React:', error);
             }
         }
 
