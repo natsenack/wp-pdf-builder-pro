@@ -2134,6 +2134,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                  if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Deleted option: ' . $option); }
              }
 
+             // Désactiver le mode test dans les paramètres généraux
+             $settings = pdf_builder_get_option('pdf_builder_settings', []);
+             if (isset($settings['pdf_builder_license_test_mode_enabled'])) {
+                 $settings['pdf_builder_license_test_mode_enabled'] = '0';
+                 pdf_builder_update_option('pdf_builder_settings', $settings);
+                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Disabled test mode in settings'); }
+             }
+
              // Définir le statut de licence à 'free'
              pdf_builder_update_option('pdf_builder_license_status', 'free');
 
