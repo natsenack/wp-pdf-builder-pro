@@ -193,8 +193,7 @@ class PDFGenerator extends BaseGenerator
             $this->logWarning("Failed to initialize DomPDF with options: " . $e->getMessage());
             // Fallback avec options minimales
             $fallbackOptions = new Options();
-            $fallbackOptions->set('isRemoteEnabled', false);
-            $fallbackOptions->set('isHtml5ParserEnabled', true);
+            // Avoid setting any options that might cause errors
             $this->dompdf = new Dompdf($fallbackOptions);
         }
     }

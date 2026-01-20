@@ -331,8 +331,7 @@ class PdfBuilderScreenshotRenderer
                 error_log('[PDF Builder] Error setting Dompdf options in screenshot renderer: ' . $e->getMessage());
                 // Fallback
                 $options = new Options();
-                $options->set('isRemoteEnabled', false);
-                $options->set('isHtml5ParserEnabled', true);
+                // Avoid setting any options that might cause errors
                 $dompdf = new Dompdf($options);
             }
 

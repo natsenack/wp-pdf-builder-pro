@@ -168,8 +168,7 @@ class PdfBuilderPdfGenerator
             error_log('[PDF Builder] Error setting Dompdf options: ' . $e->getMessage());
             // Fallback avec options minimales
             $options = new Options();
-            $options->set('isRemoteEnabled', false);
-            $options->set('isHtml5ParserEnabled', true);
+            // Avoid setting any options that might cause errors
             $dompdf = new Dompdf($options);
         }
 
