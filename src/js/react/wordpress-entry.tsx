@@ -35,6 +35,9 @@ window.initPDFBuilderReact = window.pdfBuilderReact.initPDFBuilderReact;
 
 
 
+// DEBUG: Log that the script is loading
+console.log('🚀 [WORDPRESS-ENTRY] Script loading started - before try block');
+
 // Now try the full React implementation
 try {
 import { debugError, debugWarn, debugLog } from './utils/debug';
