@@ -401,7 +401,23 @@ class AdminScriptLoader
         } else {
             $available_dpis = [$available_dpi_string];
         }
-        $available_dpis = array_map('strval', $available_dpis);
+        // TEST: Ajouter un script de test pour vérifier si notre JS peut s'exécuter
+        wp_add_inline_script('jquery', '
+            (function() {
+                try {
+                    console.log("🧪 [PDF Builder Test] Script de test chargé avec succès");
+                    console.log("🧪 [PDF Builder Test] jQuery version:", jQuery.fn.jquery);
+                    console.log("🧪 [PDF Builder Test] Window object disponible:", typeof window !== "undefined");
+                    
+                    // Tester si on peut définir des variables globales
+                    window.pdfBuilderTestExecuted = true;
+                    console.log("🧪 [PDF Builder Test] Variable globale définie:", window.pdfBuilderTestExecuted);
+                    
+                } catch (error) {
+                    console.error("🧪 [PDF Builder Test] Erreur dans le script de test:", error);
+                }
+            })();
+        ');        $available_dpis = array_map('strval', $available_dpis);
 
         $available_formats_string = pdf_builder_get_option('pdf_builder_canvas_formats', 'A4');
         if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
