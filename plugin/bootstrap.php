@@ -540,7 +540,7 @@ function pdf_builder_load_core()
     }
 
     // Charger la classe d'administration depuis src/
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php') && !class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php') && !class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
@@ -1033,9 +1033,9 @@ function pdf_builder_load_bootstrap()
         add_action('init', function() use ($core) {
             $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
 
-            if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdmin')) {
+            if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
                 try {
-                    $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($core);
+                    $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
                 } catch (Exception $e) {
                     // Fallback en cas d'erreur
                     add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');

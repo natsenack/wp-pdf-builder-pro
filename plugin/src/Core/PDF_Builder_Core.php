@@ -94,7 +94,7 @@ class PdfBuilderCore
         }
 
         // Charger la classe d'administration
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php') && !class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php') && !class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
@@ -211,12 +211,12 @@ class PdfBuilderCore
 
     /**
      * Enregistrer le menu admin - DÉSACTIVÉ COMPLÈTEMENT
-     * Cette classe PDF_Builder_Core est remplacée par PdfBuilderAdmin
+     * Cette classe PDF_Builder_Core est remplacée par PdfBuilderAdminNew
      * qui fournit un éditeur unifié avec support des types de templates
      */
     public function registerAdminMenu()
     {
-        // DÉSACTIVÉ - Tous les menus sont gérés par PdfBuilderAdmin
+        // DÉSACTIVÉ - Tous les menus sont gérés par PdfBuilderAdminNew
         return;
 
         if (self::$menu_added) {
@@ -600,12 +600,12 @@ class PdfBuilderCore
         }
 
         // Inclure et instancier la classe d'administration
-        if (!class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+        if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
             include_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
-        if (class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
-            $this->admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance($this);
+        if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+            $this->admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($this);
         }
     }
 

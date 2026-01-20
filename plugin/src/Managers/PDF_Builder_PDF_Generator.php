@@ -181,8 +181,8 @@ class PdfBuilderPdfGenerator
     private function generateHtmlFromTemplateData($template)
     {
         // Utiliser la même fonction que la génération commande pour la cohérence
-        if (class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
-            $admin = \PDF_Builder\Admin\PdfBuilderAdmin::getInstance();
+        if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+            $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
             if (method_exists($admin, 'generate_unified_html')) {
                 return $admin->generate_unified_html($template);
             }

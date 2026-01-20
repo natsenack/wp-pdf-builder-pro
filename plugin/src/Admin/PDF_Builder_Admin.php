@@ -21,9 +21,9 @@ use PDF_Builder\Admin\Utils\Utils;
 /**
  * Classe principale d'administration du PDF Builder Pro
  * RESPONSABILITÉS : Orchestration des managers, interface principale
- * Version: 2.0.2 - Fixed class redeclaration issue
+ * Version: 2.0.3 - Renamed class to fix redeclaration issue
  */
-class PdfBuilderAdmin
+class PdfBuilderAdminNew
 {
     /**
      * Instance unique de la classe

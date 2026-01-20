@@ -292,7 +292,7 @@ class PDF_Builder_Loader {
         if (file_exists($full_path)) {
             // Pour PDF_Builder_Admin.php, vérifier le namespace complet
             if (strpos($relative_path, 'PDF_Builder_Admin.php') !== false) {
-                if (!class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
+                if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
                     require_once $full_path;
                 }
             } else {

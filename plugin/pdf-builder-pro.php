@@ -2241,7 +2241,7 @@ function pdf_builder_check_template_limit_handler() {
 
         // For free version, check template count
         $user_id = get_current_user_id();
-        $template_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates($user_id);
+        $template_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates($user_id);
 
         $can_create = $template_count < 1; // Limit to 1 template for free version
 
