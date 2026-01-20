@@ -603,7 +603,7 @@ class AdminScriptLoader
                 try {
                     console.log("🔍 [PAGE DIAGNOSTIC] URL actuelle:", window.location.href);
                     console.log("🔍 [PAGE DIAGNOSTIC] Paramètre page:", new URLSearchParams(window.location.search).get("page"));
-                    console.log("🔍 [PAGE DIAGNOSTIC] Hook détecté:", "' . $hook . '");
+                    console.log("🔍 [PAGE DIAGNOSTIC] Hook détecté:", "' . (isset($hook) ? $hook : 'unknown') . '");
                     
                     // Tester si le wrapper React est chargé
                     setTimeout(function() {
