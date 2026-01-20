@@ -2117,9 +2117,6 @@ class PDF_Builder_Unified_Ajax_Handler {
          try {
              if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Starting license cleanup'); }
 
-             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-             $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0') === '1';
-
              // Liste des options de licence à supprimer
              $license_options = [
                  'pdf_builder_license_key',
@@ -2128,17 +2125,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'pdf_builder_license_data',
                  'pdf_builder_license_activated_at',
                  'pdf_builder_license_email_reminders',
-                 'pdf_builder_license_reminder_email'
+                 'pdf_builder_license_reminder_email',
+                 // Toujours supprimer la clé de test et le mode test lors du nettoyage complet
+                 'pdf_builder_license_test_key',
+                 'pdf_builder_license_test_key_expires',
+                 'pdf_builder_license_test_mode_enabled'
              ];
-
-             // Ne pas supprimer la clé de test si le mode test était actif
-             if (!$test_mode_was_enabled) {
-                 $license_options[] = 'pdf_builder_license_test_key';
-                 $license_options[] = 'pdf_builder_license_test_key_expires';
-             }
-             
-             // Toujours supprimer le mode test
-             $license_options[] = 'pdf_builder_license_test_mode_enabled';
 
              // Supprimer chaque option individuellement
              foreach ($license_options as $option) {
