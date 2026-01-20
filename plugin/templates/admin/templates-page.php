@@ -1025,40 +1025,28 @@ function duplicateTemplate(templateId, templateName) {
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
-    console.log('[DEBUG] confirmDeleteTemplate called with:', templateId, templateName);
     if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action ne peut pas être annulée.')) {
-        console.log('[DEBUG] User confirmed deletion, sending AJAX request');
-        // Créer une requête AJAX pour supprimer le template
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+        // Utiliser jQuery AJAX au lieu de fetch pour la compatibilité
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_delete_template',
+                template_id: templateId,
+                nonce: pdfBuilderTemplatesNonce
             },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_delete_template',
-                'template_id': templateId,
-                'nonce': pdfBuilderTemplatesNonce
-            })
-        })
-        .then(response => {
-            console.log('[DEBUG] AJAX response received:', response);
-            return response.json();
-        })
-        .then(data => {
-            console.log('[DEBUG] AJAX data received:', data);
-            if (data.success) {
-                alert('Template supprimé avec succès !');
-                location.reload();
-            } else {
-                alert('Erreur lors de la suppression: ' + (data.message || 'Erreur inconnue'));
+            success: function(response) {
+                if (response.success) {
+                    alert('Template supprimé avec succès !');
+                    location.reload();
+                } else {
+                    alert('Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue'));
+                }
+            },
+            error: function() {
+                alert('Erreur lors de la suppression du template');
             }
-        })
-        .catch(error => {
-            console.error('[DEBUG] AJAX error:', error);
-            alert('Erreur lors de la suppression du template');
         });
-    } else {
-        console.log('[DEBUG] User cancelled deletion');
     }
 }
 

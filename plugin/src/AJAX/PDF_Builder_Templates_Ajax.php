@@ -456,25 +456,19 @@ class PdfBuilderTemplatesAjax
      */
     public function deleteTemplate()
     {
-        error_log('[DEBUG] deleteTemplate method called');
         try {
-            error_log('[DEBUG] POST data: ' . print_r($_POST, true));
 // Vérification des permissions
             if (!current_user_can('manage_options')) {
-                error_log('[DEBUG] Permission check failed');
                 wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                error_log('[DEBUG] Nonce verification failed');
                 wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
-            error_log('[DEBUG] Template ID: ' . $template_id);
             if (empty($template_id)) {
-                error_log('[DEBUG] Template ID is empty');
                 wp_send_json_error('ID du template manquant');
             }
 
@@ -483,28 +477,22 @@ class PdfBuilderTemplatesAjax
 // Vérifier que le template existe et récupérer son nom
             $template = $wpdb->get_row($wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
-                error_log('[DEBUG] Template not found with ID: ' . $template_id);
                 wp_send_json_error('Template non trouvé');
             }
 
             $template_name = $template['name'];
-            error_log('[DEBUG] Template found: ' . $template_name);
 
             // Supprimer le template
             $result = $wpdb->delete($table_templates, array('id' => $template_id), array('%d'));
             if ($result === false) {
-                error_log('[DEBUG] Database delete failed');
                 wp_send_json_error('Erreur lors de la suppression du template');
             }
-
-            error_log('[DEBUG] Template deleted successfully');
 // Déclencher le hook de suppression de template
             do_action('pdf_builder_template_deleted', $template_id, $template_name ?: 'Template #' . $template_id);
             wp_send_json_success(array(
                 'message' => 'Template supprimé avec succès'
             ));
         } catch (Exception $e) {
-            error_log('[DEBUG] Exception caught: ' . $e->getMessage());
             wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
         }
     }

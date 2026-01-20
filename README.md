@@ -115,16 +115,6 @@ Le système de génération utilise une approche hybride :
 - **Solution** : Unifier sur 1.1.0 pour les micro-versions
 - **Statut** : ✅ Corrigé en 1.1.0.0
 
-#### 2. Logs de debug en production
-- **Problème** : 50+ appels à `error_log()` dans les templates
-- **Impact** : Pollution des logs, performance dégradée
-- **Solution** : Remplacer par système de logging conditionnel
-
-#### 3. Chargement Composer redondant
-- **Problème** : Autoloader chargé 8+ fois dans différents fichiers
-- **Impact** : Performance, conflits potentiels
-- **Solution** : Centraliser le chargement dans bootstrap.php
-
 #### 4. Sanitisation incomplète
 - **Problème** : Certaines entrées utilisateur non sanitizées
 - **Impact** : Vulnérabilités XSS potentielles
@@ -136,11 +126,6 @@ Le système de génération utilise une approche hybride :
 - **Problème** : Système de cache configuré mais non fonctionnel
 - **Impact** : Performances suboptimales
 - **Solution** : Implémenter le cache Redis/file avec fallback
-
-#### 6. TODOs non résolus
-- **Problème** : 15+ TODOs dans le code (AJAX, suppression, etc.)
-- **Impact** : Fonctionnalités manquantes
-- **Solution** : Implémenter ou supprimer les TODOs
 
 #### 7. Gestion d'erreurs inconsistante
 - **Problème** : Mélange `wp_die()`, `error_log()`, exceptions
