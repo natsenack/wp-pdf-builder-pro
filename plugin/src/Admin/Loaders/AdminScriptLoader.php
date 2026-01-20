@@ -413,6 +413,21 @@ class AdminScriptLoader
                     window.pdfBuilderTestExecuted = true;
                     console.log("🧪 [PDF Builder Test] Variable globale définie:", window.pdfBuilderTestExecuted);
                     
+                    // Tester si nos scripts sont chargés après un délai
+                    setTimeout(function() {
+                        console.log("🔍 [PDF Builder Test] Vérification des scripts après délai:");
+                        console.log("🔍 [PDF Builder Test] pdf-builder-react.min.js chargé:", typeof window.pdfBuilderReact !== "undefined");
+                        console.log("🔍 [PDF Builder Test] pdfBuilderData disponible:", typeof window.pdfBuilderData !== "undefined");
+                        if (window.pdfBuilderData) {
+                            console.log("🔍 [PDF Builder Test] pdfBuilderData.license:", window.pdfBuilderData.license);
+                            console.log("🔍 [PDF Builder Test] pdfBuilderData.canvasSettings:", !!window.pdfBuilderData.canvasSettings);
+                        }
+                        
+                        // Tester si React est disponible
+                        console.log("🔍 [PDF Builder Test] React disponible:", typeof window.React !== "undefined");
+                        console.log("🔍 [PDF Builder Test] ReactDOM disponible:", typeof window.ReactDOM !== "undefined");
+                    }, 2000);
+                    
                 } catch (error) {
                     console.error("🧪 [PDF Builder Test] Erreur dans le script de test:", error);
                 }
