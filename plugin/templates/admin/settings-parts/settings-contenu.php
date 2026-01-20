@@ -22,19 +22,7 @@
         } else {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] PAGE_LOAD - {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key}"); }
         }
-        // Pour les utilisateurs non-premium, forcer les paramètres premium aux valeurs par défaut
-        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-        if (!$license_manager->is_premium()) {
-            $premium_settings = [
-                'canvas_border_color' => '#cccccc',
-                'canvas_border_width' => '1',
-                'canvas_container_bg_color' => '#f8f9fa'
-            ];
-            if (isset($premium_settings[$key])) {
-                $value = $premium_settings[$key];
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] PAGE_LOAD - {$key}: FORCED_DEFAULT_FOR_FREE_USER '{$value}' - KEY: {$option_key}"); }
-            }
-        }
+
         return $value;
     }
 
@@ -705,7 +693,6 @@
                         for (var name in inputsByName) {
                             var inputs = inputsByName[name];
                             var firstInput = inputs[0];
-                            var valueToSend = null;
 
                             if (firstInput.type === 'checkbox') {
                                 if (name.endsWith('[]')) {
@@ -717,48 +704,28 @@
                                         }
                                     });
                                     if (checkedValues.length > 0) {
-                                        valueToSend = checkedValues.join(',');
-                                        console.log('Checkbox array:', name, '=', valueToSend);
+                                        formData.append(name, checkedValues.join(','));
+                                        console.log('Checkbox array:', name, '=', checkedValues.join(','));
                                     }
                                 } else {
                                     // Single checkbox
                                     var checked = inputs.some(function(input) { return input.checked; });
-                                    valueToSend = checked ? '1' : '0';
-                                    console.log('Checkbox:', name, '=', valueToSend);
+                                    formData.append(name, checked ? '1' : '0');
+                                    console.log('Checkbox:', name, '=', checked ? '1' : '0');
                                 }
                             } else if (firstInput.type === 'radio') {
                                 // Radio buttons - find the checked one
                                 var checkedInput = inputs.find(function(input) { return input.checked; });
                                 if (checkedInput) {
-                                    valueToSend = checkedInput.value;
-                                    console.log('Radio:', name, '=', valueToSend);
+                                    formData.append(name, checkedInput.value);
+                                    console.log('Radio:', name, '=', checkedInput.value);
                                 }
                             } else if (firstInput.type === 'file') {
                                 // Ne pas traiter les fichiers pour le moment
                             } else {
                                 // Single value inputs (text, select, textarea, etc.)
-                                valueToSend = firstInput.value;
-                                console.log('Input:', name, '=', valueToSend);
-                            }
-
-                            // Forcer les valeurs par défaut pour les paramètres premium si utilisateur non-premium
-                            <?php
-                            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-                            if (!$license_manager->is_premium()) {
-                                echo "
-                                if (name === 'pdf_builder_canvas_border_color') {
-                                    valueToSend = '#cccccc';
-                                } else if (name === 'pdf_builder_canvas_border_width') {
-                                    valueToSend = '1';
-                                } else if (name === 'pdf_builder_canvas_container_bg_color') {
-                                    valueToSend = '#f8f9fa';
-                                }
-                                ";
-                            }
-                            ?>
-
-                            if (valueToSend !== null) {
-                                formData.append(name, valueToSend);
+                                formData.append(name, firstInput.value);
+                                console.log('Input:', name, '=', firstInput.value);
                             }
                         }
 

@@ -64,6 +64,9 @@ class Canvas_Manager
         // Charger depuis l'array unifié de settings pour cohérence avec les modales
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
+        // Vérifier si l'utilisateur est premium
+        $is_premium = class_exists('\PDF_Builder\Admin\PDF_Builder_Admin') && \PDF_Builder\Admin\PDF_Builder_Admin::is_premium_user();
+
         $this->settings = [
             'default_canvas_format' => pdf_builder_get_option('pdf_builder_canvas_format', 'A4'),
             'default_canvas_orientation' => pdf_builder_get_option('pdf_builder_canvas_orientation', 'portrait'),
@@ -73,10 +76,10 @@ class Canvas_Manager
             'default_canvas_height' => intval(pdf_builder_get_option('pdf_builder_canvas_height', 1123)),
             'canvas_background_color' => $settings['pdf_builder_canvas_bg_color'] ?? '#ffffff',
             'canvas_show_transparency' => ($settings['pdf_builder_canvas_show_transparency'] ?? '0') == '1',
-            'container_background_color' => $settings['pdf_builder_canvas_container_bg_color'] ?? '#f8f9fa',
+            'container_background_color' => $is_premium ? ($settings['pdf_builder_canvas_container_bg_color'] ?? '#f8f9fa') : '#f8f9fa',
             'container_show_transparency' => ($settings['pdf_builder_canvas_container_show_transparency'] ?? '0') == '1',
-            'border_color' => $settings['pdf_builder_canvas_border_color'] ?? '#cccccc',
-            'border_width' => intval($settings['pdf_builder_canvas_border_width'] ?? 1),
+            'border_color' => $is_premium ? ($settings['pdf_builder_canvas_border_color'] ?? '#cccccc') : '#cccccc',
+            'border_width' => $is_premium ? intval($settings['pdf_builder_canvas_border_width'] ?? 1) : 1,
             'shadow_enabled' => ($settings['pdf_builder_canvas_shadow_enabled'] ?? '0') == '1',
             'margin_top' => intval($settings['pdf_builder_canvas_margin_top'] ?? 28),
             'margin_right' => intval($settings['pdf_builder_canvas_margin_right'] ?? 28),

@@ -68,20 +68,6 @@ function get_canvas_modal_value($key, $default = '') {
         }
     }
 
-    // Pour les utilisateurs non-premium, forcer les paramètres premium aux valeurs par défaut
-    $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-    if (!$license_manager->is_premium()) {
-        $premium_settings = [
-            'canvas_border_color' => '#cccccc',
-            'canvas_border_width' => '1',
-            'canvas_container_bg_color' => '#f8f9fa'
-        ];
-        if (isset($premium_settings[$key])) {
-            $value = $premium_settings[$key];
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] {$key}: FORCED_DEFAULT_FOR_FREE_USER '{$value}' - KEY: {$option_key}"); }
-        }
-    }
-
     return $value;
 }
 ?>
