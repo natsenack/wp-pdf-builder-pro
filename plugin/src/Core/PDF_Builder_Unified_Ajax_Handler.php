@@ -102,7 +102,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handle_generate_test_license_key']);
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_license_key']);
         add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
-        add_action('wp_ajax_pdf_builder_check_license_expiration', [$this, 'handle_check_license_expiration']);
 
         // Actions de diagnostic
         add_action('wp_ajax_pdf_builder_export_diagnostic', [$this, 'handle_export_diagnostic']);
@@ -2164,39 +2163,6 @@ class PDF_Builder_Unified_Ajax_Handler {
          } catch (Exception $e) {
              // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur nettoyage licence: ' . $e->getMessage()); }
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
-         }
-     }
-
-     /**
-      * Handler pour déclencher manuellement la vérification d'expiration des licences
-      */
-     public function handle_check_license_expiration() {
-         if (!$this->nonce_manager->validate_ajax_request()) {
-             return;
-         }
-
-         try {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Manual license expiration check triggered'); }
-
-             // Importer et utiliser le License_Expiration_Handler
-             require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-expiration-handler.php';
-             \PDFBuilderPro\License\License_Expiration_Handler::checkLicenseExpiration();
-
-             // Récupérer l'état après vérification
-             $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
-             $test_key = pdf_builder_get_option('pdf_builder_license_test_key', false);
-             $license_key = pdf_builder_get_option('pdf_builder_license_key', false);
-
-             wp_send_json_success([
-                 'message' => 'Vérification d\'expiration des licences effectuée.',
-                 'license_status' => $license_status,
-                 'has_test_key' => !empty($test_key),
-                 'has_license_key' => !empty($license_key)
-             ]);
-
-         } catch (Exception $e) {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur vérification expiration: ' . $e->getMessage()); }
-             wp_send_json_error(['message' => 'Erreur lors de la vérification d\'expiration']);
          }
      }
 

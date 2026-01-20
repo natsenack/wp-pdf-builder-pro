@@ -658,6 +658,9 @@ class AjaxHandler
                 case 'validate_license_key':
                     $this->handleValidateLicenseKey();
                     break;
+                case 'check_license_expiration':
+                    $this->handleCheckLicenseExpiration();
+                    break;
 
                 // Gestion de la base de données
                 case 'manage_database_table':
@@ -1750,79 +1753,95 @@ class AjaxHandler
         try {
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Starting cleanup process'); }
 
-            // Récupérer les paramètres actuels
-            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings)); }
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings))); }
-
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
-            $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode_enabled'] ?? '0') === '1';
+            $test_mode_was_enabled = pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0') === '1';
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO')); }
 
-            // Liste des clés de licence à supprimer (nettoyage complet)
-            $license_keys_to_remove = [
+            // Liste des options de licence à supprimer
+            $license_options = [
                 'pdf_builder_license_key',
                 'pdf_builder_license_status',
-                'pdf_builder_license_expiry',
-                'pdf_builder_license_type',
-                'pdf_builder_license_last_check',
-                'pdf_builder_license_validated',
-                'pdf_builder_license_test_key',
-                'pdf_builder_license_test_key_expires',
-                'pdf_builder_license_test_mode_enabled'
+                'pdf_builder_license_expires',
+                'pdf_builder_license_data',
+                'pdf_builder_license_activated_at',
+                'pdf_builder_license_email_reminders',
+                'pdf_builder_license_reminder_email'
             ];
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Keys to remove: ' . implode(', ', $license_keys_to_remove)); }
+            // Ne pas supprimer la clé de test si le mode test était actif
+            if (!$test_mode_was_enabled) {
+                $license_options[] = 'pdf_builder_license_test_key';
+                $license_options[] = 'pdf_builder_license_test_key_expires';
+            }
 
+            // Toujours supprimer le mode test
+            $license_options[] = 'pdf_builder_license_test_mode_enabled';
+
+            // Supprimer chaque option individuellement
             $removed_count = 0;
-            foreach ($license_keys_to_remove as $key) {
-                if (isset($settings[$key])) {
-                    $old_value = $settings[$key];
-                    unset($settings[$key]);
-                    $removed_count++;
-                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Removed key: ' . $key . ' (value was: ' . $old_value . ')'); }
+            foreach ($license_options as $option) {
+                $old_value = pdf_builder_get_option($option, null);
+                if ($old_value !== null) {
+                    $result = pdf_builder_delete_option($option);
+                    if ($result) {
+                        $removed_count++;
+                        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Deleted option: ' . $option . ' (value was: ' . $old_value . ')'); }
+                    } else {
+                        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Failed to delete option: ' . $option); }
+                    }
                 } else {
-                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Key not found: ' . $key); }
+                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Option not found: ' . $option); }
                 }
             }
 
-            // IMPORTANT: Désactiver temporairement le sanitize callback pour éviter qu'il remette les clés supprimées
-            global $wp_filter;
-            $sanitize_callbacks = null;
-            if (isset($wp_filter['sanitize_option_pdf_builder_settings'])) {
-                $sanitize_callbacks = $wp_filter['sanitize_option_pdf_builder_settings'];
-                unset($wp_filter['sanitize_option_pdf_builder_settings']);
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Temporarily disabled sanitize callback'); }
-            }
+            // Définir le statut de licence à 'free'
+            pdf_builder_update_option('pdf_builder_license_status', 'free');
 
-            // Sauvegarder les paramètres nettoyés SANS sanitize callback
-            $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Removed ' . $removed_count . ' license keys'); }
-
-            // Réactiver le sanitize callback si il était présent
-            if ($sanitize_callbacks !== null) {
-                $wp_filter['sanitize_option_pdf_builder_settings'] = $sanitize_callbacks;
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Re-enabled sanitize callback'); }
-            }
-
-            // Vérifier que les clés ont bien été supprimées
-            $updated_settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $remaining_license_keys = array_filter(array_keys($updated_settings), function($key) {
-                return strpos($key, 'pdf_builder_license') === 0;
-            });
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Remaining license keys: ' . implode(', ', $remaining_license_keys)); }
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Final settings count: ' . count($updated_settings)); }
+            // Clear license transients
+            global $wpdb;
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'");
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'");
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Cleared license transients'); }
 
             wp_send_json_success([
-                'message' => 'Nettoyage complet réussi. ' . $removed_count . ' clés de licence supprimées.',
-                'removed_count' => $removed_count,
-                'remaining_keys' => $remaining_license_keys
+                'message' => 'Licence complètement nettoyée. Le plugin est maintenant en mode gratuit.',
+                'reset_complete' => true,
+                'removed_count' => $removed_count
             ]);
 
         } catch (Exception $e) {
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Error: ' . $e->getMessage()); }
             wp_send_json_error(['message' => 'Erreur lors du nettoyage: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Vérifier manuellement l'expiration des licences
+     */
+    private function handleCheckLicenseExpiration()
+    {
+        try {
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckLicenseExpiration - Manual license expiration check triggered'); }
+
+            // Importer et utiliser le License_Expiration_Handler
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-expiration-handler.php';
+            \PDFBuilderPro\License\License_Expiration_Handler::checkLicenseExpiration();
+
+            // Récupérer l'état après vérification
+            $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+            $test_key = pdf_builder_get_option('pdf_builder_license_test_key', false);
+            $license_key = pdf_builder_get_option('pdf_builder_license_key', false);
+
+            wp_send_json_success([
+                'message' => 'Vérification d\'expiration des licences effectuée.',
+                'license_status' => $license_status,
+                'has_test_key' => !empty($test_key),
+                'has_license_key' => !empty($license_key)
+            ]);
+
+        } catch (Exception $e) {
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckLicenseExpiration - Error: ' . $e->getMessage()); }
+            wp_send_json_error(['message' => 'Erreur lors de la vérification d\'expiration']);
         }
     }
 
