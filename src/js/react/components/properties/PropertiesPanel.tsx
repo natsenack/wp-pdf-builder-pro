@@ -301,14 +301,18 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <WoocommerceOrderDateProperties
               element={element as any}
-              onUpdate={(updatedElement) => updateElement(element.id, updatedElement)}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'woocommerce_invoice_number' && (
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <WoocommerceInvoiceNumberProperties
               element={element as any}
-              onUpdate={(updatedElement) => updateElement(element.id, updatedElement)}
+              onChange={handlePropertyChange}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
             />
           )}
           {element.type === 'document_type' && (
