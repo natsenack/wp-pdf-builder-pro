@@ -124,44 +124,53 @@ class PdfBuilderPdfGenerator
 
         // Créer les options Dompdf pour éviter l'erreur de dépréciation (version corrigée)
         $options = new Options();
-        $options->set('isRemoteEnabled', true);
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('defaultFont', 'Arial');
+        try {
+            $options->set('isRemoteEnabled', true);
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('defaultFont', 'Arial');
 
-        $dompdf = new Dompdf($options);
+            $dompdf = new Dompdf($options);
 
-        // Appliquer les paramètres de qualité
-        switch ($pdf_quality) {
-            case 'low':
-                $options->set('dpi', 72);
-                $options->set('defaultMediaType', 'screen');
-                break;
-            case 'medium':
-                $options->set('dpi', 96);
-                $options->set('defaultMediaType', 'screen');
-                break;
-            case 'high':
-            default:
-                $options->set('dpi', 150);
+            // Appliquer les paramètres de qualité
+            switch ($pdf_quality) {
+                case 'low':
+                    $options->set('dpi', 72);
+                    $options->set('defaultMediaType', 'screen');
+                    break;
+                case 'medium':
+                    $options->set('dpi', 96);
+                    $options->set('defaultMediaType', 'screen');
+                    break;
+                case 'high':
+                default:
+                    $options->set('dpi', 150);
+                    $options->set('defaultMediaType', 'print');
+                    break;
+            }
+
+            // Appliquer la compression
+            if ($pdf_compression === 'high') {
+                $options->set('compress', true);
+            } elseif ($pdf_compression === 'low') {
+                $options->set('compress', false);
+            } // medium = default
+
+            // Métadonnées
+            if ($pdf_metadata_enabled) {
+                $options->set('enable_remote', true);
+            }
+
+            // Optimisation pour l'impression
+            if ($pdf_print_optimized) {
                 $options->set('defaultMediaType', 'print');
-                break;
-        }
-
-        // Appliquer la compression
-        if ($pdf_compression === 'high') {
-            $options->set('compress', true);
-        } elseif ($pdf_compression === 'low') {
-            $options->set('compress', false);
-        } // medium = default
-
-        // Métadonnées
-        if ($pdf_metadata_enabled) {
-            $options->set('enable_remote', true);
-        }
-
-        // Optimisation pour l'impression
-        if ($pdf_print_optimized) {
-            $options->set('defaultMediaType', 'print');
+            }
+        } catch (\Throwable $e) {
+            error_log('[PDF Builder] Error setting Dompdf options: ' . $e->getMessage());
+            // Fallback avec options minimales
+            $options = new Options();
+            $options->set('isRemoteEnabled', false);
+            $options->set('isHtml5ParserEnabled', true);
+            $dompdf = new Dompdf($options);
         }
 
         // Configuration PDF

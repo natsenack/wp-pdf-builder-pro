@@ -155,38 +155,48 @@ class PDFGenerator extends BaseGenerator
     private function initializeDomPDF(): void
     {
         $options = new Options();
-// Configuration optimisée pour les aperçus
-        $options->set('isRemoteEnabled', $this->config['enable_remote'] ?? false);
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isFontSubsettingEnabled', true);
-        $options->set('defaultMediaType', 'screen');
-        $options->set('dpi', $this->config['dpi'] ?? 96);
-// Configuration mémoire et performance
-        $options->set('tempDir', $this->config['temp_dir'] ?? sys_get_temp_dir());
-        $options->set('fontCache', $this->config['temp_dir'] ?? sys_get_temp_dir());
-        $options->set('logOutputFile', null);
-// Désactiver logs fichier en mode aperçu
-
-        // Configuration format
-        $options->set('defaultPaperSize', $this->config['format'] ?? 'A4');
-        $options->set('defaultPaperOrientation', $this->config['orientation'] ?? 'portrait');
-// Configuration optimisation pour le web (depuis settings Performance)
-        if (!empty($this->config['optimize_for_web'])) {
-            $options->set('isRemoteEnabled', false);
-// Réduire connexions externes
+        
+        // Configuration optimisée pour les aperçus
+        try {
+            $options->set('isRemoteEnabled', $this->config['enable_remote'] ?? false);
+            $options->set('isHtml5ParserEnabled', true);
             $options->set('isFontSubsettingEnabled', true);
-// Réduire taille polices
-            $this->logInfo("PDF optimized for web delivery");
-        }
+            $options->set('defaultMediaType', 'screen');
+            $options->set('dpi', $this->config['dpi'] ?? 96);
+            // Configuration mémoire et performance
+            $options->set('tempDir', $this->config['temp_dir'] ?? sys_get_temp_dir());
+            $options->set('fontCache', $this->config['temp_dir'] ?? sys_get_temp_dir());
+            $options->set('logOutputFile', null);
+            // Désactiver logs fichier en mode aperçu
 
-        // Configuration compression d'images (depuis settings Performance)
-        // Nota: La vraie compression se fait dans convertPDFToImage()
-        if (isset($this->config['compress_images'])) {
-            $this->config['should_compress_images'] = $this->config['compress_images'];
-            $this->logInfo("Image compression enabled: " . ($this->config['compress_images'] ? 'yes' : 'no'));
-        }
+            // Configuration format
+            $options->set('defaultPaperSize', $this->config['format'] ?? 'A4');
+            $options->set('defaultPaperOrientation', $this->config['orientation'] ?? 'portrait');
+            // Configuration optimisation pour le web (depuis settings Performance)
+            if (!empty($this->config['optimize_for_web'])) {
+                $options->set('isRemoteEnabled', false);
+                // Réduire connexions externes
+                $options->set('isFontSubsettingEnabled', true);
+                // Réduire taille polices
+                $this->logInfo("PDF optimized for web delivery");
+            }
 
-        $this->dompdf = new Dompdf($options);
+            // Configuration compression d'images (depuis settings Performance)
+            // Nota: La vraie compression se fait dans convertPDFToImage()
+            if (isset($this->config['compress_images'])) {
+                $this->config['should_compress_images'] = $this->config['compress_images'];
+                $this->logInfo("Image compression enabled: " . ($this->config['compress_images'] ? 'yes' : 'no'));
+            }
+
+            $this->dompdf = new Dompdf($options);
+        } catch (\Throwable $e) {
+            $this->logWarning("Failed to initialize DomPDF with options: " . $e->getMessage());
+            // Fallback avec options minimales
+            $fallbackOptions = new Options();
+            $fallbackOptions->set('isRemoteEnabled', false);
+            $fallbackOptions->set('isHtml5ParserEnabled', true);
+            $this->dompdf = new Dompdf($fallbackOptions);
+        }
     }
 
     /**

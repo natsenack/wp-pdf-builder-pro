@@ -321,11 +321,20 @@ class PdfBuilderScreenshotRenderer
 
             // Créer les options Dompdf pour éviter l'erreur de dépréciation
             $options = new Options();
-            $options->set('isRemoteEnabled', true);
-            $options->set('isHtml5ParserEnabled', true);
-            $options->set('defaultFont', 'Arial');
+            try {
+                $options->set('isRemoteEnabled', true);
+                $options->set('isHtml5ParserEnabled', true);
+                $options->set('defaultFont', 'Arial');
 
-            $dompdf = new Dompdf($options);
+                $dompdf = new Dompdf($options);
+            } catch (\Throwable $e) {
+                error_log('[PDF Builder] Error setting Dompdf options in screenshot renderer: ' . $e->getMessage());
+                // Fallback
+                $options = new Options();
+                $options->set('isRemoteEnabled', false);
+                $options->set('isHtml5ParserEnabled', true);
+                $dompdf = new Dompdf($options);
+            }
 
             // Lire le HTML et l'ajouter au PDF
             $html_content = file_get_contents($html_file);
