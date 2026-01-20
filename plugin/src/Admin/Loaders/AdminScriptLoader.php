@@ -360,6 +360,16 @@ class AdminScriptLoader
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
         ];
 
+        // Ajouter les informations de licence
+        if (class_exists('\PDF_Builder\License\License_Manager')) {
+            $license_manager = \PDF_Builder\License\License_Manager::get_instance();
+            $localize_data['license'] = [
+                'isPremium' => $license_manager->isPremium(),
+                'status' => pdf_builder_get_option('pdf_builder_license_status', 'free'),
+                'hasTestMode' => !empty(pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0')),
+            ];
+        }
+
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
