@@ -34,14 +34,25 @@ class License_Expiration_Handler
      */
     public static function checkLicenseExpiration()
     {
+        // Log the start of the check
+        if (class_exists('\PDF_Builder_Logger')) {
+            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Début de la vérification');
+        }
+
         // Check premium license expiration
         $license_expires = pdf_builder_get_option('pdf_builder_license_expires', '');
         $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+        if (class_exists('\PDF_Builder_Logger')) {
+            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: License expires=' . $license_expires . ', status=' . $license_status);
+        }
         if (!empty($license_expires) && $license_status !== 'free') {
             $expires_date = new \DateTime($license_expires);
             $now = new \DateTime();
         // If license has expired, update status
             if ($now > $expires_date) {
+                if (class_exists('\PDF_Builder_Logger')) {
+                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Licence premium expirée, suppression de la clé');
+                }
                 pdf_builder_update_option('pdf_builder_license_status', 'expired');
                 pdf_builder_delete_option('pdf_builder_license_key');
 // Clear the key
@@ -61,11 +72,18 @@ class License_Expiration_Handler
         // Check test key expiration
         $test_key_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
         $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
+        if (class_exists('\PDF_Builder_Logger')) {
+            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Test key expires=' . $test_key_expires . ', test key=' . substr($test_key, 0, 10) . '...');
+        }
         if (!empty($test_key_expires) && !empty($test_key)) {
-            $expires_date = new \DateTime($test_key_expires);
+            // Convertir les dates au format Y-m-d pour comparaison
+            $expires_date = new \DateTime($test_key_expires . ' 23:59:59'); // Fin de journée
             $now = new \DateTime();
         // If test key has expired, remove it
             if ($now > $expires_date) {
+                if (class_exists('\PDF_Builder_Logger')) {
+                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Clé de test expirée, suppression');
+                }
                 pdf_builder_delete_option('pdf_builder_license_test_key');
                 pdf_builder_delete_option('pdf_builder_license_test_key_expires');
                 pdf_builder_delete_option('pdf_builder_license_test_mode_enabled');
@@ -73,6 +91,10 @@ class License_Expiration_Handler
 // Log the expiration
                 
             }
+        }
+
+        if (class_exists('\PDF_Builder_Logger')) {
+            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Fin de la vérification');
         }
     }
 

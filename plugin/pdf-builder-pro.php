@@ -685,6 +685,7 @@ function pdf_builder_register_ajax_handlers() {
     
     // Handlers de licence - maintenant gérés par le gestionnaire de licences
     add_action('wp_ajax_pdf_builder_test_license', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_check_license_expiration', 'pdf_builder_ajax_handler_dispatch');
 
     // Handlers de routes - maintenant gérés par le système de diagnostic
     add_action('wp_ajax_pdf_builder_test_routes', 'pdf_builder_ajax_handler_dispatch');

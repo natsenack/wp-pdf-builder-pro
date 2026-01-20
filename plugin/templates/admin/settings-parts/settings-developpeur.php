@@ -115,6 +115,17 @@
                             <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
                         </td>
                     </tr>
+                    <tr>
+                        <th scope="row"><label>Vérification Expiration</label></th>
+                        <td>
+                            <button type="button" id="check_expiration_btn" class="button button-secondary" style="padding: 10px 15px; height: auto;">
+                                🔍 Vérifier expiration manuellement
+                            </button>
+                            <p class="description">Déclenche manuellement la vérification d'expiration des licences (normalement exécutée quotidiennement par cron)</p>
+                            <span id="check_expiration_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
+                            <input type="hidden" id="check_expiration_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                        </td>
+                    </tr>
                 </table>
             </section>
 
@@ -922,6 +933,56 @@
                 complete: function() {
                     $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
                     console.log('🔐 [Test de Licence] Nettoyage terminé');
+                }
+            });
+        });
+
+        // Gestionnaire pour le bouton de vérification d'expiration
+        $('#check_expiration_btn').on('click', function(e) {
+            e.preventDefault();
+            console.log('🔍 [Vérification Expiration] Bouton cliqué');
+            
+            const $btn = $(this);
+            const $status = $('#check_expiration_status');
+            const nonce = $('#check_expiration_nonce').val();
+
+            // Désactiver le bouton pendant la vérification
+            $btn.prop('disabled', true).text('🔍 Vérification en cours...');
+            $status.html('<span style="color: #007cba;">Vérification d\'expiration en cours...</span>');
+            console.log('🔍 [Vérification Expiration] Début de la vérification');
+
+            // Requête AJAX
+            $.ajax({
+                url: pdf_builder_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_ajax_handler',
+                    action_type: 'check_license_expiration',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    console.log('🔍 [Vérification Expiration] Réponse AJAX reçue:', response);
+                    if (response.success) {
+                        const data = response.data;
+                        let message = '✅ Vérification terminée. ';
+                        message += 'Statut: ' + data.license_status + ', ';
+                        message += 'Clé licence: ' + (data.has_license_key ? 'présente' : 'absente') + ', ';
+                        message += 'Clé test: ' + (data.has_test_key ? 'présente' : 'absente');
+                        
+                        $status.html('<span style="color: #28a745;">' + message + '</span>');
+                        console.log('🔍 [Vérification Expiration] Vérification réussie');
+                    } else {
+                        console.error('🔍 [Vérification Expiration] Erreur:', response.data.message);
+                        $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('🔍 [Vérification Expiration] Erreur AJAX:', error);
+                    $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('🔍 Vérifier expiration manuellement');
+                    console.log('🔍 [Vérification Expiration] Vérification terminée');
                 }
             });
         });
