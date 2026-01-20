@@ -361,6 +361,7 @@ class AdminScriptLoader
         ];
 
         // Ajouter les informations de licence
+        error_log("[DEBUG] Checking License_Manager class: " . (class_exists('\PDF_Builder\License\License_Manager') ? 'exists' : 'not exists'));
         if (class_exists('\PDF_Builder\License\License_Manager')) {
             $license_manager = \PDF_Builder\License\License_Manager::get_instance();
             $license_data = [
