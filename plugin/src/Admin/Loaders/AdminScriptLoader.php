@@ -361,9 +361,9 @@ class AdminScriptLoader
         ];
 
         // Ajouter les informations de licence
-        error_log("[DEBUG] Checking License_Manager class: " . (class_exists('\PDF_Builder\License\License_Manager') ? 'exists' : 'not exists'));
-        if (class_exists('\PDF_Builder\License\License_Manager')) {
-            $license_manager = \PDF_Builder\License\License_Manager::get_instance();
+        error_log("[DEBUG] Checking License_Manager class: " . (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager') ? 'exists' : 'not exists'));
+        if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
             $license_data = [
                 'isPremium' => $license_manager->isPremium(),
                 'status' => pdf_builder_get_option('pdf_builder_license_status', 'free'),
