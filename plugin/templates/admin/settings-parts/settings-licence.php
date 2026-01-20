@@ -1004,6 +1004,110 @@
 
             </section>
 
+            <!-- Section Rappels par Email pour Expiration -->
+            <section id="email-reminders" aria-label="Rappels par Email" style="margin-top: 2rem; padding: 2rem; background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef;">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem; color: #495057; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5rem;">📧</span>
+                    Rappels par Email pour l'Expiration
+                </h3>
+
+                <p style="margin-bottom: 1.5rem; color: #6c757d; line-height: 1.6;">
+                    Recevez des notifications par email avant l'expiration de votre licence pour éviter toute interruption de service.
+                </p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                    <!-- Activation des rappels -->
+                    <div>
+                        <label for="license_email_reminders" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #495057;">
+                            <input type="checkbox"
+                                   id="license_email_reminders"
+                                   name="license_email_reminders"
+                                   value="1"
+                                   <?php checked($license_email_reminders, '1'); ?>
+                                   style="margin-right: 0.5rem;">
+                            Activer les rappels par email
+                        </label>
+                        <p style="margin: 0; font-size: 0.9rem; color: #6c757d;">
+                            Recevoir des notifications 30 et 7 jours avant l'expiration.
+                        </p>
+                    </div>
+
+                    <!-- Adresse email -->
+                    <div>
+                        <label for="license_reminder_email" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #495057;">
+                            Adresse email pour les rappels
+                        </label>
+                        <input type="email"
+                               id="license_reminder_email"
+                               name="license_reminder_email"
+                               value="<?php echo esc_attr($license_reminder_email); ?>"
+                               placeholder="<?php echo esc_attr(get_option('admin_email', '')); ?>"
+                               style="width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem;">
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #6c757d;">
+                            Laissez vide pour utiliser l'email administrateur du site.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Bouton de sauvegarde -->
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; text-align: right;">
+                    <button type="button"
+                            id="save_email_reminders"
+                            class="button button-primary"
+                            style="padding: 0.75rem 1.5rem; font-weight: 600;">
+                        💾 Sauvegarder les paramètres
+                    </button>
+                    <span id="email_reminders_status" style="margin-left: 1rem;"></span>
+                </div>
+
+                <!-- JavaScript pour la gestion AJAX -->
+                <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                    $('#save_email_reminders').on('click', function(e) {
+                        e.preventDefault();
+
+                        const $btn = $(this);
+                        const $status = $('#email_reminders_status');
+                        const nonce = '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
+
+                        // Récupérer les valeurs
+                        const emailReminders = $('#license_email_reminders').is(':checked') ? '1' : '0';
+                        const reminderEmail = $('#license_reminder_email').val();
+
+                        // Désactiver le bouton
+                        $btn.prop('disabled', true).text('Sauvegarde en cours...');
+                        $status.html('<span style="color: #007cba;">Sauvegarde en cours...</span>');
+
+                        // Requête AJAX
+                        $.ajax({
+                            url: pdf_builder_ajax.ajax_url,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_ajax_handler',
+                                action_type: 'save_license_settings',
+                                nonce: nonce,
+                                license_email_reminders: emailReminders,
+                                license_reminder_email: reminderEmail
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    $status.html('<span style="color: #28a745;">✅ Paramètres sauvegardés avec succès !</span>');
+                                } else {
+                                    $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                            },
+                            complete: function() {
+                                $btn.prop('disabled', false).text('💾 Sauvegarder les paramètres');
+                            }
+                        });
+                    });
+                });
+                </script>
+            </section>
+
                     <!-- JavaScript AJAX déplacé vers settings-main.php pour éviter les conflits -->
                     <script type="text/javascript">
                         // Nonce for license deactivation
