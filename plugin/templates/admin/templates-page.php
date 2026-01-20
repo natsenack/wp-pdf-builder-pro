@@ -1571,11 +1571,6 @@ function duplicateTemplate(templateId, templateName) {
     }
 }
 
-function confirmDeleteTemplate(templateId, templateName) {
-    // Cette fonction est définie plus haut dans le fichier avec l'implémentation AJAX complète
-    // Ne pas redéfinir ici pour éviter l'écrasement
-}
-
 function toggleDefaultTemplate(templateId, templateType, templateName) {
     
     // TODO: Implémenter le changement de template par défaut
