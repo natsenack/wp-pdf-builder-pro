@@ -43,7 +43,7 @@ class License_Expiration_Handler
         // If license has expired, update status
             if ($now > $expires_date) {
                 pdf_builder_update_option('pdf_builder_license_status', 'expired');
-                pdf_builder_update_option('pdf_builder_license_key', '');
+                pdf_builder_delete_option('pdf_builder_license_key');
 // Clear the key
 
                 // Log the expiration
@@ -66,9 +66,9 @@ class License_Expiration_Handler
             $now = new \DateTime();
         // If test key has expired, remove it
             if ($now > $expires_date) {
-                delete_option('pdf_builder_license_test_key');
-                delete_option('pdf_builder_license_test_key_expires');
-                delete_option('pdf_builder_license_test_mode_enabled');
+                pdf_builder_delete_option('pdf_builder_license_test_key');
+                pdf_builder_delete_option('pdf_builder_license_test_key_expires');
+                pdf_builder_delete_option('pdf_builder_license_test_mode_enabled');
                 pdf_builder_update_option('pdf_builder_license_status', 'free');
 // Log the expiration
                 

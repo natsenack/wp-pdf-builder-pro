@@ -317,8 +317,8 @@ class LicenseTestHandler
             
             // Si on désactive le mode test, supprimer la clé de test
             if (!$new_state && $this->getTestKey()) {
-                delete_option('pdf_builder_license_test_key');
-                delete_option('pdf_builder_license_test_key_expires');
+                pdf_builder_delete_option('pdf_builder_license_test_key');
+                pdf_builder_delete_option('pdf_builder_license_test_key_expires');
                 if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleTestMode: clé de test supprimée'); }
             }
             
@@ -369,8 +369,8 @@ class LicenseTestHandler
 
         try {
             // Supprimer la clé de test et l'expiration / désactiver le mode test
-            delete_option('pdf_builder_license_test_key');
-            delete_option('pdf_builder_license_test_key_expires');
+            pdf_builder_delete_option('pdf_builder_license_test_key');
+            pdf_builder_delete_option('pdf_builder_license_test_key_expires');
             pdf_builder_update_option('pdf_builder_license_test_mode_enabled', false);
 
             // Retourner la confirmation
