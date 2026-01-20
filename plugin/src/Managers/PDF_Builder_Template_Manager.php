@@ -987,13 +987,16 @@ class PdfBuilderTemplateManager
             $errors[] = "Élément $index: id doit être une chaîne non-vide (reçu: '$element_id')";
         }
 
+        // Normaliser le type d'élément (remplacer les tirets par des underscores pour la compatibilité)
+        $normalized_type = str_replace('-', '_', $element_type);
+
         // Vérifier le type d'élément valide
         $valid_types = ['text', 'image', 'rectangle', 'line', 'product_table',
                        'customer_info', 'company_logo', 'company_info', 'order_number',
                        'document_type', 'textarea', 'html', 'divider', 'progress-bar',
                        'dynamic-text', 'mentions'];
 
-        if (!in_array($element_type, $valid_types)) {
+        if (!in_array($normalized_type, $valid_types)) {
             $errors[] = "Élément $index ($element_id): type invalide '$element_type' (types valides: " .
                        implode(', ', $valid_types) . ')';
         }
