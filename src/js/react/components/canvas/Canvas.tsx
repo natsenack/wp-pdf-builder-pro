@@ -3407,6 +3407,17 @@ export const Canvas = function Canvas({
 
   // Calculate border style based on canvas settings and license
   const isPremium = window.pdfBuilderData?.license?.isPremium || false;
+
+  // DEBUG: Log license and settings info
+  console.log('🔍 [CANVAS DEBUG] License check:', {
+    windowExists: typeof window !== 'undefined',
+    pdfBuilderData: !!window.pdfBuilderData,
+    license: window.pdfBuilderData?.license,
+    isPremium: isPremium,
+    canvasSettings: canvasSettings,
+    defaultSettings: DEFAULT_SETTINGS
+  });
+
   const borderStyle = isDragOver 
     ? "2px solid #007acc" 
     : (!isPremium 
@@ -3424,6 +3435,17 @@ export const Canvas = function Canvas({
   debugLog(
     `[Canvas] Rendering canvas element - Display size: ${displayWidth}x${displayHeight}, Border: ${borderStyle}, Drag over: ${isDragOver}`
   );
+
+  // DEBUG: Log applied colors
+  console.log('🎨 [CANVAS DEBUG] Applied styles:', {
+    isPremium: isPremium,
+    borderStyle: borderStyle,
+    backgroundColor: !isPremium 
+      ? DEFAULT_SETTINGS.containerBackgroundColor 
+      : (canvasSettings?.containerBackgroundColor || DEFAULT_SETTINGS.containerBackgroundColor),
+    defaultBg: DEFAULT_SETTINGS.containerBackgroundColor,
+    customBg: canvasSettings?.containerBackgroundColor
+  });
 
   return (
     <>

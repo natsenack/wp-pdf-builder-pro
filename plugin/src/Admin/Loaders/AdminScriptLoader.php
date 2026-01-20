@@ -363,17 +363,26 @@ class AdminScriptLoader
         // Ajouter les informations de licence
         if (class_exists('\PDF_Builder\License\License_Manager')) {
             $license_manager = \PDF_Builder\License\License_Manager::get_instance();
-            $localize_data['license'] = [
+            $license_data = [
                 'isPremium' => $license_manager->isPremium(),
                 'status' => pdf_builder_get_option('pdf_builder_license_status', 'free'),
                 'hasTestMode' => !empty(pdf_builder_get_option('pdf_builder_license_test_mode_enabled', '0')),
             ];
+            
+            // DEBUG: Log license data being sent to JS
+            error_log('[PHP DEBUG] License data sent to JS: ' . print_r($license_data, true));
+            
+            $localize_data['license'] = $license_data;
         }
 
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
             $canvas_settings = $canvas_manager->getAllSettings();
+            
+            // DEBUG: Log canvas settings being sent to JS
+            error_log('[PHP DEBUG] Canvas settings sent to JS: ' . print_r($canvas_settings, true));
+            
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
