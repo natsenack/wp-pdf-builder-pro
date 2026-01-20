@@ -987,16 +987,19 @@ class PdfBuilderTemplateManager
             $errors[] = "Élément $index: id doit être une chaîne non-vide (reçu: '$element_id')";
         }
 
-        // Normaliser le type d'élément (remplacer les tirets par des underscores pour la compatibilité)
-        $normalized_type = str_replace('-', '_', $element_type);
-
-        // Vérifier le type d'élément valide
+        // Vérifier le type d'élément valide (accepter les tirets et underscores)
         $valid_types = ['text', 'image', 'rectangle', 'line', 'product_table',
                        'customer_info', 'company_logo', 'company_info', 'order_number',
                        'document_type', 'textarea', 'html', 'divider', 'progress-bar',
-                       'dynamic-text', 'mentions'];
+                       'dynamic-text', 'dynamic_text', 'mentions'];
 
-        if (!in_array($normalized_type, $valid_types)) {
+        // Normaliser pour la vérification (accepter les deux formats)
+        $normalized_type_dash = str_replace('_', '-', $element_type);
+        $normalized_type_underscore = str_replace('-', '_', $element_type);
+
+        if (!in_array($element_type, $valid_types) &&
+            !in_array($normalized_type_dash, $valid_types) &&
+            !in_array($normalized_type_underscore, $valid_types)) {
             $errors[] = "Élément $index ($element_id): type invalide '$element_type' (types valides: " .
                        implode(', ', $valid_types) . ')';
         }
