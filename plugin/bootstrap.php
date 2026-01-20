@@ -645,7 +645,7 @@ function pdf_builder_load_core()
         wp_enqueue_script('react-dom', false, ['react'], false, true);
 
         // Charger seulement le bundle sur la page de l'éditeur React
-        if ($hook === 'pdf-builder_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {
+        if ($hook === 'pdf-builder-pro_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {
             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook); }
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)

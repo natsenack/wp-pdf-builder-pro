@@ -242,7 +242,7 @@ class AdminScriptLoader
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']); }
-            $this->loadReactEditorScripts();
+            $this->loadReactEditorScripts($hook);
         } else {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook); }
         }
@@ -250,14 +250,14 @@ class AdminScriptLoader
         // Charger aussi les scripts React si on est sur une page qui contient "react-editor" dans l'URL
         if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-react-editor') !== false) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts from REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
-            $this->loadReactEditorScripts();
+            $this->loadReactEditorScripts($hook);
         }
     }
 
     /**
      * Charge les scripts spécifiques à l'éditeur React
      */
-    private function loadReactEditorScripts()
+    private function loadReactEditorScripts($hook = null)
     {
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts called');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown')); }
@@ -603,7 +603,7 @@ class AdminScriptLoader
                 try {
                     console.log("🔍 [PAGE DIAGNOSTIC] URL actuelle:", window.location.href);
                     console.log("🔍 [PAGE DIAGNOSTIC] Paramètre page:", new URLSearchParams(window.location.search).get("page"));
-                    console.log("🔍 [PAGE DIAGNOSTIC] Hook détecté:", "' . (isset($hook) ? $hook : 'unknown') . '");
+                    console.log("🔍 [PAGE DIAGNOSTIC] Hook détecté:", "' . ($hook ?: 'null') . '");
                     
                     // Tester si le wrapper React est chargé
                     setTimeout(function() {
