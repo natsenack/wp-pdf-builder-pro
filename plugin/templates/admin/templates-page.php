@@ -1025,7 +1025,9 @@ function duplicateTemplate(templateId, templateName) {
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
+    console.log('[DEBUG] confirmDeleteTemplate called with:', templateId, templateName);
     if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action ne peut pas être annulée.')) {
+        console.log('[DEBUG] User confirmed deletion, sending AJAX request');
         // Créer une requête AJAX pour supprimer le template
         fetch(ajaxurl, {
             method: 'POST',
@@ -1038,8 +1040,12 @@ function confirmDeleteTemplate(templateId, templateName) {
                 'nonce': pdfBuilderTemplatesNonce
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('[DEBUG] AJAX response received:', response);
+            return response.json();
+        })
         .then(data => {
+            console.log('[DEBUG] AJAX data received:', data);
             if (data.success) {
                 alert('Template supprimé avec succès !');
                 location.reload();
@@ -1048,9 +1054,11 @@ function confirmDeleteTemplate(templateId, templateName) {
             }
         })
         .catch(error => {
-            
+            console.error('[DEBUG] AJAX error:', error);
             alert('Erreur lors de la suppression du template');
         });
+    } else {
+        console.log('[DEBUG] User cancelled deletion');
     }
 }
 
