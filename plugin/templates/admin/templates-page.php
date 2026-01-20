@@ -1038,7 +1038,7 @@ function handleDeleteClick(templateId, templateName) {
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
-    console.log('[DEBUG] confirmDeleteTemplate appelée avec:', templateId, templateName);
+    console.log('[DEBUG] DÉBUT confirmDeleteTemplate - templateId:', templateId, 'templateName:', templateName);
 
     if (confirm('Êtes-vous sûr de vouloir supprimer définitivement le template "' + templateName + '" ?\n\nCette action ne peut pas être annulée.')) {
         console.log('[DEBUG] Utilisateur a confirmé la suppression');
