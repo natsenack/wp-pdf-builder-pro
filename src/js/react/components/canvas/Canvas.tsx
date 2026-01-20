@@ -3410,7 +3410,7 @@ export const Canvas = function Canvas({
   const borderStyle = isDragOver 
     ? "2px solid #007acc" 
     : (!isPremium 
-        ? "none" // Pas de bordure en mode gratuit
+        ? `${DEFAULT_SETTINGS.borderWidth}px solid ${DEFAULT_SETTINGS.borderColor}` // Bordure par défaut en mode gratuit
         : (canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0 
             ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || DEFAULT_SETTINGS.borderColor}` 
             : "none")
@@ -3443,7 +3443,11 @@ export const Canvas = function Canvas({
             ? DEFAULT_SETTINGS.containerBackgroundColor // Fond par défaut en mode gratuit
             : (canvasSettings?.containerBackgroundColor || DEFAULT_SETTINGS.containerBackgroundColor),
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-          boxShadow: isDragOver ? "0 0 0 2px rgba(0, 122, 204, 0.2)" : (!isPremium ? "none" : "none"),
+          boxShadow: isDragOver 
+            ? "0 0 0 2px rgba(0, 122, 204, 0.2)" 
+            : (canvasSettings?.shadowEnabled 
+                ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)" 
+                : "none"),
           pointerEvents: "auto",
         }}
       >
