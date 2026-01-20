@@ -338,7 +338,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template" onclick="console.log(\'[PDF Builder] Edit button clicked for template ID: ' . intval($template_id) . '\'); console.log(\'[PDF Builder] Navigating to editor for template: ' . esc_js($template_name) . '\');">✏️</a>';
                     echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . esc_js($button_action) . '(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Paramètres">⚙️</button>';
                     echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Dupliquer ce template">📋</button>';
-                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="console.log(\'[DEBUG] Bouton supprimer cliqué pour template ID:\', ' . intval($template_id) . '); confirmDeleteTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer">🗑️</button>';
+                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="handleDeleteClick(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
@@ -1021,6 +1021,19 @@ function duplicateTemplate(templateId, templateName) {
             
             alert('Erreur lors de la duplication du template');
         });
+    }
+}
+
+function handleDeleteClick(templateId, templateName) {
+    console.log('[DEBUG] handleDeleteClick appelée avec:', templateId, templateName);
+
+    // Vérifier que la fonction confirmDeleteTemplate existe
+    if (typeof confirmDeleteTemplate === 'function') {
+        console.log('[DEBUG] confirmDeleteTemplate existe, appel de la fonction');
+        confirmDeleteTemplate(templateId, templateName);
+    } else {
+        console.error('[DEBUG] confirmDeleteTemplate n\'est pas définie !');
+        alert('Erreur: Fonction de suppression non disponible');
     }
 }
 
