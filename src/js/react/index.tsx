@@ -22,7 +22,8 @@ const logger = createLogger('PDFBuilderReact');
 // ============================================================================
 
 logger.info('🚀 PDF Builder V2 module execution started');
-logger.debug('React available:', typeof React);
+console.log('[PDF Builder React] Module loaded, React available:', typeof React);
+console.log('[PDF Builder React] createRoot available:', typeof createRoot);
 
 let reactRoot: Root | null = null;
 
@@ -37,20 +38,25 @@ let reactRoot: Root | null = null;
  */
 function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): boolean {
   logger.info(`Initializing PDF Builder in container: ${containerId}`);
+  console.log('[PDF Builder React] initPDFBuilderReact called with containerId:', containerId);
   
   try {
     // Get container
     const container = getDOMContainer(containerId);
+    console.log('[PDF Builder React] Container found:', !!container, 'Element:', container);
     if (!container) {
       logger.error(`Container not found: ${containerId}`);
+      console.error('[PDF Builder React] Container not found:', containerId);
       return false;
     }
 
     // Create React root
     reactRoot = createRoot(container);
     logger.debug('React root created');
+    console.log('[PDF Builder React] React root created successfully');
 
     // Render the REAL PDF Builder component
+    console.log('[PDF Builder React] About to render PDFBuilder component');
     reactRoot.render(
       <PDFBuilder 
         width={1200} 
@@ -59,6 +65,7 @@ function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): bo
       />
     );
     logger.info('✅ PDF Builder rendered successfully');
+    console.log('[PDF Builder React] PDFBuilder component rendered successfully');
 
     return true;
   } catch (error) {
