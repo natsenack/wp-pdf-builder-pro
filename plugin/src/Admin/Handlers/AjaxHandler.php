@@ -1714,6 +1714,21 @@ class AjaxHandler
                 return;
             }
 
+            // Forcer les valeurs par défaut pour les paramètres premium si utilisateur non-premium
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            if (!$license_manager->is_premium()) {
+                $premium_defaults = [
+                    'pdf_builder_canvas_border_color' => '#cccccc',
+                    'pdf_builder_canvas_border_width' => '1',
+                    'pdf_builder_canvas_container_bg_color' => '#f8f9fa'
+                ];
+                foreach ($premium_defaults as $key => $default_value) {
+                    if (isset($settings_to_save[$key])) {
+                        $settings_to_save[$key] = $default_value;
+                    }
+                }
+            }
+
             // Récupérer les paramètres existants
             $existing_settings = pdf_builder_get_option('pdf_builder_settings', array());
 
