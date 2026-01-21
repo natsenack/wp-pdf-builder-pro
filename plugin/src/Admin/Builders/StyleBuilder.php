@@ -121,7 +121,7 @@ class StyleBuilder
         }
 
         $transform_parts = [];
-        if (isset($element['rotation']) && $element['rotation'] != 0) {
+        if (isset($element['rotation']) && $element['rotation'] != 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '1') == '1') {
             $transform_parts[] = "rotate({$element['rotation']}deg)";
             $properties_found[] = 'rotation=' . $element['rotation'];
         }

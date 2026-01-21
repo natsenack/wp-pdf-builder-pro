@@ -223,7 +223,7 @@ class PdfBuilderScreenshotRenderer
         }
 
         // Rotation
-        if (isset($props['rotation']) && $props['rotation'] != 0) {
+        if (isset($props['rotation']) && $props['rotation'] != 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '1') == '1') {
             $style[] = 'transform: rotate(' . intval($props['rotation']) . 'deg)';
         }
 

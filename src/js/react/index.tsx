@@ -8,12 +8,6 @@
  * - Properties panel for element editing
  */
 
-// 🚨 DEBUG: Log bundle loading - BASIC
-console.error('🔥 [BUNDLE BASIC] pdf-builder-react.min.js START OF FILE EXECUTING');
-
-// 🚨 DEBUG: Log bundle loading
-console.error('🔥 [REACT BUNDLE] pdf-builder-react.min.js bundle loaded and executing');
-
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
@@ -43,7 +37,6 @@ let reactRoot: Root | null = null;
  * @returns true if initialization succeeded, false otherwise
  */
 function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): boolean {
-  console.error('🚀 [REACT INIT] initPDFBuilderReact function called with containerId:', containerId);
   logger.info(`Initializing PDF Builder in container: ${containerId}`);
   // console.log('[PDF Builder React] initPDFBuilderReact called with containerId:', containerId);
   

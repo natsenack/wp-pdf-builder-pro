@@ -31,9 +31,7 @@ import { wooCommerceManager } from "../../utils/WooCommerceElementsManager";
 import { elementChangeTracker } from "../../utils/ElementChangeTracker";
 import { debugWarn, debugError, debugLog } from "../../utils/debug";
 
-// 🚨 DEBUG: Log file loading
-console.error('🔥 [CANVAS FILE] Canvas.tsx loaded and executing');
-
+// Déclaration pour l'API Performance
 declare const performance: {
   memory?: {
     usedJSHeapSize: number;
@@ -1589,18 +1587,12 @@ export const Canvas = function Canvas({
   height,
   className,
 }: CanvasProps) {
-  // 🚨 DEBUG: Log component initialization
-  console.error('🚀 [CANVAS COMPONENT] Canvas component function called with props:', { width, height, className });
-
-  // Debug log that won't be removed by webpack
-  const componentDebug = {
-    component: 'Canvas',
-    mounted: true,
-    props: { width, height, className },
-    timestamp: Date.now()
-  };
-  window.pdfBuilderDebug = window.pdfBuilderDebug || [];
-  window.pdfBuilderDebug.push(componentDebug);
+  // DEBUG: Log component initialization and data reception
+  console.log('🚀 [Canvas DEBUG] Component initialized, checking window data:', {
+    windowPdfBuilderData: window.pdfBuilderData,
+    license: window.pdfBuilderData?.license,
+    canvasSettings: window.pdfBuilderData?.canvasSettings
+  });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -1611,15 +1603,6 @@ export const Canvas = function Canvas({
 
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
-
-  // 🔥 DEBUG: Check rotation settings from context
-  useEffect(() => {
-    console.error('🔥 [CANVAS SETTINGS ON MOUNT]', {
-      selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
-      enable_rotation: canvasSettings?.enable_rotation,
-      hasCanvasSettings: !!canvasSettings
-    });
-  }, [canvasSettings]);
 
   debugLog("🎨 Canvas: Component initialized with props:", {
     width,
@@ -1718,27 +1701,7 @@ export const Canvas = function Canvas({
 
   // ✅ LAZY LOADING: Hook pour mettre à jour le viewport quand le canvas change
   useEffect(() => {
-    // 🚨 DEBUG: Log canvas mount
-    console.error('🔥 [CANVAS MOUNT] Canvas useEffect triggered, canvasRef:', !!canvasRef.current);
-
     if (!canvasRef.current) return;
-
-    // 🚨 ADD DIRECT EVENT LISTENER AS BACKUP
-    const canvas = canvasRef.current;
-    const directMouseDown = (event: MouseEvent) => {
-      console.error('🔥 [DIRECT MOUSE] Canvas received direct mousedown at', event.clientX, event.clientY);
-      // Call the React handler
-      if (handleMouseDown) {
-        handleMouseDown(event as any);
-      }
-    };
-    
-    canvas.addEventListener('mousedown', directMouseDown);
-    
-    // Cleanup
-    return () => {
-      canvas.removeEventListener('mousedown', directMouseDown);
-    };
 
     const updateViewport = () => {
       const canvas = canvasRef.current;
@@ -1964,13 +1927,6 @@ export const Canvas = function Canvas({
     canvasRef,
     canvasWidth: width,
     canvasHeight: height,
-  });
-
-  // 🚨 DEBUG: Log hook usage
-  console.error('🔥 [CANVAS] useCanvasInteraction hook used, handlers:', {
-    handleMouseDown: typeof handleMouseDown,
-    handleMouseUp: typeof handleMouseUp,
-    handleCanvasClick: typeof handleCanvasClick
   });
 
   // Hook pour les raccourcis clavier
@@ -2656,32 +2612,13 @@ export const Canvas = function Canvas({
       selectedIds: string[],
       elements: Element[]
     ) => {
-      // Debug log that won't be removed by webpack
-      const debugInfo = {
-        function: 'drawSelection',
-        selectedIds: selectedIds,
-        elementsCount: elements.length,
-        timestamp: Date.now()
-      };
-      window.pdfBuilderDebug = window.pdfBuilderDebug || [];
-      window.pdfBuilderDebug.push(debugInfo);
-
-      console.error('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
       const selectedElements = elements.filter((el) =>
         selectedIds.includes(el.id)
       );
-      console.error('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
       if (selectedElements.length === 0) {
-        console.error('🔥 [SELECTION EMPTY] No elements selected - drawSelection returning early');
         debugLog("[Canvas] Selection cleared - no elements selected");
         return;
       }
-
-      console.error('[CANVAS DEBUG] Drawing selection for', selectedElements.length, 'elements - checking rotation handles');
-      console.error('🔥 [DRAW SELECT] About to draw with canvasSettings:', {
-        selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
-        enable_rotation: canvasSettings?.enable_rotation
-      });
 
       debugLog(
         `[Canvas] Drawing selection for ${selectedElements.length} element(s):`,
@@ -2769,44 +2706,27 @@ export const Canvas = function Canvas({
       }
 
       // Poignées de rotation (conditionnées par les settings)
-      console.error('❌❌❌ [DRAW SELECTION CALLED] ❌❌❌');
-      console.error('🔥 canvasSettings exists:', !!canvasSettings);
-      console.error('🔥 selectionRotationEnabled:', canvasSettings?.selectionRotationEnabled);
-      console.error('🔥 enable_rotation:', canvasSettings?.enable_rotation);
-      console.error('🔥 selectedElements:', selectedElements.length);
-      console.error('🔥 selectedIds:', selectedIds.length);
-
-      // Debug log that won't be removed by webpack
-      const rotationDebug = {
-        function: 'rotation_check',
-        selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
-        enable_rotation: canvasSettings?.enable_rotation,
-        selectedElements: selectedElements.length,
-        selectedIds: selectedIds.length,
-        timestamp: Date.now()
-      };
-      window.pdfBuilderDebug = window.pdfBuilderDebug || [];
-      window.pdfBuilderDebug.push(rotationDebug);
-
-      if (canvasSettings?.selectionRotationEnabled || true) {  // FORCE FOR DEBUG
-        // DEBUG: Draw text on canvas to show the value
-        ctx.font = "16px Arial";
-        ctx.fillStyle = "red";
-        ctx.fillText("ROTATION: " + canvasSettings?.selectionRotationEnabled, 10, 30);
-        
+      if (canvasSettings?.selectionRotationEnabled) {
+        console.log('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
+        console.log('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
-        // Les poignées de rotation s'affichent toujours quand activées, indépendamment de la rotation actuelle
-        // Calculer la couleur basée sur la rotation moyenne ou utiliser une couleur fixe
-        const avgRotation = selectedElements.reduce((sum, el) => sum + ((el as any).rotation || 0), 0) / selectedElements.length;
-        let normalizedRotation = avgRotation % 360;
-        if (normalizedRotation > 180) normalizedRotation -= 360;
-        if (normalizedRotation < -180) normalizedRotation += 360;
-        const hasZeroRotation = Math.abs(normalizedRotation - 0) <= 10;
+        // Vérifier si au moins un élément a une rotation proche de 0°
+        // Utiliser la même logique de normalisation que dans useCanvasInteraction.ts
+        const hasZeroRotation = selectedElements.some((el) => {
+          const rotation = (el as any).rotation || 0;
+          // Normaliser l'angle entre -180° et 180° (même logique que le snap)
+          let normalizedRotation = rotation % 360;
+          if (normalizedRotation > 180) normalizedRotation -= 360;
+          if (normalizedRotation < -180) normalizedRotation += 360;
+          // Utiliser la tolérance pour 0° (10°) pour cohérence avec le snap ultra simple
+          return Math.abs(normalizedRotation - 0) <= 10;
+        });
 
-        // Couleur verte pour indiquer la rotation activée
-        const handleColor = "#00cc44"; // Toujours vert pour indiquer que la rotation est disponible
+        // Couleur différente pour indiquer le snap à 0°
+        const handleColor = hasZeroRotation ? "#00cc44" : "#007acc";
         ctx.fillStyle = handleColor;
         ctx.strokeStyle = handleColor;
         ctx.lineWidth = 2;
@@ -3395,19 +3315,8 @@ export const Canvas = function Canvas({
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
-    console.error('🔥🔥🔥 [RENDER CANVAS CALLED] RENDER STARTS 🔥🔥🔥');
-    
-    // Debug log that won't be removed by webpack
-    const debugInfo = {
-      elements: state.elements.length,
-      selection: state.selection.selectedElements.length,
-      timestamp: Date.now()
-    };
-    window.pdfBuilderDebug = window.pdfBuilderDebug || [];
-    window.pdfBuilderDebug.push(debugInfo);
-
-    console.error('[CANVAS DEBUG] renderCanvas called - Elements:', state.elements.length, 'Selection:', state.selection.selectedElements.length);
     const startTime = Date.now();
+    renderCountRef.current += 1;
 
     debugLog(
       `🎨 Canvas: Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Selection: ${state.selection.selectedElements.length} items`
@@ -3565,13 +3474,7 @@ export const Canvas = function Canvas({
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
-      console.error('🔥 [BEFORE DRAW SELECTION] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
-      console.error('[CANVAS DEBUG] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
-      console.error('🔥 [RENDER CANVAS] selectionRotationEnabled:', canvasSettings?.selectionRotationEnabled);
-      console.error('🔥 [RENDER CANVAS] canvasSettings keys:', Object.keys(canvasSettings || {}));
       drawSelection(ctx, state.selection.selectedElements, state.elements);
-    } else {
-      console.error('🔥 [RENDER CANVAS] No elements selected, skipping drawSelection');
     }
 
     ctx.restore();
@@ -3751,18 +3654,6 @@ export const Canvas = function Canvas({
           pointerEvents: "auto",
         }}
       >
-        {/* 🚨 DEBUG: Log canvas render */}
-        {(() => {
-          console.error('🔥 [CANVAS RENDER] Canvas component rendering with handlers:', {
-            handleMouseDown: typeof handleMouseDown,
-            handleMouseUp: typeof handleMouseUp,
-            handleCanvasClick: typeof handleCanvasClick,
-            canvasRef: !!canvasRef,
-            width,
-            height
-          });
-          return null;
-        })()}
         <canvas
           ref={canvasRef}
           width={width}
@@ -3783,8 +3674,6 @@ export const Canvas = function Canvas({
               ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)"
               : "none",
             display: "block",
-            pointerEvents: "auto",
-            zIndex: 1
           }}
         />
       </div>

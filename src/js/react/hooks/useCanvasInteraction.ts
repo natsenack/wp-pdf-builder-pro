@@ -22,9 +22,6 @@ interface UseCanvasInteractionProps {
 }
 
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
-  // 🚨 DEBUG: Log hook initialization
-  console.error('🔥 [HOOK INIT] useCanvasInteraction hook initialized');
-
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
   
@@ -592,21 +589,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // Gestionnaire de mouse down pour commencer le drag ou resize
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
-    // 🚨 DEBUG: Log mouse down event - BASIC
-    console.error('🔥 [MOUSE DOWN BASIC] handleMouseDown called - event detected');
-
-    // 🚨 DEBUG: Log mouse down event
-    window.pdfBuilderDebug = window.pdfBuilderDebug || [];
-    window.pdfBuilderDebug.push({
-      timestamp: Date.now(),
-      event: 'handleMouseDown',
-      clientX: event.clientX,
-      clientY: event.clientY,
-      button: event.button,
-      ctrlKey: event.ctrlKey
-    });
-    console.error('🔥 [MOUSE DOWN] handleMouseDown called at', event.clientX, event.clientY);
-
     const canvas = canvasRef.current;
     if (!canvas) {
       debugLog('[CanvasInteraction] Mouse down ignored - canvas ref null');
@@ -644,7 +626,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // Si on a cliqué sur un élément
     if (clickedElement) {
-      console.error('🔥 [SELECTION] Found clicked element:', clickedElement.type, clickedElement.id, 'at position', x.toFixed(1), y.toFixed(1));
       debugLog(`[CanvasInteraction] Clicked element: ${clickedElement.type} (${clickedElement.id})`);
       // ✅ Utiliser state.selection directement (plus fiable que ref)
       const isAlreadySelected = state.selection.selectedElements.includes(clickedElement.id);
@@ -658,12 +639,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         if (isAlreadySelected) {
           // Retirer l'élément de la sélection
           const newSelection = state.selection.selectedElements.filter(id => id !== clickedElement.id);
-          console.error('🔥 [SELECTION] Removing element from selection:', clickedElement.id, 'New selection:', newSelection);
           dispatch({ type: 'SET_SELECTION', payload: newSelection });
         } else {
           // Ajouter l'élément à la sélection
           const newSelection = [...state.selection.selectedElements, clickedElement.id];
-          console.error('🔥 [SELECTION] Adding element to selection:', clickedElement.id, 'New selection:', newSelection);
           dispatch({ type: 'SET_SELECTION', payload: newSelection });
         }
         event.preventDefault();
@@ -672,7 +651,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // ✅ Mode sélection simple (comportement actuel)
         if (!isAlreadySelected) {
           debugLog(`[CanvasInteraction] Selecting element ${clickedElement.id}`);
-          console.error('🔥 [SELECTION] Setting single selection:', [clickedElement.id]);
           dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
           // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
           isDraggingRef.current = true;
@@ -759,7 +737,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // ✅ Sinon on a cliqué sur le vide - gérer selon le mode de sélection
     if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
       debugLog(`[CanvasInteraction] Starting ${selectionMode} selection at (${x.toFixed(1)}, ${y.toFixed(1)})`);
-      console.error('🔥 [SELECTION] Starting', selectionMode, 'selection at', x.toFixed(1), y.toFixed(1));
       // Commencer une nouvelle sélection
       isSelectingRef.current = true;
       selectionStartRef.current = { x, y };
@@ -776,25 +753,14 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // Mode clic simple - désélectionner
       if (state.selection.selectedElements.length > 0) {
         debugLog(`[CanvasInteraction] Clearing selection (${state.selection.selectedElements.length} elements)`);
-        console.error('🔥 [SELECTION] Clearing selection, had', state.selection.selectedElements.length, 'elements');
         dispatch({ type: 'CLEAR_SELECTION' });
         selectedElementRef.current = null;
-      } else {
-        console.error('🔥 [SELECTION] Clicked on empty space, no elements selected');
       }
     }
   }, [state, canvasRef, dispatch, getResizeHandleAtPosition]);
 
   // Gestionnaire de mouse up pour terminer le drag ou resize
   const handleMouseUp = useCallback(() => {
-    // 🚨 DEBUG: Log mouse up event
-    window.pdfBuilderDebug = window.pdfBuilderDebug || [];
-    window.pdfBuilderDebug.push({
-      timestamp: Date.now(),
-      event: 'handleMouseUp'
-    });
-    console.error('🔥 [MOUSE UP] handleMouseUp called');
-
     debugLog(`[CanvasInteraction] Mouse up - ending interactions (dragging: ${isDraggingRef.current}, resizing: ${isResizingRef.current}, rotating: ${isRotatingRef.current}, selecting: ${isSelectingRef.current})`);
     
     // Annuler tout RAF en cours et effectuer un dernier update si nécessaire
