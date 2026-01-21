@@ -506,6 +506,19 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData'); }
 
+        // 🚨 DEBUG: Add immediate execution test
+        wp_add_inline_script('pdf-builder-react-main', '
+            console.error("🔥 [SCRIPT EXECUTION] pdf-builder-react-main script is executing");
+            console.error("🔥 [SCRIPT EXECUTION] window object:", typeof window);
+            console.error("🔥 [SCRIPT EXECUTION] document object:", typeof document);
+            try {
+                console.error("🔥 [SCRIPT EXECUTION] pdfBuilderData set:", !!window.pdfBuilderData);
+            } catch(e) {
+                console.error("🔥 [SCRIPT EXECUTION] Error accessing pdfBuilderData:", e);
+            }
+        ', 'after');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Debug script added to pdf-builder-react-main');
+
         // Emergency reload script - DISABLED - Don't force reload
         // The React wrapper handles its own initialization without hard reload requirements
         /*
