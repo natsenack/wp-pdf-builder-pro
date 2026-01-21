@@ -107,8 +107,6 @@ export interface CanvasSettingsContextType {
       gridSnapEnabled: boolean;
     }>
   ) => Promise<void>;
-  updateRotationSettings: (enabled: boolean) => void;
-  saveRotationSettings: (enabled: boolean) => Promise<void>;
   refreshSettings: () => void;
 }
 
@@ -213,13 +211,9 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 
     // Vérifier que windowSettings est un objet
     if (typeof windowSettings !== "object" || windowSettings === null) {
-      console.error('🔥 [REACT CONTEXT] windowSettings is invalid:', windowSettings);
+      
       throw new Error("Les paramètres du canvas ne sont pas un objet valide");
     }
-
-    // 🚨 LOG ALL SETTINGS AT START
-    console.error('🔥 [REACT CONTEXT] Building settings from windowSettings:', windowSettings);
-    console.error('🔥 [REACT CONTEXT] enable_rotation:', windowSettings.enable_rotation, 'type:', typeof windowSettings.enable_rotation);
 
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {
@@ -329,25 +323,9 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       selectionMultiSelectEnabled:
         windowSettings.multi_select === true ||
         windowSettings.multi_select === "1",
-      selectionRotationEnabled: (() => {
-        const value = windowSettings.enable_rotation === true || windowSettings.enable_rotation === "1";
-        console.error('🔥 [REACT CONTEXT] Calculating selectionRotationEnabled:', {
-          windowSettings_enable_rotation: windowSettings.enable_rotation,
-          type: typeof windowSettings.enable_rotation,
-          comparison_true: windowSettings.enable_rotation === true,
-          comparison_1: windowSettings.enable_rotation === "1",
-          result: value
-        });
-        return value;
-      })(),
-
-      // Debug: Log rotation setting in React context
-      _debug_rotation_react: (() => {
-        console.error('🔥 [REACT CONTEXT] windowSettings object:', windowSettings);
-        console.error('🔥 [REACT CONTEXT] windowSettings.enable_rotation:', windowSettings.enable_rotation, 'type:', typeof windowSettings.enable_rotation);
-        console.error('🔥 [REACT CONTEXT] selectionRotationEnabled:', windowSettings.enable_rotation === true || windowSettings.enable_rotation === "1");
-        return null;
-      })(),
+      selectionRotationEnabled:
+        windowSettings.enable_rotation === true ||
+        windowSettings.enable_rotation === "1",
       selectionCopyPasteEnabled:
         windowSettings.copy_paste_enabled === true ||
         windowSettings.copy_paste_enabled === "1",
@@ -401,8 +379,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       updateGridSettings: () => {},
       saveGridSettings: async () => {},
     };
-
-    console.error('🔥 [REACT CONTEXT] newSettings created with selectionRotationEnabled:', newSettings.selectionRotationEnabled);
 
     return newSettings;
   } catch (_err) {
@@ -587,58 +563,6 @@ export function CanvasSettingsProvider({
       } catch (error) {
         debugError(
           "Erreur lors de la sauvegarde des paramètres de grille:",
-          error
-        );
-      }
-    },
-    updateRotationSettings: (enabled: boolean) => {
-      setSettings((prev) => ({
-        ...prev,
-        selectionRotationEnabled: enabled,
-      }));
-    },
-    saveRotationSettings: async (enabled: boolean) => {
-      try {
-        // Préparer les données pour l'AJAX
-        const formData = new URLSearchParams();
-        formData.append("action", "pdf_builder_save_canvas_settings");
-        formData.append("nonce", window.pdfBuilderAjax?.nonce || "");
-        formData.append("canvas_rotate_enabled", enabled ? "1" : "0");
-
-        // Sauvegarder côté serveur
-        const response = await fetch(
-          window.pdfBuilderAjax?.ajax_url || "/wp-admin/admin-ajax.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: formData,
-          }
-        );
-
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success) {
-            // Mettre à jour l'état local
-            setSettings((prev) => ({
-              ...prev,
-              selectionRotationEnabled: enabled,
-            }));
-          } else {
-            debugError(
-              "Erreur lors de la sauvegarde des paramètres de rotation:",
-              result.message
-            );
-          }
-        } else {
-          debugError(
-            "Erreur HTTP lors de la sauvegarde des paramètres de rotation"
-          );
-        }
-      } catch (error) {
-        debugError(
-          "Erreur lors de la sauvegarde des paramètres de rotation:",
           error
         );
       }

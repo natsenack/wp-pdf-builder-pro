@@ -4,14 +4,8 @@
 (function($) {
     'use strict';
 
-    // 🚨 DEBUG: Log settings initialization
-    console.error('🔥 [SETTINGS INIT] canvas-settings.js loading');
-
     // Initialize canvas settings functionality
     $(document).ready(function() {
-
-        // 🚨 DEBUG: Log ready
-        console.error('🔥 [SETTINGS READY] canvas-settings.js document ready');
 
         // Handle modal apply buttons
         $('.canvas-modal-apply').on('click', function(e) {
@@ -22,53 +16,22 @@
             var $modal = $button.closest('.canvas-modal-overlay');
             var $form = $modal.find('form');
 
-            // 🚨 DEBUG: Log form submission
-            console.error('🔥 [SETTINGS SAVE] Saving settings for category:', category);
-
             // If no form, create one from modal inputs
             if ($form.length === 0) {
                 var formData = new FormData();
 
-                // List of toggle checkboxes that need 0 value when unchecked
-                var toggleCheckboxes = [
-                    'pdf_builder_canvas_drag_enabled',
-                    'pdf_builder_canvas_resize_enabled',
-                    'pdf_builder_canvas_rotate_enabled',
-                    'pdf_builder_canvas_multi_select',
-                    'pdf_builder_canvas_keyboard_shortcuts'
-                ];
-
-                // First pass: Handle all toggle checkboxes explicitly
-                toggleCheckboxes.forEach(function(checkboxName) {
-                    var $checkbox = $modal.find('input[name="' + checkboxName + '"]');
-                    if ($checkbox.length > 0) {
-                        if ($checkbox.prop('checked')) {
-                            console.error('🔥 [SETTINGS] Toggle CHECKED:', checkboxName, '= 1');
-                            formData.append(checkboxName, '1');
-                        } else {
-                            console.error('🔥 [SETTINGS] Toggle UNCHECKED:', checkboxName, '= 0');
-                            formData.append(checkboxName, '0');
-                        }
-                    }
-                });
-
-                // Second pass: Collect all other inputs from the modal
+                // Collect all inputs from the modal
                 $modal.find('input, select, textarea').each(function() {
                     var $input = $(this);
                     var name = $input.attr('name');
                     var type = $input.attr('type');
                     var value = $input.val();
 
-                    // Skip if it's a toggle checkbox (already processed)
-                    if (type === 'checkbox' && toggleCheckboxes.indexOf(name) !== -1) {
-                        return;
-                    }
-
                     if (name && !$input.prop('disabled')) {
                         if (type === 'checkbox') {
                             if ($input.prop('checked')) {
-                                console.error('🔥 [SETTINGS] Checkbox checked:', name, '=', value);
                                 if (name.endsWith('[]')) {
+                                    // Handle array inputs - append multiple values with same key
                                     var arrayName = name.slice(0, -2);
                                     formData.append(arrayName, value);
                                 } else {
@@ -146,17 +109,6 @@
                 $(this).hide();
             }
         });
-
-        // Handle rotation toggle real-time updates
-        $('#modal_canvas_rotate_enabled').on('change', function() {
-            var isEnabled = $(this).prop('checked');
-
-            // Update React context if available
-            if (window.pdfBuilderReact && window.pdfBuilderReact.updateRotationSettings) {
-                window.pdfBuilderReact.updateRotationSettings(isEnabled);
-            }
-        });
-
     });
 
     // Helper function to show notifications

@@ -222,18 +222,14 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_save_canvas_settings() {
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Handler called"); }
-        error_log('🔥 [AJAX HANDLER] handle_save_canvas_settings called');
-        error_log('🔥 [AJAX HANDLER] $_POST data: ' . print_r($_POST, true));
 
         if (!$this->nonce_manager->validate_ajax_request('pdf_builder_canvas_settings')) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_ERROR - Nonce validation failed"); }
-            error_log('🔥 [AJAX HANDLER] Nonce validation failed');
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Nonce valid, processing POST data: " . print_r($_POST, true)); }
-        error_log('🔥 [AJAX HANDLER] Nonce valid, processing');
 
         try {
             $saved_count = 0;
@@ -286,7 +282,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             foreach ($canvas_settings as $setting_key) {
                 if (isset($_POST[$setting_key])) {
                     $value = $_POST[$setting_key];
-                    error_log('🔥 [AJAX HANDLER] Processing: ' . $setting_key . ' = ' . $value);
                     
                     // Gestion spéciale pour les champs array (dpi, formats, orientations)
                     $array_fields = ['pdf_builder_canvas_dpi', 'pdf_builder_canvas_formats', 'pdf_builder_canvas_orientations'];
@@ -318,7 +313,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     // Log pour tous les toggles d'interactions
                     if (in_array($setting_key, ['pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
-                        error_log('🔥 [AJAX HANDLER] INTERACTIONS_TOGGLE_SAVE - ' . $setting_key . ': ' . $value);
                         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] INTERACTIONS_TOGGLE_SAVE - {$setting_key}: {$value}"); }
                     }
                     
@@ -337,7 +331,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                         $value = intval($value);
                     } elseif (strpos($setting_key, '_enabled') !== false || strpos($setting_key, '_transparent') !== false) {
                         $value = $value === '1' ? '1' : '0';
-                        error_log('🔥 [AJAX HANDLER] After toggle validation: ' . $setting_key . ' = ' . $value);
                     } elseif (strpos($setting_key, '_color') !== false) {
                         // Validation couleur hex
                         if (!preg_match('/^#[a-fA-F0-9]{6}$/', $value)) {
@@ -346,7 +339,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
 
                     pdf_builder_update_option($setting_key, $value);
-                    error_log('🔥 [AJAX HANDLER] SAVED TO DB: ' . $setting_key . ' = ' . $value);
                     
                     // Also update the settings array to keep consistency with the main form
                     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -359,23 +351,16 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Vérifier immédiatement que la valeur a été sauvegardée
                     $verify_value = pdf_builder_get_option($setting_key);
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}"); }
-                    error_log('🔥 [AJAX HANDLER] VERIFY: ' . $setting_key . ' saved=' . $value . ' retrieved=' . $verify_value);
                     
                     // Log spécifique pour les toggles
                     if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid', 'pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
                         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] TOGGLE_SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}"); }
-                    }
-                } else {
-                    // Log si le paramètre n'est PAS dans $_POST
-                    if (in_array($setting_key, ['pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
-                        error_log('🔥 [AJAX HANDLER] MISSING IN POST: ' . $setting_key);
                     }
                 }
             }
 
             if ($saved_count > 0) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_SUCCESS - {$saved_count} paramètres sauvegardés: " . implode(', ', array_keys($saved_options))); }
-                error_log('🔥 [AJAX HANDLER] SUCCESS - ' . $saved_count . ' settings saved: ' . implode(', ', array_keys($saved_options)));
                 wp_send_json_success([
                     'message' => 'Paramètres Canvas sauvegardés avec succès',
                     'saved_count' => $saved_count,
@@ -384,13 +369,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                 ]);
             } else {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_WARNING - Aucun paramètre sauvegardé"); }
-                error_log('🔥 [AJAX HANDLER] WARNING - No settings saved');
                 wp_send_json_error(['message' => 'Aucun paramètre Canvas sauvegardé']);
             }
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur sauvegarde Canvas: ' . $e->getMessage()); }
-            error_log('🔥 [AJAX HANDLER] ERROR - ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }

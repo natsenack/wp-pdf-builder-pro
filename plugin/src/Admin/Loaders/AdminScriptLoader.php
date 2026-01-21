@@ -44,9 +44,6 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
-        // 🚨 DEBUG: Log PHP script loading
-        error_log('🔥 [PHP LOADER] AdminScriptLoader::loadAdminScripts called - hook: ' . ($hook ?: 'null'));
-
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
@@ -350,8 +347,6 @@ class AdminScriptLoader
 
         // Main React app bundle (dépend du runtime et vendors)
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
-        // 🚨 DEBUG: Log script enqueuing
-        error_log('🔥 [PHP ENQUEUE] Enqueuing pdf-builder-react-main: ' . $react_main_url);
         wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main'); }
@@ -510,19 +505,6 @@ class AdminScriptLoader
         // Also set window.pdfBuilderData directly before React initializes
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData'); }
-
-        // 🚨 DEBUG: Add immediate execution test
-        wp_add_inline_script('pdf-builder-react-main', '
-            console.error("🔥 [SCRIPT EXECUTION] pdf-builder-react-main script is executing");
-            console.error("🔥 [SCRIPT EXECUTION] window object:", typeof window);
-            console.error("🔥 [SCRIPT EXECUTION] document object:", typeof document);
-            try {
-                console.error("🔥 [SCRIPT EXECUTION] pdfBuilderData set:", !!window.pdfBuilderData);
-            } catch(e) {
-                console.error("🔥 [SCRIPT EXECUTION] Error accessing pdfBuilderData:", e);
-            }
-        ', 'after');
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Debug script added to pdf-builder-react-main'); }
 
         // Emergency reload script - DISABLED - Don't force reload
         // The React wrapper handles its own initialization without hard reload requirements

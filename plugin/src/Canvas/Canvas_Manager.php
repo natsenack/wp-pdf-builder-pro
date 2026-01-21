@@ -105,7 +105,7 @@ class Canvas_Manager
             'show_resize_handles' => pdf_builder_get_option('pdf_builder_canvas_show_resize_handles', '1') == '1',
             'handle_size' => intval(pdf_builder_get_option('pdf_builder_canvas_handle_size', 8)),
             'handle_color' => pdf_builder_get_option('pdf_builder_canvas_handle_color', '#007cba'),
-            'enable_rotation' => pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1',
+            'enable_rotation' => pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '1') == '1',
             'rotation_step' => intval(pdf_builder_get_option('pdf_builder_canvas_rotation_step', 15)),
             'multi_select' => pdf_builder_get_option('pdf_builder_canvas_multi_select', '1') == '1',
             'copy_paste_enabled' => pdf_builder_get_option('pdf_builder_canvas_copy_paste_enabled', '1') == '1',
@@ -251,22 +251,31 @@ class Canvas_Manager
         }
 
         $current_screen = get_current_screen();
-        if (!$current_screen) {
+        if (!$current_screen || $current_screen->base !== 'pdf-builder-pro_page_pdf-builder-settings') {
             return;
         }
+    }
 
-        // Passer les paramètres sur la page des settings ET sur la page de l'éditeur
-        $allowed_pages = [
-            'pdf-builder-pro_page_pdf-builder-settings',
-            'toplevel_page_pdf-builder-react-editor',
-            'pdf-builder_page_pdf-builder-react-editor'
-        ];
-
-        if (!in_array($current_screen->base, $allowed_pages)) {
-            return;
-        }
-
-        // Plus besoin de charger les scripts ici, c'est fait dans le bootstrap
+    /**
+     * Génère le script d'initialisation des paramètres canvas
+     *
+     * @return string
+     */
+    private function getCanvasSettingsScript()
+    {
+        $settings = wp_json_encode($this->settings);
+        return <<<JS
+(function() {
+    // Fusionner avec les settings existants au lieu d'écraser
+    if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
+        window.pdfBuilderCanvasSettings = {};
+    }
+    Object.assign(window.pdfBuilderCanvasSettings, {$settings});
+    if (typeof window.pdfBuilderSettings !== 'undefined') {
+        window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
+    }
+})();
+JS;
     }
 
     /**

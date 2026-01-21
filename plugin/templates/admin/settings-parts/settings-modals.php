@@ -54,9 +54,10 @@ if (!$can_use_grid_navigation) {
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Utiliser directement pdf_builder_get_option pour les paramètres individuels
+    // Récupérer depuis l'array unifié de settings
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
     $option_key = 'pdf_builder_' . $key;
-    $value = pdf_builder_get_option($option_key, null);
+    $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
 
     if ($value === null) {
         $value = $default;
@@ -990,79 +991,6 @@ function closeUpgradeModal() {
         modal.style.display = 'none';
     }
 }
-
-// JavaScript pour la sauvegarde des paramètres canvas
-document.addEventListener('DOMContentLoaded', function() {
-    // Générer le nonce PHP directement
-    const pdfBuilderAjax = {
-        ajax_url: ajaxurl,
-        nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
-    };
-    
-    // Gestionnaire pour les boutons "Appliquer" des modals canvas
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('canvas-modal-apply')) {
-            e.preventDefault();
-            
-            var category = e.target.getAttribute('data-category');
-            var modal = e.target.closest('.canvas-modal-overlay');
-            
-            if (modal) {
-                // Collecter les données du formulaire
-                var formData = new FormData();
-                formData.append('action', 'pdf_builder_ajax_handler');
-                formData.append('action_type', 'save_all_settings');
-                formData.append('nonce', pdfBuilderAjax.nonce);
-                
-                // Collecter tous les champs du modal
-                var inputs = modal.querySelectorAll('input, select, textarea');
-                inputs.forEach(function(input) {
-                    if (input.name) {
-                        if (input.type === 'checkbox') {
-                            formData.append(input.name, input.checked ? '1' : '0');
-                        } else {
-                            formData.append(input.name, input.value);
-                        }
-                    }
-                });
-                
-                // Afficher un indicateur de chargement
-                e.target.textContent = '⏳ Sauvegarde...';
-                e.target.disabled = true;
-                
-                // Envoyer la requête AJAX
-                var ajaxUrl = pdfBuilderAjax.ajax_url;
-                fetch(ajaxUrl, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'same-origin'
-                })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    if (data.success) {
-                        // Fermer le modal
-                        modal.style.display = 'none';
-                        
-                        // Recharger la page pour appliquer les changements
-                        location.reload();
-                    } else {
-                        alert('Erreur lors de la sauvegarde: ' + (data.data && data.data.message ? data.data.message : 'Erreur inconnue'));
-                        e.target.textContent = '✅ Appliquer';
-                        e.target.disabled = false;
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Erreur AJAX:', error);
-                    alert('Erreur lors de la sauvegarde');
-                    e.target.textContent = '✅ Appliquer';
-                    e.target.disabled = false;
-                });
-            }
-        }
-    });
-});
 </script>
 
 <?php

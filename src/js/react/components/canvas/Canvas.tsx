@@ -2790,11 +2790,9 @@ export const Canvas = function Canvas({
 
       if (canvasSettings?.selectionRotationEnabled || true) {  // FORCE FOR DEBUG
         // DEBUG: Draw text on canvas to show the value
-        ctx.save();
         ctx.font = "16px Arial";
         ctx.fillStyle = "red";
         ctx.fillText("ROTATION: " + canvasSettings?.selectionRotationEnabled, 10, 30);
-        ctx.restore();
         
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
