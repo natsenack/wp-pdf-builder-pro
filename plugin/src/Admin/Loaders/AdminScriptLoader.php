@@ -517,7 +517,7 @@ class AdminScriptLoader
                 console.error("🔥 [SCRIPT EXECUTION] Error accessing pdfBuilderData:", e);
             }
         ', 'after');
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Debug script added to pdf-builder-react-main');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Debug script added to pdf-builder-react-main'); }
 
         // Emergency reload script - DISABLED - Don't force reload
         // The React wrapper handles its own initialization without hard reload requirements
