@@ -3319,6 +3319,7 @@ export const Canvas = function Canvas({
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
+    console.warn('[CANVAS DEBUG] renderCanvas called - Elements:', state.elements.length, 'Selection:', state.selection.selectedElements.length);
     const startTime = Date.now();
     renderCountRef.current += 1;
 
