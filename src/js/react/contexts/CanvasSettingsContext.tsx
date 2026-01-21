@@ -195,17 +195,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 
     // Debug: Check if window settings exist
     if (typeof window !== "undefined") {
-      console.log('[CanvasSettings] window.pdfBuilderData:', window.pdfBuilderData);
-      console.log('[CanvasSettings] window.pdfBuilderSettings:', window.pdfBuilderSettings);
-      console.log('[CanvasSettings] window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-      console.log('[CanvasSettings] Selected windowSettings:', windowSettings);
-      
-      if (windowSettings) {
-        console.log('[CanvasSettings] zoom_step:', windowSettings.zoom_step);
-        console.log('[CanvasSettings] min_zoom:', windowSettings.min_zoom);
-        console.log('[CanvasSettings] max_zoom:', windowSettings.max_zoom);
-        console.log('[CanvasSettings] default_zoom:', windowSettings.default_zoom);
-      }
+      // Uncomment for debugging: console.log('[CanvasSettings] Selected windowSettings:', windowSettings);
     }
 
     if (!windowSettings) {
