@@ -7,6 +7,9 @@
 (function() {
     'use strict';
 
+    // 🚨 DEBUG: Log script execution - BASIC
+    console.error('🔥 [INIT BASIC] pdf-builder-react-init.js START OF FILE EXECUTING');
+
     // 🚨 DEBUG: Log script execution
     console.error('🔥 [REACT-INIT] pdf-builder-react-init.js script started executing');
 

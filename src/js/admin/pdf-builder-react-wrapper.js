@@ -7,6 +7,9 @@
 (function() {
     'use strict';
 
+    // 🚨 DEBUG: Log wrapper execution - BASIC
+    console.error('🔥 [WRAPPER BASIC] pdf-builder-react-wrapper.js START OF FILE EXECUTING');
+
     // 🚨 DEBUG: Log wrapper execution
     console.error('🔥 [REACT-WRAPPER] pdf-builder-react-wrapper.js script started executing');
 
