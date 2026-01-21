@@ -937,6 +937,48 @@ function get_canvas_modal_value($key, $default = '') {
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 <script>
 /**
+ * Gestion des dépendances entre paramètres canvas
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de la dépendance Sélection Multiple -> Mode de sélection
+    const multiSelectCheckbox = document.getElementById('modal_canvas_multi_select');
+    const selectionModeSelect = document.getElementById('modal_canvas_selection_mode');
+    
+    if (multiSelectCheckbox && selectionModeSelect) {
+        // Fonction pour mettre à jour l'état du select Mode de sélection
+        function updateSelectionModeState() {
+            const isMultiSelectEnabled = multiSelectCheckbox.checked;
+            
+            if (isMultiSelectEnabled) {
+                // Activer le select
+                selectionModeSelect.disabled = false;
+                selectionModeSelect.style.opacity = '1';
+                selectionModeSelect.style.pointerEvents = 'auto';
+                selectionModeSelect.parentElement.style.opacity = '1';
+            } else {
+                // Désactiver et griser le select
+                selectionModeSelect.disabled = true;
+                selectionModeSelect.style.opacity = '0.5';
+                selectionModeSelect.style.pointerEvents = 'none';
+                selectionModeSelect.parentElement.style.opacity = '0.7';
+                
+                // Forcer la valeur à 'single' quand désactivé
+                const singleOption = selectionModeSelect.querySelector('option[value="single"]');
+                if (singleOption) {
+                    singleOption.selected = true;
+                }
+            }
+        }
+        
+        // Écouter les changements sur la checkbox
+        multiSelectCheckbox.addEventListener('change', updateSelectionModeState);
+        
+        // Initialiser l'état au chargement
+        updateSelectionModeState();
+    }
+});
+
+/**
  * Fonction pour afficher le modal de mise à niveau
  */
 function showUpgradeModal(feature) {
