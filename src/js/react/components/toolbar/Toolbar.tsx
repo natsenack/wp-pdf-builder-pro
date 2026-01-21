@@ -1,5 +1,6 @@
 import React from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { useCanvas } from '../../contexts/builder/BuilderContext';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 import { BuilderMode } from '../../types/elements';
 
@@ -9,6 +10,7 @@ interface ToolbarProps {
 
 export function Toolbar({ className }: ToolbarProps) {
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
+  const { zoomIn, zoomOut, resetZoom } = useCanvas();
   const canvasSettings = useCanvasSettings();
 
   // Vérifications de sécurité
@@ -371,9 +373,8 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom out
-                  const newZoom = Math.max(canvasSettings.zoomMin, state.canvas.zoom - canvasSettings.zoomStep);
-                  if (setCanvas) {
-                    setCanvas({ zoom: newZoom });
+                  if (zoomOut) {
+                    zoomOut();
                   }
                 }}
                 style={{
@@ -403,9 +404,8 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom in
-                  const newZoom = Math.min(canvasSettings.zoomMax, state.canvas.zoom + canvasSettings.zoomStep);
-                  if (setCanvas) {
-                    setCanvas({ zoom: newZoom });
+                  if (zoomIn) {
+                    zoomIn();
                   }
                 }}
                 style={{
@@ -427,9 +427,8 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Fit to screen (zoom to fit canvas)
-                  if (setCanvas) {
-                    const fitZoom = Math.max(canvasSettings.zoomMin, Math.min(100, canvasSettings.zoomMax));
-                    setCanvas({ zoom: fitZoom });
+                  if (resetZoom) {
+                    resetZoom();
                   }
                 }}
                 style={{
