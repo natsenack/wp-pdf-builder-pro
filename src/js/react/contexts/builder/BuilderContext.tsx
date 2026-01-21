@@ -568,6 +568,10 @@ interface BuilderContextType {
   reset: () => void;
   toggleGrid: () => void;
   toggleGuides: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  setZoom: (zoom: number) => void;
+  resetZoom: () => void;
 }
 
 const BuilderContext = createContext<BuilderContextType | undefined>(undefined);
@@ -748,7 +752,11 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     redo,
     reset,
     toggleGrid: toggleGrid,
-    toggleGuides: toggleGuides
+    toggleGuides: toggleGuides,
+    zoomIn: () => setCanvas({ zoom: Math.min(state.canvas.zoom + canvasSettings.zoomStep, canvasSettings.zoomMax) }),
+    zoomOut: () => setCanvas({ zoom: Math.max(state.canvas.zoom - canvasSettings.zoomStep, canvasSettings.zoomMin) }),
+    setZoom: (zoom: number) => setCanvas({ zoom: Math.max(canvasSettings.zoomMin, Math.min(zoom, canvasSettings.zoomMax)) }),
+    resetZoom: () => setCanvas({ zoom: Math.max(canvasSettings.zoomMin, Math.min(canvasSettings.zoomDefault, canvasSettings.zoomMax)) })
   };
 
   return (
