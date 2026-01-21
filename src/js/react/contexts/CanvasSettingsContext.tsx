@@ -213,9 +213,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 
     // Vérifier que windowSettings est un objet
     if (typeof windowSettings !== "object" || windowSettings === null) {
-      
+      console.error('🔥 [REACT CONTEXT] windowSettings is invalid:', windowSettings);
       throw new Error("Les paramètres du canvas ne sont pas un objet valide");
     }
+
+    // 🚨 LOG ALL SETTINGS AT START
+    console.error('🔥 [REACT CONTEXT] Building settings from windowSettings:', windowSettings);
+    console.error('🔥 [REACT CONTEXT] enable_rotation:', windowSettings.enable_rotation, 'type:', typeof windowSettings.enable_rotation);
 
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {
@@ -325,9 +329,17 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       selectionMultiSelectEnabled:
         windowSettings.multi_select === true ||
         windowSettings.multi_select === "1",
-      selectionRotationEnabled:
-        windowSettings.enable_rotation === true ||
-        windowSettings.enable_rotation === "1",
+      selectionRotationEnabled: (() => {
+        const value = windowSettings.enable_rotation === true || windowSettings.enable_rotation === "1";
+        console.error('🔥 [REACT CONTEXT] Calculating selectionRotationEnabled:', {
+          windowSettings_enable_rotation: windowSettings.enable_rotation,
+          type: typeof windowSettings.enable_rotation,
+          comparison_true: windowSettings.enable_rotation === true,
+          comparison_1: windowSettings.enable_rotation === "1",
+          result: value
+        });
+        return value;
+      })(),
 
       // Debug: Log rotation setting in React context
       _debug_rotation_react: (() => {
@@ -389,6 +401,8 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       updateGridSettings: () => {},
       saveGridSettings: async () => {},
     };
+
+    console.error('🔥 [REACT CONTEXT] newSettings created with selectionRotationEnabled:', newSettings.selectionRotationEnabled);
 
     return newSettings;
   } catch (_err) {
