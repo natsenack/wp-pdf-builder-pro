@@ -22,6 +22,9 @@ interface UseCanvasInteractionProps {
 }
 
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
+  // 🚨 DEBUG: Log hook initialization
+  console.error('🔥 [HOOK INIT] useCanvasInteraction hook initialized');
+
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
   
@@ -589,6 +592,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // Gestionnaire de mouse down pour commencer le drag ou resize
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+    // 🚨 DEBUG: Log mouse down event - BASIC
+    console.error('🔥 [MOUSE DOWN BASIC] handleMouseDown called - event detected');
+
     // 🚨 DEBUG: Log mouse down event
     window.pdfBuilderDebug = window.pdfBuilderDebug || [];
     window.pdfBuilderDebug.push({

@@ -1938,6 +1938,13 @@ export const Canvas = function Canvas({
     canvasHeight: height,
   });
 
+  // 🚨 DEBUG: Log hook usage
+  console.error('🔥 [CANVAS] useCanvasInteraction hook used, handlers:', {
+    handleMouseDown: typeof handleMouseDown,
+    handleMouseUp: typeof handleMouseUp,
+    handleCanvasClick: typeof handleCanvasClick
+  });
+
   // Hook pour les raccourcis clavier
   const keyboardShortcutInfo = useKeyboardShortcuts();
 
