@@ -246,7 +246,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
 
+                $template_counter = 0;
                 foreach ($templates as $template) {
+                    $template_counter++;
                     $template_id = $template['id'];
                     $template_name = esc_html($template['name']);
                     $thumbnail_url = isset($template['thumbnail_url']) ? $template['thumbnail_url'] : '';
@@ -291,7 +293,10 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
 
-                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    // Déterminer si c'est un template "en trop" pour les utilisateurs gratuits
+                    $is_excess_template = (!$is_premium && $template_counter > 1);
+
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6; pointer-events: none;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
@@ -326,6 +331,13 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     echo $type_label;
                     echo '</div>';
 
+                    // Badge pour templates en trop (utilisateurs gratuits)
+                    if ($is_excess_template) {
+                        echo '<div class="excess-template-badge" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                        echo '🚫 LIMITE DÉPASSÉE';
+                        echo '</div>';
+                    }
+
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     if (!empty($thumbnail_url)) {
                         echo '<div style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa;">';
@@ -343,10 +355,22 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     }
                     echo '</div>';
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template" onclick="console.log(\'[PDF Builder] Edit button clicked for template ID: ' . intval($template_id) . '\'); console.log(\'[PDF Builder] Navigating to editor for template: ' . esc_js($template_name) . '\');">✏️</a>';
-                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . esc_js($button_action) . '(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Paramètres">⚙️</button>';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Dupliquer ce template">📋</button>';
-                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="handleDeleteClick(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer">🗑️</button>';
+                    if ($is_excess_template) {
+                        // Template en trop pour utilisateur gratuit - gros bouton supprimer au centre
+                        echo '<div style="flex: 1; text-align: center;">';
+                        echo '<button class="button button-danger" style="width: 100%; padding: 15px; font-size: 18px; background-color: #dc3545; border-color: #dc3545; color: white; pointer-events: auto;" onclick="handleDeleteClick(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer ce template (limite gratuite dépassée)">🚫 SUPPRIMER</button>';
+                        echo '</div>';
+                    } else {
+                        // Boutons normaux
+                        echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template" onclick="console.log(\'[PDF Builder] Edit button clicked for template ID: ' . intval($template_id) . '\'); console.log(\'[PDF Builder] Navigating to editor for template: ' . esc_js($template_name) . '\');">✏️</a>';
+                        echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . esc_js($button_action) . '(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Paramètres">⚙️</button>';
+                        if ($is_premium) {
+                            echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Dupliquer ce template">📋</button>';
+                        } else {
+                            echo '<button class="button button-primary" style="flex: 1; font-size: 16px; opacity: 0.5; cursor: not-allowed;" disabled title="Duplication réservée aux utilisateurs Premium">📋</button>';
+                        }
+                        echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="handleDeleteClick(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer">🗑️</button>';
+                    }
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
