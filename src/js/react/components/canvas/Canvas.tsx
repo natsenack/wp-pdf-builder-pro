@@ -2788,7 +2788,7 @@ export const Canvas = function Canvas({
       window.pdfBuilderDebug = window.pdfBuilderDebug || [];
       window.pdfBuilderDebug.push(rotationDebug);
 
-      if (canvasSettings?.selectionRotationEnabled || true) {  // FORCE TOUJOURS TRUE POUR TESTER
+      if (canvasSettings?.selectionRotationEnabled) {
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
