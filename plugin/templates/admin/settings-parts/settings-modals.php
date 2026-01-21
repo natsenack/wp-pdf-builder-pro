@@ -46,14 +46,10 @@ $canvas_defaults = [
 
 // Ajuster les valeurs par défaut pour les utilisateurs gratuits (features premium)
 $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation');
-echo "<!-- DEBUG: canUseFeature('grid_navigation') = " . ($can_use_grid_navigation ? 'TRUE' : 'FALSE') . " -->";
-if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[MODAL DEBUG] canUseFeature('grid_navigation'): " . ($can_use_grid_navigation ? 'TRUE' : 'FALSE')); }
 if (!$can_use_grid_navigation) {
     $canvas_defaults['grid_enabled'] = '0';
     $canvas_defaults['guides_enabled'] = '0';
     $canvas_defaults['snap_to_grid'] = '0';
-    echo "<!-- DEBUG: Defaults adjusted for free user -->";
-    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[MODAL DEBUG] Defaults adjusted for free user"); }
 }
 
 // Fonction helper pour récupérer une valeur canvas
@@ -65,9 +61,6 @@ function get_canvas_modal_value($key, $default = '') {
 
     if ($value === null) {
         $value = $default;
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] {$key}: OPTION_NOT_FOUND - using default '{$default}' - KEY: {$option_key}"); }
-    } else {
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key}"); }
     }
 
     // Validation spéciale pour les champs array corrompus
@@ -76,7 +69,6 @@ function get_canvas_modal_value($key, $default = '') {
         // Si la valeur contient '0' ou est vide/invalide, utiliser la valeur par défaut
         if (empty($value) || $value === '0' || strpos($value, '0,') === 0 || $value === '0,0' || $value === '0,0,0,0,0') {
             $value = $default;
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] Using default for corrupted {$option_key}: '{$value}'"); }
         }
     }
 
@@ -85,7 +77,6 @@ function get_canvas_modal_value($key, $default = '') {
     if (in_array($key, $premium_grid_keys)) {
         if (!\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation')) {
             $value = '0';
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] {$key}: FORCED_OFF for free user - KEY: {$option_key}"); }
         }
     }
 
@@ -354,16 +345,6 @@ function get_canvas_modal_value($key, $default = '') {
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
-            <div style="background: #ffebee; border: 1px solid #f44336; padding: 10px; margin-bottom: 15px; border-radius: 4px; font-size: 12px; color: #c62828;">
-                <strong>DEBUG INFO:</strong><br>
-                canUseFeature('grid_navigation') = <?php echo $can_use_grid_navigation ? 'TRUE (PREMIUM)' : 'FALSE (FREE)'; ?><br>
-                canvas_defaults['grid_enabled'] = <?php echo $canvas_defaults['grid_enabled']; ?><br>
-                get_canvas_modal_value('canvas_grid_enabled') = <?php echo get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']); ?><br>
-                Current user license: <?php 
-                    $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-                    echo $license_manager->is_premium() ? 'PREMIUM' : 'FREE';
-                ?>
-            </div>
             <div class="modal-settings-grid">
                 <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
@@ -376,7 +357,6 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php if (!$can_use_grid_navigation): ?>
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
-                    <!-- DEBUG GRID: can_use_grid_navigation = <?php echo $can_use_grid_navigation ? 'TRUE' : 'FALSE'; ?>, default = <?php echo $canvas_defaults['grid_enabled']; ?>, value = <?php echo get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']); ?> -->
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📏</span> Taille grille (px)</label>

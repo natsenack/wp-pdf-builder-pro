@@ -381,9 +381,6 @@ class AdminScriptLoader
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
             $canvas_settings = $canvas_manager->getAllSettings();
             
-            // DEBUG: Log canvas settings being sent to JS
-            error_log('[PHP DEBUG] Canvas settings sent to JS: ' . print_r($canvas_settings, true));
-            
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
