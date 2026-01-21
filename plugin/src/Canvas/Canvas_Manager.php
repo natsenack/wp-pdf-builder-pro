@@ -106,20 +106,6 @@ class Canvas_Manager
             'handle_size' => intval(pdf_builder_get_option('pdf_builder_canvas_handle_size', 8)),
             'handle_color' => pdf_builder_get_option('pdf_builder_canvas_handle_color', '#007cba'),
             'enable_rotation' => pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1',
-            // Debug: Log rotation setting
-            '_debug_rotation_php' => (function() {
-                $rotation_value = pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0');
-                $is_enabled = $rotation_value == '1';
-                error_log("[PDF BUILDER DEBUG] Rotation setting from DB: '{$rotation_value}', evaluated to: " . ($is_enabled ? 'true' : 'false'));
-                // Also write to a visible location
-                if (function_exists('wp_upload_dir')) {
-                    $upload_dir = wp_upload_dir();
-                    $debug_file = $upload_dir['basedir'] . '/pdf-builder-debug.log';
-                    $debug_message = date('Y-m-d H:i:s') . " - Rotation setting: '{$rotation_value}' -> " . ($is_enabled ? 'ENABLED' : 'DISABLED') . "\n";
-                    file_put_contents($debug_file, $debug_message, FILE_APPEND);
-                }
-                return null;
-            })(),
             'rotation_step' => intval(pdf_builder_get_option('pdf_builder_canvas_rotation_step', 15)),
             'multi_select' => pdf_builder_get_option('pdf_builder_canvas_multi_select', '1') == '1',
             'copy_paste_enabled' => pdf_builder_get_option('pdf_builder_canvas_copy_paste_enabled', '1') == '1',
@@ -265,9 +251,24 @@ class Canvas_Manager
         }
 
         $current_screen = get_current_screen();
-        if (!$current_screen || $current_screen->base !== 'pdf-builder-pro_page_pdf-builder-settings') {
+        if (!$current_screen) {
             return;
         }
+
+        // Passer les paramètres sur la page des settings ET sur la page de l'éditeur
+        $allowed_pages = [
+            'pdf-builder-pro_page_pdf-builder-settings',
+            'toplevel_page_pdf-builder-react-editor',
+            'pdf-builder_page_pdf-builder-react-editor'
+        ];
+
+        if (!in_array($current_screen->base, $allowed_pages)) {
+            return;
+        }
+
+        // Générer et ajouter le script directement
+        $script = $this->getCanvasSettingsScript();
+        wp_add_inline_script('jquery', $script);
     }
 
     /**
@@ -285,17 +286,6 @@ class Canvas_Manager
         window.pdfBuilderCanvasSettings = {};
     }
     Object.assign(window.pdfBuilderCanvasSettings, {$settings});
-    
-    // Debug: Log rotation setting passed to JS
-    console.log('[DEBUG PHP->JS] enable_rotation:', window.pdfBuilderCanvasSettings.enable_rotation);
-    console.log('[DEBUG PHP->JS] Full canvas settings:', window.pdfBuilderCanvasSettings);
-    // Also show an alert for visibility
-    if (window.pdfBuilderCanvasSettings.enable_rotation) {
-        console.warn('⚠️ ROTATION IS ENABLED - Green handle will appear');
-    } else {
-        console.info('✅ ROTATION IS DISABLED - No green handle should appear');
-    }
-    
     if (typeof window.pdfBuilderSettings !== 'undefined') {
         window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
     }
