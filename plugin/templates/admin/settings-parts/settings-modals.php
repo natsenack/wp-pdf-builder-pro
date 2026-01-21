@@ -44,6 +44,14 @@ $canvas_defaults = [
     'error_reporting' => '1'
 ];
 
+// Ajuster les valeurs par défaut pour les utilisateurs gratuits (features premium)
+$can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation');
+if (!$can_use_grid_navigation) {
+    $canvas_defaults['grid_enabled'] = '0';
+    $canvas_defaults['guides_enabled'] = '0';
+    $canvas_defaults['snap_to_grid'] = '0';
+}
+
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
     // Récupérer depuis l'array unifié de settings
