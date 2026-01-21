@@ -44,6 +44,9 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
+        // 🚨 DEBUG: Log PHP script loading
+        error_log('🔥 [PHP LOADER] AdminScriptLoader::loadAdminScripts called - hook: ' . ($hook ?: 'null'));
+
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
@@ -347,6 +350,8 @@ class AdminScriptLoader
 
         // Main React app bundle (dépend du runtime et vendors)
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
+        // 🚨 DEBUG: Log script enqueuing
+        error_log('🔥 [PHP ENQUEUE] Enqueuing pdf-builder-react-main: ' . $react_main_url);
         wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main'); }
