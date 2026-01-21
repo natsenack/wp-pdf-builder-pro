@@ -1971,7 +1971,7 @@ export const Canvas = function Canvas({
   );
 
   const drawCompanyLogo = useCallback(
-    (ctx: CanvasRenderingContext2D, element: Element, canvasSettings: any) => {
+    (ctx: CanvasRenderingContext2D, element: Element) => {
       const props = element as ImageElementProperties;
       const logoUrl = props.src || props.logoUrl || "";
 
@@ -2173,7 +2173,7 @@ export const Canvas = function Canvas({
             }
 
             // Appliquer la rotation
-            if (rotation !== 0 && canvasSettings?.selectionRotationEnabled) {
+            if (rotation !== 0) {
               const centerX = x + logoWidth / 2;
               const centerY = y + logoHeight / 2;
               ctx.translate(centerX, centerY);
@@ -2490,13 +2490,12 @@ export const Canvas = function Canvas({
     []
   ); // No deps - pure function
 
-  // ✅ BUGFIX-001/004: Memoize drawElement but pass state and canvasSettings as parameters to avoid dependency cycle
+  // ✅ BUGFIX-001/004: Memoize drawElement but pass state as parameter to avoid dependency cycle
   const drawElement = useCallback(
     (
       ctx: CanvasRenderingContext2D,
       element: Element,
-      currentState: BuilderState,
-      canvasSettings: any
+      currentState: BuilderState
     ) => {
       // Vérifier si l'élément est visible
       if (element.visible === false) {
@@ -2517,7 +2516,7 @@ export const Canvas = function Canvas({
       ctx.save();
 
       // Appliquer transformation de l'élément
-      if (element.rotation && canvasSettings?.selectionRotationEnabled) {
+      if (element.rotation) {
         // Rotation autour du centre de l'élément
         const centerX = element.width / 2;
         const centerY = element.height / 2;
@@ -2561,7 +2560,7 @@ export const Canvas = function Canvas({
           break;
         case "company_logo":
           debugLog(`[Canvas] Rendering company logo element: ${element.id}`);
-          drawCompanyLogo(ctx, element, canvasSettings);
+          drawCompanyLogo(ctx, element);
           break;
         case "order-number":
         case "order_number":
@@ -2707,7 +2706,14 @@ export const Canvas = function Canvas({
       }
 
       // Poignées de rotation (conditionnées par les settings)
-      if (canvasSettings?.selectionRotationEnabled) {
+      console.log('[CANVAS] Checking rotation settings:', {
+        selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
+        canvasSettings: !!canvasSettings
+      });
+      if (canvasSettings?.selectionRotationEnabled !== false) {
+        console.log('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
+        console.log('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
@@ -2755,7 +2761,7 @@ export const Canvas = function Canvas({
         ctx.lineTo(rotationHandleX, rotationHandleY);
         ctx.stroke();
       } else {
-        // console.log('[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.log('[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
       }
 
       // Afficher les dimensions pour chaque élément sélectionné
@@ -3409,7 +3415,7 @@ export const Canvas = function Canvas({
       debugLog(
         `[Canvas] Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`
       );
-      drawElement(ctx, element, state, canvasSettings); // ✅ BUGFIX-001/004: Pass state and canvasSettings as parameters
+      drawElement(ctx, element, state); // ✅ BUGFIX-001/004: Pass state as parameter
     });
 
     // Dessiner la sélection temporaire (rectangle/lasso en cours)

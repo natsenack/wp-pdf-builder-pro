@@ -252,7 +252,7 @@ export const getDefaultCanvasSettings = () => ({
     show_resize_handles: false,
     handle_size: 8,
     handle_color: '#007cba',
-    enable_rotation: false,
+    enable_rotation: true,
     rotation_step: 15,
     multi_select: false,
     copy_paste_enabled: false,

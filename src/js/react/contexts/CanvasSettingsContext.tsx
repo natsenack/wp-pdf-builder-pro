@@ -152,7 +152,7 @@ const DEFAULT_SETTINGS: Omit<
 
   selectionDragEnabled: true,
   selectionMultiSelectEnabled: true,
-  selectionRotationEnabled: false,
+  selectionRotationEnabled: true,
   selectionCopyPasteEnabled: true,
   selectionShowHandles: true,
   selectionHandleSize: 8,
@@ -324,8 +324,9 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
         windowSettings.multi_select === true ||
         windowSettings.multi_select === "1",
       selectionRotationEnabled:
-        windowSettings.enable_rotation === true ||
-        windowSettings.enable_rotation === "1",
+        (windowSettings.enable_rotation === true ||
+        windowSettings.enable_rotation === "1") ??
+        DEFAULT_SETTINGS.selectionRotationEnabled,
       selectionCopyPasteEnabled:
         windowSettings.copy_paste_enabled === true ||
         windowSettings.copy_paste_enabled === "1",
