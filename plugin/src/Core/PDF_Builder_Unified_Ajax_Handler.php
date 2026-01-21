@@ -485,10 +485,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'canvas_grid_size' => pdf_builder_get_option('pdf_builder_canvas_canvas_grid_size', 20),
                     'canvas_guides_enabled' => pdf_builder_get_option('pdf_builder_canvas_canvas_guides_enabled', '1'),
                     'canvas_snap_to_grid' => pdf_builder_get_option('pdf_builder_canvas_canvas_snap_to_grid', '1'),
-                    'canvas_zoom_min' => pdf_builder_get_option('pdf_builder_canvas_zoom_min', 25),
-                    'canvas_zoom_max' => pdf_builder_get_option('pdf_builder_canvas_zoom_max', 500),
-                    'canvas_zoom_default' => pdf_builder_get_option('pdf_builder_canvas_zoom_default', 100),
-                    'canvas_zoom_step' => pdf_builder_get_option('pdf_builder_canvas_zoom_step', 25),
+                    'canvas_zoom_min' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_min', 25),
+                    'canvas_zoom_max' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_max', 500),
+                    'canvas_zoom_default' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_default', 100),
+                    'canvas_zoom_step' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_step', 25),
                     'canvas_drag_enabled' => pdf_builder_get_option('pdf_builder_canvas_canvas_drag_enabled', '1'),
                     'canvas_resize_enabled' => pdf_builder_get_option('pdf_builder_canvas_canvas_resize_enabled', '1'),
                     'canvas_rotate_enabled' => pdf_builder_get_option('pdf_builder_canvas_canvas_rotate_enabled', '1'),
@@ -595,10 +595,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'canvas_snap_to_grid' => pdf_builder_get_option('pdf_builder_canvas_canvas_snap_to_grid', '1'),
 
                     // Canvas zoom
-                    'canvas_zoom_min' => pdf_builder_get_option('pdf_builder_canvas_zoom_min', 25),
-                    'canvas_zoom_max' => pdf_builder_get_option('pdf_builder_canvas_zoom_max', 500),
-                    'canvas_zoom_default' => pdf_builder_get_option('pdf_builder_canvas_zoom_default', 100),
-                    'canvas_zoom_step' => pdf_builder_get_option('pdf_builder_canvas_zoom_step', 25),
+                    'canvas_zoom_min' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_min', 25),
+                    'canvas_zoom_max' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_max', 500),
+                    'canvas_zoom_default' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_default', 100),
+                    'canvas_zoom_step' => pdf_builder_get_option('pdf_builder_canvas_canvas_zoom_step', 25),
 
                     // Canvas interactions
                     'canvas_drag_enabled' => pdf_builder_get_option('pdf_builder_canvas_canvas_drag_enabled', '1'),

@@ -8,7 +8,7 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
+  const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas, zoomIn, zoomOut, resetZoom } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
   // Vérifications de sécurité
@@ -371,9 +371,8 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom out
-                  const newZoom = Math.max(canvasSettings.zoomMin, state.canvas.zoom - canvasSettings.zoomStep);
-                  if (setCanvas) {
-                    setCanvas({ zoom: newZoom });
+                  if (zoomOut) {
+                    zoomOut();
                   }
                 }}
                 style={{
@@ -403,9 +402,8 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom in
-                  const newZoom = Math.min(canvasSettings.zoomMax, state.canvas.zoom + canvasSettings.zoomStep);
-                  if (setCanvas) {
-                    setCanvas({ zoom: newZoom });
+                  if (zoomIn) {
+                    zoomIn();
                   }
                 }}
                 style={{
@@ -426,10 +424,9 @@ export function Toolbar({ className }: ToolbarProps) {
               <span style={{ fontSize: '10px', color: '#94a3b8', margin: '0 2px' }}>|</span>
               <button
                 onClick={() => {
-                  // Fit to screen (zoom to fit canvas)
-                  if (setCanvas) {
-                    const fitZoom = Math.max(canvasSettings.zoomMin, Math.min(100, canvasSettings.zoomMax));
-                    setCanvas({ zoom: fitZoom });
+                  // Fit to screen (reset to default zoom)
+                  if (resetZoom) {
+                    resetZoom();
                   }
                 }}
                 style={{
