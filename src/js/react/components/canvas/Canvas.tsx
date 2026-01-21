@@ -2612,9 +2612,11 @@ export const Canvas = function Canvas({
       selectedIds: string[],
       elements: Element[]
     ) => {
+      console.log('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
       const selectedElements = elements.filter((el) =>
         selectedIds.includes(el.id)
       );
+      console.log('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
       if (selectedElements.length === 0) {
         debugLog("[Canvas] Selection cleared - no elements selected");
         return;
