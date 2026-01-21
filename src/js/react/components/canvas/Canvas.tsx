@@ -2788,12 +2788,7 @@ export const Canvas = function Canvas({
       window.pdfBuilderDebug = window.pdfBuilderDebug || [];
       window.pdfBuilderDebug.push(rotationDebug);
 
-      if (canvasSettings?.selectionRotationEnabled) {
-        console.warn('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
-        console.error('🔥 [ROTATION DRAW] selectionRotationEnabled is TRUE - DRAWING ROTATION HANDLES NOW');
-        console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
-        console.warn('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
-        console.warn('[DEBUG CANVAS] selectedElements:', selectedElements);
+      if (canvasSettings?.selectionRotationEnabled || true) {  // FORCE TOUJOURS TRUE POUR TESTER
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
