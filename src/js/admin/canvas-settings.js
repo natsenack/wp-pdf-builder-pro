@@ -4,8 +4,14 @@
 (function($) {
     'use strict';
 
+    // 🚨 DEBUG: Log settings initialization
+    console.error('🔥 [SETTINGS INIT] canvas-settings.js loading');
+
     // Initialize canvas settings functionality
     $(document).ready(function() {
+
+        // 🚨 DEBUG: Log ready
+        console.error('🔥 [SETTINGS READY] canvas-settings.js document ready');
 
         // Handle modal apply buttons
         $('.canvas-modal-apply').on('click', function(e) {
@@ -15,6 +21,9 @@
             var category = $button.data('category');
             var $modal = $button.closest('.canvas-modal-overlay');
             var $form = $modal.find('form');
+
+            // 🚨 DEBUG: Log form submission
+            console.error('🔥 [SETTINGS SAVE] Saving settings for category:', category);
 
             // If no form, create one from modal inputs
             if ($form.length === 0) {
@@ -30,6 +39,7 @@
                     if (name && !$input.prop('disabled')) {
                         if (type === 'checkbox') {
                             if ($input.prop('checked')) {
+                                console.error('🔥 [SETTINGS] Checkbox checked:', name, '=', value);
                                 if (name.endsWith('[]')) {
                                     // Handle array inputs - append multiple values with same key
                                     var arrayName = name.slice(0, -2);
