@@ -2757,6 +2757,7 @@ export const Canvas = function Canvas({
 
       // Poignées de rotation (conditionnées par les settings)
       console.warn('[CANVAS DEBUG] About to check rotation handles. canvasSettings exists:', !!canvasSettings);
+      console.warn('[CANVAS DEBUG] selectionRotationEnabled value:', canvasSettings?.selectionRotationEnabled);
       console.warn('[CANVAS DEBUG] enable_rotation value:', canvasSettings?.enable_rotation);
       console.warn('[CANVAS DEBUG] selectedElements count:', selectedElements.length);
       console.warn('[CANVAS DEBUG] selectedIds count:', selectedIds.length);
@@ -2764,6 +2765,7 @@ export const Canvas = function Canvas({
       // Debug log that won't be removed by webpack
       const rotationDebug = {
         function: 'rotation_check',
+        selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
         enable_rotation: canvasSettings?.enable_rotation,
         selectedElements: selectedElements.length,
         selectedIds: selectedIds.length,
@@ -2772,8 +2774,8 @@ export const Canvas = function Canvas({
       window.pdfBuilderDebug = window.pdfBuilderDebug || [];
       window.pdfBuilderDebug.push(rotationDebug);
 
-      if (canvasSettings?.enable_rotation) {
-        console.warn('[CANVAS] Drawing rotation handles because enable_rotation is:', canvasSettings?.enable_rotation);
+      if (canvasSettings?.selectionRotationEnabled) {
+        console.warn('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
         console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
         console.warn('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
         console.warn('[DEBUG CANVAS] selectedElements:', selectedElements);
@@ -2820,7 +2822,7 @@ export const Canvas = function Canvas({
         ctx.lineTo(rotationHandleX, rotationHandleY);
         ctx.stroke();
       } else {
-        console.log('[CANVAS] NOT drawing rotation handles because enable_rotation is:', canvasSettings?.enable_rotation);
+        console.log('[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
       }
 
       // Afficher les dimensions pour chaque élément sélectionné
