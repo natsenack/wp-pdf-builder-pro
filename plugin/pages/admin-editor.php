@@ -11,7 +11,7 @@ if (!current_user_can('manage_options')) {
 }
 
 // Inclure les assets React
-require_once __DIR__ . '/includes/ReactAssetsV2.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/core/includes/ReactAssetsV2.php';
 ?>
 
 <div class="wrap pdf-builder-admin-container">

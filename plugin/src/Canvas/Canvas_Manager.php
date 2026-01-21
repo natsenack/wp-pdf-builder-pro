@@ -255,6 +255,10 @@ class Canvas_Manager
             return;
         }
 
+        // Debug: log de la page actuelle
+        error_log('[CANVAS-DEBUG] Current screen base: ' . $current_screen->base);
+        error_log('[CANVAS-DEBUG] Current screen id: ' . $current_screen->id);
+
         // Passer les paramètres sur la page des settings ET sur la page de l'éditeur
         $allowed_pages = [
             'pdf-builder-pro_page_pdf-builder-settings',
@@ -263,12 +267,15 @@ class Canvas_Manager
         ];
 
         if (!in_array($current_screen->base, $allowed_pages)) {
+            error_log('[CANVAS-DEBUG] Page not allowed: ' . $current_screen->base);
             return;
         }
 
-        // Générer et ajouter le script directement
+        error_log('[CANVAS-DEBUG] Loading canvas settings script on page: ' . $current_screen->base);
+
+        // Générer et ajouter le script directement dans le footer pour s'assurer qu'il s'exécute après tout
         $script = $this->getCanvasSettingsScript();
-        wp_add_inline_script('jquery', $script);
+        wp_add_inline_script('wp-util', $script);
     }
 
     /**
@@ -281,6 +288,7 @@ class Canvas_Manager
         $settings = wp_json_encode($this->settings);
         return <<<JS
 (function() {
+    console.log('[CANVAS-SETTINGS] Script executing...');
     // Fusionner avec les settings existants au lieu d'écraser
     if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
         window.pdfBuilderCanvasSettings = {};
@@ -289,7 +297,8 @@ class Canvas_Manager
     if (typeof window.pdfBuilderSettings !== 'undefined') {
         window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
     }
-    console.log('[CANVAS SETTINGS] Loaded settings:', window.pdfBuilderCanvasSettings);
+    console.log('[CANVAS-SETTINGS] Loaded settings:', window.pdfBuilderCanvasSettings);
+    console.log('[CANVAS-SETTINGS] enable_rotation value:', window.pdfBuilderCanvasSettings.enable_rotation);
 })();
 JS;
     }
