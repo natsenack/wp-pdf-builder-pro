@@ -1,6 +1,5 @@
 import React from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
-import { useCanvas } from '../../contexts/builder/BuilderContext';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 import { BuilderMode } from '../../types/elements';
 
@@ -10,7 +9,6 @@ interface ToolbarProps {
 
 export function Toolbar({ className }: ToolbarProps) {
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
-  const { zoomIn, zoomOut, resetZoom } = useCanvas();
   const canvasSettings = useCanvasSettings();
 
   // Vérifications de sécurité
@@ -373,8 +371,9 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom out
-                  if (zoomOut) {
-                    zoomOut();
+                  const newZoom = Math.max(canvasSettings.zoomMin, state.canvas.zoom - canvasSettings.zoomStep);
+                  if (setCanvas) {
+                    setCanvas({ zoom: newZoom });
                   }
                 }}
                 style={{
@@ -404,8 +403,9 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom in
-                  if (zoomIn) {
-                    zoomIn();
+                  const newZoom = Math.min(canvasSettings.zoomMax, state.canvas.zoom + canvasSettings.zoomStep);
+                  if (setCanvas) {
+                    setCanvas({ zoom: newZoom });
                   }
                 }}
                 style={{
@@ -427,8 +427,9 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Fit to screen (zoom to fit canvas)
-                  if (resetZoom) {
-                    resetZoom();
+                  if (setCanvas) {
+                    const fitZoom = Math.max(canvasSettings.zoomMin, Math.min(100, canvasSettings.zoomMax));
+                    setCanvas({ zoom: fitZoom });
                   }
                 }}
                 style={{
