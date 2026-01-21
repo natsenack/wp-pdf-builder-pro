@@ -149,7 +149,7 @@ const initialCanvasState: CanvasState = {
   pan: { x: 0, y: 0 },
   showGrid: false,
   gridSize: 20,
-  snapToGrid: true,
+  snapToGrid: false, // Désactivé par défaut pour les utilisateurs gratuits
   backgroundColor: '#ffffff'
 };
 
@@ -209,7 +209,7 @@ const initialState: BuilderState = {
     canvasHeight: 1123, // A4 height in PX
     marginTop: 28,     // ~10mm in PX
     marginBottom: 28,  // ~10mm in PX
-    showGuides: true,
+    showGuides: false, // Désactivé par défaut pour les utilisateurs gratuits
     snapToGrid: false
   },
   previewMode: 'editor',
@@ -620,25 +620,25 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       canvasUpdates.gridSize = canvasSettings.gridSize;
     }
 
-    // Synchroniser showGrid : forcer à false si la fonctionnalité n'est pas disponible
-    if (!canvasSettings.gridShow) {
-      canvasUpdates.showGrid = false;
-    } else if (state.canvas.showGrid === false && canvasSettings.gridShow !== false) {
+    // Synchroniser showGrid : activer si disponible, sinon forcer à false
+    if (canvasSettings.gridShow && canvasSettings.gridShow !== state.canvas.showGrid) {
       canvasUpdates.showGrid = canvasSettings.gridShow;
+    } else if (!canvasSettings.gridShow && state.canvas.showGrid !== false) {
+      canvasUpdates.showGrid = false;
     }
 
-    // Synchroniser snapToGrid : forcer à false si la fonctionnalité n'est pas disponible
-    if (!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) {
-      canvasUpdates.snapToGrid = false;
-    } else if (state.canvas.snapToGrid === true && canvasSettings.gridSnapEnabled !== true) {
+    // Synchroniser snapToGrid : activer si disponible, sinon forcer à false
+    if (canvasSettings.gridShow && canvasSettings.gridSnapEnabled && canvasSettings.gridSnapEnabled !== state.canvas.snapToGrid) {
       canvasUpdates.snapToGrid = canvasSettings.gridSnapEnabled;
+    } else if ((!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) && state.canvas.snapToGrid !== false) {
+      canvasUpdates.snapToGrid = false;
     }
 
-    // Synchroniser showGuides : forcer à false si la fonctionnalité n'est pas disponible
-    if (!canvasSettings.guidesEnabled) {
-      templateUpdates.showGuides = false;
-    } else if (state.template.showGuides === true && canvasSettings.guidesEnabled !== true) {
+    // Synchroniser showGuides : activer si disponible, sinon forcer à false
+    if (canvasSettings.guidesEnabled && canvasSettings.guidesEnabled !== state.template.showGuides) {
       templateUpdates.showGuides = canvasSettings.guidesEnabled;
+    } else if (!canvasSettings.guidesEnabled && state.template.showGuides !== false) {
+      templateUpdates.showGuides = false;
     }
 
     if (Object.keys(canvasUpdates).length > 0) {
