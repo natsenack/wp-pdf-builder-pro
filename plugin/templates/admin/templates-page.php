@@ -166,7 +166,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+            <div id="template-limit-notice" class="pdf-builder-notice pdf-builder-notice-info template-limit-notice-hidden" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
                     <span class="dashicons dashicons-dismiss"></span>
                 </button>
@@ -556,6 +556,11 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     --pdf-light: #f8f9fa;        /* Fond clair */
     --pdf-border: #dee2e6;       /* Bordure */
     --pdf-text: #495057;         /* Texte principal */
+}
+
+/* Classe pour cacher initialement la notification de limite de templates */
+.template-limit-notice-hidden {
+    display: none !important;
 }
 
 .template-modal {
@@ -955,11 +960,21 @@ function saveTemplateSettings() {
     });
 }
 
+// Vérifier immédiatement si la notification doit être affichée (évite le flash)
+(function() {
+    const notice = document.getElementById('template-limit-notice');
+    const isDismissed = localStorage.getItem('pdf_builder_template_limit_notice_dismissed') === 'true';
+
+    if (notice && !isDismissed) {
+        notice.classList.remove('template-limit-notice-hidden');
+    }
+})();
+
 // Gestion de la notification de limite de templates
 function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
-        notice.style.display = 'none';
+        notice.classList.add('template-limit-notice-hidden');
         // Sauvegarder dans localStorage que l'utilisateur a fermé la notification
         localStorage.setItem('pdf_builder_template_limit_notice_dismissed', 'true');
     }
@@ -968,21 +983,11 @@ function dismissTemplateLimitNotice() {
 function showTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
-        notice.style.display = 'block';
+        notice.classList.remove('template-limit-notice-hidden');
         // Supprimer le flag de fermeture du localStorage
         localStorage.removeItem('pdf_builder_template_limit_notice_dismissed');
     }
 }
-
-// Vérifier au chargement de la page si la notification doit être affichée
-document.addEventListener('DOMContentLoaded', function() {
-    const notice = document.getElementById('template-limit-notice');
-    const isDismissed = localStorage.getItem('pdf_builder_template_limit_notice_dismissed') === 'true';
-
-    if (notice && isDismissed) {
-        notice.style.display = 'none';
-    }
-});
 
 // Modifier les gestionnaires de boutons pour réafficher la notification
 document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
