@@ -990,6 +990,78 @@ function closeUpgradeModal() {
         modal.style.display = 'none';
     }
 }
+
+// JavaScript pour la sauvegarde des paramètres canvas
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestionnaire pour les boutons "Appliquer" des modals canvas
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('canvas-modal-apply')) {
+            e.preventDefault();
+            
+            var category = e.target.getAttribute('data-category');
+            var modal = e.target.closest('.canvas-modal-overlay');
+            
+            if (modal) {
+                // Collecter les données du formulaire
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_ajax_handler');
+                formData.append('action_type', 'save_all_settings');
+                formData.append('nonce', window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : '');
+                
+                // Ajouter le nonce WordPress standard si pdfBuilderAjax n'est pas disponible
+                if (!window.pdfBuilderAjax || !window.pdfBuilderAjax.nonce) {
+                    formData.append('_wpnonce', window.wpApiSettings ? window.wpApiSettings.nonce : '');
+                }
+                
+                // Collecter tous les champs du modal
+                var inputs = modal.querySelectorAll('input, select, textarea');
+                inputs.forEach(function(input) {
+                    if (input.name) {
+                        if (input.type === 'checkbox') {
+                            formData.append(input.name, input.checked ? '1' : '0');
+                        } else {
+                            formData.append(input.name, input.value);
+                        }
+                    }
+                });
+                
+                // Afficher un indicateur de chargement
+                e.target.textContent = '⏳ Sauvegarde...';
+                e.target.disabled = true;
+                
+                // Envoyer la requête AJAX
+                var ajaxUrl = window.pdfBuilderAjax && window.pdfBuilderAjax.ajax_url ? window.pdfBuilderAjax.ajax_url : ajaxurl;
+                fetch(ajaxUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.success) {
+                        // Fermer le modal
+                        modal.style.display = 'none';
+                        
+                        // Recharger la page pour appliquer les changements
+                        location.reload();
+                    } else {
+                        alert('Erreur lors de la sauvegarde: ' + (data.data && data.data.message ? data.data.message : 'Erreur inconnue'));
+                        e.target.textContent = '✅ Appliquer';
+                        e.target.disabled = false;
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Erreur AJAX:', error);
+                    alert('Erreur lors de la sauvegarde');
+                    e.target.textContent = '✅ Appliquer';
+                    e.target.disabled = false;
+                });
+            }
+        }
+    });
+});
 </script>
 
 <?php
