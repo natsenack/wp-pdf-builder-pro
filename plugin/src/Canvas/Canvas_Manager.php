@@ -271,7 +271,10 @@ class Canvas_Manager
             return;
         }
 
-        error_log('[CANVAS-DEBUG] Loading canvas settings script on page: ' . $current_screen->base);
+        error_log('[CANVAS-DEBUG] enqueueCanvasSettingsScript called');
+
+        // Ajouter un script de test simple pour vérifier que les scripts sont chargés
+        wp_add_inline_script('jquery', 'console.log("[CANVAS-TEST] Scripts are loading...");');
 
         // Générer et ajouter le script directement dans le footer pour s'assurer qu'il s'exécute après tout
         $script = $this->getCanvasSettingsScript();
