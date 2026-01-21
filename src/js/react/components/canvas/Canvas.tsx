@@ -2707,6 +2707,7 @@ export const Canvas = function Canvas({
 
       // Poignées de rotation (conditionnées par les settings)
       if (canvasSettings?.selectionRotationEnabled) {
+        console.log('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
         console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
         console.log('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
         const rotationHandleSize = 8;
@@ -2756,7 +2757,7 @@ export const Canvas = function Canvas({
         ctx.lineTo(rotationHandleX, rotationHandleY);
         ctx.stroke();
       } else {
-        console.log('[DEBUG CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.log('[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
       }
 
       // Afficher les dimensions pour chaque élément sélectionné

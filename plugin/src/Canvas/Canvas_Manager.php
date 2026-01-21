@@ -289,6 +289,7 @@ class Canvas_Manager
     if (typeof window.pdfBuilderSettings !== 'undefined') {
         window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
     }
+    console.log('[CANVAS SETTINGS] Loaded settings:', window.pdfBuilderCanvasSettings);
 })();
 JS;
     }

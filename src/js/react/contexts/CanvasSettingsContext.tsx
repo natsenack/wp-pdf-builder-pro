@@ -328,6 +328,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       selectionRotationEnabled:
         windowSettings.enable_rotation === true ||
         windowSettings.enable_rotation === "1",
+
+      // Debug: Log rotation setting in React context
+      _debug_rotation_react: (() => {
+        console.log('[REACT CONTEXT] windowSettings.enable_rotation:', windowSettings.enable_rotation);
+        console.log('[REACT CONTEXT] selectionRotationEnabled:', windowSettings.enable_rotation === true || windowSettings.enable_rotation === "1");
+        return null;
+      })(),
       selectionCopyPasteEnabled:
         windowSettings.copy_paste_enabled === true ||
         windowSettings.copy_paste_enabled === "1",

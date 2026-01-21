@@ -54,10 +54,9 @@ if (!$can_use_grid_navigation) {
 
 // Fonction helper pour récupérer une valeur canvas
 function get_canvas_modal_value($key, $default = '') {
-    // Récupérer depuis l'array unifié de settings
-    $settings = pdf_builder_get_option('pdf_builder_settings', array());
+    // Utiliser directement pdf_builder_get_option pour les paramètres individuels
     $option_key = 'pdf_builder_' . $key;
-    $value = isset($settings[$option_key]) ? $settings[$option_key] : null;
+    $value = pdf_builder_get_option($option_key, null);
 
     if ($value === null) {
         $value = $default;
