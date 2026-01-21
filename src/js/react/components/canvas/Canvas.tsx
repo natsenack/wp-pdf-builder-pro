@@ -1710,6 +1710,9 @@ export const Canvas = function Canvas({
 
   // ✅ LAZY LOADING: Hook pour mettre à jour le viewport quand le canvas change
   useEffect(() => {
+    // 🚨 DEBUG: Log canvas mount
+    console.error('🔥 [CANVAS MOUNT] Canvas useEffect triggered, canvasRef:', !!canvasRef.current);
+
     if (!canvasRef.current) return;
 
     const updateViewport = () => {
@@ -3707,6 +3710,18 @@ export const Canvas = function Canvas({
           pointerEvents: "auto",
         }}
       >
+        {/* 🚨 DEBUG: Log canvas render */}
+        {(() => {
+          console.error('🔥 [CANVAS RENDER] Canvas component rendering with handlers:', {
+            handleMouseDown: typeof handleMouseDown,
+            handleMouseUp: typeof handleMouseUp,
+            handleCanvasClick: typeof handleCanvasClick,
+            canvasRef: !!canvasRef,
+            width,
+            height
+          });
+          return null;
+        })()}
         <canvas
           ref={canvasRef}
           width={width}
