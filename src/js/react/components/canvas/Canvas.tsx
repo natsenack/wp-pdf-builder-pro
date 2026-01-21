@@ -1593,6 +1593,16 @@ export const Canvas = function Canvas({
   // 🚨 DEBUG: Log component initialization
   console.error('🚀 [CANVAS COMPONENT] Canvas component function called with props:', { width, height, className });
 
+  // Debug log that won't be removed by webpack
+  const componentDebug = {
+    component: 'Canvas',
+    mounted: true,
+    props: { width, height, className },
+    timestamp: Date.now()
+  };
+  window.pdfBuilderDebug = window.pdfBuilderDebug || [];
+  window.pdfBuilderDebug.push(componentDebug);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
