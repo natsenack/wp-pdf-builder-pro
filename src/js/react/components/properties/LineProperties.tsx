@@ -1,4 +1,5 @@
 import { BaseElement } from '../../types/elements';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 
 interface ExtendedElement extends BaseElement {
   strokeColor?: string;
@@ -13,6 +14,7 @@ interface LinePropertiesProps {
 }
 
 export function LineProperties({ element, onChange, activeTab, setActiveTab }: LinePropertiesProps) {
+  const canvasSettings = useCanvasSettings();
   const lineCurrentTab = activeTab[element.id] || 'fonctionnalites';
   const setLineCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
     setActiveTab({ ...activeTab, [element.id]: tab });
@@ -217,6 +219,7 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
             />
           </div>
 
+          {canvasSettings?.selectionRotationEnabled && (
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Rotation <span style={{ color: '#666', fontSize: '10px' }}>({element.rotation || 0}°)</span>
@@ -236,6 +239,7 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
               }}
             />
           </div>
+          )}
         </>
       )}
     </>

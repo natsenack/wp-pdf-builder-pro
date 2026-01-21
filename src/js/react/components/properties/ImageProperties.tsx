@@ -1,4 +1,5 @@
 import { BaseElement } from '../../types/elements';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 
 interface ExtendedElement extends BaseElement {
   src?: string;
@@ -13,6 +14,7 @@ interface ImagePropertiesProps {
 }
 
 export function ImageProperties({ element, onChange, activeTab, setActiveTab }: ImagePropertiesProps) {
+  const canvasSettings = useCanvasSettings();
   const imageCurrentTab = activeTab[element.id] || 'fonctionnalites';
   const setImageCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
     setActiveTab({ ...activeTab, [element.id]: tab });
@@ -282,6 +284,7 @@ export function ImageProperties({ element, onChange, activeTab, setActiveTab }: 
             />
           </div>
 
+          {canvasSettings?.selectionRotationEnabled && (
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Rotation <span style={{ color: '#666', fontSize: '10px' }}>({element.rotation || 0}°)</span>
@@ -301,6 +304,7 @@ export function ImageProperties({ element, onChange, activeTab, setActiveTab }: 
               }}
             />
           </div>
+          )}
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
