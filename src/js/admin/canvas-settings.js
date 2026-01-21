@@ -28,7 +28,6 @@
             // If no form, create one from modal inputs
             if ($form.length === 0) {
                 var formData = new FormData();
-                var processedCheckboxes = {}; // Track which checkboxes we've processed
 
                 // List of toggle checkboxes that need 0 value when unchecked
                 var toggleCheckboxes = [
@@ -39,31 +38,41 @@
                     'pdf_builder_canvas_keyboard_shortcuts'
                 ];
 
-                // Collect all inputs from the modal
+                // First pass: Handle all toggle checkboxes explicitly
+                toggleCheckboxes.forEach(function(checkboxName) {
+                    var $checkbox = $modal.find('input[name="' + checkboxName + '"]');
+                    if ($checkbox.length > 0) {
+                        if ($checkbox.prop('checked')) {
+                            console.error('🔥 [SETTINGS] Toggle CHECKED:', checkboxName, '= 1');
+                            formData.append(checkboxName, '1');
+                        } else {
+                            console.error('🔥 [SETTINGS] Toggle UNCHECKED:', checkboxName, '= 0');
+                            formData.append(checkboxName, '0');
+                        }
+                    }
+                });
+
+                // Second pass: Collect all other inputs from the modal
                 $modal.find('input, select, textarea').each(function() {
                     var $input = $(this);
                     var name = $input.attr('name');
                     var type = $input.attr('type');
                     var value = $input.val();
 
+                    // Skip if it's a toggle checkbox (already processed)
+                    if (type === 'checkbox' && toggleCheckboxes.indexOf(name) !== -1) {
+                        return;
+                    }
+
                     if (name && !$input.prop('disabled')) {
                         if (type === 'checkbox') {
-                            // Handle checkboxes - only process each checkbox name once
-                            if (!processedCheckboxes[name]) {
-                                processedCheckboxes[name] = true;
-                                
-                                if ($input.prop('checked')) {
-                                    console.error('🔥 [SETTINGS] Checkbox checked:', name, '=', value);
-                                    if (name.endsWith('[]')) {
-                                        var arrayName = name.slice(0, -2);
-                                        formData.append(arrayName, value);
-                                    } else {
-                                        formData.append(name, value);
-                                    }
-                                } else if (toggleCheckboxes.indexOf(name) !== -1) {
-                                    // For toggle checkboxes, send 0 when unchecked
-                                    console.error('🔥 [SETTINGS] Checkbox unchecked:', name, '= 0');
-                                    formData.append(name, '0');
+                            if ($input.prop('checked')) {
+                                console.error('🔥 [SETTINGS] Checkbox checked:', name, '=', value);
+                                if (name.endsWith('[]')) {
+                                    var arrayName = name.slice(0, -2);
+                                    formData.append(arrayName, value);
+                                } else {
+                                    formData.append(name, value);
                                 }
                             }
                         } else if (type === 'radio') {
