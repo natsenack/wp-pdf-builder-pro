@@ -334,6 +334,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
         console.log('[DEBUG REACT] windowSettings.enable_rotation:', windowSettings.enable_rotation);
         console.log('[DEBUG REACT] selectionRotationEnabled:', windowSettings.enable_rotation === true || windowSettings.enable_rotation === "1");
         console.log('[DEBUG REACT] windowSettings object:', windowSettings);
+        // Alert for visibility
+        const isEnabled = windowSettings.enable_rotation === true || windowSettings.enable_rotation === "1";
+        if (isEnabled) {
+            console.warn('⚠️ REACT: ROTATION ENABLED');
+        } else {
+            console.info('✅ REACT: ROTATION DISABLED');
+        }
         return null;
       })(),
       selectionCopyPasteEnabled:

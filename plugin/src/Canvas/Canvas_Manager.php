@@ -109,7 +109,15 @@ class Canvas_Manager
             // Debug: Log rotation setting
             '_debug_rotation_php' => (function() {
                 $rotation_value = pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0');
-                error_log("[PDF BUILDER DEBUG] Rotation setting from DB: '{$rotation_value}', evaluated to: " . ($rotation_value == '1' ? 'true' : 'false'));
+                $is_enabled = $rotation_value == '1';
+                error_log("[PDF BUILDER DEBUG] Rotation setting from DB: '{$rotation_value}', evaluated to: " . ($is_enabled ? 'true' : 'false'));
+                // Also write to a visible location
+                if (function_exists('wp_upload_dir')) {
+                    $upload_dir = wp_upload_dir();
+                    $debug_file = $upload_dir['basedir'] . '/pdf-builder-debug.log';
+                    $debug_message = date('Y-m-d H:i:s') . " - Rotation setting: '{$rotation_value}' -> " . ($is_enabled ? 'ENABLED' : 'DISABLED') . "\n";
+                    file_put_contents($debug_file, $debug_message, FILE_APPEND);
+                }
                 return null;
             })(),
             'rotation_step' => intval(pdf_builder_get_option('pdf_builder_canvas_rotation_step', 15)),
@@ -281,6 +289,12 @@ class Canvas_Manager
     // Debug: Log rotation setting passed to JS
     console.log('[DEBUG PHP->JS] enable_rotation:', window.pdfBuilderCanvasSettings.enable_rotation);
     console.log('[DEBUG PHP->JS] Full canvas settings:', window.pdfBuilderCanvasSettings);
+    // Also show an alert for visibility
+    if (window.pdfBuilderCanvasSettings.enable_rotation) {
+        console.warn('⚠️ ROTATION IS ENABLED - Green handle will appear');
+    } else {
+        console.info('✅ ROTATION IS DISABLED - No green handle should appear');
+    }
     
     if (typeof window.pdfBuilderSettings !== 'undefined') {
         window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
