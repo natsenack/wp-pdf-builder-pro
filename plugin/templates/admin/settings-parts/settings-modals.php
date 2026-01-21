@@ -468,6 +468,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
+                    <?php $can_use_keyboard_shortcuts = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('keyboard_shortcuts'); ?>
                     <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier<?php if (!$can_use_keyboard_shortcuts): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <?php if ($can_use_keyboard_shortcuts): ?>
                     <div class="toggle-switch">
