@@ -271,8 +271,8 @@ class Canvas_Manager
         window.pdfBuilderCanvasSettings = {};
     }
     Object.assign(window.pdfBuilderCanvasSettings, {$settings});
-    if (typeof pdfBuilderSettings !== 'undefined') {
-        pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
+    if (typeof window.pdfBuilderSettings !== 'undefined') {
+        window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
     }
 })();
 JS;
