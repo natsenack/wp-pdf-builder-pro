@@ -36,6 +36,9 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdminNew::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
 
+// DEBUG: Afficher les valeurs pour le débogage
+echo "<!-- DEBUG NOTIFICATION: is_premium=" . ($is_premium ? 'true' : 'false') . ", templates_count=$templates_count, notice_dismissed=" . ($notice_dismissed ? 'true' : 'false') . " -->";
+
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
@@ -137,7 +140,11 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     <div style="background: #fff; padding: 20px; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
         <!-- Message limitation freemium - AU-DESSUS de Templates Disponibles -->
-        <?php if (!$is_premium && $templates_count >= 1 && !$notice_dismissed): ?>
+        <?php
+        $show_notice = (!$is_premium && $templates_count >= 1 && !$notice_dismissed);
+        echo "<!-- DEBUG: show_notice condition: (!$is_premium && $templates_count >= 1 && !$notice_dismissed) = " . ($show_notice ? 'true' : 'false') . " -->";
+        if ($show_notice):
+        ?>
             <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 0 0 20px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <button type="button" class="pdf-builder-notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
                     <span class="dashicons dashicons-dismiss"></span>
