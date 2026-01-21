@@ -993,6 +993,12 @@ function closeUpgradeModal() {
 
 // JavaScript pour la sauvegarde des paramètres canvas
 document.addEventListener('DOMContentLoaded', function() {
+    // Générer le nonce PHP directement
+    const pdfBuilderAjax = {
+        ajax_url: ajaxurl,
+        nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+    };
+    
     // Gestionnaire pour les boutons "Appliquer" des modals canvas
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('canvas-modal-apply')) {
@@ -1006,12 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var formData = new FormData();
                 formData.append('action', 'pdf_builder_ajax_handler');
                 formData.append('action_type', 'save_all_settings');
-                formData.append('nonce', window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : '');
-                
-                // Ajouter le nonce WordPress standard si pdfBuilderAjax n'est pas disponible
-                if (!window.pdfBuilderAjax || !window.pdfBuilderAjax.nonce) {
-                    formData.append('_wpnonce', window.wpApiSettings ? window.wpApiSettings.nonce : '');
-                }
+                formData.append('nonce', pdfBuilderAjax.nonce);
                 
                 // Collecter tous les champs du modal
                 var inputs = modal.querySelectorAll('input, select, textarea');
@@ -1030,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.target.disabled = true;
                 
                 // Envoyer la requête AJAX
-                var ajaxUrl = window.pdfBuilderAjax && window.pdfBuilderAjax.ajax_url ? window.pdfBuilderAjax.ajax_url : ajaxurl;
+                var ajaxUrl = pdfBuilderAjax.ajax_url;
                 fetch(ajaxUrl, {
                     method: 'POST',
                     body: formData,
