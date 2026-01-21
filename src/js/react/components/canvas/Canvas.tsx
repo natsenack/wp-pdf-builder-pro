@@ -2612,11 +2612,11 @@ export const Canvas = function Canvas({
       selectedIds: string[],
       elements: Element[]
     ) => {
-      console.log('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
+      console.warn('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
       const selectedElements = elements.filter((el) =>
         selectedIds.includes(el.id)
       );
-      console.log('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
+      console.warn('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
       if (selectedElements.length === 0) {
         debugLog("[Canvas] Selection cleared - no elements selected");
         return;
@@ -2708,16 +2708,16 @@ export const Canvas = function Canvas({
       }
 
       // Poignées de rotation (conditionnées par les settings)
-      console.log('[CANVAS DEBUG] About to check rotation handles. canvasSettings exists:', !!canvasSettings);
-      console.log('[CANVAS DEBUG] selectionRotationEnabled value:', canvasSettings?.selectionRotationEnabled);
-      console.log('[CANVAS DEBUG] selectedElements count:', selectedElements.length);
-      console.log('[CANVAS DEBUG] selectedIds count:', selectedIds.length);
+      console.warn('[CANVAS DEBUG] About to check rotation handles. canvasSettings exists:', !!canvasSettings);
+      console.warn('[CANVAS DEBUG] selectionRotationEnabled value:', canvasSettings?.selectionRotationEnabled);
+      console.warn('[CANVAS DEBUG] selectedElements count:', selectedElements.length);
+      console.warn('[CANVAS DEBUG] selectedIds count:', selectedIds.length);
 
       if (canvasSettings?.selectionRotationEnabled) {
-        console.log('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.warn('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
         console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
-        console.log('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
-        console.log('[DEBUG CANVAS] selectedElements:', selectedElements);
+        console.warn('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
+        console.warn('[DEBUG CANVAS] selectedElements:', selectedElements);
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
