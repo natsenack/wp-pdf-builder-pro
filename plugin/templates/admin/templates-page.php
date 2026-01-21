@@ -28,6 +28,9 @@ if (!class_exists('PDF_Builder\TemplateDefaults')) {
 // ✅ FIX: Créer le nonce directement dans le template PHP
 $templates_nonce = wp_create_nonce('pdf_builder_templates');
 
+// Vérifier si la notification a été rejetée (cookie)
+$notice_dismissed = isset($_COOKIE['pdf_builder_template_limit_notice_dismissed']) && $_COOKIE['pdf_builder_template_limit_notice_dismissed'] === 'true';
+
 // Vérifications freemium
 $user_can_create = \PDF_Builder\Admin\PdfBuilderAdminNew::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
@@ -165,9 +168,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
         </div>
 
         <!-- Message limitation freemium -->
-        <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div id="template-limit-notice" class="pdf-builder-notice pdf-builder-notice-info template-limit-notice-hidden" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
-                <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
+        <?php if (!$is_premium && $templates_count >= 1 && !$notice_dismissed): ?>
+            <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+                <button type="button" class="pdf-builder-notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
                     <span class="dashicons dashicons-dismiss"></span>
                 </button>
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
@@ -556,11 +559,6 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     --pdf-light: #f8f9fa;        /* Fond clair */
     --pdf-border: #dee2e6;       /* Bordure */
     --pdf-text: #495057;         /* Texte principal */
-}
-
-/* Classe pour cacher initialement la notification de limite de templates */
-.template-limit-notice-hidden {
-    display: none !important;
 }
 
 .template-modal {
@@ -960,34 +958,43 @@ function saveTemplateSettings() {
     });
 }
 
-// Vérifier immédiatement si la notification doit être affichée (évite le flash)
-(function() {
-    const notice = document.getElementById('template-limit-notice');
-    const isDismissed = localStorage.getItem('pdf_builder_template_limit_notice_dismissed') === 'true';
-
-    if (notice && !isDismissed) {
-        notice.classList.remove('template-limit-notice-hidden');
-    }
-})();
-
 // Gestion de la notification de limite de templates
 function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
-        notice.classList.add('template-limit-notice-hidden');
-        // Sauvegarder dans localStorage que l'utilisateur a fermé la notification
-        localStorage.setItem('pdf_builder_template_limit_notice_dismissed', 'true');
+        notice.style.display = 'none';
+        // Sauvegarder dans un cookie que l'utilisateur a fermé la notification
+        document.cookie = 'pdf_builder_template_limit_notice_dismissed=true; path=/; max-age=86400'; // 24h
     }
 }
 
 function showTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
     if (notice) {
-        notice.classList.remove('template-limit-notice-hidden');
-        // Supprimer le flag de fermeture du localStorage
-        localStorage.removeItem('pdf_builder_template_limit_notice_dismissed');
+        notice.style.display = 'block';
+        // Supprimer le cookie de fermeture
+        document.cookie = 'pdf_builder_template_limit_notice_dismissed=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
 }
+
+// Vérifier au chargement de la page si la notification doit être affichée
+document.addEventListener('DOMContentLoaded', function() {
+    const notice = document.getElementById('template-limit-notice');
+    const cookies = document.cookie.split(';');
+    let isDismissed = false;
+
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'pdf_builder_template_limit_notice_dismissed' && value === 'true') {
+            isDismissed = true;
+            break;
+        }
+    }
+
+    if (notice && isDismissed) {
+        notice.style.display = 'none';
+    }
+});
 
 // Modifier les gestionnaires de boutons pour réafficher la notification
 document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
