@@ -135,6 +135,30 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     <!-- Debug section removed for production: API debug UI and tests have been stripped -->
 
     <div style="background: #fff; padding: 20px; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+        <!-- Message limitation freemium - AU-DESSUS de Templates Disponibles -->
+        <?php if (!$is_premium && $templates_count >= 1 && !$notice_dismissed): ?>
+            <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 0 0 20px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+                <button type="button" class="pdf-builder-notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
+                    <span class="dashicons dashicons-dismiss"></span>
+                </button>
+                <h4 style="margin: 0 0 10px 0; color: #0c5460;">
+                    <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
+                    <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
+                </h4>
+                <p style="margin: 0 0 10px 0; color: #0c5460;">
+                    <?php printf(
+                        __('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
+                        $templates_count
+                    ); ?>
+                </p>
+                <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
+                    <span class="dashicons dashicons-star-filled"></span>
+                    <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+
         <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
 
         <div style="margin: 20px 0;">
@@ -166,29 +190,6 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 <?php endif; ?>
             </span>
         </div>
-
-        <!-- Message limitation freemium -->
-        <?php if (!$is_premium && $templates_count >= 1 && !$notice_dismissed): ?>
-            <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
-                <button type="button" class="pdf-builder-notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
-                    <span class="dashicons dashicons-dismiss"></span>
-                </button>
-                <h4 style="margin: 0 0 10px 0; color: #0c5460;">
-                    <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
-                    <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
-                </h4>
-                <p style="margin: 0 0 10px 0; color: #0c5460;">
-                    <?php printf(
-                        __('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
-                        $templates_count
-                    ); ?>
-                </p>
-                <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
-                    <span class="dashicons dashicons-star-filled"></span>
-                    <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
-                </a>
-            </div>
-        <?php endif; ?>
 
         <!-- Message pour utilisateurs gratuits sans templates -->
         <?php if (!$is_premium && $templates_count === 0): ?>
@@ -997,7 +998,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Modifier les gestionnaires de boutons pour réafficher la notification
-document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
+document.getElementById('upgrade-required-btn')?.addEventListener('click', function(e) {
     e.preventDefault();
 
     // Vérifier limite côté client (sécurité supplémentaire)
