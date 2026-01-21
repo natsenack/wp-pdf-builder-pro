@@ -166,7 +166,10 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 
         <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px;">
+            <div id="template-limit-notice" class="notice notice-info" style="margin: 15px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
+                <button type="button" class="notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
+                    <span class="dashicons dashicons-dismiss"></span>
+                </button>
                 <h4 style="margin: 0 0 10px 0; color: #0c5460;">
                     <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
@@ -844,48 +847,6 @@ function showUpgradeModal(reason) {
     }
 }
 
-// Gestionnaire pour bouton créer template
-document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
-    e.preventDefault();
-
-    // Vérifier limite côté client (sécurité supplémentaire)
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_check_template_limit',
-            'nonce': pdfBuilderAjax.nonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.can_create) {
-            // Rediriger vers éditeur
-            window.location.href = pdfBuilderAjax.editor_url;
-        } else {
-            showUpgradeModal('template');
-        }
-    })
-    .catch(error => {
-        // 
-        showUpgradeModal('template');
-    });
-});
-
-// Gestionnaire pour bouton galerie de modèles (uniquement premium)
-document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
-    e.preventDefault();
-    <?php if ($is_premium): ?>
-        // Ouvrir la galerie pour utilisateurs premium
-        document.getElementById('template-gallery-modal').style.display = 'flex';
-    <?php else: ?>
-        // Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal('gallery');
-    <?php endif; ?>
-});
-
 // Fermer modal au clic sur overlay ou bouton close
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
@@ -993,6 +954,82 @@ function saveTemplateSettings() {
         alert('Erreur lors de la sauvegarde des paramètres du template');
     });
 }
+
+// Gestion de la notification de limite de templates
+function dismissTemplateLimitNotice() {
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        notice.style.display = 'none';
+        // Sauvegarder dans localStorage que l'utilisateur a fermé la notification
+        localStorage.setItem('pdf_builder_template_limit_notice_dismissed', 'true');
+    }
+}
+
+function showTemplateLimitNotice() {
+    const notice = document.getElementById('template-limit-notice');
+    if (notice) {
+        notice.style.display = 'block';
+        // Supprimer le flag de fermeture du localStorage
+        localStorage.removeItem('pdf_builder_template_limit_notice_dismissed');
+    }
+}
+
+// Vérifier au chargement de la page si la notification doit être affichée
+document.addEventListener('DOMContentLoaded', function() {
+    const notice = document.getElementById('template-limit-notice');
+    const isDismissed = localStorage.getItem('pdf_builder_template_limit_notice_dismissed') === 'true';
+
+    if (notice && isDismissed) {
+        notice.style.display = 'none';
+    }
+});
+
+// Modifier les gestionnaires de boutons pour réafficher la notification
+document.getElementById('create-template-btn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Vérifier limite côté client (sécurité supplémentaire)
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'action': 'pdf_builder_check_template_limit',
+            'nonce': pdfBuilderAjax.nonce
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.can_create) {
+            // Rediriger vers éditeur
+            window.location.href = pdfBuilderAjax.editor_url;
+        } else {
+            showUpgradeModal('template');
+            // Réafficher la notification de limite
+            showTemplateLimitNotice();
+        }
+    })
+    .catch(error => {
+        showUpgradeModal('template');
+        // Réafficher la notification de limite
+        showTemplateLimitNotice();
+    });
+});
+
+// Gestionnaire pour bouton galerie de modèles (uniquement premium)
+document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    <?php if ($is_premium): ?>
+        // Ouvrir la galerie pour utilisateurs premium
+        document.getElementById('template-gallery-modal').style.display = 'flex';
+    <?php else: ?>
+        // Montrer modal upgrade pour utilisateurs gratuits
+        showUpgradeModal('gallery');
+        // Réafficher la notification de limite
+        showTemplateLimitNotice();
+    <?php endif; ?>
+});
 
 function duplicateTemplate(templateId, templateName) {
     if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
