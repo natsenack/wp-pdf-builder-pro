@@ -348,18 +348,15 @@ function get_canvas_modal_value($key, $default = '') {
             <div class="modal-settings-grid">
                 <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📐</span> Grille activée</label>
+                    <label><span style="font-size: 16px;">📐</span> Grille activée<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
                                value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
                         <label for="modal_canvas_grid_enabled"></label>
                     </div>
-                    <?php if (!$can_use_grid_navigation): ?>
-                    <span class="premium-badge">⭐ PREMIUM</span>
-                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📏</span> Taille grille (px)</label>
+                    <label><span style="font-size: 16px;">📏</span> Taille grille (px)<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <?php if ($can_use_grid_navigation): ?>
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_grid_size', $canvas_defaults['grid_size'])); ?>">
@@ -367,30 +364,23 @@ function get_canvas_modal_value($key, $default = '') {
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_grid_size', $canvas_defaults['grid_size'])); ?>" disabled
                            style="opacity: 0.6; cursor: not-allowed;">
-                    <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📍</span> Guides activés</label>
+                    <label><span style="font-size: 16px;">📍</span> Guides activés<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
                                value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
                         <label for="modal_canvas_guides_enabled"></label>
                     </div>
-                    <?php if (!$can_use_grid_navigation): ?>
-                    <span class="premium-badge">⭐ PREMIUM</span>
-                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille</label>
+                    <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
                                value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
                         <label for="modal_canvas_snap_to_grid"></label>
                     </div>
-                    <?php if (!$can_use_grid_navigation): ?>
-                    <span class="premium-badge">⭐ PREMIUM</span>
-                    <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%)</label>
@@ -478,8 +468,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier</label>
-                    <?php $can_use_keyboard_shortcuts = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('keyboard_shortcuts'); ?>
+                    <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier<?php if (!$can_use_keyboard_shortcuts): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <?php if ($can_use_keyboard_shortcuts): ?>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts"
@@ -492,7 +481,6 @@ function get_canvas_modal_value($key, $default = '') {
                                value="1" disabled>
                         <label for="modal_canvas_keyboard_shortcuts"></label>
                     </div>
-                    <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
