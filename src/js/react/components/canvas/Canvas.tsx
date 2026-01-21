@@ -1715,6 +1715,23 @@ export const Canvas = function Canvas({
 
     if (!canvasRef.current) return;
 
+    // 🚨 ADD DIRECT EVENT LISTENER AS BACKUP
+    const canvas = canvasRef.current;
+    const directMouseDown = (event: MouseEvent) => {
+      console.error('🔥 [DIRECT MOUSE] Canvas received direct mousedown at', event.clientX, event.clientY);
+      // Call the React handler
+      if (handleMouseDown) {
+        handleMouseDown(event as any);
+      }
+    };
+    
+    canvas.addEventListener('mousedown', directMouseDown);
+    
+    // Cleanup
+    return () => {
+      canvas.removeEventListener('mousedown', directMouseDown);
+    };
+
     const updateViewport = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -3742,6 +3759,8 @@ export const Canvas = function Canvas({
               ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)"
               : "none",
             display: "block",
+            pointerEvents: "auto",
+            zIndex: 1
           }}
         />
       </div>
