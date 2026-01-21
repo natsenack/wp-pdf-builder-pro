@@ -1006,7 +1006,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    if (notice && isDismissed) {
+    // TEMP: Ne pas cacher la notification si elle est visible (forcée côté serveur)
+    if (notice && isDismissed && notice.style.display !== 'block') {
         notice.style.display = 'none';
     }
 });
