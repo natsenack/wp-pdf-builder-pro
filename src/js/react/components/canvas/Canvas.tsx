@@ -33,18 +33,7 @@ import { debugWarn, debugError, debugLog } from "../../utils/debug";
 
 // 🚨 DEBUG: Log file loading
 console.error('🔥 [CANVAS FILE] Canvas.tsx loaded and executing');
-  console.error('🔥 [CANVAS FILE] Canvas component mounted - checking canvasSettings on every render');
 
-  // Debug hook to check settings from context on EVERY render
-  useEffect(() => {
-    if (canvasSettings) {
-      console.error('🔥 [CANVAS SETTINGS ON MOUNT]', {
-        selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
-        enable_rotation: canvasSettings?.enable_rotation,
-        allSettings: canvasSettings
-      });
-    }
-  }, [canvasSettings]);
 declare const performance: {
   memory?: {
     usedJSHeapSize: number;
@@ -1622,6 +1611,15 @@ export const Canvas = function Canvas({
 
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
+
+  // 🔥 DEBUG: Check rotation settings from context
+  useEffect(() => {
+    console.error('🔥 [CANVAS SETTINGS ON MOUNT]', {
+      selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
+      enable_rotation: canvasSettings?.enable_rotation,
+      hasCanvasSettings: !!canvasSettings
+    });
+  }, [canvasSettings]);
 
   debugLog("🎨 Canvas: Component initialized with props:", {
     width,
