@@ -2706,10 +2706,16 @@ export const Canvas = function Canvas({
       }
 
       // Poignées de rotation (conditionnées par les settings)
+      console.log('[CANVAS DEBUG] About to check rotation handles. canvasSettings exists:', !!canvasSettings);
+      console.log('[CANVAS DEBUG] selectionRotationEnabled value:', canvasSettings?.selectionRotationEnabled);
+      console.log('[CANVAS DEBUG] selectedElements count:', selectedElements.length);
+      console.log('[CANVAS DEBUG] selectedIds count:', selectedIds.length);
+
       if (canvasSettings?.selectionRotationEnabled) {
         console.log('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
         console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
         console.log('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
+        console.log('[DEBUG CANVAS] selectedElements:', selectedElements);
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
