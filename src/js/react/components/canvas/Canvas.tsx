@@ -31,6 +31,9 @@ import { wooCommerceManager } from "../../utils/WooCommerceElementsManager";
 import { elementChangeTracker } from "../../utils/ElementChangeTracker";
 import { debugWarn, debugError, debugLog } from "../../utils/debug";
 
+// 🚨 DEBUG: Log file loading
+console.error('🔥 [CANVAS FILE] Canvas.tsx loaded and executing');
+
 // Déclaration pour l'API Performance
 declare const performance: {
   memory?: {
@@ -1587,12 +1590,8 @@ export const Canvas = function Canvas({
   height,
   className,
 }: CanvasProps) {
-  // DEBUG: Log component initialization and data reception
-  console.log('🚀 [Canvas DEBUG] Component initialized, checking window data:', {
-    windowPdfBuilderData: window.pdfBuilderData,
-    license: window.pdfBuilderData?.license,
-    canvasSettings: window.pdfBuilderData?.canvasSettings
-  });
+  // 🚨 DEBUG: Log component initialization
+  console.error('🚀 [CANVAS COMPONENT] Canvas component function called with props:', { width, height, className });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -2612,11 +2611,11 @@ export const Canvas = function Canvas({
       selectedIds: string[],
       elements: Element[]
     ) => {
-      console.warn('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
+      console.error('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
       const selectedElements = elements.filter((el) =>
         selectedIds.includes(el.id)
       );
-      console.warn('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
+      console.error('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
       if (selectedElements.length === 0) {
         debugLog("[Canvas] Selection cleared - no elements selected");
         return;
@@ -3319,7 +3318,7 @@ export const Canvas = function Canvas({
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
-    console.warn('[CANVAS DEBUG] renderCanvas called - Elements:', state.elements.length, 'Selection:', state.selection.selectedElements.length);
+    console.error('[CANVAS DEBUG] renderCanvas called - Elements:', state.elements.length, 'Selection:', state.selection.selectedElements.length);
     const startTime = Date.now();
     renderCountRef.current += 1;
 
