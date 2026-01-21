@@ -68,6 +68,15 @@ function get_canvas_modal_value($key, $default = '') {
         }
     }
 
+    // Validation premium: forcer à '0' si l'utilisateur n'a pas accès aux fonctionnalités de grille
+    $premium_grid_keys = ['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'];
+    if (in_array($key, $premium_grid_keys)) {
+        if (!\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation')) {
+            $value = '0';
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[CANVAS MODAL] {$key}: FORCED_OFF for free user - KEY: {$option_key}"); }
+        }
+    }
+
     return $value;
 }
 ?>

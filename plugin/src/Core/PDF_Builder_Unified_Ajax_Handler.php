@@ -303,6 +303,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Log spécifique pour les toggles de grille
                     if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'])) {
                         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] GRID_TOGGLE_SAVE - {$setting_key}: {$value}"); }
+                        
+                        // Validation premium: forcer à '0' si l'utilisateur n'a pas accès à la fonctionnalité
+                        if (!\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation')) {
+                            $value = '0';
+                            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] GRID_TOGGLE_FORCED_OFF - {$setting_key}: utilisateur gratuit, forcé à 0"); }
+                        }
                     }
                     
                     // Log pour tous les toggles d'interactions
