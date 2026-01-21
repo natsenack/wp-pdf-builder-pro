@@ -629,7 +629,7 @@ class PdfBuilderProGenerator
 
         // Transformations
         $transforms = [];
-        if (isset($properties['rotation']) && $properties['rotation'] != 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '1') == '1') {
+        if (isset($properties['rotation']) && $properties['rotation'] != 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1') {
             $transforms[] = 'rotate(' . intval($properties['rotation']) . 'deg)';
         }
         if (isset($properties['scale']) && $properties['scale'] != 1) {

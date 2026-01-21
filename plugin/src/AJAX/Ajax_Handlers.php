@@ -843,7 +843,7 @@ function pdf_builder_reset_canvas_defaults_handler() {
             // Interaction
             'pdf_builder_canvas_drag_enabled' => '1',
             'pdf_builder_canvas_resize_enabled' => '1',
-            'pdf_builder_canvas_rotate_enabled' => '1',
+            'pdf_builder_canvas_rotate_enabled' => '0',
             'pdf_builder_canvas_multi_select' => '1',
             'pdf_builder_canvas_selection_mode' => 'single',
 

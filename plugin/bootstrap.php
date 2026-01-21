@@ -1648,7 +1648,7 @@ function pdf_builder_initialize_canvas_defaults() {
         // Interactions
         'pdf_builder_canvas_drag_enabled' => '1',
         'pdf_builder_canvas_resize_enabled' => '1',
-        'pdf_builder_canvas_rotate_enabled' => '1',
+        'pdf_builder_canvas_rotate_enabled' => '0',
         'pdf_builder_canvas_multi_select' => '1',
         'pdf_builder_canvas_keyboard_shortcuts' => '1',
         'pdf_builder_canvas_selection_mode' => 'bounding_box',

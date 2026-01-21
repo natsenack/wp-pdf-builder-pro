@@ -231,7 +231,7 @@ class PdfHtmlGenerator
             $shadowColor = $element['shadowColor'] ?? 'rgba(0,0,0,0.2)';
             $base_style .= ' box-shadow: ' . $offsetX . 'px ' . $offsetY . 'px 4px ' . $shadowColor . ';';
         }
-        if (isset($element['rotation']) && $element['rotation'] !== 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '1') == '1') {
+        if (isset($element['rotation']) && $element['rotation'] !== 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1') {
             $rotation = floatval($element['rotation']);
             $base_style .= ' transform: rotate(' . $rotation . 'deg);';
         }
