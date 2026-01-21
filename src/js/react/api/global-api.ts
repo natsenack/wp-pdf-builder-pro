@@ -146,6 +146,28 @@ export function updateCanvasDimensions(width: number, height: number) {
 }
 
 /**
+ * Met à jour les paramètres de rotation
+ */
+export function updateRotationSettings(enabled: boolean) {
+  try {
+    // Mettre à jour l'objet window global
+    if (!window.pdfBuilderCanvasSettings) {
+      window.pdfBuilderCanvasSettings = {};
+    }
+    window.pdfBuilderCanvasSettings.enable_rotation = enabled;
+
+    // Dispatcher un événement pour notifier le contexte React
+    const event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
+    window.dispatchEvent(event);
+
+    return true;
+  } catch (error) {
+    debugError('[Global API] Error updating rotation settings', error);
+    return false;
+  }
+}
+
+/**
  * Interface de l'API globale
  */
 export interface GlobalAPI {
@@ -158,6 +180,7 @@ export interface GlobalAPI {
   saveTemplate: typeof saveTemplate;
   resetAPI: typeof resetAPI;
   updateCanvasDimensions: typeof updateCanvasDimensions;
+  updateRotationSettings: typeof updateRotationSettings;
 }
 
 

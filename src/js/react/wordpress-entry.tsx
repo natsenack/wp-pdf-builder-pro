@@ -52,7 +52,9 @@ import {
   getCurrentTemplate,
   exportTemplate,
   saveTemplate,
-  resetAPI
+  resetAPI,
+  updateCanvasDimensions,
+  updateRotationSettings
 } from './api/global-api';
 
 
@@ -328,6 +330,8 @@ window.pdfBuilderReact = {
   saveTemplate,
   registerEditorInstance,
   resetAPI,
+  updateCanvasDimensions,
+  updateRotationSettings,
   _isWebpackBundle: true
 };
 

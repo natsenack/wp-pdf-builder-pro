@@ -109,6 +109,17 @@
                 $(this).hide();
             }
         });
+
+        // Handle rotation toggle real-time updates
+        $('#modal_canvas_rotate_enabled').on('change', function() {
+            var isEnabled = $(this).prop('checked');
+
+            // Update React context if available
+            if (window.pdfBuilderReact && window.pdfBuilderReact.updateRotationSettings) {
+                window.pdfBuilderReact.updateRotationSettings(isEnabled);
+            }
+        });
+
     });
 
     // Helper function to show notifications

@@ -107,6 +107,8 @@ export interface CanvasSettingsContextType {
       gridSnapEnabled: boolean;
     }>
   ) => Promise<void>;
+  updateRotationSettings: (enabled: boolean) => void;
+  saveRotationSettings: (enabled: boolean) => Promise<void>;
   refreshSettings: () => void;
 }
 
@@ -152,7 +154,7 @@ const DEFAULT_SETTINGS: Omit<
 
   selectionDragEnabled: true,
   selectionMultiSelectEnabled: true,
-  selectionRotationEnabled: true,
+  selectionRotationEnabled: false,
   selectionCopyPasteEnabled: true,
   selectionShowHandles: true,
   selectionHandleSize: 8,
@@ -563,6 +565,58 @@ export function CanvasSettingsProvider({
       } catch (error) {
         debugError(
           "Erreur lors de la sauvegarde des paramètres de grille:",
+          error
+        );
+      }
+    },
+    updateRotationSettings: (enabled: boolean) => {
+      setSettings((prev) => ({
+        ...prev,
+        selectionRotationEnabled: enabled,
+      }));
+    },
+    saveRotationSettings: async (enabled: boolean) => {
+      try {
+        // Préparer les données pour l'AJAX
+        const formData = new URLSearchParams();
+        formData.append("action", "pdf_builder_save_canvas_settings");
+        formData.append("nonce", window.pdfBuilderAjax?.nonce || "");
+        formData.append("canvas_rotate_enabled", enabled ? "1" : "0");
+
+        // Sauvegarder côté serveur
+        const response = await fetch(
+          window.pdfBuilderAjax?.ajax_url || "/wp-admin/admin-ajax.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            // Mettre à jour l'état local
+            setSettings((prev) => ({
+              ...prev,
+              selectionRotationEnabled: enabled,
+            }));
+          } else {
+            debugError(
+              "Erreur lors de la sauvegarde des paramètres de rotation:",
+              result.message
+            );
+          }
+        } else {
+          debugError(
+            "Erreur HTTP lors de la sauvegarde des paramètres de rotation"
+          );
+        }
+      } catch (error) {
+        debugError(
+          "Erreur lors de la sauvegarde des paramètres de rotation:",
           error
         );
       }
