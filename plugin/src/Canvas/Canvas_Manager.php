@@ -86,13 +86,16 @@ class Canvas_Manager
             'margin_bottom' => intval($settings['pdf_builder_canvas_margin_bottom'] ?? 10),
             'margin_left' => intval($settings['pdf_builder_canvas_margin_left'] ?? 10),
             'show_margins' => ($settings['pdf_builder_canvas_show_margins'] ?? '0') == '1',
-            'show_grid' => ($settings['pdf_builder_canvas_grid_enabled'] ?? (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? '1' : '0')) == '1',
+            'show_grid' => (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? 
+                (($settings['pdf_builder_canvas_grid_enabled'] ?? '1') == '1') : false),
             'grid_size' => intval($settings['pdf_builder_canvas_grid_size'] ?? 20),
             'grid_color' => $settings['pdf_builder_canvas_grid_color'] ?? '#e0e0e0',
-            'snap_to_grid' => ($settings['pdf_builder_canvas_snap_to_grid'] ?? (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? '1' : '0')) == '1',
+            'snap_to_grid' => (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? 
+                (($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') == '1') : false),
             'snap_to_elements' => ($settings['pdf_builder_canvas_snap_to_elements'] ?? '0') == '1',
             'snap_tolerance' => intval($settings['pdf_builder_canvas_snap_tolerance'] ?? 5),
-            'show_guides' => ($settings['pdf_builder_canvas_guides_enabled'] ?? (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? '1' : '0')) == '1',
+            'show_guides' => (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? 
+                (($settings['pdf_builder_canvas_guides_enabled'] ?? '1') == '1') : false),
             'default_zoom' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_default', 100)),
             'zoom_step' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_step', 25)),
             'min_zoom' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_min', 10)),
