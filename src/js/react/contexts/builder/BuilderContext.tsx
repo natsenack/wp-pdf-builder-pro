@@ -612,29 +612,41 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   useEffect(() => {
     if (!canvasSettings.isReady || gridInitializedRef.current) return;
 
-    const updates: Partial<CanvasState> = {};
+    const canvasUpdates: Partial<CanvasState> = {};
+    const templateUpdates: Partial<TemplateState> = {};
 
-    // Ne synchroniser que si c'est la première fois ou si les paramètres ont changé dans les settings
-    // mais pas si l'utilisateur a changé manuellement l'état
+    // Synchroniser gridSize toujours
     if (canvasSettings.gridSize !== state.canvas.gridSize) {
-      updates.gridSize = canvasSettings.gridSize;
+      canvasUpdates.gridSize = canvasSettings.gridSize;
     }
 
-    // Pour showGrid et snapToGrid, ne synchroniser que si l'état actuel correspond aux paramètres par défaut
-    // (c'est-à-dire au chargement initial)
-    if (state.canvas.showGrid === canvasSettings.gridShow && canvasSettings.gridShow !== state.canvas.showGrid) {
-      updates.showGrid = canvasSettings.gridShow;
+    // Synchroniser showGrid seulement si l'état actuel est la valeur par défaut (false)
+    if (state.canvas.showGrid === false && canvasSettings.gridShow !== false) {
+      canvasUpdates.showGrid = canvasSettings.gridShow;
     }
 
-    if (state.canvas.snapToGrid === canvasSettings.gridSnapEnabled && canvasSettings.gridSnapEnabled !== state.canvas.snapToGrid) {
-      updates.snapToGrid = canvasSettings.gridSnapEnabled;
+    // Synchroniser snapToGrid seulement si l'état actuel est la valeur par défaut (true)
+    if (state.canvas.snapToGrid === true && canvasSettings.gridSnapEnabled !== true) {
+      canvasUpdates.snapToGrid = canvasSettings.gridSnapEnabled;
     }
 
-    if (Object.keys(updates).length > 0) {
+    // Synchroniser showGuides seulement si l'état actuel est la valeur par défaut (true)
+    if (state.template.showGuides === true && canvasSettings.guidesEnabled !== true) {
+      templateUpdates.showGuides = canvasSettings.guidesEnabled;
+    }
+
+    if (Object.keys(canvasUpdates).length > 0) {
+      dispatch({ type: 'SET_CANVAS', payload: canvasUpdates });
+    }
+
+    if (Object.keys(templateUpdates).length > 0) {
+      dispatch({ type: 'SET_TEMPLATE', payload: templateUpdates });
+    }
+
+    if (Object.keys(canvasUpdates).length > 0 || Object.keys(templateUpdates).length > 0) {
       gridInitializedRef.current = true;
-      dispatch({ type: 'SET_CANVAS', payload: updates });
     }
-  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled, canvasSettings.isReady, state.canvas.gridSize, state.canvas.showGrid, state.canvas.snapToGrid]);
+  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled, canvasSettings.guidesEnabled, canvasSettings.isReady, state.canvas.gridSize, state.canvas.showGrid, state.canvas.snapToGrid, state.template.showGuides]);
 
   // ✅ DISABLED: Template loading is now EXCLUSIVELY handled by useTemplate hook
   // which reads template_id from URL/localized data and calls AJAX GET
