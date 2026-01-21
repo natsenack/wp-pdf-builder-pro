@@ -46,10 +46,12 @@ $canvas_defaults = [
 
 // Ajuster les valeurs par défaut pour les utilisateurs gratuits (features premium)
 $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation');
+if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[MODAL DEBUG] canUseFeature('grid_navigation'): " . ($can_use_grid_navigation ? 'TRUE' : 'FALSE')); }
 if (!$can_use_grid_navigation) {
     $canvas_defaults['grid_enabled'] = '0';
     $canvas_defaults['guides_enabled'] = '0';
     $canvas_defaults['snap_to_grid'] = '0';
+    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[MODAL DEBUG] Defaults adjusted for free user"); }
 }
 
 // Fonction helper pour récupérer une valeur canvas
