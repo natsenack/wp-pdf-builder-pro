@@ -2713,20 +2713,16 @@ export const Canvas = function Canvas({
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
-        // Vérifier si au moins un élément a une rotation proche de 0°
-        // Utiliser la même logique de normalisation que dans useCanvasInteraction.ts
-        const hasZeroRotation = selectedElements.some((el) => {
-          const rotation = (el as any).rotation || 0;
-          // Normaliser l'angle entre -180° et 180° (même logique que le snap)
-          let normalizedRotation = rotation % 360;
-          if (normalizedRotation > 180) normalizedRotation -= 360;
-          if (normalizedRotation < -180) normalizedRotation += 360;
-          // Utiliser la tolérance pour 0° (10°) pour cohérence avec le snap ultra simple
-          return Math.abs(normalizedRotation - 0) <= 10;
-        });
+        // Les poignées de rotation s'affichent toujours quand activées, indépendamment de la rotation actuelle
+        // Calculer la couleur basée sur la rotation moyenne ou utiliser une couleur fixe
+        const avgRotation = selectedElements.reduce((sum, el) => sum + ((el as any).rotation || 0), 0) / selectedElements.length;
+        let normalizedRotation = avgRotation % 360;
+        if (normalizedRotation > 180) normalizedRotation -= 360;
+        if (normalizedRotation < -180) normalizedRotation += 360;
+        const hasZeroRotation = Math.abs(normalizedRotation - 0) <= 10;
 
-        // Couleur différente pour indiquer le snap à 0°
-        const handleColor = hasZeroRotation ? "#00cc44" : "#007acc";
+        // Couleur verte pour indiquer la rotation activée
+        const handleColor = "#00cc44"; // Toujours vert pour indiquer que la rotation est disponible
         ctx.fillStyle = handleColor;
         ctx.strokeStyle = handleColor;
         ctx.lineWidth = 2;
