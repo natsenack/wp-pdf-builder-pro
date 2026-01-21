@@ -141,8 +141,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 
         <!-- Message limitation freemium - AU-DESSUS de Templates Disponibles -->
         <?php
-        $show_notice = (!$is_premium && $templates_count >= 1 && !$notice_dismissed);
-        echo "<!-- DEBUG: show_notice condition: (!$is_premium && $templates_count >= 1 && !$notice_dismissed) = " . ($show_notice ? 'true' : 'false') . " -->";
+        // TEMP: Forcer l'affichage pour test (ignorer le cookie)
+        $show_notice = (!$is_premium && $templates_count >= 1); // && !$notice_dismissed
+        echo "<!-- DEBUG: show_notice condition: (!$is_premium && $templates_count >= 1) = " . ($show_notice ? 'true' : 'false') . " (cookie ignored for test) -->";
         if ($show_notice):
         ?>
             <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 0 0 20px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
