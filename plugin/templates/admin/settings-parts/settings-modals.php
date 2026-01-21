@@ -102,7 +102,7 @@ function get_canvas_modal_value($key, $default = '') {
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group" style="grid-column: span 2;">
-                    <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas</label>
+                    <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas <span class="info-tooltip" title="Définit la taille par défaut du canvas en pixels">ℹ️</span></label>
                     <div class="dimensions-display-compact">
                         <div class="dimensions-value">
                             <?php echo esc_html(get_canvas_modal_value('width', $canvas_defaults['width'])); ?> × <?php echo esc_html(get_canvas_modal_value('height', $canvas_defaults['height'])); ?> px
@@ -113,7 +113,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔍</span> Résolutions DPI</label>
+                    <label><span style="font-size: 16px;">🔍</span> Résolutions DPI <span class="info-tooltip" title="Résolutions disponibles pour l'export des PDF">ℹ️</span></label>
                     <div style="display: flex; flex-direction: column; margin-top: 8px;">
                         <?php
                         $current_dpi_string = get_canvas_modal_value('canvas_dpi', $canvas_defaults['dpi']);
@@ -163,7 +163,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📄</span> Formats de Document Disponibles</label>
+                    <label><span style="font-size: 16px;">📄</span> Formats de Document Disponibles <span class="info-tooltip" title="Formats de papier supportés pour les templates">ℹ️</span></label>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
                         <?php
                         // Récupérer les formats actuellement sélectionnés
@@ -216,7 +216,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles</label>
+                    <label><span style="font-size: 16px;">🔄</span> Orientations Disponibles <span class="info-tooltip" title="Orientations portrait/paysage autorisées">ℹ️</span></label>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
                         <?php
                         // Récupérer les orientations actuellement sélectionnées
@@ -309,7 +309,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond du Conteneur <span class="premium-badge">⭐ PREMIUM</span></label>
+                    <label><span style="font-size: 16px;">🎨</span> Couleur de Fond du Conteneur <span class="premium-badge">⭐ PREMIUM</span> <span class="info-tooltip" title="Couleur d'arrière-plan du conteneur canvas">ℹ️</span></label>
                     <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <input type="color" id="modal_canvas_container_bg_color" name="pdf_builder_canvas_container_bg_color"
@@ -348,7 +348,7 @@ function get_canvas_modal_value($key, $default = '') {
             <div class="modal-settings-grid">
                 <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📐</span> Grille activée<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
+                    <label><span style="font-size: 16px;">📐</span> Grille activée<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?> <span class="info-tooltip" title="Affiche une grille d'aide à l'alignement">ℹ️</span></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
                                value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
@@ -356,7 +356,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📏</span> Taille grille (px)<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
+                    <label><span style="font-size: 16px;">📏</span> Taille grille (px)<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?> <span class="info-tooltip" title="Espacement entre les lignes de la grille">ℹ️</span></label>
                     <?php if ($can_use_grid_navigation): ?>
                     <input type="number" id="modal_canvas_grid_size" name="pdf_builder_canvas_grid_size"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_grid_size', $canvas_defaults['grid_size'])); ?>">
@@ -367,7 +367,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📍</span> Guides activés<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
+                    <label><span style="font-size: 16px;">📍</span> Guides activés<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?> <span class="info-tooltip" title="Affiche des guides d'alignement magnétiques">ℹ️</span></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
                                value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
@@ -375,7 +375,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
+                    <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?> <span class="info-tooltip" title="Les éléments s'alignent automatiquement sur la grille">ℹ️</span></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
                                value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
@@ -383,22 +383,22 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%)</label>
+                    <label><span style="font-size: 16px;">🔍</span> Zoom minimum (%) <span class="info-tooltip" title="Niveau de zoom minimum autorisé">ℹ️</span></label>
                     <input type="number" id="modal_canvas_zoom_min" name="pdf_builder_canvas_zoom_min"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_min', $canvas_defaults['zoom_min'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_max">Zoom maximum (%)</label>
+                    <label for="modal_canvas_zoom_max">Zoom maximum (%) <span class="info-tooltip" title="Niveau de zoom maximum autorisé">ℹ️</span></label>
                     <input type="number" id="modal_canvas_zoom_max" name="pdf_builder_canvas_zoom_max"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_max', $canvas_defaults['zoom_max'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_default">Zoom par défaut (%)</label>
+                    <label for="modal_canvas_zoom_default">Zoom par défaut (%) <span class="info-tooltip" title="Niveau de zoom au chargement du canvas">ℹ️</span></label>
                     <input type="number" id="modal_canvas_zoom_default" name="pdf_builder_canvas_zoom_default"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_default', $canvas_defaults['zoom_default'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label for="modal_canvas_zoom_step">Pas de zoom (%)</label>
+                    <label for="modal_canvas_zoom_step">Pas de zoom (%) <span class="info-tooltip" title="Incrément de zoom lors des contrôles">ℹ️</span></label>
                     <input type="number" id="modal_canvas_zoom_step" name="pdf_builder_canvas_zoom_step"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_zoom_step', $canvas_defaults['zoom_step'])); ?>">
                 </div>
@@ -421,7 +421,7 @@ function get_canvas_modal_value($key, $default = '') {
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">✋</span> Glisser activé</label>
+                    <label><span style="font-size: 16px;">✋</span> Glisser activé <span class="info-tooltip" title="Permet de déplacer les éléments sur le canvas">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_drag_enabled', $canvas_defaults['drag_enabled']), '1'); ?>>
@@ -429,7 +429,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📐</span> Redimensionnement activé</label>
+                    <label><span style="font-size: 16px;">📐</span> Redimensionnement activé <span class="info-tooltip" title="Permet de redimensionner les éléments">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_resize_enabled', $canvas_defaults['resize_enabled']), '1'); ?>>
@@ -437,7 +437,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🔄</span> Rotation activée</label>
+                    <label><span style="font-size: 16px;">🔄</span> Rotation activée <span class="info-tooltip" title="Permet de faire pivoter les éléments">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_rotate_enabled', $canvas_defaults['rotate_enabled']), '1'); ?>>
@@ -445,7 +445,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">☑️</span> Sélection multiple</label>
+                    <label><span style="font-size: 16px;">☑️</span> Sélection multiple <span class="info-tooltip" title="Permet de sélectionner plusieurs éléments simultanément">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_multi_select" name="pdf_builder_canvas_multi_select"
                                value="1" <?php checked(get_canvas_modal_value('canvas_multi_select', $canvas_defaults['multi_select']), '1'); ?>>
@@ -453,7 +453,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🎯</span> Mode de sélection</label>
+                    <label><span style="font-size: 16px;">🎯</span> Mode de sélection <span class="info-tooltip" title="Comportement de la sélection (simple ou rectangle)">ℹ️</span></label>
                     <?php $can_use_advanced_selection = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('advanced_selection'); ?>
                     <select id="modal_canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
                         <option value="single" <?php selected(get_canvas_modal_value('canvas_selection_mode', $canvas_defaults['selection_mode']), 'single'); ?>>Simple</option>
@@ -532,22 +532,22 @@ function get_canvas_modal_value($key, $default = '') {
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🎮</span> FPS cible</label>
+                    <label><span style="font-size: 16px;">🎮</span> FPS cible <span class="info-tooltip" title="Images par seconde visées pour les animations">ℹ️</span></label>
                     <input type="number" id="modal_canvas_fps_target" name="pdf_builder_canvas_fps_target"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_fps_target', $canvas_defaults['fps_target'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🧠</span> Limite mémoire JS (MB)</label>
+                    <label><span style="font-size: 16px;">🧠</span> Limite mémoire JS (MB) <span class="info-tooltip" title="Limite de mémoire pour le JavaScript du canvas">ℹ️</span></label>
                     <input type="number" id="modal_canvas_memory_limit_js" name="pdf_builder_canvas_memory_limit_js"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_memory_limit_js', $canvas_defaults['memory_limit_js'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">⏱️</span> Timeout réponse (ms)</label>
+                    <label><span style="font-size: 16px;">⏱️</span> Timeout réponse (ms) <span class="info-tooltip" title="Délai maximum pour les réponses des opérations">ℹ️</span></label>
                     <input type="number" id="modal_canvas_response_timeout" name="pdf_builder_canvas_response_timeout"
                            value="<?php echo esc_attr(get_canvas_modal_value('canvas_response_timeout', $canvas_defaults['response_timeout'])); ?>">
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🐛</span> Debug activé</label>
+                    <label><span style="font-size: 16px;">🐛</span> Debug activé <span class="info-tooltip" title="Active les logs de débogage dans la console">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_debug_enabled', $canvas_defaults['debug_enabled']), '1'); ?>>
@@ -555,7 +555,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">📊</span> Monitoring performance</label>
+                    <label><span style="font-size: 16px;">📊</span> Monitoring performance <span class="info-tooltip" title="Surveille les performances du canvas">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_performance_monitoring" name="pdf_builder_canvas_performance_monitoring"
                                value="1" <?php checked(get_canvas_modal_value('canvas_performance_monitoring', $canvas_defaults['performance_monitoring']), '1'); ?>>
@@ -563,7 +563,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label><span style="font-size: 16px;">🚨</span> Rapport d'erreurs</label>
+                    <label><span style="font-size: 16px;">🚨</span> Rapport d'erreurs <span class="info-tooltip" title="Rapporte les erreurs à l'équipe de développement">ℹ️</span></label>
                     <div class="toggle-switch">
                         <input type="checkbox" id="modal_canvas_error_reporting" name="pdf_builder_canvas_error_reporting"
                                value="1" <?php checked(get_canvas_modal_value('canvas_error_reporting', $canvas_defaults['error_reporting']), '1'); ?>>

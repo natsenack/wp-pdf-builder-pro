@@ -269,4 +269,17 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
   display: none !important;
 }
 
+/* Info Tooltips for Canvas Settings */
+.info-tooltip {
+  cursor: help;
+  color: #6c757d;
+  font-size: 14px;
+  margin-left: 8px;
+  transition: color 0.2s ease;
+}
+
+.info-tooltip:hover {
+  color: #007cba;
+}
+
 
