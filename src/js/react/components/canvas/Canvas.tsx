@@ -2621,6 +2621,8 @@ export const Canvas = function Canvas({
         return;
       }
 
+      console.error('[CANVAS DEBUG] Drawing selection for', selectedElements.length, 'elements - checking rotation handles');
+
       debugLog(
         `[Canvas] Drawing selection for ${selectedElements.length} element(s):`,
         selectedIds
@@ -3320,7 +3322,6 @@ export const Canvas = function Canvas({
   const renderCanvas = useCallback(() => {
     console.error('[CANVAS DEBUG] renderCanvas called - Elements:', state.elements.length, 'Selection:', state.selection.selectedElements.length);
     const startTime = Date.now();
-    renderCountRef.current += 1;
 
     debugLog(
       `🎨 Canvas: Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Selection: ${state.selection.selectedElements.length} items`
@@ -3478,6 +3479,7 @@ export const Canvas = function Canvas({
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
+      console.error('[CANVAS DEBUG] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
