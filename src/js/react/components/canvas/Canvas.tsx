@@ -2650,7 +2650,7 @@ export const Canvas = function Canvas({
       // Poignées de redimensionnement (conditionnées par les settings)
       if (canvasSettings?.selectionShowHandles) {
         const handleSize = 6;
-        ctx.fillStyle = "#007acc";
+        ctx.fillStyle = "#ff0000"; // DEBUG: Red handles to see if this code runs
         ctx.setLineDash([]);
 
         // Coins
@@ -2731,7 +2731,7 @@ export const Canvas = function Canvas({
         const hasZeroRotation = Math.abs(normalizedRotation - 0) <= 10;
 
         // Couleur verte pour indiquer la rotation activée
-        const handleColor = "#00cc44"; // Toujours vert pour indiquer que la rotation est disponible
+        const handleColor = "#ff00ff"; // DEBUG: Magenta handles to see if rotation code runs
         ctx.fillStyle = handleColor;
         ctx.strokeStyle = handleColor;
         ctx.lineWidth = 2;
@@ -3480,6 +3480,9 @@ export const Canvas = function Canvas({
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
       console.error('[CANVAS DEBUG] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
+      // DEBUG: Change canvas background to red when elements are selected
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, width, height);
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
