@@ -45,8 +45,6 @@ class ReactAssetsV2
      */
     public function enqueueReactAssets($hook)
     {
-        error_log('[REACT-ASSETS] enqueueReactAssets called with hook: ' . $hook);
-
         // Charger seulement sur les pages du plugin
         $allowed_hooks = [
             'toplevel_page_pdf-builder-react-editor',
@@ -55,11 +53,8 @@ class ReactAssetsV2
         ];
 
         if (!in_array($hook, $allowed_hooks)) {
-            error_log('[REACT-ASSETS] Hook not allowed: ' . $hook);
             return;
         }
-
-        error_log('[REACT-ASSETS] Loading React assets for hook: ' . $hook);
 
         // Définir les chemins des assets
         $assets_url = PDF_BUILDER_PRO_ASSETS_URL;
@@ -178,5 +173,4 @@ class ReactAssetsV2
 }
 
 // Initialiser la classe
-error_log('[REACT-ASSETS] ReactAssetsV2.php loaded and initializing...');
 ReactAssetsV2::getInstance();
