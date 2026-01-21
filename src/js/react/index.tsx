@@ -8,6 +8,9 @@
  * - Properties panel for element editing
  */
 
+// 🚨 DEBUG: Log bundle loading - BASIC
+console.error('🔥 [BUNDLE BASIC] pdf-builder-react.min.js START OF FILE EXECUTING');
+
 // 🚨 DEBUG: Log bundle loading
 console.error('🔥 [REACT BUNDLE] pdf-builder-react.min.js bundle loaded and executing');
 
