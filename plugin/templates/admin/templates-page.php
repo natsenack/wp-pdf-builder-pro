@@ -169,7 +169,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('gallery'); if(document.getElementById('template-limit-notice')) showTemplateLimitNotice();"
+                        onclick="showUpgradeModal('gallery'); <?php if (!$is_premium): ?>showTemplateLimitNotice();<?php endif; ?>"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
@@ -177,7 +177,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
             <?php endif; ?>
 
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;"
-                    onclick="<?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); if(document.getElementById('template-limit-notice')) showTemplateLimitNotice();<?php endif; ?>">
+                    onclick="<?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
