@@ -169,14 +169,15 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('gallery'); showTemplateLimitNotice();"
+                        onclick="console.log('upgrade-required-btn clicked'); showUpgradeModal('gallery'); showTemplateLimitNotice();"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
                 </button>
             <?php endif; ?>
 
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;">
+            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;"
+                    onclick="console.log('open-template-gallery clicked'); <?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
@@ -970,11 +971,16 @@ function dismissTemplateLimitNotice() {
 }
 
 function showTemplateLimitNotice() {
+    console.log('showTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
+    console.log('notice element:', notice);
     if (notice) {
         notice.style.display = 'block';
         // Supprimer le cookie de fermeture
         document.cookie = 'pdf_builder_template_limit_notice_dismissed=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        console.log('notification shown');
+    } else {
+        console.log('notice element not found');
     }
 }
 
@@ -995,20 +1001,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (notice && isDismissed) {
         notice.style.display = 'none';
     }
-});
-
-// Gestionnaire pour bouton galerie de modèles (uniquement premium)
-document.getElementById('open-template-gallery')?.addEventListener('click', function(e) {
-    e.preventDefault();
-    <?php if ($is_premium): ?>
-        // Ouvrir la galerie pour utilisateurs premium
-        document.getElementById('template-gallery-modal').style.display = 'flex';
-    <?php else: ?>
-        // Montrer modal upgrade pour utilisateurs gratuits
-        showUpgradeModal('gallery');
-        // Réafficher la notification de limite
-        showTemplateLimitNotice();
-    <?php endif; ?>
 });
 
 function duplicateTemplate(templateId, templateName) {
