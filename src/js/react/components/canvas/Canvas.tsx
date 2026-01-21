@@ -2707,6 +2707,7 @@ export const Canvas = function Canvas({
 
       // Poignées de rotation (conditionnées par les settings)
       if (canvasSettings?.selectionRotationEnabled) {
+        console.log('[DEBUG] Canvas - Drawing rotation handles, selectionRotationEnabled:', canvasSettings?.selectionRotationEnabled);
         const rotationHandleSize = 8;
         const rotationHandleDistance = 20;
 
