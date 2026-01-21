@@ -2208,6 +2208,14 @@ input:checked + .toggle-slider:before {
     pointer-events: none;
 }
 
+.toggle-switch.disabled .toggle-slider {
+    background-color: #6c757d !important; /* Gris pour les fonctionnalités désactivées */
+}
+
+.toggle-switch.disabled input + .toggle-slider:before {
+    background-color: #adb5bd; /* Gris plus clair pour le bouton */
+}
+
 /* Animation au survol */
 .toggle-slider:hover {
     box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);

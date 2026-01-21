@@ -368,18 +368,12 @@ function get_canvas_modal_value($key, $default = '') {
                 <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📐</span> Grille activée</label>
-                    <?php if ($can_use_grid_navigation): ?>
-                    <div class="toggle-switch">
+                    <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
+                               value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']), '1'); ?>>
                         <label for="modal_canvas_grid_enabled"></label>
                     </div>
-                    <?php else: ?>
-                    <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
-                        <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
-                               value="1" disabled <?php checked('0', '1'); ?>>
-                        <label for="modal_canvas_grid_enabled"></label>
-                    </div>
+                    <?php if (!$can_use_grid_navigation): ?>
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
                     <!-- DEBUG GRID: can_use_grid_navigation = <?php echo $can_use_grid_navigation ? 'TRUE' : 'FALSE'; ?>, default = <?php echo $canvas_defaults['grid_enabled']; ?>, value = <?php echo get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']); ?> -->
@@ -398,35 +392,23 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📍</span> Guides activés</label>
-                    <?php if ($can_use_grid_navigation): ?>
-                    <div class="toggle-switch">
+                    <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
-                               value="1" <?php checked(get_canvas_modal_value('canvas_guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
+                               value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_guides_enabled', $canvas_defaults['guides_enabled']), '1'); ?>>
                         <label for="modal_canvas_guides_enabled"></label>
                     </div>
-                    <?php else: ?>
-                    <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
-                        <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
-                               value="1" disabled <?php checked('0', '1'); ?>>
-                        <label for="modal_canvas_guides_enabled"></label>
-                    </div>
+                    <?php if (!$can_use_grid_navigation): ?>
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🧲</span> Accrochage à la grille</label>
-                    <?php if ($can_use_grid_navigation): ?>
-                    <div class="toggle-switch">
+                    <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
-                               value="1" <?php checked(get_canvas_modal_value('canvas_snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
+                               value="1"<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?> <?php checked(get_canvas_modal_value('canvas_snap_to_grid', $canvas_defaults['snap_to_grid']), '1'); ?>>
                         <label for="modal_canvas_snap_to_grid"></label>
                     </div>
-                    <?php else: ?>
-                    <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
-                        <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
-                               value="1" disabled <?php checked('0', '1'); ?>>
-                        <label for="modal_canvas_snap_to_grid"></label>
-                    </div>
+                    <?php if (!$can_use_grid_navigation): ?>
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
                 </div>
