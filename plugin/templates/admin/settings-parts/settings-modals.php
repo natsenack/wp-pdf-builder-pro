@@ -422,7 +422,6 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">✋</span> Glisser activé</label>
                     <div class="toggle-switch">
-                        <input type="hidden" name="pdf_builder_canvas_drag_enabled" value="0">
                         <input type="checkbox" id="modal_canvas_drag_enabled" name="pdf_builder_canvas_drag_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_drag_enabled', $canvas_defaults['drag_enabled']), '1'); ?>>
                         <label for="modal_canvas_drag_enabled"></label>
@@ -431,7 +430,6 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📐</span> Redimensionnement activé</label>
                     <div class="toggle-switch">
-                        <input type="hidden" name="pdf_builder_canvas_resize_enabled" value="0">
                         <input type="checkbox" id="modal_canvas_resize_enabled" name="pdf_builder_canvas_resize_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_resize_enabled', $canvas_defaults['resize_enabled']), '1'); ?>>
                         <label for="modal_canvas_resize_enabled"></label>
@@ -440,7 +438,6 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🔄</span> Rotation activée</label>
                     <div class="toggle-switch">
-                        <input type="hidden" name="pdf_builder_canvas_rotate_enabled" value="0">
                         <input type="checkbox" id="modal_canvas_rotate_enabled" name="pdf_builder_canvas_rotate_enabled"
                                value="1" <?php checked(get_canvas_modal_value('canvas_rotate_enabled', $canvas_defaults['rotate_enabled']), '1'); ?>>
                         <label for="modal_canvas_rotate_enabled"></label>
@@ -449,7 +446,6 @@ function get_canvas_modal_value($key, $default = '') {
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">☑️</span> Sélection multiple</label>
                     <div class="toggle-switch">
-                        <input type="hidden" name="pdf_builder_canvas_multi_select" value="0">
                         <input type="checkbox" id="modal_canvas_multi_select" name="pdf_builder_canvas_multi_select"
                                value="1" <?php checked(get_canvas_modal_value('canvas_multi_select', $canvas_defaults['multi_select']), '1'); ?>>
                         <label for="modal_canvas_multi_select"></label>
@@ -475,7 +471,6 @@ function get_canvas_modal_value($key, $default = '') {
                     <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier<?php if (!$can_use_keyboard_shortcuts): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <?php if ($can_use_keyboard_shortcuts): ?>
                     <div class="toggle-switch">
-                        <input type="hidden" name="pdf_builder_canvas_keyboard_shortcuts" value="0">
                         <input type="checkbox" id="modal_canvas_keyboard_shortcuts" name="pdf_builder_canvas_keyboard_shortcuts"
                                value="1" <?php checked(get_canvas_modal_value('canvas_keyboard_shortcuts', $canvas_defaults['keyboard_shortcuts']), '1'); ?>>
                         <label for="modal_canvas_keyboard_shortcuts"></label>
