@@ -2769,11 +2769,12 @@ export const Canvas = function Canvas({
       }
 
       // Poignées de rotation (conditionnées par les settings)
-      console.warn('[CANVAS DEBUG] About to check rotation handles. canvasSettings exists:', !!canvasSettings);
-      console.warn('[CANVAS DEBUG] selectionRotationEnabled value:', canvasSettings?.selectionRotationEnabled);
-      console.warn('[CANVAS DEBUG] enable_rotation value:', canvasSettings?.enable_rotation);
-      console.warn('[CANVAS DEBUG] selectedElements count:', selectedElements.length);
-      console.warn('[CANVAS DEBUG] selectedIds count:', selectedIds.length);
+      console.error('❌❌❌ [DRAW SELECTION CALLED] ❌❌❌');
+      console.error('🔥 canvasSettings exists:', !!canvasSettings);
+      console.error('🔥 selectionRotationEnabled:', canvasSettings?.selectionRotationEnabled);
+      console.error('🔥 enable_rotation:', canvasSettings?.enable_rotation);
+      console.error('🔥 selectedElements:', selectedElements.length);
+      console.error('🔥 selectedIds:', selectedIds.length);
 
       // Debug log that won't be removed by webpack
       const rotationDebug = {
