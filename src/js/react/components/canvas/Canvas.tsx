@@ -3395,6 +3395,8 @@ export const Canvas = function Canvas({
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
+    console.error('🔥🔥🔥 [RENDER CANVAS CALLED] RENDER STARTS 🔥🔥🔥');
+    
     // Debug log that won't be removed by webpack
     const debugInfo = {
       elements: state.elements.length,
