@@ -105,7 +105,7 @@ class Canvas_Manager
             'show_resize_handles' => pdf_builder_get_option('pdf_builder_canvas_show_resize_handles', '1') == '1',
             'handle_size' => intval(pdf_builder_get_option('pdf_builder_canvas_handle_size', 8)),
             'handle_color' => pdf_builder_get_option('pdf_builder_canvas_handle_color', '#007cba'),
-            'enable_rotation' => pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '1') == '1',
+            'enable_rotation' => pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1',
             'rotation_step' => intval(pdf_builder_get_option('pdf_builder_canvas_rotation_step', 15)),
             'multi_select' => pdf_builder_get_option('pdf_builder_canvas_multi_select', '1') == '1',
             'copy_paste_enabled' => pdf_builder_get_option('pdf_builder_canvas_copy_paste_enabled', '1') == '1',
