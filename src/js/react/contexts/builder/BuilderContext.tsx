@@ -620,18 +620,24 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       canvasUpdates.gridSize = canvasSettings.gridSize;
     }
 
-    // Synchroniser showGrid seulement si l'état actuel est la valeur par défaut (false)
-    if (state.canvas.showGrid === false && canvasSettings.gridShow !== false) {
+    // Synchroniser showGrid : forcer à false si la fonctionnalité n'est pas disponible
+    if (!canvasSettings.gridShow) {
+      canvasUpdates.showGrid = false;
+    } else if (state.canvas.showGrid === false && canvasSettings.gridShow !== false) {
       canvasUpdates.showGrid = canvasSettings.gridShow;
     }
 
-    // Synchroniser snapToGrid seulement si l'état actuel est la valeur par défaut (true)
-    if (state.canvas.snapToGrid === true && canvasSettings.gridSnapEnabled !== true) {
+    // Synchroniser snapToGrid : forcer à false si la fonctionnalité n'est pas disponible
+    if (!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) {
+      canvasUpdates.snapToGrid = false;
+    } else if (state.canvas.snapToGrid === true && canvasSettings.gridSnapEnabled !== true) {
       canvasUpdates.snapToGrid = canvasSettings.gridSnapEnabled;
     }
 
-    // Synchroniser showGuides seulement si l'état actuel est la valeur par défaut (true)
-    if (state.template.showGuides === true && canvasSettings.guidesEnabled !== true) {
+    // Synchroniser showGuides : forcer à false si la fonctionnalité n'est pas disponible
+    if (!canvasSettings.guidesEnabled) {
+      templateUpdates.showGuides = false;
+    } else if (state.template.showGuides === true && canvasSettings.guidesEnabled !== true) {
       templateUpdates.showGuides = canvasSettings.guidesEnabled;
     }
 
