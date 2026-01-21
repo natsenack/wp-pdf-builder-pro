@@ -36,8 +36,11 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdminNew::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
 
+// TEMP: Forcer l'affichage pour test (ignorer le cookie)
+$force_show_notice = true; // Variable pour indiquer que la notification est forcée
+
 // DEBUG: Afficher les valeurs pour le débogage
-echo "<!-- DEBUG NOTIFICATION: is_premium=" . ($is_premium ? 'true' : 'false') . ", templates_count=$templates_count, notice_dismissed=" . ($notice_dismissed ? 'true' : 'false') . " -->";
+echo "<!-- DEBUG NOTIFICATION: is_premium=" . ($is_premium ? 'true' : 'false') . ", templates_count=$templates_count, notice_dismissed=" . ($notice_dismissed ? 'true' : 'false') . ", force_show_notice=" . ($force_show_notice ? 'true' : 'false') . " -->";
 
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
@@ -141,9 +144,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 
         <!-- Message limitation freemium - AU-DESSUS de Templates Disponibles -->
         <?php
-        // TEMP: Forcer l'affichage pour test (ignorer le cookie)
-        $show_notice = (!$is_premium && $templates_count >= 1); // && !$notice_dismissed
-        echo "<!-- DEBUG: show_notice condition: (!$is_premium && $templates_count >= 1) = " . ($show_notice ? 'true' : 'false') . " (cookie ignored for test) -->";
+        // TEMP: Forcer l'affichage pour test
+        $show_notice = (!$is_premium && $templates_count >= 1) || $force_show_notice;
+        echo "<!-- DEBUG: show_notice condition: " . ($show_notice ? 'true' : 'false') . " -->";
         if ($show_notice):
         ?>
             <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 0 0 20px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
@@ -993,6 +996,7 @@ function showTemplateLimitNotice() {
 }
 
 // Vérifier au chargement de la page si la notification doit être affichée
+<?php if (!$force_show_notice): ?>
 document.addEventListener('DOMContentLoaded', function() {
     const notice = document.getElementById('template-limit-notice');
     const cookies = document.cookie.split(';');
@@ -1011,6 +1015,7 @@ document.addEventListener('DOMContentLoaded', function() {
         notice.style.display = 'none';
     }
 });
+<?php endif; ?>
 
 function duplicateTemplate(templateId, templateName) {
     if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
