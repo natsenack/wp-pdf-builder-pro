@@ -2490,11 +2490,12 @@ export const Canvas = function Canvas({
     []
   ); // No deps - pure function
 
-  // ✅ BUGFIX-001/004: Memoize drawElement but pass canvasSettings as parameter to avoid dependency cycle
+  // ✅ BUGFIX-001/004: Memoize drawElement but pass state and canvasSettings as parameters to avoid dependency cycle
   const drawElement = useCallback(
     (
       ctx: CanvasRenderingContext2D,
       element: Element,
+      currentState: BuilderState,
       canvasSettings: any
     ) => {
       // Vérifier si l'élément est visible
@@ -3408,7 +3409,7 @@ export const Canvas = function Canvas({
       debugLog(
         `[Canvas] Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`
       );
-      drawElement(ctx, element, canvasSettings); // ✅ BUGFIX-001/004: Pass canvasSettings as parameter
+      drawElement(ctx, element, state, canvasSettings); // ✅ BUGFIX-001/004: Pass state and canvasSettings as parameters
     });
 
     // Dessiner la sélection temporaire (rectangle/lasso en cours)
