@@ -36,12 +36,6 @@ $user_can_create = \PDF_Builder\Admin\PdfBuilderAdminNew::can_create_template();
 $templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
 $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
 
-// TEMP: Forcer l'affichage pour test (ignorer le cookie)
-$force_show_notice = true; // Variable pour indiquer que la notification est forcée
-
-// DEBUG: Afficher les valeurs pour le débogage
-echo "<!-- DEBUG NOTIFICATION: is_premium=" . ($is_premium ? 'true' : 'false') . ", templates_count=$templates_count, notice_dismissed=" . ($notice_dismissed ? 'true' : 'false') . ", force_show_notice=" . ($force_show_notice ? 'true' : 'false') . " -->";
-
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
@@ -143,12 +137,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     <div style="background: #fff; padding: 20px; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
         <!-- Message limitation freemium - AU-DESSUS de Templates Disponibles -->
-        <?php
-        // TEMP: Forcer l'affichage pour test
-        $show_notice = (!$is_premium && $templates_count >= 1) || $force_show_notice;
-        echo "<!-- DEBUG: show_notice condition: " . ($show_notice ? 'true' : 'false') . " -->";
-        if ($show_notice):
-        ?>
+        <?php if (!$is_premium && $templates_count >= 1 && !$notice_dismissed): ?>
             <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 0 0 20px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative;">
                 <button type="button" class="pdf-builder-notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
                     <span class="dashicons dashicons-dismiss"></span>
@@ -180,7 +169,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="console.log('upgrade-required-btn clicked'); showUpgradeModal('gallery'); showTemplateLimitNotice();"
+                        onclick="showUpgradeModal('gallery'); showTemplateLimitNotice();"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
@@ -188,7 +177,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
             <?php endif; ?>
 
             <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;"
-                    onclick="console.log('open-template-gallery clicked'); <?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
+                    onclick="<?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
                 🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
             </button>
 
@@ -982,21 +971,15 @@ function dismissTemplateLimitNotice() {
 }
 
 function showTemplateLimitNotice() {
-    console.log('showTemplateLimitNotice called');
     const notice = document.getElementById('template-limit-notice');
-    console.log('notice element:', notice);
     if (notice) {
         notice.style.display = 'block';
         // Supprimer le cookie de fermeture
         document.cookie = 'pdf_builder_template_limit_notice_dismissed=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        console.log('notification shown');
-    } else {
-        console.log('notice element not found');
     }
 }
 
 // Vérifier au chargement de la page si la notification doit être affichée
-<?php if (!$force_show_notice): ?>
 document.addEventListener('DOMContentLoaded', function() {
     const notice = document.getElementById('template-limit-notice');
     const cookies = document.cookie.split(';');
@@ -1010,12 +993,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // TEMP: Ne pas cacher la notification si elle est visible (forcée côté serveur)
-    if (notice && isDismissed && notice.style.display !== 'block') {
+    if (notice && isDismissed) {
         notice.style.display = 'none';
     }
 });
-<?php endif; ?>
 
 function duplicateTemplate(templateId, templateName) {
     if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
