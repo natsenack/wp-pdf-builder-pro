@@ -96,19 +96,11 @@ class Canvas_Manager
             'snap_tolerance' => intval($settings['pdf_builder_canvas_snap_tolerance'] ?? 5),
             'show_guides' => (\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation') ? 
                 (($settings['pdf_builder_canvas_guides_enabled'] ?? '1') == '1') : false),
-            'default_zoom' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_default', 100)),
-            'zoom_step' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_step', 25)),
-            'min_zoom' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_min', 10)),
-            'max_zoom' => intval(pdf_builder_get_option('pdf_builder_canvas_zoom_max', 500)),
+            'default_zoom' => intval($settings['pdf_builder_canvas_zoom_default'] ?? 100),
+            'zoom_step' => intval($settings['pdf_builder_canvas_zoom_step'] ?? 25),
+            'min_zoom' => intval($settings['pdf_builder_canvas_zoom_min'] ?? 10),
+            'max_zoom' => intval($settings['pdf_builder_canvas_zoom_max'] ?? 500),
             'zoom_with_wheel' => pdf_builder_get_option('pdf_builder_canvas_zoom_with_wheel', '1') == '1',
-
-            // Debug temporaire
-            '_debug_zoom_values' => [
-                'default_zoom_raw' => pdf_builder_get_option('pdf_builder_canvas_zoom_default', 100),
-                'zoom_step_raw' => pdf_builder_get_option('pdf_builder_canvas_zoom_step', 25),
-                'min_zoom_raw' => pdf_builder_get_option('pdf_builder_canvas_zoom_min', 10),
-                'max_zoom_raw' => pdf_builder_get_option('pdf_builder_canvas_zoom_max', 500),
-            ],
             'pan_with_mouse' => pdf_builder_get_option('pdf_builder_canvas_pan_enabled', '1') == '1',
             'show_resize_handles' => pdf_builder_get_option('pdf_builder_canvas_show_resize_handles', '1') == '1',
             'handle_size' => intval(pdf_builder_get_option('pdf_builder_canvas_handle_size', 8)),
