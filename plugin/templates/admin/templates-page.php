@@ -238,9 +238,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 
             // Adapter la requête selon la disponibilité de la colonne
             if ($thumbnail_column_exists) {
-                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY id", get_current_user_id()), ARRAY_A);
+                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY created_at DESC", get_current_user_id()), ARRAY_A);
             } else {
-                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, '' as thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY id", get_current_user_id()), ARRAY_A);
+                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, '' as thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY created_at DESC", get_current_user_id()), ARRAY_A);
             }
 
             if (!empty($templates)) {
