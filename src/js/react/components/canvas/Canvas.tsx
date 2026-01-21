@@ -3554,8 +3554,13 @@ export const Canvas = function Canvas({
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
+      console.error('🔥 [BEFORE DRAW SELECTION] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
       console.error('[CANVAS DEBUG] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
+      console.error('🔥 [RENDER CANVAS] selectionRotationEnabled:', canvasSettings?.selectionRotationEnabled);
+      console.error('🔥 [RENDER CANVAS] canvasSettings keys:', Object.keys(canvasSettings || {}));
       drawSelection(ctx, state.selection.selectedElements, state.elements);
+    } else {
+      console.error('🔥 [RENDER CANVAS] No elements selected, skipping drawSelection');
     }
 
     ctx.restore();
