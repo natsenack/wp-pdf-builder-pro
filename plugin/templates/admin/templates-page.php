@@ -169,7 +169,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </a>
             <?php else: ?>
                 <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('gallery')"
+                        onclick="showUpgradeModal('gallery'); showTemplateLimitNotice();"
                         style="background-color: #dc3545; border-color: #dc3545; color: white;">
                     <span class="dashicons dashicons-lock"></span>
                     <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
@@ -995,39 +995,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (notice && isDismissed) {
         notice.style.display = 'none';
     }
-});
-
-// Modifier les gestionnaires de boutons pour réafficher la notification
-document.getElementById('upgrade-required-btn')?.addEventListener('click', function(e) {
-    e.preventDefault();
-
-    // Vérifier limite côté client (sécurité supplémentaire)
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_check_template_limit',
-            'nonce': pdfBuilderAjax.nonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.can_create) {
-            // Rediriger vers éditeur
-            window.location.href = pdfBuilderAjax.editor_url;
-        } else {
-            showUpgradeModal('template');
-            // Réafficher la notification de limite
-            showTemplateLimitNotice();
-        }
-    })
-    .catch(error => {
-        showUpgradeModal('template');
-        // Réafficher la notification de limite
-        showTemplateLimitNotice();
-    });
 });
 
 // Gestionnaire pour bouton galerie de modèles (uniquement premium)
