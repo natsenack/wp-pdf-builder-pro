@@ -2611,6 +2611,16 @@ export const Canvas = function Canvas({
       selectedIds: string[],
       elements: Element[]
     ) => {
+      // Debug log that won't be removed by webpack
+      const debugInfo = {
+        function: 'drawSelection',
+        selectedIds: selectedIds,
+        elementsCount: elements.length,
+        timestamp: Date.now()
+      };
+      window.pdfBuilderDebug = window.pdfBuilderDebug || [];
+      window.pdfBuilderDebug.push(debugInfo);
+
       console.error('[CANVAS DEBUG] drawSelection called with selectedIds:', selectedIds, 'elements count:', elements.length);
       const selectedElements = elements.filter((el) =>
         selectedIds.includes(el.id)
@@ -2650,7 +2660,7 @@ export const Canvas = function Canvas({
       // Poignées de redimensionnement (conditionnées par les settings)
       if (canvasSettings?.selectionShowHandles) {
         const handleSize = 6;
-        ctx.fillStyle = "#ff0000"; // DEBUG: Red handles to see if this code runs
+        ctx.fillStyle = "#007acc";
         ctx.setLineDash([]);
 
         // Coins
@@ -2714,6 +2724,17 @@ export const Canvas = function Canvas({
       console.warn('[CANVAS DEBUG] selectedElements count:', selectedElements.length);
       console.warn('[CANVAS DEBUG] selectedIds count:', selectedIds.length);
 
+      // Debug log that won't be removed by webpack
+      const rotationDebug = {
+        function: 'rotation_check',
+        enable_rotation: canvasSettings?.enable_rotation,
+        selectedElements: selectedElements.length,
+        selectedIds: selectedIds.length,
+        timestamp: Date.now()
+      };
+      window.pdfBuilderDebug = window.pdfBuilderDebug || [];
+      window.pdfBuilderDebug.push(rotationDebug);
+
       if (canvasSettings?.enable_rotation) {
         console.warn('[CANVAS] Drawing rotation handles because enable_rotation is:', canvasSettings?.enable_rotation);
         console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
@@ -2731,7 +2752,7 @@ export const Canvas = function Canvas({
         const hasZeroRotation = Math.abs(normalizedRotation - 0) <= 10;
 
         // Couleur verte pour indiquer la rotation activée
-        const handleColor = "#ff00ff"; // DEBUG: Magenta handles to see if rotation code runs
+        const handleColor = "#00cc44"; // Toujours vert pour indiquer que la rotation est disponible
         ctx.fillStyle = handleColor;
         ctx.strokeStyle = handleColor;
         ctx.lineWidth = 2;
@@ -3320,6 +3341,15 @@ export const Canvas = function Canvas({
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
+    // Debug log that won't be removed by webpack
+    const debugInfo = {
+      elements: state.elements.length,
+      selection: state.selection.selectedElements.length,
+      timestamp: Date.now()
+    };
+    window.pdfBuilderDebug = window.pdfBuilderDebug || [];
+    window.pdfBuilderDebug.push(debugInfo);
+
     console.error('[CANVAS DEBUG] renderCanvas called - Elements:', state.elements.length, 'Selection:', state.selection.selectedElements.length);
     const startTime = Date.now();
 
@@ -3480,9 +3510,6 @@ export const Canvas = function Canvas({
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
       console.error('[CANVAS DEBUG] About to call drawSelection with', state.selection.selectedElements.length, 'selected elements');
-      // DEBUG: Change canvas background to red when elements are selected
-      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-      ctx.fillRect(0, 0, width, height);
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
