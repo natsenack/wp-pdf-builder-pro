@@ -322,7 +322,7 @@
 
                                     <!-- Contrôles en bas -->
                                     <div class="interactions-controls">
-                                        <div class="selection-mode-indicator">
+                                        <div class="selection-mode-indicator" id="selection-mode-indicator">
                                             <span class="mode-icon active" title="Sélection rectangle (R) - Pour sélectionner plusieurs éléments" data-mode="rectangle">▭</span>
                                             <span class="mode-icon" title="Sélection lasso (L) - Pour sélection libre" data-mode="lasso">🪢</span>
                                             <span class="mode-icon" title="Sélection par clic (C) - Pour sélection simple" data-mode="click">👆</span>
@@ -437,6 +437,52 @@
 
             <!-- CSS pour les modales Canvas - DÉJÀ INCLUS dans pdf-builder-unified.css -->
             <style>
+                /* Indicateurs de mode de sélection */
+                .selection-mode-indicator {
+                    display: flex;
+                    gap: 8px;
+                    margin-bottom: 8px;
+                }
+                
+                .mode-icon {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 6px;
+                    background: #f8f9fa;
+                    border: 2px solid #e9ecef;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    user-select: none;
+                }
+                
+                .mode-icon:hover {
+                    background: #e9ecef;
+                    border-color: #dee2e6;
+                    transform: scale(1.05);
+                }
+                
+                .mode-icon.active {
+                    background: #007cba;
+                    border-color: #007cba;
+                    color: white;
+                }
+                
+                .mode-icon.active:hover {
+                    background: #005a87;
+                    border-color: #005a87;
+                }
+                
+                /* État désactivé quand sélection multiple est OFF */
+                .mode-icon[style*="opacity: 0.4"] {
+                    background: #f8f9fa !important;
+                    border-color: #e9ecef !important;
+                    color: #6c757d !important;
+                    cursor: not-allowed !important;
+                }
             </style>
 
             <script>
@@ -484,7 +530,23 @@
                         resizeEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1'); ?>,
                         rotateEnabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1'); ?>,
                         multiSelect: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1'); ?>,
-                        selectionMode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single')); ?>,
+                        selectionMode: <?php 
+                            $selection_mode_php = get_canvas_option_contenu('canvas_selection_mode', 'single');
+                            // Mapper les valeurs PHP vers JavaScript
+                            $selection_mode_js = 'click'; // défaut
+                            switch ($selection_mode_php) {
+                                case 'single':
+                                    $selection_mode_js = 'click';
+                                    break;
+                                case 'multiple':
+                                    $selection_mode_js = 'rectangle';
+                                    break;
+                                case 'group':
+                                    $selection_mode_js = 'lasso';
+                                    break;
+                            }
+                            echo json_encode($selection_mode_js);
+                        ?>,
                         keyboardShortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1'); ?>,
                         fpsTarget: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60')); ?>,
                         memoryLimitJs: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>,
@@ -862,6 +924,7 @@
                                 modal.style.display = 'none';
                             });
                             initEvents();
+                            initSelectionModeIndicators();
                         });
                     } else {
                         // S'assurer que tous les modals sont cachés au chargement
@@ -870,7 +933,41 @@
                             modal.style.display = 'none';
                         });
                         initEvents();
+                        initSelectionModeIndicators();
                     }
+
+                    // Fonction pour gérer l'état des indicateurs de mode de sélection
+                    function initSelectionModeIndicators() {
+                        var multiSelectToggle = document.querySelector('input[name="pdf_builder_canvas_multi_select"]');
+                        var selectionModeIndicator = document.getElementById('selection-mode-indicator');
+                        
+                        if (!multiSelectToggle || !selectionModeIndicator) return;
+                        
+                        function updateSelectionModeState() {
+                            var isMultiSelectEnabled = multiSelectToggle.checked;
+                            var modeIcons = selectionModeIndicator.querySelectorAll('.mode-icon');
+                            
+                            modeIcons.forEach(function(icon) {
+                                if (isMultiSelectEnabled) {
+                                    icon.style.opacity = '1';
+                                    icon.style.pointerEvents = 'auto';
+                                    icon.style.cursor = 'pointer';
+                                } else {
+                                    icon.style.opacity = '0.4';
+                                    icon.style.pointerEvents = 'none';
+                                    icon.style.cursor = 'not-allowed';
+                                }
+                            });
+                        }
+                        
+                        // Mettre à jour l'état initial
+                        updateSelectionModeState();
+                        
+                        // Écouter les changements
+                        multiSelectToggle.addEventListener('change', updateSelectionModeState);
+                    }
+                    
+                })();
 
                     
                 })();
