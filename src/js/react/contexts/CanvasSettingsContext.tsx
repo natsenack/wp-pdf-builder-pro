@@ -152,7 +152,7 @@ const DEFAULT_SETTINGS: Omit<
 
   selectionDragEnabled: true,
   selectionMultiSelectEnabled: true,
-  selectionRotationEnabled: false,
+  selectionRotationEnabled: true,
   selectionCopyPasteEnabled: true,
   selectionShowHandles: true,
   selectionHandleSize: 8,
