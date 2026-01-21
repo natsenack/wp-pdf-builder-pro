@@ -346,7 +346,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php else: ?>
                     <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
                         <input type="checkbox" id="modal_canvas_grid_enabled" name="pdf_builder_canvas_grid_enabled"
-                               value="1" disabled <?php checked(get_canvas_modal_value('canvas_grid_enabled', '0'), '1'); ?>>
+                               value="1" disabled <?php checked('0', '1'); ?>>
                         <label for="modal_canvas_grid_enabled"></label>
                     </div>
                     <span class="premium-badge">⭐ PREMIUM</span>
@@ -375,7 +375,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php else: ?>
                     <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
                         <input type="checkbox" id="modal_canvas_guides_enabled" name="pdf_builder_canvas_guides_enabled"
-                               value="1" disabled <?php checked(get_canvas_modal_value('canvas_guides_enabled', '0'), '1'); ?>>
+                               value="1" disabled <?php checked('0', '1'); ?>>
                         <label for="modal_canvas_guides_enabled"></label>
                     </div>
                     <span class="premium-badge">⭐ PREMIUM</span>
@@ -392,7 +392,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php else: ?>
                     <div class="toggle-switch" style="opacity: 0.6; pointer-events: none;">
                         <input type="checkbox" id="modal_canvas_snap_to_grid" name="pdf_builder_canvas_snap_to_grid"
-                               value="1" disabled <?php checked(get_canvas_modal_value('canvas_snap_to_grid', '0'), '1'); ?>>
+                               value="1" disabled <?php checked('0', '1'); ?>>
                         <label for="modal_canvas_snap_to_grid"></label>
                     </div>
                     <span class="premium-badge">⭐ PREMIUM</span>
