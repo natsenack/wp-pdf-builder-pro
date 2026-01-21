@@ -2664,11 +2664,16 @@ export const Canvas = function Canvas({
       );
       console.error('[CANVAS DEBUG] filtered selectedElements:', selectedElements.length);
       if (selectedElements.length === 0) {
+        console.error('🔥 [SELECTION EMPTY] No elements selected - drawSelection returning early');
         debugLog("[Canvas] Selection cleared - no elements selected");
         return;
       }
 
       console.error('[CANVAS DEBUG] Drawing selection for', selectedElements.length, 'elements - checking rotation handles');
+      console.error('🔥 [DRAW SELECT] About to draw with canvasSettings:', {
+        selectionRotationEnabled: canvasSettings?.selectionRotationEnabled,
+        enable_rotation: canvasSettings?.enable_rotation
+      });
 
       debugLog(
         `[Canvas] Drawing selection for ${selectedElements.length} element(s):`,
@@ -2776,6 +2781,7 @@ export const Canvas = function Canvas({
 
       if (canvasSettings?.selectionRotationEnabled) {
         console.warn('[CANVAS] Drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.error('🔥 [ROTATION DRAW] selectionRotationEnabled is TRUE - DRAWING ROTATION HANDLES NOW');
         console.warn('⚠️ CANVAS: ROTATION HANDLES BEING DRAWN - GREEN LINE WILL APPEAR');
         console.warn('[DEBUG CANVAS] canvasSettings object:', canvasSettings);
         console.warn('[DEBUG CANVAS] selectedElements:', selectedElements);
