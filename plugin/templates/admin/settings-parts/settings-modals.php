@@ -354,6 +354,16 @@ function get_canvas_modal_value($key, $default = '') {
             <button type="button" class="canvas-modal-close">&times;</button>
         </div>
         <div class="canvas-modal-body">
+            <div style="background: #ffebee; border: 1px solid #f44336; padding: 10px; margin-bottom: 15px; border-radius: 4px; font-size: 12px; color: #c62828;">
+                <strong>DEBUG INFO:</strong><br>
+                canUseFeature('grid_navigation') = <?php echo $can_use_grid_navigation ? 'TRUE (PREMIUM)' : 'FALSE (FREE)'; ?><br>
+                canvas_defaults['grid_enabled'] = <?php echo $canvas_defaults['grid_enabled']; ?><br>
+                get_canvas_modal_value('canvas_grid_enabled') = <?php echo get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']); ?><br>
+                Current user license: <?php 
+                    $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+                    echo $license_manager->is_premium() ? 'PREMIUM' : 'FREE';
+                ?>
+            </div>
             <div class="modal-settings-grid">
                 <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
@@ -372,6 +382,7 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                     <span class="premium-badge">⭐ PREMIUM</span>
                     <?php endif; ?>
+                    <!-- DEBUG GRID: can_use_grid_navigation = <?php echo $can_use_grid_navigation ? 'TRUE' : 'FALSE'; ?>, default = <?php echo $canvas_defaults['grid_enabled']; ?>, value = <?php echo get_canvas_modal_value('canvas_grid_enabled', $canvas_defaults['grid_enabled']); ?> -->
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📏</span> Taille grille (px)</label>
