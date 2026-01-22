@@ -27,18 +27,29 @@
         console.log('[PDF PREVIEW API] - options:', options);
 
         try {
+            // Extraire template_id s'il est dans templateData
+            const template_id = templateData?.template_id || null;
+            
+            const params = {
+                action: config.endpoint,
+                nonce: config.nonce,
+                template_data: JSON.stringify(templateData),
+                format: options.format || 'png',
+                quality: options.quality || 150
+            };
+
+            // Ajouter template_id s'il existe
+            if (template_id) {
+                params.template_id = template_id;
+                console.log('[PDF PREVIEW API] Template ID to send:', template_id);
+            }
+
             const response = await fetch(config.ajaxUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: new URLSearchParams({
-                    action: config.endpoint,
-                    nonce: config.nonce,
-                    template_data: JSON.stringify(templateData),
-                    format: options.format || 'png',
-                    quality: options.quality || 150
-                })
+                body: new URLSearchParams(params)
             });
 
             console.log('[PDF PREVIEW API] Backend response status:', response.status);

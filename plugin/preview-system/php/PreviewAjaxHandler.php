@@ -43,11 +43,26 @@ class PreviewAjaxHandler {
 
             // Récupérer les données
             $template_data_json = isset($_POST['template_data']) ? sanitize_text_field($_POST['template_data']) : '{}';
+            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
             $format = isset($_POST['format']) ? sanitize_text_field($_POST['format']) : 'png';
             $quality = isset($_POST['quality']) ? intval($_POST['quality']) : 150;
 
-            // Parser JSON
+            // Parser JSON du frontend
             $template_data = json_decode($template_data_json, true);
+
+            // Si template_id est fourni, récupérer depuis la base de données
+            if ($template_id && $template_id > 0) {
+                error_log('[PREVIEW AJAX] Récupération du template depuis la BD - ID: ' . $template_id);
+                $db_template_data = self::loadTemplateFromDatabase($template_id);
+                
+                if ($db_template_data) {
+                    $template_data = $db_template_data;
+                    error_log('[PREVIEW AJAX] Template chargé depuis la BD');
+                } else {
+                    error_log('[PREVIEW AJAX] Template non trouvé dans la BD, utilisation des données du frontend');
+                }
+            }
+
             if (!is_array($template_data)) {
                 wp_send_json_error('Données du template invalides');
             }
@@ -67,6 +82,54 @@ class PreviewAjaxHandler {
         } catch (\Exception $e) {
             error_log('[PREVIEW AJAX ERROR] ' . $e->getMessage());
             wp_send_json_error('Erreur serveur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Charge les données du template depuis la base de données
+     */
+    private static function loadTemplateFromDatabase(int $template_id): ?array {
+        try {
+            // Récupérer le post du template
+            $post = get_post($template_id, ARRAY_A);
+            
+            if (!$post || $post['post_type'] !== 'pdf_template') {
+                error_log('[PREVIEW] Template post type incorrect ou introuvable');
+                return null;
+            }
+
+            // Récupérer les métadonnées du template
+            $template_data = get_post_meta($template_id, '_pdf_template_data', true);
+
+            if (!$template_data) {
+                error_log('[PREVIEW] Pas de métadonnées trouvées pour le template');
+                return null;
+            }
+
+            // Si c'est une chaîne JSON, la décoder
+            if (is_string($template_data)) {
+                $template_data = json_decode($template_data, true);
+                if (!$template_data) {
+                    error_log('[PREVIEW] Erreur de décodage JSON des données du template');
+                    return null;
+                }
+            }
+
+            // Ajouter les informations du post si nécessaire
+            if (!isset($template_data['template_id'])) {
+                $template_data['template_id'] = $template_id;
+            }
+
+            if (!isset($template_data['template_name'])) {
+                $template_data['template_name'] = $post['post_title'];
+            }
+
+            error_log('[PREVIEW] Template chargé avec succès - ID: ' . $template_id . ', Nom: ' . $post['post_title']);
+            return $template_data;
+
+        } catch (\Exception $e) {
+            error_log('[PREVIEW ERROR] Erreur lors du chargement du template: ' . $e->getMessage());
+            return null;
         }
     }
 
