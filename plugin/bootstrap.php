@@ -45,7 +45,7 @@ function pdf_builder_inject_nonce() {
 (function() {
     window.pdfBuilderData = {
         nonce: '%NONCE%',
-        ajaxurl: '%AJAX_URL%',
+        ajaxUrl: '%AJAX_URL%',
         templateId: null,
         _timestamp: %TIMESTAMP%
     };
@@ -111,6 +111,12 @@ function pdf_builder_inject_nonce() {
         })
         .then(r => {
             console.log('[TEST] Response status:', r.status);
+            if (!r.ok) {
+                return r.text().then(text => {
+                    console.error('[TEST] Server error (HTML):', text.substring(0, 500));
+                    throw new Error('Server error: ' + text.substring(0, 200));
+                });
+            }
             return r.json();
         })
         .then(d => {
@@ -134,8 +140,6 @@ SCRIPT;
     $script = str_replace('%TIMESTAMP%', time(), $script);
     
     echo $script;
-    
-    echo '</script>';
 }
 
 // Ajouter le hook admin_head avec priorité très haute
