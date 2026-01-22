@@ -100,37 +100,62 @@ class PreviewAjaxHandler {
 
     /**
      * Charge les données du template depuis la base de données
+     * Les templates sont stockés dans la table wp_pdf_builder_templates
      */
     private static function loadTemplateFromDatabase(int $template_id): ?array {
         try {
             error_log('[PREVIEW DB] === Début du chargement du template ID: ' . $template_id . ' ===');
             
-            // Récupérer le post du template
-            $post = get_post($template_id, ARRAY_A);
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'pdf_builder_templates';
             
-            if (!$post) {
-                error_log('[PREVIEW DB] ❌ Post non trouvé pour ID: ' . $template_id);
+            // Récupérer le template depuis la table personnalisée
+            $template = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT * FROM {$table_name} WHERE id = %d",
+                    $template_id
+                ),
+                ARRAY_A
+            );
+            
+            if (!$template) {
+                error_log('[PREVIEW DB] ❌ Template non trouvé pour ID: ' . $template_id);
                 return null;
             }
 
-            error_log('[PREVIEW DB] Post trouvé - Type: ' . $post['post_type'] . ', Titre: ' . $post['post_title']);
+            error_log('[PREVIEW DB] Template trouvé - Nom: ' . $template['name'] . ', Type: ' . $template['type']);
             
-            // Accepter n'importe quel type de post tant qu'il a les données de template
-            // (les templates peuvent être des pages, posts, ou custom post types)
-
-            // Récupérer les métadonnées du template
-            error_log('[PREVIEW DB] Récupération de _pdf_template_data...');
-            $template_data = get_post_meta($template_id, '_pdf_template_data', true);
+            // Récupérer les données du template
+            $template_data = null;
+            
+            // D'abord essayer la colonne 'data' (format JSON recommandé)
+            if (!empty($template['data'])) {
+                error_log('[PREVIEW DB] Utilisation de la colonne "data"');
+                $template_data = $template['data'];
+            } 
+            // Sinon essayer 'template_data'
+            elseif (!empty($template['template_data'])) {
+                error_log('[PREVIEW DB] Utilisation de la colonne "template_data"');
+                $template_data = $template['template_data'];
+            }
+            // Sinon essayer 'elements' (composants du template)
+            elseif (!empty($template['elements'])) {
+                error_log('[PREVIEW DB] Utilisation de la colonne "elements"');
+                $template_data = $template['elements'];
+            }
+            // Fallback: essayer 'content'
+            elseif (!empty($template['content'])) {
+                error_log('[PREVIEW DB] Utilisation de la colonne "content"');
+                $template_data = $template['content'];
+            }
 
             if (!$template_data) {
-                error_log('[PREVIEW DB] ❌ Pas de métadonnées trouvées pour la clé _pdf_template_data');
-                // Lister toutes les métadonnées pour debug
-                $all_meta = get_post_meta($template_id);
-                error_log('[PREVIEW DB] Clés de métadonnées disponibles: ' . implode(', ', array_keys($all_meta)));
+                error_log('[PREVIEW DB] ❌ Aucune donnée trouvée dans les colonnes disponibles');
+                error_log('[PREVIEW DB] Colonnes du template: ' . implode(', ', array_keys($template)));
                 return null;
             }
 
-            error_log('[PREVIEW DB] Métadonnées trouvées - Type: ' . gettype($template_data) . ', Taille: ' . strlen((is_string($template_data) ? $template_data : json_encode($template_data))));
+            error_log('[PREVIEW DB] Données trouvées - Type: ' . gettype($template_data) . ', Taille: ' . strlen((is_string($template_data) ? $template_data : json_encode($template_data))));
 
             // Si c'est une chaîne JSON, la décoder
             if (is_string($template_data)) {
@@ -141,22 +166,22 @@ class PreviewAjaxHandler {
                     error_log('[PREVIEW DB] Premier 500 caractères: ' . substr($template_data, 0, 500));
                     return null;
                 }
-                error_log('[PREVIEW DB] ✓ JSON décodé avec succès - Type: ' . gettype($decoded));
+                error_log('[PREVIEW DB] ✓ JSON décodé avec succès');
                 $template_data = $decoded;
             } else {
                 error_log('[PREVIEW DB] Données déjà en format ' . gettype($template_data));
             }
 
-            // Ajouter les informations du post si nécessaire
+            // Ajouter les informations du template si nécessaire
             if (!isset($template_data['template_id'])) {
                 $template_data['template_id'] = $template_id;
             }
 
             if (!isset($template_data['template_name'])) {
-                $template_data['template_name'] = $post['post_title'];
+                $template_data['template_name'] = $template['name'];
             }
 
-            error_log('[PREVIEW DB] ✓ Template chargé avec succès - ID: ' . $template_id . ', Nom: ' . $post['post_title'] . ', Clés données: ' . implode(', ', array_keys($template_data)));
+            error_log('[PREVIEW DB] ✓ Template chargé avec succès - ID: ' . $template_id . ', Nom: ' . $template['name'] . ', Clés données: ' . implode(', ', array_keys(is_array($template_data) ? $template_data : [])));
             return $template_data;
 
         } catch (\Exception $e) {
