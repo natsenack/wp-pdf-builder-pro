@@ -103,29 +103,50 @@ class PreviewAjaxHandler {
      */
     private static function loadTemplateFromDatabase(int $template_id): ?array {
         try {
+            error_log('[PREVIEW DB] === Début du chargement du template ID: ' . $template_id . ' ===');
+            
             // Récupérer le post du template
             $post = get_post($template_id, ARRAY_A);
             
-            if (!$post || $post['post_type'] !== 'pdf_template') {
-                error_log('[PREVIEW] Template post type incorrect ou introuvable');
+            if (!$post) {
+                error_log('[PREVIEW DB] ❌ Post non trouvé pour ID: ' . $template_id);
+                return null;
+            }
+
+            error_log('[PREVIEW DB] Post trouvé - Type: ' . $post['post_type'] . ', Titre: ' . $post['post_title']);
+            
+            if ($post['post_type'] !== 'pdf_template') {
+                error_log('[PREVIEW DB] ❌ Post type incorrect: ' . $post['post_type'] . ' (attendu: pdf_template)');
                 return null;
             }
 
             // Récupérer les métadonnées du template
+            error_log('[PREVIEW DB] Récupération de _pdf_template_data...');
             $template_data = get_post_meta($template_id, '_pdf_template_data', true);
 
             if (!$template_data) {
-                error_log('[PREVIEW] Pas de métadonnées trouvées pour le template');
+                error_log('[PREVIEW DB] ❌ Pas de métadonnées trouvées pour la clé _pdf_template_data');
+                // Lister toutes les métadonnées pour debug
+                $all_meta = get_post_meta($template_id);
+                error_log('[PREVIEW DB] Clés de métadonnées disponibles: ' . implode(', ', array_keys($all_meta)));
                 return null;
             }
 
+            error_log('[PREVIEW DB] Métadonnées trouvées - Type: ' . gettype($template_data) . ', Taille: ' . strlen((is_string($template_data) ? $template_data : json_encode($template_data))));
+
             // Si c'est une chaîne JSON, la décoder
             if (is_string($template_data)) {
-                $template_data = json_decode($template_data, true);
-                if (!$template_data) {
-                    error_log('[PREVIEW] Erreur de décodage JSON des données du template');
+                error_log('[PREVIEW DB] Décodage du JSON...');
+                $decoded = json_decode($template_data, true);
+                if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('[PREVIEW DB] ❌ Erreur de décodage JSON: ' . json_last_error_msg());
+                    error_log('[PREVIEW DB] Premier 500 caractères: ' . substr($template_data, 0, 500));
                     return null;
                 }
+                error_log('[PREVIEW DB] ✓ JSON décodé avec succès - Type: ' . gettype($decoded));
+                $template_data = $decoded;
+            } else {
+                error_log('[PREVIEW DB] Données déjà en format ' . gettype($template_data));
             }
 
             // Ajouter les informations du post si nécessaire
@@ -137,11 +158,11 @@ class PreviewAjaxHandler {
                 $template_data['template_name'] = $post['post_title'];
             }
 
-            error_log('[PREVIEW] Template chargé avec succès - ID: ' . $template_id . ', Nom: ' . $post['post_title']);
+            error_log('[PREVIEW DB] ✓ Template chargé avec succès - ID: ' . $template_id . ', Nom: ' . $post['post_title'] . ', Clés données: ' . implode(', ', array_keys($template_data)));
             return $template_data;
 
         } catch (\Exception $e) {
-            error_log('[PREVIEW ERROR] Erreur lors du chargement du template: ' . $e->getMessage());
+            error_log('[PREVIEW DB ERROR] ' . $e->getMessage());
             return null;
         }
     }
