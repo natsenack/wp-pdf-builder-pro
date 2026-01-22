@@ -117,7 +117,7 @@ module.exports = {
       : []),
   ],
   optimization: {
-    minimize: false, // Temporarily disable minification for debugging
+    minimize: !isDev,
     minimizer: [
       new TerserPlugin({
         terserOptions: {

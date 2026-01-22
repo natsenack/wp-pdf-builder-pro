@@ -139,18 +139,18 @@ export function usePreview(): UsePreviewReturn {
         console.log('[HOOK USE PREVIEW] Full result object:', JSON.stringify(result, null, 2));
       }
 
-      if (result && typeof result === 'object' && 'success' in result && result.success && 'image_url' in result && typeof result.image_url === 'string') {
+      if (result && typeof result === 'object' && 'success' in result && result.success && 'data' in result && result.data && 'image_url' in result.data && typeof result.data.image_url === 'string') {
         console.log('[HOOK USE PREVIEW] ===== VALIDATION PASSED =====');
-        console.log('[HOOK USE PREVIEW] Preview generated successfully, image_url:', result.image_url);
+        console.log('[HOOK USE PREVIEW] Preview generated successfully, image_url:', result.data.image_url);
         if (finalFormat === 'pdf') {
           // Pour PDF, ouvrir dans un nouvel onglet
           console.log('[HOOK USE PREVIEW] Opening PDF in new tab');
-          window.open(result.image_url, '_blank');
+          window.open(result.data.image_url, '_blank');
           setPreviewUrl(null); // Ne pas afficher dans la modale
         } else {
           // Pour PNG/JPG, afficher dans la modale
           console.log('[HOOK USE PREVIEW] Setting preview URL for modal display');
-          setPreviewUrl(result.image_url);
+          setPreviewUrl(result.data.image_url);
         }
       } else {
         console.log('[HOOK USE PREVIEW] ===== VALIDATION FAILED =====');
@@ -160,9 +160,11 @@ export function usePreview(): UsePreviewReturn {
         console.log('[HOOK USE PREVIEW] - is object:', result && typeof result === 'object');
         console.log('[HOOK USE PREVIEW] - has success key:', result && 'success' in result);
         console.log('[HOOK USE PREVIEW] - success value:', result && result.success);
-        console.log('[HOOK USE PREVIEW] - has image_url key:', result && 'image_url' in result);
-        console.log('[HOOK USE PREVIEW] - image_url type:', result && typeof result.image_url);
-        console.log('[HOOK USE PREVIEW] - image_url value:', result && result.image_url);
+        console.log('[HOOK USE PREVIEW] - has data key:', result && 'data' in result);
+        console.log('[HOOK USE PREVIEW] - data exists:', result && result.data);
+        console.log('[HOOK USE PREVIEW] - data has image_url key:', result && result.data && 'image_url' in result.data);
+        console.log('[HOOK USE PREVIEW] - image_url type:', result && result.data && typeof result.data.image_url);
+        console.log('[HOOK USE PREVIEW] - image_url value:', result && result.data && result.data.image_url);
 
         const errorMsg = (result && typeof result === 'object' && 'error' in result && typeof result.error === 'string') ? result.error : 'Erreur lors de la génération de l\'aperçu';
         console.error('[HOOK USE PREVIEW] Invalid result format, throwing error:', errorMsg);
@@ -171,8 +173,10 @@ export function usePreview(): UsePreviewReturn {
         console.error('[HOOK USE PREVIEW] - is object:', result && typeof result === 'object');
         console.error('[HOOK USE PREVIEW] - has success key:', result && 'success' in result);
         console.error('[HOOK USE PREVIEW] - success value:', result && result.success);
-        console.error('[HOOK USE PREVIEW] - has image_url key:', result && 'image_url' in result);
-        console.error('[HOOK USE PREVIEW] - image_url type:', result && typeof result.image_url);
+        console.error('[HOOK USE PREVIEW] - has data key:', result && 'data' in result);
+        console.error('[HOOK USE PREVIEW] - data exists:', result && result.data);
+        console.error('[HOOK USE PREVIEW] - data has image_url key:', result && result.data && 'image_url' in result.data);
+        console.error('[HOOK USE PREVIEW] - image_url type:', result && result.data && typeof result.data.image_url);
         throw new Error(errorMsg);
       }
     } catch (err) {
