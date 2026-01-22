@@ -95,7 +95,8 @@ function pdf_builder_inject_nonce() {
         
         // Si on a un template_id, l'envoyer au lieu de template_data
         if (templateId && templateId > 0) {
-            console.log('[TEST] Sending template_id:', templateId);
+            console.log('[TEST] ✅ Template ID trouvé:', templateId);
+            console.log('[TEST] Récupération du template depuis la BD...');
             formData.append('template_id', templateId);
         } else {
             // Sinon envoyer des données template valides
@@ -107,7 +108,7 @@ function pdf_builder_inject_nonce() {
                     orientation: 'portrait'
                 }
             };
-            console.log('[TEST] Sending template_data:', templateData);
+            console.log('[TEST] ❌ Template ID vide - Sending template_data:', templateData);
             formData.append('template_data', JSON.stringify(templateData));
         }
         
@@ -133,6 +134,9 @@ function pdf_builder_inject_nonce() {
         .then(d => {
             if (d.success) {
                 console.log('[TEST] ✅ SUCCESS - Preview data:', d.data);
+                if (d.data && d.data.image_url) {
+                    console.log('[TEST] Image URL récupérée:', d.data.image_url.substring(0, 100) + '...');
+                }
             } else {
                 console.warn('[TEST] ⚠️ Server returned error:', d.data);
             }
