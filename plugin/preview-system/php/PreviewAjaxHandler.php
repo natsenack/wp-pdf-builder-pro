@@ -115,10 +115,8 @@ class PreviewAjaxHandler {
 
             error_log('[PREVIEW DB] Post trouvé - Type: ' . $post['post_type'] . ', Titre: ' . $post['post_title']);
             
-            if ($post['post_type'] !== 'pdf_template') {
-                error_log('[PREVIEW DB] ❌ Post type incorrect: ' . $post['post_type'] . ' (attendu: pdf_template)');
-                return null;
-            }
+            // Accepter n'importe quel type de post tant qu'il a les données de template
+            // (les templates peuvent être des pages, posts, ou custom post types)
 
             // Récupérer les métadonnées du template
             error_log('[PREVIEW DB] Récupération de _pdf_template_data...');
