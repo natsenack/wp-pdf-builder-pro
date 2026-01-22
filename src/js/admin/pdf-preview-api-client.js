@@ -161,6 +161,7 @@ console.log('[PDF PREVIEW API CLIENT] pdfBuilderAjax available:', typeof window.
 
                 window.pdfPreviewApiClient.generatePreview({
                     template_data: templateData,
+                    template_id: templateData?.template_id || null,
                     context: 'editor',
                     format: options?.format || 'png',
                     quality: options?.quality || 150

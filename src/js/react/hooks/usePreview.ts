@@ -122,7 +122,10 @@ export function usePreview(): UsePreviewReturn {
 
       // Générer l'aperçu
       const result = await window.pdfPreviewAPI.generateEditorPreview(
-        templateData,
+        {
+          ...templateData,
+          template_id: (templateData as any)?.template_id || null,
+        },
         { format: finalFormat, quality }
       );
 

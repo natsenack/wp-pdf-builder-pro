@@ -525,11 +525,15 @@ class PreviewImageAPI
         // Format 1: {template: {elements: [...]}}
         // Format 2: {elements: [...]}
         if (isset($decoded['template']) && isset($decoded['template']['elements'])) {
-// Format avec template wrapper
+            // Format avec template wrapper - garder la structure complète
             $elements = $decoded['template']['elements'];
+            $normalized = $decoded; // Garder la structure complète
         } elseif (isset($decoded['elements'])) {
-        // Format direct
+            // Format direct - créer la structure wrapper
             $elements = $decoded['elements'];
+            $normalized = [
+                'template' => $decoded,
+            ];
         } else {
             $this->sendJsonError('Invalid template structure - missing elements', 400);
         }
@@ -538,19 +542,8 @@ class PreviewImageAPI
         if (!is_array($elements)) {
             $this->sendJsonError('Elements must be an array', 400);
         }
-
-        // Recréer la structure attendue
-        $decoded = [
-            'template' => [
-                'elements' => $elements
-            ]
-        ];
-// Sanitisation des éléments
-        $decoded['template']['elements'] = array_map(function ($element) {
-
-            return $this->sanitizeElement($element);
-        }, $decoded['template']['elements']);
-        return $decoded;
+        // Retourner la structure complète (pas juste template wrapper)
+        return $normalized;
     }
 
     /**
@@ -559,7 +552,7 @@ class PreviewImageAPI
     private function sanitizeElement($element)
     {
         $sanitized = [];
-// Champs autorisés selon type
+        // Champs autorisés selon type
         $allowed_fields = [
             'type', 'content', 'x', 'y', 'width', 'height', 'fontSize', 'fontFamily',
             'color', 'backgroundColor', 'textAlign', 'fontWeight', 'fontStyle'

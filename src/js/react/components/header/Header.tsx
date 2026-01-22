@@ -1380,6 +1380,7 @@ export const Header = memo(function Header({
                     {
                       ...state.template,
                       elements: state.elements,
+                      template_id: window.pdfBuilderData?.templateId || null,
                     },
                     {
                       format: previewFormat,
