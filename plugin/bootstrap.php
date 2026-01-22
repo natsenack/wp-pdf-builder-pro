@@ -47,6 +47,36 @@ function pdf_builder_inject_nonce() {
     echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
     echo "console.log('[BOOTSTRAP NONCE OK] window.pdfBuilderNonce =', window.pdfBuilderNonce);";
     echo "console.log('[BOOTSTRAP NONCE OK] Nonce length =', window.pdfBuilderNonce.length);";
+    
+    // 🎯 TEST DIRECT: Faire un appel AJAX simple pour vérifier que le nonce fonctionne
+    echo "window.testPDFPreview = function() {";
+    echo "  console.warn('🔴 TEST PREVIEW CALLED');";
+    echo "  const nonce = window.pdfBuilderNonce;";
+    echo "  const ajaxurl = window.pdfBuilderData.ajaxurl;";
+    echo "  console.log('TEST: nonce =', nonce);";
+    echo "  console.log('TEST: ajaxurl =', ajaxurl);";
+    echo "  ";
+    echo "  const formData = new FormData();";
+    echo "  formData.append('action', 'pdf_builder_generate_preview');";
+    echo "  formData.append('nonce', nonce);";
+    echo "  formData.append('template_data', JSON.stringify({elements: [], styles: {}}));";
+    echo "  formData.append('format', 'png');";
+    echo "  formData.append('quality', '150');";
+    echo "  ";
+    echo "  console.log('TEST: Fetching AJAX...');";
+    echo "  fetch(ajaxurl, {";
+    echo "    method: 'POST',";
+    echo "    body: formData";
+    echo "  })";
+    echo "  .then(r => {";
+    echo "    console.log('TEST: Response status:', r.status);";
+    echo "    return r.json();";
+    echo "  })";
+    echo "  .then(d => console.log('TEST: Response data:', d))";
+    echo "  .catch(e => console.error('TEST: Error:', e));";
+    echo "};";
+    echo "console.log('🟢 testPDFPreview function registered. Call: window.testPDFPreview()');";
+    
     echo '</script>';
 }
 
