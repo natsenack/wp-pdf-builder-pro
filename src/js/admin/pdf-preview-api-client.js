@@ -20,7 +20,11 @@
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_generate_preview',
-                    data: JSON.stringify(data),
+                    template_data: JSON.stringify(data.template_data),
+                    context: data.context || 'editor',
+                    format: data.format || 'png',
+                    quality: data.quality || 150,
+                    order_id: data.order_id || null,
                     nonce: window.pdfBuilderAjax?.nonce
                 },
                 success: function(response) {
@@ -58,9 +62,9 @@
             return new Promise(function(resolve, reject) {
                 window.pdfPreviewApiClient.generatePreview({
                     template_data: templateData,
+                    context: 'editor',
                     format: options?.format || 'png',
-                    quality: options?.quality || 90,
-                    context: 'canvas'
+                    quality: options?.quality || 150
                 }, function(error, response) {
                     if (error) {
                         reject(new Error(error));
@@ -76,9 +80,9 @@
                 window.pdfPreviewApiClient.generatePreview({
                     template_data: templateData,
                     order_id: orderId,
+                    context: 'metabox',
                     format: options?.format || 'png',
-                    quality: options?.quality || 90,
-                    context: 'metabox'
+                    quality: options?.quality || 150
                 }, function(error, response) {
                     if (error) {
                         reject(new Error(error));
