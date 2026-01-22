@@ -100,11 +100,7 @@ class PreviewAjaxHandler {
     }
     
     private static function buildHtmlFromTemplate(array $template_data): string {
-        $name = htmlspecialchars($template_data['templateName'] ?? $template_data['name'] ?? 'Template sans nom');
-        $description = htmlspecialchars($template_data['templateDescription'] ?? $template_data['description'] ?? '');
-        $width = intval($template_data['canvasWidth'] ?? 800);
-        $height = intval($template_data['canvasHeight'] ?? 600);
-        $elements = $template_data['elements'] ?? [];
+        $json = json_encode($template_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         
         $html = '<!DOCTYPE html>
 <html>
@@ -112,106 +108,24 @@ class PreviewAjaxHandler {
     <meta charset="UTF-8">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+            font-family: monospace;
+            font-size: 10px;
+            margin: 10px;
+            padding: 10px;
             background-color: #f5f5f5;
         }
-        .container {
-            max-width: 100%;
+        pre {
             background-color: white;
-            padding: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        h1 {
-            margin: 0 0 10px 0;
-            color: #333;
-            font-size: 24px;
-        }
-        .description {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 13px;
-        }
-        .info-label {
-            font-weight: bold;
-            color: #333;
-            width: 30%;
-        }
-        .info-value {
-            color: #666;
-            width: 70%;
-        }
-        .elements {
-            margin-top: 20px;
-        }
-        .element {
-            background-color: #f9f9f9;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-left: 3px solid #007cba;
-            font-size: 12px;
-        }
-        .element-type {
-            font-weight: bold;
-            color: #007cba;
-            margin-bottom: 4px;
-        }
-        .element-content {
-            color: #666;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>' . $name . '</h1>' . ($description ? '<div class="description">' . $description . '</div>' : '') . '
-        
-        <div class="info-row">
-            <span class="info-label">Dimensions Canvas:</span>
-            <span class="info-value">' . $width . ' x ' . $height . ' px</span>
-        </div>
-        
-        <div class="info-row">
-            <span class="info-label">Nombre d\'éléments:</span>
-            <span class="info-value">' . count($elements) . '</span>
-        </div>
-        
-        <div class="info-row">
-            <span class="info-label">Date de génération:</span>
-            <span class="info-value">' . date('d/m/Y à H:i:s') . '</span>
-        </div>';
-        
-        // Afficher les éléments
-        if (!empty($elements) && is_array($elements)) {
-            $html .= '<div class="elements">
-                <strong style="display: block; margin-bottom: 10px; border-bottom: 2px solid #007cba; padding-bottom: 8px;">Éléments du template:</strong>';
-            
-            foreach ($elements as $index => $element) {
-                $type = htmlspecialchars($element['type'] ?? 'Inconnu');
-                $content = htmlspecialchars($element['content'] ?? $element['text'] ?? '(vide)');
-                
-                $html .= '<div class="element">
-                    <div class="element-type">' . ($index + 1) . '. ' . $type . '</div>
-                    <div class="element-content">' . substr($content, 0, 100) . '</div>
-                </div>';
-            }
-            
-            $html .= '</div>';
-        }
-        
-        $html .= '
-    </div>
+    <h2>Template Data (JSON)</h2>
+    <pre>' . htmlspecialchars($json) . '</pre>
 </body>
 </html>';
         
