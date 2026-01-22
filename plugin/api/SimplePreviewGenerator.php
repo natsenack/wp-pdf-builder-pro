@@ -199,21 +199,16 @@ class SimplePreviewGenerator
     }
 }
 
-// === ENREGISTREMENT AJAX ===
-if (!function_exists('pdf_builder_preview_init')) {
-    function pdf_builder_preview_init()
-    {
-        add_action('wp_ajax_pdf_builder_generate_preview', function() {
-            $generator = new SimplePreviewGenerator();
-            $generator->handle();
-            wp_die();
-        });
+// === ENREGISTREMENT AJAX - Appels directs ===
+// Enregistrer les actions AJAX directement sans fonction wrapper
+add_action('wp_ajax_pdf_builder_generate_preview', function() {
+    $generator = new SimplePreviewGenerator();
+    $generator->handle();
+    wp_die();
+});
 
-        add_action('wp_ajax_nopriv_pdf_builder_generate_preview', function() {
-            http_response_code(401);
-            wp_send_json_error('Authentication required');
-            wp_die();
-        });
-    }
-    add_action('init', 'pdf_builder_preview_init');
-}
+add_action('wp_ajax_nopriv_pdf_builder_generate_preview', function() {
+    http_response_code(401);
+    wp_send_json_error('Authentication required');
+    wp_die();
+});
