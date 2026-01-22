@@ -4,6 +4,12 @@
  * Ce script initialise l'éditeur React une fois que tous les bundles sont chargés
  */
 
+// LOG ABSOLU AU DÉBUT DU FICHIER
+console.log('=== PDF BUILDER REACT INIT LOADED ===');
+console.log('Timestamp:', Date.now());
+console.log('User Agent:', navigator.userAgent);
+console.log('Location:', window.location.href);
+
 console.log('[REACT INIT] ===== FILE LOADED =====');
 console.log('[REACT INIT] React initialization script loaded at:', new Date().toISOString());
 console.log('[REACT INIT] Window object available:', typeof window);

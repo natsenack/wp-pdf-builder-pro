@@ -5,6 +5,10 @@
  * Responsable du chargement des scripts et styles d'administration
  */
 
+error_log('[DEBUG] PDF Builder AdminScriptLoader.php FILE LOADED at ' . microtime(true));
+error_log('[DEBUG] PDF Builder AdminScriptLoader.php REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
+error_log('[DEBUG] PDF Builder AdminScriptLoader.php GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page'));
+
 namespace PDF_Builder\Admin\Loaders;
 
 // Import the logger class
@@ -25,6 +29,8 @@ class AdminScriptLoader
      */
     public function __construct($admin)
     {
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: CONSTRUCTOR CALLED');
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: Admin object provided: ' . (is_object($admin) ? 'YES' : 'NO'));
         $this->admin = $admin;
 
         // Ensure logger is loaded
@@ -37,6 +43,7 @@ class AdminScriptLoader
 
         // Enregistrer le hook pour charger les scripts admin
         add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: admin_enqueue_scripts hook registered');
     }
 
     /**

@@ -12,6 +12,15 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 
 error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
 
+// Vérifier si on est sur une page admin
+if (is_admin()) {
+    error_log('[BOOTSTRAP] We are in admin area');
+    error_log('[BOOTSTRAP] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page param'));
+    error_log('[BOOTSTRAP] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
+} else {
+    error_log('[BOOTSTRAP] Not in admin area');
+}
+
 // Définir les constantes essentielles si elles ne sont pas déjà définies
 if (!defined('PDF_BUILDER_PLUGIN_FILE')) {
     define('PDF_BUILDER_PLUGIN_FILE', __FILE__);

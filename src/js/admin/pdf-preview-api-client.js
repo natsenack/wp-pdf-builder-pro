@@ -2,6 +2,13 @@
  * PDF Builder - Preview API Client
  * Client for PDF preview API calls
  */
+
+// LOG ABSOLU AU DÉBUT DU FICHIER
+console.log('=== PDF PREVIEW API CLIENT LOADED ===');
+console.log('Timestamp:', Date.now());
+console.log('User Agent:', navigator.userAgent);
+console.log('Location:', window.location.href);
+
 console.log('[PDF PREVIEW API CLIENT] ===== FILE LOADED =====');
 console.log('[PDF PREVIEW API CLIENT] Script loaded and executing at:', new Date().toISOString());
 console.log('[PDF PREVIEW API CLIENT] Window object available:', typeof window);

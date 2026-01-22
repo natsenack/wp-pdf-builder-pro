@@ -16,6 +16,10 @@
  * date de début de la création du plugin : 15/10/2025
  */
 
+error_log('[DEBUG] PDF BUILDER PRO MAIN FILE LOADED at ' . microtime(true));
+error_log('[DEBUG] PDF BUILDER PRO REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
+error_log('[DEBUG] PDF BUILDER PRO GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page'));
+
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
