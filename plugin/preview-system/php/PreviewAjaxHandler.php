@@ -30,6 +30,9 @@ class PreviewAjaxHandler {
      */
     public static function generatePreviewAjax() {
         try {
+            // TEST - Confirmer que la fonction est appelée
+            exit('AJAX_HANDLER_CALLED_OK');
+            
             error_log('[PREVIEW AJAX] ===== NOUVEAU APPEL AJAX =====');
             error_log('[PREVIEW AJAX] Utilisateur courant: ' . get_current_user_id());
             error_log('[PREVIEW AJAX] User peut manage_options? ' . (current_user_can('manage_options') ? 'OUI' : 'NON'));
