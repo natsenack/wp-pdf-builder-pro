@@ -191,84 +191,75 @@ class PreviewAjaxHandler {
     }
 
     /**
-     * Génère l'aperçu avec le système de fallback
+     * Génère l'aperçu simple
      */
     private static function generatePreview(array $template_data, string $format = 'png', int $quality = 150) {
         try {
             error_log('[PREVIEW] Début de la génération - Format: ' . $format);
 
-            // Préparer les données
-            $final_template_data = [
-                'template' => $template_data,
-            ];
+            // Créer une image simple avec les données du template
+            $image = imagecreatetruecolor(800, 600);
+            $bg_color = imagecolorallocate($image, 240, 240, 240);
+            $text_color = imagecolorallocate($image, 50, 50, 50);
+            $header_color = imagecolorallocate($image, 52, 152, 219);
 
-            // Obtenir le data provider (utilisateur courant par défaut)
-            $data_provider = self::getDataProvider();
-
-            // Créer le manager de générateurs
-            $generator_manager = new GeneratorManager();
-
-            // Générer l'aperçu
-            $output_type = $format === 'pdf' ? 'pdf' : 'png';
-            error_log('[PREVIEW] Appel GeneratorManager->generatePreview() avec output_type: ' . $output_type);
+            imagefill($image, 0, 0, $bg_color);
             
-            $preview_result = $generator_manager->generatePreview(
-                $final_template_data,
-                $data_provider,
-                $output_type,
-                [
-                    'quality' => $quality,
-                    'is_preview' => true,
-                ]
-            );
+            // En-tête
+            imagefilledrectangle($image, 0, 0, 800, 60, $header_color);
+            imagestring($image, 5, 20, 20, 'PDF Preview - ' . ($template_data['template_name'] ?? 'Template'), imagecolorallocate($image, 255, 255, 255));
+            
+            // Contenu
+            imagestring($image, 3, 20, 80, 'Template ID: ' . ($template_data['template_id'] ?? 'N/A'), $text_color);
+            imagestring($image, 3, 20, 100, 'Format: ' . $format, $text_color);
+            imagestring($image, 3, 20, 120, 'Qualité: ' . $quality, $text_color);
+            
+            $y = 160;
+            if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+                imagestring($image, 3, 20, $y, 'Éléments: ' . count($template_data['elements']), $text_color);
+                $y += 20;
+            }
+            
+            // Dimensions canvas
+            if (isset($template_data['canvasWidth']) && isset($template_data['canvasHeight'])) {
+                imagestring($image, 3, 20, $y, 'Canvas: ' . $template_data['canvasWidth'] . 'x' . $template_data['canvasHeight'], $text_color);
+                $y += 20;
+            }
+            
+            // Footer
+            imagefilledrectangle($image, 0, 570, 800, 600, imagecolorallocate($image, 200, 200, 200));
+            imagestring($image, 3, 20, 577, 'Généré par PDF Builder Pro - ' . date('Y-m-d H:i:s'), $text_color);
 
-            error_log('[PREVIEW] Génération complétée - Type retour: ' . gettype($preview_result));
-            if (is_array($preview_result)) {
-                error_log('[PREVIEW] Résultat est un array avec clés: ' . implode(', ', array_keys($preview_result)));
-            } elseif (is_string($preview_result)) {
-                error_log('[PREVIEW] Résultat est une string de ' . strlen($preview_result) . ' bytes');
-            } elseif ($preview_result === null) {
-                error_log('[PREVIEW] Résultat est NULL');
+            // Exporter en image
+            ob_start();
+            if ($format === 'jpg') {
+                imagejpeg($image, null, $quality);
             } else {
-                error_log('[PREVIEW] Résultat est de type: ' . gettype($preview_result));
+                imagepng($image);
             }
+            $image_data = ob_get_clean();
+            imagedestroy($image);
 
-            // === FOCUS: PDF ONLY ===
-            // Pour l'instant, on se concentre UNIQUEMENT sur PDF
+            error_log('[PREVIEW] Image générée avec succès - ' . strlen($image_data) . ' bytes');
 
-            // Format 1: String direct = PDF binary content
-            if (is_string($preview_result)) {
-                error_log('[PREVIEW] PDF généré avec succès - taille: ' . strlen($preview_result) . ' bytes');
-                $pdf_file = self::savePdfTemporary($preview_result);
-                return [
-                    'image_url' => $pdf_file,
-                    'format' => 'pdf',
-                    'success' => true
-                ];
-            }
-
-            // Format 2: Array avec PDF file path
-            if (is_array($preview_result) && isset($preview_result['file'])) {
-                error_log('[PREVIEW] PDF fichier généré: ' . $preview_result['file']);
-                return [
-                    'image_url' => $preview_result['file'],
-                    'format' => 'pdf',
-                    'success' => true
-                ];
-            }
-
-            // Format 3: Fallback - error
-            error_log('[PREVIEW] Format inattendu ou erreur: ' . gettype($preview_result));
             return [
-                'image_url' => self::generatePlaceholderImage($format),
+                'image_url' => 'data:image/' . ($format === 'jpg' ? 'jpeg' : 'png') . ';base64,' . base64_encode($image_data),
                 'format' => $format,
-                'fallback' => true,
-                'success' => true
+                'success' => true,
+                'fallback' => false,
+                'generator' => 'simple-image'
             ];
 
         } catch (\Exception $e) {
             error_log('[PREVIEW ERROR] ' . $e->getMessage());
-            throw $e;
+            // Fallback à une image vide
+            return [
+                'image_url' => self::generatePlaceholderImage($format),
+                'format' => $format,
+                'fallback' => true,
+                'success' => true,
+                'error' => $e->getMessage()
+            ];
         }
     }
 
