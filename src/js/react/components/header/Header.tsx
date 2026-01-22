@@ -601,7 +601,18 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
+            console.log('[REACT HEADER] Aperçu button clicked - opening preview modal');
+            console.log('[REACT HEADER] Current state before opening modal:');
+            console.log('[REACT HEADER] - showPreviewModal:', showPreviewModal);
+            console.log('[REACT HEADER] - isGeneratingPreview:', isGeneratingPreview);
+            console.log('[REACT HEADER] - previewImageUrl:', previewImageUrl);
+            console.log('[REACT HEADER] - previewError:', previewError);
+            console.log('[REACT HEADER] - previewFormat:', previewFormat);
+            console.log('[REACT HEADER] - Template state elements count:', state.elements?.length || 0);
+            console.log('[REACT HEADER] - Template state has content:', !!(state.elements && state.elements.length > 0));
+            console.log('[REACT HEADER] About to call openPreviewModal()');
             openPreviewModal();
+            console.log('[REACT HEADER] openPreviewModal() called successfully');
           }}
           onMouseEnter={() => setHoveredButton("preview")}
           onMouseLeave={() => setHoveredButton(null)}
