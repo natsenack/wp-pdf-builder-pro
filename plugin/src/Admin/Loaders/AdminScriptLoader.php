@@ -55,6 +55,10 @@ class AdminScriptLoader
         error_log('[DEBUG] PDF Builder AdminScriptLoader: GET params: ' . print_r($_GET, true));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
+        // AJOUTER UN SCRIPT DE TEST AU DÉBUT, PEU IMPORTE LA CONDITION
+        wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED AT START ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href); console.log("Hook:", "' . $hook . '");', 'before');
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: TEST SCRIPT ADDED AT START');
+
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
         add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
