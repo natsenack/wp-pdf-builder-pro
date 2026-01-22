@@ -416,33 +416,48 @@ class PreviewImageAPI
         $params = [
             'context' => $context,
             'template_data' => null,
+            'template_id' => null,
             'preview_type' => 'design',
             'order_id' => null,
             'quality' => 150,
             'format' => 'png'
         ];
-// Paramètres spécifiques selon contexte
+
+        // Vérifier si un template_id est fourni pour charger le template complet
+        if (!empty($_POST['template_id'])) {
+            $template_id = intval($_POST['template_id']);
+            $loaded_template = $this->loadTemplateById($template_id);
+            if ($loaded_template) {
+                $params['template_data'] = $loaded_template;
+                $params['template_id'] = $template_id;
+            }
+        }
+
+        // Si pas de template_id ou chargement échoué, utiliser les données transmises
+        if (empty($params['template_data'])) {
+            $params['template_data'] = $this->validateTemplateData($_POST['template_data'] ?? '');
+        }
+
+        // Paramètres spécifiques selon contexte
         switch ($context) {
             case 'editor':
-                // Aperçu design - données fictives
-                $params['template_data'] = $this->validateTemplateData($_POST['template_data'] ?? '');
+                // Aperçu design
                 $params['preview_type'] = 'design';
-
                 break;
+
             case 'metabox':
                 // Aperçu commande réelle
-                $params['template_data'] = $this->validateTemplateData($_POST['template_data'] ?? '');
                 $params['order_id'] = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
                 $params['preview_type'] = $params['order_id'] ? 'order' : 'design';
-            // Validation commande existe
+                // Validation commande existe
                 if ($params['order_id'] && function_exists('wc_get_order')) {
                     $order = \wc_get_order($params['order_id']);
                     if (!$order) {
                         $this->sendJsonError('Order not found', 404);
                     }
                 }
-
                 break;
+
             default:
                 $this->sendJsonError('Invalid context', 400);
         }
@@ -459,6 +474,36 @@ class PreviewImageAPI
         }
 
         return $params;
+    }
+
+    /**
+     * Charge un template complet depuis la base de données par son ID
+     *
+     * @param int $template_id ID du template
+     * @return array|null Données du template ou null si non trouvé
+     */
+    private function loadTemplateById($template_id)
+    {
+        if (!$template_id) {
+            return null;
+        }
+
+        // Récupérer le post du template
+        $template_post = get_post($template_id);
+        
+        if (!$template_post || $template_post->post_type !== 'pdf_template') {
+            return null;
+        }
+
+        // Décoder le contenu JSON du template
+        $template_json = json_decode($template_post->post_content, true);
+        
+        if (!$template_json || json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        // Valider et normaliser la structure
+        return $this->validateTemplateData(json_encode($template_json));
     }
 
     /**

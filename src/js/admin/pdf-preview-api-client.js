@@ -36,6 +36,13 @@ console.log('[PDF PREVIEW API CLIENT] pdfBuilderAjax available:', typeof window.
             formData.append('preview_type', data.context || 'editor');
             formData.append('format', data.format || 'png');
             formData.append('quality', (data.quality || 150).toString());
+            
+            // Ajouter template_id s'il est disponible
+            if (data.template_id) {
+                formData.append('template_id', data.template_id.toString());
+                console.log('[PDF Preview API] Sending template_id:', data.template_id);
+            }
+            
             if (data.order_id) {
                 formData.append('order_id', data.order_id.toString());
             }
