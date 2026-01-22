@@ -83,7 +83,7 @@ class ReactAssets {
             if (!window.pdfBuilderNonce || window.pdfBuilderNonce === '') {
                 console.error('[INLINE INJECT ERROR] Nonce is EMPTY!');
             } else {
-                console.success('[INLINE INJECT OK] Nonce length:', window.pdfBuilderNonce.length);
+                console.log('[INLINE INJECT OK] Nonce length:', window.pdfBuilderNonce.length);
             }
         ", 'before');
         
