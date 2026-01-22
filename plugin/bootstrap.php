@@ -38,60 +38,73 @@ function pdf_builder_inject_nonce() {
     
     // Injecter directement
     $ajax_url = admin_url('admin-ajax.php');
-    echo '<script type="text/javascript">';
-    echo "console.warn('[BOOTSTRAP NONCE INJECT] Starting injection at ' + new Date().toISOString());";
-    echo "window.pdfBuilderData = {";
-    echo "  nonce: '" . esc_js($nonce) . "',";
-    echo "  ajaxurl: '" . esc_js($ajax_url) . "',";
-    echo "  templateId: null,";
-    echo "  _timestamp: " . time() . "";
-    echo "};";
-    echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
-    echo "console.log('[BOOTSTRAP NONCE OK] window.pdfBuilderNonce =', window.pdfBuilderNonce);";
-    echo "console.log('[BOOTSTRAP NONCE OK] Nonce length =', window.pdfBuilderNonce.length);";
-    echo "console.log('[BOOTSTRAP AJAX URL] ajaxurl from window.pdfBuilderData =', window.pdfBuilderData.ajaxurl);";
-    echo "console.log('[BOOTSTRAP VERIFY] Full window.pdfBuilderData object:', JSON.stringify(window.pdfBuilderData));";
     
-    // 🎯 TEST DIRECT: Faire un appel AJAX simple pour vérifier que le nonce fonctionne
-    echo "window.testPDFPreview = function() {";
-    echo "  console.warn('🔴 TEST PREVIEW CALLED at ' + new Date().toISOString());";
-    echo "  ";
-    echo "  // VERIFY DATA EXISTS";
-    echo "  console.log('[FUNC] window.pdfBuilderData exists?', typeof window.pdfBuilderData !== 'undefined');";
-    echo "  console.log('[FUNC] window.pdfBuilderData =', window.pdfBuilderData);";
-    echo "  ";
-    echo "  const nonce = window.pdfBuilderNonce;";
-    echo "  const ajaxurl = window.pdfBuilderData ? window.pdfBuilderData.ajaxurl : 'UNDEFINED_OBJECT';";
-    echo "  ";
-    echo "  console.log('[FUNC] nonce =', nonce);";
-    echo "  console.log('[FUNC] ajaxurl from window.pdfBuilderData.ajaxurl =', ajaxurl);";
-    echo "  ";
-    echo "  if (!ajaxurl || ajaxurl === 'UNDEFINED_OBJECT') {";
-    echo "    console.error('[FUNC] ERROR: ajaxurl is undefined!');";
-    echo "    console.error('[FUNC] window.pdfBuilderData object:', window.pdfBuilderData);";
-    echo "    return;";
-    echo "  }";
-    echo "  ";
-    echo "  const formData = new FormData();";
-    echo "  formData.append('action', 'pdf_builder_generate_preview');";
-    echo "  formData.append('nonce', nonce);";
-    echo "  formData.append('template_data', JSON.stringify({elements: [], styles: {}}));";
-    echo "  formData.append('format', 'png');";
-    echo "  formData.append('quality', '150');";
-    echo "  ";
-    echo "  console.log('[FUNC] Fetching POST to:', ajaxurl);";
-    echo "  fetch(ajaxurl, {";
-    echo "    method: 'POST',";
-    echo "    body: formData";
-    echo "  })";
-    echo "  .then(r => {";
-    echo "    console.log('[FUNC] Response status:', r.status);";
-    echo "    return r.json().catch(e => {console.error('[FUNC] JSON parse error:', e); throw e;});";
-    echo "  })";
-    echo "  .then(d => console.log('[FUNC] SUCCESS - Response data:', d))";
-    echo "  .catch(e => console.error('[FUNC] FETCH ERROR:', e));";
-    echo "};";
-    echo "console.log('🟢 testPDFPreview function registered with enhanced debugging. Call: window.testPDFPreview()');";
+    // Générer le script en bloc unique
+    $script = <<<'SCRIPT'
+<script type="text/javascript">
+(function() {
+    window.pdfBuilderData = {
+        nonce: '%NONCE%',
+        ajaxurl: '%AJAX_URL%',
+        templateId: null,
+        _timestamp: %TIMESTAMP%
+    };
+    window.pdfBuilderNonce = '%NONCE%';
+    
+    console.warn('[BOOTSTRAP] Injection du nonce et AJAX URL');
+    console.log('[BOOTSTRAP] nonce =', window.pdfBuilderNonce);
+    console.log('[BOOTSTRAP] ajaxurl =', window.pdfBuilderData.ajaxurl);
+    
+    // TEST DIRECT
+    window.testPDFPreview = function() {
+        console.warn('🔴 TEST PREVIEW CALLED');
+        
+        // Vérification des données
+        console.log('[TEST] window.pdfBuilderData =', window.pdfBuilderData);
+        
+        const nonce = window.pdfBuilderNonce;
+        const ajaxurl = window.pdfBuilderData ? window.pdfBuilderData.ajaxurl : undefined;
+        
+        console.log('[TEST] nonce =', nonce);
+        console.log('[TEST] ajaxurl =', ajaxurl);
+        
+        if (!ajaxurl) {
+            console.error('[TEST] ERROR: ajaxurl is undefined!');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_generate_preview');
+        formData.append('nonce', nonce);
+        formData.append('template_data', JSON.stringify({elements: [], styles: {}}));
+        formData.append('format', 'png');
+        formData.append('quality', '150');
+        
+        console.log('[TEST] Fetching POST to:', ajaxurl);
+        
+        fetch(ajaxurl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(r => {
+            console.log('[TEST] Response status:', r.status);
+            return r.json();
+        })
+        .then(d => console.log('[TEST] SUCCESS - Response:', d))
+        .catch(e => console.error('[TEST] ERROR:', e));
+    };
+    
+    console.log('🟢 testPDFPreview registered. Call: window.testPDFPreview()');
+})();
+</script>
+SCRIPT;
+    
+    // Remplacer les placeholders
+    $script = str_replace('%NONCE%', esc_js($nonce), $script);
+    $script = str_replace('%AJAX_URL%', esc_js($ajax_url), $script);
+    $script = str_replace('%TIMESTAMP%', time(), $script);
+    
+    echo $script;
     
     echo '</script>';
 }
