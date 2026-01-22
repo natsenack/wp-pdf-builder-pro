@@ -30,22 +30,31 @@ class PdfBuilderPreviewAjax
      */
     public function generatePreview()
     {
+        error_log('[PDF Preview AJAX] Handler called');
         try {
+            error_log('[PDF Preview AJAX] Starting permission check');
 // Vérification des permissions
             if (!current_user_can('manage_options')) {
+                error_log('[PDF Preview AJAX] Permission denied');
                 wp_die('Forbidden');
             }
 
-            // Vérification du nonce
+            error_log('[PDF Preview AJAX] Checking nonce');
+// Vérification du nonce
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+                error_log('[PDF Preview AJAX] Invalid nonce: ' . ($_POST['nonce'] ?? 'none'));
                 wp_send_json_error('Invalid nonce');
             }
 
-            // Récupération des données
+            error_log('[PDF Preview AJAX] Retrieving data');
+// Récupération des données
             $template_data = json_decode(stripslashes($_POST['template_data'] ?? '{}'), true);
             $preview_type = sanitize_text_field($_POST['preview_type'] ?? 'sample');
             $order_id = intval($_POST['order_id'] ?? 0);
+            error_log('[PDF Preview AJAX] Template data: ' . json_encode($template_data));
+            error_log('[PDF Preview AJAX] Preview type: ' . $preview_type);
             if (empty($template_data)) {
+                error_log('[PDF Preview AJAX] Template data empty');
                 wp_send_json_error('Données du template manquantes');
             }
 
@@ -53,11 +62,14 @@ class PdfBuilderPreviewAjax
             require_once plugin_dir_path(__FILE__) . 'Managers/PDF_Builder_Preview_Generator.php';
             $generator = new PDF_Builder_Preview_Generator($template_data, $preview_type, $order_id);
             $preview_url = $generator->generate_preview();
+            error_log('[PDF Preview AJAX] Preview generated successfully: ' . $preview_url);
             wp_send_json_success(array(
                 'preview_url' => $preview_url,
                 'cache_key' => $generator->get_cache_key()
             ));
         } catch (Exception $e) {
+            error_log('[PDF Preview AJAX] Exception: ' . $e->getMessage());
+            error_log('[PDF Preview AJAX] Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur lors de la génération de l\'aperçu: ' . $e->getMessage());
         }
     }
@@ -67,14 +79,17 @@ class PdfBuilderPreviewAjax
      */
     public function getPreviewData()
     {
+        error_log('[PDF Preview AJAX] getPreviewData called');
         try {
 // Vérification des permissions
             if (!current_user_can('manage_options')) {
+                error_log('[PDF Preview AJAX] getPreviewData: Permission denied');
                 wp_die('Forbidden');
             }
 
             // Vérification du nonce
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+                error_log('[PDF Preview AJAX] getPreviewData: Invalid nonce');
                 wp_send_json_error('Invalid nonce');
             }
 
@@ -83,8 +98,10 @@ class PdfBuilderPreviewAjax
                 'recent_orders' => $this->get_recent_orders(),
                 'company_info' => $this->get_company_info()
             );
+            error_log('[PDF Preview AJAX] getPreviewData: Success');
             wp_send_json_success($data);
         } catch (Exception $e) {
+            error_log('[PDF Preview AJAX] getPreviewData: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur lors de la récupération des données: ' . $e->getMessage());
         }
     }
