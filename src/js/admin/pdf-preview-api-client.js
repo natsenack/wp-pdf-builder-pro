@@ -25,7 +25,7 @@
             if (data.order_id) {
                 formData.append('order_id', data.order_id.toString());
             }
-            formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+            formData.append('_wpnonce', window.pdfBuilderAjax?.nonce || '');
 
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',
@@ -47,7 +47,7 @@
             const formData = new FormData();
             formData.append('action', 'pdf_builder_get_preview_status');
             formData.append('preview_id', previewId);
-            formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+            formData.append('_wpnonce', window.pdfBuilderAjax?.nonce || '');
 
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',

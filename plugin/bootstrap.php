@@ -668,8 +668,8 @@ function pdf_builder_load_core()
             // Localiser les variables nécessaires
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
             $localize_data = [
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_ajax'),
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_order_actions'),
                 'version' => PDF_BUILDER_VERSION,
                 'templateId' => $template_id,
                 'isEdit' => $template_id > 0,
@@ -688,7 +688,7 @@ function pdf_builder_load_core()
                 // Les données seront chargées via AJAX dans l'app React
             }
 
-            wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderData', $localize_data);
+            wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', $localize_data);
         }
     });    // Charger le handler AJAX pour générer les styles des éléments
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
