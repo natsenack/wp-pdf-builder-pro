@@ -155,13 +155,18 @@ class PreviewAjaxHandler {
     }
 
     /**
-     * Génère l'aperçu simple
+     * Génère l'aperçu PDF à partir des données du template
      */
     private static function generatePreview(array $template_data, string $format = 'png', int $quality = 150) {
         try {
             error_log('[PREVIEW] Début de la génération - Format: ' . $format);
-
-            // Créer une image simple avec les données du template
+            
+            // Si format PDF, générer un vrai PDF à partir du template_data
+            if ($format === 'pdf') {
+                return self::generatePdfFromTemplate($template_data, $quality);
+            }
+            
+            // Sinon créer une image simple
             $image = imagecreatetruecolor(800, 600);
             $bg_color = imagecolorallocate($image, 240, 240, 240);
             $text_color = imagecolorallocate($image, 50, 50, 50);
@@ -225,6 +230,190 @@ class PreviewAjaxHandler {
                 'error' => $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * Génère un PDF à partir des données du template
+     */
+    private static function generatePdfFromTemplate(array $template_data, int $quality = 150) {
+        try {
+            error_log('[PREVIEW PDF] Début génération PDF à partir du template');
+            
+            // Vérifier si dompdf est disponible
+            if (!class_exists('Dompdf\Dompdf')) {
+                error_log('[PREVIEW PDF] ❌ Dompdf non disponible');
+                return self::generateSimplePdfFallback($template_data);
+            }
+
+            // Créer une instance de Dompdf
+            $dompdf = new \Dompdf\Dompdf([
+                'enable_remote' => true,
+                'isHtml5ParserEnabled' => true,
+            ]);
+
+            // Générer le HTML à partir des données du template
+            $html = self::generateHtmlFromTemplate($template_data);
+            
+            error_log('[PREVIEW PDF] HTML généré - ' . strlen($html) . ' bytes');
+
+            // Charger le HTML dans Dompdf
+            $dompdf->loadHtml($html);
+            
+            // Définir le format du papier et l'orientation
+            $width = isset($template_data['canvasWidth']) ? (int)$template_data['canvasWidth'] : 210;
+            $height = isset($template_data['canvasHeight']) ? (int)$template_data['canvasHeight'] : 297;
+            
+            // Convertir de pixels à mm (96 DPI)
+            $width_mm = $width / 96 * 25.4;
+            $height_mm = $height / 96 * 25.4;
+            
+            $dompdf->setPaper([$width_mm, $height_mm], 'portrait');
+            
+            // Rendre le PDF
+            $dompdf->render();
+            
+            // Récupérer le contenu du PDF
+            $pdf_content = $dompdf->output();
+            
+            error_log('[PREVIEW PDF] PDF généré avec succès - ' . strlen($pdf_content) . ' bytes');
+
+            // Sauvegarder le PDF temporairement
+            $pdf_url = self::savePdfTemporarily($pdf_content);
+
+            return [
+                'image_url' => $pdf_url,
+                'format' => 'pdf',
+                'success' => true,
+                'fallback' => false,
+                'generator' => 'dompdf'
+            ];
+
+        } catch (\Exception $e) {
+            error_log('[PREVIEW PDF ERROR] ' . $e->getMessage());
+            return self::generateSimplePdfFallback($template_data);
+        }
+    }
+
+    /**
+     * Génère du HTML à partir des données du template
+     */
+    private static function generateHtmlFromTemplate(array $template_data): string {
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; line-height: 1.5; }
+        .container { padding: 20px; }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        .element { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>' . htmlspecialchars($template_data['template_name'] ?? 'Template') . '</h1>';
+        
+        if (!empty($template_data['description'])) {
+            $html .= '<p>' . htmlspecialchars($template_data['description']) . '</p>';
+        }
+        
+        // Afficher les éléments du template
+        if (!empty($template_data['elements']) && is_array($template_data['elements'])) {
+            $html .= '<div style="margin: 20px 0;">';
+            $html .= '<h2 style="font-size: 18px; margin-bottom: 10px;">Éléments (' . count($template_data['elements']) . ')</h2>';
+            
+            foreach ($template_data['elements'] as $element) {
+                $html .= '<div class="element">';
+                $html .= '<strong>' . htmlspecialchars($element['type'] ?? 'Element') . '</strong>';
+                if (!empty($element['content'])) {
+                    $html .= ': ' . htmlspecialchars(substr($element['content'], 0, 100));
+                }
+                $html .= '</div>';
+            }
+            $html .= '</div>';
+        }
+        
+        // Ajouter les informations du template
+        $html .= '<div class="footer">
+            <p><strong>Informations du Template:</strong></p>
+            <ul>';
+        
+        if (!empty($template_data['canvasWidth']) && !empty($template_data['canvasHeight'])) {
+            $html .= '<li>Dimensions: ' . htmlspecialchars($template_data['canvasWidth']) . ' x ' . htmlspecialchars($template_data['canvasHeight']) . '</li>';
+        }
+        
+        if (!empty($template_data['version'])) {
+            $html .= '<li>Version: ' . htmlspecialchars($template_data['version']) . '</li>';
+        }
+        
+        $html .= '<li>Généré: ' . date('Y-m-d H:i:s') . '</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
+    /**
+     * Génère un PDF simple en fallback (sans dompdf)
+     */
+    private static function generateSimplePdfFallback(array $template_data) {
+        try {
+            error_log('[PREVIEW PDF] Génération PDF fallback simple');
+            
+            // Créer une image et la retourner en base64
+            $image = imagecreatetruecolor(800, 600);
+            $bg_color = imagecolorallocate($image, 255, 255, 255);
+            $text_color = imagecolorallocate($image, 0, 0, 0);
+            
+            imagefill($image, 0, 0, $bg_color);
+            imagestring($image, 5, 20, 20, $template_data['template_name'] ?? 'Template', $text_color);
+            imagestring($image, 3, 20, 50, 'PDF Fallback Preview', $text_color);
+            
+            ob_start();
+            imagepng($image);
+            $image_data = ob_get_clean();
+            imagedestroy($image);
+            
+            return [
+                'image_url' => 'data:image/png;base64,' . base64_encode($image_data),
+                'format' => 'pdf',
+                'success' => true,
+                'fallback' => true,
+                'generator' => 'fallback-image'
+            ];
+        } catch (\Exception $e) {
+            error_log('[PREVIEW PDF FALLBACK ERROR] ' . $e->getMessage());
+            return [
+                'image_url' => self::generatePlaceholderImage('png'),
+                'format' => 'pdf',
+                'fallback' => true,
+                'success' => true,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Sauvegarde un PDF temporairement et retourne l'URL
+     */
+    private static function savePdfTemporarily(string $pdf_content): string {
+        $upload_dir = wp_upload_dir();
+        $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+
+        if (!is_dir($temp_dir)) {
+            mkdir($temp_dir, 0755, true);
+        }
+
+        $filename = 'preview-' . uniqid() . '.pdf';
+        $filepath = $temp_dir . '/' . $filename;
+        file_put_contents($filepath, $pdf_content);
+
+        return $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
     }
 
     /**
