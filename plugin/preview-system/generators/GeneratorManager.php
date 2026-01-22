@@ -395,6 +395,7 @@ private function createGenerator(
      */
     private function logError(string $message): void
     {
+        error_log('[PREVIEW GENERATOR] ❌ ' . $message);
     }
 
     /**
@@ -404,5 +405,6 @@ private function createGenerator(
      */
     private function logInfo(string $message): void
     {
+        error_log('[PREVIEW GENERATOR] ℹ️  ' . $message);
     }
 }
