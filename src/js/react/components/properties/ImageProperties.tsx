@@ -21,7 +21,7 @@ export function ImageProperties({ element, onChange, activeTab, setActiveTab }: 
   };
 
   const openMediaLibrary = () => {
-    if (window.wp?.media) {
+    if (window.wp?.media && typeof window.wp.media === 'function') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const media = window.wp.media({
         title: 'Sélectionner une image',
@@ -40,6 +40,8 @@ export function ImageProperties({ element, onChange, activeTab, setActiveTab }: 
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (media as any).open();
+    } else {
+      alert('Bibliothèque de médias WordPress non disponible. Veuillez saisir l\'URL manuellement.');
     }
   };
 

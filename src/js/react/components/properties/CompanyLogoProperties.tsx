@@ -115,7 +115,7 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               <button
                 onClick={() => {
                   // Ouvrir la bibliothèque de médias WordPress
-                  if (!window.wp?.media) {
+                  if (!window.wp?.media || typeof window.wp.media !== 'function') {
                     const errorMsg = 'Bibliothèque de médias WordPress non disponible (wp_enqueue_media non appelé ?)';
 
                     alert(errorMsg + '\n\nSaisissez l\'URL manuellement.');
