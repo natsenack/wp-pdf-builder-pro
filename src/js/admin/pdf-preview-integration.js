@@ -2,6 +2,7 @@
  * PDF Builder - Preview Integration
  * Integration utilities for PDF preview functionality
  */
+console.log('[PDF PREVIEW INTEGRATION] Script loaded and executing');
 (function($) {
     'use strict';
 

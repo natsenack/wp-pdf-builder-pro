@@ -8,6 +8,8 @@ import React, {
 import { TemplateState } from "../../types/elements";
 import { useBuilder } from "../../contexts/builder/BuilderContext";
 import { usePreview } from "../../hooks/usePreview";
+
+console.log('[REACT HEADER COMPONENT] Component file loaded and executing');
 import { useCanvasSettings } from "../../contexts/CanvasSettingsContext";
 import { debugLog, debugError } from "../../utils/debug";
 

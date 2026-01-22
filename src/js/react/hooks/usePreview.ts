@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 
+console.log('[REACT USE PREVIEW HOOK] Hook file loaded and executing');
+
 export interface PreviewOptions {
   format?: 'png' | 'jpg' | 'pdf';
   quality?: number;

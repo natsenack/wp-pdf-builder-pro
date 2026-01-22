@@ -2,6 +2,7 @@
  * PDF Builder - Preview API Client
  * Client for PDF preview API calls
  */
+console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
 (function($) {
     'use strict';
 
