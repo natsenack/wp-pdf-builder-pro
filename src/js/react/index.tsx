@@ -1,12 +1,19 @@
 /**
  * Main entry point for PDF Builder React bundle V2
- * 
+ *
  * This is the REAL PDF Builder with:
  * - Header toolbar with all controls
  * - Sidebar with element library
  * - Canvas editor with full functionality
  * - Properties panel for element editing
  */
+
+console.log('[REACT INDEX] ===== FILE LOADED =====');
+console.log('[REACT INDEX] React bundle loaded and executing at:', new Date().toISOString());
+console.log('[REACT INDEX] Window object available:', typeof window);
+console.log('[REACT INDEX] Document object available:', typeof document);
+console.log('[REACT INDEX] React available:', typeof React);
+console.log('[REACT INDEX] createRoot available:', typeof createRoot);
 
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
@@ -37,6 +44,10 @@ let reactRoot: Root | null = null;
  * @returns true if initialization succeeded, false otherwise
  */
 function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): boolean {
+  console.log('[REACT INDEX] ===== initPDFBuilderReact CALLED =====');
+  console.log('[REACT INDEX] initPDFBuilderReact called with containerId:', containerId);
+  console.log('[REACT INDEX] Document readyState:', document.readyState);
+  console.log('[REACT INDEX] Container element exists:', !!document.getElementById(containerId));
   logger.info(`Initializing PDF Builder in container: ${containerId}`);
   // console.log('[PDF Builder React] initPDFBuilderReact called with containerId:', containerId);
   

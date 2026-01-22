@@ -9,7 +9,12 @@ import { TemplateState } from "../../types/elements";
 import { useBuilder } from "../../contexts/builder/BuilderContext";
 import { usePreview } from "../../hooks/usePreview";
 
-console.log('[REACT HEADER COMPONENT] Component file loaded and executing');
+console.log('[REACT HEADER COMPONENT] ===== FILE LOADED =====');
+console.log('[REACT HEADER COMPONENT] Component file loaded and executing at:', new Date().toISOString());
+console.log('[REACT HEADER COMPONENT] React available:', typeof React);
+console.log('[REACT HEADER COMPONENT] useState available:', typeof useState);
+console.log('[REACT HEADER COMPONENT] useBuilder available:', typeof useBuilder);
+console.log('[REACT HEADER COMPONENT] usePreview available:', typeof usePreview);
 import { useCanvasSettings } from "../../contexts/CanvasSettingsContext";
 import { debugLog, debugError } from "../../utils/debug";
 

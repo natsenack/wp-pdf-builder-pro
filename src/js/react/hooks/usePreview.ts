@@ -1,6 +1,10 @@
 import { useState, useCallback } from 'react';
 
-console.log('[REACT USE PREVIEW HOOK] Hook file loaded and executing');
+console.log('[REACT USE PREVIEW HOOK] ===== FILE LOADED =====');
+console.log('[REACT USE PREVIEW HOOK] Hook file loaded and executing at:', new Date().toISOString());
+console.log('[REACT USE PREVIEW HOOK] React available:', typeof React);
+console.log('[REACT USE PREVIEW HOOK] useState available:', typeof useState);
+console.log('[REACT USE PREVIEW HOOK] useCallback available:', typeof useCallback);
 
 export interface PreviewOptions {
   format?: 'png' | 'jpg' | 'pdf';

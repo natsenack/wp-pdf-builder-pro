@@ -2,7 +2,12 @@
  * PDF Builder - Preview API Client
  * Client for PDF preview API calls
  */
-console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
+console.log('[PDF PREVIEW API CLIENT] ===== FILE LOADED =====');
+console.log('[PDF PREVIEW API CLIENT] Script loaded and executing at:', new Date().toISOString());
+console.log('[PDF PREVIEW API CLIENT] Window object available:', typeof window);
+console.log('[PDF PREVIEW API CLIENT] jQuery available:', typeof jQuery);
+console.log('[PDF PREVIEW API CLIENT] ajaxurl available:', typeof ajaxurl);
+console.log('[PDF PREVIEW API CLIENT] pdfBuilderAjax available:', typeof window.pdfBuilderAjax);
 (function($) {
     'use strict';
 
