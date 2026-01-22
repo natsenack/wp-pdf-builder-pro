@@ -19,8 +19,6 @@ if (!defined('ABSPATH')) {
 // === LAYER 1: GENERATORS ===
 // Core generator architecture with automatic fallback system
 // BaseGenerator -> PDFGenerator -> CanvasGenerator -> ImageGenerator
-// NOTE: Reset namespace before requires so generators keep their own namespaces
-namespace;
 
 require_once __DIR__ . '/generators/BaseGenerator.php';
 require_once __DIR__ . '/generators/PDFGenerator.php';
