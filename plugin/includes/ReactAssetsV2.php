@@ -129,13 +129,26 @@ class ReactAssets {
         );
 
         // Passer les données d'authentification et de configuration au client JavaScript
+        // Récupérer le template_id depuis plusieurs sources possibles
+        $template_id = null;
+        
+        // Priorité 1: Paramètre GET/POST
+        if (isset($_GET['id'])) {
+            $template_id = intval($_GET['id']);
+        } elseif (isset($_POST['id'])) {
+            $template_id = intval($_POST['id']);
+        }
+        
+        // Priorité 2: État du template (depuis BuilderContext si disponible)
+        // Ce sera complété au runtime par le state du template
+        
         wp_localize_script(
             'pdf-preview-api-client',
             'pdfBuilderData',
             [
                 'nonce' => wp_create_nonce('pdf_builder_nonce'),
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'templateId' => isset($_GET['id']) ? intval($_GET['id']) : null,
+                'templateId' => $template_id,
             ]
         );
 

@@ -1369,6 +1369,7 @@ export const Header = memo(function Header({
                   console.log('[HEADER COMPONENT] Preview button clicked in modal');
                   console.log('[HEADER COMPONENT] Timestamp:', Date.now());
                   console.log('[HEADER COMPONENT] State template:', state.template);
+                  console.log('[HEADER COMPONENT] State template ID:', state.template?.id);
                   console.log('[HEADER COMPONENT] State elements:', state.elements);
                   console.log('[HEADER COMPONENT] State elements count:', state.elements?.length || 0);
                   console.log('[HEADER COMPONENT] Preview format:', previewFormat);
@@ -1380,7 +1381,7 @@ export const Header = memo(function Header({
                     {
                       ...state.template,
                       elements: state.elements,
-                      template_id: window.pdfBuilderData?.templateId || null,
+                      template_id: state.template?.id || window.pdfBuilderData?.templateId || null,
                     },
                     {
                       format: previewFormat,
@@ -1389,7 +1390,6 @@ export const Header = memo(function Header({
                   );
 
                   console.log('[HEADER COMPONENT] generatePreview call completed');
-                  console.log('[HEADER COMPONENT] ===== MODAL PREVIEW BUTTON HANDLER COMPLETED =====');
                 }}
                 disabled={isGeneratingPreview}
                 style={{
