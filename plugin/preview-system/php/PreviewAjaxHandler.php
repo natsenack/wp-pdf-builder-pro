@@ -239,15 +239,24 @@ class PreviewAjaxHandler {
         try {
             error_log('[PREVIEW PDF] Début génération PDF à partir du template');
             
+            // Charger l'autoloader Composer si nécessaire
+            $autoload_path = dirname(__FILE__) . '/../../vendor/autoload.php';
+            if (file_exists($autoload_path)) {
+                require_once($autoload_path);
+                error_log('[PREVIEW PDF] Autoloader Composer chargé');
+            }
+            
             // Vérifier si dompdf est disponible
             if (!class_exists('Dompdf\Dompdf')) {
-                error_log('[PREVIEW PDF] ❌ Dompdf non disponible');
+                error_log('[PREVIEW PDF] ❌ Dompdf non disponible - Utilisant fallback');
                 return self::generateSimplePdfFallback($template_data);
             }
 
+            error_log('[PREVIEW PDF] ✓ Dompdf trouvé');
+
             // Créer une instance de Dompdf
             $dompdf = new \Dompdf\Dompdf([
-                'enable_remote' => true,
+                'enable_remote' => false,
                 'isHtml5ParserEnabled' => true,
             ]);
 
@@ -260,17 +269,18 @@ class PreviewAjaxHandler {
             $dompdf->loadHtml($html);
             
             // Définir le format du papier et l'orientation
-            $width = isset($template_data['canvasWidth']) ? (int)$template_data['canvasWidth'] : 210;
-            $height = isset($template_data['canvasHeight']) ? (int)$template_data['canvasHeight'] : 297;
+            $width = isset($template_data['canvasWidth']) ? (int)$template_data['canvasWidth'] : 800;
+            $height = isset($template_data['canvasHeight']) ? (int)$template_data['canvasHeight'] : 600;
             
-            // Convertir de pixels à mm (96 DPI)
-            $width_mm = $width / 96 * 25.4;
-            $height_mm = $height / 96 * 25.4;
+            // Utiliser A4 par défaut
+            $dompdf->setPaper('A4', 'portrait');
             
-            $dompdf->setPaper([$width_mm, $height_mm], 'portrait');
+            error_log('[PREVIEW PDF] Papier défini - A4');
             
             // Rendre le PDF
             $dompdf->render();
+            
+            error_log('[PREVIEW PDF] Render effectué');
             
             // Récupérer le contenu du PDF
             $pdf_content = $dompdf->output();
@@ -279,6 +289,8 @@ class PreviewAjaxHandler {
 
             // Sauvegarder le PDF temporairement
             $pdf_url = self::savePdfTemporarily($pdf_content);
+            
+            error_log('[PREVIEW PDF] PDF sauvegardé - URL: ' . $pdf_url);
 
             return [
                 'image_url' => $pdf_url,
@@ -289,7 +301,8 @@ class PreviewAjaxHandler {
             ];
 
         } catch (\Exception $e) {
-            error_log('[PREVIEW PDF ERROR] ' . $e->getMessage());
+            error_log('[PREVIEW PDF ERROR] Exception: ' . $e->getMessage());
+            error_log('[PREVIEW PDF ERROR] Trace: ' . $e->getTraceAsString());
             return self::generateSimplePdfFallback($template_data);
         }
     }
@@ -402,18 +415,46 @@ class PreviewAjaxHandler {
      * Sauvegarde un PDF temporairement et retourne l'URL
      */
     private static function savePdfTemporarily(string $pdf_content): string {
-        $upload_dir = wp_upload_dir();
-        $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+        try {
+            error_log('[PREVIEW PDF SAVE] Début sauvegarde PDF temporaire');
+            
+            $upload_dir = wp_upload_dir();
+            $base_dir = $upload_dir['basedir'];
+            $base_url = $upload_dir['baseurl'];
+            
+            error_log('[PREVIEW PDF SAVE] Upload dir: ' . $base_dir);
+            
+            $temp_dir = $base_dir . '/pdf-builder-temp';
 
-        if (!is_dir($temp_dir)) {
-            mkdir($temp_dir, 0755, true);
+            if (!is_dir($temp_dir)) {
+                error_log('[PREVIEW PDF SAVE] Création répertoire: ' . $temp_dir);
+                @mkdir($temp_dir, 0755, true);
+            }
+
+            $filename = 'preview-' . uniqid() . '.pdf';
+            $filepath = $temp_dir . '/' . $filename;
+            
+            error_log('[PREVIEW PDF SAVE] Sauvegarde fichier: ' . $filepath);
+            
+            $bytes_written = file_put_contents($filepath, $pdf_content);
+            
+            if ($bytes_written === false) {
+                error_log('[PREVIEW PDF SAVE] ❌ Erreur écriture fichier');
+                throw new \Exception('Impossible de sauvegarder le PDF');
+            }
+            
+            error_log('[PREVIEW PDF SAVE] ✓ Fichier sauvegardé - ' . $bytes_written . ' bytes');
+            
+            $pdf_url = $base_url . '/pdf-builder-temp/' . $filename;
+            
+            error_log('[PREVIEW PDF SAVE] URL générée: ' . $pdf_url);
+            
+            return $pdf_url;
+            
+        } catch (\Exception $e) {
+            error_log('[PREVIEW PDF SAVE ERROR] ' . $e->getMessage());
+            throw $e;
         }
-
-        $filename = 'preview-' . uniqid() . '.pdf';
-        $filepath = $temp_dir . '/' . $filename;
-        file_put_contents($filepath, $pdf_content);
-
-        return $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
     }
 
     /**
