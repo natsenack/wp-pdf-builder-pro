@@ -127,6 +127,23 @@ class ReactAssets {
             $version,
             true
         );
+
+        // Passer les données d'authentification et de configuration au client JavaScript
+        wp_localize_script(
+            'pdf-preview-api-client',
+            'pdfBuilderData',
+            [
+                'nonce' => wp_create_nonce('pdf_builder_nonce'),
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'templateId' => isset($_GET['id']) ? intval($_GET['id']) : null,
+            ]
+        );
+
+        wp_localize_script(
+            'pdf-preview-api-client',
+            'pdfBuilderNonce',
+            wp_create_nonce('pdf_builder_nonce')
+        );
         
         wp_enqueue_script(
             'pdf-preview-integration',

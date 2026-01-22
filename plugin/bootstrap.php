@@ -273,7 +273,12 @@ if (function_exists('add_action')) {
         if (class_exists('\\PDF_Builder\\Api\\PreviewImageAPI')) {
             new \PDF_Builder\Api\PreviewImageAPI();
         }
+        // Initialiser le handler AJAX pour l'aperçu
+        if (class_exists('\\PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+            \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
+        }
     });
+
     // Force HTTPS if enabled in settings (simple redirect to https if not SSL)
         add_action('template_redirect', function() {
             // Skip CLI, AJAX, REST requests and cron
