@@ -61,15 +61,18 @@ function pdf_builder_inject_nonce() {
         
         // Vérification des données
         console.log('[TEST] window.pdfBuilderData =', window.pdfBuilderData);
+        console.log('[TEST] window.pdfBuilderNonce =', window.pdfBuilderNonce);
         
-        const nonce = window.pdfBuilderNonce;
-        const ajaxurl = window.pdfBuilderData ? window.pdfBuilderData.ajaxurl : undefined;
+        // Utiliser le nonce de bootstrap (frais) et l'ajaxUrl du pdfBuilderData (qui peut être créé par React)
+        const nonce = window.pdfBuilderNonce;  // Nonce frais de bootstrap
+        const ajaxurl = window.pdfBuilderData ? window.pdfBuilderData.ajaxUrl : undefined;  // NOTE: camelCase!
         
-        console.log('[TEST] nonce =', nonce);
-        console.log('[TEST] ajaxurl =', ajaxurl);
+        console.log('[TEST] nonce (from bootstrap) =', nonce);
+        console.log('[TEST] ajaxurl (from pdfBuilderData) =', ajaxurl);
         
         if (!ajaxurl) {
-            console.error('[TEST] ERROR: ajaxurl is undefined!');
+            console.error('[TEST] ERROR: ajaxurl not found in window.pdfBuilderData!');
+            console.error('[TEST] Full pdfBuilderData:', window.pdfBuilderData);
             return;
         }
         
@@ -80,7 +83,7 @@ function pdf_builder_inject_nonce() {
         formData.append('format', 'png');
         formData.append('quality', '150');
         
-        console.log('[TEST] Fetching POST to:', ajaxurl);
+        console.log('[TEST] Fetching POST to:', ajaxurl, 'with nonce:', nonce);
         
         fetch(ajaxurl, {
             method: 'POST',
