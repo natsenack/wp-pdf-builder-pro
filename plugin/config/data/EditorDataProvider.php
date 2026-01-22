@@ -161,4 +161,64 @@ class EditorDataProvider implements DataProviderInterface
         }
         return $products;
     }
-}
+
+    /**
+     * {@inheritDoc}
+     * Récupère la valeur d'une variable - retourne la valeur exacte du template
+     */
+    public function getVariableValue(string $variable): string
+    {
+        if (isset($this->templateData[$variable])) {
+            return (string)$this->templateData[$variable];
+        }
+        return '';
+    }
+
+    /**
+     * {@inheritDoc}
+     * Vérifie si une variable est disponible dans le template
+     */
+    public function hasVariable(string $variable): bool
+    {
+        return isset($this->templateData[$variable]);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Retourne la liste de toutes les variables disponibles
+     */
+    public function getAllVariables(): array
+    {
+        return array_keys($this->templateData);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Indique que ce ne sont pas des données fictives - c'est les vraies données du template
+     */
+    public function isSampleData(): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Valide et sanitise un tableau de données
+     */
+    public function validateAndSanitizeData(array $data): array
+    {
+        $sanitized = [];
+        foreach ($data as $key => $value) {
+            // Accepter les types basiques
+            if (is_string($value)) {
+                $sanitized[$key] = sanitize_text_field($value);
+            } elseif (is_numeric($value)) {
+                $sanitized[$key] = $value;
+            } elseif (is_array($value)) {
+                $sanitized[$key] = $this->validateAndSanitizeData($value);
+            } else {
+                $sanitized[$key] = (string)$value;
+            }
+        }
+        return $sanitized;
+    }
