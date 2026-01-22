@@ -54,7 +54,7 @@ class PreviewAjaxHandler {
             // Récupérer les données
             $template_data_json = isset($_POST['template_data']) ? sanitize_text_field($_POST['template_data']) : '{}';
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
-            $format = isset($_POST['format']) ? sanitize_text_field($_POST['format']) : 'png';
+            $format = isset($_POST['format']) ? sanitize_text_field($_POST['format']) : 'pdf';  // Focus PDF
             $quality = isset($_POST['quality']) ? intval($_POST['quality']) : 150;
 
             error_log('[PREVIEW AJAX] Template ID: ' . ($template_id ? $template_id : 'NON FOURNI'));
@@ -166,6 +166,8 @@ class PreviewAjaxHandler {
 
             // Générer l'aperçu
             $output_type = $format === 'pdf' ? 'pdf' : 'png';
+            error_log('[PREVIEW] Appel GeneratorManager->generatePreview() avec output_type: ' . $output_type);
+            
             $preview_result = $generator_manager->generatePreview(
                 $final_template_data,
                 $data_provider,
@@ -176,10 +178,23 @@ class PreviewAjaxHandler {
                 ]
             );
 
-            error_log('[PREVIEW] Génération réussie');
+            error_log('[PREVIEW] Génération complétée - Type retour: ' . gettype($preview_result));
+            if (is_array($preview_result)) {
+                error_log('[PREVIEW] Résultat est un array avec clés: ' . implode(', ', array_keys($preview_result)));
+            } elseif (is_string($preview_result)) {
+                error_log('[PREVIEW] Résultat est une string de ' . strlen($preview_result) . ' bytes');
+            } elseif ($preview_result === null) {
+                error_log('[PREVIEW] Résultat est NULL');
+            } else {
+                error_log('[PREVIEW] Résultat est de type: ' . gettype($preview_result));
+            }
 
-            // Si c'est un PDF, retourner le contenu
-            if ($format === 'pdf' && is_string($preview_result)) {
+            // === FOCUS: PDF ONLY ===
+            // Pour l'instant, on se concentre UNIQUEMENT sur PDF
+
+            // Format 1: String direct = PDF binary content
+            if (is_string($preview_result)) {
+                error_log('[PREVIEW] PDF généré avec succès - taille: ' . strlen($preview_result) . ' bytes');
                 $pdf_file = self::savePdfTemporary($preview_result);
                 return [
                     'image_url' => $pdf_file,
@@ -188,25 +203,24 @@ class PreviewAjaxHandler {
                 ];
             }
 
-            // Si c'est une image, convertir en data URL
-            if (is_string($preview_result)) {
-                $data_url = 'data:image/png;base64,' . base64_encode($preview_result);
+            // Format 2: Array avec PDF file path
+            if (is_array($preview_result) && isset($preview_result['file'])) {
+                error_log('[PREVIEW] PDF fichier généré: ' . $preview_result['file']);
                 return [
-                    'image_url' => $data_url,
-                    'format' => $format,
+                    'image_url' => $preview_result['file'],
+                    'format' => 'pdf',
                     'success' => true
                 ];
             }
 
-            error_log('[PREVIEW] Format inattendu: ' . gettype($preview_result));
+            // Format 3: Fallback - error
+            error_log('[PREVIEW] Format inattendu ou erreur: ' . gettype($preview_result));
             return [
                 'image_url' => self::generatePlaceholderImage($format),
                 'format' => $format,
                 'fallback' => true,
                 'success' => true
             ];
-
-        } catch (\Exception $e) {
             error_log('[PREVIEW ERROR] ' . $e->getMessage());
             throw $e;
         }

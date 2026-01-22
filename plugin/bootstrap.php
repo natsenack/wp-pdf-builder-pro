@@ -111,7 +111,7 @@ function pdf_builder_inject_nonce() {
             formData.append('template_data', JSON.stringify(templateData));
         }
         
-        formData.append('format', 'png');
+        formData.append('format', 'pdf');  // Focus PDF only for now
         formData.append('quality', '150');
         
         console.log('[TEST] Fetching POST to:', ajaxurl, 'with nonce:', nonce);
