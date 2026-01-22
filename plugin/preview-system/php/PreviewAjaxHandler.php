@@ -101,13 +101,49 @@ class PreviewAjaxHandler {
     
     private static function buildHtmlFromTemplate(array $template_data): string {
         $elements = $template_data['elements'] ?? [];
-        $canvas_width = intval($template_data['canvasWidth'] ?? 800);
-        $canvas_height = intval($template_data['canvasHeight'] ?? 1123);
         
-        // Convertir pixels en mm pour PDF (1px ≈ 0.264583mm)
-        $mm_per_px = 0.264583;
-        $pdf_width = $canvas_width * $mm_per_px;
-        $pdf_height = $canvas_height * $mm_per_px;
+        // Extraire les éléments par type
+        $logo_element = null;
+        $doc_type_element = null;
+        $company_info_element = null;
+        $customer_info_element = null;
+        $order_number_element = null;
+        $order_date_element = null;
+        $product_table_element = null;
+        $dynamic_text_element = null;
+        $mentions_element = null;
+        
+        foreach ($elements as $element) {
+            switch ($element['type'] ?? '') {
+                case 'company_logo':
+                    $logo_element = $element;
+                    break;
+                case 'document_type':
+                    $doc_type_element = $element;
+                    break;
+                case 'company_info':
+                    $company_info_element = $element;
+                    break;
+                case 'customer_info':
+                    $customer_info_element = $element;
+                    break;
+                case 'order_number':
+                    $order_number_element = $element;
+                    break;
+                case 'woocommerce_order_date':
+                    $order_date_element = $element;
+                    break;
+                case 'product_table':
+                    $product_table_element = $element;
+                    break;
+                case 'dynamic-text':
+                    $dynamic_text_element = $element;
+                    break;
+                case 'mentions':
+                    $mentions_element = $element;
+                    break;
+            }
+        }
         
         $html = '<!DOCTYPE html>
 <html>
@@ -128,218 +164,226 @@ class PreviewAjaxHandler {
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
+            padding: 10mm;
         }
-        .canvas {
-            position: relative;
-            width: ' . $pdf_width . 'mm;
-            height: ' . $pdf_height . 'mm;
-            background-color: white;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10mm;
+            gap: 10mm;
+            align-items: flex-start;
         }
-        .element {
-            position: absolute;
-            overflow: hidden;
+        .header-col {
+            flex: 1;
+        }
+        .logo-container {
+            text-align: center;
+            max-width: 80mm;
+            min-height: 40mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-container img {
+            max-width: 100%;
+            max-height: 50mm;
+            width: auto;
+            height: auto;
+        }
+        .document-type-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            text-align: right;
+        }
+        .separator-line {
+            border-top: 2px solid #000000;
+            margin: 10mm 0;
+        }
+        .two-col {
+            display: flex;
+            gap: 15mm;
+            margin-bottom: 10mm;
+        }
+        .two-col > div {
+            flex: 1;
+        }
+        .info-box {
+            background-color: #e5e7eb;
+            padding: 5mm;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .info-box-title {
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 3mm;
+            border-bottom: 1px solid #d1d5db;
+            padding-bottom: 2mm;
+        }
+        .info-item {
+            color: #374151;
+            margin-bottom: 2mm;
+        }
+        .order-info {
+            text-align: right;
+        }
+        .order-number-label {
+            font-weight: bold;
+        }
+        .order-date {
+            font-size: 11px;
+            color: #374151;
         }
         .product-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 10px;
+            margin: 10mm 0;
         }
         .product-table th {
             background-color: #f9fafb;
             color: #111827;
-            padding: 8px;
+            padding: 5mm;
             text-align: left;
-            border: 1px solid #e5e7eb;
+            border: 0.5px solid #e5e7eb;
             font-weight: bold;
         }
         .product-table td {
-            padding: 8px;
-            border: 1px solid #e5e7eb;
+            padding: 4mm 5mm;
+            border: 0.5px solid #e5e7eb;
             color: #374151;
         }
         .product-table tr:nth-child(even) {
             background-color: #f9fafb;
         }
-        .customer-info, .company-info {
-            background-color: #e5e7eb;
-            padding: 10px;
-            font-size: 12px;
-            line-height: 1.5;
+        .signature-section {
+            margin-top: 20mm;
+            font-size: 11px;
         }
-        .info-label {
-            font-weight: bold;
-            color: #111827;
-        }
-        .info-value {
-            color: #374151;
-        }
-        .document-type {
-            font-size: 18px;
-            font-weight: bold;
-            color: #111827;
-        }
-        .dynamic-text {
-            font-size: 14px;
-            line-height: 1.3;
+        .signature-text {
             white-space: pre-wrap;
+            color: #374151;
         }
-        .line-element {
-            background-color: #000000;
-        }
-        .mentions {
-            font-size: 10px;
+        .mentions-line {
+            margin-top: 10mm;
+            padding-top: 5mm;
+            border-top: 0.5px solid #d1d5db;
+            font-size: 9px;
             color: #6b7280;
-            line-height: 1.2;
-        }
-        .order-number {
-            font-size: 14px;
-            color: #374151;
-            text-align: right;
-        }
-        .company-logo {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        .order-date {
-            font-size: 12px;
-            color: #374151;
-            text-align: right;
+            text-align: center;
         }
     </style>
 </head>
-<body>
-    <div class="canvas">';
+<body>';
         
-        // Renderer chaque élément
-        foreach ($elements as $element) {
-            $type = $element['type'] ?? '';
-            $x = ($element['x'] ?? 0) * $mm_per_px;
-            $y = ($element['y'] ?? 0) * $mm_per_px;
-            $width = ($element['width'] ?? 100) * $mm_per_px;
-            $height = ($element['height'] ?? 50) * $mm_per_px;
-            
-            $style = "position: absolute; left: {$x}mm; top: {$y}mm; width: {$width}mm; height: {$height}mm;";
-            
-            // Appliquer les styles du JSON
-            if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
-                $style .= "background-color: {$element['backgroundColor']};";
+        // En-tête avec logo et titre
+        $html .= '<div class="header-row">';
+        
+        // Colonne gauche: infos entreprise
+        $html .= '<div class="header-col">';
+        if ($company_info_element) {
+            $html .= '<div class="info-box">
+                <div class="info-box-title">Infos Entreprise</div>
+                <div class="info-item">[Company Name]</div>
+                <div class="info-item">[Company Address]</div>
+                <div class="info-item">Email: [Company Email]</div>
+                <div class="info-item">Tél: [Company Phone]</div>
+                <div class="info-item">SIRET: [SIRET]</div>
+                <div class="info-item">TVA: [VAT]</div>
+            </div>';
+        }
+        $html .= '</div>';
+        
+        // Colonne milieu: logo
+        $html .= '<div class="header-col" style="text-align: center;">';
+        if ($logo_element && !empty($logo_element['src'])) {
+            error_log('[PREVIEW] Tentative affichage logo: ' . $logo_element['src']);
+            $img_src = self::convertImageToBase64($logo_element['src']);
+            if ($img_src) {
+                error_log('[PREVIEW] Logo convertit en base64, utilisant data URI');
+                $html .= '<div class="logo-container">
+                    <img src="' . $img_src . '" alt="Logo">
+                </div>';
+            } else {
+                error_log('[PREVIEW] Conversion logo échouée, affichage placeholder');
+                $html .= '<div style="color: #999; font-size: 10px;">Logo</div>';
             }
-            if (!empty($element['borderWidth']) && $element['borderWidth'] > 0) {
-                $style .= "border: {$element['borderWidth']}px solid {$element['borderColor']};";
+        } else {
+            $html .= '<div style="color: #999; font-size: 10px;">Logo</div>';
+        }
+        $html .= '</div>';
+        
+        // Colonne droite: titre document + commande
+        $html .= '<div class="header-col">';
+        if ($doc_type_element) {
+            $html .= '<div class="document-type-title">' . htmlspecialchars($doc_type_element['title'] ?? 'DOCUMENT') . '</div>';
+        }
+        if ($order_number_element) {
+            $html .= '<div class="order-info">
+                <div class="order-number-label">Commande: [Order #]</div>';
+            if ($order_date_element) {
+                $html .= '<div class="order-date">Date: ' . date('d/m/Y') . '</div>';
             }
-            if (!empty($element['textColor'])) {
-                $style .= "color: {$element['textColor']};";
-            }
-            if (!empty($element['fontSize'])) {
-                $style .= "font-size: {$element['fontSize']}px;";
-            }
-            if (!empty($element['fontWeight'])) {
-                $style .= "font-weight: {$element['fontWeight']};";
-            }
-            if (!empty($element['textAlign'])) {
-                $style .= "text-align: {$element['textAlign']};";
-            }
-            if (!empty($element['padding'])) {
-                $style .= "padding: {$element['padding']}px;";
-            }
-            
-            $html .= '<div class="element ' . htmlspecialchars($type) . '" style="' . $style . '">';
-            
-            // Rendu selon le type
-            switch ($type) {
-                case 'product_table':
-                    $html .= '<table class="product-table">
-                        <thead>
-                            <tr>
-                                <th>Produit</th>
-                                <th>Qty</th>
-                                <th>Prix Unit.</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Produit exemple</td>
-                                <td>1</td>
-                                <td>100.00 €</td>
-                                <td>100.00 €</td>
-                            </tr>
-                        </tbody>
-                    </table>';
-                    break;
-                    
-                case 'customer_info':
-                    $html .= '<div class="customer-info">
-                        <div class="info-label">Informations Client</div>
-                        <div class="info-value">Nom: [Customer Name]</div>
-                        <div class="info-value">Adresse: [Customer Address]</div>
-                        <div class="info-value">Email: [Customer Email]</div>
-                        <div class="info-value">Téléphone: [Customer Phone]</div>
-                    </div>';
-                    break;
-                    
-                case 'company_info':
-                    $html .= '<div class="company-info">
-                        <div class="info-label">Infos Entreprise</div>
-                        <div class="info-value">[Company Name]</div>
-                        <div class="info-value">[Company Address]</div>
-                        <div class="info-value">Email: [Company Email]</div>
-                        <div class="info-value">Tél: [Company Phone]</div>
-                        <div class="info-value">SIRET: [SIRET]</div>
-                        <div class="info-value">TVA: [VAT]</div>
-                    </div>';
-                    break;
-                    
-                case 'document_type':
-                    $html .= '<div class="document-type">' . htmlspecialchars($element['title'] ?? 'DOCUMENT') . '</div>';
-                    break;
-                    
-                case 'line':
-                    $html .= '<div class="line-element" style="width: 100%; height: ' . ($element['strokeWidth'] ?? 1) . 'px; background-color: ' . ($element['strokeColor'] ?? '#000000') . ';"></div>';
-                    break;
-                    
-                case 'dynamic-text':
-                    $html .= '<div class="dynamic-text">' . htmlspecialchars($element['text'] ?? '') . '</div>';
-                    break;
-                    
-                case 'mentions':
-                    $html .= '<div class="mentions">
-                        Email • Téléphone • SIRET • TVA
-                    </div>';
-                    break;
-                    
-                case 'order_number':
-                    $html .= '<div class="order-number">
-                        <strong>Commande:</strong> [Order #]<br>
-                    </div>';
-                    break;
-                    
-                case 'company_logo':
-                    if (!empty($element['src'])) {
-                        $img_src = self::convertImageToBase64($element['src']);
-                        $html .= '<img src="' . $img_src . '" alt="Logo" class="company-logo">';
-                    }
-                    break;
-                    
-                case 'woocommerce_order_date':
-                    $html .= '<div class="order-date">
-                        Date: ' . date('d/m/Y') . '
-                    </div>';
-                    break;
-                    
-                default:
-                    $html .= '<div>[Element: ' . htmlspecialchars($type) . ']</div>';
-            }
-            
             $html .= '</div>';
+        }
+        $html .= '</div>';
+        
+        $html .= '</div>';
+        
+        // Ligne séparatrice
+        $html .= '<div class="separator-line"></div>';
+        
+        // Infos client
+        $html .= '<div class="two-col">';
+        if ($customer_info_element) {
+            $html .= '<div class="info-box">
+                <div class="info-box-title">Informations Client</div>
+                <div class="info-item">Nom: [Customer Name]</div>
+                <div class="info-item">Adresse: [Customer Address]</div>
+                <div class="info-item">Email: [Customer Email]</div>
+                <div class="info-item">Téléphone: [Customer Phone]</div>
+            </div>';
+        }
+        $html .= '</div>';
+        
+        // Table des produits
+        if ($product_table_element) {
+            $html .= '<table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th width="15%">Qty</th>
+                        <th width="20%">Prix Unit.</th>
+                        <th width="20%">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Produit exemple</td>
+                        <td>1</td>
+                        <td>100.00 €</td>
+                        <td>100.00 €</td>
+                    </tr>
+                </tbody>
+            </table>';
+        }
+        
+        // Signature
+        if ($dynamic_text_element) {
+            $html .= '<div class="signature-section">
+                <div class="signature-text">' . htmlspecialchars($dynamic_text_element['text'] ?? '') . '</div>
+            </div>';
+        }
+        
+        // Mentions
+        if ($mentions_element) {
+            $html .= '<div class="mentions-line">
+                Email • Téléphone • SIRET • TVA
+            </div>';
         }
         
         $html .= '
-    </div>
 </body>
 </html>';
         
@@ -365,8 +409,11 @@ class PreviewAjaxHandler {
     
     private static function convertImageToBase64(string $image_url): string {
         try {
+            error_log('[PREVIEW] Tentative conversion base64 pour: ' . $image_url);
+            
             // Si c'est déjà un data URI, retourner tel quel
             if (strpos($image_url, 'data:') === 0) {
+                error_log('[PREVIEW] Image est déjà en base64');
                 return $image_url;
             }
             
@@ -377,6 +424,7 @@ class PreviewAjaxHandler {
             ]);
             
             if (is_wp_error($response)) {
+                error_log('[PREVIEW] Erreur wp_remote_get: ' . $response->get_error_message());
                 return '';
             }
             
@@ -384,8 +432,11 @@ class PreviewAjaxHandler {
             $content_type = wp_remote_retrieve_header($response, 'content-type');
             
             if (empty($image_data)) {
+                error_log('[PREVIEW] Image data vide');
                 return '';
             }
+            
+            error_log('[PREVIEW] Image téléchargée, taille: ' . strlen($image_data) . ' bytes');
             
             // Déterminer le type MIME
             if (empty($content_type)) {
@@ -400,13 +451,17 @@ class PreviewAjaxHandler {
                     'webp' => 'image/webp'
                 ];
                 $content_type = $mime_types[$ext] ?? 'image/png';
+                error_log('[PREVIEW] MIME type deviné: ' . $content_type);
             }
             
             // Convertir en base64
             $base64 = base64_encode($image_data);
-            return 'data:' . $content_type . ';base64,' . $base64;
+            $data_uri = 'data:' . $content_type . ';base64,' . $base64;
+            error_log('[PREVIEW] Base64 converti, longueur: ' . strlen($data_uri));
+            return $data_uri;
             
         } catch (Exception $e) {
+            error_log('[PREVIEW] Exception: ' . $e->getMessage());
             return '';
         }
     }
