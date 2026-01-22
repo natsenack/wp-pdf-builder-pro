@@ -164,13 +164,13 @@ class PreviewAjaxHandler {
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
-            padding: 10mm;
+            padding: 8mm;
         }
         .header-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10mm;
-            gap: 10mm;
+            margin-bottom: 8mm;
+            gap: 8mm;
             align-items: flex-start;
         }
         .header-col {
@@ -179,14 +179,15 @@ class PreviewAjaxHandler {
         .logo-container {
             text-align: center;
             max-width: 80mm;
-            min-height: 40mm;
+            height: 30mm;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2mm;
         }
         .logo-container img {
             max-width: 100%;
-            max-height: 50mm;
+            max-height: 28mm;
             width: auto;
             height: auto;
         }
@@ -197,8 +198,8 @@ class PreviewAjaxHandler {
             text-align: right;
         }
         .separator-line {
-            border-top: 2px solid #000000;
-            margin: 10mm 0;
+            border-top: 1px solid #999999;
+            margin: 6mm 0 8mm 0;
         }
         .two-col {
             display: flex;
@@ -301,13 +302,13 @@ class PreviewAjaxHandler {
             error_log('[PREVIEW] Tentative affichage logo: ' . $logo_element['src']);
             $img_src = self::convertImageToBase64($logo_element['src']);
             if ($img_src) {
-                error_log('[PREVIEW] Logo convertit en base64, utilisant data URI');
+                error_log('[PREVIEW] Logo image URL: ' . $img_src);
                 $html .= '<div class="logo-container">
-                    <img src="' . $img_src . '" alt="Logo">
+                    <img src="' . esc_url($img_src) . '" alt="Logo">
                 </div>';
             } else {
                 error_log('[PREVIEW] Conversion logo échouée, affichage placeholder');
-                $html .= '<div style="color: #999; font-size: 10px;">Logo</div>';
+                $html .= '<div style="color: #999; font-size: 10px;">Logo (non chargé)</div>';
             }
         } else {
             $html .= '<div style="color: #999; font-size: 10px;">Logo</div>';
@@ -409,15 +410,15 @@ class PreviewAjaxHandler {
     
     private static function convertImageToBase64(string $image_url): string {
         try {
-            error_log('[PREVIEW] Tentative conversion base64 pour: ' . $image_url);
+            error_log('[PREVIEW] Tentative téléchargement image pour: ' . $image_url);
             
-            // Si c'est déjà un data URI, retourner tel quel
-            if (strpos($image_url, 'data:') === 0) {
-                error_log('[PREVIEW] Image est déjà en base64');
+            // Si c'est déjà un chemin local, retourner tel quel
+            if (strpos($image_url, 'http') !== 0) {
+                error_log('[PREVIEW] Image est déjà un chemin local');
                 return $image_url;
             }
             
-            // Essayer de télécharger l'image
+            // Télécharger l'image
             $response = wp_remote_get($image_url, [
                 'timeout' => 10,
                 'sslverify' => false
@@ -429,8 +430,6 @@ class PreviewAjaxHandler {
             }
             
             $image_data = wp_remote_retrieve_body($response);
-            $content_type = wp_remote_retrieve_header($response, 'content-type');
-            
             if (empty($image_data)) {
                 error_log('[PREVIEW] Image data vide');
                 return '';
@@ -438,27 +437,32 @@ class PreviewAjaxHandler {
             
             error_log('[PREVIEW] Image téléchargée, taille: ' . strlen($image_data) . ' bytes');
             
-            // Déterminer le type MIME
-            if (empty($content_type)) {
-                // Deviner depuis l'extension du fichier
-                $path_info = pathinfo($image_url);
-                $ext = strtolower($path_info['extension'] ?? '');
-                $mime_types = [
-                    'png' => 'image/png',
-                    'jpg' => 'image/jpeg',
-                    'jpeg' => 'image/jpeg',
-                    'gif' => 'image/gif',
-                    'webp' => 'image/webp'
-                ];
-                $content_type = $mime_types[$ext] ?? 'image/png';
-                error_log('[PREVIEW] MIME type deviné: ' . $content_type);
+            // Déterminer l'extension depuis l'URL
+            $path_info = pathinfo($image_url);
+            $ext = strtolower($path_info['extension'] ?? 'png');
+            error_log('[PREVIEW] Extension détectée: ' . $ext);
+            
+            // Créer le répertoire temp s'il n'existe pas
+            $upload_dir = wp_upload_dir();
+            $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+            if (!is_dir($temp_dir)) {
+                @mkdir($temp_dir, 0755, true);
             }
             
-            // Convertir en base64
-            $base64 = base64_encode($image_data);
-            $data_uri = 'data:' . $content_type . ';base64,' . $base64;
-            error_log('[PREVIEW] Base64 converti, longueur: ' . strlen($data_uri));
-            return $data_uri;
+            // Sauver l'image temporairement avec un nom unique
+            $temp_filename = 'img-' . uniqid() . '.' . $ext;
+            $temp_path = $temp_dir . '/' . $temp_filename;
+            
+            if (file_put_contents($temp_path, $image_data) === false) {
+                error_log('[PREVIEW] Impossible d\'écrire l\'image: ' . $temp_path);
+                return '';
+            }
+            
+            // Retourner l'URL absolue de l'image temporaire
+            $temp_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $temp_filename;
+            error_log('[PREVIEW] Image sauvegardée: ' . $temp_url);
+            
+            return $temp_url;
             
         } catch (Exception $e) {
             error_log('[PREVIEW] Exception: ' . $e->getMessage());
