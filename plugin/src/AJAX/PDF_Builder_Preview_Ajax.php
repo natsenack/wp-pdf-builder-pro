@@ -68,7 +68,7 @@ class PdfBuilderPreviewAjax
 
             // Création du générateur d'aperçu
             require_once plugin_dir_path(__FILE__) . 'Managers/PDF_Builder_Preview_Generator.php';
-            $generator = new PDF_Builder_Preview_Generator($template_data, $preview_type, $order_id);
+            $generator = new Managers\PDF_Builder_Preview_Generator($template_data, $preview_type, $order_id);
             $preview_url = $generator->generate_preview();
             error_log('[PDF Preview AJAX] Preview generated successfully: ' . $preview_url);
             wp_send_json_success(array(
