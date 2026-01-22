@@ -11,6 +11,7 @@
         // API client for PDF preview
         generatePreview: function(data, callback) {
             console.log('[PDF Preview API] generatePreview called with data:', data);
+            console.log('[PDF Preview API] generatePreview callback function provided:', typeof callback);
             console.log('[PDF Preview API] pdfBuilderAjax available:', typeof window.pdfBuilderAjax);
             console.log('[PDF Preview API] ajaxurl:', window.pdfBuilderAjax ? window.pdfBuilderAjax.ajaxurl : 'undefined');
             console.log('[PDF Preview API] nonce:', window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : 'undefined');
@@ -27,6 +28,8 @@
             }
             formData.append('_wpnonce', window.pdfBuilderAjax?.nonce || '');
 
+            console.log('[PDF Preview API] About to make AJAX call to:', ajaxurl || '/wp-admin/admin-ajax.php');
+
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',
                 type: 'POST',
@@ -34,9 +37,25 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
+                    console.log('[PDF Preview API] AJAX SUCCESS - Raw response:', response);
+                    console.log('[PDF Preview API] Response type:', typeof response);
+                    if (typeof response === 'string') {
+                        try {
+                            const parsed = JSON.parse(response);
+                            console.log('[PDF Preview API] Parsed response:', parsed);
+                            response = parsed;
+                        } catch (e) {
+                            console.error('[PDF Preview API] Failed to parse response as JSON:', e);
+                        }
+                    }
                     if (callback) callback(null, response);
                 },
                 error: function(xhr, status, error) {
+                    console.error('[PDF Preview API] AJAX ERROR - Status:', status);
+                    console.error('[PDF Preview API] AJAX ERROR - Error:', error);
+                    console.error('[PDF Preview API] AJAX ERROR - Response text:', xhr.responseText);
+                    console.error('[PDF Preview API] AJAX ERROR - Status code:', xhr.status);
+                    console.error('[PDF Preview API] AJAX ERROR - Headers:', xhr.getAllResponseHeaders());
                     
                     if (callback) callback(error, null);
                 }
@@ -68,16 +87,22 @@
     // Define the expected global API interface for React components
     window.pdfPreviewAPI = {
         generateEditorPreview: function(templateData, options) {
+            console.log('[PDF Preview API] generateEditorPreview called with templateData:', templateData);
+            console.log('[PDF Preview API] generateEditorPreview options:', options);
             return new Promise(function(resolve, reject) {
+                console.log('[PDF Preview API] Creating Promise for generateEditorPreview');
                 window.pdfPreviewApiClient.generatePreview({
                     template_data: templateData,
                     context: 'editor',
                     format: options?.format || 'png',
                     quality: options?.quality || 150
                 }, function(error, response) {
+                    console.log('[PDF Preview API] generateEditorPreview callback called - error:', error, 'response:', response);
                     if (error) {
+                        console.error('[PDF Preview API] generateEditorPreview rejecting with error:', error);
                         reject(new Error(error));
                     } else {
+                        console.log('[PDF Preview API] generateEditorPreview resolving with response:', response);
                         resolve(response);
                     }
                 });
@@ -85,6 +110,7 @@
         },
 
         generateOrderPreview: function(templateData, orderId, options) {
+            console.log('[PDF Preview API] generateOrderPreview called with templateData:', templateData, 'orderId:', orderId);
             return new Promise(function(resolve, reject) {
                 window.pdfPreviewApiClient.generatePreview({
                     template_data: templateData,
