@@ -32,6 +32,10 @@
             // Extraire template_id s'il est dans templateData
             const template_id = templateData?.template_id || null;
             
+            console.log('[PDF PREVIEW API] Config nonce:', config.nonce);
+            console.log('[PDF PREVIEW API] Config nonce length:', config.nonce ? config.nonce.length : 0);
+            console.log('[PDF PREVIEW API] Config nonce is empty?', !config.nonce || config.nonce === '');
+            
             const params = {
                 action: config.endpoint,
                 nonce: config.nonce,
@@ -39,6 +43,13 @@
                 format: options.format || 'png',
                 quality: options.quality || 150
             };
+
+            console.log('[PDF PREVIEW API] Params before send:', {
+                action: params.action,
+                nonce: params.nonce ? params.nonce.substring(0, 20) + '...' : 'MISSING',
+                format: params.format,
+                quality: params.quality
+            });
 
             // Ajouter template_id s'il existe
             if (template_id) {

@@ -120,7 +120,8 @@ class ReactAssets {
             true
         );
         
-        wp_enqueue_script(
+        // Enregistrer et localiser le script de preview API AVANT d'enqueuer
+        wp_register_script(
             'pdf-preview-api-client',
             $plugin_url . 'assets/js/pdf-preview-api-client.min.js',
             ['jquery'],
@@ -128,30 +129,17 @@ class ReactAssets {
             true
         );
 
-        // Passer les données d'authentification et de configuration au client JavaScript
-        // Récupérer le template_id depuis plusieurs sources possibles
-        $template_id = null;
-        
-        // Priorité 1: Paramètre GET/POST
-        if (isset($_GET['id'])) {
-            $template_id = intval($_GET['id']);
-        } elseif (isset($_POST['id'])) {
-            $template_id = intval($_POST['id']);
-        }
-        
-        // Priorité 2: État du template (depuis BuilderContext si disponible)
-        // Ce sera complété au runtime par le state du template
-        
         // Créer le nonce une seule fois
         $nonce = wp_create_nonce('pdf_builder_nonce');
         
+        // Localiser les données IMMÉDIATEMENT après l'enregistrement
         wp_localize_script(
             'pdf-preview-api-client',
             'pdfBuilderData',
             [
                 'nonce' => $nonce,
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'templateId' => $template_id,
+                'templateId' => null, // Sera défini ci-dessous
             ]
         );
 
@@ -160,6 +148,9 @@ class ReactAssets {
             'pdfBuilderNonce',
             $nonce
         );
+        
+        // MAINTENANT enqueuer le script après localisation
+        wp_enqueue_script('pdf-preview-api-client');
         
         wp_enqueue_script(
             'pdf-preview-integration',
