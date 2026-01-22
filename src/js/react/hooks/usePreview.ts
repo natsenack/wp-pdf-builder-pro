@@ -110,6 +110,8 @@ export function usePreview(): UsePreviewReturn {
       if (result && typeof result === 'object') {
         console.log('[REACT PREVIEW] Result has success:', 'success' in result, result.success);
         console.log('[REACT PREVIEW] Result has image_url:', 'image_url' in result, typeof result.image_url);
+        console.log('[REACT PREVIEW] Result has error:', 'error' in result, result.error);
+        console.log('[REACT PREVIEW] Full result object:', JSON.stringify(result, null, 2));
       }
 
       if (result && typeof result === 'object' && 'success' in result && result.success && 'image_url' in result && typeof result.image_url === 'string') {
@@ -125,18 +127,29 @@ export function usePreview(): UsePreviewReturn {
           setPreviewUrl(result.image_url);
         }
       } else {
+        console.log('[REACT PREVIEW] Result validation failed, checking error message');
         const errorMsg = (result && typeof result === 'object' && 'error' in result && typeof result.error === 'string') ? result.error : 'Erreur lors de la génération de l\'aperçu';
         console.error('[REACT PREVIEW] Invalid result format, throwing error:', errorMsg);
+        console.error('[REACT PREVIEW] Result validation details:');
+        console.error('[REACT PREVIEW] - result exists:', !!result);
+        console.error('[REACT PREVIEW] - is object:', result && typeof result === 'object');
+        console.error('[REACT PREVIEW] - has success key:', result && 'success' in result);
+        console.error('[REACT PREVIEW] - success value:', result && result.success);
+        console.error('[REACT PREVIEW] - has image_url key:', result && 'image_url' in result);
+        console.error('[REACT PREVIEW] - image_url type:', result && typeof result.image_url);
         throw new Error(errorMsg);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue lors de la génération';
-      console.error('[REACT PREVIEW] Exception caught:', errorMessage);
-      console.error('[REACT PREVIEW] Full error object:', err);
+      console.error('[REACT PREVIEW] CATCH BLOCK - Exception caught:', errorMessage);
+      console.error('[REACT PREVIEW] CATCH BLOCK - Full error object:', err);
+      console.error('[REACT PREVIEW] CATCH BLOCK - Error stack:', err instanceof Error ? err.stack : 'No stack available');
+      console.error('[REACT PREVIEW] CATCH BLOCK - Error type:', typeof err);
+      console.error('[REACT PREVIEW] CATCH BLOCK - Error constructor:', err?.constructor?.name || 'Unknown');
 
       setError(errorMessage);
     } finally {
-      console.log('[REACT PREVIEW] Setting isGenerating to false');
+      console.log('[REACT PREVIEW] FINALLY BLOCK - Setting isGenerating to false');
       setIsGenerating(false);
     }
   }, [format]);

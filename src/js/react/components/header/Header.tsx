@@ -1393,6 +1393,7 @@ export const Header = memo(function Header({
                 }}
               >
                 <strong>Erreur:</strong> {previewError}
+                {console.log('[HEADER COMPONENT] Displaying error in UI:', previewError)}
               </div>
             )}
 

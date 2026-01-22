@@ -57,8 +57,13 @@ console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
                     console.error('[PDF Preview API] AJAX ERROR - Response text:', xhr.responseText);
                     console.error('[PDF Preview API] AJAX ERROR - Status code:', xhr.status);
                     console.error('[PDF Preview API] AJAX ERROR - Headers:', xhr.getAllResponseHeaders());
+                    console.error('[PDF Preview API] AJAX ERROR - Ready state:', xhr.readyState);
+                    console.error('[PDF Preview API] AJAX ERROR - Full xhr object:', xhr);
                     
-                    if (callback) callback(error, null);
+                    if (callback) {
+                        console.log('[PDF Preview API] Calling callback with error');
+                        callback(error, null);
+                    }
                 }
             });
         },
@@ -99,11 +104,18 @@ console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
                     quality: options?.quality || 150
                 }, function(error, response) {
                     console.log('[PDF Preview API] generateEditorPreview callback called - error:', error, 'response:', response);
+                    console.log('[PDF Preview API] Callback execution - checking error condition');
                     if (error) {
                         console.error('[PDF Preview API] generateEditorPreview rejecting with error:', error);
+                        console.error('[PDF Preview API] Error type:', typeof error);
+                        console.error('[PDF Preview API] Error details:', error);
+                        console.error('[PDF Preview API] About to reject Promise with new Error(error)');
                         reject(new Error(error));
                     } else {
                         console.log('[PDF Preview API] generateEditorPreview resolving with response:', response);
+                        console.log('[PDF Preview API] Response type:', typeof response);
+                        console.log('[PDF Preview API] Response keys:', response ? Object.keys(response) : 'No response');
+                        console.log('[PDF Preview API] About to resolve Promise with response');
                         resolve(response);
                     }
                 });
