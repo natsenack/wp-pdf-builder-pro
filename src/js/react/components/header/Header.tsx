@@ -1332,6 +1332,12 @@ export const Header = memo(function Header({
             <div style={{ marginBottom: "20px" }}>
               <button
                 onClick={async () => {
+                  console.log('[HEADER COMPONENT] Preview button clicked');
+                  console.log('[HEADER COMPONENT] State template:', state.template);
+                  console.log('[HEADER COMPONENT] State elements:', state.elements);
+                  console.log('[HEADER COMPONENT] Preview format:', previewFormat);
+                  console.log('[HEADER COMPONENT] Is generating:', isGeneratingPreview);
+
                   await generatePreview(
                     {
                       ...state.template,

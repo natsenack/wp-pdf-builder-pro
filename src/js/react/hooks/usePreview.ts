@@ -69,7 +69,10 @@ export function usePreview(): UsePreviewReturn {
     const finalFormat = options.format || format;
     const quality = options.quality || 150;
 
-
+    console.log('[REACT PREVIEW] generatePreview called with templateData:', templateData);
+    console.log('[REACT PREVIEW] generatePreview options:', options);
+    console.log('[REACT PREVIEW] generatePreview finalFormat:', finalFormat, 'quality:', quality);
+    console.log('[REACT PREVIEW] window.pdfPreviewAPI available:', typeof window.pdfPreviewAPI);
 
     setIsGenerating(true);
     setError(null);
@@ -78,15 +81,20 @@ export function usePreview(): UsePreviewReturn {
     try {
       // Vérifier s'il y a du contenu dans le template
       const hasContent = (templateData.elements as unknown[]) && (templateData.elements as unknown[]).length > 0;
+      console.log('[REACT PREVIEW] Template has content:', hasContent, 'elements count:', (templateData.elements as unknown[])?.length || 0);
 
       if (!hasContent) {
+        console.error('[REACT PREVIEW] No content in template, throwing error');
         throw new Error('Aucun contenu dans le template. Ajoutez des éléments avant de générer un aperçu.');
       }
 
       // Vérifier la disponibilité de l'API Preview
       if (typeof window.pdfPreviewAPI === 'undefined') {
+        console.error('[REACT PREVIEW] pdfPreviewAPI not available');
         throw new Error('API Preview non disponible. Vérifiez que les scripts sont chargés.');
       }
+
+      console.log('[REACT PREVIEW] About to call window.pdfPreviewAPI.generateEditorPreview');
 
       // Générer l'aperçu
       const result = await window.pdfPreviewAPI.generateEditorPreview(
@@ -94,24 +102,39 @@ export function usePreview(): UsePreviewReturn {
         { format: finalFormat, quality }
       );
 
+      console.log('[REACT PREVIEW] generateEditorPreview result:', result);
+      console.log('[REACT PREVIEW] Result type:', typeof result);
+      console.log('[REACT PREVIEW] Result is object:', result && typeof result === 'object');
+      if (result && typeof result === 'object') {
+        console.log('[REACT PREVIEW] Result has success:', 'success' in result, result.success);
+        console.log('[REACT PREVIEW] Result has image_url:', 'image_url' in result, typeof result.image_url);
+      }
+
       if (result && typeof result === 'object' && 'success' in result && result.success && 'image_url' in result && typeof result.image_url === 'string') {
+        console.log('[REACT PREVIEW] Preview generated successfully, image_url:', result.image_url);
         if (finalFormat === 'pdf') {
           // Pour PDF, ouvrir dans un nouvel onglet
+          console.log('[REACT PREVIEW] Opening PDF in new tab');
           window.open(result.image_url, '_blank');
           setPreviewUrl(null); // Ne pas afficher dans la modale
         } else {
           // Pour PNG/JPG, afficher dans la modale
+          console.log('[REACT PREVIEW] Setting preview URL for modal display');
           setPreviewUrl(result.image_url);
         }
       } else {
         const errorMsg = (result && typeof result === 'object' && 'error' in result && typeof result.error === 'string') ? result.error : 'Erreur lors de la génération de l\'aperçu';
+        console.error('[REACT PREVIEW] Invalid result format, throwing error:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue lors de la génération';
+      console.error('[REACT PREVIEW] Exception caught:', errorMessage);
+      console.error('[REACT PREVIEW] Full error object:', err);
 
       setError(errorMessage);
     } finally {
+      console.log('[REACT PREVIEW] Setting isGenerating to false');
       setIsGenerating(false);
     }
   }, [format]);
