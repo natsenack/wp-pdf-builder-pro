@@ -13,12 +13,15 @@ if (!defined('ABSPATH')) {
 }
 
 // Empêcher la redéclaration de classe
-if (class_exists('PDF_Builder\AJAX\PdfBuilderPreviewAjax')) {
-    error_log('[PDF Preview AJAX] Class already exists, skipping instantiation');
+if (!isset($GLOBALS['pdf_builder_preview_ajax_loaded'])) {
+    $GLOBALS['pdf_builder_preview_ajax_loaded'] = true;
+    error_log('[PDF Preview AJAX] File loaded, about to define class');
+} else {
+    error_log('[PDF Preview AJAX] File already loaded, skipping');
     return;
 }
 
-error_log('[PDF Preview AJAX] File loaded, class does not exist yet');
+error_log('[PDF Preview AJAX] Defining class');
 
 class PdfBuilderPreviewAjax
 {
@@ -46,8 +49,8 @@ class PdfBuilderPreviewAjax
 
             error_log('[PDF Preview AJAX] Checking nonce');
 // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                error_log('[PDF Preview AJAX] Invalid nonce: ' . ($_POST['nonce'] ?? 'none'));
+            if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_order_actions')) {
+                error_log('[PDF Preview AJAX] Invalid nonce: ' . ($_POST['_wpnonce'] ?? 'none'));
                 wp_send_json_error('Invalid nonce');
             }
 
@@ -163,7 +166,10 @@ class PdfBuilderPreviewAjax
 }
 
 // Initialisation
-error_log('[PDF Preview AJAX] About to instantiate class');
-new PdfBuilderPreviewAjax();
-error_log('[PDF Preview AJAX] Class instantiated successfully');
+if (!isset($GLOBALS['pdf_builder_preview_ajax_instantiated'])) {
+    $GLOBALS['pdf_builder_preview_ajax_instantiated'] = true;
+    error_log('[PDF Preview AJAX] About to instantiate class');
+    new PdfBuilderPreviewAjax();
+    error_log('[PDF Preview AJAX] Class instantiated successfully');
+}
 
