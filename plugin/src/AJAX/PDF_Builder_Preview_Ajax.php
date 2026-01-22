@@ -14,15 +14,20 @@ if (!defined('ABSPATH')) {
 
 // Empêcher la redéclaration de classe
 if (class_exists('PDF_Builder\AJAX\PdfBuilderPreviewAjax')) {
+    error_log('[PDF Preview AJAX] Class already exists, skipping instantiation');
     return;
 }
+
+error_log('[PDF Preview AJAX] File loaded, class does not exist yet');
 
 class PdfBuilderPreviewAjax
 {
     public function __construct()
     {
+        error_log('[PDF Preview AJAX] Constructor called, registering hooks');
         add_action('wp_ajax_pdf_builder_generate_preview', array($this, 'generatePreview'));
         add_action('wp_ajax_pdf_builder_get_preview_data', array($this, 'getPreviewData'));
+        error_log('[PDF Preview AJAX] Hooks registered successfully');
     }
 
     /**
@@ -158,5 +163,7 @@ class PdfBuilderPreviewAjax
 }
 
 // Initialisation
-new PDF_Builder_Preview_Ajax();
+error_log('[PDF Preview AJAX] About to instantiate class');
+new PdfBuilderPreviewAjax();
+error_log('[PDF Preview AJAX] Class instantiated successfully');
 
