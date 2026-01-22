@@ -37,16 +37,18 @@ function pdf_builder_inject_nonce() {
     $nonce = wp_create_nonce('pdf_builder_nonce');
     
     // Injecter directement
+    $ajax_url = admin_url('admin-ajax.php');
     echo '<script type="text/javascript">';
     echo "console.warn('[BOOTSTRAP NONCE INJECT] Starting injection');";
     echo "window.pdfBuilderData = {";
     echo "  nonce: '" . esc_js($nonce) . "',";
-    echo "  ajaxurl: '" . esc_js(admin_url('admin-ajax.php')) . "',";
+    echo "  ajaxurl: '" . esc_js($ajax_url) . "',";
     echo "  templateId: null";
     echo "};";
     echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
     echo "console.log('[BOOTSTRAP NONCE OK] window.pdfBuilderNonce =', window.pdfBuilderNonce);";
     echo "console.log('[BOOTSTRAP NONCE OK] Nonce length =', window.pdfBuilderNonce.length);";
+    echo "console.log('[BOOTSTRAP AJAX URL] ajaxurl =', window.pdfBuilderData.ajaxurl);";
     
     // 🎯 TEST DIRECT: Faire un appel AJAX simple pour vérifier que le nonce fonctionne
     echo "window.testPDFPreview = function() {";
