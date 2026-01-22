@@ -122,59 +122,41 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                     return;
                   }
 
-                  try {
-                    
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const mediaUploader: any = window.wp.media({
+                    title: 'Sélectionner un logo',
+                    button: {
+                      text: 'Utiliser ce logo'
+                    },
+                    multiple: false,
+                    library: {
+                      type: 'image'
+                    }
+                  });
+
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  mediaUploader.on('select', () => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const mediaUploader: any = window.wp.media({
-                      title: 'Sélectionner un logo',
-                      button: {
-                        text: 'Utiliser ce logo'
-                      },
-                      multiple: false,
-                      library: {
-                        type: 'image'
-                      }
-                    });
+                    const attachment = mediaUploader.state().get('selection').first().toJSON();
 
-                    // Écouter l'événement select avec closure pour avoir accès à mediaUploader
-                    mediaUploader.on('select', () => {
-                      try {
-                        const state = mediaUploader.state();
-                        const selection = state.get('selection');
-                        
-                        if (!selection || selection.length === 0) {
-                          return;
-                        }
+                    if (!attachment || !attachment.url) {
+                      alert('Erreur: L\'image sélectionnée n\'a pas d\'URL valide');
+                      return;
+                    }
 
-                        const attachment = selection.first().toJSON();
+                    // Mettre à jour l'URL
+                    onChange(element.id, 'src', attachment.url);
 
-                        if (!attachment || !attachment.url) {
+                    // Optionnellement, mettre à jour les dimensions si elles sont par défaut
+                    if (!element.width || element.width === 150) {
+                      onChange(element.id, 'width', attachment.width || 150);
+                    }
+                    if (!element.height || element.height === 80) {
+                      onChange(element.id, 'height', attachment.height || 80);
+                    }
+                  });
 
-                          alert('Erreur: L\'image sélectionnée n\'a pas d\'URL valide');
-                          return;
-                        }
-
-                        // Mettre à jour l'URL
-                        onChange(element.id, 'src', attachment.url);
-                        
-                        // Optionnellement, mettre à jour les dimensions
-                        if (!element.width || element.width === 150) {
-                          onChange(element.id, 'width', attachment.width || 150);
-                        }
-                        if (!element.height || element.height === 80) {
-                          onChange(element.id, 'height', attachment.height || 80);
-                        }
-                      } catch (error) {
-
-                        alert('Erreur: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
-                      }
-                    });
-
-                    mediaUploader.open();
-                  } catch (error) {
-
-                    alert('Erreur: ' + (error instanceof Error ? error.message : 'Impossible d\'ouvrir la bibliothèque'));
-                  }
+                  mediaUploader.open();
                 }}
                 style={{
                   padding: '6px 12px',
