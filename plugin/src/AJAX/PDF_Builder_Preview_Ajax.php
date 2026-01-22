@@ -16,8 +16,8 @@ class PdfBuilderPreviewAjax
 {
     public function __construct()
     {
-        add_action('wp_ajax_pdf_builder_generate_preview', array($this, 'generate_preview'));
-        add_action('wp_ajax_pdf_builder_get_preview_data', array($this, 'get_preview_data'));
+        add_action('wp_ajax_pdf_builder_generate_preview', array($this, 'generatePreview'));
+        add_action('wp_ajax_pdf_builder_get_preview_data', array($this, 'getPreviewData'));
     }
 
     /**
@@ -32,7 +32,7 @@ class PdfBuilderPreviewAjax
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_preview_nonce')) {
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Invalid nonce');
             }
 
@@ -69,7 +69,7 @@ class PdfBuilderPreviewAjax
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_preview_nonce')) {
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Invalid nonce');
             }
 

@@ -10,7 +10,10 @@
     window.pdfPreviewApiClient = {
         // API client for PDF preview
         generatePreview: function(data, callback) {
-            
+            console.log('[PDF Preview API] generatePreview called with data:', data);
+            console.log('[PDF Preview API] pdfBuilderAjax available:', typeof window.pdfBuilderAjax);
+            console.log('[PDF Preview API] ajaxurl:', window.pdfBuilderAjax ? window.pdfBuilderAjax.ajaxurl : 'undefined');
+            console.log('[PDF Preview API] nonce:', window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : 'undefined');
 
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',
@@ -45,6 +48,44 @@
                 error: function(xhr, status, error) {
                     if (callback) callback(error, null);
                 }
+            });
+        }
+    };
+
+    // Define the expected global API interface for React components
+    window.pdfPreviewAPI = {
+        generateEditorPreview: function(templateData, options) {
+            return new Promise(function(resolve, reject) {
+                window.pdfPreviewApiClient.generatePreview({
+                    template_data: templateData,
+                    format: options?.format || 'png',
+                    quality: options?.quality || 90,
+                    context: 'canvas'
+                }, function(error, response) {
+                    if (error) {
+                        reject(new Error(error));
+                    } else {
+                        resolve(response);
+                    }
+                });
+            });
+        },
+
+        generateOrderPreview: function(templateData, orderId, options) {
+            return new Promise(function(resolve, reject) {
+                window.pdfPreviewApiClient.generatePreview({
+                    template_data: templateData,
+                    order_id: orderId,
+                    format: options?.format || 'png',
+                    quality: options?.quality || 90,
+                    context: 'metabox'
+                }, function(error, response) {
+                    if (error) {
+                        reject(new Error(error));
+                    } else {
+                        resolve(response);
+                    }
+                });
             });
         }
     };

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Preview</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Test API Preview</h1>
+    <button id="test-api">Tester l'API Preview</button>
+    <div id="result"></div>
+
+    <script>
+        // Simuler le chargement des scripts comme dans WordPress
+        window.ajaxurl = '/wp-admin/admin-ajax.php';
+        window.pdfBuilderAjax = {
+            ajaxurl: '/wp-admin/admin-ajax.php',
+            nonce: 'test-nonce-123'
+        };
+
+        // Charger le script API client
+        var script = document.createElement('script');
+        script.src = '../plugin/assets/js/pdf-preview-api-client.min.js';
+        script.onload = function() {
+            console.log('Script API client chargé');
+            document.getElementById('result').innerHTML = '✅ Script API client chargé avec succès';
+        };
+        script.onerror = function() {
+            console.error('Erreur chargement script API client');
+            document.getElementById('result').innerHTML = '❌ Erreur chargement script API client';
+        };
+        document.head.appendChild(script);
+
+        // Test de l'API
+        document.getElementById('test-api').addEventListener('click', function() {
+            if (typeof window.pdfPreviewApiClient !== 'undefined') {
+                document.getElementById('result').innerHTML = '✅ API Preview disponible';
+
+                // Tester l'appel API (simulé)
+                window.pdfPreviewApiClient.generatePreview({
+                    template_id: 1,
+                    format: 'png'
+                }, function(error, response) {
+                    if (error) {
+                        document.getElementById('result').innerHTML += '<br>❌ Erreur API: ' + error;
+                    } else {
+                        document.getElementById('result').innerHTML += '<br>✅ Réponse API: ' + JSON.stringify(response);
+                    }
+                });
+            } else {
+                document.getElementById('result').innerHTML = '❌ API Preview non disponible';
+            }
+        });
+    </script>
+</body>
+</html>
