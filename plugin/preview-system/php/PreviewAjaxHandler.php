@@ -100,7 +100,7 @@ class PreviewAjaxHandler {
 
     /**
      * Charge les données du template depuis la base de données
-     * Les templates sont stockés dans la table wp_pdf_builder_templates
+     * Utilise uniquement la colonne template_data de la table wp_pdf_builder_templates
      */
     private static function loadTemplateFromDatabase(int $template_id): ?array {
         try {
@@ -109,10 +109,10 @@ class PreviewAjaxHandler {
             global $wpdb;
             $table_name = $wpdb->prefix . 'pdf_builder_templates';
             
-            // Récupérer le template depuis la table personnalisée
+            // Récupérer le template depuis la table
             $template = $wpdb->get_row(
                 $wpdb->prepare(
-                    "SELECT * FROM {$table_name} WHERE id = %d",
+                    "SELECT id, name, template_data FROM {$table_name} WHERE id = %d",
                     $template_id
                 ),
                 ARRAY_A
@@ -123,65 +123,29 @@ class PreviewAjaxHandler {
                 return null;
             }
 
-            error_log('[PREVIEW DB] Template trouvé - Nom: ' . $template['name'] . ', Type: ' . $template['type']);
+            error_log('[PREVIEW DB] Template trouvé - Nom: ' . $template['name']);
             
-            // Récupérer les données du template
-            $template_data = null;
-            
-            // D'abord essayer la colonne 'data' (format JSON recommandé)
-            if (!empty($template['data'])) {
-                error_log('[PREVIEW DB] Utilisation de la colonne "data"');
-                $template_data = $template['data'];
-            } 
-            // Sinon essayer 'template_data'
-            elseif (!empty($template['template_data'])) {
-                error_log('[PREVIEW DB] Utilisation de la colonne "template_data"');
-                $template_data = $template['template_data'];
-            }
-            // Sinon essayer 'elements' (composants du template)
-            elseif (!empty($template['elements'])) {
-                error_log('[PREVIEW DB] Utilisation de la colonne "elements"');
-                $template_data = $template['elements'];
-            }
-            // Fallback: essayer 'content'
-            elseif (!empty($template['content'])) {
-                error_log('[PREVIEW DB] Utilisation de la colonne "content"');
-                $template_data = $template['content'];
-            }
-
-            if (!$template_data) {
-                error_log('[PREVIEW DB] ❌ Aucune donnée trouvée dans les colonnes disponibles');
-                error_log('[PREVIEW DB] Colonnes du template: ' . implode(', ', array_keys($template)));
+            if (empty($template['template_data'])) {
+                error_log('[PREVIEW DB] ❌ Colonne template_data vide');
                 return null;
             }
 
-            error_log('[PREVIEW DB] Données trouvées - Type: ' . gettype($template_data) . ', Taille: ' . strlen((is_string($template_data) ? $template_data : json_encode($template_data))));
+            error_log('[PREVIEW DB] Taille template_data: ' . strlen($template['template_data']) . ' bytes');
 
-            // Si c'est une chaîne JSON, la décoder
-            if (is_string($template_data)) {
-                error_log('[PREVIEW DB] Décodage du JSON...');
-                $decoded = json_decode($template_data, true);
-                if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('[PREVIEW DB] ❌ Erreur de décodage JSON: ' . json_last_error_msg());
-                    error_log('[PREVIEW DB] Premier 500 caractères: ' . substr($template_data, 0, 500));
-                    return null;
-                }
-                error_log('[PREVIEW DB] ✓ JSON décodé avec succès');
-                $template_data = $decoded;
-            } else {
-                error_log('[PREVIEW DB] Données déjà en format ' . gettype($template_data));
+            // Décoder le JSON
+            $template_data = json_decode($template['template_data'], true);
+            if ($template_data === null && json_last_error() !== JSON_ERROR_NONE) {
+                error_log('[PREVIEW DB] ❌ Erreur de décodage JSON: ' . json_last_error_msg());
+                return null;
             }
 
-            // Ajouter les informations du template si nécessaire
-            if (!isset($template_data['template_id'])) {
-                $template_data['template_id'] = $template_id;
-            }
+            error_log('[PREVIEW DB] ✓ JSON décodé - Clés: ' . implode(', ', array_keys($template_data)));
+            
+            // Ajouter les infos du template
+            $template_data['template_id'] = $template_id;
+            $template_data['template_name'] = $template['name'];
 
-            if (!isset($template_data['template_name'])) {
-                $template_data['template_name'] = $template['name'];
-            }
-
-            error_log('[PREVIEW DB] ✓ Template chargé avec succès - ID: ' . $template_id . ', Nom: ' . $template['name'] . ', Clés données: ' . implode(', ', array_keys(is_array($template_data) ? $template_data : [])));
+            error_log('[PREVIEW DB] ✓ Template chargé avec succès');
             return $template_data;
 
         } catch (\Exception $e) {
