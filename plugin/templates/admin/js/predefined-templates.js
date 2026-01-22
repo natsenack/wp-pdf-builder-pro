@@ -112,6 +112,70 @@
                 $(this).hide();
             }
         });
+
+        // Contrôles de zoom
+        $('#zoom-in').on('click', function() {
+            adjustZoom(25);
+        });
+
+        $('#zoom-out').on('click', function() {
+            adjustZoom(-25);
+        });
+
+        $('#zoom-fit').on('click', function() {
+            fitToWindow();
+        });
+
+        // Contrôles de rotation
+        $('#rotate-left').on('click', function() {
+            adjustRotation(-90);
+        });
+
+        $('#rotate-right').on('click', function() {
+            adjustRotation(90);
+        });
+
+        // Contrôles de téléchargement
+        $('#download-pdf').on('click', function() {
+            downloadPreview('pdf');
+        });
+
+        $('#download-png').on('click', function() {
+            downloadPreview('png');
+        });
+
+        $('#download-jpg').on('click', function() {
+            downloadPreview('jpg');
+        });
+
+        // Gestion du drag sur l'image
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+
+        $(document).on('mousedown', '#preview-container img', function(e) {
+            isDragging = true;
+            startX = e.pageX - $(this).offset().left;
+            startY = e.pageY - $(this).offset().top;
+            $(this).css('cursor', 'grabbing');
+        });
+
+        $(document).on('mousemove', function(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const img = $('#preview-container img');
+            if (img.length) {
+                const x = e.pageX - img.offset().left;
+                const y = e.pageY - img.offset().top;
+                const walkX = (x - startX) * 2;
+                const walkY = (y - startY) * 2;
+                img.css('transform', `translate(${walkX}px, ${walkY}px) ${getCurrentTransform()}`);
+            }
+        });
+
+        $(document).on('mouseup', function() {
+            isDragging = false;
+            $('#preview-container img').css('cursor', 'move');
+        });
     }
 
     /**
@@ -361,7 +425,7 @@
 
                 if (response.success) {
                     // Afficher l'aperçu dans une modale
-                    showPreviewModal(response.data.preview_svg);
+                    showPreviewModal(response.data.preview_svg, slug);
                     refreshTemplatesList(); // Actualiser pour voir le nouvel aperçu
                 } else {
                     showErrorMessage(response.data.message || pdfBuilderPredefined.strings.previewError);
@@ -409,9 +473,26 @@
     /**
      * Afficher la modale d'aperçu
      */
-    function showPreviewModal(svgContent) {
+    function showPreviewModal(svgContent, templateSlug = null) {
+        // Définir le template actuel
+        if (templateSlug) {
+            setCurrentPreviewTemplate(templateSlug);
+        }
+
+        // Réinitialiser les contrôles
+        currentZoom = 100;
+        currentRotation = 0;
+        $('#zoom-level').text('100%');
+        $('#rotation-angle').text('0°');
+
+        // Afficher le contenu
         $('#preview-container').html(svgContent);
         $('#preview-modal').show();
+
+        // Ajuster automatiquement au chargement
+        setTimeout(() => {
+            fitToWindow();
+        }, 100);
     }
 
     /**
@@ -456,6 +537,101 @@
 
     function hideMessages() {
         $('.admin-notice').remove();
+    }
+
+    // Variables pour les contrôles d'aperçu
+    let currentZoom = 100;
+    let currentRotation = 0;
+    let currentTemplateSlug = null;
+
+    /**
+     * Ajuster le zoom de l'aperçu
+     */
+    function adjustZoom(delta) {
+        const img = $('#preview-container img');
+        if (img.length) {
+            currentZoom = Math.max(25, Math.min(500, currentZoom + delta));
+            updateImageTransform();
+            $('#zoom-level').text(currentZoom + '%');
+        }
+    }
+
+    /**
+     * Ajuster la rotation de l'aperçu
+     */
+    function adjustRotation(delta) {
+        currentRotation = (currentRotation + delta) % 360;
+        updateImageTransform();
+        $('#rotation-angle').text(currentRotation + '°');
+    }
+
+    /**
+     * Ajuster l'image à la fenêtre
+     */
+    function fitToWindow() {
+        const container = $('#preview-container');
+        const img = container.find('img');
+        if (img.length) {
+            const containerWidth = container.width();
+            const containerHeight = container.height();
+            const imgWidth = img[0].naturalWidth;
+            const imgHeight = img[0].naturalHeight;
+
+            const scaleX = containerWidth / imgWidth;
+            const scaleY = containerHeight / imgHeight;
+            const scale = Math.min(scaleX, scaleY) * 100;
+
+            currentZoom = Math.max(25, Math.min(500, scale));
+            updateImageTransform();
+            $('#zoom-level').text(Math.round(currentZoom) + '%');
+        }
+    }
+
+    /**
+     * Mettre à jour la transformation de l'image
+     */
+    function updateImageTransform() {
+        const img = $('#preview-container img');
+        if (img.length) {
+            const transform = `scale(${currentZoom / 100}) rotate(${currentRotation}deg)`;
+            img.css('transform', transform);
+        }
+    }
+
+    /**
+     * Obtenir la transformation actuelle pour le drag
+     */
+    function getCurrentTransform() {
+        return `scale(${currentZoom / 100}) rotate(${currentRotation}deg)`;
+    }
+
+    /**
+     * Télécharger l'aperçu dans le format spécifié
+     */
+    function downloadPreview(format) {
+        if (!currentTemplateSlug) {
+            showErrorMessage('Aucun modèle sélectionné pour le téléchargement.');
+            return;
+        }
+
+        // Créer un lien temporaire pour le téléchargement
+        const downloadUrl = pdfBuilderPredefined.ajaxUrl + '?action=pdf_builder_download_preview&slug=' + currentTemplateSlug + '&format=' + format + '&nonce=' + pdfBuilderPredefined.nonce;
+
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'preview.' + format;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showSuccessMessage('Téléchargement démarré pour le format ' + format.toUpperCase());
+    }
+
+    /**
+     * Définir le modèle actuel pour l'aperçu
+     */
+    function setCurrentPreviewTemplate(slug) {
+        currentTemplateSlug = slug;
     }
 
 })(jQuery);

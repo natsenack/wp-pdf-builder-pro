@@ -417,6 +417,120 @@ class PDF_Builder_Predefined_Templates_Manager
             color: #666;
         }
         .modal-body { padding: 20px; }
+
+        /* Styles pour la modal d'aperçu améliorée */
+        .preview-modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        .modal-toolbar {
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+        .preview-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .zoom-controls, .rotation-controls, .download-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .control-btn:hover {
+            background: #f0f0f0;
+            border-color: #bbb;
+        }
+        .control-btn:active {
+            background: #e0e0e0;
+        }
+        #zoom-level, #rotation-angle {
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .preview-image-container {
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .preview-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            cursor: move;
+        }
+        .preview-loading {
+            text-align: center;
+            color: #666;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .preview-modal-content {
+                max-width: 95vw;
+                max-height: 95vh;
+            }
+            .preview-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .zoom-controls, .rotation-controls, .download-controls {
+                justify-content: center;
+            }
+            .modal-toolbar {
+                padding: 8px 15px;
+            }
+            .modal-body {
+                padding: 15px;
+            }
+            .preview-image-container {
+                min-height: 300px;
+            }
+        }
+        @media (max-width: 480px) {
+            .control-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+            #zoom-level, #rotation-angle {
+                min-width: 40px;
+                font-size: 12px;
+            }
+            .preview-controls {
+                gap: 8px;
+            }
+        }
         </style>
         <div class="wrap">
             <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 20px;">
@@ -564,13 +678,38 @@ class PDF_Builder_Predefined_Templates_Manager
         </div>
         <!-- Modale d'aperçu -->
         <div id="preview-modal" class="pdf-builder-modal" style="display: none;">
-            <div class="modal-content">
+            <div class="modal-content preview-modal-content">
                 <div class="modal-header">
                     <h3><?php _e('Aperçu du Modèle', 'pdf-builder-pro'); ?></h3>
                     <button class="close-modal">&times;</button>
                 </div>
+                <div class="modal-toolbar">
+                    <div class="preview-controls">
+                        <div class="zoom-controls">
+                            <button id="zoom-out" class="control-btn" title="Zoom arrière">🔍-</button>
+                            <span id="zoom-level">100%</span>
+                            <button id="zoom-in" class="control-btn" title="Zoom avant">🔍+</button>
+                            <button id="zoom-fit" class="control-btn" title="Ajuster à la fenêtre">⛶</button>
+                        </div>
+                        <div class="rotation-controls">
+                            <button id="rotate-left" class="control-btn" title="Rotation gauche">↺</button>
+                            <span id="rotation-angle">0°</span>
+                            <button id="rotate-right" class="control-btn" title="Rotation droite">↻</button>
+                        </div>
+                        <div class="download-controls">
+                            <button id="download-pdf" class="control-btn" title="Télécharger PDF">📄 PDF</button>
+                            <button id="download-png" class="control-btn" title="Télécharger PNG">🖼️ PNG</button>
+                            <button id="download-jpg" class="control-btn" title="Télécharger JPG">🖼️ JPG</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-body">
-                    <div id="preview-container"></div>
+                    <div id="preview-container" class="preview-image-container">
+                        <div class="preview-loading">
+                            <div class="spinner"></div>
+                            <p><?php _e('Génération de l\'aperçu...', 'pdf-builder-pro'); ?></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

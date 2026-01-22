@@ -60,8 +60,34 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const pendingDragUpdateRef = useRef<{ x: number; y: number } | null>(null);
   const pendingRotationUpdateRef = useRef<{ x: number; y: number } | null>(null);
 
+  // ✅ SYSTÈME PARAMÈTRES: FPS limiting et monitoring de performance
+  const lastFrameTimeRef = useRef<number>(0);
+  const frameCountRef = useRef<number>(0);
+  const fpsIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const performanceMetricsRef = useRef({
+    fps: 0,
+    memoryUsage: 0,
+    lastUpdate: Date.now()
+  });
+
   // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
   const lastKnownStateRef = useRef(state);
+
+  // ✅ SYSTÈME PARAMÈTRES: Helper pour requestAnimationFrame avec FPS limiting
+  const requestAnimationFrameLimited = useCallback((callback: () => void) => {
+    const { fpsTarget } = canvasSettings;
+    const now = performance.now();
+    const frameInterval = 1000 / fpsTarget; // Intervalle minimum entre frames
+
+    if (now - lastFrameTimeRef.current >= frameInterval) {
+      lastFrameTimeRef.current = now;
+      return requestAnimationFrame(callback);
+    } else {
+      // Si on dépasse le FPS target, différer l'appel
+      const delay = frameInterval - (now - lastFrameTimeRef.current);
+      return setTimeout(() => requestAnimationFrame(callback), delay) as any;
+    }
+  }, [canvasSettings.fpsTarget]);
 
   // Fonctions pour gérer les événements globaux pendant la sélection
   const startGlobalSelectionListeners = useCallback(() => {
@@ -524,6 +550,53 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // ✅ CORRECTION 5: Garder un snapshot du state courant
     lastKnownStateRef.current = state;
   }, [state.selection.selectedElements, state.elements, state.canvas]); // Dépendances spécifiques au lieu de state entier
+
+  // ✅ SYSTÈME PARAMÈTRES: Initialiser le monitoring de performance et FPS limiting
+  useEffect(() => {
+    const { fpsTarget, performanceMonitoring, debugMode, memoryLimitJs } = canvasSettings;
+
+    // Initialiser le monitoring FPS si activé
+    if (performanceMonitoring || debugMode) {
+      const updateFPS = () => {
+        const now = performance.now();
+        frameCountRef.current++;
+
+        if (now - lastFrameTimeRef.current >= 1000) {
+          performanceMetricsRef.current.fps = Math.round((frameCountRef.current * 1000) / (now - lastFrameTimeRef.current));
+          frameCountRef.current = 0;
+          lastFrameTimeRef.current = now;
+
+          // Monitoring mémoire si activé
+          if (performanceMonitoring && 'memory' in performance) {
+            const memory = (performance as any).memory;
+            performanceMetricsRef.current.memoryUsage = Math.round(memory.usedJSHeapSize / 1024 / 1024); // MB
+
+            // Vérifier la limite mémoire
+            if (memory.usedJSHeapSize > memoryLimitJs * 1024 * 1024) {
+              debugWarn(`[Canvas Performance] Mémoire JS dépassée: ${performanceMetricsRef.current.memoryUsage}MB / ${memoryLimitJs}MB`);
+            }
+          }
+
+          performanceMetricsRef.current.lastUpdate = Date.now();
+        }
+      };
+
+      // Démarrer le monitoring FPS
+      fpsIntervalRef.current = setInterval(updateFPS, 100);
+
+      if (debugMode) {
+        debugLog(`[Canvas Performance] Monitoring activé - FPS cible: ${fpsTarget}, Mémoire limite: ${memoryLimitJs}MB`);
+      }
+    }
+
+    // Cleanup
+    return () => {
+      if (fpsIntervalRef.current) {
+        clearInterval(fpsIntervalRef.current);
+        fpsIntervalRef.current = null;
+      }
+    };
+  }, [canvasSettings.fpsTarget, canvasSettings.performanceMonitoring, canvasSettings.debugMode, canvasSettings.memoryLimitJs]);
 
   // ✅ CORRECTION 4: Fonction helper pour vérifier que rect est valide
   const validateCanvasRect = (rect: { width: number; height: number; left: number; top: number; right: number; bottom: number }): boolean => {
@@ -1072,9 +1145,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // performDragUpdate calculera la nouvelle position pour chaque élément individuellement
       pendingDragUpdateRef.current = { x, y };
 
-      // Programmer l'update avec RAF si pas déjà programmé
+      // Programmer l'update avec RAF limité si pas déjà programmé
       if (rafIdRef.current === null) {
-        rafIdRef.current = requestAnimationFrame(performDragUpdate);
+        rafIdRef.current = requestAnimationFrameLimited(performDragUpdate);
       }
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
       debugLog(`[CanvasInteraction] Resizing element ${selectedElementRef.current} with handle ${resizeHandleRef.current} at (${x.toFixed(1)}, ${y.toFixed(1)})`);
@@ -1111,12 +1184,43 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // performRotationUpdate calculera la rotation pour tous les éléments
       pendingRotationUpdateRef.current = { x, y };
 
-      // Programmer l'update avec RAF si pas déjà programmé
+      // Programmer l'update avec RAF limité si pas déjà programmé
       if (rafIdRef.current === null) {
-        rafIdRef.current = requestAnimationFrame(performRotationUpdate);
+        rafIdRef.current = requestAnimationFrameLimited(performRotationUpdate);
       }
     }
   }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, calculateResize, state.canvas, performDragUpdate]);
+
+  // ✅ SYSTÈME PARAMÈTRES: Fonction pour obtenir les métriques de performance
+  const getPerformanceMetrics = useCallback(() => {
+    return {
+      fps: performanceMetricsRef.current.fps,
+      memoryUsage: performanceMetricsRef.current.memoryUsage,
+      memoryLimit: canvasSettings.memoryLimitJs,
+      fpsTarget: canvasSettings.fpsTarget,
+      lastUpdate: performanceMetricsRef.current.lastUpdate
+    };
+  }, [canvasSettings.memoryLimitJs, canvasSettings.fpsTarget]);
+
+  // ✅ SYSTÈME PARAMÈTRES: Gestionnaire d'erreurs avec reporting
+  const reportError = useCallback((error: Error, context: string) => {
+    if (canvasSettings.errorReporting) {
+      debugError(`[Canvas Error Report] ${context}:`, error);
+      // Ici on pourrait envoyer l'erreur à un service de monitoring
+      // Pour l'instant, on log juste avec plus de détails
+      console.error(`[PDF Builder Canvas Error] ${context}:`, {
+        message: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+        canvasSettings: {
+          fpsTarget: canvasSettings.fpsTarget,
+          memoryLimitJs: canvasSettings.memoryLimitJs,
+          performanceMonitoring: canvasSettings.performanceMonitoring
+        },
+        performanceMetrics: getPerformanceMetrics()
+      });
+    }
+  }, [canvasSettings.errorReporting, canvasSettings, getPerformanceMetrics]);
 
   // Cleanup des listeners globaux au démontage du composant
   useEffect(() => {
@@ -1204,6 +1308,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     handleMouseMove,
     handleMouseUp,
     handleContextMenu,
+    // ✅ SYSTÈME PARAMÈTRES: Exposer les métriques et fonctions système
+    getPerformanceMetrics,
+    reportError,
     // Informations pour le rendu visuel de la sélection
     selectionState: {
       isSelecting: isSelectingRef.current,

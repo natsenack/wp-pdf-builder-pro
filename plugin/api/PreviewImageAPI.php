@@ -189,6 +189,35 @@ class PreviewImageAPI
                 )
             )
         ));
+
+        // Route pour le téléchargement direct
+        register_rest_route('wp-pdf-builder-pro/v1', '/download', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'handleDownload'),
+            'permission_callback' => array($this, 'checkRestPermissions'),
+            'args' => array(
+                'templateId' => array(
+                    'required' => true,
+                    'type' => 'integer',
+                    'description' => 'ID du template à télécharger'
+                ),
+                'format' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'enum' => array('png', 'jpg', 'pdf'),
+                    'default' => 'pdf',
+                    'description' => 'Format de téléchargement'
+                ),
+                'quality' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'minimum' => 50,
+                    'maximum' => 300,
+                    'default' => 90,
+                    'description' => 'Qualité de l\'image (50-300)'
+                )
+            )
+        ));
     }
 
         /**
@@ -552,6 +581,85 @@ class PreviewImageAPI
         );
 
         return $result;
+    }
+
+    /**
+     * Gérer les requêtes de téléchargement direct
+     */
+    public function handleDownload($request)
+    {
+        try {
+            // Récupérer les paramètres
+            $template_id = $request->get_param('templateId');
+            $format = $request->get_param('format') ?: 'pdf';
+            $quality = $request->get_param('quality') ?: 90;
+
+            // Validation
+            if (!$template_id) {
+                return new \WP_Error('missing_template_id', 'Template ID is required', array('status' => 400));
+            }
+
+            if (!in_array($format, array('png', 'jpg', 'pdf'))) {
+                return new \WP_Error('invalid_format', 'Invalid format specified', array('status' => 400));
+            }
+
+            // Récupérer le template
+            $template = get_post($template_id);
+            if (!$template || $template->post_type !== 'pdf_template') {
+                return new \WP_Error('template_not_found', 'Template not found', array('status' => 404));
+            }
+
+            // Récupérer les données du template
+            $template_data = json_decode($template->post_content, true);
+            if (!$template_data) {
+                return new \WP_Error('invalid_template_data', 'Invalid template data', array('status' => 400));
+            }
+
+            // Préparer les paramètres pour la génération
+            $params = array(
+                'template_data' => $template_data,
+                'format' => $format,
+                'quality' => $quality,
+                'context' => 'download'
+            );
+
+            // Générer le fichier
+            $result = $this->generateWithCache($params);
+
+            if (!$result || !isset($result['image_url'])) {
+                return new \WP_Error('generation_failed', 'Failed to generate file', array('status' => 500));
+            }
+
+            // Récupérer le fichier généré
+            $file_path = str_replace(site_url('/'), ABSPATH, $result['image_url']);
+
+            if (!file_exists($file_path)) {
+                return new \WP_Error('file_not_found', 'Generated file not found', array('status' => 404));
+            }
+
+            // Déterminer le type MIME
+            $mime_types = array(
+                'pdf' => 'application/pdf',
+                'png' => 'image/png',
+                'jpg' => 'image/jpeg'
+            );
+
+            $mime_type = $mime_types[$format] ?? 'application/octet-stream';
+
+            // Envoyer le fichier
+            header('Content-Type: ' . $mime_type);
+            header('Content-Disposition: attachment; filename="' . sanitize_file_name($template->post_name) . '_preview.' . $format . '"');
+            header('Content-Length: ' . filesize($file_path));
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
+
+            readfile($file_path);
+            exit;
+
+        } catch (\Exception $e) {
+            error_log('[PDF Builder API] Download error: ' . $e->getMessage());
+            return new \WP_Error('download_error', 'Download failed: ' . $e->getMessage(), array('status' => 500));
+        }
     }
 
     /**

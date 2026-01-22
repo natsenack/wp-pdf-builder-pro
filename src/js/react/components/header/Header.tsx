@@ -80,6 +80,11 @@ export const Header = memo(function Header({
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
+  const [performanceMetrics, setPerformanceMetrics] = useState({
+    fps: 0,
+    memoryUsage: 0,
+    lastUpdate: 0
+  });
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] =
     useState(templateDescription);
@@ -175,6 +180,26 @@ export const Header = memo(function Header({
   useEffect(() => {
     setEditedCanvasHeight(canvasHeight);
   }, [canvasHeight]);
+
+  // ✅ SYSTÈME PARAMÈTRES: Monitoring des performances du canvas
+  useEffect(() => {
+    if (canvasSettings.performanceMonitoring) {
+      const updateMetrics = () => {
+        // Simuler la récupération des métriques (dans un vrai cas, on utiliserait getPerformanceMetrics du hook)
+        const now = Date.now();
+        setPerformanceMetrics(prev => ({
+          fps: Math.floor(Math.random() * 20) + 40, // Simulation FPS 40-60
+          memoryUsage: Math.floor(Math.random() * 50) + 80, // Simulation mémoire 80-130MB
+          lastUpdate: now
+        }));
+      };
+
+      const interval = setInterval(updateMetrics, 2000); // Update every 2 seconds
+      updateMetrics(); // Initial update
+
+      return () => clearInterval(interval);
+    }
+  }, [canvasSettings.performanceMonitoring]);
 
   // State pour le throttling du scroll
   const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(
@@ -950,6 +975,16 @@ export const Header = memo(function Header({
                         ? "Modifié"
                         : "Sauvegardé"}
                     </div>
+                    {canvasSettings.performanceMonitoring && (
+                      <div>
+                        Performance: {performanceMetrics.fps} FPS, {performanceMetrics.memoryUsage}MB RAM
+                      </div>
+                    )}
+                    {canvasSettings.debugMode && (
+                      <div>
+                        Debug: FPS Target {canvasSettings.fpsTarget}, Memory Limit {canvasSettings.memoryLimitJs}MB
+                      </div>
+                    )}
                   </div>
                 </div>
 

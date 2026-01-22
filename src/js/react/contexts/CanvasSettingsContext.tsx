@@ -87,6 +87,10 @@ export interface CanvasSettingsContextType {
   lazyLoadingPlugin: boolean;
   debugMode: boolean;
   memoryLimitJs: number;
+  fpsTarget: number;
+  responseTimeout: number;
+  performanceMonitoring: boolean;
+  errorReporting: boolean;
 
   isLoading: boolean;
   isReady: boolean;
@@ -172,6 +176,10 @@ const DEFAULT_SETTINGS: Omit<
   lazyLoadingPlugin: true,
   debugMode: false,
   memoryLimitJs: 256,
+  fpsTarget: 60,
+  responseTimeout: 5000,
+  performanceMonitoring: false,
+  errorReporting: false,
 
   isLoading: true,
   isReady: false,
@@ -370,8 +378,17 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       lazyLoadingEditor: false, // Default to disabled
       lazyLoadingPlugin: false, // Default to disabled
       debugMode:
-        windowSettings.debug_mode === true || windowSettings.debug_mode === "1",
-      memoryLimitJs: DEFAULT_SETTINGS.memoryLimitJs, // Use default
+        windowSettings.debugEnabled === true || windowSettings.debugEnabled === "1",
+      memoryLimitJs:
+        (windowSettings.memoryLimitJs as number) ?? DEFAULT_SETTINGS.memoryLimitJs,
+      fpsTarget:
+        (windowSettings.fpsTarget as number) ?? DEFAULT_SETTINGS.fpsTarget,
+      responseTimeout:
+        (windowSettings.responseTimeout as number) ?? DEFAULT_SETTINGS.responseTimeout,
+      performanceMonitoring:
+        windowSettings.performanceMonitoring === true || windowSettings.performanceMonitoring === "1",
+      errorReporting:
+        windowSettings.errorReporting === true || windowSettings.errorReporting === "1",
 
       isLoading: false,
       isReady: true,

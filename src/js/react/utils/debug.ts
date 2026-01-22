@@ -60,6 +60,7 @@ declare global {
       existingTemplate?: any;
       hasExistingData?: boolean;
     };
+    pdfBuilderCanvasSettings?: any; // Canvas settings from WordPress
   }
 }
 
