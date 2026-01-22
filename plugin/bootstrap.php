@@ -66,9 +66,11 @@ function pdf_builder_inject_nonce() {
         // Utiliser le nonce de bootstrap (frais) et l'ajaxUrl du pdfBuilderData (qui peut être créé par React)
         const nonce = window.pdfBuilderNonce;  // Nonce frais de bootstrap
         const ajaxurl = window.pdfBuilderData ? window.pdfBuilderData.ajaxUrl : undefined;  // NOTE: camelCase!
+        const templateId = window.pdfBuilderData ? window.pdfBuilderData.templateId : null;
         
         console.log('[TEST] nonce (from bootstrap) =', nonce);
         console.log('[TEST] ajaxurl (from pdfBuilderData) =', ajaxurl);
+        console.log('[TEST] templateId (from pdfBuilderData) =', templateId);
         
         if (!ajaxurl) {
             console.error('[TEST] ERROR: ajaxurl not found in window.pdfBuilderData!');
@@ -79,7 +81,25 @@ function pdf_builder_inject_nonce() {
         const formData = new FormData();
         formData.append('action', 'pdf_builder_generate_preview');
         formData.append('nonce', nonce);
-        formData.append('template_data', JSON.stringify({elements: [], styles: {}}));
+        
+        // Si on a un template_id, l'envoyer au lieu de template_data
+        if (templateId && templateId > 0) {
+            console.log('[TEST] Sending template_id:', templateId);
+            formData.append('template_id', templateId);
+        } else {
+            // Sinon envoyer des données template valides
+            const templateData = {
+                elements: [],
+                styles: {},
+                settings: {
+                    pageSize: 'A4',
+                    orientation: 'portrait'
+                }
+            };
+            console.log('[TEST] Sending template_data:', templateData);
+            formData.append('template_data', JSON.stringify(templateData));
+        }
+        
         formData.append('format', 'png');
         formData.append('quality', '150');
         
@@ -93,8 +113,14 @@ function pdf_builder_inject_nonce() {
             console.log('[TEST] Response status:', r.status);
             return r.json();
         })
-        .then(d => console.log('[TEST] SUCCESS - Response:', d))
-        .catch(e => console.error('[TEST] ERROR:', e));
+        .then(d => {
+            if (d.success) {
+                console.log('[TEST] ✅ SUCCESS - Preview data:', d.data);
+            } else {
+                console.warn('[TEST] ⚠️ Server returned error:', d.data);
+            }
+        })
+        .catch(e => console.error('[TEST] ❌ FETCH ERROR:', e));
     };
     
     console.log('🟢 testPDFPreview registered. Call: window.testPDFPreview()');
