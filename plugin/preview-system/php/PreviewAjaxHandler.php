@@ -320,7 +320,8 @@ class PreviewAjaxHandler {
                     
                 case 'company_logo':
                     if (!empty($element['src'])) {
-                        $html .= '<img src="' . htmlspecialchars($element['src']) . '" alt="Logo" class="company-logo">';
+                        $img_src = self::convertImageToBase64($element['src']);
+                        $html .= '<img src="' . $img_src . '" alt="Logo" class="company-logo">';
                     }
                     break;
                     
@@ -360,5 +361,53 @@ class PreviewAjaxHandler {
         file_put_contents($filepath, $pdf_content);
         
         return $base_url . '/pdf-builder-temp/' . $filename;
+    }
+    
+    private static function convertImageToBase64(string $image_url): string {
+        try {
+            // Si c'est déjà un data URI, retourner tel quel
+            if (strpos($image_url, 'data:') === 0) {
+                return $image_url;
+            }
+            
+            // Essayer de télécharger l'image
+            $response = wp_remote_get($image_url, [
+                'timeout' => 10,
+                'sslverify' => false
+            ]);
+            
+            if (is_wp_error($response)) {
+                return '';
+            }
+            
+            $image_data = wp_remote_retrieve_body($response);
+            $content_type = wp_remote_retrieve_header($response, 'content-type');
+            
+            if (empty($image_data)) {
+                return '';
+            }
+            
+            // Déterminer le type MIME
+            if (empty($content_type)) {
+                // Deviner depuis l'extension du fichier
+                $path_info = pathinfo($image_url);
+                $ext = strtolower($path_info['extension'] ?? '');
+                $mime_types = [
+                    'png' => 'image/png',
+                    'jpg' => 'image/jpeg',
+                    'jpeg' => 'image/jpeg',
+                    'gif' => 'image/gif',
+                    'webp' => 'image/webp'
+                ];
+                $content_type = $mime_types[$ext] ?? 'image/png';
+            }
+            
+            // Convertir en base64
+            $base64 = base64_encode($image_data);
+            return 'data:' . $content_type . ';base64,' . $base64;
+            
+        } catch (Exception $e) {
+            return '';
+        }
     }
 }
