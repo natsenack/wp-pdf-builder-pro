@@ -264,6 +264,10 @@ class AdminScriptLoader
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
 
+        // CHARGER LA MÉDIATHÈQUE WORDPRESS POUR LES COMPOSANTS REACT
+        wp_enqueue_media();
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_enqueue_media() called for React editor'); }
+
         $cache_bust = microtime(true) . '-' . rand(1000, 9999);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
@@ -345,11 +349,11 @@ class AdminScriptLoader
         $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css';
         wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param . $nuclear_suffix);
 
-        // Main React app bundle (dépend du runtime et vendors)
+        // Main React app bundle (dépend du runtime, vendors et de la médiathèque WordPress)
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
-        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime'], $version_param . $nuclear_suffix, true);
+        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime', 'media-views'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main'); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main with media-views dependency'); }
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
