@@ -195,7 +195,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       let finalY = elementStartPos.y + mouseDeltaY;
 
       // ✅ AJOUT: Logique d'accrochage à la grille
-      if (lastState.canvas.snapToGrid && lastState.canvas.gridSize > 0) {
+      if (lastState.template.snapToGrid && lastState.canvas.gridSize > 0) {
         const gridSize = lastState.canvas.gridSize;
         const snapTolerance = 5; // Tolérance de 5px pour l'accrochage
 
@@ -399,7 +399,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     let finalX = x;
     let finalY = y;
 
-    if (state.canvas.snapToGrid && state.canvas.gridSize > 0) {
+    if (state.template.snapToGrid && state.canvas.gridSize > 0) {
       const gridSize = state.canvas.gridSize;
       finalX = Math.round(x / gridSize) * gridSize;
       finalY = Math.round(y / gridSize) * gridSize;
@@ -516,7 +516,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Remettre en mode sélection après création
     dispatch({ type: 'SET_MODE', payload: 'select' });
 
-  }, [dispatch, state.canvas.snapToGrid, state.canvas.gridSize]);
+  }, [dispatch, state.template.snapToGrid, state.canvas.gridSize]);
 
   // ✅ Syncer la ref avec l'état Redux (correction: éviter la dépendance sur state entier)
   useEffect(() => {
@@ -998,7 +998,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
 
     // ✅ AJOUT: Appliquer le snap à la grille pour les positions lors du redimensionnement
-    if (state.canvas.snapToGrid && state.canvas.gridSize > 0) {
+    if (state.template.snapToGrid && state.canvas.gridSize > 0) {
       const gridSize = state.canvas.gridSize;
       const snapTolerance = 5;
 
@@ -1018,7 +1018,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
 
     return updates;
-  }, [state.canvas.snapToGrid, state.canvas.gridSize]);
+  }, [state.template.snapToGrid, state.canvas.gridSize]);
 
   // Gestionnaire de mouse move pour le drag, resize et curseur
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {

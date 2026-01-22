@@ -317,9 +317,14 @@ export interface PropertiesPanelProps {
 export interface LoadTemplatePayload {
   id?: string;
   name?: string;
+  description?: string;
   elements?: BaseElement[];
   canvas?: Partial<CanvasState>;
   lastSaved?: Date;
+  showGuides?: boolean;
+  snapToGrid?: boolean;
+  marginTop?: number;
+  marginBottom?: number;
 }
 
 // Propriétés spécifiques pour les éléments

@@ -178,6 +178,12 @@ export function useTemplate() {
               elements: enrichedElements,
               canvas: canvasData,
               lastSaved: lastSavedDate,
+              // Restaurer les paramètres du template depuis les données chargées
+              showGuides: templateData.showGuides ?? true,
+              snapToGrid: templateData.snapToGrid ?? false,
+              marginTop: templateData.marginTop ?? 0,
+              marginBottom: templateData.marginBottom ?? 0,
+              description: templateData.description ?? "",
             } as LoadTemplatePayload,
           });
 
@@ -419,6 +425,12 @@ export function useTemplate() {
             elements: enrichedElements,
             canvas: canvasData,
             lastSaved: lastSavedDate,
+            // Restaurer les paramètres du template depuis les données chargées
+            showGuides: templateData.showGuides ?? true,
+            snapToGrid: templateData.snapToGrid ?? false,
+            marginTop: templateData.marginTop ?? 0,
+            marginBottom: templateData.marginBottom ?? 0,
+            description: templateData.description ?? "",
           } as LoadTemplatePayload,
         });
 

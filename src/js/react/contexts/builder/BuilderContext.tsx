@@ -469,9 +469,14 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         elements: clampedElements,
         canvas: canvasData,
         template: {
-          ...state.template, // ✅ Preserve existing template properties like showGuides
+          ...state.template, // ✅ Preserve existing template properties
           id: (action.payload as Record<string, unknown>).id as string,
           name: (action.payload as Record<string, unknown>).name as string,
+          description: (action.payload as Record<string, unknown>).description as string || "",
+          showGuides: (action.payload as Record<string, unknown>).showGuides as boolean ?? true,
+          snapToGrid: (action.payload as Record<string, unknown>).snapToGrid as boolean ?? false,
+          marginTop: (action.payload as Record<string, unknown>).marginTop as number ?? 0,
+          marginBottom: (action.payload as Record<string, unknown>).marginBottom as number ?? 0,
           isNew: false,
           isModified: false, // ✅ Template chargé de la DB n'est PAS modifié
           isSaving: false,
