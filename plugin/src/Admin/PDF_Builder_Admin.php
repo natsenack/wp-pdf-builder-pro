@@ -225,6 +225,7 @@ class PdfBuilderAdminNew
 
         // Initialiser les nouveaux services et loaders
         $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);
+        error_log('[DEBUG] PDF Builder Admin: AdminScriptLoader instantiated successfully');
         $this->style_builder = new \PDF_Builder\Admin\Builders\StyleBuilder();
         $this->table_renderer = new \PDF_Builder\Admin\Renderers\TableRenderer();
         $this->react_transformer = new \PDF_Builder\Admin\Transformers\ReactDataTransformer();
@@ -1050,6 +1051,7 @@ class PdfBuilderAdminNew
      */
     public function reactEditorPage()
     {
+        error_log('[DEBUG] PDF Builder Admin: reactEditorPage() called at ' . date('Y-m-d H:i:s'));
         if (!$this->checkAdminPermissions()) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
