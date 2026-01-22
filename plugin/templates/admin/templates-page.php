@@ -43,44 +43,38 @@ if ($templates_count === 0 && !$is_premium) {
     $templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
 }
 
-// Récupérer les DPI disponibles depuis les paramètres canvas
-$settings = pdf_builder_get_option('pdf_builder_settings', array());
-$available_dpi_string = isset($settings['pdf_builder_canvas_dpi']) ? $settings['pdf_builder_canvas_dpi'] : '72,96,150';
-if (is_string($available_dpi_string) && strpos($available_dpi_string, ',') !== false) {
-    $available_dpis = explode(',', $available_dpi_string);
-} elseif (is_array($available_dpi_string)) {
-    $available_dpis = $available_dpi_string;
-} else {
-    // Valeur unique, la convertir en tableau
-    $available_dpis = [$available_dpi_string];
+// Fonction helper pour parser les paramètres canvas
+function parse_canvas_setting($setting_key, $default_value, $type = 'string') {
+    $settings = pdf_builder_get_option('pdf_builder_settings', array());
+    $setting_value = isset($settings[$setting_key]) ? $settings[$setting_key] : $default_value;
+    
+    if (is_string($setting_value) && strpos($setting_value, ',') !== false) {
+        $parsed = explode(',', $setting_value);
+    } elseif (is_array($setting_value)) {
+        $parsed = $setting_value;
+    } else {
+        // Valeur unique, la convertir en tableau
+        $parsed = [$setting_value];
+    }
+    
+    // Appliquer le type
+    if ($type === 'int') {
+        $parsed = array_map('intval', $parsed);
+    } elseif ($type === 'string') {
+        $parsed = array_map('strval', $parsed);
+    }
+    
+    return $parsed;
 }
-$available_dpis = array_map('intval', $available_dpis); // S'assurer que ce sont des entiers
+
+// Récupérer les DPI disponibles depuis les paramètres canvas
+$available_dpis = parse_canvas_setting('pdf_builder_canvas_dpi', '72,96,150', 'int');
 
 // Récupérer les formats disponibles depuis les paramètres canvas
-$settings = pdf_builder_get_option('pdf_builder_settings', array());
-$available_formats_string = isset($settings['pdf_builder_canvas_formats']) ? $settings['pdf_builder_canvas_formats'] : 'A4';
-if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
-    $available_formats = explode(',', $available_formats_string);
-} elseif (is_array($available_formats_string)) {
-    $available_formats = $available_formats_string;
-} else {
-    // Valeur unique, la convertir en tableau
-    $available_formats = [$available_formats_string];
-}
-$available_formats = array_map('strval', $available_formats); // S'assurer que ce sont des chaînes
+$available_formats = parse_canvas_setting('pdf_builder_canvas_formats', 'A4', 'string');
 
 // Récupérer les orientations disponibles depuis les paramètres canvas
-$settings = pdf_builder_get_option('pdf_builder_settings', array());
-$available_orientations_string = isset($settings['pdf_builder_canvas_orientations']) ? $settings['pdf_builder_canvas_orientations'] : 'portrait,landscape';
-if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
-    $available_orientations = explode(',', $available_orientations_string);
-} elseif (is_array($available_orientations_string)) {
-    $available_orientations = $available_orientations_string;
-} else {
-    // Valeur unique, la convertir en tableau
-    $available_orientations = [$available_orientations_string];
-}
-$available_orientations = array_map('strval', $available_orientations); // S'assurer que ce sont des chaînes
+$available_orientations = parse_canvas_setting('pdf_builder_canvas_orientations', 'portrait,landscape', 'string');
 
 // Définir les options DPI avec leurs labels
 $dpi_options = [
@@ -882,28 +876,15 @@ document.addEventListener('click', function(e) {
         e.target.closest('.modal-overlay').style.display = 'none';
     }
 });
+</script>
+    </div>
+</div>
 
-// Fonctions pour gérer les templates
-function openTemplateSettings(templateId, templateName) {
-    // Ouvrir le modal des paramètres du template
-    document.getElementById('template-settings-modal').style.display = 'flex';
-
-    // Définir le titre du modal
-    document.getElementById('template-settings-title').textContent = 'Configuration de "' + templateName + '"';
-
-    // Charger les données du template
-    loadTemplateSettings(templateId);
-}
-
-function closeTemplateSettingsModal() {
-    document.getElementById('template-settings-modal').style.display = 'none';
-}
-
+<!-- JavaScript pour la gestion des templates -->
+<script>
+var currentTemplateId = null;
+// FIN DU SCRIPT - Code nettoyé
 function loadTemplateSettings(templateId) {
-    // Définir l'ID du template
-    document.getElementById('settings-template-id').value = templateId;
-
-    // Faire une requête AJAX pour charger les paramètres du template
     fetch(ajaxurl, {
         method: 'POST',
         headers: {
@@ -1005,6 +986,7 @@ function showTemplateLimitNotice() {
 
 // Vérifier au chargement de la page si la notification doit être affichée
 document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de la notification de limite de templates
     const notice = document.getElementById('template-limit-notice');
     const cookies = document.cookie.split(';');
     let isDismissed = false;
@@ -1020,7 +1002,79 @@ document.addEventListener('DOMContentLoaded', function() {
     if (notice && isDismissed) {
         notice.style.display = 'none';
     }
+
+    // Gestionnaire pour le bouton "Créer un template"
+    var createBtn = document.getElementById('create-template-btn');
+    if (createBtn) {
+        createBtn.addEventListener('click', function() {
+            window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>';
+        });
+    }
+
+    // Gestionnaire pour le bouton "Parcourir les modèles"
+    var galleryBtn = document.getElementById('open-template-gallery');
+    if (galleryBtn) {
+        galleryBtn.addEventListener('click', function() {
+            <?php if ($is_premium): ?>
+                // Utilisateur premium : ouvrir la galerie
+                document.getElementById('template-gallery-modal').style.display = 'flex';
+            <?php else: ?>
+                // Utilisateur gratuit : ouvrir le modal d'upgrade
+                showUpgradeModal('gallery');
+            <?php endif; ?>
+        });
+    }
+
+    // Gestionnaires pour les filtres
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Retirer la classe active de tous les boutons
+            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+
+            var filter = this.getAttribute('data-filter');
+            filterTemplates(filter);
+        });
+    });
+
+    // Gestionnaires pour les filtres de la galerie
+    var galleryFilterBtns = document.querySelectorAll('.gallery-filter-btn');
+    galleryFilterBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Retirer la classe active de tous les boutons
+            galleryFilterBtns.forEach(function(b) { b.classList.remove('active'); });
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+
+            var filter = this.getAttribute('data-filter');
+            filterGalleryTemplates(filter);
+        });
+    });
 });
+
+function filterTemplates(filter) {
+    var cards = document.querySelectorAll('.template-card');
+    cards.forEach(function(card) {
+        if (filter === 'all' || card.classList.contains('template-type-' + filter)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function filterGalleryTemplates(filter) {
+    var cards = document.querySelectorAll('.predefined-template-card');
+    cards.forEach(function(card) {
+        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
 
 function duplicateTemplate(templateId, templateName) {
     if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
@@ -1235,24 +1289,6 @@ function selectPredefinedTemplate(templateSlug) {
     </div>
 </div>
 
-<!-- JavaScript pour la gestion des templates -->
-<script>
-var currentTemplateId = null;
-
-// Fonction pour ouvrir les paramètres du template
-function openTemplateSettings(templateId, templateName) {
-    
-    currentTemplateId = templateId;
-    
-    // Afficher la modale
-    document.getElementById('template-settings-modal').style.display = 'flex';
-    
-    // Mettre à jour le titre
-    document.getElementById('template-settings-title').textContent = '⚙️ Paramètres de "' + templateName + '"';
-    
-    // Charger les paramètres du template
-    loadTemplateSettings(templateId);
-}
 
 // Fonction pour fermer la modale des paramètres
 function closeTemplateSettingsModal() {
@@ -1588,109 +1624,4 @@ function saveTemplateSettings() {
         saveButton.disabled = false;
     });
 }
-
-// Fonctions utilitaires pour les templates
-function duplicateTemplate(templateId, templateName) {
-    if (confirm('Êtes-vous sûr de vouloir dupliquer le template "' + templateName + '" ?')) {
-        // Implémentation de la duplication
-        
-        // TODO: Implémenter la duplication via AJAX
-        alert('Fonction de duplication à implémenter');
-    }
-}
-
-function toggleDefaultTemplate(templateId, templateType, templateName) {
-    
-    // TODO: Implémenter le changement de template par défaut
-    alert('Fonction de changement de template par défaut à implémenter');
-}
-
-// Fonctions pour la galerie de modèles
-function closeTemplateGallery() {
-    document.getElementById('template-gallery-modal').style.display = 'none';
-}
-
-function selectPredefinedTemplate(slug) {
-    
-    // TODO: Implémenter la sélection de modèle prédéfini
-    alert('Fonction de sélection de modèle prédéfini à implémenter');
-}
-
-// Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    
-    
-    // Gestionnaire pour le bouton "Créer un template"
-    var createBtn = document.getElementById('create-template-btn');
-    if (createBtn) {
-        createBtn.addEventListener('click', function() {
-            window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>';
-        });
-    }
-    
-    // Gestionnaire pour le bouton "Parcourir les modèles"
-    var galleryBtn = document.getElementById('open-template-gallery');
-    if (galleryBtn) {
-        galleryBtn.addEventListener('click', function() {
-            <?php if ($is_premium): ?>
-                // Utilisateur premium : ouvrir la galerie
-                document.getElementById('template-gallery-modal').style.display = 'flex';
-            <?php else: ?>
-                // Utilisateur gratuit : ouvrir le modal d'upgrade
-                showUpgradeModal('gallery');
-            <?php endif; ?>
-        });
-    }
-    
-    // Gestionnaires pour les filtres
-    var filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            // Retirer la classe active de tous les boutons
-            filterBtns.forEach(function(b) { b.classList.remove('active'); });
-            // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
-            
-            var filter = this.getAttribute('data-filter');
-            filterTemplates(filter);
-        });
-    });
-    
-    // Gestionnaires pour les filtres de la galerie
-    var galleryFilterBtns = document.querySelectorAll('.gallery-filter-btn');
-    galleryFilterBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            // Retirer la classe active de tous les boutons
-            galleryFilterBtns.forEach(function(b) { b.classList.remove('active'); });
-            // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
-            
-            var filter = this.getAttribute('data-filter');
-            filterGalleryTemplates(filter);
-        });
-    });
-});
-
-function filterTemplates(filter) {
-    var cards = document.querySelectorAll('.template-card');
-    cards.forEach(function(card) {
-        if (filter === 'all' || card.classList.contains('template-type-' + filter)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-
-function filterGalleryTemplates(filter) {
-    var cards = document.querySelectorAll('.predefined-template-card');
-    cards.forEach(function(card) {
-        if (filter === 'all' || card.getAttribute('data-category') === filter) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-</script>
 

@@ -484,35 +484,6 @@ function get_canvas_modal_value($key, $default = '') {
                     </div>
                     <?php endif; ?>
                 </div>
-                <div class="setting-group">
-                    <label for="modal_canvas_export_quality">Qualité export (%)</label>
-                    <input type="number" id="modal_canvas_export_quality" name="pdf_builder_canvas_export_quality"
-                           value="<?php echo esc_attr(get_canvas_modal_value('canvas_export_quality', $canvas_defaults['export_quality'])); ?>">
-                </div>
-                <div class="setting-group">
-                    <label for="modal_canvas_export_format">Format export</label>
-                    <?php $can_use_multi_format_export = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('multi_format_export'); ?>
-                    <select id="modal_canvas_export_format" name="pdf_builder_canvas_export_format">
-                        <option value="pdf" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'pdf'); ?>>PDF</option>
-                        <option value="png" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
-                        <option value="jpg" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'jpg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG'; ?></option>
-                        <option value="svg" <?php selected(get_canvas_modal_value('canvas_export_format', $canvas_defaults['export_format']), 'svg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG'; ?></option>
-                    </select>
-                    <?php if (!$can_use_multi_format_export): ?>
-                        <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
-                            <strong>🔒 Fonction Premium</strong> - Débloquez l'export PNG, JPG et SVG
-                            <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="setting-group">
-                    <label for="modal_canvas_export_transparent">Fond transparent</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="modal_canvas_export_transparent" name="pdf_builder_canvas_export_transparent"
-                               value="1" <?php checked(get_canvas_modal_value('canvas_export_transparent', $canvas_defaults['export_transparent']), '1'); ?>>
-                        <label for="modal_canvas_export_transparent"></label>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="canvas-modal-footer">

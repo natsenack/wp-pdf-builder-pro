@@ -61,6 +61,44 @@ $is_premium = $license_manager->isPremium();
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>
                             </td>
                         </tr>
+                        <tr>
+                            <th scope="row"><label for="export_quality">Qualité export (%)</label></th>
+                            <td>
+                                <input type="number" id="export_quality" name="pdf_builder_settings[pdf_builder_canvas_export_quality]"
+                                       value="<?php echo esc_attr($settings['pdf_builder_canvas_export_quality'] ?? '90'); ?>" min="1" max="100">
+                                <p class="description">Qualité de l'image exportée (1-100%)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="export_format">Format export</label></th>
+                            <td>
+                                <?php $can_use_multi_format_export = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('multi_format_export'); ?>
+                                <select id="export_format" name="pdf_builder_settings[pdf_builder_canvas_export_format]">
+                                    <option value="pdf" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'pdf'); ?>>PDF</option>
+                                    <option value="png" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
+                                    <option value="jpg" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'jpg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG'; ?></option>
+                                    <option value="svg" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'svg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG'; ?></option>
+                                </select>
+                                <?php if (!$can_use_multi_format_export): ?>
+                                <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
+                                    <strong>🔒 Fonction Premium</strong> - Débloquez l'export PNG, JPG et SVG
+                                    <a href="#" onclick="showUpgradeModal('canvas_settings')" style="color: #856404; text-decoration: underline; font-weight: 500;">Passer en Premium →</a>
+                                </div>
+                                <?php endif; ?>
+                                <p class="description">Format de fichier pour l'export</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="export_transparent">Fond transparent</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_export_transparent]" value="0">
+                                    <input type="checkbox" id="export_transparent" name="pdf_builder_settings[pdf_builder_canvas_export_transparent]" value="1" <?php checked($settings['pdf_builder_canvas_export_transparent'] ?? '0', '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Exporter avec un fond transparent (PNG/SVG uniquement)</p>
+                            </td>
+                        </tr>
                         <script>
                             // PDF Cache toggle functionality
                             (function() {
@@ -90,6 +128,39 @@ $is_premium = $license_manager->isPremium();
                                         }
                                         pdfCacheInput.checked = !pdfCacheInput.checked;
                                         pdfCacheInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                    });
+                                }
+                            })();
+                        </script>
+                        <script>
+                            // Export Transparent toggle functionality
+                            (function() {
+                                const exportTransparentInput = document.getElementById('export_transparent');
+                                const exportTransparentLabel = exportTransparentInput ? exportTransparentInput.closest('label') : null;
+                                const exportTransparentSlider = exportTransparentLabel ? exportTransparentLabel.querySelector('.toggle-slider') : null;
+                                
+                                if (exportTransparentInput && exportTransparentLabel && exportTransparentSlider) {
+                                    // Make slider clickable
+                                    exportTransparentSlider.style.pointerEvents = 'auto';
+                                    exportTransparentSlider.style.cursor = 'pointer';
+                                    
+                                    // Handle slider clicks
+                                    exportTransparentSlider.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        exportTransparentInput.dataset.sliderClicked = 'true';
+                                        exportTransparentInput.checked = !exportTransparentInput.checked;
+                                        exportTransparentInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                    });
+                                    
+                                    // Handle label clicks (prevent double toggle)
+                                    exportTransparentLabel.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        if (exportTransparentInput.dataset.sliderClicked) {
+                                            delete exportTransparentInput.dataset.sliderClicked;
+                                            return;
+                                        }
+                                        exportTransparentInput.checked = !exportTransparentInput.checked;
+                                        exportTransparentInput.dispatchEvent(new Event('change', { bubbles: true }));
                                     });
                                 }
                             })();

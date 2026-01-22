@@ -502,11 +502,6 @@ function pdf_builder_load_core()
         }
     }
 
-    // Charger le gestionnaire de test de licence
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
-    }
-
     // Charger les classes Core essentielles
     $core_classes = array(
         'PDF_Builder_Security_Validator.php',
@@ -816,16 +811,6 @@ function pdf_builder_load_bootstrap()
     // Charger manuellement le Thumbnail Manager pour s'assurer qu'il est disponible
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php';
-    }
-
-    // CHARGER LE HANDLER DE TEST DE LICENCE (toujours chargé pour permettre l'activation/désactivation)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
-        // Initialiser le handler toujours (pas seulement si le mode test est activé)
-        if (class_exists('PDF_Builder\\License\\LicenseTestHandler')) {
-            $license_test_handler = \PDF_Builder\License\LicenseTestHandler::getInstance();
-            $license_test_handler->init();
-        }
     }
 
     // CHARGER LE HANDLER D'EXPIRATION DE LICENCE
