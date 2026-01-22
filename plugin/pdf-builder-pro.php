@@ -1190,22 +1190,10 @@ if (function_exists('add_action')) {
 // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers()
 
 /**
- * Charger le plugin pour les requêtes AJAX
- */
-// Preview system disabled - no AJAX handlers needed
-            'success' => false,
-            'message' => 'PreviewImageAPI not found - plugin not properly initialized'
-        ]);
-        exit;
-    }
-}
-
-/**
  * Charger le domaine de traduction
  */
 function pdf_builder_load_textdomain()
 {
-
     load_plugin_textdomain('pdf-builder-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
 
