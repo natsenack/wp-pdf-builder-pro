@@ -38,9 +38,103 @@ export interface UsePreviewReturn {
 }
 
 /**
- * Hook React usePreview pour gérer l'aperçu PDF
- * Implémente les exigences de l'étape 1.5 du roadmap
+ * Adapte le contenu du template selon le format demandé
+ * Pour PNG/JPEG : simplification des éléments complexes
+ * Pour PDF : conservation de tous les éléments avec propriétés complètes
  */
+function adaptTemplateForFormat(templateData: Record<string, unknown>, format: 'png' | 'jpg' | 'pdf'): Record<string, unknown> {
+  console.log('[HOOK USE PREVIEW] ===== ADAPTING TEMPLATE FOR FORMAT =====');
+  console.log('[HOOK USE PREVIEW] Original format:', format);
+  console.log('[HOOK USE PREVIEW] Original elements count:', (templateData.elements as unknown[])?.length || 0);
+
+  if (format === 'pdf') {
+    // Pour PDF, on garde tout le contenu tel quel
+    console.log('[HOOK USE PREVIEW] PDF format - keeping all elements as-is');
+    return { ...templateData };
+  }
+
+  // Pour PNG/JPEG, on adapte le contenu
+  const adaptedData = { ...templateData };
+  const elements = templateData.elements as unknown[];
+
+  if (Array.isArray(elements)) {
+    adaptedData.elements = elements.map((element: unknown, index: number) => {
+      if (!element || typeof element !== 'object') {
+        return element;
+      }
+
+      const el = element as Record<string, unknown>;
+      const adaptedElement = { ...el };
+
+      // Adapter selon le type d'élément pour les formats image
+      const elementType = el.type as string;
+
+      console.log(`[HOOK USE PREVIEW] Adapting element ${index} of type: ${elementType}`);
+
+      switch (elementType) {
+        case 'image':
+          // Pour les images dans PNG/JPEG, réduire la qualité si spécifiée
+          if (adaptedElement.imageQuality) {
+            adaptedElement.imageQuality = Math.min(adaptedElement.imageQuality as number, 80);
+            console.log(`[HOOK USE PREVIEW] Reduced image quality to: ${adaptedElement.imageQuality}`);
+          }
+          break;
+
+        case 'text':
+        case 'dynamic_text':
+        case 'order_number':
+        case 'woocommerce_order_date':
+        case 'woocommerce_invoice_number':
+          // Pour les textes, simplifier les effets complexes
+          if (adaptedElement.textShadow) {
+            adaptedElement.textShadow = undefined;
+            console.log(`[HOOK USE PREVIEW] Removed text shadow for element ${index}`);
+          }
+          if (adaptedElement.textStroke) {
+            adaptedElement.textStroke = undefined;
+            console.log(`[HOOK USE PREVIEW] Removed text stroke for element ${index}`);
+          }
+          break;
+
+        case 'shape':
+        case 'rectangle':
+        case 'circle':
+          // Pour les formes, simplifier les gradients complexes
+          if (adaptedElement.gradient && typeof adaptedElement.gradient === 'object') {
+            const gradient = adaptedElement.gradient as Record<string, unknown>;
+            if (gradient.type === 'radial' || gradient.stops && (gradient.stops as unknown[]).length > 2) {
+              // Simplifier en gradient linéaire simple ou couleur unie
+              adaptedElement.fillColor = gradient.stops?.[0]?.color || adaptedElement.fillColor;
+              adaptedElement.gradient = undefined;
+              console.log(`[HOOK USE PREVIEW] Simplified gradient for shape element ${index}`);
+            }
+          }
+          break;
+
+        case 'barcode':
+        case 'qrcode':
+          // Pour les codes-barres, réduire la complexité
+          if (adaptedElement.errorCorrection) {
+            adaptedElement.errorCorrection = 'M'; // Niveau moyen au lieu de élevé
+            console.log(`[HOOK USE PREVIEW] Reduced barcode error correction for element ${index}`);
+          }
+          break;
+
+        default:
+          // Pour les autres types, garder tel quel
+          console.log(`[HOOK USE PREVIEW] Keeping element ${index} of type ${elementType} as-is`);
+          break;
+      }
+
+      return adaptedElement;
+    });
+
+    console.log('[HOOK USE PREVIEW] Adapted elements count:', adaptedData.elements.length);
+  }
+
+  console.log('[HOOK USE PREVIEW] ===== TEMPLATE ADAPTATION COMPLETED =====');
+  return adaptedData;
+}
 export function usePreview(): UsePreviewReturn {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -120,9 +214,13 @@ export function usePreview(): UsePreviewReturn {
       console.log('[HOOK USE PREVIEW] - templateData:', JSON.stringify(templateData, null, 2));
       console.log('[HOOK USE PREVIEW] - options:', { format: finalFormat, quality });
 
+      // Adapter le template selon le format demandé
+      const adaptedTemplateData = adaptTemplateForFormat(templateData, finalFormat);
+      console.log('[HOOK USE PREVIEW] Adapted templateData:', JSON.stringify(adaptedTemplateData, null, 2));
+
       // Générer l'aperçu
       const result = await window.pdfPreviewAPI.generateEditorPreview(
-        templateData,
+        adaptedTemplateData,
         { format: finalFormat, quality }
       );
 
