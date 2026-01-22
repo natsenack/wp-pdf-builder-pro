@@ -72,7 +72,7 @@ class PdfBuilderPreviewAjax
             $preview_url = $generator->generate_preview();
             error_log('[PDF Preview AJAX] Preview generated successfully: ' . $preview_url);
             wp_send_json_success(array(
-                'preview_url' => $preview_url,
+                'image_url' => $preview_url,
                 'cache_key' => $generator->get_cache_key()
             ));
         } catch (Exception $e) {

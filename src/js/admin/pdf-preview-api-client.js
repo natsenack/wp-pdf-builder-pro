@@ -40,6 +40,18 @@ console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
                 success: function(response) {
                     console.log('[PDF Preview API] AJAX SUCCESS - Raw response:', response);
                     console.log('[PDF Preview API] Response type:', typeof response);
+                    console.log('[PDF Preview API] Response is object:', response && typeof response === 'object');
+                    if (response && typeof response === 'object') {
+                        console.log('[PDF Preview API] Response keys:', Object.keys(response));
+                        console.log('[PDF Preview API] Response success:', response.success);
+                        console.log('[PDF Preview API] Response data:', response.data);
+                        if (response.data) {
+                            console.log('[PDF Preview API] Response data type:', typeof response.data);
+                            console.log('[PDF Preview API] Response data keys:', Object.keys(response.data));
+                            console.log('[PDF Preview API] Response data image_url:', response.data.image_url);
+                            console.log('[PDF Preview API] Response data preview_url:', response.data.preview_url);
+                        }
+                    }
                     if (typeof response === 'string') {
                         try {
                             const parsed = JSON.parse(response);
@@ -105,6 +117,8 @@ console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
                 }, function(error, response) {
                     console.log('[PDF Preview API] generateEditorPreview callback called - error:', error, 'response:', response);
                     console.log('[PDF Preview API] Callback execution - checking error condition');
+                    console.log('[PDF Preview API] Error exists:', !!error);
+                    console.log('[PDF Preview API] Response exists:', !!response);
                     if (error) {
                         console.error('[PDF Preview API] generateEditorPreview rejecting with error:', error);
                         console.error('[PDF Preview API] Error type:', typeof error);
@@ -115,6 +129,8 @@ console.log('[PDF PREVIEW API CLIENT] Script loaded and executing');
                         console.log('[PDF Preview API] generateEditorPreview resolving with response:', response);
                         console.log('[PDF Preview API] Response type:', typeof response);
                         console.log('[PDF Preview API] Response keys:', response ? Object.keys(response) : 'No response');
+                        console.log('[PDF Preview API] Response success:', response ? response.success : 'No response');
+                        console.log('[PDF Preview API] Response data:', response ? response.data : 'No response');
                         console.log('[PDF Preview API] About to resolve Promise with response');
                         resolve(response);
                     }
