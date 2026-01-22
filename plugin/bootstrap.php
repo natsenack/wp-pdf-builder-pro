@@ -734,6 +734,7 @@ function pdf_builder_load_new_classes()
     $data_classes = [
         'src/Interfaces/DataProviderInterface.php',
         'config/data/SampleDataProvider.php',
+        'config/data/EditorDataProvider.php',
         'config/data/WooCommerceDataProvider.php'
     ];
     foreach ($data_classes as $class_file) {

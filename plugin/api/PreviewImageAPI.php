@@ -2,8 +2,10 @@
 
 namespace PDF_Builder\Api;
 
+use PDF_Builder\Api;
 use PDF_Builder\Generators\GeneratorManager;
 use PDF_Builder\Data\SampleDataProvider;
+use PDF_Builder\Data\EditorDataProvider;
 use PDF_Builder\Data\WooCommerceDataProvider;
 use PDF_Builder\Utilities\ImageConverter;
 
@@ -737,11 +739,12 @@ class PreviewImageAPI
     {
         $context = $params['context'] ?? 'canvas';
         if ($context === 'metabox' && !empty($params['order_id'])) {
-        // Données réelles WooCommerce
+            // Données réelles WooCommerce
             return new WooCommerceDataProvider($params['order_id'], $context);
         } else {
-        // Données fictives pour l'éditeur
-            return new SampleDataProvider($context);
+            // Pour l'éditeur, utiliser les données réelles du template
+            // EditorDataProvider affiche les données exactes du template sans remplacement
+            return new EditorDataProvider($params['template_data'], 'editor');
         }
     }
 
