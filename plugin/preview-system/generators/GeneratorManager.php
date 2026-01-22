@@ -406,6 +406,3 @@ private function createGenerator(
     {
     }
 }
-
-
-

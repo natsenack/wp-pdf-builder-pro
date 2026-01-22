@@ -13,9 +13,9 @@ class ImageGenerator extends BaseGenerator
     /**
      * Constructeur
      */
-    public function __construct(array $template_data, DataProviderInterface $data_provider, array $options = [])
+    public function __construct(array $template_data, DataProviderInterface $data_provider, bool $is_preview = true, array $options = [])
     {
-        parent::__construct($template_data, $data_provider, $options);
+        parent::__construct($template_data, $data_provider, $is_preview, $options);
     }
 
     /**
@@ -81,7 +81,7 @@ class ImageGenerator extends BaseGenerator
                         break;
                     case 'jpg':
                     case 'jpeg':
-                        $result = imagejpeg($image, $output_path, $this->options['quality'] ?? 90);
+                        $result = imagejpeg($image, $output_path, $this->config['quality'] ?? 90);
                         break;
                     default:
                         $result = imagepng($image, $output_path);
@@ -123,6 +123,3 @@ class ImageGenerator extends BaseGenerator
         }
     }
 }
-
-
-

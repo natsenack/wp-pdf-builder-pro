@@ -292,15 +292,15 @@ class PDFGenerator extends BaseGenerator
                 $this->logWarning("DomPDF generation to file failed: " . $e->getMessage());
                 $this->logWarning("Full exception: " . $e->getTraceAsString());
                 $this->performance_metrics['fallback_used'] = true;
-            // Au lieu d'essayer d'autres générateurs, utiliser directement les images PDF simulées
-                $this->logInfo("Using PDF preview image simulation as fallback");
+            // Utiliser le placeholder comme fallback
+                $this->logInfo("Using placeholder image as fallback");
                 try {
-                    $image_data = $this->generatePDFPreviewImage($output_type);
+                    $image_data = $this->generatePlaceholderImage($output_type);
                     file_put_contents($output_file, $image_data);
-                    $this->logInfo("PDF preview image simulation succeeded");
+                    $this->logInfo("Placeholder image fallback succeeded");
                     return true;
                 } catch (\Exception $fallback_e) {
-                    $this->logError("PDF preview image simulation also failed: " . $fallback_e->getMessage());
+                    $this->logError("Placeholder image fallback also failed: " . $fallback_e->getMessage());
                 }
             }
         } else {
@@ -447,10 +447,9 @@ class PDFGenerator extends BaseGenerator
             $this->logInfo("Saving output as {$output_type} to {$output_file}");
             switch ($output_type) {
                 case 'pdf':
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               $pdf_data = $this->dompdf->output();
+                    $pdf_data = $this->dompdf->output();
                     $this->logInfo("PDF data size: " . strlen($pdf_data) . " bytes");
                     file_put_contents($output_file, $pdf_data);
-
                     break;
                 case 'png':
                 case 'jpg':
@@ -458,7 +457,6 @@ class PDFGenerator extends BaseGenerator
                     $image_data = $this->convertPDFToImage($output_type);
                     $this->logInfo("Image data size: " . strlen($image_data) . " bytes");
                     file_put_contents($output_file, $image_data);
-
                     break;
                 default:
                     throw new \Exception("Unsupported output type: {$output_type}");
@@ -621,66 +619,12 @@ class PDFGenerator extends BaseGenerator
             // Option 2: Pour l'instant, on va créer une image avec du texte "PDF Preview"
             // en attendant une vraie implémentation d'API
 
-            $this->logInfo("Using fallback image generation with PDF content indication");
-            return $this->generatePDFPreviewImage($format);
+            $this->logInfo("Using fallback image generation");
+            return $this->generatePlaceholderImage($format);
         } catch (\Exception $e) {
             $this->logError("External API conversion failed: " . $e->getMessage());
             return $this->generatePlaceholderImage($format);
         }
-    }
-
-    /**
-     * Génère une image d'aperçu PDF avec contenu simulé
-     *
-     * @param string $format Format d'image
-     * @return string Données de l'image
-     */
-    private function generatePDFPreviewImage(string $format): string
-    {
-        $this->logInfo("Generating PDF preview image with simulated content");
-        $width = 800;
-        $height = 600;
-        $image = imagecreatetruecolor($width, $height);
-// Couleurs pour simuler un PDF
-        $bg_color = imagecolorallocate($image, 255, 255, 255);
-// Blanc
-        $text_color = imagecolorallocate($image, 0, 0, 0);
-// Noir
-        $border_color = imagecolorallocate($image, 200, 200, 200);
-// Gris clair
-
-        // Remplissage fond blanc
-        imagefill($image, 0, 0, $bg_color);
-// Bordure
-        imagerectangle($image, 0, 0, $width - 1, $height - 1, $border_color);
-// Simuler du contenu PDF
-        $font_size = 5;
-// En-tête
-        imagestring($image, $font_size, 50, 50, "PDF INVOICE PREVIEW", $text_color);
-        imagestring($image, $font_size, 50, 80, "Generated with DomPDF", $text_color);
-
-        // Lignes de contenu simulées
-        for ($i = 0; $i < 10; $i++) {
-            $y = 120 + ($i * 20);
-            imagestring($image, $font_size, 50, $y, "Line item " . ($i + 1) . " - Description", $text_color);
-            imagestring($image, $font_size, 500, $y, "$" . rand(10, 100), $text_color);
-        }
-
-        // Total
-        imagestring($image, $font_size, 450, 350, "TOTAL: $" . rand(500, 1000), $text_color);
-// Pied de page
-        imagestring($image, $font_size, 50, 520, "This is a preview image generated from PDF content", $text_color);
-// Capture de l'image
-        ob_start();
-        if ($format === 'png') {
-            imagepng($image);
-        } else {
-            imagejpeg($image);
-        }
-        $image_data = ob_get_clean();
-        imagedestroy($image);
-        
-        return $image_data;
     }
 
     /**
@@ -992,7 +936,30 @@ class PDFGenerator extends BaseGenerator
         $this->logInfo("HTML converted to placeholder image: {$output_path}");
         return $output_path;
     }
+
+    /**
+     * Génère avec TCPDF
+     */
+    private function generateWithTCPDF(string $output_type)
+    {
+        // Stub - à implémenter si nécessaire
+        $this->logWarning("TCPDF generation not yet implemented");
+        return false;
+    }
+
+    /**
+     * Convertit PDF en image avec HTML2PDF (pour convertir le résultat HTML2PDF)
+     */
+    private function convertPDFToImageHTML2PDF(string $pdf_data, string $format): string
+    {
+        // Stub - utiliser la méthode générique pour Imagick si disponible
+        if (extension_loaded('imagick')) {
+            $temp_pdf = tempnam(sys_get_temp_dir(), 'pdf_');
+            file_put_contents($temp_pdf, $pdf_data);
+            $result = $this->convertPdfWithImagick($temp_pdf, 150, $format);
+            @unlink($temp_pdf);
+            return $result;
+        }
+        return $this->generatePlaceholderImage($format);
+    }
 }
-
-
-

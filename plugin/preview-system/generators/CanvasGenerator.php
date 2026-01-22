@@ -132,12 +132,10 @@ class CanvasGenerator extends BaseGenerator
         $height = intval(($element['height'] ?? 50) * $canvas_height / 100);
         switch ($type) {
             case 'text':
-                                                                                                                                                                                                                                                                                                                                                                                                           $this->renderTextToImage($image, $element, $x, $y, $width, $height);
-
+                $this->renderTextToImage($image, $element, $x, $y, $width, $height);
                 break;
             case 'rectangle':
-                                                                                                                                                                                                                                                                                                                                                                                                       $this->renderRectangleToImage($image, $element, $x, $y, $width, $height);
-
+                $this->renderRectangleToImage($image, $element, $x, $y, $width, $height);
                 break;
         }
     }
@@ -225,14 +223,14 @@ class CanvasGenerator extends BaseGenerator
         $html .= 'ctx.fillStyle = "white";';
         $html .= 'ctx.fillRect(0, 0, ' . $width . ', ' . $height . ');';
 // Rendre les éléments du template
-        if (isset($template_data['template']['elements'])) {
-            foreach ($template_data['template']['elements'] as $element) {
+        if (isset($this->template_data['template']['elements'])) {
+            foreach ($this->template_data['template']['elements'] as $element) {
                 $html .= $this->generateCanvasElementJS($element, $width, $height);
             }
         }
 
         // Message par défaut si pas d'éléments
-        if (empty($template_data['template']['elements'])) {
+        if (empty($this->template_data['template']['elements'])) {
             $html .= $this->generateDefaultCanvasMessage($width, $height);
         }
 
@@ -266,12 +264,10 @@ class CanvasGenerator extends BaseGenerator
         $js = '';
         switch ($type) {
             case 'text':
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      $js .= $this->generateCanvasTextJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
-
+                $js .= $this->generateCanvasTextJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
                 break;
             case 'rectangle':
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $js .= $this->generateCanvasRectangleJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
-
+                $js .= $this->generateCanvasRectangleJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
                 break;
         }
 
@@ -347,6 +343,3 @@ class CanvasGenerator extends BaseGenerator
         return $this->performance_metrics;
     }
 }
-
-
-
