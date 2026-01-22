@@ -242,6 +242,8 @@ class PreviewAjaxHandler {
                 'fallback' => true,
                 'success' => true
             ];
+
+        } catch (\Exception $e) {
             error_log('[PREVIEW ERROR] ' . $e->getMessage());
             throw $e;
         }
