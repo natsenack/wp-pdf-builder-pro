@@ -14,25 +14,44 @@ error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
 
 // ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
-// Cela s'exécute avant wp_head et garantit que le nonce est disponible
+// Cela s'exécute avant admin_head et garantit que le nonce est disponible
 // ========================================================================
-add_action('wp_head', function() {
-    // Créer le nonce une seule fois au chargement de la page admin
-    if (is_admin() && current_user_can('manage_options')) {
-        $nonce = wp_create_nonce('pdf_builder_nonce');
-        echo '<script type="text/javascript">';
-        echo "console.warn('[HEAD BOOTSTRAP INJECT] Nonce is being injected');";
-        echo "window.pdfBuilderData = {";
-        echo "  nonce: '" . esc_js($nonce) . "',";
-        echo "  ajaxurl: '" . esc_js(admin_url('admin-ajax.php')) . "',";
-        echo "  templateId: null";
-        echo "};";
-        echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
-        echo "console.log('[HEAD BOOTSTRAP INJECT OK] pdfBuilderNonce:', window.pdfBuilderNonce);";
-        echo "console.log('[HEAD BOOTSTRAP INJECT OK] Length:', window.pdfBuilderNonce.length);";
-        echo '</script>';
+// Fonction d'injection du nonce
+function pdf_builder_inject_nonce() {
+    // Vérifier qu'on est sur la bonne page
+    if (!is_admin()) {
+        return; // Pas sur une page admin
     }
-}, 1); // Priorité très haute (avant tout)
+    
+    $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+    if ($page !== 'pdf-builder-react-editor') {
+        return; // Pas sur la page de l'éditeur
+    }
+    
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        return; // Pas de permission
+    }
+    
+    // Créer le nonce
+    $nonce = wp_create_nonce('pdf_builder_nonce');
+    
+    // Injecter directement
+    echo '<script type="text/javascript">';
+    echo "console.warn('[BOOTSTRAP NONCE INJECT] Starting injection');";
+    echo "window.pdfBuilderData = {";
+    echo "  nonce: '" . esc_js($nonce) . "',";
+    echo "  ajaxurl: '" . esc_js(admin_url('admin-ajax.php')) . "',";
+    echo "  templateId: null";
+    echo "};";
+    echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
+    echo "console.log('[BOOTSTRAP NONCE OK] window.pdfBuilderNonce =', window.pdfBuilderNonce);";
+    echo "console.log('[BOOTSTRAP NONCE OK] Nonce length =', window.pdfBuilderNonce.length);";
+    echo '</script>';
+}
+
+// Ajouter le hook admin_head avec priorité très haute
+add_action('admin_head', 'pdf_builder_inject_nonce', 1);
 
 // Vérifier si on est sur une page admin
 if (is_admin()) {
