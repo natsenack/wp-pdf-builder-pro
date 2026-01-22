@@ -152,6 +152,15 @@ class ReactAssets {
         // MAINTENANT enqueuer le script après localisation
         wp_enqueue_script('pdf-preview-api-client');
         
+        // Ajouter un inline script pour vérifier que le nonce est bien dispo
+        wp_add_inline_script('pdf-preview-api-client', '
+            console.log("[NONCE DEBUG] Window objects check:");
+            console.log("[NONCE DEBUG] pdfBuilderData:", window.pdfBuilderData);
+            console.log("[NONCE DEBUG] pdfBuilderNonce:", window.pdfBuilderNonce);
+            console.log("[NONCE DEBUG] pdfBuilderData?.nonce:", window.pdfBuilderData?.nonce);
+            console.log("[NONCE DEBUG] typeof pdfBuilderNonce:", typeof window.pdfBuilderNonce);
+        ', 'before');
+        
         wp_enqueue_script(
             'pdf-preview-integration',
             $plugin_url . 'assets/js/pdf-preview-integration.min.js',
