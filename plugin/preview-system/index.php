@@ -45,6 +45,25 @@ require_once __DIR__ . '/php/PreviewAjaxHandler.php';
 // - usePreview hook for React component state management
 // - PreviewImageAPI TypeScript class for API integration
 
+// Enqueue JavaScript files
+add_action('admin_enqueue_scripts', function() {
+    wp_enqueue_script(
+        'pdf-preview-api-client',
+        plugin_dir_url(__FILE__) . 'js/pdf-preview-api-client.js',
+        ['jquery'],
+        '1.0.0',
+        true
+    );
+    
+    wp_enqueue_script(
+        'pdf-preview-integration',
+        plugin_dir_url(__FILE__) . '../../assets/js/pdf-preview-integration.min.js',
+        ['jquery', 'pdf-preview-api-client'],
+        '1.0.0',
+        true
+    );
+});
+
 // Export main classes for backward compatibility
 class Api {
     public static function load() {
