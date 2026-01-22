@@ -60,6 +60,48 @@ class ReactAssets {
             $version
         );
         
+        // === ENREGISTRER ET LOCALISER PDF PREVIEW API CLIENT EN PREMIER ===
+        // Cela doit être fait AVANT React pour que le nonce soit disponible
+        wp_register_script(
+            'pdf-preview-api-client',
+            $plugin_url . 'assets/js/pdf-preview-api-client.min.js',
+            ['jquery'],
+            $version,
+            true
+        );
+
+        // Créer le nonce UNE SEULE FOIS
+        $nonce = wp_create_nonce('pdf_builder_nonce');
+        
+        // Localiser les données IMMÉDIATEMENT après l'enregistrement
+        wp_localize_script(
+            'pdf-preview-api-client',
+            'pdfBuilderData',
+            [
+                'nonce' => $nonce,
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'templateId' => null,
+            ]
+        );
+
+        wp_localize_script(
+            'pdf-preview-api-client',
+            'pdfBuilderNonce',
+            $nonce
+        );
+        
+        // Ajouter un inline script de diagnostic
+        wp_add_inline_script('pdf-preview-api-client', '
+            console.log("[NONCE DEBUG] Window objects check:");
+            console.log("[NONCE DEBUG] pdfBuilderData:", window.pdfBuilderData);
+            console.log("[NONCE DEBUG] pdfBuilderNonce:", window.pdfBuilderNonce);
+            console.log("[NONCE DEBUG] pdfBuilderData?.nonce:", window.pdfBuilderData?.nonce);
+            console.log("[NONCE DEBUG] typeof pdfBuilderNonce:", typeof window.pdfBuilderNonce);
+        ', 'before');
+        
+        // PUIS enqueuer le script après localisation
+        wp_enqueue_script('pdf-preview-api-client');
+        
         // Vendors (React, ReactDOM)
         wp_enqueue_script(
             'pdf-builder-react-vendors-v2',
@@ -69,11 +111,11 @@ class ReactAssets {
             true
         );
         
-        // App principal
+        // App principal - AVEC pdf-preview-api-client COMME DÉPENDANCE
         wp_enqueue_script(
             'pdf-builder-react-app-v2',
             $plugin_url . 'assets/js/pdf-builder-react.min.js',
-            ['pdf-builder-react-vendors-v2', 'wp-util'],
+            ['pdf-builder-react-vendors-v2', 'wp-util', 'pdf-preview-api-client'],
             $version,
             true
         );
@@ -120,47 +162,7 @@ class ReactAssets {
             true
         );
         
-        // Enregistrer et localiser le script de preview API AVANT d'enqueuer
-        wp_register_script(
-            'pdf-preview-api-client',
-            $plugin_url . 'assets/js/pdf-preview-api-client.min.js',
-            ['jquery'],
-            $version,
-            true
-        );
-
-        // Créer le nonce une seule fois
-        $nonce = wp_create_nonce('pdf_builder_nonce');
-        
-        // Localiser les données IMMÉDIATEMENT après l'enregistrement
-        wp_localize_script(
-            'pdf-preview-api-client',
-            'pdfBuilderData',
-            [
-                'nonce' => $nonce,
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'templateId' => null, // Sera défini ci-dessous
-            ]
-        );
-
-        wp_localize_script(
-            'pdf-preview-api-client',
-            'pdfBuilderNonce',
-            $nonce
-        );
-        
-        // MAINTENANT enqueuer le script après localisation
-        wp_enqueue_script('pdf-preview-api-client');
-        
-        // Ajouter un inline script pour vérifier que le nonce est bien dispo
-        wp_add_inline_script('pdf-preview-api-client', '
-            console.log("[NONCE DEBUG] Window objects check:");
-            console.log("[NONCE DEBUG] pdfBuilderData:", window.pdfBuilderData);
-            console.log("[NONCE DEBUG] pdfBuilderNonce:", window.pdfBuilderNonce);
-            console.log("[NONCE DEBUG] pdfBuilderData?.nonce:", window.pdfBuilderData?.nonce);
-            console.log("[NONCE DEBUG] typeof pdfBuilderNonce:", typeof window.pdfBuilderNonce);
-        ', 'before');
-        
+        // Integration preview (après que pdf-preview-api-client soit enqueueé)
         wp_enqueue_script(
             'pdf-preview-integration',
             $plugin_url . 'assets/js/pdf-preview-integration.min.js',
