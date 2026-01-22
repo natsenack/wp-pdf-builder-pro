@@ -45,6 +45,7 @@ class AdminScriptLoader
     public function loadAdminScripts($hook = null)
     {
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: GET params: ' . print_r($_GET, true));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
@@ -200,12 +201,16 @@ class AdminScriptLoader
 
         // Scripts de l'API Preview 1.4 - seulement si les fichiers existent
         $preview_client_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-api-client.min.js';
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview client exists: ' . $preview_client_js . ' - exists: ' . (file_exists($preview_client_js) ? 'YES' : 'NO'));
         if (file_exists($preview_client_js)) {
             wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
+            error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-api-client script');
             
             $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
+            error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview integration exists: ' . $preview_integration_js . ' - exists: ' . (file_exists($preview_integration_js) ? 'YES' : 'NO'));
             if (file_exists($preview_integration_js)) {
                 wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param, true);
+                error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-integration script');
 
                 // Localize ajaxurl for integration script
                 wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
@@ -249,8 +254,11 @@ class AdminScriptLoader
 
         // Charger aussi les scripts React si on est sur une page qui contient "react-editor" dans l'URL
         if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-react-editor') !== false) {
+            error_log('[DEBUG] PDF Builder AdminScriptLoader: FOUND pdf-builder-react-editor in URL, loading React scripts');
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts from REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
             $this->loadReactEditorScripts($hook);
+        } else {
+            error_log('[DEBUG] PDF Builder AdminScriptLoader: NO pdf-builder-react-editor in URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
         }
     }
 
@@ -259,7 +267,7 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts($hook = null)
     {
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts called');
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
