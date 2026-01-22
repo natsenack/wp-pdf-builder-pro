@@ -21,7 +21,7 @@
                 data: {
                     action: 'pdf_builder_generate_preview',
                     template_data: JSON.stringify(data.template_data),
-                    context: data.context || 'editor',
+                    preview_type: data.context || 'editor',
                     format: data.format || 'png',
                     quality: data.quality || 150,
                     order_id: data.order_id || null,
