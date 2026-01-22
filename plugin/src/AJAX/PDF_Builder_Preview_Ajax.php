@@ -12,6 +12,11 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// Empêcher la redéclaration de classe
+if (class_exists('PDF_Builder\AJAX\PdfBuilderPreviewAjax')) {
+    return;
+}
+
 class PdfBuilderPreviewAjax
 {
     public function __construct()
