@@ -120,6 +120,10 @@ export function usePreview(): UsePreviewReturn {
       console.log('[HOOK USE PREVIEW] - templateData:', JSON.stringify(templateData, null, 2));
       console.log('[HOOK USE PREVIEW] - options:', { format: finalFormat, quality });
 
+      console.warn('🔴 AVANT APPEL API - TIMESTAMP:', Date.now());
+      console.warn('🔴 window.pdfPreviewAPI:', window.pdfPreviewAPI);
+      console.warn('🔴 window.pdfPreviewAPI.generateEditorPreview:', window.pdfPreviewAPI.generateEditorPreview);
+
       // Générer l'aperçu
       const result = await window.pdfPreviewAPI.generateEditorPreview(
         {
@@ -128,6 +132,9 @@ export function usePreview(): UsePreviewReturn {
         },
         { format: finalFormat, quality }
       );
+
+      console.warn('🟢 APRÈS APPEL API - TIMESTAMP:', Date.now());
+      console.warn('🟢 API result reçu:', result);
 
       console.log('[HOOK USE PREVIEW] ===== API CALL COMPLETED =====');
       console.log('[HOOK USE PREVIEW] generateEditorPreview result received:', result);
