@@ -5,14 +5,14 @@
  * Responsable du chargement des scripts et styles d'administration
  */
 
-error_log('[DEBUG] PDF Builder AdminScriptLoader.php FILE LOADED at ' . microtime(true));
-error_log('[DEBUG] PDF Builder AdminScriptLoader.php REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
-error_log('[DEBUG] PDF Builder AdminScriptLoader.php GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page'));
-
 namespace PDF_Builder\Admin\Loaders;
 
 // Import the logger class
 use PDF_Builder_Logger;
+
+error_log('[DEBUG] PDF Builder AdminScriptLoader.php FILE LOADED at ' . microtime(true));
+error_log('[DEBUG] PDF Builder AdminScriptLoader.php REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
+error_log('[DEBUG] PDF Builder AdminScriptLoader.php GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page'));
 
 /**
  * Classe responsable du chargement des scripts et styles admin
