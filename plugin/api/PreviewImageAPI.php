@@ -3,17 +3,15 @@
 namespace PDF_Builder\Api;
 
 if (!defined('ABSPATH')) {
-    exit('Direct access forbidden');
+    exit;
 }
 
 /**
  * Preview Image API (Legacy)
  * DEPRECATED - Use PreviewSystem instead
- * 
- * Kept for backward compatibility only
  */
 
-// Load the new system
+// Charger le nouveau système
 require_once dirname(__FILE__) . '/PreviewSystem.php';
 
 // Alias pour compatibilité

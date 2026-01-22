@@ -1,89 +1,68 @@
 <?php
 /**
- * PDF Builder Pro - Preview System Initialization
+ * PDF Builder Pro - Preview System (Minimal & Clean v2)
  * 
- * Point d'entrée simplifié et fiable pour tous les aperçus
- * Enregistre les actions AJAX et les routes REST
+ * Architecture ultra-simple :
+ * - Aucune génération au démarrage
+ * - Génération à la demande AJAX uniquement
+ * - Cache fichier simple
+ * - Zéro dépendance complexe
  */
 
 namespace PDF_Builder\Api;
 
 if (!defined('ABSPATH')) {
-    exit('Direct access forbidden');
+    exit;
 }
 
-/**
- * Classe d'initialisation du système d'aperçu
- * S'enregistre sur les hooks WordPress standard
- */
 class PreviewSystem
 {
-    private static $initialized = false;
+    private static $init = false;
+    private static $cache_dir;
 
     /**
-     * Initialiser le système
+     * Initialiser une seule fois
      */
-    public static function init()
+    public static function boot()
     {
-        if (self::$initialized) {
+        if (self::$init) {
             return;
         }
-        self::$initialized = true;
+        self::$init = true;
 
-        // Enregistrer les actions AJAX
-        self::registerAjaxActions();
-        
-        // Enregistrer les routes REST
-        add_action('rest_api_init', [__CLASS__, 'registerRestRoutes']);
+        // S'enregistrer sur les hooks WordPress
+        add_action('wp_ajax_pdf_preview', [__CLASS__, 'handleAjax']);
+        add_action('wp_ajax_nopriv_pdf_preview', [__CLASS__, 'denyAccess']);
     }
 
     /**
-     * Enregistrer les actions AJAX
+     * Handler AJAX principal
      */
-    private static function registerAjaxActions()
+    public static function handleAjax()
     {
-        // Action AJAX authentifiée
-        add_action('wp_ajax_pdf_builder_generate_preview', function () {
-            self::handleAjaxPreviewGeneration();
-        });
-
-        // Action AJAX non authentifiée (refusée)
-        add_action('wp_ajax_nopriv_pdf_builder_generate_preview', function () {
-            http_response_code(401);
-            wp_send_json_error('Authentication required', 401);
-        });
-    }
-
-    /**
-     * Handler AJAX pour la génération d'aperçu
-     */
-    private static function handleAjaxPreviewGeneration()
-    {
-        header('Content-Type: application/json; charset=UTF-8');
+        header('Content-Type: application/json');
 
         try {
-            // 1. Vérifier les permissions
+            // 1. Permissions
             if (!current_user_can('manage_options')) {
-                throw new \Exception('Permission denied', 403);
+                throw new \Exception('Access denied', 403);
             }
 
-            // 2. Vérifier le nonce
-            $nonce = $_POST['nonce'] ?? $_POST['_wpnonce'] ?? '';
-            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
-                throw new \Exception('Invalid security token', 401);
+            // 2. Nonce
+            if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_nonce')) {
+                throw new \Exception('Invalid nonce', 401);
             }
 
-            // 3. Extraire les données
-            $template_data = self::extractTemplateData();
+            // 3. Données
+            $data = json_decode(stripslashes($_POST['data'] ?? ''), true);
+            if (!$data || !isset($data['elements']) || !is_array($data['elements'])) {
+                throw new \Exception('Invalid template data', 400);
+            }
 
-            // 4. Générer l'aperçu
-            $result = self::generatePreview($template_data);
+            // 4. Générer
+            $url = self::generatePreview($data);
 
-            // 5. Répondre
-            wp_send_json_success([
-                'url' => $result['url'],
-                'cached' => $result['cached'] ?? false
-            ]);
+            wp_send_json_success(['url' => $url]);
 
         } catch (\Exception $e) {
             http_response_code($e->getCode() ?: 500);
@@ -92,70 +71,41 @@ class PreviewSystem
     }
 
     /**
-     * Extraire template_data du POST
+     * Refuser l'accès non-authentifié
      */
-    private static function extractTemplateData()
+    public static function denyAccess()
     {
-        $raw = $_POST['template_data'] ?? '';
-        
-        if (empty($raw)) {
-            throw new \Exception('No template data provided', 400);
-        }
-
-        $decoded = json_decode(stripslashes($raw), true);
-        
-        if (!is_array($decoded) || json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Invalid JSON in template data', 400);
-        }
-
-        // Vérifier qu'il y a des éléments
-        $elements = $decoded['elements'] ?? $decoded['template']['elements'] ?? null;
-        if (!$elements || !is_array($elements)) {
-            throw new \Exception('No elements found in template', 400);
-        }
-
-        return $decoded;
+        http_response_code(401);
+        wp_send_json_error('Authentication required');
     }
 
     /**
-     * Générer l'aperçu avec cache
+     * Générer l'aperçu (cœur du système)
      */
     private static function generatePreview($template_data)
     {
-        // Initialiser le cache
-        $upload_dir = wp_upload_dir();
-        $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache/previews';
-        $cache_url = $upload_dir['baseurl'] . '/pdf-builder-cache/previews';
-
-        if (!is_dir($cache_dir)) {
-            wp_mkdir_p($cache_dir);
-        }
-
-        // Créer clé de cache
-        $cache_key = md5(json_encode($template_data) . intval($_POST['quality'] ?? 150));
+        // Initialiser cache
+        $cache_dir = self::getCacheDir();
+        $cache_key = md5(json_encode($template_data));
         $cache_file = $cache_dir . '/' . $cache_key . '.png';
-        $cache_url_full = $cache_url . '/' . $cache_key . '.png';
 
-        // Vérifier le cache existant
+        // Vérifier cache existant
         if (file_exists($cache_file)) {
             $age = time() - filemtime($cache_file);
-            if ($age < 86400) { // 24 heures
-                return [
-                    'url' => $cache_url_full,
-                    'cached' => true
-                ];
+            if ($age < 86400) { // 24h
+                return self::getCacheUrl() . '/' . $cache_key . '.png';
             }
-            @unlink($cache_file);
+            unlink($cache_file);
         }
 
-        // Générer l'image
+        // Générer nouvelle image
         try {
-            $generator_manager = new \PDF_Builder\Generators\GeneratorManager();
-            $data_provider = new \PDF_Builder\Data\EditorDataProvider($template_data);
-            
-            $result = $generator_manager->generatePreview(
+            $generator = new \PDF_Builder\Generators\GeneratorManager();
+            $provider = new \PDF_Builder\Data\EditorDataProvider($template_data);
+
+            $result = $generator->generatePreview(
                 $template_data,
-                $data_provider,
+                $provider,
                 'png',
                 [
                     'quality' => intval($_POST['quality'] ?? 150),
@@ -165,21 +115,14 @@ class PreviewSystem
             );
 
             if (empty($result['file']) || !file_exists($result['file'])) {
-                throw new \Exception('Generation failed - no file produced');
+                throw new \Exception('Generation failed');
             }
 
             // Copier au cache
-            if (!copy($result['file'], $cache_file)) {
-                @unlink($result['file']);
-                throw new \Exception('Failed to cache preview');
-            }
-
+            copy($result['file'], $cache_file);
             @unlink($result['file']);
 
-            return [
-                'url' => $cache_url_full,
-                'cached' => false
-            ];
+            return self::getCacheUrl() . '/' . $cache_key . '.png';
 
         } catch (\Exception $e) {
             throw new \Exception('Preview generation error: ' . $e->getMessage());
@@ -187,76 +130,46 @@ class PreviewSystem
     }
 
     /**
-     * Enregistrer les routes REST
+     * Obtenir le chemin du cache
      */
-    public static function registerRestRoutes()
+    private static function getCacheDir()
     {
-        register_rest_route('wp-pdf-builder-pro/v1', '/preview', [
-            'methods' => 'POST',
-            'callback' => [__CLASS__, 'handleRestPreview'],
-            'permission_callback' => [__CLASS__, 'checkRestPermissions'],
-        ]);
-
-        register_rest_route('wp-pdf-builder-pro/v1', '/download', [
-            'methods' => 'POST',
-            'callback' => [__CLASS__, 'handleRestDownload'],
-            'permission_callback' => [__CLASS__, 'checkRestPermissions'],
-        ]);
-    }
-
-    /**
-     * Vérifier les permissions REST
-     */
-    public static function checkRestPermissions($request)
-    {
-        return current_user_can('manage_options');
-    }
-
-    /**
-     * Handler REST pour aperçu
-     */
-    public static function handleRestPreview($request)
-    {
-        try {
-            $template_data = $request->get_json_params();
-            if (empty($template_data)) {
-                return new \WP_Error('invalid_data', 'No template data', ['status' => 400]);
+        if (!self::$cache_dir) {
+            $upload_dir = wp_upload_dir();
+            self::$cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache/previews';
+            if (!is_dir(self::$cache_dir)) {
+                wp_mkdir_p(self::$cache_dir);
             }
-
-            $result = self::generatePreview($template_data);
-            return new \WP_REST_Response(['url' => $result['url']], 200);
-        } catch (\Exception $e) {
-            return new \WP_Error('generation_error', $e->getMessage(), ['status' => 500]);
         }
+        return self::$cache_dir;
     }
 
     /**
-     * Handler REST pour download
+     * Obtenir l'URL du cache
      */
-    public static function handleRestDownload($request)
+    private static function getCacheUrl()
     {
-        return new \WP_REST_Response(['message' => 'Download not implemented'], 501);
+        $upload_dir = wp_upload_dir();
+        return $upload_dir['baseurl'] . '/pdf-builder-cache/previews';
     }
 
     /**
      * Nettoyer le cache
      */
-    public static function cleanupCache()
+    public static function cleanCache()
     {
-        $upload_dir = wp_upload_dir();
-        $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache/previews';
-
-        if (!is_dir($cache_dir)) {
+        $dir = self::getCacheDir();
+        if (!is_dir($dir)) {
             return;
         }
 
-        $files = glob($cache_dir . '/*.png');
+        $files = glob($dir . '/*.png');
         if (!$files) {
             return;
         }
 
         $now = time();
-        $max_age = 86400 * 7; // 7 jours
+        $max_age = 7 * 86400; // 7 jours
 
         foreach ($files as $file) {
             if ($now - filemtime($file) > $max_age) {
@@ -266,8 +179,11 @@ class PreviewSystem
     }
 }
 
-// === Initialisation automatique ===
-// S'initialise dès que ce fichier est chargé (pas de dépendance sur les hooks)
+// ============================================================================
+// DÉMARRAGE AUTOMATIQUE
+// ============================================================================
+
+// S'initialiser dès le chargement
 if (function_exists('add_action')) {
-    PreviewSystem::init();
+    PreviewSystem::boot();
 }
