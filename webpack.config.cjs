@@ -22,7 +22,7 @@ module.exports = {
     "notifications": "./src/js/admin/notifications.js",
     "pdf-builder-wrap": "./src/js/admin/pdf-builder-wrap.js",
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
-    "pdf-preview-api-client": "./src/js/admin/pdf-preview-api-client.js",
+    "pdf-preview-api-client": "./plugin/preview-system/js/pdf-preview-api-client.js",
     "pdf-preview-integration": "./src/js/admin/pdf-preview-integration.js",
     "notifications": "./src/css/notifications.css",
   },
