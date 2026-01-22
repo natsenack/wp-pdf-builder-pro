@@ -781,6 +781,7 @@ function pdf_builder_load_new_classes()
 
     // Charger l'API
     $api_classes = [
+        'api/SimplePreviewGenerator.php',
         'api/PreviewImageAPI.php',
         'api/MediaDiagnosticAPI.php',
         'api/MediaLibraryFixAPI.php'
