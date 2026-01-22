@@ -746,7 +746,16 @@ export function useTemplate() {
   ]);
 
   const previewTemplate = useCallback(() => {
+    console.log('[USE TEMPLATE HOOK] ===== PREVIEW TEMPLATE CALLED =====');
+    console.log('[USE TEMPLATE HOOK] previewTemplate function executed at:', new Date().toISOString());
+    console.log('[USE TEMPLATE HOOK] Current template state:');
+    console.log('[USE TEMPLATE HOOK] - template name:', state.template.name);
+    console.log('[USE TEMPLATE HOOK] - template description:', state.template.description);
+    console.log('[USE TEMPLATE HOOK] - elements count:', state.elements?.length || 0);
+    console.log('[USE TEMPLATE HOOK] - showPreviewModal before:', state.showPreviewModal);
+    console.log('[USE TEMPLATE HOOK] Dispatching SET_SHOW_PREVIEW_MODAL with payload: true');
     dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: true });
+    console.log('[USE TEMPLATE HOOK] SET_SHOW_PREVIEW_MODAL dispatched successfully');
   }, [dispatch]);
 
   const newTemplate = useCallback(() => {

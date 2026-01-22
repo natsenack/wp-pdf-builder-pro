@@ -133,37 +133,55 @@ console.log('[PDF PREVIEW API CLIENT] pdfBuilderAjax available:', typeof window.
     // Define the expected global API interface for React components
     window.pdfPreviewAPI = {
         generateEditorPreview: function(templateData, options) {
-            console.log('[PDF PREVIEW API] generateEditorPreview called with templateData:', templateData);
-            console.log('[PDF PREVIEW API] generateEditorPreview options:', options);
-            console.log('[PDF PREVIEW API] generateEditorPreview - creating Promise');
+            console.log('[PDF PREVIEW API] ===== generateEditorPreview CALLED =====');
+            console.log('[PDF PREVIEW API] Template data provided:', !!templateData);
+            console.log('[PDF PREVIEW API] Template data type:', typeof templateData);
+            console.log('[PDF PREVIEW API] Template data keys:', templateData ? Object.keys(templateData) : 'No data');
+            console.log('[PDF PREVIEW API] Options:', options);
+            console.log('[PDF PREVIEW API] Timestamp:', Date.now());
+            console.log('[PDF PREVIEW API] Creating Promise');
             return new Promise(function(resolve, reject) {
-                console.log('[PDF PREVIEW API] generateEditorPreview - Promise executor called');
-                console.log('[PDF PREVIEW API] generateEditorPreview - about to call pdfPreviewApiClient.generatePreview');
+                console.log('[PDF PREVIEW API] ===== PROMISE EXECUTOR CALLED =====');
+                console.log('[PDF PREVIEW API] About to call pdfPreviewApiClient.generatePreview');
+                console.log('[PDF PREVIEW API] pdfPreviewApiClient available:', typeof window.pdfPreviewApiClient);
+                console.log('[PDF PREVIEW API] generatePreview method available:', typeof (window.pdfPreviewApiClient && window.pdfPreviewApiClient.generatePreview));
+
+                if (!window.pdfPreviewApiClient || !window.pdfPreviewApiClient.generatePreview) {
+                    console.error('[PDF PREVIEW API] pdfPreviewApiClient.generatePreview not available');
+                    reject(new Error('pdfPreviewApiClient.generatePreview not available'));
+                    return;
+                }
+
                 window.pdfPreviewApiClient.generatePreview({
                     template_data: templateData,
                     context: 'editor',
                     format: options?.format || 'png',
                     quality: options?.quality || 150
                 }, function(error, response) {
-                    console.log('[PDF PREVIEW API] generateEditorPreview - callback executed');
-                    console.log('[PDF PREVIEW API] generateEditorPreview - callback error:', error);
-                    console.log('[PDF PREVIEW API] generateEditorPreview - callback response:', response);
-                    console.log('[PDF PREVIEW API] generateEditorPreview - callback execution - checking error condition');
-                    console.log('[PDF PREVIEW API] generateEditorPreview - error exists:', !!error);
-                    console.log('[PDF PREVIEW API] generateEditorPreview - response exists:', !!response);
+                    console.log('[PDF PREVIEW API] ===== CALLBACK EXECUTED =====');
+                    console.log('[PDF PREVIEW API] Callback timestamp:', Date.now());
+                    console.log('[PDF PREVIEW API] Callback error:', error);
+                    console.log('[PDF PREVIEW API] Callback response:', response);
+                    console.log('[PDF PREVIEW API] Checking error condition');
+                    console.log('[PDF PREVIEW API] Error exists:', !!error);
+                    console.log('[PDF PREVIEW API] Response exists:', !!response);
+
                     if (error) {
-                        console.error('[PDF PREVIEW API] generateEditorPreview - rejecting with error:', error);
-                        console.error('[PDF PREVIEW API] generateEditorPreview - error type:', typeof error);
-                        console.error('[PDF PREVIEW API] generateEditorPreview - error details:', error);
-                        console.error('[PDF PREVIEW API] generateEditorPreview - about to reject Promise with new Error(error)');
+                        console.error('[PDF PREVIEW API] ===== REJECTING PROMISE =====');
+                        console.error('[PDF PREVIEW API] Error type:', typeof error);
+                        console.error('[PDF PREVIEW API] Error details:', error);
+                        console.error('[PDF PREVIEW API] About to reject Promise');
                         reject(new Error(error));
                     } else {
-                        console.log('[PDF PREVIEW API] generateEditorPreview - resolving with response:', response);
-                        console.log('[PDF PREVIEW API] generateEditorPreview - response type:', typeof response);
-                        console.log('[PDF PREVIEW API] generateEditorPreview - response keys:', response ? Object.keys(response) : 'No response');
-                        console.log('[PDF PREVIEW API] generateEditorPreview - response success:', response ? response.success : 'No response');
-                        console.log('[PDF PREVIEW API] generateEditorPreview - response data:', response ? response.data : 'No response');
-                        console.log('[PDF PREVIEW API] generateEditorPreview - about to resolve Promise with response');
+                        console.log('[PDF PREVIEW API] ===== RESOLVING PROMISE =====');
+                        console.log('[PDF PREVIEW API] Response type:', typeof response);
+                        console.log('[PDF PREVIEW API] Response keys:', response ? Object.keys(response) : 'No response');
+                        console.log('[PDF PREVIEW API] Response success:', response ? response.success : 'No response');
+                        console.log('[PDF PREVIEW API] Response data:', response ? response.data : 'No response');
+                        console.log('[PDF PREVIEW API] Response data type:', response && response.data ? typeof response.data : 'No data');
+                        console.log('[PDF PREVIEW API] Response data keys:', response && response.data ? Object.keys(response.data) : 'No data keys');
+                        console.log('[PDF PREVIEW API] Response data image_url:', response && response.data ? response.data.image_url : 'No image_url');
+                        console.log('[PDF PREVIEW API] About to resolve Promise');
                         resolve(response);
                     }
                 });

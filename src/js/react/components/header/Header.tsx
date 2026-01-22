@@ -606,6 +606,7 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
+            console.log('[REACT HEADER] ===== APERÇU BUTTON CLICKED =====');
             console.log('[REACT HEADER] Aperçu button clicked - opening preview modal');
             console.log('[REACT HEADER] Current state before opening modal:');
             console.log('[REACT HEADER] - showPreviewModal:', showPreviewModal);
@@ -615,9 +616,12 @@ export const Header = memo(function Header({
             console.log('[REACT HEADER] - previewFormat:', previewFormat);
             console.log('[REACT HEADER] - Template state elements count:', state.elements?.length || 0);
             console.log('[REACT HEADER] - Template state has content:', !!(state.elements && state.elements.length > 0));
+            console.log('[REACT HEADER] - usePreview hook available:', typeof usePreview);
+            console.log('[REACT HEADER] - openModal function available:', typeof openPreviewModal);
             console.log('[REACT HEADER] About to call openPreviewModal()');
             openPreviewModal();
             console.log('[REACT HEADER] openPreviewModal() called successfully');
+            console.log('[REACT HEADER] ===== APERÇU BUTTON CLICK HANDLER COMPLETED =====');
           }}
           onMouseEnter={() => setHoveredButton("preview")}
           onMouseLeave={() => setHoveredButton(null)}
@@ -1242,6 +1246,17 @@ export const Header = memo(function Header({
             justifyContent: "center",
             zIndex: 1001,
           }}
+          onLoad={() => {
+            console.log('[REACT HEADER] ===== PREVIEW MODAL RENDERING =====');
+            console.log('[REACT HEADER] Preview modal is open');
+            console.log('[REACT HEADER] Modal state:');
+            console.log('[REACT HEADER] - showPreviewModal:', showPreviewModal);
+            console.log('[REACT HEADER] - isGeneratingPreview:', isGeneratingPreview);
+            console.log('[REACT HEADER] - previewImageUrl:', previewImageUrl);
+            console.log('[REACT HEADER] - previewError:', previewError);
+            console.log('[REACT HEADER] - previewFormat:', previewFormat);
+            console.log('[REACT HEADER] Modal rendering timestamp:', Date.now());
+          }}
         >
           <div
             style={{
@@ -1350,11 +1365,16 @@ export const Header = memo(function Header({
             <div style={{ marginBottom: "20px" }}>
               <button
                 onClick={async () => {
-                  console.log('[HEADER COMPONENT] Preview button clicked');
+                  console.log('[HEADER COMPONENT] ===== MODAL PREVIEW BUTTON CLICKED =====');
+                  console.log('[HEADER COMPONENT] Preview button clicked in modal');
+                  console.log('[HEADER COMPONENT] Timestamp:', Date.now());
                   console.log('[HEADER COMPONENT] State template:', state.template);
                   console.log('[HEADER COMPONENT] State elements:', state.elements);
+                  console.log('[HEADER COMPONENT] State elements count:', state.elements?.length || 0);
                   console.log('[HEADER COMPONENT] Preview format:', previewFormat);
                   console.log('[HEADER COMPONENT] Is generating:', isGeneratingPreview);
+                  console.log('[HEADER COMPONENT] generatePreview function available:', typeof generatePreview);
+                  console.log('[HEADER COMPONENT] About to call generatePreview');
 
                   await generatePreview(
                     {
@@ -1366,6 +1386,9 @@ export const Header = memo(function Header({
                       quality: 150,
                     }
                   );
+
+                  console.log('[HEADER COMPONENT] generatePreview call completed');
+                  console.log('[HEADER COMPONENT] ===== MODAL PREVIEW BUTTON HANDLER COMPLETED =====');
                 }}
                 disabled={isGeneratingPreview}
                 style={{

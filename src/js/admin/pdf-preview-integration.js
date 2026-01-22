@@ -2,6 +2,10 @@
  * PDF Builder - Preview Integration
  * Integration utilities for PDF preview functionality
  */
+console.log('[PDF PREVIEW INTEGRATION] ===== SCRIPT LOADED =====');
+console.log('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
+console.log('[PDF PREVIEW INTEGRATION] Location:', window.location.href);
+console.log('[PDF PREVIEW INTEGRATION] User Agent:', navigator.userAgent);
 console.log('[PDF PREVIEW INTEGRATION] Script loaded and executing');
 (function($) {
     'use strict';
@@ -11,51 +15,103 @@ console.log('[PDF PREVIEW INTEGRATION] Script loaded and executing');
     window.pdfPreviewIntegration = {
         // Preview integration utilities
         init: function() {
-            console.log('[PDF PREVIEW INTEGRATION] Initializing preview integration');
+            console.log('[PDF PREVIEW INTEGRATION] ===== INITIALIZING PREVIEW INTEGRATION =====');
             console.log('[PDF PREVIEW INTEGRATION] window.pdfPreviewAPI available:', typeof window.pdfPreviewAPI);
             console.log('[PDF PREVIEW INTEGRATION] window.pdfPreviewApiClient available:', typeof window.pdfPreviewApiClient);
             console.log('[PDF PREVIEW INTEGRATION] window.pdfBuilderAjax available:', typeof window.pdfBuilderAjax);
+            console.log('[PDF PREVIEW INTEGRATION] jQuery available:', typeof $);
 
             // Bind preview events
             this.bindEvents();
         },
 
         bindEvents: function() {
-            console.log('[PDF PREVIEW INTEGRATION] Binding events');
+            console.log('[PDF PREVIEW INTEGRATION] ===== BINDING EVENTS =====');
             // Example event bindings
             $(document).on('pdfBuilderPreviewRequested', function(e, data) {
-                console.log('[PDF PREVIEW INTEGRATION] Preview requested event:', data);
+                console.log('[PDF PREVIEW INTEGRATION] ===== PREVIEW REQUESTED EVENT =====');
+                console.log('[PDF PREVIEW INTEGRATION] Preview requested event data:', data);
+                console.log('[PDF PREVIEW INTEGRATION] Event timestamp:', Date.now());
                 // Handle preview request
             });
 
             $(document).on('pdfBuilderPreviewReady', function(e, previewData) {
-                console.log('[PDF PREVIEW INTEGRATION] Preview ready event:', previewData);
+                console.log('[PDF PREVIEW INTEGRATION] ===== PREVIEW READY EVENT =====');
+                console.log('[PDF PREVIEW INTEGRATION] Preview ready event data:', previewData);
+                console.log('[PDF PREVIEW INTEGRATION] Event timestamp:', Date.now());
                 // Handle preview display
+            });
+
+            $(document).on('pdfBuilderPreviewError', function(e, errorData) {
+                console.log('[PDF PREVIEW INTEGRATION] ===== PREVIEW ERROR EVENT =====');
+                console.log('[PDF PREVIEW INTEGRATION] Preview error event data:', errorData);
+                console.log('[PDF PREVIEW INTEGRATION] Event timestamp:', Date.now());
             });
         },
 
         showPreview: function(previewUrl) {
-            console.log('[PDF PREVIEW INTEGRATION] Showing preview:', previewUrl);
+            console.log('[PDF PREVIEW INTEGRATION] ===== SHOWING PREVIEW =====');
+            console.log('[PDF PREVIEW INTEGRATION] Preview URL:', previewUrl);
+            console.log('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
             // Basic preview display
             const previewWindow = window.open(previewUrl, 'pdf-preview', 'width=800,height=600');
             if (previewWindow) {
+                console.log('[PDF PREVIEW INTEGRATION] Preview window opened successfully');
                 previewWindow.focus();
+            } else {
+                console.error('[PDF PREVIEW INTEGRATION] Failed to open preview window - popup blocked?');
             }
         },
 
         updatePreview: function(elementId, content) {
-            console.log('[PDF PREVIEW INTEGRATION] Updating preview element:', elementId, 'with content length:', content.length);
+            console.log('[PDF PREVIEW INTEGRATION] ===== UPDATING PREVIEW ELEMENT =====');
+            console.log('[PDF PREVIEW INTEGRATION] Element ID:', elementId);
+            console.log('[PDF PREVIEW INTEGRATION] Content length:', content ? content.length : 'null');
+            console.log('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
             const element = document.getElementById(elementId);
             if (element) {
+                console.log('[PDF PREVIEW INTEGRATION] Element found, updating content');
                 element.innerHTML = content;
-                
+                console.log('[PDF PREVIEW INTEGRATION] Element updated successfully');
+            } else {
+                console.error('[PDF PREVIEW INTEGRATION] Element not found:', elementId);
             }
+        },
+
+        // Add method to trigger preview generation
+        generatePreview: function(templateData, options) {
+            console.log('[PDF PREVIEW INTEGRATION] ===== GENERATE PREVIEW CALLED =====');
+            console.log('[PDF PREVIEW INTEGRATION] Template data provided:', !!templateData);
+            console.log('[PDF PREVIEW INTEGRATION] Options:', options);
+            console.log('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
+
+            if (!window.pdfPreviewAPI) {
+                console.error('[PDF PREVIEW INTEGRATION] pdfPreviewAPI not available');
+                return Promise.reject(new Error('pdfPreviewAPI not available'));
+            }
+
+            console.log('[PDF PREVIEW INTEGRATION] Calling pdfPreviewAPI.generateEditorPreview');
+            return window.pdfPreviewAPI.generateEditorPreview(templateData, options)
+                .then(function(response) {
+                    console.log('[PDF PREVIEW INTEGRATION] ===== PREVIEW GENERATION SUCCESS =====');
+                    console.log('[PDF PREVIEW INTEGRATION] Response:', response);
+                    console.log('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
+                    return response;
+                })
+                .catch(function(error) {
+                    console.error('[PDF PREVIEW INTEGRATION] ===== PREVIEW GENERATION ERROR =====');
+                    console.error('[PDF PREVIEW INTEGRATION] Error:', error);
+                    console.error('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
+                    throw error;
+                });
         }
     };
 
     // Auto-initialize on document ready
     $(document).ready(function() {
-        console.log('[PDF PREVIEW INTEGRATION] Document ready, initializing...');
+        console.log('[PDF PREVIEW INTEGRATION] ===== DOCUMENT READY =====');
+        console.log('[PDF PREVIEW INTEGRATION] Timestamp:', Date.now());
+        console.log('[PDF PREVIEW INTEGRATION] Initializing...');
         window.pdfPreviewIntegration.init();
     });
 
