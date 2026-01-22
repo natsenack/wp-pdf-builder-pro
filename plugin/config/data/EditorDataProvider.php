@@ -32,7 +32,7 @@ class EditorDataProvider implements DataProviderInterface
      * {@inheritDoc}
      * Récupère une valeur de données - retourne le template tel quel
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         // Les variables dynamiques dans les templates ne sont pas remplacées
         // On retourne la clé elle-même ou une chaîne vide
@@ -44,7 +44,7 @@ class EditorDataProvider implements DataProviderInterface
      * {@inheritDoc}
      * Récupère toutes les données
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->templateData;
     }
@@ -53,7 +53,7 @@ class EditorDataProvider implements DataProviderInterface
      * {@inheritDoc}
      * Vérifie si une clé existe
      */
-    public function has($key)
+    public function has($key): bool
     {
         return isset($this->templateData[$key]);
     }
@@ -61,7 +61,7 @@ class EditorDataProvider implements DataProviderInterface
     /**
      * Définit une valeur de données
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->templateData[$key] = $value;
     }
@@ -70,7 +70,7 @@ class EditorDataProvider implements DataProviderInterface
      * {@inheritDoc}
      * Récupère les données formatées pour le rendu
      */
-    public function getFormattedData()
+    public function getFormattedData(): array
     {
         return $this->templateData;
     }
@@ -79,7 +79,7 @@ class EditorDataProvider implements DataProviderInterface
      * {@inheritDoc}
      * Récupère le contexte
      */
-    public function getContext()
+    public function getContext(): string
     {
         return $this->context;
     }
@@ -89,7 +89,7 @@ class EditorDataProvider implements DataProviderInterface
      * Remplace les variables dans un texte - pour EditorDataProvider,
      * on ne remplace que les variables qui existent dans les données du template
      */
-    public function replaceVariables($text)
+    public function replaceVariables($text): string
     {
         if (empty($text) || !is_string($text)) {
             return $text;
@@ -111,7 +111,7 @@ class EditorDataProvider implements DataProviderInterface
     /**
      * Récupère les informations client (du template)
      */
-    public function getCustomerInfo()
+    public function getCustomerInfo(): array
     {
         return [
             'name' => $this->get('customer_name', ''),
@@ -124,7 +124,7 @@ class EditorDataProvider implements DataProviderInterface
     /**
      * Récupère les informations de commande (du template)
      */
-    public function getOrderInfo()
+    public function getOrderInfo(): array
     {
         return [
             'number' => $this->get('order_number', ''),
@@ -137,7 +137,7 @@ class EditorDataProvider implements DataProviderInterface
     /**
      * Récupère les informations d'entreprise (du template)
      */
-    public function getCompanyInfo()
+    public function getCompanyInfo(): array
     {
         return [
             'name' => $this->get('company_name', ''),
@@ -150,7 +150,7 @@ class EditorDataProvider implements DataProviderInterface
     /**
      * Récupère les produits (du template)
      */
-    public function getProducts()
+    public function getProducts(): array
     {
         $products = [];
         // Chercher tous les produits dans les données du template
