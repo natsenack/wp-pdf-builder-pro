@@ -30,22 +30,35 @@ class PreviewAjaxHandler {
      */
     public static function generatePreviewAjax() {
         try {
+            error_log('[PREVIEW AJAX] ===== NOUVEAU APPEL AJAX =====');
+            error_log('[PREVIEW AJAX] Utilisateur courant: ' . get_current_user_id());
+            error_log('[PREVIEW AJAX] User peut manage_options? ' . (current_user_can('manage_options') ? 'OUI' : 'NON'));
+            
             // Vérifier la permission
             if (!current_user_can('manage_options')) {
+                error_log('[PREVIEW AJAX] ERREUR: Permissions insuffisantes pour user ' . get_current_user_id());
                 wp_send_json_error('Permissions insuffisantes', 403);
             }
 
             // Vérifier le nonce
             $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+            error_log('[PREVIEW AJAX] Nonce reçu: ' . (empty($nonce) ? 'VIDE' : substr($nonce, 0, 20) . '...'));
+            
             if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+                error_log('[PREVIEW AJAX] ERREUR: Nonce invalide');
                 wp_send_json_error('Nonce invalide', 403);
             }
+
+            error_log('[PREVIEW AJAX] ✓ Nonce valide');
 
             // Récupérer les données
             $template_data_json = isset($_POST['template_data']) ? sanitize_text_field($_POST['template_data']) : '{}';
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
             $format = isset($_POST['format']) ? sanitize_text_field($_POST['format']) : 'png';
             $quality = isset($_POST['quality']) ? intval($_POST['quality']) : 150;
+
+            error_log('[PREVIEW AJAX] Template ID: ' . ($template_id ? $template_id : 'NON FOURNI'));
+            error_log('[PREVIEW AJAX] Format: ' . $format . ', Quality: ' . $quality);
 
             // Parser JSON du frontend
             $template_data = json_decode($template_data_json, true);
@@ -57,7 +70,7 @@ class PreviewAjaxHandler {
                 
                 if ($db_template_data) {
                     $template_data = $db_template_data;
-                    error_log('[PREVIEW AJAX] Template chargé depuis la BD');
+                    error_log('[PREVIEW AJAX] ✓ Template chargé depuis la BD');
                 } else {
                     error_log('[PREVIEW AJAX] Template non trouvé dans la BD, utilisation des données du frontend');
                 }

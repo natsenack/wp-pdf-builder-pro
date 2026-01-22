@@ -142,11 +142,14 @@ class ReactAssets {
         // Priorité 2: État du template (depuis BuilderContext si disponible)
         // Ce sera complété au runtime par le state du template
         
+        // Créer le nonce une seule fois
+        $nonce = wp_create_nonce('pdf_builder_nonce');
+        
         wp_localize_script(
             'pdf-preview-api-client',
             'pdfBuilderData',
             [
-                'nonce' => wp_create_nonce('pdf_builder_nonce'),
+                'nonce' => $nonce,
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'templateId' => $template_id,
             ]
@@ -155,7 +158,7 @@ class ReactAssets {
         wp_localize_script(
             'pdf-preview-api-client',
             'pdfBuilderNonce',
-            wp_create_nonce('pdf_builder_nonce')
+            $nonce
         );
         
         wp_enqueue_script(

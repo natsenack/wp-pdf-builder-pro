@@ -8,12 +8,14 @@
 
     // Configuration
     const config = {
-        ajaxUrl: window.ajaxurl || '/wp-admin/admin-ajax.php',
-        nonce: window.pdfBuilderNonce || '',
+        ajaxUrl: window.ajaxurl || (window.pdfBuilderData?.ajaxurl) || '/wp-admin/admin-ajax.php',
+        nonce: window.pdfBuilderData?.nonce || window.pdfBuilderNonce || '',
         endpoint: 'pdf_builder_generate_preview'
     };
 
     console.log('[PDF PREVIEW API CLIENT] Initializing - Config:', config);
+    console.log('[PDF PREVIEW API CLIENT] pdfBuilderData:', window.pdfBuilderData);
+    console.log('[PDF PREVIEW API CLIENT] pdfBuilderNonce:', window.pdfBuilderNonce);
 
     /**
      * Appelle le backend pour générer un aperçu PDF
