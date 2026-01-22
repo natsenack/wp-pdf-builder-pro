@@ -66,16 +66,26 @@ class ReactAssets {
         // === INJECTER DIRECTEMENT EN TANT QUE SCRIPT INLINE GLOBAL ===
         // Ceci s'exécute AVANT tous les autres scripts
         wp_enqueue_script('jquery');  // S'assurer que jQuery est chargé
-        wp_add_inline_script('jquery', '
+        
+        $nonce_js = esc_js($nonce);
+        $ajax_url = esc_js(admin_url('admin-ajax.php'));
+        
+        wp_add_inline_script('jquery', "
+            console.warn('[INLINE INJECT START] - Executing inline script hook');
             window.pdfBuilderData = {
-                nonce: "' . esc_js($nonce) . '",
-                ajaxurl: "' . esc_js(admin_url('admin-ajax.php')) . '",
+                nonce: '{$nonce_js}',
+                ajaxurl: '{$ajax_url}',
                 templateId: null
             };
-            window.pdfBuilderNonce = "' . esc_js($nonce) . '";
-            console.log("[INLINE INJECT] pdfBuilderNonce injected:", window.pdfBuilderNonce);
-            console.log("[INLINE INJECT] pdfBuilderData injected:", window.pdfBuilderData);
-        ', 'before');
+            window.pdfBuilderNonce = '{$nonce_js}';
+            console.log('[INLINE INJECT COMPLETE] pdfBuilderNonce:', window.pdfBuilderNonce);
+            console.log('[INLINE INJECT COMPLETE] window.pdfBuilderData:', window.pdfBuilderData);
+            if (!window.pdfBuilderNonce || window.pdfBuilderNonce === '') {
+                console.error('[INLINE INJECT ERROR] Nonce is EMPTY!');
+            } else {
+                console.success('[INLINE INJECT OK] Nonce length:', window.pdfBuilderNonce.length);
+            }
+        ", 'before');
         
         // === ENREGISTRER ET LOCALISER PDF PREVIEW API CLIENT AVEC DÉPENDANCES ===
         wp_register_script(
