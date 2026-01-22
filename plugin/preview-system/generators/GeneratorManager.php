@@ -6,7 +6,7 @@ use PDF_Builder\Interfaces\DataProviderInterface;
 
 /**
  * Classe GeneratorManager
- * Gère le système double générateur avec fallback automatique
+ * Gère le système triple générateur avec fallback automatique (dompdf → canvas → image)
  */
 class GeneratorManager
 {
