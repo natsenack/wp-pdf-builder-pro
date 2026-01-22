@@ -7,11 +7,14 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Preview Image API (Legacy)
- * DEPRECATED - Preview generation removed
+ * Preview Image API
+ * DEPRECATED - System moved to preview-system folder
  */
 
-// Alias stub - no functionality
-class PreviewImageAPI
+// Load the new location
+require_once dirname(__DIR__) . '/preview-system/php/PreviewImageAPI.php';
+
+// Alias for backward compatibility
+class PreviewImageAPI extends \PDF_Builder\PreviewSystem\PreviewImageAPI
 {
 }

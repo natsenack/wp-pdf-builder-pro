@@ -1,12 +1,7 @@
 <?php
 /**
- * PDF Builder Pro - Preview System (Ultra-Minimal)
- * 
- * Juste l'essentiel :
- * - Hook AJAX simple
- * - Pas de génération
- * - Pas de cache
- * - Zéro complexité
+ * PDF Builder Pro - Preview System
+ * DEPRECATED - Redirects to preview-system folder
  */
 
 namespace PDF_Builder\Api;
@@ -15,5 +10,5 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Preview system disabled - all generation removed
-// UI elements (buttons, metabox, modals) remain intact
+// Load the new location
+require_once dirname(__DIR__) . '/preview-system/php/PreviewSystem.php';

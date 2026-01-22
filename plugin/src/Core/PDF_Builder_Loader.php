@@ -241,7 +241,8 @@ class PDF_Builder_Loader {
      * Charge les endpoints API
      */
     private function load_api_endpoints() {
-        $this->require_file('api/PreviewImageAPI.php');
+        // Preview system moved to preview-system folder
+        require_once dirname(__DIR__) . '/preview-system/index.php';
         $this->require_file('src/AJAX/preview-image-handler.php');
     }
 
