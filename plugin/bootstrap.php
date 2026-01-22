@@ -12,6 +12,28 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 
 error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
 
+// ========================================================================
+// ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
+// Cela s'exécute avant wp_head et garantit que le nonce est disponible
+// ========================================================================
+add_action('wp_head', function() {
+    // Créer le nonce une seule fois au chargement de la page admin
+    if (is_admin() && current_user_can('manage_options')) {
+        $nonce = wp_create_nonce('pdf_builder_nonce');
+        echo '<script type="text/javascript">';
+        echo "console.warn('[HEAD BOOTSTRAP INJECT] Nonce is being injected');";
+        echo "window.pdfBuilderData = {";
+        echo "  nonce: '" . esc_js($nonce) . "',";
+        echo "  ajaxurl: '" . esc_js(admin_url('admin-ajax.php')) . "',";
+        echo "  templateId: null";
+        echo "};";
+        echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
+        echo "console.log('[HEAD BOOTSTRAP INJECT OK] pdfBuilderNonce:', window.pdfBuilderNonce);";
+        echo "console.log('[HEAD BOOTSTRAP INJECT OK] Length:', window.pdfBuilderNonce.length);";
+        echo '</script>';
+    }
+}, 1); // Priorité très haute (avant tout)
+
 // Vérifier si on est sur une page admin
 if (is_admin()) {
     error_log('[BOOTSTRAP] We are in admin area');

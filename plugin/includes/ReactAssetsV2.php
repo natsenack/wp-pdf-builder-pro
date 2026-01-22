@@ -63,21 +63,8 @@ class ReactAssets {
         // === CRÉER LE NONCE ===
         $nonce = wp_create_nonce('pdf_builder_nonce');
         
-        // === INJECTER DIRECTEMENT DANS LE HEAD SANS DÉPENDRE DE JQUERY ===
-        // Utiliser wp_head hook qui s'exécute très tôt
-        add_action('wp_head', function() use ($nonce) {
-            echo '<script type="text/javascript">';
-            echo "console.warn('[HEAD INJECT START]');";
-            echo "window.pdfBuilderData = {";
-            echo "  nonce: '" . esc_js($nonce) . "',";
-            echo "  ajaxurl: '" . esc_js(admin_url('admin-ajax.php')) . "',";
-            echo "  templateId: null";
-            echo "};";
-            echo "window.pdfBuilderNonce = '" . esc_js($nonce) . "';";
-            echo "console.log('[HEAD INJECT OK] pdfBuilderNonce:', window.pdfBuilderNonce);";
-            echo "console.log('[HEAD INJECT OK] Length:', window.pdfBuilderNonce.length);";
-            echo '</script>';
-        }, 5); // Hook très tôt, avant les autres scripts
+        // ✅ Le nonce est maintenant injecté dans le HEAD via bootstrap.php au hook wp_head
+        // Pas besoin de l'injecter à nouveau ici
         
         // Enqueue jQuery normalement
         wp_enqueue_script('jquery');
