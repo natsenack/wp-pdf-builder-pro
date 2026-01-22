@@ -658,9 +658,7 @@ function pdf_builder_register_ajax_handlers() {
     // Simplified AJAX handlers registration - complex factory system removed
     // All handlers are now registered directly without factory initialization
 
-    // Handlers principaux gérés par PDF_Builder_Ajax_Handler
-    add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
-    add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
+    // Preview system disabled - no AJAX handlers needed
 
     // REMOVED: Duplicate settings handlers - now handled by unified AJAX system
 
@@ -1194,40 +1192,7 @@ if (function_exists('add_action')) {
 /**
  * Charger le plugin pour les requêtes AJAX
  */
-function pdf_builder_load_for_ajax()
-{
-
-    // Vérifier que WordPress est prêt
-    if (!function_exists('get_option') || !defined('ABSPATH')) {
-        return;
-    }
-
-    // Charger le bootstrap pour les requêtes AJAX
-    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
-    if (file_exists($bootstrap_path)) {
-        require_once $bootstrap_path;
-    // Pour les requêtes AJAX, nous chargeons juste le bootstrap
-        // sans initialiser complètement le plugin
-        if (function_exists('pdf_builder_load_bootstrap')) {
-            pdf_builder_load_bootstrap();
-        }
-    }
-}
-function pdf_builder_handle_preview_ajax()
-{
-    // Charger le bootstrap
-    pdf_builder_load_for_ajax();
-    // Le bootstrap a instancié PreviewImageAPI qui a re-enregistré les actions AJAX.
-    // Maintenant, appelons directement la méthode generatePreview si PreviewImageAPI existe
-    if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
-        // Créer une nouvelle instance et appeler generatePreview directement
-        $api = new \PDF_Builder\Api\PreviewImageAPI();
-        $api->generatePreview();
-    } else {
-    // Fallback: envoyer une erreur JSON
-        header('Content-Type: application/json; charset=UTF-8', true);
-        http_response_code(500);
-        echo json_encode([
+// Preview system disabled - no AJAX handlers needed
             'success' => false,
             'message' => 'PreviewImageAPI not found - plugin not properly initialized'
         ]);

@@ -1,25 +1,29 @@
 /**
- * PDF Builder - Preview API Client (Ultra-Minimal)
- * Simplified preview system - no actual generation
+ * PDF Builder - Preview API Client
+ * UI only - no generation
+ * Buttons, metabox and modals remain intact
+ * All generation logic removed
  */
 
 (function($) {
     'use strict';
 
+    // Stub API - no actual functionality
     window.pdfPreviewApiClient = {
         generatePreview: function(data, callback) {
-            if (callback) callback(null, { success: true, data: { image_url: '#' } });
+            // Do nothing
         }
     };
 
-    // API interface for React components
     window.pdfPreviewAPI = {
         generateEditorPreview: function(templateData, options) {
-            return Promise.resolve({ success: true, data: { image_url: '#' } });
+            // Return rejected promise
+            return Promise.reject(new Error('Preview generation disabled'));
         },
 
         generateOrderPreview: function(templateData, orderId, options) {
-            return Promise.resolve({ success: true, data: { image_url: '#' } });
+            // Return rejected promise
+            return Promise.reject(new Error('Preview generation disabled'));
         }
     };
 

@@ -1025,180 +1025,27 @@ class PDF_Builder_Predefined_Templates_Manager
     }
     public function ajaxGenerateTemplatePreview()
     {
-        try {
-// Vérifications de sécurité
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-            }
-            check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
-            $slug = sanitize_key($_POST['slug'] ?? '');
-            if (empty($slug)) {
-                wp_send_json_error('Slug du modèle manquant');
-            }
-            $template = $this->loadTemplateFromFile($slug);
-            if (!$template) {
-                wp_send_json_error('Modèle non trouvé');
-            }
-            // Générer un aperçu SVG simple basé sur les éléments du template
-            $json_data = json_decode($template['json'], true);
-            $svg_preview = $this->generateSvgPreview($json_data);
-// Mettre à jour le fichier avec l'aperçu
-            $json_data['preview_svg'] = $svg_preview;
-            $file_path = $this->templates_dir . $slug . '.json';
-            file_put_contents($file_path, wp_json_encode($json_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-            wp_send_json_success([
-                'message' => 'Aperçu généré avec succès',
-                'preview_svg' => $svg_preview
-            ]);
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
+        wp_send_json_error('Preview generation disabled');
     }
     /**
      * Générer un aperçu SVG simple du template
      */
     private function generateSvgPreview($config)
     {
-        $width = $config['canvasWidth'] ?? 794;
-        $height = $config['canvasHeight'] ?? 1123;
-// Calculer les proportions pour l'aperçu (max 300x300)
-        $ratio = min(300 / $width, 300 / $height);
-        $preview_width = $width * $ratio;
-        $preview_height = $height * $ratio;
-        $svg = '<svg width="' . $preview_width . '" height="' . $preview_height . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $width . ' ' . $height . '">';
-// Fond blanc
-        $svg .= '<rect width="100%" height="100%" fill="white" stroke="#ddd" stroke-width="1"/>';
-// Aperçu des éléments avec rendu réel
-        if (isset($config['elements']) && is_array($config['elements'])) {
-            foreach ($config['elements'] as $element) {
-                $type = $element['type'] ?? 'text';
-                $x = $element['x'] ?? 0;
-                $y = $element['y'] ?? 0;
-                $w = $element['width'] ?? 100;
-                $h = $element['height'] ?? 20;
-                if ($type === 'text' && isset($element['content'])) {
-        // Rendu réel du texte
-                    $content = $element['content'];
-                    $fontSize = $element['fontSize'] ?? $element['style']['fontSize'] ?? 14;
-                    $color = $element['color'] ?? $element['style']['color'] ?? '#000000';
-                    $fontWeight = $element['fontWeight'] ?? $element['style']['fontWeight'] ?? 'normal';
-                    $textAlign = $element['style']['textAlign'] ?? 'left';
-        // Convertir la taille de police pour l'aperçu (réduire proportionnellement)
-                    $scaledFontSize = max(8, $fontSize * $ratio);
-        // Position Y ajustée (SVG text baseline)
-                    $textY = $y + ($h * 0.7);
-        // Gestion de l'alignement horizontal
-                    $textAnchor = 'start';
-                    if ($textAlign === 'center') {
-                            $textAnchor = 'middle';
-                    } elseif ($textAlign === 'right') {
-                                $textAnchor = 'end';
-                    }
-                    $textX = $x;
-                    if ($textAlign === 'center') {
-                        $textX = $x + ($w / 2);
-                    } elseif ($textAlign === 'right') {
-                        $textX = $x + $w;
-                    }
-                    // Limiter le texte pour l'aperçu
-                    $displayText = strlen($content) > 30 ? substr($content, 0, 27) . '...' : $content;
-                    $svg .= '<text x="' . $textX . '" y="' . $textY . '" text-anchor="' . $textAnchor . '" font-family="Arial, sans-serif" font-size="' . $scaledFontSize . '" font-weight="' . $fontWeight . '" fill="' . $color . '">' . htmlspecialchars($displayText) . '</text>';
-                } else {
-    // Rendu simplifié pour les autres types d'éléments
-                    $elementStyle = $this->getElementPreviewStyle($type);
-                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $w . '" height="' . $h . '" fill="' . $elementStyle['color'] . '" stroke="#ccc" stroke-width="0.5" opacity="0.8"/>';
-    // Ajouter une icône pour identifier le type
-                    if ($elementStyle['icon']) {
-                        $iconSize = min($w, $h) * 0.4;
-                        $iconX = $x + ($w / 2);
-                        $iconY = $y + ($h / 2) + ($iconSize * 0.3);
-                        $svg .= '<text x="' . $iconX . '" y="' . $iconY . '" text-anchor="middle" font-size="' . $iconSize . '" fill="#666">' . $elementStyle['icon'] . '</text>';
-                    }
-                }
-            }
-        }
-        $svg .= '</svg>';
-        return $svg;
+        return '';
     }
     /**
      * Obtenir le style d'aperçu pour un type d'élément
      */
     private function getElementPreviewStyle($type)
     {
-        $styles = [
-            // Médias
-            'image' => ['color' => '#fff3e0', 'icon' => '🖼️'],
-            'logo' => ['color' => '#fff3e0', 'icon' => '🏷️'],
-            'company_logo' => ['color' => '#fff3e0', 'icon' => '🏷️'],
-            // Données structurées
-            'table' => ['color' => '#f3e5f5', 'icon' => '📊'],
-            'product_table' => ['color' => '#f3e5f5', 'icon' => '📋'],
-            'customer_info' => ['color' => '#e8f5e8', 'icon' => '👤'],
-            'company_info' => ['color' => '#e8f5e8', 'icon' => '🏢'],
-            // Formulaires
-            'barcode' => ['color' => '#e1f5fe', 'icon' => '📱'],
-            'qr_code' => ['color' => '#e1f5fe', 'icon' => '📱'],
-            'signature' => ['color' => '#fff8e1', 'icon' => '✍️'],
-            'checkbox' => ['color' => '#f3e5f5', 'icon' => '☑️'],
-            // Champs de données
-            'date' => ['color' => '#e8f5e8', 'icon' => '📅'],
-            'number' => ['color' => '#e8f5e8', 'icon' => '🔢'],
-            'currency' => ['color' => '#e8f5e8', 'icon' => '💰'],
-            'email' => ['color' => '#e8f5e8', 'icon' => '📧'],
-            'phone' => ['color' => '#e8f5e8', 'icon' => '📞'],
-            'address' => ['color' => '#e8f5e8', 'icon' => '🏠'],
-            'order_number' => ['color' => '#e8f5e8', 'icon' => '🔢'],
-            'dynamic-text' => ['color' => '#e8f5e8', 'icon' => '📝'],
-            // Contenu
-            'mentions' => ['color' => '#fce4ec', 'icon' => '📄'],
-            'document_type' => ['color' => '#fce4ec', 'icon' => '📄'],
-            // Layout
-            'rectangle' => ['color' => '#fce4ec', 'icon' => '▭'],
-            'line' => ['color' => '#f0f0f0', 'icon' => '━'],
-            'header' => ['color' => '#fce4ec', 'icon' => '📄'],
-            'footer' => ['color' => '#fce4ec', 'icon' => '📄'],
-            // Défaut
-            'default' => ['color' => '#f5f5f5', 'icon' => '']
-        ];
-        return $styles[$type] ?? $styles['default'];
+        return [];
     }
     /**
      * Nettoie le JSON d'un template pour en faire un modèle prédéfini réutilisable
      */
     private function cleanTemplateJsonForPredefined($json_data)
     {
-        // Supprimer les propriétés spécifiques à la session d'édition
-        $session_properties = ['id', 'isNew', 'isModified', 'isSaving', 'lastSaved'];
-        foreach ($session_properties as $prop) {
-            unset($json_data[$prop]);
-        }
-        // Nettoyer les éléments
-        if (isset($json_data['elements']) && is_array($json_data['elements'])) {
-            foreach ($json_data['elements'] as &$element) {
-            // Supprimer les propriétés spécifiques à la session
-                $element_session_props = ['createdAt', 'updatedAt'];
-                foreach ($element_session_props as $prop) {
-                    unset($element[$prop]);
-                }
-                // Régénérer l'ID de l'élément pour éviter les conflits lors de la réutilisation
-                // Garder le préfixe "element_" mais régénérer la partie aléatoire
-                if (isset($element['id'])) {
-                    $timestamp = time();
-                    $random = substr(md5(uniqid('', true)), 0, 10);
-                    $element['id'] = 'element_' . $timestamp . '_' . $random;
-                }
-                // S'assurer que les propriétés essentielles sont présentes avec des valeurs par défaut
-                $element['visible'] = $element['visible'] ?? true;
-                $element['locked'] = $element['locked'] ?? false;
-                $element['opacity'] = $element['opacity'] ?? 100;
-                $element['rotation'] = $element['rotation'] ?? 0;
-                $element['scale'] = $element['scale'] ?? 100;
-            }
-        }
-        // Ajouter des propriétés de template par défaut si elles n'existent pas
-        $json_data['canvasWidth'] = $json_data['canvasWidth'] ?? 794;
-        $json_data['canvasHeight'] = $json_data['canvasHeight'] ?? 1123;
-        $json_data['version'] = $json_data['version'] ?? '1.0';
         return $json_data;
     }
 }
