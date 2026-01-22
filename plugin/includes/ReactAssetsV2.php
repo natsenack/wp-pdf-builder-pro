@@ -60,37 +60,33 @@ class ReactAssets {
             $version
         );
         
-        // === ENREGISTRER ET LOCALISER PDF PREVIEW API CLIENT EN PREMIER ===
-        // Cela doit être fait AVANT React pour que le nonce soit disponible
+        // === CRÉER LE NONCE ===
+        $nonce = wp_create_nonce('pdf_builder_nonce');
+        
+        // === INJECTER DIRECTEMENT EN TANT QUE SCRIPT INLINE GLOBAL ===
+        // Ceci s'exécute AVANT tous les autres scripts
+        wp_enqueue_script('jquery');  // S'assurer que jQuery est chargé
+        wp_add_inline_script('jquery', '
+            window.pdfBuilderData = {
+                nonce: "' . esc_js($nonce) . '",
+                ajaxurl: "' . esc_js(admin_url('admin-ajax.php')) . '",
+                templateId: null
+            };
+            window.pdfBuilderNonce = "' . esc_js($nonce) . '";
+            console.log("[INLINE INJECT] pdfBuilderNonce injected:", window.pdfBuilderNonce);
+            console.log("[INLINE INJECT] pdfBuilderData injected:", window.pdfBuilderData);
+        ', 'before');
+        
+        // === ENREGISTRER ET LOCALISER PDF PREVIEW API CLIENT AVEC DÉPENDANCES ===
         wp_register_script(
             'pdf-preview-api-client',
             $plugin_url . 'assets/js/pdf-preview-api-client.min.js',
             ['jquery'],
             $version,
-            false  // IMPORTANT: charger dans le HEAD, pas déferred!
-        );
-
-        // Créer le nonce UNE SEULE FOIS
-        $nonce = wp_create_nonce('pdf_builder_nonce');
-        
-        // Localiser les données IMMÉDIATEMENT après l'enregistrement
-        wp_localize_script(
-            'pdf-preview-api-client',
-            'pdfBuilderData',
-            [
-                'nonce' => $nonce,
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'templateId' => null,
-            ]
-        );
-
-        wp_localize_script(
-            'pdf-preview-api-client',
-            'pdfBuilderNonce',
-            $nonce
+            false  // Charger dans le HEAD
         );
         
-        // PUIS enqueuer le script après localisation
+        // PUIS enqueuer le script
         wp_enqueue_script('pdf-preview-api-client');
         
         // Vendors (React, ReactDOM)
