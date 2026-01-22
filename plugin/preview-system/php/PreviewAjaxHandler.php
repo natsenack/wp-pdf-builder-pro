@@ -15,6 +15,8 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+class PreviewAjaxHandler {
+    
     /**
      * Initialise les hooks AJAX
      */
