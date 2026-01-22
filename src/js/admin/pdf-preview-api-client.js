@@ -15,18 +15,24 @@
             console.log('[PDF Preview API] ajaxurl:', window.pdfBuilderAjax ? window.pdfBuilderAjax.ajaxurl : 'undefined');
             console.log('[PDF Preview API] nonce:', window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : 'undefined');
 
+            // Use FormData to ensure proper encoding
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_generate_preview');
+            formData.append('template_data', JSON.stringify(data.template_data));
+            formData.append('preview_type', data.context || 'editor');
+            formData.append('format', data.format || 'png');
+            formData.append('quality', (data.quality || 150).toString());
+            if (data.order_id) {
+                formData.append('order_id', data.order_id.toString());
+            }
+            formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',
                 type: 'POST',
-                data: {
-                    action: 'pdf_builder_generate_preview',
-                    template_data: JSON.stringify(data.template_data),
-                    preview_type: data.context || 'editor',
-                    format: data.format || 'png',
-                    quality: data.quality || 150,
-                    order_id: data.order_id || null,
-                    nonce: window.pdfBuilderAjax?.nonce
-                },
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     if (callback) callback(null, response);
                 },
@@ -38,14 +44,17 @@
         },
 
         getPreviewStatus: function(previewId, callback) {
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_get_preview_status');
+            formData.append('preview_id', previewId);
+            formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+
             return $.ajax({
                 url: ajaxurl || '/wp-admin/admin-ajax.php',
                 type: 'POST',
-                data: {
-                    action: 'pdf_builder_get_preview_status',
-                    preview_id: previewId,
-                    nonce: window.pdfBuilderAjax?.nonce
-                },
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     if (callback) callback(null, response);
                 },
