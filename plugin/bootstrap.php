@@ -53,7 +53,7 @@ function pdf_builder_inject_nonce() {
     
     console.warn('[BOOTSTRAP] Injection du nonce et AJAX URL');
     console.log('[BOOTSTRAP] nonce =', window.pdfBuilderNonce);
-    console.log('[BOOTSTRAP] ajaxurl =', window.pdfBuilderData.ajaxurl);
+    console.log('[BOOTSTRAP] ajaxUrl =', window.pdfBuilderData.ajaxUrl);
     
     // TEST DIRECT
     window.testPDFPreview = function() {
