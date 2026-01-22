@@ -8,13 +8,10 @@ if (!defined('ABSPATH')) {
 
 /**
  * Preview Image API (Legacy)
- * DEPRECATED - Use PreviewSystem instead
+ * DEPRECATED - Preview generation removed
  */
 
-// Charger le nouveau système
-require_once dirname(__FILE__) . '/PreviewSystem.php';
-
-// Alias pour compatibilité
-class PreviewImageAPI extends PreviewSystem
+// Alias stub - no functionality
+class PreviewImageAPI
 {
 }
