@@ -559,6 +559,11 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
     }
 
+    // Charger le handler AJAX de prévisualisation PDF
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php';
+    }
+
     // Charger les handlers AJAX pour les paramètres
 
     // ============================================================================
