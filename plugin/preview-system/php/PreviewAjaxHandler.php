@@ -217,7 +217,7 @@ class PreviewAjaxHandler {
      */
     private static function getDataProvider() {
         // Utiliser SampleDataProvider par défaut
-        $provider_class = 'PDF_Builder\\Config\\Data\\SampleDataProvider';
+        $provider_class = 'PDF_Builder\\Data\\SampleDataProvider';
         
         if (class_exists($provider_class)) {
             return new $provider_class();
@@ -277,9 +277,4 @@ class PreviewAjaxHandler {
 
         return 'data:image/' . ($format === 'jpg' ? 'jpeg' : 'png') . ';base64,' . base64_encode($image_data);
     }
-}
-
-// Initialiser les hooks
-if (!wp_doing_cron()) {
-    PreviewAjaxHandler::init();
 }

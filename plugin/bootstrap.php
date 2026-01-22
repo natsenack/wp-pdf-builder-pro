@@ -10,6 +10,17 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
+// Activer le débogage pour capture les erreurs PHP critiques
+if (!defined('WP_DEBUG')) {
+    define('WP_DEBUG', true);
+}
+if (!defined('WP_DEBUG_LOG')) {
+    define('WP_DEBUG_LOG', true);
+}
+if (!defined('WP_DEBUG_DISPLAY')) {
+    define('WP_DEBUG_DISPLAY', false); // Ne pas afficher en frontend, seulement logger
+}
+
 error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
 
 // ========================================================================
