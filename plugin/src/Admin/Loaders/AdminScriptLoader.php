@@ -210,6 +210,9 @@ class AdminScriptLoader
         $preview_client_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-api-client.min.js';
         error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview client exists: ' . $preview_client_js . ' - exists: ' . (file_exists($preview_client_js) ? 'YES' : 'NO'));
         if (file_exists($preview_client_js)) {
+            // AJOUTER UN SCRIPT DE TEST TRÈS SIMPLE
+            wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href);', 'before');
+            
             wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
             error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-api-client script');
             
