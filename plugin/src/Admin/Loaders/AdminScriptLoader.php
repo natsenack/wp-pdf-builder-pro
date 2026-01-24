@@ -284,9 +284,13 @@ class AdminScriptLoader
         // Add random query parameter to URLs to bypass ALL caching
         $random_param = '?t=' . microtime(true) . '&r=' . rand(1000000, 9999999) . '&nuke=' . uniqid('NUKE', true) . '&ultra=' . time();
 
+        // Ensure React is loaded before our bundle
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
+
         // Load React main bundle first
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
-        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap'], $version_param . $nuclear_suffix, true);
+        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-wrap', 'react', 'react-dom'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main');
 
