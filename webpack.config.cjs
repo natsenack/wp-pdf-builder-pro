@@ -60,13 +60,29 @@ const baseConfig = {
           from: 'src/js/ajax-throttle.js',
           to: 'ajax-throttle.js',
         },
+        {
+          from: 'src/js/pdf-builder-utils.js',
+          to: 'pdf-builder-utils.js',
+        },
+        {
+          from: 'src/js/notifications.js',
+          to: 'notifications.js',
+        },
+        {
+          from: 'src/js/developer-tools.js',
+          to: 'developer-tools.js',
+        },
+        {
+          from: 'src/js/pdf-builder-init.js',
+          to: 'pdf-builder-init.js',
+        },
       ],
     }),
   ],
   optimization: {
     minimizer: [
       new TerserPlugin({
-        exclude: /tabs-force\.js$|settings-tabs-improved\.js$|settings-global-save\.js$|tabs-root-monitor\.js$|ajax-throttle\.js$/,
+        exclude: /tabs-force\.js$|settings-tabs-improved\.js$|settings-global-save\.js$|tabs-root-monitor\.js$|ajax-throttle\.js$|pdf-builder-utils\.js$|notifications\.js$|developer-tools\.js$|pdf-builder-init\.js$/,
         terserOptions: {
           compress: {
             drop_console: false,  // KEEP console logs

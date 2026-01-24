@@ -1,60 +1,8 @@
-// ABSOLUTE START - TRY CATCH WRAPPING ENTIRE MODULE
-console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V6: wordpress-entry.tsx STARTED EXECUTING');
-console.error('🚨🚨🚨 CRITICAL: React script execution started');
-debugger;  // Force debugger if console is open
-
-// WRAP ENTIRE MODULE IN TRY-CATCH TO SURVIVE EXTENSION ERRORS
-try {
-
-// IMMEDIATE VISUAL INDICATOR - Add visible element to DOM VERY EARLY
-try {
-  const debugDiv = document.createElement('div');
-  debugDiv.id = 'pdf-builder-debug-indicator';
-  debugDiv.style.cssText = `
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: #00FF00;
-    color: black;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 999999;
-    font-size: 14px;
-    font-weight: bold;
-    border: 3px solid #00FF00;
-    box-shadow: 0 0 20px #00FF00;
-  `;
-  debugDiv.textContent = '✅ REACT LOADED ✅ ' + new Date().toISOString().substring(11, 19);
-  if (document.body) {
-    document.body.appendChild(debugDiv);
-  } else {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.appendChild(debugDiv);
-    });
-  }
-  console.log('✅ Debug div added to DOM');
-} catch (e) {
-  console.error('❌ Failed to add debug div:', e);
-}
-
-// IMPORTS - Log after each one to identify which import fails
-console.log('📦 About to import React...');
+// IMPORTS - Must be at the top level
 import React from 'react';
-console.log('✅ React imported successfully');
-
-console.log('📦 About to import createRoot...');
 import { createRoot } from 'react-dom/client';
-console.log('✅ createRoot imported successfully');
-
-console.log('📦 About to import PDFBuilder...');
 import { PDFBuilder } from './PDFBuilder';
-console.log('✅ PDFBuilder imported successfully');
-
-console.log('📦 About to import debug utilities...');
 import { debugError, debugWarn, debugLog } from './utils/debug';
-console.log('✅ Debug utilities imported successfully');
-
-console.log('📦 About to import API functions...');
 import {
   registerEditorInstance,
   loadTemplate,
@@ -65,13 +13,38 @@ import {
   saveTemplate,
   resetAPI
 } from './api/global-api';
-console.log('✅ API functions imported successfully');
 
-console.log('✅✅✅ ALL IMPORTS COMPLETED SUCCESSFULLY ✅✅✅');
-
-// Set window flags to indicate module is loaded
-(window as any)['REACT_SCRIPT_LOADED'] = true;
-(window as any)['REACT_LOAD_TIME'] = new Date().toISOString();
+// Fonction d'initialisation appelée par WordPress
+declare global {
+  interface Window {
+    pdfBuilderReactInitData: {
+      nonce: string;
+      ajaxUrl: string;
+      strings: {
+        loading: string;
+        error: string;
+      };
+    };
+    initPDFBuilderReact: typeof initPDFBuilderReact;
+    pdfBuilderReact: {
+      initPDFBuilderReact: typeof initPDFBuilderReact;
+      loadTemplate: typeof loadTemplate;
+      getEditorState: typeof getEditorState;
+      setEditorState: typeof setEditorState;
+      getCurrentTemplate: typeof getCurrentTemplate;
+      exportTemplate: typeof exportTemplate;
+      saveTemplate: typeof saveTemplate;
+      registerEditorInstance: typeof registerEditorInstance;
+      resetAPI: typeof resetAPI;
+      _isWebpackBundle: true;
+    };
+    // Notification functions
+    showSuccessNotification?: (message: string, duration?: number) => void;
+    showErrorNotification?: (message: string, duration?: number) => void;
+    showWarningNotification?: (message: string, duration?: number) => void;
+    showInfoNotification?: (message: string, duration?: number) => void;
+  }
+}
 
 // ESSENTIAL: Create a debug log container for ALL messages
 const createDebugConsole = () => {
@@ -111,48 +84,60 @@ const logToDebugConsole = (msg: string) => {
   debugConsole.scrollTop = debugConsole.scrollHeight;
 };
 
-logToDebugConsole('✅ Debug console created');
-console.log('✅ Debug console functions ready');
-
-// DEBUG HELPER FUNCTION - AFTER IMPORTS (Use the global console)
 const addDebugToDOM = (msg: string) => {
   logToDebugConsole(msg);
   console.log('[PDF-BUILDER-DEBUG]', msg);
 };
 
-// Fonction d'initialisation appelée par WordPress
-declare global {
-  interface Window {
-    pdfBuilderReactInitData: {
-      nonce: string;
-      ajaxUrl: string;
-      strings: {
-        loading: string;
-        error: string;
-      };
-    };
-    initPDFBuilderReact: typeof initPDFBuilderReact;
-    pdfBuilderReact: {
-      initPDFBuilderReact: typeof initPDFBuilderReact;
-      loadTemplate: typeof loadTemplate;
-      getEditorState: typeof getEditorState;
-      setEditorState: typeof setEditorState;
-      getCurrentTemplate: typeof getCurrentTemplate;
-      exportTemplate: typeof exportTemplate;
-      saveTemplate: typeof saveTemplate;
-      registerEditorInstance: typeof registerEditorInstance;
-      resetAPI: typeof resetAPI;
-      _isWebpackBundle: true;
-    };
-    // Notification functions
-    showSuccessNotification?: (message: string, duration?: number) => void;
-    showErrorNotification?: (message: string, duration?: number) => void;
-    showWarningNotification?: (message: string, duration?: number) => void;
-    showInfoNotification?: (message: string, duration?: number) => void;
-  }
-}
-
 export function initPDFBuilderReact() {
+  // ABSOLUTE START - TRY CATCH WRAPPING ENTIRE MODULE
+  console.log('⚛️⚛️⚛️ REACT_FILE_LOADED_V6: wordpress-entry.tsx STARTED EXECUTING');
+  console.error('🚨🚨🚨 CRITICAL: React script execution started');
+  debugger;  // Force debugger if console is open
+
+  // WRAP ENTIRE MODULE IN TRY-CATCH TO SURVIVE EXTENSION ERRORS
+  try {
+
+  console.log('✅✅✅ ALL IMPORTS COMPLETED SUCCESSFULLY ✅✅✅');
+
+  // IMMEDIATE VISUAL INDICATOR - Add visible element to DOM VERY EARLY
+  try {
+    const debugDiv = document.createElement('div');
+    debugDiv.id = 'pdf-builder-debug-indicator';
+    debugDiv.style.cssText = `
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #00FF00;
+      color: black;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 999999;
+      font-size: 14px;
+      font-weight: bold;
+      border: 3px solid #00FF00;
+      box-shadow: 0 0 20px #00FF00;
+    `;
+    debugDiv.textContent = '✅ REACT LOADED ✅ ' + new Date().toISOString().substring(11, 19);
+    if (document.body) {
+      document.body.appendChild(debugDiv);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.appendChild(debugDiv);
+      });
+    }
+    console.log('✅ Debug div added to DOM');
+  } catch (e) {
+    console.error('❌ Failed to add debug div:', e);
+  }
+
+  // Set window flags to indicate module is loaded
+  (window as any)['REACT_SCRIPT_LOADED'] = true;
+  (window as any)['REACT_LOAD_TIME'] = new Date().toISOString();
+
+  logToDebugConsole('✅ Debug console created');
+  console.log('✅ Debug console functions ready');
+
   // LOG CRITIQUE - DÉBUT
   console.log('💥 NUCLEAR_DEBUG_V1: initPDFBuilderReact STARTED');
   addDebugToDOM('💥 initPDFBuilderReact STARTED at ' + new Date().toISOString());
@@ -320,15 +305,36 @@ export function initPDFBuilderReact() {
 
     return false;
   }
+
+  } catch (moduleError) {
+    // CATCH EXTENSION ERROR - Even if something breaks, create minimal API
+    console.error('🔥🔥🔥 MODULE-LEVEL ERROR CAUGHT (likely extension issue):', moduleError);
+    console.error('🔥 Error:', moduleError instanceof Error ? moduleError.message : String(moduleError));
+    console.error('🔥 Stack:', moduleError instanceof Error ? moduleError.stack : 'No stack');
+
+    // Create minimal API stub so wrapper doesn't hang
+    window.initPDFBuilderReact = function() {
+      console.error('❌ initPDFBuilderReact is stub (module error)');
+      const container = document.getElementById('pdf-builder-react-root');
+      if (container) {
+        container.innerHTML = '<div style="padding: 20px; background: #ffcccc; border: 1px solid #ff0000; color: #c62828;"><h3>Erreur: Module React n\'a pas pu charger</h3><p style="font-size: 12px;">Erreur d\'extension détectée. Consultez la console pour les détails.</p></div>';
+      }
+      return false;
+    };
+
+    window.pdfBuilderReact = {
+      initPDFBuilderReact: window.initPDFBuilderReact,
+      _isWebpackBundle: true,
+      _error: moduleError,
+      _errorMessage: moduleError instanceof Error ? moduleError.message : String(moduleError)
+    };
+
+    console.log('✅ Minimal API created (stub mode)');
+  }
 }
 
-// Déclarer l'interface globale pour TypeScript
-// (Déjà déclarée plus haut)
-
-// Export pour utilisation manuelle (WordPress l'appelle explicitement)
-window.initPDFBuilderReact = initPDFBuilderReact;
-
 // Exporter l'API complète pour WordPress
+window.initPDFBuilderReact = initPDFBuilderReact;
 window.pdfBuilderReact = {
   initPDFBuilderReact,
   loadTemplate,
@@ -341,30 +347,3 @@ window.pdfBuilderReact = {
   resetAPI,
   _isWebpackBundle: true
 };
-
-} catch (moduleError) {
-  // CATCH EXTENSION ERROR - Even if something breaks, create minimal API
-  console.error('🔥🔥🔥 MODULE-LEVEL ERROR CAUGHT (likely extension issue):', moduleError);
-  console.error('🔥 Error:', moduleError instanceof Error ? moduleError.message : String(moduleError));
-  console.error('🔥 Stack:', moduleError instanceof Error ? moduleError.stack : 'No stack');
-  
-  // Create minimal API stub so wrapper doesn't hang
-  window.initPDFBuilderReact = function() {
-    console.error('❌ initPDFBuilderReact is stub (module error)');
-    const container = document.getElementById('pdf-builder-react-root');
-    if (container) {
-      container.innerHTML = '<div style="padding: 20px; background: #ffcccc; border: 1px solid #ff0000; color: #c62828;"><h3>Erreur: Module React n\'a pas pu charger</h3><p style="font-size: 12px;">Erreur d\'extension détectée. Consultez la console pour les détails.</p></div>';
-    }
-    return false;
-  };
-
-  window.pdfBuilderReact = {
-    initPDFBuilderReact: window.initPDFBuilderReact,
-    _isWebpackBundle: true,
-    _error: moduleError,
-    _errorMessage: moduleError instanceof Error ? moduleError.message : String(moduleError)
-  };
-  
-  console.log('✅ Minimal API created (stub mode)');
-}
-// END OUTER TRY-CATCH
